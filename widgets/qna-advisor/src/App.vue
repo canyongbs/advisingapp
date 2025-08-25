@@ -35,7 +35,8 @@
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js/dist/web/pusher';
 import { defineProps, onMounted, onUnmounted, ref } from 'vue';
-import headshotAdgent from '../../../resources/images/canyon-ai-headshot.jpg?url';
+import headshotAgent from '../../../resources/images/canyon-ai-headshot.jpg?url';
+
 
 const props = defineProps(['url']);
 const sendMessageUrl = ref(null);
@@ -51,6 +52,8 @@ const scriptUrl = new URL(document.currentScript.getAttribute('src'));
 const protocol = scriptUrl.protocol;
 const scriptHostname = scriptUrl.hostname;
 const hostUrl = `${protocol}//${scriptHostname}`;
+const userAvatar = hostUrl + '/images/user-default-avatar.svg';
+const loadingSpinner = hostUrl + '/images/loading-spinner.svg';
 
 onMounted(async () => {
     try {
@@ -81,11 +84,9 @@ function setupWebsockets(config) {
         window.Pusher = Pusher;
         window.Echo = new Echo(config);
 
-        console.log(chatId.value);
         if (chatId.value) {
             privateChannel = window.Echo.private(`qna-advisor-chat-${chatId.value}`)
                 .listen('.advisor-message.chunk', (data) => {
-                    console.log(data);
                     if (data.error) {
                         console.error('Advisor message error:', data.error);
                         isLoading.value = false;
@@ -153,60 +154,70 @@ async function sendMessage() {
 </script>
 
 <template>
-    <div v-show="sendMessageUrl !== null" class="flex flex-col gap-y-3 w-11/12 mx-auto bg-white">
-        <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/qna-advisor/style.css'" />
-        <div class="flex h-[calc(100dvh-16rem)] flex-col gap-y-3" >
-            <div class="flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
-                <div class="divide-y dark:divide-gray-800" v-if="messages.length > 0" >
-                    <div
-                        class="mx-auto flex gap-4 text-base w-full items-start bg-gray-50 border-t border-gray-200 px-10 py-3"
-                        v-for="(message, index) in messages"
-                        :key="index"
-                    >
-                        <div class="relative flex flex-shrink-0 flex-col items-end">
-                            <img
-                                v-if="message.from === 'agent'"
-                                class="h-8 w-8 object-cover object-center"
-                                style="border-radius: 40px"
-                                :src="headshotAdgent"
-                                alt="Canyon AI"
-                                title="Canyon AI"
-                            />
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6" class="h-8 w-8 object-cover object-center" v-else>
-                                <path fillRule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clipRule="evenodd" />
-                            </svg>
-
+    <div>
+        <div v-show="sendMessageUrl !== null" class="flex flex-col gap-y-3 w-11/12 mx-auto bg-white">
+            <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/qna-advisor/style.css'" />
+            <div class="flex h-[calc(100dvh-16rem)] flex-col gap-y-3" >
+                <div class="flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
+                    <div class="divide-y dark:divide-gray-800" v-if="messages.length > 0" >
+                        <div
+                            class="mx-auto flex gap-4 text-base w-full items-start bg-gray-50 border-t border-gray-200 px-10 py-3"
+                            v-for="(message, index) in messages"
+                            :key="index"
+                        >
+                            <div class="relative flex flex-shrink-0 flex-col items-end">
+                                <img
+                                    class="h-8 w-8 object-cover object-center"
+                                    style="border-radius: 40px"
+                                    :src="message.from === 'agent' ? headshotAgent : userAvatar"
+                                    alt="Canyon AI"
+                                    title="Canyon AI"
+                                />
+                            </div>
+                            <div class="relative flex w-full flex-col gap-1 md:gap-3">
+                                {{ message.content }}
+                            </div>
                         </div>
-                        <div class="relative flex w-full flex-col gap-1 md:gap-3">
-                            {{ message.content }}
+                    </div>
+                </div>
+                <div class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
+                    <div v-if="isLoading" class="justify-center px-4 py-4 text-base md:gap-6 md:py-6">
+                        <p>AI is typing...</p>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800">
+                        <label class="sr-only" for="message_input">Type here</label>
+                        <textarea
+                            v-model="message"
+                            placeholder="Ask your question..."
+                            :disabled="isLoading"
+                            class="min-h-20 w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"  style="height: min(80px, 25dvh);"
+                        ></textarea>
+                    </div>
+                    <div class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
+                        <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+                            <button
+                                @click="sendMessage"
+                                :disabled="isLoading || !message.trim()"
+                                style="border-radius: 12px"
+                                class="relative font-semibold outline-none focus-visible:ring-2 px-3 py-2 text-sm bg-gray-600 text-white hover:bg-gray-500 focus-visible:ring-gray-500/50 dark:bg-gray-500 dark:hover:bg-gray-400 dark:focus-visible:ring-gray-400/50 w-full sm:w-auto"
+                            >
+                                Send
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
-                <div v-if="isLoading" class="justify-center px-4 py-4 text-base md:gap-6 md:py-6">
-                    <p>AI is typing...</p>
-                </div>
-                <div class="bg-white dark:bg-gray-800">
-                    <label class="sr-only" for="message_input">Type here</label>
-                    <textarea
-                        v-model="message"
-                        placeholder="Ask your question..."
-                        :disabled="isLoading"
-                        class="min-h-20 w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"  style="height: min(80px, 25dvh);"
-                    ></textarea>
-                </div>
-                <div class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
-                    <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-                        <button
-                            @click="sendMessage"
-                            :disabled="isLoading || !message.trim()"
-                            style="border-radius: 12px"
-                            class="relative font-semibold outline-none focus-visible:ring-2 px-3 py-2 text-sm bg-gray-600 text-white hover:bg-gray-500 focus-visible:ring-gray-500/50 dark:bg-gray-500 dark:hover:bg-gray-400 dark:focus-visible:ring-gray-400/50 w-full sm:w-auto"
-                        >
-                            Send
-                        </button>
-                    </div>
+        </div>
+        <div class="relative h-screen" v-if="sendMessageUrl === null">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+                <div role="status">
+                    <img
+                        class="inline h-8 w-8 animate-spin text-gray-200 dark:text-gray-600"
+                        style="border-radius: 40px"
+                        :src="loadingSpinner"
+                        alt="spinner"
+                        title="spinner" />
+                    <span class="sr-only">Loading...</span>
                 </div>
             </div>
         </div>
