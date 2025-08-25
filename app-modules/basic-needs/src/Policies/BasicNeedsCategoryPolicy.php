@@ -64,15 +64,15 @@ class BasicNeedsCategoryPolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['support_category.view-any', 'product_admin.view-any'],
+            abilities: ['settings.view-any'],
             denyResponse: 'You do not have permission to view basic needs categories.'
         );
     }
 
-    public function view(Authenticatable $authenticatable, BasicNeedsCategory $basicNeedsCategory): Response
+    public function view(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['support_category.*.view', "product_admin.{$basicNeedsCategory->getKey()}.view"],
+            abilities: ['settings.*.view'],
             denyResponse: 'You do not have permission to view this basic needs category.'
         );
     }
@@ -80,39 +80,39 @@ class BasicNeedsCategoryPolicy
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['support_category.create', 'product_admin.create'],
+            abilities: ['settings.create'],
             denyResponse: 'You do not have permission to create basic needs categories.'
         );
     }
 
-    public function update(Authenticatable $authenticatable, BasicNeedsCategory $basicNeedsCategory): Response
+    public function update(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['support_category.*.update', "product_admin.{$basicNeedsCategory->getKey()}.update"],
+            abilities: ['settings.*.update'],
             denyResponse: 'You do not have permission to update this basic needs category.'
         );
     }
 
-    public function delete(Authenticatable $authenticatable, BasicNeedsCategory $basicNeedsCategory): Response
+    public function delete(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['support_category.*.delete', "product_admin.{$basicNeedsCategory->getKey()}.delete"],
+            abilities: ['settings.*.delete'],
             denyResponse: 'You do not have permission to delete this basic needs category.'
         );
     }
 
-    public function restore(Authenticatable $authenticatable, BasicNeedsCategory $basicNeedsCategory): Response
+    public function restore(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['support_category.*.restore', "product_admin.{$basicNeedsCategory->getKey()}.restore"],
+            abilities: ['settings.*.restore'],
             denyResponse: 'You do not have permission to restore this basic needs category.'
         );
     }
 
-    public function forceDelete(Authenticatable $authenticatable, BasicNeedsCategory $basicNeedsCategory): Response
+    public function forceDelete(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['support_category.*.force-delete', "product_admin.{$basicNeedsCategory->getKey()}.force-delete"],
+            abilities: ['settings.*.force-delete'],
             denyResponse: 'You do not have permission to force delete this basic needs category.'
         );
     }
