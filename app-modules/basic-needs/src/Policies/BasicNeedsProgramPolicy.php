@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\BasicNeeds\Policies;
 
-use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Concerns\PerformsFeatureChecks;
