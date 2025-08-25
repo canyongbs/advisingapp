@@ -43,6 +43,7 @@ use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ListProjects;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageFiles;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageMilestones;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageProjectPipelines;
+use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageTasks;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ViewProject;
 use AdvisingApp\Project\Models\Project;
 use Filament\Navigation\NavigationItem;
@@ -69,6 +70,7 @@ class ProjectResource extends Resource
             ManageFiles::class,
             ManageProjectPipelines::class,
             ManageMilestones::class,
+            ManageTasks::class,
         ]);
     }
 
@@ -98,6 +100,7 @@ class ProjectResource extends Resource
             'files' => ManageFiles::route('/{record}/files'),
             'manage-pipelines' => ManageProjectPipelines::route('/{record}/pipelines'),
             'manage-milestones' => ManageMilestones::route('/{record}/milestones'),
+            'manage-tasks' => ManageTasks::route('/{record}/tasks'),
         ];
     }
 }

@@ -40,6 +40,7 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Project\Database\Factories\ProjectFactory;
 use AdvisingApp\Project\Observers\ProjectObserver;
+use AdvisingApp\Task\Models\Task;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -96,5 +97,13 @@ class Project extends BaseModel implements Auditable
     public function milestones(): HasMany
     {
         return $this->hasMany(ProjectMilestone::class, 'project_id');
+    }
+
+    /**
+     * @return HasMany<Task, $this>
+     */
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
     }
 }
