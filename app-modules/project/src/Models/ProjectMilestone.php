@@ -65,6 +65,10 @@ class ProjectMilestone extends Model implements Auditable
         'target_date',
     ];
 
+    protected $casts = [
+        'target_date' => 'date',
+    ];
+
     /**
      * @return BelongsTo<User, $this>
      */
