@@ -39,6 +39,7 @@ namespace AdvisingApp\Task\Models;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
+use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -148,6 +149,14 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, H
     public function histories(): MorphMany
     {
         return $this->morphMany(TaskHistory::class, 'subject');
+    }
+
+    /**
+     * @return BelongsTo<Project, $this>
+     */
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
     }
 
     public function getSubscribable(): ?Subscribable
