@@ -34,62 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Settings;
+namespace AdvisingApp\Notification\Enums;
 
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioApiKey;
-use AdvisingApp\Notification\Enums\SmsMessagingProvider;
-use App\Settings\IntegrationSettings;
+use Filament\Support\Contracts\HasLabel;
 
-/**
- * Though this is named TwilioSettings, it is actually used for messaging settings in general.
- * It is also used to store setting related to our other messaging option Telnyx.
- * Eventually we can rename / fix all of this to be seperate.
- */
-class TwilioSettings extends IntegrationSettings
+enum SmsMessagingProvider: string implements HasLabel
 {
-    public SmsMessagingProvider $provider = SmsMessagingProvider::Twilio;
+    case Twilio = 'twilio';
 
-    public bool $is_enabled = false;
+    case Telnyx = 'telnyx';
 
-    public bool $is_demo_mode_enabled = false;
-
-    public bool $is_demo_auto_reply_mode_enabled = false;
-
-    public ?TwilioApiKey $api_key = null;
-
-    public ?string $account_sid = null;
-
-    public ?string $auth_token = null;
-
-    public ?string $from_number = null;
-
-    public ?string $telnyx_api_key = null;
-
-    public static function group(): string
+    public function getLabel(): string
     {
-        return 'twilio';
-    }
-
-    public static function encrypted(): array
-    {
-        return [
-            'api_key',
-            'account_sid',
-            'auth_token',
-            'from_number',
-            'telnyx_api_key',
-        ];
-    }
-
-    public function isConfigured(): bool
-    {
-        if ($this->is_demo_mode_enabled) {
-            return true;
-        }
-
-        return match ($this->provider) {
-            SmsMessagingProvider::Twilio => filled($this->account_sid) && filled($this->auth_token) && filled($this->from_number),
-            SmsMessagingProvider::Telnyx => filled($this->telnyx_api_key),
-        };
+        return $this->name;
     }
 }

@@ -37,9 +37,11 @@
 namespace AdvisingApp\IntegrationTwilio\Filament\Pages;
 
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
+use AdvisingApp\Notification\Enums\SmsMessagingProvider;
 use App\Filament\Clusters\ProductIntegrations;
 use App\Models\User;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -84,19 +86,34 @@ class ManageMessagingSettings extends SettingsPage
                     ->helperText('When enabled, SMS messages will receive an automatic reply.'),
                 Section::make()
                     ->schema([
+                        Select::make('provider')
+                            ->label('Provider')
+                            ->options(SmsMessagingProvider::class)
+                            ->enum(SmsMessagingProvider::class)
+                            ->required()
+                            ->live(),
+                        PhoneInput::make('from_number')
+                            ->required(),
                         TextInput::make('account_sid')
                             ->label('Account SID')
                             ->string()
                             ->required()
                             ->password()
-                            ->revealable(),
+                            ->revealable()
+                            ->visible(fn (Get $get) => $get('provider') === SmsMessagingProvider::Twilio),
                         TextInput::make('auth_token')
                             ->string()
                             ->required()
                             ->password()
-                            ->revealable(),
-                        PhoneInput::make('from_number')
-                            ->required(),
+                            ->revealable()
+                            ->visible(fn (Get $get) => $get('provider') === SmsMessagingProvider::Twilio),
+                        TextInput::make('telnyx_api_key')
+                            ->label('API Key')
+                            ->string()
+                            ->required()
+                            ->password()
+                            ->revealable()
+                            ->visible(fn (Get $get) => $get('provider') === SmsMessagingProvider::Telnyx),
                     ])
                     ->visible(fn (Get $get) => $get('is_enabled') && ! $get('is_demo_mode_enabled')),
             ]);

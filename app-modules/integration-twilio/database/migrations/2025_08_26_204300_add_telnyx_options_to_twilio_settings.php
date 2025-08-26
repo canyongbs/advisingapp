@@ -34,62 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Settings;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsBlueprint;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioApiKey;
-use AdvisingApp\Notification\Enums\SmsMessagingProvider;
-use App\Settings\IntegrationSettings;
-
-/**
- * Though this is named TwilioSettings, it is actually used for messaging settings in general.
- * It is also used to store setting related to our other messaging option Telnyx.
- * Eventually we can rename / fix all of this to be seperate.
- */
-class TwilioSettings extends IntegrationSettings
-{
-    public SmsMessagingProvider $provider = SmsMessagingProvider::Twilio;
-
-    public bool $is_enabled = false;
-
-    public bool $is_demo_mode_enabled = false;
-
-    public bool $is_demo_auto_reply_mode_enabled = false;
-
-    public ?TwilioApiKey $api_key = null;
-
-    public ?string $account_sid = null;
-
-    public ?string $auth_token = null;
-
-    public ?string $from_number = null;
-
-    public ?string $telnyx_api_key = null;
-
-    public static function group(): string
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return 'twilio';
+        $this->migrator->inGroup('twilio', function (SettingsBlueprint $blueprint): void {
+            try {
+                $blueprint->add('provider', 'twilio');
+            } catch (SettingAlreadyExists) {
+            }
+
+            try {
+                $blueprint->addEncrypted('telnyx_api_key');
+            } catch (SettingAlreadyExists) {
+            }
+        });
     }
 
-    public static function encrypted(): array
+    public function down(): void
     {
-        return [
-            'api_key',
-            'account_sid',
-            'auth_token',
-            'from_number',
-            'telnyx_api_key',
-        ];
+        $this->migrator->inGroup('twilio', function (SettingsBlueprint $blueprint): void {
+            $blueprint->delete('provider');
+            $blueprint->delete('telnyx_api_key');
+        });
     }
-
-    public function isConfigured(): bool
-    {
-        if ($this->is_demo_mode_enabled) {
-            return true;
-        }
-
-        return match ($this->provider) {
-            SmsMessagingProvider::Twilio => filled($this->account_sid) && filled($this->auth_token) && filled($this->from_number),
-            SmsMessagingProvider::Telnyx => filled($this->telnyx_api_key),
-        };
-    }
-}
+};
