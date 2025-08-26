@@ -152,6 +152,8 @@ class ManageLicenseSettings extends SettingsPage
                                 ->label('Case Management'),
                             Toggle::make('data.addons.resourceHub')
                                 ->label('Resource Hub'),
+                            Toggle::make('data.addons.supportPrograms')
+                                ->label('Support Programs'),
                             Toggle::make('data.addons.eventManagement')
                                 ->label('Event Management'),
                             Toggle::make('data.addons.realtimeChat')
