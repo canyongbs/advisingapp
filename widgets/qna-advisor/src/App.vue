@@ -36,9 +36,8 @@ import Echo from 'laravel-echo';
 import Pusher from 'pusher-js/dist/web/pusher';
 import { defineProps, onMounted, onUnmounted, ref } from 'vue';
 import headshotAgent from '../../../resources/images/canyon-ai-headshot.jpg?url';
-import userAvatar from '../public/images/user-default-avatar.svg?url';
 import loadingSpinner from '../public/images/loading-spinner.svg?url';
-
+import userAvatar from '../public/images/user-default-avatar.svg?url';
 
 const props = defineProps(['url']);
 const sendMessageUrl = ref(null);
@@ -155,7 +154,7 @@ async function sendMessage() {
 
 <template>
     <div class="h-full bg-gray-50 dark:bg-gray-950">
-        <div v-show="sendMessageUrl !== null" class="flex flex-col gap-y-3 w-11/12 mx-auto ">
+        <div v-show="sendMessageUrl !== null" class="flex flex-col gap-y-3 w-11/12 mx-auto">
             <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/qna-advisor/style.css'" />
             <div class="flex h-[calc(100dvh-16rem)] flex-col gap-y-3">
                 <div
@@ -170,7 +169,7 @@ async function sendMessage() {
                             <div class="relative flex flex-shrink-0 flex-col items-end">
                                 <img
                                     class="h-8 w-8 object-cover object-center"
-                                    :class="{'dark:invert': message.from !== 'agent'}"
+                                    :class="{ 'dark:invert': message.from !== 'agent' }"
                                     style="border-radius: 40px"
                                     :src="message.from === 'agent' ? headshotAgent : userAvatar"
                                     alt="Canyon AI"
@@ -186,7 +185,10 @@ async function sendMessage() {
                 <div
                     class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700"
                 >
-                    <div v-if="isLoading" class="justify-center px-4 py-4 text-base md:gap-6 md:py-6 tex-gray-900 dark:text-white">
+                    <div
+                        v-if="isLoading"
+                        class="justify-center px-4 py-4 text-base md:gap-6 md:py-6 tex-gray-900 dark:text-white"
+                    >
                         <p>AI is typing...</p>
                     </div>
                     <div class="bg-white dark:bg-gray-800">
