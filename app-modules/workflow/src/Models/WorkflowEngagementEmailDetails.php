@@ -59,7 +59,6 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
         'channel',
         'subject',
         'body',
-        'workflow_step_id',
     ];
 
     protected $casts = [
