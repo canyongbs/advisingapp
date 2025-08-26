@@ -63,8 +63,9 @@ class ManageMessagingSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
-        /** @var User $user */
-        $user = auth()->user();
+        $user = auth()->guard('web')->user();
+
+        assert($user instanceof User);
 
         return $user->isSuperAdmin();
     }
