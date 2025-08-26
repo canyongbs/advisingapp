@@ -52,4 +52,9 @@ class OpenAiResponsesGpt5MiniService extends BaseOpenAiResponsesService
     {
         return $this->settings->open_ai_gpt_5_mini_base_uri ?? config('integration-open-ai.gpt_5_mini_base_uri');
     }
+
+    public function hasTemperature(): bool
+    {
+        return false;
+    }
 }

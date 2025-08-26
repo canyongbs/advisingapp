@@ -41,7 +41,7 @@ return new class () extends SettingsMigration {
     public function up(): void
     {
         try {
-            $this->migrator->add('ai.open_ai_gpt_5_model_name');
+            $this->migrator->add('ai.open_ai_gpt_5_mini_model_name');
         } catch (SettingAlreadyExists $exception) {
             // do nothing
         }
