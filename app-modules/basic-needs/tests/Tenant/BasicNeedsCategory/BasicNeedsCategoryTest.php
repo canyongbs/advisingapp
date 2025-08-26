@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages\CreateBasicNeedsCategory;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages\EditBasicNeedsCategory;
@@ -41,12 +42,14 @@ use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages\L
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertSoftDeleted;
+use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
 it('can render list page', function () {
@@ -288,4 +291,31 @@ it('can bulk delete basic needs categories', function () {
     foreach ($basicNeedsCategories as $basicNeedsCategory) {
         assertSoftDeleted($basicNeedsCategory);
     }
+});
+
+it('is gated with proper access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->supportPrograms = false;
+
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $user->givePermissionTo('settings.view-any');
+
+    actingAs($user);
+
+    get(BasicNeedsCategoryResource::getUrl('index'))->assertForbidden();
+
+    $settings->data->addons->supportPrograms = true;
+    $settings->save();
+
+    $user->revokePermissionTo('settings.view-any');
+
+    get(BasicNeedsCategoryResource::getUrl('index'))->assertForbidden();
+
+    $user->givePermissionTo('settings.view-any');
+
+    get(BasicNeedsCategoryResource::getUrl('index'))->assertSuccessful();
 });

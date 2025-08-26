@@ -36,19 +36,25 @@
 
 namespace AdvisingApp\BasicNeeds\Policies;
 
-use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\SettingsPermissions;
+use App\Concerns\PerformsFeatureChecks;
+use App\Enums\Feature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
 class BasicNeedsCategoryPolicy
 {
+    use PerformsFeatureChecks;
+
     public function before(Authenticatable $authenticatable): ?Response
     {
         if (! $authenticatable->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
             return Response::deny('You are not licensed for the Retention or Recruitment CRM.');
+        }
+
+        if (! is_null($response = $this->hasFeatures())) {
+            return $response;
         }
 
         return null;
@@ -56,106 +62,62 @@ class BasicNeedsCategoryPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.view-any',
-                denyResponse: 'You do not have permission to view basic needs categories.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.view-any',
+            abilities: ['settings.view-any'],
             denyResponse: 'You do not have permission to view basic needs categories.'
         );
     }
 
-    public function view(Authenticatable $authenticatable, BasicNeedsCategory $basicNeedsCategory): Response
+    public function view(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.view',
-                denyResponse: 'You do not have permission to view this basic needs category.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$basicNeedsCategory->getKey()}.view"],
+            abilities: ['settings.*.view'],
             denyResponse: 'You do not have permission to view this basic needs category.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.create',
-                denyResponse: 'You do not have permission to create basic needs categories.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: ['settings.create'],
             denyResponse: 'You do not have permission to create basic needs categories.'
         );
     }
 
-    public function update(Authenticatable $authenticatable, BasicNeedsCategory $basicNeedsCategory): Response
+    public function update(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.update'],
-                denyResponse: 'You do not have permission to update this basic needs category.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$basicNeedsCategory->getKey()}.update"],
+            abilities: ['settings.*.update'],
             denyResponse: 'You do not have permission to update this basic needs category.'
         );
     }
 
-    public function delete(Authenticatable $authenticatable, BasicNeedsCategory $basicNeedsCategory): Response
+    public function delete(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.delete'],
-                denyResponse: 'You do not have permission to delete this basic needs category.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$basicNeedsCategory->getKey()}.delete"],
+            abilities: ['settings.*.delete'],
             denyResponse: 'You do not have permission to delete this basic needs category.'
         );
     }
 
-    public function restore(Authenticatable $authenticatable, BasicNeedsCategory $basicNeedsCategory): Response
+    public function restore(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.restore'],
-                denyResponse: 'You do not have permission to restore this basic needs category.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$basicNeedsCategory->getKey()}.restore"],
+            abilities: ['settings.*.restore'],
             denyResponse: 'You do not have permission to restore this basic needs category.'
         );
     }
 
-    public function forceDelete(Authenticatable $authenticatable, BasicNeedsCategory $basicNeedsCategory): Response
+    public function forceDelete(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.force-delete'],
-                denyResponse: 'You do not have permission to force delete this basic needs category.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$basicNeedsCategory->getKey()}.force-delete"],
+            abilities: ['settings.*.force-delete'],
             denyResponse: 'You do not have permission to force delete this basic needs category.'
         );
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [Feature::SupportPrograms];
     }
 }

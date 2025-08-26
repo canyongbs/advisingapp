@@ -34,50 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace App\Enums;
+use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
-use App\Models\Authenticatable;
-use App\Settings\LicenseSettings;
-use Illuminate\Support\Facades\Gate;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-enum Feature: string
-{
-    case OnlineForms = 'online-forms';
+    /** @var array<string> $permissions */
+    private array $permissions = [
+        'support_program.view-any' => 'Support Program',
+        'support_program.create' => 'Support Program',
+        'support_program.*.view' => 'Support Program',
+        'support_program.*.update' => 'Support Program',
+        'support_program.*.delete' => 'Support Program',
+        'support_program.*.restore' => 'Support Program',
+        'support_program.*.force-delete' => 'Support Program',
+    ];
 
-    case OnlineSurveys = 'online-surveys';
+    /** @var array<string> $guards */
+    private array $guards = [
+        'web',
+        'api',
+    ];
 
-    case OnlineAdmissions = 'online-admissions';
-
-    case CaseManagement = 'case-management';
-
-    case ResourceHub = 'resource-hub';
-
-    case SupportPrograms = 'support-programs';
-
-    case EventManagement = 'event-management';
-    case RealtimeChat = 'realtime-chat';
-
-    case MobileApps = 'mobile-apps';
-
-    case ScheduleAndAppointments = 'schedule-and-appointments';
-
-    case CustomAiAssistants = 'custom-ai-assistants';
-
-    case ResearchAdvisor = 'research-advisor';
-
-    case QnAAdvisor = 'qna-advisor';
-
-    public function generateGate(): void
+    public function up(): void
     {
-        // If features are added that are not based on a License Addon we will need to update this
-        Gate::define(
-            $this->getGateName(),
-            fn (?Authenticatable $authenticatable) => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
-        );
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $permissions = Arr::except($this->permissions, keys: DB::table('permissions')
+                    ->where('guard_name', $guard)
+                    ->pluck('name')
+                    ->all());
+
+                $this->createPermissions($permissions, $guard);
+            });
     }
 
-    public function getGateName(): string
+    public function down(): void
     {
-        return "feature-{$this->value}";
+        collect($this->guards)
+            ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
     }
-}
+};
