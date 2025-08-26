@@ -15,7 +15,7 @@ return new class () extends Migration {
     public function down(): void
     {
         Schema::table('workflow_engagement_email_details', function (Blueprint $table) {
-            $table->foreignUuid('workflow_step_id')->constrained('workflow_steps');
+            $table->foreignUuid('workflow_step_id')->nullable()->constrained('workflow_steps');
         });
     }
 };

@@ -45,15 +45,18 @@ use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @mixin IdeHelperWorkflowEngagementEmailDetails
  */
-class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditable
+class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditable, HasMedia
 {
     use SoftDeletes;
     use AuditableTrait;
     use HasUuids;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'channel',
