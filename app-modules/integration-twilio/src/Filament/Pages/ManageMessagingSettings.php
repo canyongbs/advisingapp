@@ -47,13 +47,13 @@ use Filament\Forms\Get;
 use Filament\Pages\SettingsPage;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
-class ManageTwilioSettings extends SettingsPage
+class ManageMessagingSettings extends SettingsPage
 {
     protected static string $settings = TwilioSettings::class;
 
-    protected static ?string $title = 'Twilio Settings';
+    protected static ?string $title = 'Messaging Settings';
 
-    protected static ?string $navigationLabel = 'Twilio';
+    protected static ?string $navigationLabel = 'Messaging';
 
     protected static ?int $navigationSort = 40;
 
