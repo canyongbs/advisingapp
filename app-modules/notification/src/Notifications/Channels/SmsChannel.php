@@ -57,6 +57,8 @@ use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 use Talkroute\MessageSegmentCalculator\SegmentCalculator;
+use Telnyx\Message;
+use Telnyx\Telnyx;
 use Throwable;
 use Twilio\Exceptions\TwilioException;
 use Twilio\Rest\Api\V2010;
@@ -140,7 +142,7 @@ class SmsChannel
             if (! $twilioSettings->is_demo_mode_enabled) {
                 $result = match ($twilioSettings->provider) {
                     SmsMessagingProvider::Twilio => $this->sendViaTwilio($message, $recipientNumber),
-                    SmsMessagingProvider::Telnyx => $this->sendViaTelnyx($message, $recipientNumber),
+                    SmsMessagingProvider::Telnyx => $this->sendViaTelnyx($message, $recipientNumber, $twilioSettings->telnyx_api_key),
                 };
             } else {
                 $result = SmsChannelResultData::from([
@@ -239,7 +241,31 @@ class SmsChannel
         return $result;
     }
 
-    protected function sendViaTelnyx(TwilioMessage $message, mixed $recipientNumber): SmsChannelResultData {}
+    protected function sendViaTelnyx(TwilioMessage $message, mixed $recipientNumber, ?string $apiKey): SmsChannelResultData
+    {
+        $result = SmsChannelResultData::from([
+            'success' => false,
+        ]);
+
+        try {
+            Telnyx::setApiKey($apiKey);
+
+            // TODO: add status webhook info
+
+            $message = Message::create([
+                'from' => $message->getFrom(),
+                'to' => config('local_development.twilio.to_number') ?: $recipientNumber,
+                'text' => $message->getContent(),
+            ]);
+
+            $result->success = true;
+            $result->message = $message;
+        } catch (Throwable $exception) {
+            $result->error = $exception->getMessage();
+        }
+
+        return $result;
+    }
 
     protected function determineQuotaUsage(TwilioMessage | SmsChannelResultData $message, SmsMessage $smsMessage): int
     {

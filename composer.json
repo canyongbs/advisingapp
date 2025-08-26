@@ -39,6 +39,7 @@
         "canyon-gbs/advising-app-meeting-center": "*",
         "canyon-gbs/advising-app-notification": "*",
         "canyon-gbs/advising-app-portal": "*",
+        "canyon-gbs/advising-app-project": "*",
         "canyon-gbs/advising-app-prospect": "*",
         "canyon-gbs/advising-app-report": "*",
         "canyon-gbs/advising-app-resource-hub": "*",
@@ -54,7 +55,6 @@
         "canyon-gbs/integration-open-ai": "*",
         "canyon-gbs/multifactor-authentication": "*",
         "canyon-gbs/pipeline": "*",
-        "canyon-gbs/advising-app-project": "*",
         "canyon-gbs/research": "*",
         "canyon-gbs/segment": "*",
         "canyon-gbs/workflow": "*",
@@ -114,6 +114,7 @@
         "stechstudio/filament-impersonate": "^3.5",
         "talkroute/message-segment-calculator": "^1.0",
         "tapp/filament-timezone-field": "^3.0",
+        "telnyx/telnyx-php": "^3.0",
         "tpetry/laravel-postgresql-enhanced": "^3.0",
         "twilio/sdk": "^8.5.0",
         "ysfkaya/filament-phone-input": "^3.2.2"
