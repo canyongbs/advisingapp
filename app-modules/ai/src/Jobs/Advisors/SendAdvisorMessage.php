@@ -41,12 +41,14 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
+use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 
 class SendAdvisorMessage implements ShouldQueue
 {
@@ -87,7 +89,7 @@ class SendAdvisorMessage implements ShouldQueue
             }
 
             $use = $this->content->uses()->make();
-            $use->user()->associate(auth()->user());
+            $use->user()->associate($this->thread->user);
             $use->save();
         } else {
             $message->content = $this->content;
@@ -101,7 +103,7 @@ class SendAdvisorMessage implements ShouldQueue
             'ip' => request()->ip(),
         ];
         $message->thread()->associate($this->thread);
-        $message->user()->associate(auth()->user());
+        $message->user()->associate($this->thread->user);
 
         if ($this->content instanceof Prompt) {
             $message->prompt()->associate($this->content);
@@ -116,17 +118,24 @@ class SendAdvisorMessage implements ShouldQueue
         $response = new AiMessage();
         $response->thread()->associate($this->thread);
 
-        $stream = $aiService->sendMessage(
-            message: $message,
-            files: $this->files
-        );
+        Auth::setUser($this->thread->user);
+
+        try {
+            $stream = $aiService->sendMessage(
+                message: $message,
+                files: $this->files
+            );
+        } finally {
+            // Reset the Auth user to avoid issues with subsequent jobs
+            Auth::logout();
+        }
 
         $chunkBuffer = [];
         $chunkCount = 0;
 
         foreach ($stream() as $chunk) {
-            if ($chunk['type'] === 'text') {
-                $chunkBuffer[] = $chunk['content'];
+            if ($chunk instanceof Text) {
+                $chunkBuffer[] = $chunk->content;
                 $chunkCount++;
 
                 if ($chunkCount >= 30) {

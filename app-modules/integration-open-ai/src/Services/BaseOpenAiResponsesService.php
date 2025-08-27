@@ -46,6 +46,8 @@ use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\Ai\Settings\AiSettings;
+use AdvisingApp\Ai\Support\StreamingChunks\NextRequestOptions;
+use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\AssistantsDataTransferObject;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
@@ -55,6 +57,7 @@ use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Research\Models\ResearchRequest;
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use Closure;
 use Exception;
@@ -287,10 +290,7 @@ abstract class BaseOpenAiResponsesService implements AiService
                             ($chunk->chunkType === ChunkType::Meta) &&
                             filled($chunk->meta?->id)
                         ) {
-                            yield [
-                                'type' => 'next_request_options',
-                                'options' => ['previous_response_id' => $chunk->meta->id],
-                            ];
+                            yield new NextRequestOptions(['previous_response_id' => $chunk->meta->id]);
 
                             continue;
                         }
@@ -299,7 +299,7 @@ abstract class BaseOpenAiResponsesService implements AiService
                             continue;
                         }
 
-                        yield ['type' => 'text', 'content' => $chunk->text];
+                        yield new Text($chunk->text);
 
                         if ($chunk->finishReason === FinishReason::Error) {
                             report(new MessageResponseException('Stream not successful.'));
@@ -562,7 +562,7 @@ abstract class BaseOpenAiResponsesService implements AiService
         }
 
         $aiSettings = app(AiSettings::class);
-        $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
+        $instructions = $this->generateAssistantInstructions($message->thread->assistant, $message->thread->user, withDynamicContext: true);
 
         try {
             $vectorStoreIds = array_values(array_filter([
@@ -1147,7 +1147,7 @@ abstract class BaseOpenAiResponsesService implements AiService
             ->baseUrl((string) str($this->getDeployment())->beforeLast('/v1'));
     }
 
-    protected function generateAssistantInstructions(AiAssistant $assistant, bool $withDynamicContext = false): string
+    protected function generateAssistantInstructions(AiAssistant $assistant, User $user, bool $withDynamicContext = false): string
     {
         $assistantInstructions = rtrim($assistant->instructions, '. ');
 
@@ -1163,7 +1163,7 @@ abstract class BaseOpenAiResponsesService implements AiService
         $formattingInstructions = static::FORMATTING_INSTRUCTIONS;
 
         if ($withDynamicContext) {
-            $dynamicContext = rtrim(auth()->user()->getDynamicContext(), '. ');
+            $dynamicContext = rtrim($user->getDynamicContext(), '. ');
 
             return "{$dynamicContext}.\n\n{$assistantInstructions}.\n\n{$formattingInstructions}";
         }

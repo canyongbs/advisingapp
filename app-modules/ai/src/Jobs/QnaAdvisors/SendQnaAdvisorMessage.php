@@ -40,6 +40,8 @@ use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Events\QnaAdvisors\QnaAdvisorMessageChunk;
 use AdvisingApp\Ai\Events\QnaAdvisors\QnaAdvisorNextRequestOptions;
 use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Support\StreamingChunks\NextRequestOptions;
+use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -85,17 +87,17 @@ class SendQnaAdvisorMessage implements ShouldQueue
             $chunkCount = 0;
 
             foreach ($stream() as $chunk) {
-                if ($chunk['type'] === 'next_request_options') {
+                if ($chunk instanceof NextRequestOptions) {
                     event(new QnaAdvisorNextRequestOptions(
                         $this->chatId,
-                        $chunk['options'],
+                        $chunk->options,
                     ));
 
                     continue;
                 }
 
-                if ($chunk['type'] === 'text') {
-                    $chunkBuffer[] = $chunk['content'];
+                if ($chunk instanceof Text) {
+                    $chunkBuffer[] = $chunk->content;
                     $chunkCount++;
 
                     if ($chunkCount >= 30) {
