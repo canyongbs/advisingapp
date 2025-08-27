@@ -2,11 +2,12 @@
 
 namespace AdvisingApp\IntegrationTwilio\Http\Controllers;
 
-use AdvisingApp\Engagement\Actions\CreateEngagementResponse;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
+use AdvisingApp\IntegrationTwilio\Jobs\ProcessTelnyxMessageReceived;
+use AdvisingApp\IntegrationTwilio\Jobs\ProcessTelnyxMessageStatusUpdate;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class TelnyxInboundWebhookController
 {
@@ -18,40 +19,24 @@ class TelnyxInboundWebhookController
         throw_if(! isset($data['record_type']) || $data['record_type'] !== 'event', new Exception('Invalid Telnyx webhook record type'));
 
         if ($data['event_type'] === 'message.received') {
-            return $this->processInboundMessageReceived($data);
+            dispatch(new ProcessTelnyxMessageReceived($data));
+
+            return response()->noContent();
         }
 
         if ($data['event_type'] === 'message.sent' || $data['event_type'] === 'message.finalized') {
-            return $this->processOutboundMessageStatusUpdate($data);
+            dispatch(new ProcessTelnyxMessageStatusUpdate($data));
+
+            return response()->noContent();
         }
 
-        // 2. Execute the correct workload
+        // Did not match any event_type we are currently parsing
 
-        // 3. Respond back
-    }
+        Log::warning('Telnyx event_type not matched', [
+            'event_type' => $data['event_type'],
+            'payload' => $request->getContent(),
+        ]);
 
-    /**
-     * @param array{
-     *     payload: array{
-     *         from: array{phone_number: string},
-     *         text: string
-     *     }
-     * } $data
-     */
-    protected function processInboundMessageReceived(array $data): Response
-    {
-        $createEngagementResponse = resolve(CreateEngagementResponse::class);
-
-        $createEngagementResponse(EngagementResponseData::from([
-            'from' => $data['payload']['from']['phone_number'],
-            'body' => $data['payload']['text'],
-        ]));
-
-        return response()->noContent();
-    }
-
-    protected function processOutboundMessageStatusUpdate(array $data): Response
-    {
-        // Process the "message.status" event
+        return response()->make(status: 501);
     }
 }
