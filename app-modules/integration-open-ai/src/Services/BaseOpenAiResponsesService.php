@@ -46,20 +46,18 @@ use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\Ai\Settings\AiSettings;
+use AdvisingApp\Ai\Support\StreamingChunks\Finish;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
-use AdvisingApp\Ai\Support\StreamingChunks\NextRequestOptions;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\AssistantsDataTransferObject;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
-use AdvisingApp\IntegrationOpenAi\Models\OpenAiResearchRequestVectorStore;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
-use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService\Concerns\InteractsWithResearchRequestVectorStores;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService\Concerns\InteractsWithResearchRequests;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService\Concerns\InteractsWithVectorStores;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use AdvisingApp\Research\Models\ResearchRequest;
 use App\Models\User;
 use Closure;
 use Exception;
@@ -74,9 +72,6 @@ use Prism\Prism\Enums\ChunkType;
 use Prism\Prism\Enums\FinishReason;
 use Prism\Prism\Exceptions\PrismRateLimitedException;
 use Prism\Prism\Prism;
-use Prism\Prism\Schema\ArraySchema;
-use Prism\Prism\Schema\ObjectSchema;
-use Prism\Prism\Schema\StringSchema;
 use Prism\Prism\ValueObjects\Messages\AssistantMessage;
 use Prism\Prism\ValueObjects\Messages\UserMessage;
 use Throwable;
@@ -85,7 +80,7 @@ abstract class BaseOpenAiResponsesService implements AiService
 {
     use HasAiServiceHelpers;
     use InteractsWithVectorStores;
-    use InteractsWithResearchRequestVectorStores;
+    use InteractsWithResearchRequests;
 
     public const FORMATTING_INSTRUCTIONS = 'When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.';
 
@@ -306,22 +301,31 @@ abstract class BaseOpenAiResponsesService implements AiService
 
                         yield new Text($chunk->text);
 
-                        if ($chunk->finishReason === FinishReason::Error) {
-                            report(new MessageResponseException('Stream not successful.'));
+                        if ($chunk->finishReason) {
+                            yield new Finish(
+                                isIncomplete: $chunk->finishReason === FinishReason::Length,
+                                error: ($chunk->finishReason === FinishReason::Error) ? 'Something went wrong' : null,
+                            );
+
+                            break;
                         }
                     }
                 } catch (PrismRateLimitedException $exception) {
                     foreach ($exception->rateLimits as $rateLimit) {
                         if ($rateLimit->resetsAt?->isFuture()) {
-                            throw new MessageResponseException("Rate limit exceeded, retry at {$rateLimit->resetsAt}.");
+                            yield new Finish(
+                                rateLimitResetsAt: $rateLimit->resetsAt,
+                            );
+
+                            break;
                         }
                     }
-
-                    throw new MessageResponseException('Rate limit exceeded, please try again later.');
                 } catch (Throwable $exception) {
                     report($exception);
 
-                    throw new MessageResponseException('Failed to complete the prompt: [' . $exception->getMessage() . '].');
+                    yield new Finish(
+                        error: 'Something went wrong',
+                    );
                 }
 
                 if ($shouldTrack) {
@@ -595,249 +599,6 @@ abstract class BaseOpenAiResponsesService implements AiService
     public function getDeploymentHash(): string
     {
         return md5($this->getDeployment());
-    }
-
-    /**
-     * @return array<string>
-     */
-    public function getResearchRequestRequestSearchQueries(ResearchRequest $researchRequest, string $prompt, string $content): array
-    {
-        return $this->structured(
-            prompt: $prompt,
-            content: $content,
-            schema: app(ArraySchema::class, [
-                'name' => 'search_queries',
-                'description' => 'An array of search queries to be used for web searches.',
-                'items' => app(StringSchema::class, [
-                    'name' => 'query',
-                    'description' => 'A search query that can be used in Google to find relevant web pages.',
-                ]),
-            ]),
-            providerOptions: [
-                'tool_choice' => [
-                    'type' => 'file_search',
-                ],
-                'tools' => [[
-                    'type' => 'file_search',
-                    'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
-                ]],
-            ],
-        )['description'] ?? [];
-    }
-
-    /**
-     * @return array{response: array<mixed>, nextRequestOptions: array<string, mixed>}
-     */
-    public function getResearchRequestRequestOutline(ResearchRequest $researchRequest, string $prompt, string $content): array
-    {
-        $responseId = null;
-
-        $response = $this->structured(
-            prompt: $prompt,
-            content: $content,
-            schema: app(ObjectSchema::class, [
-                'name' => 'outline',
-                'description' => 'An outline for the research report, including sections and subsections.',
-                'properties' => [
-                    app(ObjectSchema::class, [
-                        'name' => 'abstract',
-                        'description' => 'An abstract for the research report.',
-                        'properties' => [
-                            app(StringSchema::class, [
-                                'name' => 'heading',
-                                'description' => 'The heading of the abstract section.',
-                            ]),
-                        ],
-                        'requiredFields' => ['heading'],
-                    ]),
-                    app(ObjectSchema::class, [
-                        'name' => 'introduction',
-                        'description' => 'An introduction for the research report.',
-                        'properties' => [
-                            app(StringSchema::class, [
-                                'name' => 'heading',
-                                'description' => 'The heading of the introduction section.',
-                            ]),
-                        ],
-                        'requiredFields' => ['heading'],
-                    ]),
-                    app(ArraySchema::class, [
-                        'name' => 'sections',
-                        'description' => 'An array of sections for the research report, each with a heading and subsections. There should be 6 sections in total.',
-                        'items' => app(ObjectSchema::class, [
-                            'name' => 'section',
-                            'description' => 'A section in the research report.',
-                            'properties' => [
-                                app(StringSchema::class, [
-                                    'name' => 'heading',
-                                    'description' => 'The heading of the section.',
-                                ]),
-                                app(ArraySchema::class, [
-                                    'name' => 'subsections',
-                                    'description' => 'An array of subsections within the section. There should be 3 subsections in this section.',
-                                    'items' => app(ObjectSchema::class, [
-                                        'name' => 'subsection',
-                                        'description' => 'A subsection within a section of the research report.',
-                                        'properties' => [
-                                            app(StringSchema::class, [
-                                                'name' => 'heading',
-                                                'description' => 'The heading of the subsection.',
-                                            ]),
-                                        ],
-                                        'requiredFields' => ['heading'],
-                                    ]),
-                                ]),
-                            ],
-                            'requiredFields' => ['heading', 'subsections'],
-                        ]),
-                    ]),
-                    app(ObjectSchema::class, [
-                        'name' => 'conclusion',
-                        'description' => 'A conclusion for the research report.',
-                        'properties' => [
-                            app(StringSchema::class, [
-                                'name' => 'heading',
-                                'description' => 'The heading of the conclusion section.',
-                            ]),
-                        ],
-                        'requiredFields' => ['heading'],
-                    ]),
-                ],
-                'requiredFields' => ['abstract', 'introduction', 'sections', 'conclusion'],
-            ]),
-            providerOptions: [
-                'tool_choice' => [
-                    'type' => 'file_search',
-                ],
-                'tools' => [[
-                    'type' => 'file_search',
-                    'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
-                ]],
-            ],
-            responseId: $responseId,
-        );
-
-        return [
-            'response' => $response['properties'] ?? [],
-            'nextRequestOptions' => filled($responseId) ? [
-                'previous_response_id' => $responseId,
-            ] : [],
-        ];
-    }
-
-    /**
-     * @param array<string, mixed> $options
-     */
-    public function getResearchRequestRequestSection(ResearchRequest $researchRequest, string $prompt, string $content, array $options, Closure $nextRequestOptions): Generator
-    {
-        $aiSettings = app(AiSettings::class);
-
-        try {
-            $stream = Prism::text()
-                ->using('azure_open_ai', $this->getModel())
-                ->withClientOptions([
-                    'apiKey' => $this->getApiKey(),
-                    'apiVersion' => $this->getApiVersion(),
-                    'deployment' => $this->getDeployment(),
-                ])
-                ->withProviderOptions([
-                    'tool_choice' => [
-                        'type' => 'file_search',
-                    ],
-                    'tools' => [[
-                        'type' => 'file_search',
-                        'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
-                    ]],
-                    'truncation' => 'auto',
-                    ...$options,
-                ])
-                ->withSystemPrompt($prompt)
-                ->withPrompt($content)
-                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
-                ->asStream();
-
-            foreach ($stream as $chunk) {
-                if (
-                    ($chunk->chunkType === ChunkType::Meta) &&
-                    filled($chunk->meta?->id)
-                ) {
-                    $nextRequestOptions(['previous_response_id' => $chunk->meta->id]);
-
-                    continue;
-                }
-
-                if ($chunk->chunkType !== ChunkType::Text) {
-                    continue;
-                }
-
-                yield $chunk->text;
-
-                if ($chunk->finishReason === FinishReason::Error) {
-                    report(new MessageResponseException('Stream not successful.'));
-                }
-            }
-        } catch (PrismRateLimitedException $exception) {
-            foreach ($exception->rateLimits as $rateLimit) {
-                if ($rateLimit->resetsAt?->isFuture()) {
-                    throw new MessageResponseException("Rate limit exceeded, retry at {$rateLimit->resetsAt}.");
-                }
-            }
-
-            throw new MessageResponseException('Rate limit exceeded, please try again later.');
-        } catch (Throwable $exception) {
-            report($exception);
-
-            throw new MessageResponseException('Failed to complete the prompt: [' . $exception->getMessage() . '].');
-        }
-    }
-
-    /**
-     * @return array<string>
-     */
-    public function getReadyResearchRequestVectorStoreIds(ResearchRequest $researchRequest): array
-    {
-        return OpenAiResearchRequestVectorStore::query()
-            ->where('deployment_hash', $this->getDeploymentHash())
-            ->whereBelongsTo($researchRequest)
-            ->whereNotNull('ready_until')
-            ->where('ready_until', '>=', now())
-            ->whereNotNull('vector_store_id')
-            ->pluck('vector_store_id')
-            ->all();
-    }
-
-    public function isResearchRequestReady(ResearchRequest $researchRequest): bool
-    {
-        $vectorStore = $this->findOrCreateVectorStoreRecordForResearchRequest($researchRequest);
-
-        if ($vectorStore->ready_until?->isFuture()) {
-            return true;
-        }
-
-        if (($isResearchRequestReady = $this->isResearchRequestReadyInExistingVectorStore($researchRequest, $vectorStore)) !== null) {
-            return $isResearchRequestReady;
-        }
-
-        $this->createVectorStoreForResearchRequest($researchRequest, $vectorStore);
-
-        return false;
-    }
-
-    public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void
-    {
-        DB::transaction(function () use ($researchRequest) {
-            $vectorStore = $this->findOrCreateVectorStoreRecordForResearchRequest($researchRequest);
-            $vectorStore->ready_until = null;
-            $vectorStore->save();
-
-            $fileIds = $this->uploadResearchRequestParsedSearchResultFilesForVectorStore($researchRequest, $vectorStore);
-
-            if (blank($fileIds)) {
-                return;
-            }
-
-            $this->attachResearchRequestFilesToVectorStore($fileIds, $vectorStore);
-        });
     }
 
     /**

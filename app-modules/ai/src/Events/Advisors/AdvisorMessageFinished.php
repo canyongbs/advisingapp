@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Events\Advisors;
 
 use AdvisingApp\Ai\Models\AiThread;
+use Carbon\CarbonInterface;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -44,7 +45,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AdvisorMessageChunk implements ShouldBroadcastNow
+class AdvisorMessageFinished implements ShouldBroadcastNow
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -52,12 +53,14 @@ class AdvisorMessageChunk implements ShouldBroadcastNow
 
     public function __construct(
         public AiThread $thread,
-        public string $content,
+        public bool $isIncomplete = false,
+        public ?string $error = null,
+        public ?CarbonInterface $rateLimitResetsAt = null,
     ) {}
 
     public function broadcastAs(): string
     {
-        return 'advisor-message.chunk';
+        return 'advisor-message.finished';
     }
 
     /**
@@ -66,7 +69,9 @@ class AdvisorMessageChunk implements ShouldBroadcastNow
     public function broadcastWith(): array
     {
         return [
-            'content' => $this->content,
+            'is_incomplete' => $this->isIncomplete,
+            'error' => $this->error,
+            'rate_limit_resets_after_seconds' => $this->rateLimitResetsAt ? (now()->diffInSeconds($this->rateLimitResetsAt) + 1) : null,
         ];
     }
 

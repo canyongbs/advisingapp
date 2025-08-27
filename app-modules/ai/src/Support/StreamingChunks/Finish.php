@@ -34,49 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Events\Advisors;
+namespace AdvisingApp\Ai\Support\StreamingChunks;
 
-use AdvisingApp\Ai\Models\AiThread;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
+use Carbon\CarbonInterface;
 
-class AdvisorMessageChunk implements ShouldBroadcastNow
+readonly class Finish
 {
-    use Dispatchable;
-    use InteractsWithSockets;
-    use SerializesModels;
-
     public function __construct(
-        public AiThread $thread,
-        public string $content,
+        public bool $isIncomplete = false,
+        public ?string $error = null,
+        public ?CarbonInterface $rateLimitResetsAt = null,
     ) {}
-
-    public function broadcastAs(): string
-    {
-        return 'advisor-message.chunk';
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function broadcastWith(): array
-    {
-        return [
-            'content' => $this->content,
-        ];
-    }
-
-    /**
-     * @return array<int, Channel>
-     */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel("advisor-thread-{$this->thread->getKey()}"),
-        ];
-    }
 }

@@ -36,47 +36,43 @@
 
 namespace AdvisingApp\Ai\Http\Controllers\Advisors;
 
-use AdvisingApp\Ai\Actions\RetryMessage;
-use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Http\Requests\Advisors\RetryMessageRequest;
+use AdvisingApp\Ai\Jobs\Advisors\RetryAdvisorMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
 class RetryMessageController
 {
-    public function __invoke(RetryMessageRequest $request, AiThread $thread): StreamedResponse | JsonResponse
+    public function __invoke(RetryMessageRequest $request, AiThread $thread): JsonResponse
     {
         try {
-            return new StreamedResponse(
-                app(RetryMessage::class)(
-                    $thread,
-                    $request->validated('content'),
-                    AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
-                ),
-                headers: [
-                    'Content-Type' => 'text/html; charset=utf-8;',
-                    'Cache-Control' => 'no-cache',
-                    'X-Accel-Buffering' => 'no',
-                ],
-            );
-        } catch (AiAssistantArchivedException $exception) {
-            return response()->json([
-                'message' => $exception->getMessage(),
-            ], 404);
-        } catch (AiThreadLockedException $exception) {
-            return response()->json([
-                'isThreadLocked' => true,
-                'message' => $exception->getMessage(),
-            ], 503);
+            if ($thread->locked_at) {
+                return response()->json([
+                    'isThreadLocked' => true,
+                    'message' => 'The assistant is currently undergoing maintenance.',
+                ], 503);
+            }
+
+            if ($thread->assistant->archived_at) {
+                return response()->json([
+                    'message' => 'This assistant has been archived and is no longer available to use.',
+                ], 404);
+            }
+
+            dispatch(new RetryAdvisorMessage(
+                $thread,
+                $request->validated('content'),
+                AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
+            ));
+
+            return response()->json([]);
         } catch (Throwable $exception) {
             report($exception);
 
             return response()->json([
-                'message' => 'An error happened when sending your message.',
+                'message' => 'An error happened when retrying your message.',
             ], 503);
         }
     }
