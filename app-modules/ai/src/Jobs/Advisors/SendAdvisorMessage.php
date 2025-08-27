@@ -36,24 +36,17 @@
 
 namespace AdvisingApp\Ai\Jobs\Advisors;
 
-use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Events\Advisors\AdvisorMessageChunk;
-use AdvisingApp\Ai\Events\QnaAdvisors\QnaAdvisorMessageChunk;
-use AdvisingApp\Ai\Events\QnaAdvisors\QnaAdvisorNextRequestOptions;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
-use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
-use Throwable;
 
 class SendAdvisorMessage implements ShouldQueue
 {
