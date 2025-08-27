@@ -34,9 +34,11 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\IntegrationTwilio\Http\Controllers\TelnyxInboundWebhookController;
 use AdvisingApp\IntegrationTwilio\Http\Controllers\TwilioInboundWebhookController;
 use AdvisingApp\IntegrationTwilio\Http\Middleware\EnsureTwilioRequestIsValid;
 use AdvisingApp\IntegrationTwilio\Http\Middleware\LogTwilioRequest;
+use AdvisingApp\IntegrationTwilio\Http\Middleware\VerifyTelnyxWebhookSignature;
 use App\Http\Middleware\TrimStrings;
 use Illuminate\Support\Facades\Route;
 
@@ -47,3 +49,11 @@ Route::post('inbound/webhook/twilio/{event}', TwilioInboundWebhookController::cl
     ])
     ->withoutMiddleware(TrimStrings::class)
     ->name('inbound.webhook.twilio');
+
+Route::post('inbound/webhook/telnyx', TelnyxInboundWebhookController::class)
+    ->middleware([
+        VerifyTelnyxWebhookSignature::class,
+        LogTwilioRequest::class,
+    ])
+    ->withoutMiddleware(TrimStrings::class)
+    ->name('inbound.webhook.telnyx');
