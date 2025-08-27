@@ -75,7 +75,7 @@ it('executes email workflow step successfully', function () {
     Notification::assertSentTo(
         $student,
         EngagementNotification::class,
-        function ($notification) {
+        function (EngagementNotification $notification) {
             return $notification->engagement->channel === NotificationChannel::Email;
         }
     );
