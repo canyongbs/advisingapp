@@ -161,6 +161,32 @@ class WorkflowStepsRelationManager extends RelationManager
 
                         return 'Edit ' . Str::title($workflowStep->currentDetails->getLabel());
                     })
+                    ->fillForm(function (WorkflowStep $record): array {
+                        assert($record->currentDetails instanceof WorkflowDetails);
+
+                        $data = $record->currentDetails->toArray();
+
+                        $totalMinutes = $record->delay_minutes;
+                        $data['days'] = intval($totalMinutes / (24 * 60));
+                        $totalMinutes %= (24 * 60);
+                        $data['hours'] = intval($totalMinutes / 60);
+                        $data['minutes'] = $totalMinutes % 60;
+
+                        return $data;
+                    })
+                    ->using(function (array $data, WorkflowStep $record): WorkflowStep {
+                        assert($record->currentDetails instanceof WorkflowDetails);
+
+                        $delayMinutes = ($data['days'] * 24 * 60) + ($data['hours'] * 60) + $data['minutes'];
+                        $record->delay_minutes = $delayMinutes;
+                        $record->save();
+
+                        unset($data['days'], $data['hours'], $data['minutes']);
+
+                        $record->currentDetails->update($data);
+
+                        return $record;
+                    })
                     ->databaseTransaction(),
                 DeleteAction::make()
                     ->modalHeading(function (WorkflowStep $workflowStep) {

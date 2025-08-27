@@ -67,6 +67,10 @@ class TriggerApplicationSubmissionWorkflows implements ShouldQueueAfterCommit
             $application->loadMissing('workflowTriggers.workflow.workflowSteps.currentDetails');
 
             $application->workflowTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($event) {
+                if (! $workflowTrigger->workflow->is_enabled) {
+                    return;
+                }
+
                 $workflowRun = new WorkflowRun(['started_at' => now()]);
                 $workflowRun->related()->associate($event->submission->author);
                 $workflowRun->workflowTrigger()->associate($workflowTrigger);
