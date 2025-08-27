@@ -165,7 +165,10 @@ class SmsChannel
             try {
                 if ($result->success) {
                     $smsMessage->quota_usage = $this->determineQuotaUsage($result, $smsMessage);
-                    $smsMessage->external_reference_id = $result->message->sid;
+                    $smsMessage->external_reference_id = match ($twilioSettings->provider) {
+                        SmsMessagingProvider::Twilio => $result->message->sid,
+                        SmsMessagingProvider::Telnyx => $result->message->id, // @phpstan-ignore property.notFound
+                    };
 
                     $smsMessage->events()->create([
                         'type' => $twilioSettings->is_demo_mode_enabled
@@ -250,12 +253,12 @@ class SmsChannel
         try {
             Telnyx::setApiKey($apiKey);
 
-            // TODO: add status webhook info
-
             $message = Message::create([
                 'from' => $message->getFrom(),
                 'to' => config('local_development.twilio.to_number') ?: $recipientNumber,
                 'text' => $message->getContent(),
+                'webhook_url' => config('app.url') . route('inbound.webhook.twilio', 'status_callback', false),
+                'webhook_failover_url' => config('app.url') . route('inbound.webhook.twilio', 'status_callback', false),
             ]);
 
             $result->success = true;
@@ -281,7 +284,8 @@ class SmsChannel
             return SegmentCalculator::segmentsCount($message->getContent());
         }
 
-        return $message->message->numSegments;
+        // It's numSegments for Twilio or parts for Telnyx
+        return $message->message->numSegments ?? $message->message->parts; // @phpstan-ignore property.notFound
     }
 
     protected function canSendWithinQuotaLimits(int $usage): bool
