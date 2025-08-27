@@ -21,7 +21,7 @@ class TelnyxInboundWebhookController
             return $this->processInboundMessageReceived($data);
         }
 
-        if ($data['event_type'] === 'message.finalized') {
+        if ($data['event_type'] === 'message.sent' || $data['event_type'] === 'message.finalized') {
             return $this->processOutboundMessageStatusUpdate($data);
         }
 
@@ -30,6 +30,14 @@ class TelnyxInboundWebhookController
         // 3. Respond back
     }
 
+    /**
+     * @param array{
+     *     payload: array{
+     *         from: array{phone_number: string},
+     *         text: string
+     *     }
+     * } $data
+     */
     protected function processInboundMessageReceived(array $data): Response
     {
         $createEngagementResponse = resolve(CreateEngagementResponse::class);
