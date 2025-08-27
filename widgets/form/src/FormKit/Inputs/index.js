@@ -45,7 +45,7 @@ export default {
         props: [],
     }),
     upload: createInput(Upload, {
-        props: ['accept', 'multiple', 'limit','size'],
+        props: ['accept', 'multiple', 'limit', 'size'],
         icon: upload,
     }),
 };

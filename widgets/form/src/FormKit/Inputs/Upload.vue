@@ -32,7 +32,6 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { createMessage } from '@formkit/core';
 import axios from 'axios';
 import { computed, nextTick, ref } from 'vue';
 import { consumer } from '../../../../../portals/resource-hub/src/Services/Consumer.js';
@@ -78,15 +77,16 @@ const serverOptions = computed(() => ({
             // const data = await get(props.context.uploadUrl, {
             //     params: { filename: file.name }
             // })
-            if(uploadUrl.value === undefined) {
-                const formId = getFormId()
+            if (uploadUrl.value === undefined) {
+                const formId = getFormId();
                 uploadUrl.value = `/api/forms/form-upload-url`;
             }
-            const data = await axios.get(uploadUrl.value, {
-            params: { filename: file.name }
-            })
-            .then(async (response) => {
-                const { url, path } = response.data;
+            const data = await axios
+                .get(uploadUrl.value, {
+                    params: { filename: file.name },
+                })
+                .then(async (response) => {
+                    const { url, path } = response.data;
 
                     return axios
                         .put(url, file, {
@@ -113,10 +113,10 @@ const serverOptions = computed(() => ({
                     // props.context.node.store.remove(`uploading.${index}`);
                 });
 
-                if (!data || !data.path) {
-                    error('Invalid upload response');
-                    return;
-                }
+            if (!data || !data.path) {
+                error('Invalid upload response');
+                return;
+            }
 
             const { path } = data;
 
@@ -159,28 +159,27 @@ const serverOptions = computed(() => ({
     },
 }));
 
-
 const getFormId = () => {
-  // Try Vue Router first (if available)
-  try {
-    const route = useRoute?.();
-    if (route?.params?.id) {
-      return route.params.id;
+    // Try Vue Router first (if available)
+    try {
+        const route = useRoute?.();
+        if (route?.params?.id) {
+            return route.params.id;
+        }
+    } catch (e) {
+        // ignore if Vue Router not used
     }
-  } catch (e) {
-    // ignore if Vue Router not used
-  }
 
-  // Fallback: extract from URL path
-  const segments = window.location.pathname.split('/');
-  // URL looks like /forms/{id}/respond
-  if (segments.length >= 3 && segments[1] === 'forms') {
-    return segments[2];
-  }
+    // Fallback: extract from URL path
+    const segments = window.location.pathname.split('/');
+    // URL looks like /forms/{id}/respond
+    if (segments.length >= 3 && segments[1] === 'forms') {
+        return segments[2];
+    }
 
-  console.error('Form ID not found in URL');
-  return null;
-}
+    console.error('Form ID not found in URL');
+    return null;
+};
 
 const handleFileAdd = (error, file) => {
     if (error) {
