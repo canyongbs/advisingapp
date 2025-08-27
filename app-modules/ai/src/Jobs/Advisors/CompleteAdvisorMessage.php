@@ -38,10 +38,8 @@ namespace AdvisingApp\Ai\Jobs\Advisors;
 
 use AdvisingApp\Ai\Events\Advisors\AdvisorMessageChunk;
 use AdvisingApp\Ai\Events\Advisors\AdvisorMessageFinished;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Exceptions\AiResponseToCompleteDoesNotExistException;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Support\StreamingChunks\Finish;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
@@ -50,10 +48,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
-class SendAdvisorMessage implements ShouldQueue
+class CompleteAdvisorMessage implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -62,72 +59,35 @@ class SendAdvisorMessage implements ShouldQueue
 
     public int $timeout = 600;
 
-    /**
-     * @param array<AiMessageFile> $files
-     */
     public function __construct(
         protected AiThread $thread,
-        protected string | Prompt $content,
-        protected array $files = [],
     ) {}
 
     public function handle(): void
     {
-        $message = new AiMessage();
+        $response = $this->thread->messages()
+            ->whereNull('user_id')
+            ->latest()
+            ->first();
 
-        if ($this->content instanceof Prompt) {
-            if ($this->content->is_smart) {
-                $descriptionLine = $this->content->description
-                    ? "with the description {$this->content->description}"
-                    : null;
-
-                $additionalContent = "Below I will provide you the input content for a prompt with the name {$this->content->title}, in the category {$this->content->type->title}" . ($descriptionLine ? ", {$descriptionLine}" : '') . '.
-                The prompt may have variables {{ VARIABLE }} that are needed in order to effectively serve your function. Begin by analyzing the prompt.
-                Begin by introducing yourself as an AI Advisor, and based on the prompt name, category, and description, explain what your purpose is. Then if the prompt has any variables in it, ask the user for that information, one variable at a time, explaining why you need that input from the user. Once all the variables are collected, return a response for the prompt supplied below.
-                Note: If there are no variables, then just return a response for the prompt supplied below.';
-
-                $message->content = $additionalContent . "\n\n" . $this->content->prompt;
-            } else {
-                $message->content = $this->content->prompt;
-            }
-
-            $use = $this->content->uses()->make();
-            $use->user()->associate($this->thread->user);
-            $use->save();
-        } else {
-            $message->content = $this->content;
+        if (! $response) {
+            throw new AiResponseToCompleteDoesNotExistException();
         }
 
-        $message->request = [
-            'headers' => Arr::only(
-                request()->headers->all(),
-                ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
-            ),
-            'ip' => request()->ip(),
-        ];
-        $message->thread()->associate($this->thread);
-        $message->user()->associate($this->thread->user);
-
-        if ($this->content instanceof Prompt) {
-            $message->prompt()->associate($this->content);
+        if (str($response->content)->endsWith('...')) {
+            $response->content = (string) str($response->content)
+                ->beforeLast('...')
+                ->append(' ');
         }
-
-        $message->save();
 
         $aiService = $this->thread->assistant->model->getService();
 
         $aiService->ensureAssistantAndThreadExists($this->thread);
 
-        $response = new AiMessage();
-        $response->thread()->associate($this->thread);
-
         Auth::setUser($this->thread->user);
 
         try {
-            $stream = $aiService->sendMessage(
-                message: $message,
-                files: $this->files
-            );
+            $stream = $aiService->completeResponse($response);
         } finally {
             // Reset the Auth user to avoid issues with subsequent jobs
             Auth::logout();

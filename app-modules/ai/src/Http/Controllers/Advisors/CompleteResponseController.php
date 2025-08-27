@@ -36,11 +36,8 @@
 
 namespace AdvisingApp\Ai\Http\Controllers\Advisors;
 
-use AdvisingApp\Ai\Actions\CompleteResponse;
-use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
-use AdvisingApp\Ai\Exceptions\AiResponseToCompleteDoesNotExistException;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Http\Requests\Advisors\CompleteResponseRequest;
+use AdvisingApp\Ai\Jobs\Advisors\CompleteAdvisorMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -51,25 +48,24 @@ class CompleteResponseController
     public function __invoke(CompleteResponseRequest $request, AiThread $thread): StreamedResponse | JsonResponse
     {
         try {
-            return new StreamedResponse(
-                app(CompleteResponse::class)(
-                    $thread,
-                ),
-                headers: [
-                    'Content-Type' => 'text/html; charset=utf-8;',
-                    'Cache-Control' => 'no-cache',
-                    'X-Accel-Buffering' => 'no',
-                ],
-            );
-        } catch (AiAssistantArchivedException | AiResponseToCompleteDoesNotExistException $exception) {
-            return response()->json([
-                'message' => $exception->getMessage(),
-            ], 404);
-        } catch (AiThreadLockedException $exception) {
-            return response()->json([
-                'isThreadLocked' => true,
-                'message' => $exception->getMessage(),
-            ], 503);
+            if ($thread->locked_at) {
+                return response()->json([
+                    'isThreadLocked' => true,
+                    'message' => 'The assistant is currently undergoing maintenance.',
+                ], 503);
+            }
+
+            if ($thread->assistant->archived_at) {
+                return response()->json([
+                    'message' => 'This assistant has been archived and is no longer available to use.',
+                ], 404);
+            }
+
+            dispatch(new CompleteAdvisorMessage(
+                $thread,
+            ));
+
+            return response()->json([]);
         } catch (Throwable $exception) {
             report($exception);
 
