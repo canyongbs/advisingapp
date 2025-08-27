@@ -24,30 +24,4 @@ class WorkflowRunStepFactory extends Factory
             'last_failed_at' => null,
         ];
     }
-
-    public function executed(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'dispatched_at' => now()->subMinutes(5),
-            'succeeded_at' => now(),
-        ]);
-    }
-
-    public function failed(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'dispatched_at' => now()->subMinutes(5),
-            'last_failed_at' => now(),
-        ]);
-    }
-
-    public function pending(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'execute_at' => now()->addMinutes(10),
-            'dispatched_at' => null,
-            'succeeded_at' => null,
-            'last_failed_at' => null,
-        ]);
-    }
 }

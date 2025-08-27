@@ -19,18 +19,4 @@ class WorkflowEngagementEmailDetailsFactory extends Factory
             'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraphs(3, true)]]]]],
         ];
     }
-
-    public function withSubject(string $subject): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $subject]]]]],
-        ]);
-    }
-
-    public function withBody(string $body): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $body]]]]],
-        ]);
-    }
 }

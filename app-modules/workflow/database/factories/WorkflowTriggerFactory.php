@@ -23,20 +23,4 @@ class WorkflowTriggerFactory extends Factory
             'created_by_id' => User::factory(),
         ];
     }
-
-    public function forForm(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'related_type' => (new Form())->getMorphClass(),
-            'related_id' => Form::factory(),
-        ]);
-    }
-
-    public function forApplication(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'related_type' => 'application',
-            'related_id' => $this->faker->uuid(),
-        ]);
-    }
 }

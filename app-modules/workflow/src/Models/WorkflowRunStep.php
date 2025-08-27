@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Workflow\Models;
 
+use AdvisingApp\Workflow\Database\Factories\WorkflowRunStepFactory;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -50,6 +52,9 @@ class WorkflowRunStep extends BaseModel
 {
     use SoftDeletes;
     use HasUuids;
+
+    /** @use HasFactory<WorkflowRunStepFactory> */
+    use HasFactory;
 
     protected $fillable = [
         'execute_at',

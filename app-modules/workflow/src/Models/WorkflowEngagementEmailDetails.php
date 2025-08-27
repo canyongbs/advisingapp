@@ -38,11 +38,13 @@ namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Workflow\Database\Factories\WorkflowEngagementEmailDetailsFactory;
 use AdvisingApp\Workflow\Filament\Blocks\EngagementEmailBlock;
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Jobs\EngagementEmailWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
@@ -57,6 +59,9 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
     use AuditableTrait;
     use HasUuids;
     use InteractsWithMedia;
+
+    /** @use HasFactory<WorkflowEngagementEmailDetailsFactory> */
+    use HasFactory;
 
     protected $fillable = [
         'channel',

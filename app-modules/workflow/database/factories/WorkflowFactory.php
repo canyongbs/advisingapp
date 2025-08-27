@@ -19,18 +19,4 @@ class WorkflowFactory extends Factory
             'is_enabled' => true,
         ];
     }
-
-    public function disabled(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'is_enabled' => false,
-        ]);
-    }
-
-    public function enabled(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'is_enabled' => true,
-        ]);
-    }
 }

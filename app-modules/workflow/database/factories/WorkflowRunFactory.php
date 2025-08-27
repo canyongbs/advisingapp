@@ -21,11 +21,4 @@ class WorkflowRunFactory extends Factory
             'started_at' => now(),
         ];
     }
-
-    public function notStarted(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'started_at' => null,
-        ]);
-    }
 }
