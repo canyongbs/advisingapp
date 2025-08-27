@@ -154,6 +154,45 @@ class AiIntegrationsSettings extends Settings
 
     public bool $is_open_ai_gpt_o4_mini_responses_api_enabled = false;
 
+    public ?string $open_ai_gpt_5_model_name = null;
+
+    public ?string $open_ai_gpt_5_base_uri = null;
+
+    public ?string $open_ai_gpt_5_api_key = null;
+
+    public ?string $open_ai_gpt_5_model = null;
+
+    /**
+     * @var array<string>
+     */
+    public array $open_ai_gpt_5_applicable_features = [];
+
+    public ?string $open_ai_gpt_5_mini_model_name = null;
+
+    public ?string $open_ai_gpt_5_mini_base_uri = null;
+
+    public ?string $open_ai_gpt_5_mini_api_key = null;
+
+    public ?string $open_ai_gpt_5_mini_model = null;
+
+    /**
+     * @var array<string>
+     */
+    public array $open_ai_gpt_5_mini_applicable_features = [];
+
+    public ?string $open_ai_gpt_5_nano_model_name = null;
+
+    public ?string $open_ai_gpt_5_nano_base_uri = null;
+
+    public ?string $open_ai_gpt_5_nano_api_key = null;
+
+    public ?string $open_ai_gpt_5_nano_model = null;
+
+    /**
+     * @var array<string>
+     */
+    public array $open_ai_gpt_5_nano_applicable_features = [];
+
     public ?string $jina_deepsearch_v1_model_name = null;
 
     public ?string $jina_deepsearch_v1_api_key = null;
@@ -199,6 +238,15 @@ class AiIntegrationsSettings extends Settings
             'open_ai_gpt_o4_mini_base_uri',
             'open_ai_gpt_o4_mini_api_key',
             'open_ai_gpt_o4_mini_model',
+            'open_ai_gpt_5_base_uri',
+            'open_ai_gpt_5_api_key',
+            'open_ai_gpt_5_model',
+            'open_ai_gpt_5_mini_base_uri',
+            'open_ai_gpt_5_mini_api_key',
+            'open_ai_gpt_5_mini_model',
+            'open_ai_gpt_5_nano_base_uri',
+            'open_ai_gpt_5_nano_api_key',
+            'open_ai_gpt_5_nano_model',
             'jina_deepsearch_v1_api_key',
             'llamaparse_api_key',
         ];
