@@ -34,62 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Models;
+namespace App\Features;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Project\Database\Factories\ProjectMilestoneFactory;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @mixin IdeHelperProjectMilestone
- */
-class ProjectMilestone extends Model implements Auditable
+class ProjectMilestoneTargetDateFeature extends AbstractFeatureFlag
 {
-    /** @use HasFactory<ProjectMilestoneFactory> */
-    use HasFactory;
-
-    use HasUuids;
-    use SoftDeletes;
-    use AuditableTrait;
-
-    protected $fillable = [
-        'title',
-        'description',
-        'status_id',
-        'target_date',
-    ];
-
-    protected $casts = [
-        'target_date' => 'date',
-    ];
-
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function createdBy(): BelongsTo
+    public function resolve(mixed $scope): mixed
     {
-        return $this->belongsTo(User::class, 'created_by_id');
-    }
-
-    /**
-     * @return BelongsTo<ProjectMilestoneStatus, $this>
-     */
-    public function status(): BelongsTo
-    {
-        return $this->belongsTo(ProjectMilestoneStatus::class, 'status_id');
-    }
-
-    /**
-     * @return BelongsTo<Project, $this>
-     */
-    public function project(): BelongsTo
-    {
-        return $this->belongsTo(Project::class);
+        return false;
     }
 }
