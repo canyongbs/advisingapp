@@ -36,16 +36,12 @@
 
 namespace AdvisingApp\Ai\Http\Controllers\Advisors;
 
-use AdvisingApp\Ai\Actions\SendMessage;
-use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Http\Requests\Advisors\SendMessageRequest;
 use AdvisingApp\Ai\Jobs\Advisors\SendAdvisorMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
 use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
 class SendMessageController

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Ai\Events\Advisors;
 
-use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
