@@ -78,7 +78,7 @@ trait SemesterSelectForOperator
         $count = $this->settings['count'] ?? 1;
         $semesters = $this->settings['semesters'] ?? null;
 
-        if (is_null($semesters)) {
+        if (blank($semesters)) {
             return parent::applyToBaseQuery($query);
         }
 
@@ -86,13 +86,13 @@ trait SemesterSelectForOperator
 
         $semesters = array_values(array_filter($semesters, fn ($semester) => filled($semester)));
 
-        $lowerSemesters = array_map(fn ($semester) => mb_strtolower($semester), $semesters);
+        $lowerSemesters = array_map('mb_strtolower', $semesters);
 
         return $query->whereHas($relationshipName, function (Builder $query) use ($lowerSemesters) {
             if (! empty($lowerSemesters)) {
                 $query->whereIn(DB::raw('LOWER(semester_name)'), $lowerSemesters);
             }
-        }, $this->getOperatorQuery(empty($lowerSemesters)), $count);
+        }, $this->getQueryOperator(), $count);
     }
 
     public function getSummary(): string
