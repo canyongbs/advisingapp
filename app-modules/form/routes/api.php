@@ -51,6 +51,9 @@ Route::prefix('api')
         Route::prefix('forms')
             ->name('forms.')
             ->group(function () {
+                Route::get('form-upload-url', [FormWidgetController::class, 'uploadFormFiles'])
+                    // ->middleware(['signed:relative'])
+                    ->name('form-upload-url');
                 Route::get('/{form}', [FormWidgetController::class, 'view'])
                     ->middleware(['signed:relative'])
                     ->name('define');
@@ -66,8 +69,5 @@ Route::prefix('api')
                 Route::post('/{form}/register', [FormWidgetController::class, 'registerProspect'])
                     ->middleware(['signed:relative'])
                     ->name('register-prospect');
-                Route::get('form-upload-url', [FormWidgetController::class, 'uploadFormFiles'])
-                    ->middleware(['signed:relative'])
-                    ->name('form-upload-url');
             });
     });

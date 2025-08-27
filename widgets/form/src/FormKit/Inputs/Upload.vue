@@ -54,29 +54,39 @@ const props = defineProps({
 const field = ref(null);
 const uploadedFiles = ref([]);
 const fileIndexCounter = ref(0);
+const uploadUrl = ref('');
+uploadUrl.value = props.context.uploadUrl;
 
 const serverOptions = computed(() => ({
     process: async (fieldName, file, metadata, load, error, progress, abort) => {
         const fileIndex = uploadedFiles.value.findIndex((f) => f.originalFileName === file.name);
         if (fileIndex !== -1) {
-            props.context.node.store.set(
-                createMessage({
-                    blocking: true,
-                    key: `uploaded.${fileIndex}`,
-                    value: `File already exists with name: ${file.name}.`,
-                }),
-            );
+            // props.context.node.store.set(
+            //     createMessage({
+            //         blocking: true,
+            //         key: `uploaded.${fileIndex}`,
+            //         value: `File already exists with name: ${file.name}.`,
+            //     }),
+            // );
             load();
             return;
         }
+
         const index = fileIndexCounter.value++;
         const { get } = consumer();
         try {
-            const data = await get(props.context.uploadUrl, {
-                filename: file.name,
+            // const data = await get(props.context.uploadUrl, {
+            //     params: { filename: file.name }
+            // })
+            if(uploadUrl.value === undefined) {
+                const formId = getFormId()
+                uploadUrl.value = `/api/forms/form-upload-url`;
+            }
+            const data = await axios.get(uploadUrl.value, {
+            params: { filename: file.name }
             })
-                .then(async (response) => {
-                    const { url, path } = response.data;
+            .then(async (response) => {
+                const { url, path } = response.data;
 
                     return axios
                         .put(url, file, {
@@ -91,15 +101,22 @@ const serverOptions = computed(() => ({
                             };
                         })
                         .catch(() => {
+                            console.log('Error sending photo:', err);
                             return null;
                         });
                 })
-                .catch(() => {
+                .catch((err) => {
+                    console.log('Error fetching upload URL:', err);
                     return null;
                 })
                 .finally(() => {
-                    props.context.node.store.remove(`uploading.${index}`);
+                    // props.context.node.store.remove(`uploading.${index}`);
                 });
+
+                if (!data || !data.path) {
+                    error('Invalid upload response');
+                    return;
+                }
 
             const { path } = data;
 
@@ -142,6 +159,29 @@ const serverOptions = computed(() => ({
     },
 }));
 
+
+const getFormId = () => {
+  // Try Vue Router first (if available)
+  try {
+    const route = useRoute?.();
+    if (route?.params?.id) {
+      return route.params.id;
+    }
+  } catch (e) {
+    // ignore if Vue Router not used
+  }
+
+  // Fallback: extract from URL path
+  const segments = window.location.pathname.split('/');
+  // URL looks like /forms/{id}/respond
+  if (segments.length >= 3 && segments[1] === 'forms') {
+    return segments[2];
+  }
+
+  console.error('Form ID not found in URL');
+  return null;
+}
+
 const handleFileAdd = (error, file) => {
     if (error) {
         console.error('Error adding file:', error);
@@ -151,13 +191,13 @@ const handleFileAdd = (error, file) => {
     const isDuplicate = uploadedFiles.value.some((existingFile) => existingFile.originalFileName === file.file.name);
 
     if (isDuplicate) {
-        props.context.node.store.set(
-            createMessage({
-                blocking: true,
-                key: `Already exists.${file.file.name}`,
-                value: `The file "${file.file.name}" has already been uploaded.`,
-            }),
-        );
+        // props.context.node.store.set(
+        //     createMessage({
+        //         blocking: true,
+        //         key: `Already exists.${file.file.name}`,
+        //         value: `The file "${file.file.name}" has already been uploaded.`,
+        //     }),
+        // );
         nextTick(() => {
             const pond = field.value;
             pond.removeFile(file.id);

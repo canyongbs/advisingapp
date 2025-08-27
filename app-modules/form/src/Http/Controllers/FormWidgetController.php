@@ -364,7 +364,7 @@ class FormWidgetController extends Controller
             'filename' => ['required', 'string'],
         ]);
 
-        $filename = sprintf('%s.%s', Str::uuid(), str($request->validated('filename'))->afterLast('.'));
+        $filename = sprintf('%s.%s', Str::uuid(), str($request->get('filename'))->afterLast('.'));
         $path = "tmp/{$filename}";
 
         return response()->json([

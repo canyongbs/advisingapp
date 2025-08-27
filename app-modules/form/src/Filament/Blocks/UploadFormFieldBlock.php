@@ -66,10 +66,10 @@ class UploadFormFieldBlock extends FormFieldBlock
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
             'multiple' => $field->config['multiple'] ?? false,
-            'accept' => $field->config['accept'] ?? '',
-            'limit' => $field->config['limit'] ?? null,
+            'accept' => $field->config['accept'] ?? static::getExtensionsFull(),
+            'limit' => $field->config['limit'] ?? 5,
             'size' => $field->config['size'] ?? null,
-            'uploadUrl' => route('forms.form-upload-url'),
+            'uploadUrl' => '',
         ];
     }
 
@@ -79,5 +79,36 @@ class UploadFormFieldBlock extends FormFieldBlock
     public static function getValidationRules(SubmissibleField $field): array
     {
         return [];
+    }
+
+    public static function getExtensionsFull(): array
+    {
+        return collect(static::defaultMimes())
+            ->unique()
+            ->sort()
+            ->keys()
+            ->values()
+            ->toArray();
+    }
+
+    public static function defaultMimes(): array
+    {
+        return [
+            'application/pdf' => ['pdf'],
+            'application/vnd.ms-excel' => ['xls'],
+            'application/vnd.ms-powerpoint' => ['ppt'],
+            'application/vnd.ms-word' => ['doc'],
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation' => ['pptx'],
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => ['xlsx'],
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => ['docx'],
+            'image/jpeg' => ['jpg', 'jpeg'],
+            'image/pdf' => ['pdf'],
+            'image/png' => ['png'],
+            'text/csv' => ['csv'],
+            'text/markdown' => ['md', 'markdown', 'mkd'],
+            'text/plain' => ['txt', 'text'],
+            'application/octet-stream' => ['log'],
+            '.log' => ['log'],
+        ];
     }
 }
