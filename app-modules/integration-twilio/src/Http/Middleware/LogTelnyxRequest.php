@@ -34,13 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Webhook\Enums;
+namespace AdvisingApp\IntegrationTwilio\Http\Middleware;
 
-enum InboundWebhookSource: string
+use AdvisingApp\Webhook\Actions\StoreInboundWebhook;
+use AdvisingApp\Webhook\Enums\InboundWebhookSource;
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class LogTelnyxRequest
 {
-    case Twilio = 'twilio';
+    public function __construct(
+        protected StoreInboundWebhook $storeInboundWebhook
+    ) {}
 
-    case AwsSns = 'aws_sns';
+    public function handle(Request $request, Closure $next): Response
+    {
+        $data = $request->toArray()['data'];
 
-    case Telnyx = 'telnyx';
+        $this->storeInboundWebhook->handle(
+            source: InboundWebhookSource::Telnyx,
+            event: $data['event_type'],
+            url: $request->url(),
+            payload: is_array($request->getContent()) ? json_encode($request->getContent()) : $request->getContent() // @phpstan-ignore function.impossibleType
+        );
+
+        return $next($request);
+    }
 }

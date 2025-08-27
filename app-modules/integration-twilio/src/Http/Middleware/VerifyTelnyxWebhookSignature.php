@@ -41,6 +41,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Telnyx\Telnyx;
+use Telnyx\Webhook;
 use Telnyx\WebhookSignature;
 use Throwable;
 
@@ -65,6 +66,7 @@ class VerifyTelnyxWebhookSignature
                 signature_header: $signature,
                 timestamp: $timestamp,
                 public_key: config('services.telnyx.public_key'),
+                tolerance: Webhook::DEFAULT_TOLERANCE,
             );
 
             if (! $verified) {
