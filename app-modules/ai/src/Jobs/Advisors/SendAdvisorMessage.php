@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
+use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -134,6 +135,12 @@ class SendAdvisorMessage implements ShouldQueue
         $chunkCount = 0;
 
         foreach ($stream() as $chunk) {
+            if ($chunk instanceof Meta) {
+                $response->message_id = $chunk->messageId;
+
+                continue;
+            }
+
             if ($chunk instanceof Text) {
                 $chunkBuffer[] = $chunk->content;
                 $chunkCount++;
