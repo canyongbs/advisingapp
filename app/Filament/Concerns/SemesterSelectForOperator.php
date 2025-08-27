@@ -79,7 +79,7 @@ trait SemesterSelectForOperator
         $semesters = $this->settings['semesters'] ?? null;
 
         if (is_null($semesters)) {
-            return parent::applyToBaseQuery();
+            return parent::applyToBaseQuery($query);
         }
 
         $semesters = Arr::wrap($semesters);
