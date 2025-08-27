@@ -55,10 +55,6 @@ class EqualsOperatorWithEnrollmentSemester extends EqualsOperator
 
     public function getOperatorQuery(bool $noSemesterSelected = false): string
     {
-        if ($noSemesterSelected) {
-            return '>=';
-        }
-
         return $this->isInverse() ? '!=' : '=';
     }
 }

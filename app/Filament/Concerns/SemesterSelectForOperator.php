@@ -40,6 +40,8 @@ use AdvisingApp\StudentDataModel\Models\Enrollment;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 trait SemesterSelectForOperator
 {
@@ -58,13 +60,11 @@ trait SemesterSelectForOperator
     public static function getSemesterOptions(): array
     {
         return Enrollment::query()
-            ->select('semester_name')
             ->whereNotNull('semester_name')
             ->distinct()
             ->orderBy('semester_name')
-            ->get()
-            ->mapWithKeys(fn ($enrollment) => [$enrollment->semester_name => $enrollment->semester_name])
-            ->toArray();
+            ->pluck('semester_name', 'semester_name')
+            ->all();
     }
 
     /**
@@ -79,18 +79,18 @@ trait SemesterSelectForOperator
         $semesters = $this->settings['semesters'] ?? null;
 
         if (is_null($semesters)) {
-            $semesters = [];
-        } elseif (! is_array($semesters)) {
-            $semesters = [$semesters];
+            return parent::applyToBaseQuery();
         }
 
-        $semesters = array_values(array_filter($semesters, fn ($semester) => $semester !== null && $semester !== ''));
+        $semesters = Arr::wrap($semesters);
+
+        $semesters = array_values(array_filter($semesters, fn ($semester) => filled($semester)));
+
         $lowerSemesters = array_map(fn ($semester) => mb_strtolower($semester), $semesters);
 
         return $query->whereHas($relationshipName, function (Builder $query) use ($lowerSemesters) {
             if (! empty($lowerSemesters)) {
-                $placeholders = implode(',', array_fill(0, count($lowerSemesters), '?'));
-                $query->whereRaw("LOWER(semester_name) IN ({$placeholders})", $lowerSemesters);
+                $query->whereIn(DB::raw('LOWER(semester_name)'), $lowerSemesters);
             }
         }, $this->getOperatorQuery(empty($lowerSemesters)), $count);
     }
@@ -100,13 +100,10 @@ trait SemesterSelectForOperator
         $summary = parent::getSummary();
 
         if (! empty($this->settings['semesters'])) {
-            $semesters = $this->settings['semesters'];
+            $semesters = Arr::wrap($this->settings['semesters']);
 
-            if (! is_array($semesters)) {
-                $semesters = [$semesters];
-            }
-            $concatedSemester = implode(', ', $semesters);
-            $summary .= ' in semester "' . $concatedSemester . '"';
+            $concatenatedSemesters = implode(', ', $semesters);
+            $summary .= ' in "' . (count($semesters) > 1 ? 'semesters ' : 'semester ') . $concatenatedSemesters . '"';
         }
 
         return $summary;
