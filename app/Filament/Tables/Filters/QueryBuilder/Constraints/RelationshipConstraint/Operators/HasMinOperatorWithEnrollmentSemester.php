@@ -43,16 +43,6 @@ class HasMinOperatorWithEnrollmentSemester extends HasMinOperator
 {
     use SemesterSelectForOperator;
 
-    public function getFormSchema(): array
-    {
-        return array_merge(
-            parent::getFormSchema(),
-            [
-                $this->semesterSelect(),
-            ]
-        );
-    }
-
     public function getQueryOperator(): string
     {
         return $this->isInverse() ? '<' : '>=';

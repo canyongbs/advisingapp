@@ -45,6 +45,14 @@ use Illuminate\Support\Facades\DB;
 
 trait SemesterSelectForOperator
 {
+    public function getFormSchema(): array
+    {
+        return [
+            ...parent::getFormSchema(),
+            $this->semesterSelect(),
+        ];
+    }
+
     public static function semesterSelect(): Select
     {
         return Select::make('semesters')
@@ -84,14 +92,11 @@ trait SemesterSelectForOperator
 
         $semesters = Arr::wrap($semesters);
 
-        $semesters = array_values(array_filter($semesters, fn ($semester) => filled($semester)));
-
-        $lowerSemesters = array_map('mb_strtolower', $semesters);
+        $semesters = array_values(array_filter($semesters, filled(...)));
+        $lowerSemesters = array_map(mb_strtolower(...), $semesters);
 
         return $query->whereHas($relationshipName, function (Builder $query) use ($lowerSemesters) {
-            if (! empty($lowerSemesters)) {
-                $query->whereIn(DB::raw('LOWER(semester_name)'), $lowerSemesters);
-            }
+            $query->whereIn(DB::raw('LOWER(semester_name)'), $lowerSemesters);
         }, $this->getQueryOperator(), $count);
     }
 
