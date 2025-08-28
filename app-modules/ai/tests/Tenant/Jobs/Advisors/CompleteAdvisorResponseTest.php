@@ -34,21 +34,28 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Actions\CompleteResponse;
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
+use function Tests\asSuperAdmin;
 use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Exceptions\AiResponseToCompleteDoesNotExistException;
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\AiMessage;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Actions\CompleteResponse;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use Illuminate\Support\Facades\Queue;
 
-use function Tests\asSuperAdmin;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
+use AdvisingApp\Ai\Events\Advisors\AdvisorMessageChunk;
+use AdvisingApp\Ai\Jobs\Advisors\CompleteAdvisorResponse;
+use AdvisingApp\Ai\Events\Advisors\AdvisorMessageFinished;
+use AdvisingApp\Ai\Exceptions\AiResponseToCompleteDoesNotExistException;
 
 it('completes the last response', function () {
-    Queue::fake();
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
 
     asSuperAdmin();
 
@@ -104,13 +111,7 @@ it('completes the last response', function () {
         ->first()
         ->content;
 
-    $responseStream = app(CompleteResponse::class)($thread);
-
-    $streamedContent = '';
-
-    foreach ($responseStream() as $responseContent) {
-        $streamedContent .= $responseContent;
-    }
+    dispatch(new CompleteAdvisorResponse($thread));
 
     $messages = AiMessage::all();
 
@@ -120,15 +121,19 @@ it('completes the last response', function () {
     $response = $messages->last();
 
     expect($response->content)
-        ->toBe("{$originalResponseContent}{$streamedContent}");
+        ->not->toBe($originalResponseContent)
+        ->toStartWith($originalResponseContent);
 
-    expect(Queue::pushed(RecordTrackedEvent::class))
-        ->toHaveCount(1)
-        ->each
-        ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
+    Event::assertDispatched(AdvisorMessageChunk::class);
+    Event::assertDispatched(AdvisorMessageFinished::class);
 });
 
 it('strips the appended ... when completing the last response', function () {
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
+
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -156,13 +161,7 @@ it('strips the appended ... when completing the last response', function () {
     expect(AiMessage::count())
         ->toBe(2);
 
-    $responseStream = app(CompleteResponse::class)($thread);
-
-    $streamedContent = '';
-
-    foreach ($responseStream() as $responseContent) {
-        $streamedContent .= $responseContent;
-    }
+    dispatch(new CompleteAdvisorResponse($thread));
 
     $messages = AiMessage::all();
 
@@ -172,7 +171,13 @@ it('strips the appended ... when completing the last response', function () {
     $response = $messages->last();
 
     expect($response->content)
-        ->toBe("foo...bar...baz {$streamedContent}");
+        ->not->toBe('foo...bar...baz ')
+        ->toStartWith('foo...bar...baz ')
+        ->not->toBe('foo...bar...baz...')
+        ->not->toStartWith('foo...bar...baz...');
+
+    Event::assertDispatched(AdvisorMessageChunk::class);
+    Event::assertDispatched(AdvisorMessageFinished::class);
 });
 
 it('throws an exception if the latest response does not exist', function () {
@@ -189,5 +194,5 @@ it('throws an exception if the latest response does not exist', function () {
         ->for(auth()->user())
         ->create();
 
-    iterator_to_array(app(CompleteResponse::class)($thread)());
+    dispatch(new CompleteAdvisorResponse($thread));
 })->throws(AiResponseToCompleteDoesNotExistException::class);
