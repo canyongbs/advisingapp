@@ -50,7 +50,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Throwable;
 
 class RetryAdvisorMessage implements ShouldQueue
@@ -101,8 +100,6 @@ class RetryAdvisorMessage implements ShouldQueue
         $response = new AiMessage();
         $response->thread()->associate($this->thread);
 
-        Auth::setUser($this->thread->user);
-
         try {
             $stream = $aiService->retryMessage(
                 message: $message,
@@ -115,9 +112,6 @@ class RetryAdvisorMessage implements ShouldQueue
                 $this->thread,
                 error: 'An error happened when sending your message.',
             ));
-        } finally {
-            // Reset the Auth user to avoid issues with subsequent jobs
-            Auth::logout();
         }
 
         $chunkBuffer = [];

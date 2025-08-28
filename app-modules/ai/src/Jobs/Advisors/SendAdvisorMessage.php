@@ -51,7 +51,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Throwable;
 
 class SendAdvisorMessage implements ShouldQueue
@@ -122,8 +121,6 @@ class SendAdvisorMessage implements ShouldQueue
         $response = new AiMessage();
         $response->thread()->associate($this->thread);
 
-        Auth::setUser($this->thread->user);
-
         try {
             $stream = $aiService->sendMessage(
                 message: $message,
@@ -136,9 +133,6 @@ class SendAdvisorMessage implements ShouldQueue
                 $this->thread,
                 error: 'An error happened when sending your message.',
             ));
-        } finally {
-            // Reset the Auth user to avoid issues with subsequent jobs
-            Auth::logout();
         }
 
         $chunkBuffer = [];
