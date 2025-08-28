@@ -130,7 +130,7 @@ document.addEventListener('alpine:init', () => {
                         this.pendingResponse += event.content;
                     })
                     .listen('.advisor-message.finished', (event) => {
-                        if (this.pendingResponse && !event.is_incomplete && !event.error && !event.rate_limit_resets_after_seconds) {
+                        if (this.pendingResponse) {
                             this.rawIncomingResponse += this.pendingResponse;
                             this.pendingResponse = '';
                             
