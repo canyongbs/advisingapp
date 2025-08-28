@@ -81,15 +81,9 @@ it('can send a message', function () {
             ->withFinishReason(FinishReason::Stop),
     ]);
 
-    $chunkedResponseContent = '';
-
     $stream = $service->sendMessage($message, files: []);
 
-    foreach ($stream() as $chunk) {
-        if ($chunk instanceof Text) {
-            $chunkedResponseContent .= $chunk->content;
-        }
-    }
+    iterator_to_array($stream());
 
     expect(Queue::pushed(RecordTrackedEvent::class)) /** @phpstan-ignore argument.templateType */
         ->toHaveCount(1)
@@ -163,15 +157,9 @@ it('can retry a message', function () {
             ->withFinishReason(FinishReason::Stop),
     ]);
 
-    $chunkedResponseContent = '';
-
     $stream = $service->retryMessage($message, files: []);
 
-    foreach ($stream() as $chunk) {
-        if ($chunk instanceof Text) {
-            $chunkedResponseContent .= $chunk->content;
-        }
-    }
+    iterator_to_array($stream());
 
     expect(Queue::pushed(RecordTrackedEvent::class)) /** @phpstan-ignore argument.templateType */
         ->toHaveCount(1)

@@ -59,7 +59,7 @@ document.addEventListener('alpine:init', () => {
 
                 setInterval(this.render.bind(this), 500);
 
-                const chunkInterval = setInterval(() => {
+                setInterval(() => {
                     if (/^\s*$/.test(this.pendingResponse)) {
                         return;
                     }
