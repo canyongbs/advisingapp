@@ -34,31 +34,59 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Http\Middleware;
-
+use AdvisingApp\IntegrationTwilio\Http\Middleware\LogTelnyxRequest;
 use AdvisingApp\Webhook\Actions\StoreInboundWebhook;
 use AdvisingApp\Webhook\Enums\InboundWebhookSource;
-use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Routing\Route;
 
-class LogTelnyxRequest
-{
-    public function __construct(
-        protected StoreInboundWebhook $storeInboundWebhook
-    ) {}
+use function Pest\Laravel\assertDatabaseCount;
+use function Pest\Laravel\assertDatabaseHas;
 
-    public function handle(Request $request, Closure $next): Response
-    {
-        $data = json_decode($request->getContent(), true)['data'];
+it('will create an inbound webhook with the correct source and event for a Telnyx webhook', function (string $event) {
+    $request = new Request(
+        server: ['REQUEST_URI' => 'testing'],
+        content: json_encode([
+            'data' => [
+                'event_type' => $event,
+                'id' => 'fake-id-123',
+                'occurred_at' => now()->toISOString(),
+                'payload' => [
+                    'from' => [
+                        'phone_number' => '+1234567890',
+                    ],
+                    'to' => [
+                        [
+                            'phone_number' => '+0987654321',
+                        ],
+                    ],
+                    'text' => 'Test message content',
+                ],
+                // ... Note: this is not an example of a complete payload
+            ],
+        ])
+    );
 
-        $this->storeInboundWebhook->handle(
-            source: InboundWebhookSource::Telnyx,
-            event: $data['event_type'],
-            url: $request->url(),
-            payload: is_array($request->getContent()) ? json_encode($request->getContent()) : $request->getContent() // @phpstan-ignore function.impossibleType
-        );
+    $request->setRouteResolver(function () use ($request) {
+        return (new Route('POST', 'testing', []))->bind($request);
+    });
 
-        return $next($request);
-    }
-}
+    $middleware = new LogTelnyxRequest(app(StoreInboundWebhook::class));
+
+    $middleware->handle($request, function (Request $request) {
+        return response()->json();
+    });
+
+    assertDatabaseCount('inbound_webhooks', 1);
+
+    assertDatabaseHas('inbound_webhooks', [
+        'source' => InboundWebhookSource::Telnyx->value,
+        'event' => $event,
+        'url' => $request->url(),
+        'payload' => $request->getContent(),
+    ]);
+})->with([
+    'message.finalized',
+    'message.sent',
+    'message.received',
+]);
