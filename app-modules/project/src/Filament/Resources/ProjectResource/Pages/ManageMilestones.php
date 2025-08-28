@@ -38,7 +38,6 @@ namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
 
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use AdvisingApp\Project\Models\ProjectMilestone;
-use App\Features\ProjectMilestoneTargetDateFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -85,8 +84,7 @@ class ManageMilestones extends ManageRelatedRecords
                     ->preload()
                     ->required()
                     ->relationship('status', 'name'),
-                DatePicker::make('target_date')
-                    ->visible(ProjectMilestoneTargetDateFeature::active()),
+                DatePicker::make('target_date'),
             ]);
     }
 
