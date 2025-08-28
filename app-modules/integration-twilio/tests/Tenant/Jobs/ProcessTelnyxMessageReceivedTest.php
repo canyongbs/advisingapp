@@ -34,11 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioMessageReceivedData;
-use AdvisingApp\IntegrationTwilio\Jobs\MessageReceived;
 use AdvisingApp\IntegrationTwilio\Jobs\ProcessTelnyxMessageReceived;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Http\Request;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
@@ -55,22 +52,22 @@ it('will not create an engagement response when it cannot find an associated mes
     ]);
 });
 
-// it('will create an engagement response when a message is received', function () {
-//     $request = Request::create('/', 'POST', loadFixtureFromModule('integration-twilio', 'MessageReceived/payload'));
+it('will create an engagement response when a message is received', function () {
+    $data = loadFixtureFromModule('integration-twilio', 'Telnyx/MessageReceived/message_received')['data'];
 
-//     $student = Student::factory()->create();
-//     $studentPhoneNumber = $student->phoneNumbers()->create([
-//         'number' => $request->all()['From'],
-//     ]);
-//     $student->primaryPhoneNumber()->associate($studentPhoneNumber)->save();
+    $student = Student::factory()->create();
+    $studentPhoneNumber = $student->phoneNumbers()->create([
+        'number' => $data['payload']['from']['phone_number'],
+    ]);
+    $student->primaryPhoneNumber()->associate($studentPhoneNumber)->save();
 
-//     $messageReceived = new MessageReceived(TwilioMessageReceivedData::fromRequest($request));
+    $job = new ProcessTelnyxMessageReceived($data);
 
-//     $messageReceived->handle();
+    $job->handle();
 
-//     assertDatabaseHas('engagement_responses', [
-//         'sender_id' => $student->getKey(),
-//         'sender_type' => (new Student())->getMorphClass(),
-//         'content' => $request->all()['Body'],
-//     ]);
-// });
+    assertDatabaseHas('engagement_responses', [
+        'sender_id' => $student->getKey(),
+        'sender_type' => (new Student())->getMorphClass(),
+        'content' => $data['payload']['text'],
+    ]);
+});
