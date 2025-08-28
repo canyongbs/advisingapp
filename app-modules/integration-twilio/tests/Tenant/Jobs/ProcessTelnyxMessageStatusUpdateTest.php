@@ -60,6 +60,7 @@ it('will appropriately create a message event based on the payload received', fu
     expect($events->first()->type)->toBe($expectedEventType);
 })->with([
     ['Telnyx/StatusUpdates/delivered', SmsMessageEventType::Delivered],
+    ['Telnyx/StatusUpdates/sending_failed', SmsMessageEventType::Failed],
     // ['StatusCallback/undelivered', SmsMessageEventType::Undelivered],
     // TODO: Add the rest of the status callback payloads
 ]);
