@@ -83,7 +83,7 @@ document.addEventListener('alpine:init', () => {
                         const combined = chunks.join('');
                         this.rawIncomingResponse += combined;
                         this.pendingResponse = this.pendingResponse.slice(combined.length);
-                        
+
                         if (this.messages.length > 0) {
                             this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
                                 marked.parse(this.rawIncomingResponse),
@@ -133,7 +133,7 @@ document.addEventListener('alpine:init', () => {
                         if (this.pendingResponse) {
                             this.rawIncomingResponse += this.pendingResponse;
                             this.pendingResponse = '';
-                            
+
                             if (this.messages.length > 0) {
                                 this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
                                     marked.parse(this.rawIncomingResponse),
@@ -141,12 +141,12 @@ document.addEventListener('alpine:init', () => {
                             }
                         }
 
-                        this.isSendingMessage = !! event.rate_limit_resets_after_seconds
+                        this.isSendingMessage = !!event.rate_limit_resets_after_seconds;
 
                         if (event.is_incomplete) {
                             this.isIncomplete = true;
 
-                            return
+                            return;
                         }
 
                         if (event.error) {
@@ -154,15 +154,17 @@ document.addEventListener('alpine:init', () => {
                             this.isRetryable = true;
                             this.isRateLimited = false;
 
-                            return
+                            return;
                         }
 
                         if (event.rate_limit_resets_after_seconds) {
-                            this.error = 'Heavy traffic, just a few more moments...'
+                            this.error = 'Heavy traffic, just a few more moments...';
                             this.isRateLimited = true;
 
                             this.$nextTick(async () => {
-                                await new Promise((resolve) => setTimeout(resolve, event.rate_limit_resets_after_seconds * 1000));
+                                await new Promise((resolve) =>
+                                    setTimeout(resolve, event.rate_limit_resets_after_seconds * 1000),
+                                );
 
                                 await this.handleResponse({
                                     response: await fetch(
@@ -177,9 +179,9 @@ document.addEventListener('alpine:init', () => {
                                             body: JSON.stringify(
                                                 !this.isCompletingPreviousResponse
                                                     ? {
-                                                        content: this.latestMessage,
-                                                        files: this.$wire.files,
-                                                    }
+                                                          content: this.latestMessage,
+                                                          files: this.$wire.files,
+                                                      }
                                                     : {},
                                             ),
                                         },

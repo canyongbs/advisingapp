@@ -49,6 +49,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Auth;
+use Throwable;
 
 class CompleteAdvisorMessage implements ShouldQueue
 {
@@ -88,6 +89,13 @@ class CompleteAdvisorMessage implements ShouldQueue
 
         try {
             $stream = $aiService->completeResponse($response);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            event(new AdvisorMessageFinished(
+                $this->thread,
+                error: 'An error happened when sending your message.',
+            ));
         } finally {
             // Reset the Auth user to avoid issues with subsequent jobs
             Auth::logout();
