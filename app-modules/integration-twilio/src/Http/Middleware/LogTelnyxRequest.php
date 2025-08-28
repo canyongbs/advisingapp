@@ -50,7 +50,7 @@ class LogTelnyxRequest
 
     public function handle(Request $request, Closure $next): Response
     {
-        $data = json_decode($request->getContent(), true)['data'];
+        $data = $request->toArray()['data'];
 
         $this->storeInboundWebhook->handle(
             source: InboundWebhookSource::Telnyx,

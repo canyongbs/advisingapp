@@ -67,6 +67,8 @@ it('will create an inbound webhook with the correct source and event for a Telny
         ])
     );
 
+    $request->headers->set('Content-Type', 'application/json');
+
     $request->setRouteResolver(function () use ($request) {
         return (new Route('POST', 'testing', []))->bind($request);
     });
