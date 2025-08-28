@@ -13,6 +13,15 @@ class ProcessTelnyxMessageStatusUpdate implements ShouldQueue
 {
     use Queueable;
 
+    /**
+     * @param array{
+     *     payload: array{
+     *         id: string,
+     *         to: array<array{status: string}>
+     *     },
+     *     occurred_at: string
+     * } $data
+     */
     public function __construct(
         protected array $data,
     ) {}
