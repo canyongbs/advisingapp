@@ -62,6 +62,7 @@ it('will appropriately create a message event based on the payload received', fu
     ['Telnyx/StatusUpdates/delivered', SmsMessageEventType::Delivered],
     ['Telnyx/StatusUpdates/sending_failed', SmsMessageEventType::Failed],
     ['Telnyx/StatusUpdates/delivery_failed', SmsMessageEventType::Failed],
+    ['Telnyx/StatusUpdates/delivery_unconfirmed', SmsMessageEventType::Failed],
     // ['StatusCallback/undelivered', SmsMessageEventType::Undelivered],
     // TODO: Add the rest of the status callback payloads
 ]);
