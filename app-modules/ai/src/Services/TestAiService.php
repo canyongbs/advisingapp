@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Services\Contracts\AiService;
+use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Research\Models\ResearchRequest;
@@ -120,14 +121,8 @@ class TestAiService implements AiService
             $message->files()->saveMany($files);
         }
 
-        $responseContent = fake()->paragraph();
-
-        return function () use ($responseContent): Generator {
-            $response = new AiMessage();
-
-            yield $responseContent;
-
-            $response->content = $responseContent;
+        return function (): Generator {
+            yield new Text(fake()->paragraph());
         };
     }
 
@@ -138,13 +133,7 @@ class TestAiService implements AiService
 
     public function completeResponse(AiMessage $response): Closure
     {
-        $responseContent = fake()->paragraph();
-
-        return function () use ($response, $responseContent) {
-            yield $responseContent;
-
-            $response->content .= $responseContent;
-        };
+        return $this->sendMessage($response, files: []);
     }
 
     public function getMaxAssistantInstructionsLength(): int

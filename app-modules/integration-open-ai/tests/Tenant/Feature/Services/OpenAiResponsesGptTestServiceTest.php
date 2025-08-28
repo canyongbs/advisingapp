@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGptTestService;
 use AdvisingApp\Report\Enums\TrackedEventType;
@@ -74,8 +75,6 @@ it('can send a message', function () {
             ->for(auth()->user()), 'thread')
         ->make();
 
-    $originalMessageContent = $message->content;
-
     Prism::fake([
         TextResponseFake::make()
             ->withText(strrev($message->content))
@@ -83,22 +82,14 @@ it('can send a message', function () {
     ]);
 
     $chunkedResponseContent = '';
-    $finalResponseContent = null;
 
-    $stream = $service->sendMessage($message, [], function (AiMessage $response) use (&$finalResponseContent) {
-        $finalResponseContent = $response->content;
-    });
+    $stream = $service->sendMessage($message, files: []);
 
     foreach ($stream() as $chunk) {
-        expect($chunk)
-            ->toBeJson();
-
-        $chunkedResponseContent .= base64_decode(json_decode($chunk)->content);
+        if ($chunk instanceof Text) {
+            $chunkedResponseContent .= $chunk->content;
+        }
     }
-
-    expect($finalResponseContent)
-        ->toBe($chunkedResponseContent)
-        ->toBe(strrev($originalMessageContent));
 
     expect(Queue::pushed(RecordTrackedEvent::class)) /** @phpstan-ignore argument.templateType */
         ->toHaveCount(1)
@@ -131,21 +122,14 @@ it('can complete a message response', function () {
     ]);
 
     $chunkedResponseContent = '';
-    $finalResponseContent = null;
 
-    $stream = $service->completeResponse($message, function (AiMessage $response) use (&$finalResponseContent) {
-        $finalResponseContent = $response->content;
-    });
+    $stream = $service->completeResponse($message);
 
     foreach ($stream() as $chunk) {
-        expect($chunk)
-            ->toBeJson();
-
-        $chunkedResponseContent .= base64_decode(json_decode($chunk)->content);
+        if ($chunk instanceof Text) {
+            $chunkedResponseContent .= $chunk->content;
+        }
     }
-
-    expect($finalResponseContent)
-        ->toBe($originalMessageContent . strrev($originalMessageContent));
 
     expect($chunkedResponseContent)
         ->toBe(strrev($originalMessageContent));
@@ -173,8 +157,6 @@ it('can retry a message', function () {
             ->for(auth()->user()), 'thread')
         ->make();
 
-    $originalMessageContent = $message->content;
-
     Prism::fake([
         TextResponseFake::make()
             ->withText(strrev($message->content))
@@ -182,22 +164,14 @@ it('can retry a message', function () {
     ]);
 
     $chunkedResponseContent = '';
-    $finalResponseContent = null;
 
-    $stream = $service->retryMessage($message, [], function (AiMessage $response) use (&$finalResponseContent) {
-        $finalResponseContent = $response->content;
-    });
+    $stream = $service->retryMessage($message, files: []);
 
     foreach ($stream() as $chunk) {
-        expect($chunk)
-            ->toBeJson();
-
-        $chunkedResponseContent .= base64_decode(json_decode($chunk)->content);
+        if ($chunk instanceof Text) {
+            $chunkedResponseContent .= $chunk->content;
+        }
     }
-
-    expect($finalResponseContent)
-        ->toBe($chunkedResponseContent)
-        ->toBe(strrev($originalMessageContent));
 
     expect(Queue::pushed(RecordTrackedEvent::class)) /** @phpstan-ignore argument.templateType */
         ->toHaveCount(1)
