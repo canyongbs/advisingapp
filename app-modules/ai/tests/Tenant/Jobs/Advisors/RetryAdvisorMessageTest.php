@@ -34,21 +34,24 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Actions\RetryMessage;
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Events\Advisors\AdvisorMessageChunk;
+use AdvisingApp\Ai\Events\Advisors\AdvisorMessageFinished;
+use AdvisingApp\Ai\Jobs\Advisors\RetryAdvisorMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use App\Models\User;
-use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Event;
 
 use function Tests\asSuperAdmin;
 
 it('retries a message', function () {
-    Queue::fake();
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
 
     asSuperAdmin();
 
@@ -68,13 +71,7 @@ it('retries a message', function () {
     expect(AiMessage::count())
         ->toBe(0);
 
-    $responseStream = app(RetryMessage::class)($thread, $messageContent);
-
-    $streamedContent = '';
-
-    foreach ($responseStream() as $responseContent) {
-        $streamedContent .= $responseContent;
-    }
+    dispatch(new RetryAdvisorMessage($thread, $messageContent));
 
     $messages = AiMessage::all();
 
@@ -92,16 +89,15 @@ it('retries a message', function () {
         ->thread->getKey()->toBe($thread->getKey())
         ->user->toBeNull();
 
-    expect($streamedContent)->toBe($response->content);
-
-    expect(Queue::pushed(RecordTrackedEvent::class))
-        ->toHaveCount(2)
-        ->each
-        ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
+    Event::assertDispatched(AdvisorMessageChunk::class);
+    Event::assertDispatched(AdvisorMessageFinished::class);
 });
 
 it('does not create a new message if the most recent one has the same content', function () {
-    Queue::fake();
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
 
     asSuperAdmin();
 
@@ -124,13 +120,7 @@ it('does not create a new message if the most recent one has the same content', 
     expect(AiMessage::count())
         ->toBe(1);
 
-    $responseStream = app(RetryMessage::class)($thread, $messageContent);
-
-    $streamedContent = '';
-
-    foreach ($responseStream() as $responseContent) {
-        $streamedContent .= $responseContent;
-    }
+    dispatch(new RetryAdvisorMessage($thread, $messageContent));
 
     $messages = AiMessage::all();
 
@@ -148,16 +138,15 @@ it('does not create a new message if the most recent one has the same content', 
         ->thread->getKey()->toBe($thread->getKey())
         ->user->toBeNull();
 
-    expect($streamedContent)->toBe($response->content);
-
-    expect(Queue::pushed(RecordTrackedEvent::class))
-        ->toHaveCount(1)
-        ->each
-        ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
+    Event::assertDispatched(AdvisorMessageChunk::class);
+    Event::assertDispatched(AdvisorMessageFinished::class);
 });
 
 it('does not match messages with the same content sent by other users in the same thread', function () {
-    Queue::fake();
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
 
     asSuperAdmin();
 
@@ -182,19 +171,20 @@ it('does not match messages with the same content sent by other users in the sam
     expect(AiMessage::count())
         ->toBe(1);
 
-    iterator_to_array(app(RetryMessage::class)($thread, $messageContent)());
+    dispatch(new RetryAdvisorMessage($thread, $messageContent));
 
     expect(AiMessage::count())
         ->toBe(3);
 
-    expect(Queue::pushed(RecordTrackedEvent::class))
-        ->toHaveCount(2)
-        ->each
-        ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
+    Event::assertDispatched(AdvisorMessageChunk::class);
+    Event::assertDispatched(AdvisorMessageFinished::class);
 });
 
 it('does not match messages with the same content belonging to other threads', function () {
-    Queue::fake();
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
 
     asSuperAdmin();
 
@@ -224,19 +214,20 @@ it('does not match messages with the same content belonging to other threads', f
     expect(AiMessage::count())
         ->toBe(1);
 
-    iterator_to_array(app(RetryMessage::class)($thread, $messageContent)());
+    dispatch(new RetryAdvisorMessage($thread, $messageContent));
 
     expect(AiMessage::count())
         ->toBe(3);
 
-    expect(Queue::pushed(RecordTrackedEvent::class))
-        ->toHaveCount(2)
-        ->each
-        ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
+    Event::assertDispatched(AdvisorMessageChunk::class);
+    Event::assertDispatched(AdvisorMessageFinished::class);
 });
 
 it('does not match messages with different content', function () {
-    Queue::fake();
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
 
     asSuperAdmin();
 
@@ -257,13 +248,11 @@ it('does not match messages with different content', function () {
     expect(AiMessage::count())
         ->toBe(1);
 
-    iterator_to_array(app(RetryMessage::class)($thread, $messageContent)());
+    dispatch(new RetryAdvisorMessage($thread, $messageContent));
 
     expect(AiMessage::count())
         ->toBe(3);
 
-    expect(Queue::pushed(RecordTrackedEvent::class))
-        ->toHaveCount(2)
-        ->each
-        ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
+    Event::assertDispatched(AdvisorMessageChunk::class);
+    Event::assertDispatched(AdvisorMessageFinished::class);
 });
