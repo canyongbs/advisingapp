@@ -34,34 +34,43 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\IntegrationTwilio\Jobs\ProcessTelnyxMessageStatusUpdate;
-use AdvisingApp\Notification\Enums\SmsMessageEventType;
-use AdvisingApp\Notification\Models\SmsMessage;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioMessageReceivedData;
+use AdvisingApp\IntegrationTwilio\Jobs\MessageReceived;
+use AdvisingApp\IntegrationTwilio\Jobs\ProcessTelnyxMessageReceived;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Http\Request;
 
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
 use function Tests\loadFixtureFromModule;
 
-it('will appropriately create a message event based on the payload received', function (string $payloadPath, SmsMessageEventType $expectedEventType) {
-    // Given that we have a sms message
-    /** @var SmsMessage $smsMessage */
-    $smsMessage = SmsMessage::factory()
-        ->create([
-            'external_reference_id' => 'ac012cbf-5e09-46af-a69a-7c0e2d90993c',
-        ]);
+it('will not create an engagement response when it cannot find an associated message sender', function () {
+    $data = loadFixtureFromModule('integration-twilio', 'Telnyx/MessageReceived/message_received')['data'];
 
-    $job = new ProcessTelnyxMessageStatusUpdate(loadFixtureFromModule('integration-twilio', $payloadPath)['data']);
+    $job = new ProcessTelnyxMessageReceived($data);
     $job->handle();
 
-    $events = $smsMessage->events()->get();
+    assertDatabaseMissing('engagement_responses', [
+        'content' => $data['payload']['text'],
+    ]);
+});
 
-    // The proper event should have been created for our sms message
-    expect($events->count())->toBe(1);
+// it('will create an engagement response when a message is received', function () {
+//     $request = Request::create('/', 'POST', loadFixtureFromModule('integration-twilio', 'MessageReceived/payload'));
 
-    expect($events->first()->type)->toBe($expectedEventType);
-})->with([
-    // No current tests for queued and sending as from what we have seen these don't seem to actually send webhook updates
-    ['Telnyx/StatusUpdates/sent', SmsMessageEventType::Sent],
-    ['Telnyx/StatusUpdates/delivered', SmsMessageEventType::Delivered],
-    ['Telnyx/StatusUpdates/sending_failed', SmsMessageEventType::Failed],
-    ['Telnyx/StatusUpdates/delivery_failed', SmsMessageEventType::Failed],
-    ['Telnyx/StatusUpdates/delivery_unconfirmed', SmsMessageEventType::Failed],
-]);
+//     $student = Student::factory()->create();
+//     $studentPhoneNumber = $student->phoneNumbers()->create([
+//         'number' => $request->all()['From'],
+//     ]);
+//     $student->primaryPhoneNumber()->associate($studentPhoneNumber)->save();
+
+//     $messageReceived = new MessageReceived(TwilioMessageReceivedData::fromRequest($request));
+
+//     $messageReceived->handle();
+
+//     assertDatabaseHas('engagement_responses', [
+//         'sender_id' => $student->getKey(),
+//         'sender_type' => (new Student())->getMorphClass(),
+//         'content' => $request->all()['Body'],
+//     ]);
+// });
