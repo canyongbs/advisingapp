@@ -34,22 +34,18 @@
 </COPYRIGHT>
 */
 
-use function Tests\asSuperAdmin;
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiMessage;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Queue;
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Actions\CompleteResponse;
-use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Events\Advisors\AdvisorMessageChunk;
-use AdvisingApp\Ai\Jobs\Advisors\CompleteAdvisorResponse;
 use AdvisingApp\Ai\Events\Advisors\AdvisorMessageFinished;
 use AdvisingApp\Ai\Exceptions\AiResponseToCompleteDoesNotExistException;
+use AdvisingApp\Ai\Jobs\Advisors\CompleteAdvisorResponse;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiThread;
+use Illuminate\Support\Facades\Event;
+
+use function Tests\asSuperAdmin;
 
 it('completes the last response', function () {
     Event::fake([
