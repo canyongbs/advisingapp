@@ -93,6 +93,8 @@ class CompleteAdvisorMessage implements ShouldQueue
                 $this->thread,
                 error: 'An error happened when sending your message.',
             ));
+
+            return;
         }
 
         $chunkBuffer = [];
