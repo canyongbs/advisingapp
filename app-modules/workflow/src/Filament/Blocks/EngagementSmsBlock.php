@@ -40,6 +40,7 @@ use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftCampaignEngagementBlockWit
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -55,12 +56,26 @@ class EngagementSmsBlock extends WorkflowActionBlock
         $this->schema($this->createFields());
     }
 
+    /**
+     * @return array<int, Field|Section|Actions>
+     */
     public function generateFields(): array
     {
         return [
             Hidden::make('channel')
                 ->default(NotificationChannel::Sms->value),
             EngagementSmsBodyInput::make(context: 'create'),
+            Actions::make([
+                DraftCampaignEngagementBlockWithAi::make()
+                    ->channel(NotificationChannel::Sms)
+                    ->mergeTags([
+                        'recipient first name',
+                        'recipient last name',
+                        'recipient full name',
+                        'recipient email',
+                        'recipient preferred name',
+                    ]),
+            ]),
             Section::make('How long after the previous step should this occur?')
                 ->schema([
                     TextInput::make('days')
@@ -86,17 +101,6 @@ class EngagementSmsBlock extends WorkflowActionBlock
                         ->inlineLabel(),
                 ])
                 ->columns(3),
-            // Actions::make([
-            //     DraftCampaignEngagementBlockWithAi::make()
-            //         ->channel(NotificationChannel::Sms)
-            //         ->mergeTags([
-            //             'recipient first name',
-            //             'recipient last name',
-            //             'recipient full name',
-            //             'recipient email',
-            //             'recipient preferred name',
-            //         ]),
-            // ]),
         ];
     }
 
