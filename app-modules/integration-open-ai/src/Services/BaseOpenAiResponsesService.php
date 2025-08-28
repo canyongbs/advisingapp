@@ -345,107 +345,9 @@ abstract class BaseOpenAiResponsesService implements AiService
     /**
      * @param array<AiMessageFile> $files
      */
-    public function sendMessage(AiMessage $message, array $files, ?UserMessage $userMessage = null): Closure
+    public function sendMessage(AiMessage $message, array $files): Closure
     {
-        $previousMessages = [];
-
-        $previousResponseId = $this->getMessagePreviousResponseId($message);
-
-        if (blank($previousResponseId)) {
-            $previousMessages = $message->thread->messages()
-                ->oldest()
-                ->get()
-                ->map(fn (AiMessage $message): Message => filled($message->user_id)
-                    ? new UserMessage($message->content)
-                    : new AssistantMessage($message->content))
-                ->all();
-        }
-
-        $aiSettings = app(AiSettings::class);
-        $instructions = $this->generateAssistantInstructions($message->thread->assistant, $message->thread->user, withDynamicContext: true);
-
-        try {
-            $vectorStoreIds = array_values(array_filter([
-                $this->getReadyVectorStoreId([
-                    ...$files,
-                    ...AiMessageFile::query()
-                        ->whereNotNull('parsing_results')
-                        ->whereHas(
-                            'message',
-                            fn (Builder $query) => $query
-                                ->whereKeyNot($message->getKey())
-                                ->whereBelongsTo($message->thread, 'thread'),
-                        )
-                        ->get()
-                        ->all(),
-                ]),
-                $this->getReadyVectorStoreId($message->thread->assistant->files()
-                    ->whereNotNull('parsing_results')
-                    ->get()
-                    ->all()),
-            ]));
-
-            return $this->streamRaw(
-                prompt: $instructions,
-                content: $message->content,
-                options: [
-                    'previous_response_id' => $previousResponseId,
-                    ...($this->hasReasoning() ? [
-                        'reasoning' => [
-                            'effort' => $aiSettings->reasoning_effort->value,
-                        ],
-                    ] : []),
-                    ...(filled($vectorStoreIds) ? [
-                        'tool_choice' => filled($files) ? [
-                            'type' => 'file_search',
-                        ] : 'auto',
-                        'tools' => [[
-                            'type' => 'file_search',
-                            'vector_store_ids' => $vectorStoreIds,
-                        ]],
-                    ] : []),
-                ],
-                messages: [
-                    ...$previousMessages,
-                    $userMessage ?? new UserMessage($message->content),
-                ],
-            );
-        } catch (Throwable $exception) {
-            report($exception);
-
-            throw new MessageResponseException('Failed to send a message: [' . $exception->getMessage() . '].');
-        } finally {
-            try {
-                if (is_null($message->thread->name)) {
-                    $prompt = $message->context . "\nThe following is the start of a chat between you and a user:\n" . $message->content;
-
-                    $message->thread->name = $this->complete($prompt, 'Generate a title for this chat, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:');
-
-                    $message->thread->saved_at = now();
-
-                    $message->thread->save();
-
-                    dispatch(new RecordTrackedEvent(
-                        type: TrackedEventType::AiThreadSaved,
-                        occurredAt: now(),
-                    ));
-                }
-            } catch (Exception $exception) {
-                report($exception);
-
-                $message->thread->name = 'Untitled Chat';
-            }
-
-            $message->context = $instructions;
-            $message->save();
-
-            $message->files()->saveMany($files);
-
-            dispatch(new RecordTrackedEvent(
-                type: TrackedEventType::AiExchange,
-                occurredAt: now(),
-            ));
-        }
+        return $this->sendNewMessage($message, $files);
     }
 
     public function getMessagePreviousResponseId(AiMessage $message): ?string
@@ -483,7 +385,7 @@ abstract class BaseOpenAiResponsesService implements AiService
 
     public function completeResponse(AiMessage $response): Closure
     {
-        return $this->sendMessage($response, [], new UserMessage('Continue generating the response, do not mention that I told you as I will paste it directly after the last message.'));
+        return $this->sendNewMessage($response, [], new UserMessage('Continue generating the response, do not mention that I told you as I will paste it directly after the last message.'));
     }
 
     /**
@@ -491,7 +393,7 @@ abstract class BaseOpenAiResponsesService implements AiService
      */
     public function retryMessage(AiMessage $message, array $files): Closure
     {
-        return $this->sendMessage($message, $files);
+        return $this->sendNewMessage($message, $files);
     }
 
     public function getMaxAssistantInstructionsLength(): int
@@ -667,6 +569,112 @@ abstract class BaseOpenAiResponsesService implements AiService
 
             return true;
         });
+    }
+
+    /**
+     * @param array<AiMessageFile> $files
+     */
+    protected function sendNewMessage(AiMessage $message, array $files, ?UserMessage $userMessage = null): Closure
+    {
+        $previousMessages = [];
+
+        $previousResponseId = $this->getMessagePreviousResponseId($message);
+
+        if (blank($previousResponseId)) {
+            $previousMessages = $message->thread->messages()
+                ->oldest()
+                ->get()
+                ->map(fn (AiMessage $message): Message => filled($message->user_id)
+                    ? new UserMessage($message->content)
+                    : new AssistantMessage($message->content))
+                ->all();
+        }
+
+        $aiSettings = app(AiSettings::class);
+        $instructions = $this->generateAssistantInstructions($message->thread->assistant, $message->thread->user, withDynamicContext: true);
+
+        try {
+            $vectorStoreIds = array_values(array_filter([
+                $this->getReadyVectorStoreId([
+                    ...$files,
+                    ...AiMessageFile::query()
+                        ->whereNotNull('parsing_results')
+                        ->whereHas(
+                            'message',
+                            fn (Builder $query) => $query
+                                ->whereKeyNot($message->getKey())
+                                ->whereBelongsTo($message->thread, 'thread'),
+                        )
+                        ->get()
+                        ->all(),
+                ]),
+                $this->getReadyVectorStoreId($message->thread->assistant->files()
+                    ->whereNotNull('parsing_results')
+                    ->get()
+                    ->all()),
+            ]));
+
+            return $this->streamRaw(
+                prompt: $instructions,
+                content: $message->content,
+                options: [
+                    'previous_response_id' => $previousResponseId,
+                    ...($this->hasReasoning() ? [
+                        'reasoning' => [
+                            'effort' => $aiSettings->reasoning_effort->value,
+                        ],
+                    ] : []),
+                    ...(filled($vectorStoreIds) ? [
+                        'tool_choice' => filled($files) ? [
+                            'type' => 'file_search',
+                        ] : 'auto',
+                        'tools' => [[
+                            'type' => 'file_search',
+                            'vector_store_ids' => $vectorStoreIds,
+                        ]],
+                    ] : []),
+                ],
+                messages: [
+                    ...$previousMessages,
+                    $userMessage ?? new UserMessage($message->content),
+                ],
+            );
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw new MessageResponseException('Failed to send a message: [' . $exception->getMessage() . '].');
+        } finally {
+            try {
+                if (is_null($message->thread->name)) {
+                    $prompt = $message->context . "\nThe following is the start of a chat between you and a user:\n" . $message->content;
+
+                    $message->thread->name = $this->complete($prompt, 'Generate a title for this chat, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:');
+
+                    $message->thread->saved_at = now();
+
+                    $message->thread->save();
+
+                    dispatch(new RecordTrackedEvent(
+                        type: TrackedEventType::AiThreadSaved,
+                        occurredAt: now(),
+                    ));
+                }
+            } catch (Exception $exception) {
+                report($exception);
+
+                $message->thread->name = 'Untitled Chat';
+            }
+
+            $message->context = $instructions;
+            $message->save();
+
+            $message->files()->saveMany($files);
+
+            dispatch(new RecordTrackedEvent(
+                type: TrackedEventType::AiExchange,
+                occurredAt: now(),
+            ));
+        }
     }
 
     /**
