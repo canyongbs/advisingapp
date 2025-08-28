@@ -39,6 +39,7 @@ namespace App\Providers;
 use AdvisingApp\Audit\Listeners\AuditingListener;
 use AdvisingApp\Report\Listeners\ProcessUserUniqueLoginTrackedEvent;
 use App\Listeners\ClearSentryUser;
+use App\Listeners\ClearTelnyxStaticProperties;
 use App\Listeners\InformOlympusOfDeploymentEvent;
 use App\Listeners\LoadSettingsDefaults;
 use App\Listeners\SetSentryUser;
@@ -54,6 +55,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Console\Events\ScheduledTaskStarting;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Queue\Events\JobProcessing;
 use OwenIt\Auditing\Events\Auditing;
 use Spatie\LaravelSettings\Events\LoadingSettings;
 use Spatie\Multitenancy\Events\ForgotCurrentTenantEvent;
@@ -101,6 +103,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         NewTenantSetupFailure::class => [
             InformOlympusOfDeploymentEvent::class,
+        ],
+        JobProcessing::class => [
+            ClearTelnyxStaticProperties::class,
         ],
     ];
 

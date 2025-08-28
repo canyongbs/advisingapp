@@ -35,6 +35,7 @@
 */
 
 use App\Listeners\ClearSentryUser;
+use App\Listeners\ClearTelnyxStaticProperties;
 use Laravel\Octane\Contracts\OperationTerminated;
 use Laravel\Octane\Events\RequestHandled;
 use Laravel\Octane\Events\RequestReceived;
@@ -112,6 +113,7 @@ return [
 
         RequestTerminated::class => [
             ClearSentryUser::class,
+            ClearTelnyxStaticProperties::class,
         ],
 
         TaskReceived::class => [
