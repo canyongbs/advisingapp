@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftCampaignEngagementBlockWithAi;
+use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftEngagementBlockWithAi;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Engagement\Models\EmailTemplate;
@@ -156,7 +156,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                 ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                 ->columnSpanFull(),
             Actions::make([
-                DraftCampaignEngagementBlockWithAi::make()
+                DraftEngagementBlockWithAi::make()
                     ->channel(NotificationChannel::Email)
                     ->fieldPrefix($fieldPrefix)
                     ->mergeTags($mergeTags),

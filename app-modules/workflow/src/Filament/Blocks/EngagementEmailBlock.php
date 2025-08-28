@@ -36,14 +36,17 @@
 
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
+use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftEngagementBlockWithAi;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -66,6 +69,9 @@ class EngagementEmailBlock extends WorkflowActionBlock
         $this->schema($this->createFields());
     }
 
+    /**
+     * @return array<int, covariant Field|Section|Actions>
+     */
     public function generateFields(): array
     {
         return [
@@ -151,6 +157,11 @@ class EngagementEmailBlock extends WorkflowActionBlock
                     }))
                 ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                 ->columnSpanFull(),
+            Actions::make([
+                DraftEngagementBlockWithAi::make()
+                    ->channel(NotificationChannel::Email)
+                    ->mergeTags($mergeTags),
+            ]),
             Section::make('How long after the previous step should this occur?')
                 ->schema([
                     TextInput::make('days')

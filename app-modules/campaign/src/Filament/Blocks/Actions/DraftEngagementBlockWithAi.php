@@ -54,8 +54,9 @@ use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 
-class DraftCampaignEngagementBlockWithAi extends Action
+class DraftEngagementBlockWithAi extends Action
 {
+    /** @var array<string>|Closure */
     protected array | Closure $mergeTags = [];
 
     protected NotificationChannel | Closure $channel;
@@ -70,7 +71,7 @@ class DraftCampaignEngagementBlockWithAi extends Action
             ->label('Draft with AI Assistant')
             ->link()
             ->icon('heroicon-m-pencil')
-            ->modalContent(fn () => view('campaign::filament.blocks.draft-campaign-engagement-block-with-ai-modal-content', [
+            ->modalContent(fn () => view('campaign::filament.blocks.draft-engagement-block-with-ai-modal-content', [
                 'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
                     ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
             ]))
@@ -182,6 +183,9 @@ class DraftCampaignEngagementBlockWithAi extends Action
         return 'draftWithAi';
     }
 
+    /**
+     * @param array<string>|Closure $tags
+     */
     public function mergeTags(array | Closure $tags): static
     {
         $this->mergeTags = $tags;
@@ -189,6 +193,9 @@ class DraftCampaignEngagementBlockWithAi extends Action
         return $this;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getMergeTags(): array
     {
         return $this->evaluate($this->mergeTags);
