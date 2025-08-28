@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Services\Contracts\AiService;
+use AdvisingApp\Ai\Support\StreamingChunks\Finish;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
@@ -123,6 +124,8 @@ class TestAiService implements AiService
 
         return function (): Generator {
             yield new Text(fake()->paragraph());
+
+            yield new Finish();
         };
     }
 

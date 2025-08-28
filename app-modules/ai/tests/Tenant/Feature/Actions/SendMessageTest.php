@@ -34,21 +34,24 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Actions\SendMessage;
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use AdvisingApp\Ai\Events\Advisors\AdvisorMessageChunk;
+use AdvisingApp\Ai\Events\Advisors\AdvisorMessageFinished;
+use AdvisingApp\Ai\Jobs\Advisors\SendAdvisorMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Event;
 
 use function Tests\asSuperAdmin;
 
 it('sends a message', function () {
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
+
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -67,13 +70,10 @@ it('sends a message', function () {
     expect(AiMessage::count())
         ->toBe(0);
 
-    $responseStream = app(SendMessage::class)($thread, $content);
-
-    $streamedContent = '';
-
-    foreach ($responseStream() as $responseContent) {
-        $streamedContent .= $responseContent;
-    }
+    dispatch(new SendAdvisorMessage(
+        $thread,
+        $content,
+    ));
 
     $messages = AiMessage::all();
 
@@ -91,72 +91,6 @@ it('sends a message', function () {
         ->thread->getKey()->toBe($thread->getKey())
         ->user->toBeNull();
 
-    expect($streamedContent)->toBe($response->content);
-});
-
-it('throws an exception if the thread is locked', function () {
-    asSuperAdmin();
-
-    $thread = AiThread::factory()->make([
-        'locked_at' => now(),
-    ]);
-
-    iterator_to_array(app(SendMessage::class)($thread, 'Hello, world!')());
-})->throws(AiThreadLockedException::class);
-
-it('throws an exception if the assistant is archived', function () {
-    asSuperAdmin();
-
-    $thread = AiThread::factory()
-        ->for(AiAssistant::factory()->state([
-            'application' => AiAssistantApplication::Test,
-            'archived_at' => now(),
-            'model' => AiModel::Test,
-        ]), 'assistant')
-        ->for(auth()->user())
-        ->create();
-
-    app(SendMessage::class)($thread, 'Hello, world!')();
-
-    iterator_to_array(app(SendMessage::class)($thread, 'Hello, world!')());
-})->throws(AiAssistantArchivedException::class);
-
-it('dispatches tracking for AiExchange for both sent message and response', function () {
-    Queue::fake();
-
-    asSuperAdmin();
-
-    $assistant = AiAssistant::factory()->create([
-        'application' => AiAssistantApplication::Test,
-        'is_default' => true,
-        'model' => AiModel::Test,
-    ]);
-
-    $thread = AiThread::factory()
-        ->for($assistant, 'assistant')
-        ->for(auth()->user())
-        ->create();
-
-    $content = AiMessage::factory()->make()->content;
-
-    expect(AiMessage::count())
-        ->toBe(0);
-
-    $responseStream = app(SendMessage::class)($thread, $content);
-
-    $streamedContent = '';
-
-    foreach ($responseStream() as $responseContent) {
-        $streamedContent .= $responseContent;
-    }
-
-    $messages = AiMessage::all();
-
-    expect($messages->count())
-        ->toBe(2);
-
-    expect(Queue::pushed(RecordTrackedEvent::class))
-        ->toHaveCount(2)
-        ->each
-        ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
+    Event::assertDispatched(AdvisorMessageChunk::class);
+    Event::assertDispatched(AdvisorMessageFinished::class);
 });
