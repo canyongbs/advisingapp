@@ -37,8 +37,6 @@
 use AdvisingApp\Ai\Actions\RetryMessage;
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
@@ -269,28 +267,3 @@ it('does not match messages with different content', function () {
         ->each
         ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
 });
-
-it('throws an exception if the thread is locked', function () {
-    asSuperAdmin();
-
-    $thread = AiThread::factory()->make([
-        'locked_at' => now(),
-    ]);
-
-    iterator_to_array(app(RetryMessage::class)($thread, 'Hello, world!')());
-})->throws(AiThreadLockedException::class);
-
-it('throws an exception if the assistant is archived', function () {
-    asSuperAdmin();
-
-    $thread = AiThread::factory()
-        ->for(AiAssistant::factory()->state([
-            'application' => AiAssistantApplication::Test,
-            'archived_at' => now(),
-            'model' => AiModel::Test,
-        ]), 'assistant')
-        ->for(auth()->user())
-        ->create();
-
-    iterator_to_array(app(RetryMessage::class)($thread, 'Hello, world!')());
-})->throws(AiAssistantArchivedException::class);

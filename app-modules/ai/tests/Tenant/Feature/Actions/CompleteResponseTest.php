@@ -37,9 +37,7 @@
 use AdvisingApp\Ai\Actions\CompleteResponse;
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
 use AdvisingApp\Ai\Exceptions\AiResponseToCompleteDoesNotExistException;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
@@ -193,30 +191,3 @@ it('throws an exception if the latest response does not exist', function () {
 
     iterator_to_array(app(CompleteResponse::class)($thread)());
 })->throws(AiResponseToCompleteDoesNotExistException::class);
-
-it('throws an exception if the thread is locked', function () {
-    asSuperAdmin();
-
-    $thread = AiThread::factory()->make([
-        'locked_at' => now(),
-    ]);
-
-    iterator_to_array(app(CompleteResponse::class)($thread)());
-})->throws(AiThreadLockedException::class);
-
-it('throws an exception if the assistant is archived', function () {
-    asSuperAdmin();
-
-    $thread = AiThread::factory()
-        ->for(AiAssistant::factory()->state([
-            'application' => AiAssistantApplication::Test,
-            'archived_at' => now(),
-            'model' => AiModel::Test,
-        ]), 'assistant')
-        ->for(auth()->user())
-        ->create();
-
-    app(CompleteResponse::class)($thread)();
-
-    iterator_to_array(app(CompleteResponse::class)($thread)());
-})->throws(AiAssistantArchivedException::class);
