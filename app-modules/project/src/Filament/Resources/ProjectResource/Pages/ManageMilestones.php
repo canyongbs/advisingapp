@@ -85,8 +85,7 @@ class ManageMilestones extends ManageRelatedRecords
                     ->preload()
                     ->required()
                     ->relationship('status', 'name'),
-                DatePicker::make('target_date')
-                    ->visible(ProjectMilestoneTargetDateFeature::active()),
+                DatePicker::make('target_date'),
             ]);
     }
 
