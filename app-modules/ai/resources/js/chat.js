@@ -47,6 +47,7 @@ document.addEventListener('alpine:init', () => {
             latestMessage: '',
             message: '',
             rawIncomingResponse: '',
+            pendingResponse: '',
             latestPrompt: null,
             messages: [],
             users: [],
@@ -57,6 +58,39 @@ document.addEventListener('alpine:init', () => {
                 this.render();
 
                 setInterval(this.render.bind(this), 500);
+
+                const chunkInterval = setInterval(() => {
+                    if (/^\s*$/.test(this.pendingResponse)) {
+                        return;
+                    }
+
+                    const maxChunks = 2;
+                    let chunks = [];
+                    let pendingResponse = this.pendingResponse;
+
+                    const regex = /^(\s*\S+)/;
+
+                    while (chunks.length < maxChunks) {
+                        const match = pendingResponse.match(regex);
+                        if (!match) break;
+
+                        const chunk = match[0];
+                        chunks.push(chunk);
+                        pendingResponse = pendingResponse.slice(chunk.length);
+                    }
+
+                    if (chunks.length > 0) {
+                        const combined = chunks.join('');
+                        this.rawIncomingResponse += combined;
+                        this.pendingResponse = this.pendingResponse.slice(combined.length);
+                        
+                        if (this.messages.length > 0) {
+                            this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
+                                marked.parse(this.rawIncomingResponse),
+                            );
+                        }
+                    }
+                }, 50);
 
                 const showThreadResponse = await fetch(showThreadUrl, {
                     headers: {
@@ -81,6 +115,7 @@ document.addEventListener('alpine:init', () => {
                                 });
 
                                 this.rawIncomingResponse = '';
+                                this.pendingResponse = '';
                             } else {
                                 if (this.rawIncomingResponse.endsWith('...')) {
                                     this.rawIncomingResponse = this.rawIncomingResponse.slice(0, -3);
@@ -92,13 +127,20 @@ document.addEventListener('alpine:init', () => {
                             this.hasSetUpNewMessageForResponse = true;
                         }
 
-                        this.rawIncomingResponse += event.content;
-
-                        this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
-                            marked.parse(this.rawIncomingResponse),
-                        );
+                        this.pendingResponse += event.content;
                     })
                     .listen('.advisor-message.finished', (event) => {
+                        if (this.pendingResponse && !event.is_incomplete && !event.error && !event.rate_limit_resets_after_seconds) {
+                            this.rawIncomingResponse += this.pendingResponse;
+                            this.pendingResponse = '';
+                            
+                            if (this.messages.length > 0) {
+                                this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
+                                    marked.parse(this.rawIncomingResponse),
+                                );
+                            }
+                        }
+
                         this.isSendingMessage = !! event.rate_limit_resets_after_seconds
 
                         if (event.is_incomplete) {
