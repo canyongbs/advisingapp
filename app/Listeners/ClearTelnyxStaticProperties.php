@@ -42,6 +42,26 @@ class ClearTelnyxStaticProperties
 {
     public function handle(object $event): void
     {
-        unset(Telnyx::$apiKey, Telnyx::$clientId, Telnyx::$apiBase, Telnyx::$apiVersion, Telnyx::$accountId, Telnyx::$caBundlePath, Telnyx::$verifySslCerts, Telnyx::$appInfo, Telnyx::$logger, Telnyx::$maxNetworkRetries, Telnyx::$enableTelemetry);
+        Telnyx::$apiKey = '';
+
+        Telnyx::$clientId = '';
+
+        Telnyx::$apiBase = 'https://api.telnyx.com';
+
+        Telnyx::$apiVersion = null;
+
+        Telnyx::$accountId = null;
+
+        Telnyx::$caBundlePath = null;
+
+        Telnyx::$verifySslCerts = true;
+
+        Telnyx::$appInfo = null;
+
+        Telnyx::$logger = null;
+
+        Telnyx::$maxNetworkRetries = 0;
+
+        Telnyx::$enableTelemetry = false;
     }
 }
