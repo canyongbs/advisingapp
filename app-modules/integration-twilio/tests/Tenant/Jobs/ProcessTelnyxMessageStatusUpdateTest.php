@@ -35,7 +35,6 @@
 */
 
 use AdvisingApp\IntegrationTwilio\Jobs\ProcessTelnyxMessageStatusUpdate;
-use AdvisingApp\IntegrationTwilio\Jobs\StatusCallback;
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
 use AdvisingApp\Notification\Models\SmsMessage;
 
@@ -59,10 +58,10 @@ it('will appropriately create a message event based on the payload received', fu
 
     expect($events->first()->type)->toBe($expectedEventType);
 })->with([
+    // No current tests for queued and sending as from what we have seen these don't seem to actually send webhook updates
+    ['Telnyx/StatusUpdates/sent', SmsMessageEventType::Sent],
     ['Telnyx/StatusUpdates/delivered', SmsMessageEventType::Delivered],
     ['Telnyx/StatusUpdates/sending_failed', SmsMessageEventType::Failed],
     ['Telnyx/StatusUpdates/delivery_failed', SmsMessageEventType::Failed],
     ['Telnyx/StatusUpdates/delivery_unconfirmed', SmsMessageEventType::Failed],
-    // ['StatusCallback/undelivered', SmsMessageEventType::Undelivered],
-    // TODO: Add the rest of the status callback payloads
 ]);
