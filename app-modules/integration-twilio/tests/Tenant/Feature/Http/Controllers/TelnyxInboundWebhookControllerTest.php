@@ -59,6 +59,10 @@ it('will dispatch the correct job for in inbound twilio webhook', function (stri
         ProcessTelnyxMessageStatusUpdate::class,
         'Telnyx/StatusUpdates/delivered',
     ],
+    'message.sent sent' => [
+        ProcessTelnyxMessageStatusUpdate::class,
+        'Telnyx/StatusUpdates/sent',
+    ],
     'message.received' => [
         ProcessTelnyxMessageReceived::class,
         'Telnyx/MessageReceived/message_received',
