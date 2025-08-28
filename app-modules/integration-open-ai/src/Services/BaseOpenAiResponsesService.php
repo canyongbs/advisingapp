@@ -669,11 +669,6 @@ abstract class BaseOpenAiResponsesService implements AiService
             $message->save();
 
             $message->files()->saveMany($files);
-
-            dispatch(new RecordTrackedEvent(
-                type: TrackedEventType::AiExchange,
-                occurredAt: now(),
-            ));
         }
     }
 
