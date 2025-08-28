@@ -50,7 +50,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Throwable;
 
-class CompleteAdvisorMessage implements ShouldQueue
+class CompleteAdvisorResponse implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

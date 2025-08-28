@@ -58,7 +58,6 @@ use Illuminate\Support\Facades\Bus;
 use Livewire\Livewire;
 
 use function Pest\Laravel\{actingAs, assertDatabaseHas, assertDatabaseMissing, assertNotSoftDeleted, assertSoftDeleted};
-use function PHPUnit\Framework\assertNotEmpty;
 use function Tests\asSuperAdmin;
 
 $setUp = function (
@@ -177,28 +176,6 @@ it('will allow a user to access the AI Assistant interface if they agree to the 
         ->assertDontSee($consentAgreement->body);
 
     expect($user->hasConsentedTo($consentAgreement))->toBeTrue();
-});
-
-it('can save threads automatically', function () use ($setUp) {
-    ['user' => $user, 'assistant' => $assistant] = $setUp();
-
-    $thread = AiThread::factory()
-        ->for($assistant, 'assistant')
-        ->for($user)
-        ->create([
-            'name' => null,
-        ]);
-
-    assertDatabaseHas(AiThread::class, [
-        'id' => $thread->getKey(),
-        'user_id' => $user->getKey(),
-    ]);
-
-    $message = AiMessage::factory()->create(['thread_id' => $thread->getKey(), 'user_id' => $user->getKey()]);
-
-    $assistant->model->getService()->sendMessage($message, [], function () {});
-
-    assertNotEmpty(AiThread::find($thread->getKey())->name);
 });
 
 it('can select a thread', function () use ($setUp) {

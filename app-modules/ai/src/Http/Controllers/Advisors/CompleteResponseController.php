@@ -37,7 +37,7 @@
 namespace AdvisingApp\Ai\Http\Controllers\Advisors;
 
 use AdvisingApp\Ai\Http\Requests\Advisors\CompleteResponseRequest;
-use AdvisingApp\Ai\Jobs\Advisors\CompleteAdvisorMessage;
+use AdvisingApp\Ai\Jobs\Advisors\CompleteAdvisorResponse;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -61,7 +61,7 @@ class CompleteResponseController
                 ], 404);
             }
 
-            dispatch(new CompleteAdvisorMessage(
+            dispatch(new CompleteAdvisorResponse(
                 $thread,
             ));
 

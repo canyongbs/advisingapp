@@ -34,34 +34,24 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Actions\RetryMessage;
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Exceptions\AiAssistantArchivedException;
-use AdvisingApp\Ai\Exceptions\AiThreadLockedException;
+use AdvisingApp\Ai\Jobs\Advisors\RetryAdvisorMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use App\Models\User;
-use Mockery\MockInterface;
+use Illuminate\Support\Facades\Queue;
 
 use function Pest\Laravel\post;
 use function Tests\asSuperAdmin;
 
 it('retries sending a message to a thread', function () {
+    Queue::fake([
+        RetryAdvisorMessage::class,
+    ]);
+
     asSuperAdmin();
-
-    $responseContent = AiMessage::factory()->make()->content;
-
-    /** @phpstan-ignore-next-line */
-    $this->mock(
-        RetryMessage::class,
-        fn (MockInterface $mock) => $mock
-            ->shouldReceive('__invoke')->once()
-            ->andReturn(function () use ($responseContent) {
-                echo $responseContent;
-            }),
-    );
 
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
@@ -76,53 +66,14 @@ it('retries sending a message to a thread', function () {
         'content' => AiMessage::factory()->make()->content,
         'files' => [],
     ])
-        ->assertSuccessful()
-        ->assertStreamedContent($responseContent);
-});
+        ->assertSuccessful();
 
-it('returns a message if the assistant fails', function () {
-    asSuperAdmin();
-
-    /** @phpstan-ignore-next-line */
-    $this->mock(
-        RetryMessage::class,
-        fn (MockInterface $mock) => $mock
-            ->shouldReceive('__invoke')->once()
-            ->andThrow(new Exception('Failed to retry message')),
-    );
-
-    $thread = AiThread::factory()
-        ->for(AiAssistant::factory()->create([
-            'application' => AiAssistantApplication::Test,
-            'is_default' => true,
-            'model' => AiModel::Test,
-        ]), 'assistant')
-        ->for(auth()->user())
-        ->create();
-
-    post(route('ai.advisors.threads.messages.retry', ['thread' => $thread]), [
-        'content' => AiMessage::factory()->make()->content,
-        'files' => [],
-    ])
-        ->assertServiceUnavailable()
-        ->assertJson([
-            'message' => 'An error happened when sending your message.',
-        ]);
+    Queue::assertPushed(RetryAdvisorMessage::class);
 });
 
 it('returns a message if the thread is locked', function () {
     asSuperAdmin();
 
-    $exception = new AiThreadLockedException();
-
-    /** @phpstan-ignore-next-line */
-    $this->mock(
-        RetryMessage::class,
-        fn (MockInterface $mock) => $mock
-            ->shouldReceive('__invoke')->once()
-            ->andThrow($exception),
-    );
-
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
             'application' => AiAssistantApplication::Test,
@@ -130,7 +81,9 @@ it('returns a message if the thread is locked', function () {
             'model' => AiModel::Test,
         ]), 'assistant')
         ->for(auth()->user())
-        ->create();
+        ->create([
+            'locked_at' => now(),
+        ]);
 
     post(route('ai.advisors.threads.messages.retry', ['thread' => $thread]), [
         'content' => AiMessage::factory()->make()->content,
@@ -139,28 +92,19 @@ it('returns a message if the thread is locked', function () {
         ->assertServiceUnavailable()
         ->assertJson([
             'isThreadLocked' => true,
-            'message' => $exception->getMessage(),
+            'message' => 'The assistant is currently undergoing maintenance.',
         ]);
 });
 
 it('returns a message if the assistant is archived', function () {
     asSuperAdmin();
 
-    $exception = new AiAssistantArchivedException();
-
-    /** @phpstan-ignore-next-line */
-    $this->mock(
-        RetryMessage::class,
-        fn (MockInterface $mock) => $mock
-            ->shouldReceive('__invoke')->once()
-            ->andThrow($exception),
-    );
-
     $thread = AiThread::factory()
         ->for(AiAssistant::factory()->create([
             'application' => AiAssistantApplication::Test,
             'is_default' => true,
             'model' => AiModel::Test,
+            'archived_at' => now(),
         ]), 'assistant')
         ->for(auth()->user())
         ->create();
@@ -171,7 +115,7 @@ it('returns a message if the assistant is archived', function () {
     ])
         ->assertNotFound()
         ->assertJson([
-            'message' => $exception->getMessage(),
+            'message' => 'This assistant has been archived and is no longer available to use.',
         ]);
 });
 
