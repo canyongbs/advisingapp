@@ -36,15 +36,71 @@
 
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
-use Filament\Forms\Components\Select;
+use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftEngagementBlockWithAi;
+use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 
 class EngagementSmsBlock extends WorkflowActionBlock
 {
-    //TODO: implement
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->label('Text Message');
+
+        $this->schema($this->createFields());
+    }
+
+    /**
+     * @return array<int, Field|Section|Actions>
+     */
     public function generateFields(): array
     {
         return [
-            Select::make('temp'),
+            Hidden::make('channel')
+                ->default(NotificationChannel::Sms->value),
+            EngagementSmsBodyInput::make(context: 'create'),
+            Actions::make([
+                DraftEngagementBlockWithAi::make()
+                    ->channel(NotificationChannel::Sms)
+                    ->mergeTags([
+                        'recipient first name',
+                        'recipient last name',
+                        'recipient full name',
+                        'recipient email',
+                        'recipient preferred name',
+                    ]),
+            ]),
+            Section::make('How long after the previous step should this occur?')
+                ->schema([
+                    TextInput::make('days')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+                    TextInput::make('hours')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+                    TextInput::make('minutes')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+                ])
+                ->columns(3),
         ];
     }
 
