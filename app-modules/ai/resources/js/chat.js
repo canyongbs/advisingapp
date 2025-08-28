@@ -97,45 +97,54 @@ document.addEventListener('alpine:init', () => {
                         this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
                             marked.parse(this.rawIncomingResponse),
                         );
+                    })
+                    .listen('.advisor-message.finished', (event) => {
+                        this.isSendingMessage = !! event.rate_limit_resets_after_seconds
 
-                        if (event.isIncomplete) {
+                        if (event.is_incomplete) {
                             this.isIncomplete = true;
+
+                            return
                         }
-                    })
-                    .listen('.advisor-message.rate-limited', (event) => {
-                        this.error = event.message;
-                        this.isRateLimited = true;
 
-                        this.$nextTick(async () => {
-                            await new Promise((resolve) => setTimeout(resolve, event.retry_after_seconds * 1000));
+                        if (event.error) {
+                            this.error = event.error;
+                            this.isRetryable = true;
+                            this.isRateLimited = false;
 
-                            await this.handleMessageResponse({
-                                response: await fetch(
-                                    this.isCompletingPreviousResponse ? completeResponseUrl : retryMessageUrl,
-                                    {
-                                        method: 'POST',
-                                        headers: {
-                                            Accept: 'application/json',
-                                            'Content-Type': 'application/json',
-                                            'X-CSRF-TOKEN': csrfToken,
+                            return
+                        }
+
+                        if (event.rate_limit_resets_after_seconds) {
+                            this.error = 'Heavy traffic, just a few more moments...'
+                            this.isRateLimited = true;
+
+                            this.$nextTick(async () => {
+                                await new Promise((resolve) => setTimeout(resolve, event.rate_limit_resets_after_seconds * 1000));
+
+                                await this.handleResponse({
+                                    response: await fetch(
+                                        this.isCompletingPreviousResponse ? completeResponseUrl : retryMessageUrl,
+                                        {
+                                            method: 'POST',
+                                            headers: {
+                                                Accept: 'application/json',
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': csrfToken,
+                                            },
+                                            body: JSON.stringify(
+                                                !this.isCompletingPreviousResponse
+                                                    ? {
+                                                        content: this.latestMessage,
+                                                        files: this.$wire.files,
+                                                    }
+                                                    : {},
+                                            ),
                                         },
-                                        body: JSON.stringify(
-                                            !this.isCompletingPreviousResponse
-                                                ? {
-                                                      content: this.latestMessage,
-                                                      files: this.$wire.files,
-                                                  }
-                                                : {},
-                                        ),
-                                    },
-                                ),
+                                    ),
+                                });
                             });
-                        });
-                    })
-                    .listen('.advisor-message.error', (event) => {
-                        this.error = event.message;
-                        this.isRetryable = true;
-                        this.isRateLimited = false;
+                        }
                     });
 
                 this.isLoading = false;
@@ -150,7 +159,7 @@ document.addEventListener('alpine:init', () => {
                 });
             },
 
-            handleMessageResponse: async function ({ response }) {
+            handleResponse: async function ({ response }) {
                 if (!response.ok) {
                     const responseJson = await response.json();
 
@@ -163,10 +172,6 @@ document.addEventListener('alpine:init', () => {
                 }
 
                 this.hasSetUpNewMessageForResponse = false;
-
-                if (!this.isRateLimited) {
-                    this.isSendingMessage = false;
-                }
 
                 if (!this.isCompletingPreviousResponse) {
                     this.$wire.clearFiles();
@@ -213,7 +218,7 @@ document.addEventListener('alpine:init', () => {
                 this.$nextTick(async () => {
                     this.isCompletingPreviousResponse = false;
 
-                    await this.handleMessageResponse({
+                    await this.handleResponse({
                         response: await fetch(sendMessageUrl, {
                             method: 'POST',
                             headers: {
@@ -250,7 +255,7 @@ document.addEventListener('alpine:init', () => {
                 this.$nextTick(async () => {
                     this.isCompletingPreviousResponse = isOriginallyIncomplete;
 
-                    await this.handleMessageResponse({
+                    await this.handleResponse({
                         response: await fetch(retryMessageUrl, {
                             method: 'POST',
                             headers: {
@@ -277,7 +282,7 @@ document.addEventListener('alpine:init', () => {
                 this.$nextTick(async () => {
                     this.isCompletingPreviousResponse = true;
 
-                    await this.handleMessageResponse({
+                    await this.handleResponse({
                         response: await fetch(completeResponseUrl, {
                             method: 'POST',
                             headers: {
