@@ -41,8 +41,11 @@ use Exception;
 
 class CouldNotFindSmsMessageFromData extends Exception
 {
+    /**
+     * @param TwilioStatusCallbackData|array<string, mixed> $data
+     */
     public function __construct(
-        protected TwilioStatusCallbackData $data,
+        protected TwilioStatusCallbackData|array $data,
     ) {
         parent::__construct('Could not find an sms message from the given data.');
     }
@@ -55,7 +58,10 @@ class CouldNotFindSmsMessageFromData extends Exception
     public function context(): array
     {
         return [
-            'event_data' => $this->data->toArray(),
+            'event_data' => match (true) {
+                is_array($this->data) => $this->data,
+                $this->data instanceof TwilioStatusCallbackData => $this->data->toArray()
+            },
         ];
     }
 }

@@ -34,13 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Webhook\Enums;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsBlueprint;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-enum InboundWebhookSource: string
-{
-    case Twilio = 'twilio';
+return new class () extends SettingsMigration {
+    public function up(): void
+    {
+        $this->migrator->inGroup('twilio', function (SettingsBlueprint $blueprint): void {
+            try {
+                $blueprint->add('provider', 'twilio');
+            } catch (SettingAlreadyExists) {
+            }
 
-    case AwsSns = 'aws_sns';
+            try {
+                $blueprint->addEncrypted('telnyx_api_key');
+            } catch (SettingAlreadyExists) {
+            }
+        });
+    }
 
-    case Telnyx = 'telnyx';
-}
+    public function down(): void
+    {
+        $this->migrator->inGroup('twilio', function (SettingsBlueprint $blueprint): void {
+            $blueprint->delete('provider');
+            $blueprint->delete('telnyx_api_key');
+        });
+    }
+};

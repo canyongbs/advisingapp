@@ -34,62 +34,54 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Settings;
+namespace AdvisingApp\IntegrationTwilio\Jobs;
 
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioApiKey;
-use AdvisingApp\Notification\Enums\SmsMessagingProvider;
-use App\Settings\IntegrationSettings;
+use AdvisingApp\IntegrationAwsSesEventHandling\Exceptions\CouldNotFindSmsMessageFromData;
+use AdvisingApp\Notification\Enums\SmsMessageEventType;
+use AdvisingApp\Notification\Models\SmsMessage;
+use Exception;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
-/**
- * Though this is named TwilioSettings, it is actually used for messaging settings in general.
- * It is also used to store setting related to our other messaging option Telnyx.
- * Eventually we can rename / fix all of this to be seperate.
- */
-class TwilioSettings extends IntegrationSettings
+class ProcessTelnyxMessageStatusUpdate implements ShouldQueue
 {
-    public SmsMessagingProvider $provider = SmsMessagingProvider::Twilio;
+    use Queueable;
 
-    public bool $is_enabled = false;
+    /**
+     * @param array{
+     *     payload: array{
+     *         id: string,
+     *         to: array<array{status: string}>
+     *     },
+     *     occurred_at: string
+     * } $data
+     */
+    public function __construct(
+        protected array $data,
+    ) {}
 
-    public bool $is_demo_mode_enabled = false;
-
-    public bool $is_demo_auto_reply_mode_enabled = false;
-
-    public ?TwilioApiKey $api_key = null;
-
-    public ?string $account_sid = null;
-
-    public ?string $auth_token = null;
-
-    public ?string $from_number = null;
-
-    public ?string $telnyx_api_key = null;
-
-    public static function group(): string
+    public function handle(): void
     {
-        return 'twilio';
-    }
+        $smsMessage = SmsMessage::query()
+            ->where('external_reference_id', $this->data['payload']['id'])
+            ->first();
 
-    public static function encrypted(): array
-    {
-        return [
-            'api_key',
-            'account_sid',
-            'auth_token',
-            'from_number',
-            'telnyx_api_key',
-        ];
-    }
+        if (is_null($smsMessage)) {
+            report(new CouldNotFindSmsMessageFromData($this->data));
 
-    public function isConfigured(): bool
-    {
-        if ($this->is_demo_mode_enabled) {
-            return true;
+            return;
         }
 
-        return match ($this->provider) {
-            SmsMessagingProvider::Twilio => filled($this->account_sid) && filled($this->auth_token) && filled($this->from_number),
-            SmsMessagingProvider::Telnyx => filled($this->telnyx_api_key),
-        };
+        $smsMessage->events()->create([
+            'type' => match ($this->data['payload']['to'][0]['status']) {
+                'queued', 'sending' => SmsMessageEventType::Queued,
+                'sent' => SmsMessageEventType::Sent,
+                'delivered' => SmsMessageEventType::Delivered,
+                'sending_failed', 'delivery_failed', 'delivery_unconfirmed' => SmsMessageEventType::Failed,
+                default => throw new Exception('Unknown SMS message status'),
+            },
+            'payload' => $this->data,
+            'occurred_at' => $this->data['occurred_at'],
+        ]);
     }
 }

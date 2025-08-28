@@ -36,13 +36,14 @@
 
 namespace AdvisingApp\Notification\DataTransferObjects;
 
+use Telnyx\ApiResource;
 use Twilio\Rest\Api\V2010\Account\MessageInstance;
 
 class SmsChannelResultData extends NotificationResultData
 {
     public function __construct(
         public bool $success,
-        public ?MessageInstance $message = null,
+        public MessageInstance|ApiResource|null $message = null,
         public ?string $error = null,
     ) {}
 }

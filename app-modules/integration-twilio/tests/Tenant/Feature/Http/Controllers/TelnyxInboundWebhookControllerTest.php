@@ -34,13 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Webhook\Enums;
+use AdvisingApp\IntegrationTwilio\Jobs\ProcessTelnyxMessageReceived;
+use AdvisingApp\IntegrationTwilio\Jobs\ProcessTelnyxMessageStatusUpdate;
+use Illuminate\Support\Facades\Queue;
 
-enum InboundWebhookSource: string
-{
-    case Twilio = 'twilio';
+use function Pest\Laravel\post;
+use function Pest\Laravel\withoutMiddleware;
+use function Tests\loadFixtureFromModule;
 
-    case AwsSns = 'aws_sns';
+it('will dispatch the correct job for in inbound twilio webhook', function (string $job, string $payload) {
+    Queue::fake();
+    withoutMiddleware();
 
-    case Telnyx = 'telnyx';
-}
+    $response = post(
+        route('inbound.webhook.telnyx'),
+        loadFixtureFromModule('integration-twilio', $payload),
+    );
+
+    $response->assertNoContent();
+
+    Queue::assertPushed($job);
+})->with([
+    'message.finalized delivered' => [
+        ProcessTelnyxMessageStatusUpdate::class,
+        'Telnyx/StatusUpdates/delivered',
+    ],
+    'message.sent sent' => [
+        ProcessTelnyxMessageStatusUpdate::class,
+        'Telnyx/StatusUpdates/sent',
+    ],
+    'message.received' => [
+        ProcessTelnyxMessageReceived::class,
+        'Telnyx/MessageReceived/message_received',
+    ],
+]);

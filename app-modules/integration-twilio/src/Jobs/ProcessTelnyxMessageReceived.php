@@ -34,13 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Webhook\Enums;
+namespace AdvisingApp\IntegrationTwilio\Jobs;
 
-enum InboundWebhookSource: string
+use AdvisingApp\Engagement\Actions\CreateEngagementResponse;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+
+class ProcessTelnyxMessageReceived implements ShouldQueue
 {
-    case Twilio = 'twilio';
+    use Queueable;
 
-    case AwsSns = 'aws_sns';
+    /**
+     * @param array{payload: array{from: array{phone_number: string}, text: string}} $data
+     */
+    public function __construct(
+        protected array $data
+    ) {}
 
-    case Telnyx = 'telnyx';
+    public function handle(): void
+    {
+        $createEngagementResponse = resolve(CreateEngagementResponse::class);
+
+        $createEngagementResponse(EngagementResponseData::from([
+            'from' => $this->data['payload']['from']['phone_number'],
+            'body' => $this->data['payload']['text'],
+        ]));
+    }
 }

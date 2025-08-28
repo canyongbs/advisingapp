@@ -1,0 +1,66 @@
+{
+    "data": {
+        "event_type": "message.finalized",
+        "id": "4ee8c3a6-4995-4309-a3c6-38e3db9ea4be",
+        "occurred_at": "2019-12-09T21:32:14.148+00:00",
+        "payload": {
+            "completed_at": "2019-12-09T21:32:14.148+00:00",
+            "cost": {
+                "amount": "0.0051",
+                "currency": "USD"
+            },
+            "cost_breakdown": {
+                "carrier_fee": {
+                    "amount": "0.00305",
+                    "currency": "USD"
+                },
+                "rate": {
+                    "amount": "0.00205",
+                    "currency": "USD"
+                }
+            },
+            "direction": "outbound",
+            "encoding": "GSM-7",
+            "errors": [],
+            "from": {
+                "carrier": "T-Mobile USA",
+                "line_type": "Wireless",
+                "phone_number": "+13125000000",
+                "status": "webhook_delivered"
+            },
+            "id": "ac012cbf-5e09-46af-a69a-7c0e2d90993c",
+            "media": [],
+            "messaging_profile_id": "83d2343b-553f-4c5f-b8c8-fd27004f94bf",
+            "organization_id": "9d76d591-1b7d-405d-8c64-1320ee070245",
+            "parts": 1,
+            "received_at": "2019-12-09T21:32:13.552+00:00",
+            "record_type": "message",
+            "sent_at": "2019-12-09T21:32:13.596+00:00",
+            "tags": [
+                "tag-a",
+                "tag-b"
+            ],
+            "text": "Hello there!",
+            "to": [
+                {
+                    "carrier": "T-MOBILE USA, INC.",
+                    "line_type": "Wireless",
+                    "phone_number": "+13125000000",
+                    "status": "sending_failed"
+                }
+            ],
+            "type": "SMS",
+            "valid_until": "2019-12-09T22:32:13.552+00:00",
+            "webhook_failover_url": "",
+            "webhook_url": "http://webhook.site/af3a92e7-e150-442c-9fe6-61658ce26b1a",
+            "tcr_campaign_billable": true,
+            "tcr_campaign_id": "CNZO3VL",
+            "tcr_campaign_registered": "REGISTERED"
+        },
+        "record_type": "event"
+    },
+    "meta": {
+        "attempt": 1,
+        "delivered_to": "http://webhook.site/af3a92e7-e150-442c-9fe6-61658ce26b1a"
+    }
+}

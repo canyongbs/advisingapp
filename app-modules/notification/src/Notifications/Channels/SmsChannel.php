@@ -40,6 +40,7 @@ use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
+use AdvisingApp\Notification\Enums\SmsMessagingProvider;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\SmsMessage;
@@ -56,6 +57,8 @@ use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 use Talkroute\MessageSegmentCalculator\SegmentCalculator;
+use Telnyx\Message;
+use Telnyx\Telnyx;
 use Throwable;
 use Twilio\Exceptions\TwilioException;
 use Twilio\Rest\Api\V2010;
@@ -137,32 +140,10 @@ class SmsChannel
             throw_if($quotaUsage && (! $this->canSendWithinQuotaLimits($quotaUsage)), new NotificationQuotaExceeded());
 
             if (! $twilioSettings->is_demo_mode_enabled) {
-                $client = app(Client::class);
-
-                $messageContent = [
-                    'from' => $message->getFrom(),
-                    'body' => $message->getContent(),
-                ];
-
-                if (! app()->environment('local')) {
-                    $messageContent['statusCallback'] = config('app.url') . route('inbound.webhook.twilio', 'status_callback', false);
-                }
-
-                $result = SmsChannelResultData::from([
-                    'success' => false,
-                ]);
-
-                try {
-                    $message = $client->messages->create(
-                        config('local_development.twilio.to_number') ?: $recipientNumber,
-                        $messageContent,
-                    );
-
-                    $result->success = true;
-                    $result->message = $message;
-                } catch (TwilioException $exception) {
-                    $result->error = $exception->getMessage();
-                }
+                $result = match ($twilioSettings->provider) {
+                    SmsMessagingProvider::Twilio => $this->sendViaTwilio($message, $recipientNumber),
+                    SmsMessagingProvider::Telnyx => $this->sendViaTelnyx($message, $recipientNumber, $twilioSettings->telnyx_api_key),
+                };
             } else {
                 $result = SmsChannelResultData::from([
                     'success' => true,
@@ -184,7 +165,10 @@ class SmsChannel
             try {
                 if ($result->success) {
                     $smsMessage->quota_usage = $this->determineQuotaUsage($result, $smsMessage);
-                    $smsMessage->external_reference_id = $result->message->sid;
+                    $smsMessage->external_reference_id = match ($twilioSettings->provider) {
+                        SmsMessagingProvider::Twilio => $result->message->sid,
+                        SmsMessagingProvider::Telnyx => $result->message->id, // @phpstan-ignore property.notFound
+                    };
 
                     $smsMessage->events()->create([
                         'type' => $twilioSettings->is_demo_mode_enabled
@@ -228,6 +212,64 @@ class SmsChannel
         }
     }
 
+    protected function sendViaTwilio(TwilioMessage $message, mixed $recipientNumber): SmsChannelResultData
+    {
+        $client = app(Client::class);
+
+        $messageContent = [
+            'from' => $message->getFrom(),
+            'body' => $message->getContent(),
+        ];
+
+        if (! app()->environment('local')) {
+            $messageContent['statusCallback'] = config('app.url') . route('inbound.webhook.twilio', 'status_callback', false);
+        }
+
+        $result = SmsChannelResultData::from([
+            'success' => false,
+        ]);
+
+        try {
+            $message = $client->messages->create(
+                config('local_development.twilio.to_number') ?: $recipientNumber,
+                $messageContent,
+            );
+
+            $result->success = true;
+            $result->message = $message;
+        } catch (TwilioException $exception) {
+            $result->error = $exception->getMessage();
+        }
+
+        return $result;
+    }
+
+    protected function sendViaTelnyx(TwilioMessage $message, mixed $recipientNumber, ?string $apiKey): SmsChannelResultData
+    {
+        $result = SmsChannelResultData::from([
+            'success' => false,
+        ]);
+
+        try {
+            Telnyx::setApiKey($apiKey);
+
+            $message = Message::create([
+                'from' => $message->getFrom(),
+                'to' => config('local_development.twilio.to_number') ?: $recipientNumber,
+                'text' => $message->getContent(),
+                'webhook_url' => config('app.url') . route('inbound.webhook.twilio', 'status_callback', false),
+                'webhook_failover_url' => config('app.url') . route('inbound.webhook.twilio', 'status_callback', false),
+            ]);
+
+            $result->success = true;
+            $result->message = $message;
+        } catch (Throwable $exception) {
+            $result->error = $exception->getMessage();
+        }
+
+        return $result;
+    }
+
     protected function determineQuotaUsage(TwilioMessage | SmsChannelResultData $message, SmsMessage $smsMessage): int
     {
         if (app(TwilioSettings::class)->is_demo_mode_enabled) {
@@ -242,7 +284,8 @@ class SmsChannel
             return SegmentCalculator::segmentsCount($message->getContent());
         }
 
-        return $message->message->numSegments;
+        // It's numSegments for Twilio or parts for Telnyx
+        return $message->message->numSegments ?? $message->message->parts; // @phpstan-ignore property.notFound
     }
 
     protected function canSendWithinQuotaLimits(int $usage): bool

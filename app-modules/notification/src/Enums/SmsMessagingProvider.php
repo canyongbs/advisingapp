@@ -34,13 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Webhook\Enums;
+namespace AdvisingApp\Notification\Enums;
 
-enum InboundWebhookSource: string
+use Filament\Support\Contracts\HasLabel;
+
+enum SmsMessagingProvider: string implements HasLabel
 {
     case Twilio = 'twilio';
 
-    case AwsSns = 'aws_sns';
-
     case Telnyx = 'telnyx';
+
+    public function getLabel(): string
+    {
+        return $this->name;
+    }
 }

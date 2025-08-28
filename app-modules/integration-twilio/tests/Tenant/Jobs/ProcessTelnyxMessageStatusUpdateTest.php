@@ -34,13 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Webhook\Enums;
+use AdvisingApp\IntegrationTwilio\Jobs\ProcessTelnyxMessageStatusUpdate;
+use AdvisingApp\Notification\Enums\SmsMessageEventType;
+use AdvisingApp\Notification\Models\SmsMessage;
 
-enum InboundWebhookSource: string
-{
-    case Twilio = 'twilio';
+use function Tests\loadFixtureFromModule;
 
-    case AwsSns = 'aws_sns';
+it('will appropriately create a message event based on the payload received', function (string $payloadPath, SmsMessageEventType $expectedEventType) {
+    // Given that we have a sms message
+    /** @var SmsMessage $smsMessage */
+    $smsMessage = SmsMessage::factory()
+        ->create([
+            'external_reference_id' => 'ac012cbf-5e09-46af-a69a-7c0e2d90993c',
+        ]);
 
-    case Telnyx = 'telnyx';
-}
+    $job = new ProcessTelnyxMessageStatusUpdate(loadFixtureFromModule('integration-twilio', $payloadPath)['data']);
+    $job->handle();
+
+    $events = $smsMessage->events()->get();
+
+    // The proper event should have been created for our sms message
+    expect($events->count())->toBe(1);
+
+    expect($events->first()->type)->toBe($expectedEventType);
+})->with([
+    // No current tests for queued and sending as from what we have seen these don't seem to actually send webhook updates
+    ['Telnyx/StatusUpdates/sent', SmsMessageEventType::Sent],
+    ['Telnyx/StatusUpdates/delivered', SmsMessageEventType::Delivered],
+    ['Telnyx/StatusUpdates/sending_failed', SmsMessageEventType::Failed],
+    ['Telnyx/StatusUpdates/delivery_failed', SmsMessageEventType::Failed],
+    ['Telnyx/StatusUpdates/delivery_unconfirmed', SmsMessageEventType::Failed],
+]);

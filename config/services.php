@@ -105,4 +105,8 @@ return [
     'google_recaptcha' => [
         'url' => 'https://www.google.com/recaptcha/api/siteverify',
     ],
+
+    'telnyx' => [
+        'public_key' => env('TELNYX_PUBLIC_KEY'),
+    ],
 ];

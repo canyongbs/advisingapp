@@ -34,13 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Webhook\Enums;
+namespace App\Listeners;
 
-enum InboundWebhookSource: string
+use Telnyx\Telnyx;
+
+class ClearTelnyxStaticProperties
 {
-    case Twilio = 'twilio';
+    public function handle(object $event): void
+    {
+        Telnyx::$apiKey = '';
 
-    case AwsSns = 'aws_sns';
+        Telnyx::$clientId = '';
 
-    case Telnyx = 'telnyx';
+        Telnyx::$apiBase = 'https://api.telnyx.com';
+
+        Telnyx::$apiVersion = null;
+
+        Telnyx::$accountId = null;
+
+        Telnyx::$caBundlePath = null;
+
+        Telnyx::$verifySslCerts = true;
+
+        Telnyx::$appInfo = null;
+
+        Telnyx::$logger = null;
+
+        Telnyx::$maxNetworkRetries = 0;
+
+        Telnyx::$enableTelemetry = false;
+    }
 }

@@ -34,13 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Webhook\Enums;
+use AdvisingApp\IntegrationTwilio\Jobs\ProcessTelnyxMessageReceived;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-enum InboundWebhookSource: string
-{
-    case Twilio = 'twilio';
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
+use function Tests\loadFixtureFromModule;
 
-    case AwsSns = 'aws_sns';
+it('will not create an engagement response when it cannot find an associated message sender', function () {
+    $data = loadFixtureFromModule('integration-twilio', 'Telnyx/MessageReceived/message_received')['data'];
 
-    case Telnyx = 'telnyx';
-}
+    $job = new ProcessTelnyxMessageReceived($data);
+    $job->handle();
+
+    assertDatabaseMissing('engagement_responses', [
+        'content' => $data['payload']['text'],
+    ]);
+});
+
+it('will create an engagement response when a message is received', function () {
+    $data = loadFixtureFromModule('integration-twilio', 'Telnyx/MessageReceived/message_received')['data'];
+
+    $student = Student::factory()->create();
+    $studentPhoneNumber = $student->phoneNumbers()->create([
+        'number' => $data['payload']['from']['phone_number'],
+    ]);
+    $student->primaryPhoneNumber()->associate($studentPhoneNumber)->save();
+
+    $job = new ProcessTelnyxMessageReceived($data);
+
+    $job->handle();
+
+    assertDatabaseHas('engagement_responses', [
+        'sender_id' => $student->getKey(),
+        'sender_type' => (new Student())->getMorphClass(),
+        'content' => $data['payload']['text'],
+    ]);
+});
