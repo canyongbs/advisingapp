@@ -37,7 +37,6 @@
 namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
 
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
-use App\Features\AssociateTasksWithProjectsFeature;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Actions\AssociateAction;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -56,11 +55,6 @@ class ManageTasks extends ManageRelatedRecords
     public static function getNavigationLabel(): string
     {
         return 'Tasks';
-    }
-
-    public static function canAccess(array $parameters = []): bool
-    {
-        return AssociateTasksWithProjectsFeature::active() && parent::canAccess($parameters);
     }
 
     public function table(Table $table): Table
