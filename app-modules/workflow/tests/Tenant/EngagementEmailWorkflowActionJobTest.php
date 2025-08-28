@@ -62,10 +62,8 @@ it('executes email workflow step successfully', function () {
         ],
     ]);
 
-    $workflowRunStep = WorkflowRunStep::factory()->create([
+    $workflowRunStep = WorkflowRunStep::factory()->withDetails($emailDetails)->create([
         'workflow_run_id' => $workflowRun->id,
-        'details_type' => WorkflowEngagementEmailDetails::class,
-        'details_id' => $emailDetails->id,
         'execute_at' => now(),
     ]);
 
@@ -103,10 +101,8 @@ it('throws exception for non-email channel', function () {
         'channel' => NotificationChannel::Sms,
     ]);
 
-    $workflowRunStep = WorkflowRunStep::factory()->create([
+    $workflowRunStep = WorkflowRunStep::factory()->withDetails($emailDetails)->create([
         'workflow_run_id' => $workflowRun->id,
-        'details_type' => WorkflowEngagementEmailDetails::class,
-        'details_id' => $emailDetails->id,
         'execute_at' => now(),
     ]);
 
