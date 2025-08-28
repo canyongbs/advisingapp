@@ -66,12 +66,12 @@ class EngagementEmailBlock extends WorkflowActionBlock
         $this->schema($this->createFields());
     }
 
-    public function generateFields(string $fieldPrefix = ''): array
+    public function generateFields(): array
     {
         return [
-            Hidden::make($fieldPrefix . 'channel')
+            Hidden::make('channel')
                 ->default(NotificationChannel::Email->value),
-            TiptapEditor::make($fieldPrefix . 'subject')
+            TiptapEditor::make('subject')
                 ->label('Subject')
                 ->mergeTags($mergeTags = [
                     'recipient first name',
@@ -86,7 +86,7 @@ class EngagementEmailBlock extends WorkflowActionBlock
                 ->required()
                 ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                 ->columnSpanFull(),
-            TiptapEditor::make($fieldPrefix . 'body')
+            TiptapEditor::make('body')
                 ->disk('s3-public')
                 ->label('Body')
                 ->mergeTags($mergeTags = [
