@@ -48,7 +48,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Auth;
 use Throwable;
 
 class CompleteAdvisorMessage implements ShouldQueue
@@ -85,8 +84,6 @@ class CompleteAdvisorMessage implements ShouldQueue
 
         $aiService->ensureAssistantAndThreadExists($this->thread);
 
-        Auth::setUser($this->thread->user);
-
         try {
             $stream = $aiService->completeResponse($response);
         } catch (Throwable $exception) {
@@ -96,9 +93,6 @@ class CompleteAdvisorMessage implements ShouldQueue
                 $this->thread,
                 error: 'An error happened when sending your message.',
             ));
-        } finally {
-            // Reset the Auth user to avoid issues with subsequent jobs
-            Auth::logout();
         }
 
         $chunkBuffer = [];
