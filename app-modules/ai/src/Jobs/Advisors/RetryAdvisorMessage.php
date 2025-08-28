@@ -51,6 +51,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Throwable;
 
 class RetryAdvisorMessage implements ShouldQueue
 {
@@ -107,6 +108,13 @@ class RetryAdvisorMessage implements ShouldQueue
                 message: $message,
                 files: $this->files
             );
+        } catch (Throwable $exception) {
+            report($exception);
+
+            event(new AdvisorMessageFinished(
+                $this->thread,
+                error: 'An error happened when sending your message.',
+            ));
         } finally {
             // Reset the Auth user to avoid issues with subsequent jobs
             Auth::logout();
