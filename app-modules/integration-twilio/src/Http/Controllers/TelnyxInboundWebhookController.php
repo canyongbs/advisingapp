@@ -13,7 +13,6 @@ class TelnyxInboundWebhookController
 {
     public function __invoke(Request $request): Response
     {
-        // 1. Determine what kind of event this is
         $data = $request->toArray()['data'];
 
         throw_if(! isset($data['record_type']) || $data['record_type'] !== 'event', new Exception('Invalid Telnyx webhook record type'));
