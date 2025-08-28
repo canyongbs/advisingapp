@@ -36,7 +36,7 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators;
 
-use App\Filament\Concerns\SemesterSelectForOperator;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\Concerns\SemesterSelectForOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\EqualsOperator;
 
 class EqualsOperatorWithEnrollmentSemester extends EqualsOperator

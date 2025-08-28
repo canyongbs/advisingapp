@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Concerns;
+namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\Concerns;
 
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use Filament\Forms\Components\Select;
@@ -108,7 +108,7 @@ trait SemesterSelectForOperator
             $semesters = Arr::wrap($this->settings['semesters']);
 
             $concatenatedSemesters = implode(', ', $semesters);
-            $summary .= ' in "' . (count($semesters) > 1 ? 'semesters ' : 'semester ') . $concatenatedSemesters . '"';
+            $summary .= ' in ' . (count($semesters) > 1 ? 'semesters ' : 'semester ') . $concatenatedSemesters;
         }
 
         return $summary;
