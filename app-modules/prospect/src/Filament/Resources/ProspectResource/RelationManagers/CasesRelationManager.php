@@ -41,6 +41,7 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CreateCase;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ViewCase;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
+use AdvisingApp\Division\Models\Division;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
@@ -99,7 +100,14 @@ class CasesRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->modalHeading('Create new case'),
+                    ->modalHeading('Create new case')
+                    ->mutateFormDataUsing(function (array $data): array {
+                        $data['division_id'] = $data['division_id']
+                            ?? Division::where('is_default', true)->value('id')
+                            ?? Division::first()->getKey();
+
+                        return $data;
+                    }),
             ])
             ->actions([
                 ViewAction::make()
