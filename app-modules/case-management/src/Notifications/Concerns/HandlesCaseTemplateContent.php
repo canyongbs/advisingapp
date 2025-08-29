@@ -40,6 +40,7 @@ use AdvisingApp\CaseManagement\Actions\GenerateCaseTypeEmailTemplateContent;
 use AdvisingApp\CaseManagement\Actions\GenerateCaseTypeEmailTemplateSubject;
 use AdvisingApp\CaseManagement\Enums\CaseTypeEmailTemplateRole;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use App\Features\AssignedToMergeTagRenameFeatureFlag;
 use Illuminate\Support\HtmlString;
 
 trait HandlesCaseTemplateContent
@@ -80,15 +81,31 @@ trait HandlesCaseTemplateContent
      */
     public function getMergeData(): array
     {
+        $assignedToKey = AssignedToMergeTagRenameFeatureFlag::active() ? 'assigned staff name' : 'assigned to';
+
         return [
-            'case number' => $this->case->case_number,
-            'created date' => $this->case->created_at->format('d-m-Y H:i'),
-            'updated date' => $this->case->updated_at->format('d-m-Y H:i'),
-            'assigned to' => $this->case->respondent->full_name,
-            'status' => $this->case->status->name,
-            'type' => $this->case->priority->type->name,
-            'description' => $this->case->close_details,
+            ...['case number' => $this->case->case_number],
+            ...['created date' => $this->case->created_at->format('d-m-Y H:i')],
+            ...['updated date' => $this->case->updated_at->format('d-m-Y H:i')],
+            $assignedToKey => $this->case->assignedTo->user->name ?? 'Unassigned',
+            ...['status' => $this->case->status->name],
+            ...['type' => $this->case->priority->type->name],
+            ...['description' => $this->case->close_details],
         ];
+
+        // @todo AssignedToMergeTagRenameFeatureFlag:
+        // Once this feature flag is removed, delete the $assignedToKey line and the current return block.
+        // Then uncomment and use the return block below.
+
+        // return [
+        //     'case number' => $this->case->case_number,
+        //     'created date' => $this->case->created_at->format('d-m-Y H:i'),
+        //     'updated date' => $this->case->updated_at->format('d-m-Y H:i'),
+        //     'assigned staff name' => $this->case->assignedTo->user->name ?? 'Unassigned',
+        //     'status' => $this->case->status->name,
+        //     'type' => $this->case->priority->type->name,
+        //     'description' => $this->case->close_details,
+        // ];
     }
 
     /**

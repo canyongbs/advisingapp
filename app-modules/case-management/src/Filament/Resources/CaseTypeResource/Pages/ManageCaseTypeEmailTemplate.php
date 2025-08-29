@@ -43,6 +43,7 @@ use AdvisingApp\CaseManagement\Filament\Blocks\SurveyResponseEmailTemplateTakeSu
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
+use App\Features\AssignedToMergeTagRenameFeatureFlag;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -138,7 +139,15 @@ class ManageCaseTypeEmailTemplate extends EditRecord
                 ->placeholder('Enter the email subject here...')
                 ->extraInputAttributes(['style' => 'min-height: 2rem; overflow-y:none;'])
                 ->disableToolbarMenus()
-                ->mergeTags(['case number', 'created date', 'updated date', 'status', 'assigned to', 'type'])
+                // @todo AssignedToMergeTagRenameFeatureFlag:
+                // Once this feature flag is removed, replace the current mergeTags array with the
+                // static version below and remove the conditional:
+                // ->mergeTags(['case number', 'created date', 'updated date', 'status', 'assigned staff name', 'type'])
+                ->mergeTags([
+                    ...['case number', 'created date', 'updated date', 'status'],
+                    AssignedToMergeTagRenameFeatureFlag::active() ? 'assigned staff name' : 'assigned to',
+                    'type',
+                ])
                 ->showMergeTagsInBlocksPanel(false)
                 ->helperText('You may use “merge tags” to substitute information about a case into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags'),
 
@@ -147,7 +156,15 @@ class ManageCaseTypeEmailTemplate extends EditRecord
                 ->profile('email_template')
                 ->placeholder('Enter the email body here...')
                 ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                ->mergeTags(['case number', 'created date', 'updated date', 'status', 'assigned to', 'description', 'type'])
+                // @todo AssignedToMergeTagRenameFeatureFlag:
+                // Once this feature flag is removed, replace the current mergeTags array with the
+                // static version below and remove the conditional:
+                // ->mergeTags(['case number', 'created date', 'updated date', 'status', 'assigned staff name', 'description', 'type'])
+                ->mergeTags([
+                    ...['case number', 'created date', 'updated date', 'status'],
+                    AssignedToMergeTagRenameFeatureFlag::active() ? 'assigned staff name' : 'assigned to',
+                    ...['description', 'type'],
+                ])
                 ->blocks($role === CaseTypeEmailTemplateRole::Customer ? [] : [
                     CaseTypeEmailTemplateButtonBlock::class,
                     SurveyResponseEmailTemplateTakeSurveyButtonBlock::class,
