@@ -52,7 +52,6 @@ Route::prefix('api')
             ->name('forms.')
             ->group(function () {
                 Route::get('form-upload-url', [FormWidgetController::class, 'uploadFormFiles'])
-                    // ->middleware(['signed:relative'])
                     ->name('form-upload-url');
                 Route::get('/{form}', [FormWidgetController::class, 'view'])
                     ->middleware(['signed:relative'])

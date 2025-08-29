@@ -44,9 +44,6 @@ class UploadFormFieldBlock extends FormFieldBlock
 
     public string $rendered = 'form::blocks.submissions.upload';
 
-    //Don't use in filament
-    public static bool $internal = true;
-
     public static function type(): string
     {
         return 'upload';
@@ -67,7 +64,7 @@ class UploadFormFieldBlock extends FormFieldBlock
             'label' => $field->label,
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
-            'multiple' => true,
+            'multiple' => $field->config['multiple'] ?? true,
             'accept' => $field->config['accept'] ?? static::getExtensionsFull(),
             'limit' => $field->config['limit'] ?? 5,
             'size' => $field->config['size'] ?? null,
