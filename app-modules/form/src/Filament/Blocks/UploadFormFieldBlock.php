@@ -75,7 +75,6 @@ class UploadFormFieldBlock extends FormFieldBlock
         return [];
     }
 
-
     /**
      * @return array<int, string>
      */
