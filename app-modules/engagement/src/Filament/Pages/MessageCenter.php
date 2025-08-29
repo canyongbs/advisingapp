@@ -73,7 +73,7 @@ class MessageCenter extends Page
 
     protected static ?string $navigationGroup = 'CRM';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 50;
 
     protected array $modelsToTimeline = [
         Engagement::class,

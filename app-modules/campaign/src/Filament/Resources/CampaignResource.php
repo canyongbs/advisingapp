@@ -48,9 +48,9 @@ class CampaignResource extends Resource
 {
     protected static ?string $model = Campaign::class;
 
-    protected static ?string $navigationGroup = 'Automation';
+    protected static ?string $navigationGroup = 'CRM';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 30;
 
     public static function getRelations(): array
     {
