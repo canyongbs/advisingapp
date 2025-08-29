@@ -34,54 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Workflow\Database\Factories\WorkflowEngagementSmsDetailsFactory;
-use AdvisingApp\Workflow\Filament\Blocks\EngagementSmsBlock;
-use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
-use AdvisingApp\Workflow\Jobs\EngagementSmsWorkflowActionJob;
-use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
-
-/**
- * @mixin IdeHelperWorkflowEngagementSmsDetails
- */
-class WorkflowEngagementSmsDetails extends WorkflowDetails implements Auditable
-{
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    /** @use HasFactory<WorkflowEngagementSmsDetailsFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'channel',
-        'body',
-    ];
-
-    protected $casts = [
-        'channel' => NotificationChannel::class,
-        'body' => 'array',
-    ];
-
-    public function getLabel(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'Text Message';
+        Schema::table('workflow_engagement_sms_details', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('workflow_step_id');
+        });
     }
 
-    public function getBlock(): WorkflowActionBlock
+    public function down(): void
     {
-        return EngagementSmsBlock::make();
+        Schema::table('workflow_engagement_sms_details', function (Blueprint $table) {
+            $table->foreignUuid('workflow_step_id')->nullable()->constrained('workflow_steps');
+        });
     }
-
-    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
-    {
-        return new EngagementSmsWorkflowActionJob($workflowRunStep);
-    }
-}
+};
