@@ -257,8 +257,8 @@ class SmsChannel
                 'from' => $message->getFrom(),
                 'to' => config('local_development.twilio.to_number') ?: $recipientNumber,
                 'text' => $message->getContent(),
-                'webhook_url' => config('app.url') . route('inbound.webhook.twilio', 'status_callback', false),
-                'webhook_failover_url' => config('app.url') . route('inbound.webhook.twilio', 'status_callback', false),
+                'webhook_url' => config('app.url') . route('inbound.webhook.telnyx', absolute: false),
+                'webhook_failover_url' => null,
             ]);
 
             $result->success = true;
