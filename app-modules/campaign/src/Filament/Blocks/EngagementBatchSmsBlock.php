@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftCampaignEngagementBlockWithAi;
+use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftEngagementBlockWithAi;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -63,7 +63,7 @@ class EngagementBatchSmsBlock extends CampaignActionBlock
                 ->default(NotificationChannel::Sms->value),
             EngagementSmsBodyInput::make(context: 'create', fieldPrefix: $fieldPrefix),
             Actions::make([
-                DraftCampaignEngagementBlockWithAi::make()
+                DraftEngagementBlockWithAi::make()
                     ->channel(NotificationChannel::Sms)
                     ->mergeTags([
                         'recipient first name',

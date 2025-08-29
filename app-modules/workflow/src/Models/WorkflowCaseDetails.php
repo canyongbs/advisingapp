@@ -61,7 +61,6 @@ class WorkflowCaseDetails extends WorkflowDetails implements Auditable
         'assigned_to_id',
         'close_details',
         'res_details',
-        'workflow_step_id',
     ];
 
     public function getLabel(): string

@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Workflow\Models;
 
+use AdvisingApp\Workflow\Database\Factories\WorkflowRunFactory;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -51,6 +53,9 @@ class WorkflowRun extends BaseModel
 {
     use SoftDeletes;
     use HasUuids;
+
+    /** @use HasFactory<WorkflowRunFactory> */
+    use HasFactory;
 
     protected $fillable = [
         'workflow_trigger_id',

@@ -101,6 +101,9 @@ class EngagementEmailWorkflowActionJob extends ExecuteWorkflowActionJob
 
             $workflowRunStepRelated->save();
 
+            $this->workflowRunStep->succeeded_at = now();
+            $this->workflowRunStep->saveOrFail();
+
             DB::commit();
         } catch (Throwable $throw) {
             DB::rollBack();

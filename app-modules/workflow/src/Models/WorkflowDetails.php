@@ -68,7 +68,7 @@ abstract class WorkflowDetails extends BaseModel
     {
         $blocks = [
             //            CareTeamBlock::make(),
-            //            EngagementEmailBlock::make(),
+            EngagementEmailBlock::make(),
             //            EngagementSmsBlock::make(),
             //            InteractionBlock::make(),
             //            ProactiveAlertBlock::make(),

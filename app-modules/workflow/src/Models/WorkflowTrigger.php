@@ -37,9 +37,11 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Workflow\Database\Factories\WorkflowTriggerFactory;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -54,6 +56,9 @@ class WorkflowTrigger extends BaseModel implements Auditable
     use SoftDeletes;
     use AuditableTrait;
     use HasUuids;
+
+    /** @use HasFactory<WorkflowTriggerFactory> */
+    use HasFactory;
 
     protected $fillable = [
         'type',
