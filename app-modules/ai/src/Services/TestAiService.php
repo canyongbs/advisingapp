@@ -42,6 +42,8 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Services\Contracts\AiService;
+use AdvisingApp\Ai\Support\StreamingChunks\Finish;
+use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Research\Models\ResearchRequest;
@@ -101,7 +103,7 @@ class TestAiService implements AiService
         return true;
     }
 
-    public function sendMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
+    public function sendMessage(AiMessage $message, array $files): Closure
     {
         $message->context = fake()->paragraph();
         $message->save();
@@ -120,35 +122,21 @@ class TestAiService implements AiService
             $message->files()->saveMany($files);
         }
 
-        $responseContent = fake()->paragraph();
+        return function (): Generator {
+            yield new Text(fake()->paragraph());
 
-        return function () use ($responseContent, $saveResponse): Generator {
-            $response = new AiMessage();
-
-            yield $responseContent;
-
-            $response->content = $responseContent;
-
-            $saveResponse($response);
+            yield new Finish();
         };
     }
 
-    public function retryMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
+    public function retryMessage(AiMessage $message, array $files): Closure
     {
-        return $this->sendMessage($message, $files, $saveResponse);
+        return $this->sendMessage($message, $files);
     }
 
-    public function completeResponse(AiMessage $response, Closure $saveResponse): Closure
+    public function completeResponse(AiMessage $response): Closure
     {
-        $responseContent = fake()->paragraph();
-
-        return function () use ($response, $responseContent, $saveResponse) {
-            yield $responseContent;
-
-            $response->content .= $responseContent;
-
-            $saveResponse($response);
-        };
+        return $this->sendMessage($response, files: []);
     }
 
     public function getMaxAssistantInstructionsLength(): int

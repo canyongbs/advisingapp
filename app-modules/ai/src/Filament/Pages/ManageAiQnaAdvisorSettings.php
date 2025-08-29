@@ -48,7 +48,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Illuminate\Validation\Rule;
 
-class ManageAiQnaAdvisorSettings extends ManageAiICustomAdvisorSettings
+class ManageAiQnaAdvisorSettings extends ManageAiCustomAdvisorSettings
 {
     protected static string $settings = AiQnaAdvisorSettings::class;
 

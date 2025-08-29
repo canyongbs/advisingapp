@@ -38,8 +38,8 @@ namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
 use AdvisingApp\Ai\Actions\CreateThread;
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
-use AdvisingApp\Ai\Jobs\PrepareAiThreadCloning;
-use AdvisingApp\Ai\Jobs\PrepareAiThreadEmailing;
+use AdvisingApp\Ai\Jobs\Advisors\PrepareAiThreadCloning;
+use AdvisingApp\Ai\Jobs\Advisors\PrepareAiThreadEmailing;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Rules\RestrictSuperAdmin;

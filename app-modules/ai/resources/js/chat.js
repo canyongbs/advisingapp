@@ -47,25 +47,149 @@ document.addEventListener('alpine:init', () => {
             latestMessage: '',
             message: '',
             rawIncomingResponse: '',
+            pendingResponse: '',
             latestPrompt: null,
             messages: [],
             users: [],
+            hasSetUpNewMessageForResponse: false,
+            isCompletingPreviousResponse: false,
 
             init: async function () {
                 this.render();
 
                 setInterval(this.render.bind(this), 500);
 
+                setInterval(() => {
+                    if (/^\s*$/.test(this.pendingResponse)) {
+                        return;
+                    }
+
+                    const maxChunks = 2;
+                    let chunks = [];
+                    let pendingResponse = this.pendingResponse;
+
+                    const regex = /^(\s*\S+)/;
+
+                    while (chunks.length < maxChunks) {
+                        const match = pendingResponse.match(regex);
+                        if (!match) break;
+
+                        const chunk = match[0];
+                        chunks.push(chunk);
+                        pendingResponse = pendingResponse.slice(chunk.length);
+                    }
+
+                    if (chunks.length > 0) {
+                        const combined = chunks.join('');
+                        this.rawIncomingResponse += combined;
+                        this.pendingResponse = this.pendingResponse.slice(combined.length);
+
+                        if (this.messages.length > 0) {
+                            this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
+                                marked.parse(this.rawIncomingResponse),
+                            );
+                        }
+                    }
+                }, 50);
+
                 const showThreadResponse = await fetch(showThreadUrl, {
                     headers: {
                         Accept: 'application/json',
-                        'Content-Type': 'text/event-stream',
+                        'Content-Type': 'application/json',
                     },
                 });
 
                 const thread = await showThreadResponse.json();
                 this.messages = thread.messages;
                 this.users = thread.users;
+
+                Echo.private(`advisor-thread-${threadId}`)
+                    .listen('.advisor-message.chunk', (event) => {
+                        this.error = null;
+                        this.isRateLimited = false;
+
+                        if (!this.hasSetUpNewMessageForResponse) {
+                            if (!this.isCompletingPreviousResponse) {
+                                this.messages.push({
+                                    content: '',
+                                });
+
+                                this.rawIncomingResponse = '';
+                                this.pendingResponse = '';
+                            } else {
+                                if (this.rawIncomingResponse.endsWith('...')) {
+                                    this.rawIncomingResponse = this.rawIncomingResponse.slice(0, -3);
+                                }
+
+                                this.rawIncomingResponse += ' ';
+                            }
+
+                            this.hasSetUpNewMessageForResponse = true;
+                        }
+
+                        this.pendingResponse += event.content;
+                    })
+                    .listen('.advisor-message.finished', (event) => {
+                        if (this.pendingResponse) {
+                            this.rawIncomingResponse += this.pendingResponse;
+                            this.pendingResponse = '';
+
+                            if (this.messages.length > 0) {
+                                this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
+                                    marked.parse(this.rawIncomingResponse),
+                                );
+                            }
+                        }
+
+                        this.isSendingMessage = !!event.rate_limit_resets_after_seconds;
+
+                        if (event.is_incomplete) {
+                            this.isIncomplete = true;
+
+                            return;
+                        }
+
+                        if (event.error) {
+                            this.error = event.error;
+                            this.isRetryable = true;
+                            this.isRateLimited = false;
+
+                            return;
+                        }
+
+                        if (event.rate_limit_resets_after_seconds) {
+                            this.error = 'Heavy traffic, just a few more moments...';
+                            this.isRateLimited = true;
+
+                            this.$nextTick(async () => {
+                                await new Promise((resolve) =>
+                                    setTimeout(resolve, event.rate_limit_resets_after_seconds * 1000),
+                                );
+
+                                await this.handleResponse({
+                                    response: await fetch(
+                                        this.isCompletingPreviousResponse ? completeResponseUrl : retryMessageUrl,
+                                        {
+                                            method: 'POST',
+                                            headers: {
+                                                Accept: 'application/json',
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': csrfToken,
+                                            },
+                                            body: JSON.stringify(
+                                                !this.isCompletingPreviousResponse
+                                                    ? {
+                                                          content: this.latestMessage,
+                                                          files: this.$wire.files,
+                                                      }
+                                                    : {},
+                                            ),
+                                        },
+                                    ),
+                                });
+                            });
+                        }
+                    });
 
                 this.isLoading = false;
 
@@ -79,7 +203,7 @@ document.addEventListener('alpine:init', () => {
                 });
             },
 
-            handleMessageResponse: async function ({ response, isCompletingPreviousResponse }) {
+            handleResponse: async function ({ response }) {
                 if (!response.ok) {
                     const responseJson = await response.json();
 
@@ -91,98 +215,9 @@ document.addEventListener('alpine:init', () => {
                     return;
                 }
 
-                let hasSetUpNewMessageForResponse = false;
+                this.hasSetUpNewMessageForResponse = false;
 
-                const responseReader = response.body.pipeThrough(new TextDecoderStream()).getReader();
-
-                const readResponse = async () => {
-                    const { done, value } = await responseReader.read();
-
-                    if (done) {
-                        return;
-                    }
-
-                    this.parseEvents(value).forEach((event) => {
-                        if (event.type === 'content') {
-                            this.error = null;
-                            this.isRateLimited = false;
-
-                            if (!hasSetUpNewMessageForResponse) {
-                                if (!isCompletingPreviousResponse) {
-                                    this.messages.push({
-                                        content: '',
-                                    });
-
-                                    this.rawIncomingResponse = '';
-                                } else {
-                                    if (this.rawIncomingResponse.endsWith('...')) {
-                                        this.rawIncomingResponse = this.rawIncomingResponse.slice(0, -3);
-                                    }
-
-                                    this.rawIncomingResponse += ' ';
-                                }
-
-                                hasSetUpNewMessageForResponse = true;
-                            }
-
-                            this.rawIncomingResponse += new TextDecoder().decode(
-                                Uint8Array.from(atob(event.content), (m) => m.codePointAt(0)),
-                            );
-
-                            this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
-                                marked.parse(this.rawIncomingResponse),
-                            );
-
-                            if (event.incomplete) {
-                                this.isIncomplete = true;
-                            }
-                        } else if (event.type === 'rate_limited') {
-                            this.error = event.message;
-                            this.isRateLimited = true;
-
-                            this.$nextTick(async () => {
-                                await new Promise((resolve) => setTimeout(resolve, event.retry_after_seconds * 1000));
-
-                                await this.handleMessageResponse({
-                                    response: await fetch(
-                                        isCompletingPreviousResponse ? completeResponseUrl : retryMessageUrl,
-                                        {
-                                            method: 'POST',
-                                            headers: {
-                                                Accept: 'application/json',
-                                                'Content-Type': 'application/json',
-                                                'X-CSRF-TOKEN': csrfToken,
-                                            },
-                                            body: JSON.stringify(
-                                                !isCompletingPreviousResponse
-                                                    ? {
-                                                          content: this.latestMessage,
-                                                          files: this.$wire.files,
-                                                      }
-                                                    : {},
-                                            ),
-                                        },
-                                    ),
-                                    isCompletingPreviousResponse,
-                                });
-                            });
-                        } else if (['timeout', 'failed'].includes(event.type)) {
-                            this.error = event.message;
-                            this.isRetryable = true;
-                            this.isRateLimited = false;
-                        }
-                    });
-
-                    await readResponse();
-                };
-
-                await readResponse();
-
-                if (!this.isRateLimited) {
-                    this.isSendingMessage = false;
-                }
-
-                if (!isCompletingPreviousResponse) {
+                if (!this.isCompletingPreviousResponse) {
                     this.$wire.clearFiles();
                 }
 
@@ -225,7 +260,9 @@ document.addEventListener('alpine:init', () => {
                 }
 
                 this.$nextTick(async () => {
-                    await this.handleMessageResponse({
+                    this.isCompletingPreviousResponse = false;
+
+                    await this.handleResponse({
                         response: await fetch(sendMessageUrl, {
                             method: 'POST',
                             headers: {
@@ -260,7 +297,9 @@ document.addEventListener('alpine:init', () => {
                 this.$dispatch('message-sent', { threadId: threadId });
 
                 this.$nextTick(async () => {
-                    await this.handleMessageResponse({
+                    this.isCompletingPreviousResponse = isOriginallyIncomplete;
+
+                    await this.handleResponse({
                         response: await fetch(retryMessageUrl, {
                             method: 'POST',
                             headers: {
@@ -273,7 +312,6 @@ document.addEventListener('alpine:init', () => {
                                 files: this.$wire.files,
                             }),
                         }),
-                        isCompletingPreviousResponse: isOriginallyIncomplete,
                     });
                 });
             },
@@ -286,7 +324,9 @@ document.addEventListener('alpine:init', () => {
                 this.$dispatch('message-sent', { threadId: threadId });
 
                 this.$nextTick(async () => {
-                    await this.handleMessageResponse({
+                    this.isCompletingPreviousResponse = true;
+
+                    await this.handleResponse({
                         response: await fetch(completeResponseUrl, {
                             method: 'POST',
                             headers: {
@@ -295,7 +335,6 @@ document.addEventListener('alpine:init', () => {
                                 'X-CSRF-TOKEN': csrfToken,
                             },
                         }),
-                        isCompletingPreviousResponse: true,
                     });
                 });
             },
@@ -309,39 +348,6 @@ document.addEventListener('alpine:init', () => {
                     this.$refs.messageInput.style.height = '5rem';
                     this.$refs.messageInput.style.height = `min(${this.$refs.messageInput.scrollHeight}px, 25dvh)`;
                 }
-            },
-
-            parseEvents: function (encodedEvents) {
-                encodedEvents = encodedEvents
-                    .split('\n')
-                    .map((l) => l.trim())
-                    .join('');
-
-                let jsonObjectIndex = encodedEvents.indexOf('{');
-
-                let openJsonObjects = 0;
-
-                const events = [];
-
-                for (let i = jsonObjectIndex; i < encodedEvents.length; i++) {
-                    if (encodedEvents[i] === '{' && (i < 2 || encodedEvents.slice(i - 2, i) !== '\\"')) {
-                        openJsonObjects++;
-
-                        if (openJsonObjects === 1) {
-                            jsonObjectIndex = i;
-                        }
-                    } else if (encodedEvents[i] === '}' && (i < 2 || encodedEvents.slice(i - 2, i) !== '\\"')) {
-                        openJsonObjects--;
-
-                        if (openJsonObjects === 0) {
-                            events.push(JSON.parse(encodedEvents.substring(jsonObjectIndex, i + 1)));
-
-                            jsonObjectIndex = i + 1;
-                        }
-                    }
-                }
-
-                return events;
             },
         }),
     );

@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Research\Models\ResearchRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
@@ -59,6 +60,10 @@ Broadcast::channel('research-request-{researchRequestId}', function (User $user,
 
 Broadcast::channel('user-research-requests-{userId}', function (User $user, string $userId) {
     return User::find($userId)?->is($user);
+});
+
+Broadcast::channel('advisor-thread-{threadId}', function (User $user, string $threadId) {
+    return AiThread::find($threadId)?->user()->is($user);
 });
 
 Broadcast::channel('qna-advisor-chat-{chatId}', function () {
