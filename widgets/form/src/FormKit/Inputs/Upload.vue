@@ -50,7 +50,7 @@ const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginFileV
 const props = defineProps({
     context: Object,
 });
-console.log(props.context,'context');
+console.log(props.context, 'context');
 
 const field = ref(null);
 const uploadedFiles = ref([]);
