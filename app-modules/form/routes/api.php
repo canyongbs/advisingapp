@@ -37,6 +37,7 @@
 use AdvisingApp\Form\Http\Controllers\FormWidgetController;
 use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
+use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 Route::prefix('api')
@@ -50,6 +51,8 @@ Route::prefix('api')
         Route::prefix('forms')
             ->name('forms.')
             ->group(function () {
+                Route::get('form-upload-url', [FormWidgetController::class, 'uploadFormFiles'])
+                    ->name('form-upload-url');
                 Route::get('/{form}', [FormWidgetController::class, 'view'])
                     ->middleware(['signed:relative'])
                     ->name('define');

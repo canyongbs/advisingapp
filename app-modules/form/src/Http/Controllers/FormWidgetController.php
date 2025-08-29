@@ -58,7 +58,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
@@ -352,6 +354,25 @@ class FormWidgetController extends Controller
                     'authentication' => $authentication,
                 ],
                 absolute: false,
+            ),
+        ]);
+    }
+
+    public function uploadFormFiles(Request $request): JsonResponse
+    {
+        $this->validate($request, [
+            'filename' => ['required', 'string'],
+        ]);
+
+        $filename = sprintf('%s.%s', Str::uuid(), str($request->get('filename'))->afterLast('.'));
+        $path = "tmp/{$filename}";
+
+        return response()->json([
+            'filename' => $filename,
+            'path' => $path,
+            ...Storage::temporaryUploadUrl(
+                $path,
+                now()->addMinute(),
             ),
         ]);
     }
