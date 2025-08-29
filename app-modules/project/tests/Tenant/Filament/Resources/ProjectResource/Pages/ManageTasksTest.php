@@ -126,7 +126,7 @@ it('can list tasks', function () {
 
     $project = Project::factory()->create();
 
-    Task::factory()->count(5)->for($project)->concerningStudent(Student::factory()->create())->create();
+    Task::factory()->count(5)->for($project)->concerningStudent(Student::factory()->create())->create(['is_confidential' => false]);
 
     livewire(ManageTasks::class, [
         'record' => $project->getRouteKey(),

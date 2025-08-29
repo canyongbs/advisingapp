@@ -81,6 +81,7 @@ it('returns correct total student stats of students, alerts, segments and tasks 
             ]),
         'concern_type' => (new Student())->getMorphClass(),
         'created_at' => $startDate,
+        'is_confidential' => false,
     ])->create();
 
     $widget = new StudentsStats();
@@ -166,7 +167,7 @@ it('returns correct total student stats of students, alerts, cases and tasks bas
             Student::factory()->create(['last' => 'John']),
             'concern'
         )
-        ->create();
+        ->create(['is_confidential' => false]);
 
     Task::factory()
         ->count($count)
@@ -174,7 +175,7 @@ it('returns correct total student stats of students, alerts, cases and tasks bas
             Student::factory()->create(['last' => 'Doe']),
             'concern'
         )
-        ->create();
+        ->create(['is_confidential' => false]);
 
     $widget = new StudentsStats();
     $widget->cacheTag = 'report-student';

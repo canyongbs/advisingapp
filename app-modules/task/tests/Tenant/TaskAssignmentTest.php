@@ -44,7 +44,7 @@ beforeEach(function () {
 });
 
 it('sends the proper notification to the assigned User', function () {
-    $task = Task::factory()->assigned()->create();
+    $task = Task::factory()->assigned()->create(['is_confidential' => false]);
 
     Notification::assertSentTo($task->assignedTo, TaskAssignedToUserNotification::class);
 
@@ -66,7 +66,7 @@ it('it properly subscriptions the creator and assigned Users to the Subscribable
         ->recycle(User::factory()->create())
         ->assigned()
         ->concerningStudent()
-        ->create();
+        ->create(['is_confidential' => false]);
 
     expect($task->createdBy->id)->toBe($task->assignedTo->id);
 
@@ -78,7 +78,7 @@ it('it properly subscriptions the creator and assigned Users to the Subscribable
     $task = Task::factory()
         ->assigned()
         ->concerningProspect()
-        ->create();
+        ->create(['is_confidential' => false]);
 
     expect($task->createdBy->id)->not->toBe($task->assignedTo->id);
 

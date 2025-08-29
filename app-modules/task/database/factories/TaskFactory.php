@@ -59,6 +59,7 @@ class TaskFactory extends Factory
             'created_by' => User::factory(),
             'concern_id' => null,
             'concern_type' => null,
+            'is_confidential' => $this->faker->boolean(),
         ];
     }
 

@@ -48,7 +48,7 @@ use function Pest\Livewire\livewire;
 
 it('renders all students correctly in the retention dashboard', function () {
     $allStudents = Student::factory()->has(
-        Task::factory()->state(['status' => TaskStatus::Pending]),
+        Task::factory()->state(['status' => TaskStatus::Pending, 'is_confidential' => false]),
         'tasks'
     )->count(2)->create();
 

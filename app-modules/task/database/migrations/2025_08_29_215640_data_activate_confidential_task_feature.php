@@ -34,49 +34,17 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Filament\Widgets\TaskCumulativeCountLineChart;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Task\Enums\TaskStatus;
-use AdvisingApp\Task\Models\Task;
+use App\Features\ConfidentialTaskFeature;
+use Illuminate\Database\Migrations\Migration;
 
-it('returns correct cumulative task counts grouped by month within the given date range', function () {
-    $startDate = now()->subDays(90);
-    $endDate = now()->subDays(5);
+return new class () extends Migration {
+    public function up(): void
+    {
+        ConfidentialTaskFeature::activate();
+    }
 
-    $student = Student::factory()->create();
-    $prospect = Prospect::factory()->create();
-
-    Task::factory()->count(2)->state([
-        'concern_id' => $student->sisid,
-        'concern_type' => (new Student())->getMorphClass(),
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
-
-    Task::factory()->count(2)->state([
-        'concern_id' => $prospect->getKey(),
-        'concern_type' => (new Prospect())->getMorphClass(),
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
-
-    Task::factory()->count(2)->state([
-        'concern_id' => null,
-        'concern_type' => null,
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
-
-    $widgetInstance = new TaskCumulativeCountLineChart();
-    $widgetInstance->cacheTag = 'report-tasks';
-    $widgetInstance->filters = [
-        'startDate' => $startDate->toDateString(),
-        'endDate' => $endDate->toDateString(),
-    ];
-
-    expect($widgetInstance->getData())->toMatchSnapshot();
-});
+    public function down(): void
+    {
+        ConfidentialTaskFeature::deactivate();
+    }
+};

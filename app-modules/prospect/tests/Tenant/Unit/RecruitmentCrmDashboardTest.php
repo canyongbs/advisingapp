@@ -50,7 +50,7 @@ use function Pest\Livewire\livewire;
 
 it('renders all prospects correctly in the recruitment dashboard for the All tab', function () {
     $allProspects = Prospect::factory()->has(
-        Task::factory()->state(['status' => TaskStatus::Pending]),
+        Task::factory()->state(['status' => TaskStatus::Pending, 'is_confidential' => false]),
         'tasks'
     )->count(2)->create();
 
@@ -111,7 +111,7 @@ it('renders subscribed prospects correctly in the recruitment dashboard for the 
             'subscriptions'
         )
         ->has(
-            Task::factory()->state(['status' => TaskStatus::Pending]),
+            Task::factory()->state(['status' => TaskStatus::Pending, 'is_confidential' => false]),
             'tasks'
         )->count(2)->create();
 
@@ -147,7 +147,7 @@ it('renders care team prospects correctly in the recruitment dashboard for the C
             'careTeam'
         )
         ->has(
-            Task::factory()->state(['status' => TaskStatus::Pending]),
+            Task::factory()->state(['status' => TaskStatus::Pending, 'is_confidential' => false]),
             'tasks'
         )
         ->count(2)
