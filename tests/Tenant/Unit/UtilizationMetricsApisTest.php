@@ -290,7 +290,7 @@ it('checks the API returns Journey Steps Executed', function () {
 it('checks the API returns Tasks', function () {
     $randomRecords = random_int(1, 10);
 
-    Task::factory()->count($randomRecords)->create();
+    Task::factory()->count($randomRecords)->create(['is_confidential' => false]);
 
     $softDeleteTask = Task::factory()->create();
     $softDeleteTask->delete();
