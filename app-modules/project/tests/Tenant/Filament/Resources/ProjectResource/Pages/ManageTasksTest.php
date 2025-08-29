@@ -137,8 +137,8 @@ it('can list tasks', function () {
 it('does not list tasks already associated with a project in task search', function () {
     asSuperAdmin();
 
-    $projectOne = Project::factory()->create(['is_confidential' => false]);
-    $projectTwo = Project::factory()->create(['is_confidential' => false]);
+    $projectOne = Project::factory()->create();
+    $projectTwo = Project::factory()->create();
 
     $task = Task::factory()->for($projectOne)->concerningStudent(Student::factory()->create())->create();
 
