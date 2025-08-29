@@ -153,8 +153,39 @@ async function sendMessage() {
 </script>
 
 <template>
-    <div class="h-full bg-gray-50 dark:bg-gray-950">
-        <div v-show="sendMessageUrl !== null" class="flex flex-col gap-y-3 w-11/12 mx-auto">
+    <div class="h-full" style="--primary-50: 255, 251, 235; --primary-100: 254, 243, 199; --primary-200: 253, 230, 138; --primary-300: 252, 211, 77; --primary-400: 251, 191, 36; --primary-500: 245, 158, 11; --primary-600: 217, 119, 6; --primary-700: 180, 83, 9; --primary-800: 146, 64, 14; --primary-900: 120, 53, 15; --rounding-sm: 0.25rem; --rounding: 0.375rem; --rounding-md: 0.5rem; --rounding-lg: 0.75rem; --rounding-full: 9999px;">
+
+        <!-- <div v-if="!formSubmissionUrl"> -->
+        <div>
+            <FormKit type="form" @submit="authenticate" v-model="authentication">
+                <FormKit
+                    type="email"
+                    label="Your email address"
+                    name="email"
+                    validation="required|email"
+                    validation-visibility="submit"
+                    :disabled="authentication.isRequested"
+                />
+
+                <p v-if="authentication.requestedMessage" class="text-sm">
+                    {{ authentication.requestedMessage }}
+                </p>
+
+                <FormKit
+                    type="otp"
+                    digits="6"
+                    label="Authentication code"
+                    name="code"
+                    help="We've sent a code to your email address."
+                    validation="required"
+                    validation-visibility="submit"
+                    v-if="authentication.isRequested"
+                />
+            </FormKit>
+        </div>
+
+
+        <div v-show="sendMessageUrl !== null && true === false" class="flex flex-col gap-y-3 w-11/12 mx-auto">
             <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/qna-advisor/style.css'" />
             <div class="flex h-[calc(100dvh-16rem)] flex-col gap-y-3">
                 <div

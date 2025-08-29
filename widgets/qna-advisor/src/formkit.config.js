@@ -31,28 +31,17 @@
 
 </COPYRIGHT>
 */
-import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import App from './App.vue';
-import './widget.css';
-import { defaultConfig, plugin } from '@formkit/vue';
-import config from './formkit.config.js';
+import { genesisIcons } from '@formkit/icons';
+import { generateClasses } from '@formkit/themes';
+import inputs from './FormKit/Inputs/index';
+import theme from './FormKit/theme';
 
-customElements.define(
-    'qna-advisor-embed',
-    defineCustomElement({
-        setup(props) {
-            const app = createApp();
-
-            app.use(plugin, defaultConfig(config));
-
-            app.config.devtools = true;
-
-            const inst = getCurrentInstance();
-            Object.assign(inst.appContext, app._context);
-            Object.assign(inst.provides, app._context.provides);
-
-            return () => h(App, props);
-        },
-        props: ['url'],
-    }),
-);
+export default {
+    icons: {
+        ...genesisIcons,
+    },
+    inputs,
+    config: {
+        classes: generateClasses(theme),
+    },
+};
