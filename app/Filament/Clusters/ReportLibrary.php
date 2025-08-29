@@ -40,7 +40,7 @@ use Filament\Clusters\Cluster;
 
 class ReportLibrary extends Cluster
 {
-    protected static ?string $navigationGroup = 'Analytics';
+    protected static ?string $navigationGroup = 'Data and Analytics';
 
     protected static ?int $navigationSort = 10;
 }

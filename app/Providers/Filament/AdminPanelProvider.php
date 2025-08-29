@@ -172,16 +172,8 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-calendar-days')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Automation')
-                    ->icon('heroicon-o-bolt')
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label('Data')
+                    ->label('Data and Analytics')
                     ->icon('heroicon-o-circle-stack')
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label('Analytics')
-                    ->icon('heroicon-o-document-chart-bar')
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label('User Management')
