@@ -49,11 +49,6 @@ class UploadFormFieldBlock extends FormFieldBlock
         return 'upload';
     }
 
-    public function fields(): array
-    {
-        return [];
-    }
-
     /**
      * @return array<string, mixed>
      */
@@ -80,6 +75,10 @@ class UploadFormFieldBlock extends FormFieldBlock
         return [];
     }
 
+
+    /**
+     * @return array<int, string>
+     */
     public static function getExtensionsFull(): array
     {
         return collect(static::defaultMimes())
@@ -90,6 +89,9 @@ class UploadFormFieldBlock extends FormFieldBlock
             ->toArray();
     }
 
+    /**
+     * @return array<string, array<int, string>>
+     */
     public static function defaultMimes(): array
     {
         return [
