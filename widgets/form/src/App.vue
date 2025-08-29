@@ -146,7 +146,6 @@ async function getForm() {
     await fetch(props.url)
         .then((response) => response.json())
         .then((json) => {
-            console.log(json, 'json');
             if (json.error) {
                 throw new Error(json.error);
             }
