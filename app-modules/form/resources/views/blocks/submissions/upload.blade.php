@@ -36,15 +36,30 @@
     :$label
     :$isRequired
 >
-    @dd($response)
-    {{-- @if (filled($response ?? null))
+    <div class="flex flex-col space-y-2">
+    @foreach ($response as $file)
+        @php
+            $url = Storage::disk('s3')->temporaryUrl(
+                $file['path'],
+                now()->addMinutes(5),
+                [
+                    'ResponseContentDisposition' => 'attachment; filename="' . basename($file['path']) . '"',
+                ]
+            );
+        @endphp
         <a
-            href="{{ $response }}"
-            target="_blank"
+            href="{{ $url }}"
+            class="inline-flex items-center space-x-1 text-sm text-primary-600 hover:underline"
         >
-            {{ $response }}
+            <span>{{ $file['originalFileName'] }}</span>
+            <x-heroicon-s-arrow-down-tray class="h-4 w-4" />
         </a>
-    @else
-        <span class="text-gray-500">No response</span>
-    @endif --}}
+    @endforeach
+</div>
+
+@if (blank($response ?? null))
+    <span class="text-gray-500">No response</span>
+@endif
+
+
 </x-form::blocks.field-wrapper>

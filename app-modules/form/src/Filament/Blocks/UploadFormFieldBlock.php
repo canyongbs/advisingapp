@@ -42,6 +42,8 @@ class UploadFormFieldBlock extends FormFieldBlock
 {
     public ?string $icon = 'heroicon-m-document-arrow-up';
 
+    public string $rendered = 'form::blocks.submissions.upload';
+
     //Don't use in filament
     public static bool $internal = true;
 
@@ -65,11 +67,11 @@ class UploadFormFieldBlock extends FormFieldBlock
             'label' => $field->label,
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
-            'multiple' => $field->config['multiple'] ?? false,
+            'multiple' => true,
             'accept' => $field->config['accept'] ?? static::getExtensionsFull(),
             'limit' => $field->config['limit'] ?? 5,
             'size' => $field->config['size'] ?? null,
-            'uploadUrl' => '',
+            'uploadUrl' => route('forms.form-upload-url'),
         ];
     }
 

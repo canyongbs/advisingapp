@@ -32,6 +32,7 @@
 </COPYRIGHT>
 -->
 <script setup>
+import { createMessage } from '@formkit/core';
 import axios from 'axios';
 import { computed, nextTick, ref } from 'vue';
 import { consumer } from '../../../../../portals/resource-hub/src/Services/Consumer.js';
@@ -49,24 +50,23 @@ const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginFileV
 const props = defineProps({
     context: Object,
 });
+console.log(props.context,'context');
 
 const field = ref(null);
 const uploadedFiles = ref([]);
 const fileIndexCounter = ref(0);
-const uploadUrl = ref('');
-uploadUrl.value = props.context.uploadUrl;
 
 const serverOptions = computed(() => ({
     process: async (fieldName, file, metadata, load, error, progress, abort) => {
         const fileIndex = uploadedFiles.value.findIndex((f) => f.originalFileName === file.name);
         if (fileIndex !== -1) {
-            // props.context.node.store.set(
-            //     createMessage({
-            //         blocking: true,
-            //         key: `uploaded.${fileIndex}`,
-            //         value: `File already exists with name: ${file.name}.`,
-            //     }),
-            // );
+            props.context.node.store.set(
+                createMessage({
+                    blocking: true,
+                    key: `uploaded.${fileIndex}`,
+                    value: `File already exists with name: ${file.name}.`,
+                }),
+            );
             load();
             return;
         }
@@ -77,12 +77,8 @@ const serverOptions = computed(() => ({
             // const data = await get(props.context.uploadUrl, {
             //     params: { filename: file.name }
             // })
-            if (uploadUrl.value === undefined) {
-                const formId = getFormId();
-                uploadUrl.value = `/api/forms/form-upload-url`;
-            }
             const data = await axios
-                .get(uploadUrl.value, {
+                .get(props.context.uploadUrl, {
                     params: { filename: file.name },
                 })
                 .then(async (response) => {
@@ -110,7 +106,7 @@ const serverOptions = computed(() => ({
                     return null;
                 })
                 .finally(() => {
-                    // props.context.node.store.remove(`uploading.${index}`);
+                    props.context.node.store.remove(`uploading.${index}`);
                 });
 
             if (!data || !data.path) {
@@ -159,28 +155,6 @@ const serverOptions = computed(() => ({
     },
 }));
 
-const getFormId = () => {
-    // Try Vue Router first (if available)
-    try {
-        const route = useRoute?.();
-        if (route?.params?.id) {
-            return route.params.id;
-        }
-    } catch (e) {
-        // ignore if Vue Router not used
-    }
-
-    // Fallback: extract from URL path
-    const segments = window.location.pathname.split('/');
-    // URL looks like /forms/{id}/respond
-    if (segments.length >= 3 && segments[1] === 'forms') {
-        return segments[2];
-    }
-
-    console.error('Form ID not found in URL');
-    return null;
-};
-
 const handleFileAdd = (error, file) => {
     if (error) {
         console.error('Error adding file:', error);
@@ -190,13 +164,13 @@ const handleFileAdd = (error, file) => {
     const isDuplicate = uploadedFiles.value.some((existingFile) => existingFile.originalFileName === file.file.name);
 
     if (isDuplicate) {
-        // props.context.node.store.set(
-        //     createMessage({
-        //         blocking: true,
-        //         key: `Already exists.${file.file.name}`,
-        //         value: `The file "${file.file.name}" has already been uploaded.`,
-        //     }),
-        // );
+        props.context.node.store.set(
+            createMessage({
+                blocking: true,
+                key: `Already exists.${file.file.name}`,
+                value: `The file "${file.file.name}" has already been uploaded.`,
+            }),
+        );
         nextTick(() => {
             const pond = field.value;
             pond.removeFile(file.id);
