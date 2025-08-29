@@ -81,6 +81,7 @@ trait HandlesCaseTemplateContent
     public function getMergeData(): array
     {
         return [
+            'contact name' => $this->case->respondent->{$this->case->respondent::displayNameKey()},
             'case number' => $this->case->case_number,
             'created date' => $this->case->created_at->format('d-m-Y H:i'),
             'updated date' => $this->case->updated_at->format('d-m-Y H:i'),
