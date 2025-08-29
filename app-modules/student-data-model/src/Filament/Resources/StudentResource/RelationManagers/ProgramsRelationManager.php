@@ -289,7 +289,7 @@ class ProgramsRelationManager extends RelationManager
                     ->format('Y-m-d H:i:s')
                     ->displayFormat('Y-m-d H:i:s'),
                 DateTimePicker::make('graduation_dt')
-                    ->label('Graduration Date')
+                    ->label('Graduation Date')
                     ->closeOnDateSelection(),
                 TextInput::make('catalog_year')
                     ->label('Catalog Year'),
