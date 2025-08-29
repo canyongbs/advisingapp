@@ -31,28 +31,58 @@
 
 </COPYRIGHT>
 */
-import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import App from './App.vue';
-import './widget.css';
-import { defaultConfig, plugin } from '@formkit/vue';
-import config from './formkit.config.js';
+.responsive-grid-2 {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+}
 
-customElements.define(
-    'qna-advisor-embed',
-    defineCustomElement({
-        setup(props) {
-            const app = createApp();
+.responsive-grid-3 {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-6;
+}
 
-            app.use(plugin, defaultConfig(config));
+.responsive-grid-4 {
+    @apply grid grid-cols-1 md:grid-cols-4 gap-6;
+}
 
-            app.config.devtools = true;
+.responsive-grid-5 {
+    @apply grid grid-cols-1 md:grid-cols-5 gap-6;
+}
 
-            const inst = getCurrentInstance();
-            Object.assign(inst.appContext, app._context);
-            Object.assign(inst.provides, app._context.provides);
+.fixed-grid-2 {
+    @apply grid grid-cols-2 gap-6;
+}
 
-            return () => h(App, props);
-        },
-        props: ['url'],
-    }),
-);
+.fixed-grid-3 {
+    @apply grid grid-cols-3 gap-6;
+}
+
+.fixed-grid-4 {
+    @apply grid grid-cols-4 gap-6;
+}
+
+.fixed-grid-5 {
+    @apply grid grid-cols-5 gap-6;
+}
+
+.asymetric-grid-left-thirds,
+.asymetric-grid-right-thirds {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-6;
+}
+
+.asymetric-grid-left-fourths,
+.asymetric-grid-right-fourths {
+    @apply grid grid-cols-1 md:grid-cols-4 gap-6;
+}
+
+.grid-col {
+    @apply col-span-1;
+}
+
+.asymetric-grid-left-thirds > .grid-col:first-child,
+.asymetric-grid-right-thirds > .grid-col:last-child {
+    @apply md:col-span-2;
+}
+
+.asymetric-grid-left-fourths > .grid-col:first-child,
+.asymetric-grid-right-fourths > .grid-col:last-child {
+    @apply md:col-span-3;
+}
