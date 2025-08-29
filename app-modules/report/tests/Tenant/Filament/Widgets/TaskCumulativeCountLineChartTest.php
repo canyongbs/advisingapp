@@ -52,6 +52,7 @@ it('returns correct cumulative task counts grouped by month within the given dat
         'concern_type' => (new Student())->getMorphClass(),
         'status' => TaskStatus::Pending,
         'created_at' => $endDate,
+        'is_confidential' => false,
     ])->create();
 
     Task::factory()->count(2)->state([
@@ -59,6 +60,7 @@ it('returns correct cumulative task counts grouped by month within the given dat
         'concern_type' => (new Prospect())->getMorphClass(),
         'status' => TaskStatus::Pending,
         'created_at' => $endDate,
+        'is_confidential' => false,
     ])->create();
 
     Task::factory()->count(2)->state([
@@ -66,6 +68,7 @@ it('returns correct cumulative task counts grouped by month within the given dat
         'concern_type' => null,
         'status' => TaskStatus::Pending,
         'created_at' => $endDate,
+        'is_confidential' => false,
     ])->create();
 
     $widgetInstance = new TaskCumulativeCountLineChart();

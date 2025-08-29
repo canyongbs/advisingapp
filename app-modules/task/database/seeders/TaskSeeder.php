@@ -50,7 +50,7 @@ class TaskSeeder extends Seeder
             ->assigned(User::first())
             ->concerningStudent()
             ->pastDue()
-            ->create();
+            ->create(['is_confidential' => false]);
 
         // Past due, Prospect Concerned
         Task::factory()
@@ -58,7 +58,7 @@ class TaskSeeder extends Seeder
             ->assigned(User::first())
             ->concerningProspect()
             ->pastDue()
-            ->create();
+            ->create(['is_confidential' => false]);
 
         // Due Later, Student Concerned
         Task::factory()
@@ -66,7 +66,7 @@ class TaskSeeder extends Seeder
             ->assigned(User::first())
             ->concerningStudent()
             ->dueLater()
-            ->create();
+            ->create(['is_confidential' => false]);
 
         // Due Later, Prospect Concerned
         Task::factory()
@@ -74,26 +74,26 @@ class TaskSeeder extends Seeder
             ->assigned(User::first())
             ->concerningProspect()
             ->dueLater()
-            ->create();
+            ->create(['is_confidential' => false]);
 
         // Unassigned
         Task::factory()
             ->count(3)
             ->concerningStudent()
-            ->create();
+            ->create(['is_confidential' => false]);
 
         // Unassigned, Past Due
         Task::factory()
             ->count(3)
             ->concerningStudent()
             ->pastDue()
-            ->create();
+            ->create(['is_confidential' => false]);
 
         // Randomly assigned
         Task::factory()
             ->count(10)
             ->assigned()
             ->concerningStudent()
-            ->create();
+            ->create(['is_confidential' => false]);
     }
 }

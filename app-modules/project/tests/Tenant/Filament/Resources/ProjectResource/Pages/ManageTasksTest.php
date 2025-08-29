@@ -126,7 +126,7 @@ it('can list tasks', function () {
 
     $project = Project::factory()->create();
 
-    Task::factory()->count(5)->for($project)->concerningStudent(Student::factory()->create())->create();
+    Task::factory()->count(5)->for($project)->concerningStudent(Student::factory()->create())->create(['is_confidential' => false]);
 
     livewire(ManageTasks::class, [
         'record' => $project->getRouteKey(),
@@ -137,8 +137,8 @@ it('can list tasks', function () {
 it('does not list tasks already associated with a project in task search', function () {
     asSuperAdmin();
 
-    $projectOne = Project::factory()->create();
-    $projectTwo = Project::factory()->create();
+    $projectOne = Project::factory()->create(['is_confidential' => false]);
+    $projectTwo = Project::factory()->create(['is_confidential' => false]);
 
     $task = Task::factory()->for($projectOne)->concerningStudent(Student::factory()->create())->create();
 

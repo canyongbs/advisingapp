@@ -292,7 +292,7 @@ it('checks the API returns Tasks', function () {
 
     Task::factory()->count($randomRecords)->create(['is_confidential' => false]);
 
-    $softDeleteTask = Task::factory()->create();
+    $softDeleteTask = Task::factory()->create(['is_confidential' => false]);
     $softDeleteTask->delete();
 
     $response = get(route('utilization-metrics'));

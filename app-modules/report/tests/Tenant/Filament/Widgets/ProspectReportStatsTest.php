@@ -74,6 +74,7 @@ it('returns correct total prospect stats of prospects, alerts, segments and task
         'concern_id' => Prospect::factory(),
         'concern_type' => (new Prospect())->getMorphClass(),
         'created_at' => $startDate,
+        'is_confidential' => false,
     ])->create();
 
     $widget = new ProspectReportStats();
