@@ -89,7 +89,7 @@
         "livewire/livewire": "^3.6.1",
         "maatwebsite/excel": "^3.1",
         "microsoft/microsoft-graph": "^1.109",
-        "orrison/meliorstan": "^0.2.0",
+        "orrison/meliorstan": "^0.2.1",
         "owen-it/laravel-auditing": "^14.0",
         "php-mime-mail-parser/php-mime-mail-parser": "^9.0",
         "phpmd/phpmd": "^2.15",
