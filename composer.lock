@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8e410f67364882b1b7cfbf89356fb446",
+    "content-hash": "ee5883b0cfdecfa5f6035ac5499fedf2",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -10214,16 +10214,16 @@
         },
         {
             "name": "orrison/meliorstan",
-            "version": "v0.2.1",
+            "version": "v0.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Orrison/MeliorStan.git",
-                "reference": "c8241598dc587382c490142e43bdfd2cafa01101"
+                "reference": "6938d827c75724e8bb98191a8c9bc94a7145106b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Orrison/MeliorStan/zipball/c8241598dc587382c490142e43bdfd2cafa01101",
-                "reference": "c8241598dc587382c490142e43bdfd2cafa01101",
+                "url": "https://api.github.com/repos/Orrison/MeliorStan/zipball/6938d827c75724e8bb98191a8c9bc94a7145106b",
+                "reference": "6938d827c75724e8bb98191a8c9bc94a7145106b",
                 "shasum": ""
             },
             "require": {
@@ -10260,9 +10260,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Orrison/MeliorStan/issues",
-                "source": "https://github.com/Orrison/MeliorStan/tree/v0.2.1"
+                "source": "https://github.com/Orrison/MeliorStan/tree/v0.2.2"
             },
-            "time": "2025-08-31T02:54:39+00:00"
+            "time": "2025-08-31T04:08:18+00:00"
         },
         {
             "name": "owen-it/laravel-auditing",
