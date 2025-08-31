@@ -92,7 +92,6 @@
         "orrison/meliorstan": "^0.2.1",
         "owen-it/laravel-auditing": "^14.0",
         "php-mime-mail-parser/php-mime-mail-parser": "^9.0",
-        "phpmd/phpmd": "^2.15",
         "saade/filament-fullcalendar": "^3.2",
         "sentry/sentry-laravel": "^4.7",
         "shuvroroy/filament-spatie-laravel-health": "^2.1.0",
@@ -213,8 +212,7 @@
             "@php-cs-format"
         ],
         "lint": [
-            "./vendor/bin/phpstan analyse --memory-limit=2G",
-            "./vendor/bin/phpmd app/,app-modules/,database/,tests/,routes/ ansi phpmd.ruleset.xml --cache"
+            "./vendor/bin/phpstan analyse --memory-limit=2G"
         ],
         "checks": [
             "@format-dryrun",

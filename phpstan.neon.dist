@@ -6,7 +6,6 @@ includes:
     - ./vendor/orrison/meliorstan/config/extension.neon
 
 rules:
-    - CanyonGBS\Common\PhpStan\Rules\MissingClosureParameterTypehintRule
     - Orrison\MeliorStan\Rules\BooleanGetMethodName\BooleanGetMethodNameRule
     - Orrison\MeliorStan\Rules\CamelCaseMethodName\CamelCaseMethodNameRule
     - Orrison\MeliorStan\Rules\CamelCaseParameterName\CamelCaseParameterNameRule
@@ -44,7 +43,6 @@ parameters:
         boolean_get_method_name:
             check_parameterized_methods: true
         short_variable:
-            minimum_length: 3
             exceptions: [id,at,to,as]
         short_method_name:
             minimum_length: 2

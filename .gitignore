@@ -38,4 +38,3 @@ app-modules/**/resources/js/dist/*
 /.bash_history
 **/psysh_history
 .pdepend/
-.phpmd.result-cache.php
