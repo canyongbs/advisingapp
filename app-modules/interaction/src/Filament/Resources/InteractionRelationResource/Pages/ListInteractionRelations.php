@@ -37,8 +37,17 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource\Pages;
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
+use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -49,9 +58,76 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class ListInteractionRelations extends ListRecords
+class ListInteractionRelations extends ListRecords implements HasForms
 {
+    use InteractsWithForms;
+
     protected static string $resource = InteractionRelationResource::class;
+
+    public ?array $data = [];
+
+    protected static string $view = 'interaction::filament.pages.list-interaction-relations';
+
+    private ?InteractionManagementSettings $settings = null;
+
+    public function mount(): void
+    {
+        $this->form->fill([
+            'is_relation_enabled' => $this->getSettings()->is_relation_enabled,
+            'is_relation_required' => $this->getSettings()->is_relation_required,
+        ]);
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Section::make('Relation Settings')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Toggle::make('is_relation_enabled')
+                                    ->label('Enabled')
+                                    ->live()
+                                    ->afterStateUpdated(function ($state) {
+                                        $settings = $this->getSettings();
+                                        $settings->is_relation_enabled = $state;
+                                        $settings->save();
+
+                                        Notification::make()
+                                            ->title('Relation feature ' . ($state ? 'enabled' : 'disabled'))
+                                            ->body(
+                                                $state
+                                                    ? 'You can now create, view, and manage relations across interactions.'
+                                                    : 'Relations are hidden from all interactions (create, edit, view, and list).'
+                                            )
+                                            ->{ $state ? 'success' : 'warning' }()
+                                            ->send();
+                                    }),
+                                Toggle::make('is_relation_required')
+                                    ->label('Required')
+                                    ->live()
+                                    ->visible(fn (Get $get) => $get('is_relation_enabled'))
+                                    ->afterStateUpdated(function ($state) {
+                                        $settings = $this->getSettings();
+                                        $settings->is_relation_required = $state;
+                                        $settings->save();
+
+                                        Notification::make()
+                                            ->title('Relation requirement ' . ($state ? 'enabled' : 'disabled'))
+                                            ->body(
+                                                $state
+                                                ? 'Relations are now mandatory in all interactions (create, edit, view, and list).'
+                                                : 'Relations are now optional in interactions.'
+                                            )
+                                            ->{ $state ? 'success' : 'info' }()
+                                            ->send();
+                                    }),
+                            ]),
+                    ]),
+            ])
+            ->statePath('data');
+    }
 
     public function table(Table $table): Table
     {
@@ -84,5 +160,14 @@ class ListInteractionRelations extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    private function getSettings(): InteractionManagementSettings
+    {
+        if ($this->settings === null) {
+            $this->settings = app(InteractionManagementSettings::class);
+        }
+
+        return $this->settings;
     }
 }

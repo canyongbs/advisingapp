@@ -37,8 +37,17 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource\Pages;
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource;
+use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -49,9 +58,76 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class ListInteractionOutcomes extends ListRecords
+class ListInteractionOutcomes extends ListRecords implements HasForms
 {
+    use InteractsWithForms;
+
     protected static string $resource = InteractionOutcomeResource::class;
+
+    public ?array $data = [];
+
+    protected static string $view = 'interaction::filament.pages.list-interaction-outcomes';
+
+    private ?InteractionManagementSettings $settings = null;
+
+    public function mount(): void
+    {
+        $this->form->fill([
+            'is_outcome_enabled' => $this->getSettings()->is_outcome_enabled,
+            'is_outcome_required' => $this->getSettings()->is_outcome_required,
+        ]);
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Section::make('Outcome Settings')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Toggle::make('is_outcome_enabled')
+                                    ->label('Enabled')
+                                    ->live()
+                                    ->afterStateUpdated(function ($state) {
+                                        $settings = $this->getSettings();
+                                        $settings->is_outcome_enabled = $state;
+                                        $settings->save();
+
+                                        Notification::make()
+                                            ->title('Outcome feature ' . ($state ? 'enabled' : 'disabled'))
+                                            ->body(
+                                                $state
+                                                    ? 'You can now create, view, and manage outcomes across interactions.'
+                                                    : 'Outcomes are hidden from all interactions (create, edit, view, and list).'
+                                            )
+                                            ->{ $state ? 'success' : 'warning' }()
+                                            ->send();
+                                    }),
+                                Toggle::make('is_outcome_required')
+                                    ->label('Required')
+                                    ->live()
+                                    ->visible(fn (Get $get) => $get('is_outcome_enabled'))
+                                    ->afterStateUpdated(function ($state) {
+                                        $settings = $this->getSettings();
+                                        $settings->is_outcome_required = $state;
+                                        $settings->save();
+
+                                        Notification::make()
+                                            ->title('Outcome requirement ' . ($state ? 'enabled' : 'disabled'))
+                                            ->body(
+                                                $state
+                                                ? 'Outcomes are now mandatory in all interactions (create, edit, view, and list).'
+                                                : 'Outcomes are now optional in interactions.'
+                                            )
+                                            ->{ $state ? 'success' : 'info' }()
+                                            ->send();
+                                    }),
+                            ]),
+                    ]),
+            ])
+            ->statePath('data');
+    }
 
     public function table(Table $table): Table
     {
@@ -84,5 +160,14 @@ class ListInteractionOutcomes extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    private function getSettings(): InteractionManagementSettings
+    {
+        if ($this->settings === null) {
+            $this->settings = app(InteractionManagementSettings::class);
+        }
+
+        return $this->settings;
     }
 }

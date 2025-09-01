@@ -37,8 +37,17 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages;
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
+use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -49,9 +58,76 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class ListInteractionInitiatives extends ListRecords
+class ListInteractionInitiatives extends ListRecords implements HasForms
 {
+    use InteractsWithForms;
+
     protected static string $resource = InteractionInitiativeResource::class;
+
+    public ?array $data = [];
+
+    protected static string $view = 'interaction::filament.pages.list-interaction-initiatives';
+
+    private ?InteractionManagementSettings $settings = null;
+
+    public function mount(): void
+    {
+        $this->form->fill([
+            'is_initiative_enabled' => $this->getSettings()->is_initiative_enabled,
+            'is_initiative_required' => $this->getSettings()->is_initiative_required,
+        ]);
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Section::make('Initiative Settings')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Toggle::make('is_initiative_enabled')
+                                    ->label('Enabled')
+                                    ->live()
+                                    ->afterStateUpdated(function ($state) {
+                                        $settings = $this->getSettings();
+                                        $settings->is_initiative_enabled = $state;
+                                        $settings->save();
+
+                                        Notification::make()
+                                            ->title('Initiative feature ' . ($state ? 'enabled' : 'disabled'))
+                                            ->body(
+                                                $state
+                                                    ? 'You can now create, view, and manage initiatives across interactions.'
+                                                    : 'Initiatives are hidden from all interactions (create, edit, view, and list).'
+                                            )
+                                            ->{ $state ? 'success' : 'warning' }()
+                                            ->send();
+                                    }),
+                                Toggle::make('is_initiative_required')
+                                    ->label('Required')
+                                    ->live()
+                                    ->visible(fn (Get $get) => $get('is_initiative_enabled'))
+                                    ->afterStateUpdated(function ($state) {
+                                        $settings = $this->getSettings();
+                                        $settings->is_initiative_required = $state;
+                                        $settings->save();
+
+                                        Notification::make()
+                                            ->title('Initiative requirement ' . ($state ? 'enabled' : 'disabled'))
+                                            ->body(
+                                                $state
+                                                ? 'Initiatives are now mandatory in all interactions (create, edit, view, and list).'
+                                                : 'Initiatives are now optional in interactions.'
+                                            )
+                                            ->{ $state ? 'success' : 'info' }()
+                                            ->send();
+                                    }),
+                            ]),
+                    ]),
+            ])
+            ->statePath('data');
+    }
 
     public function table(Table $table): Table
     {
@@ -84,5 +160,14 @@ class ListInteractionInitiatives extends ListRecords
         return [
             CreateAction::make(),
         ];
+    }
+
+    private function getSettings(): InteractionManagementSettings
+    {
+        if ($this->settings === null) {
+            $this->settings = app(InteractionManagementSettings::class);
+        }
+
+        return $this->settings;
     }
 }

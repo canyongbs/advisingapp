@@ -47,6 +47,7 @@ use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
+use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Scopes\ExcludeConvertedProspects;
@@ -70,6 +71,8 @@ use Illuminate\Support\Carbon;
 class CreateInteraction extends CreateRecord
 {
     protected static string $resource = InteractionResource::class;
+
+    private ?InteractionManagementSettings $settings = null;
 
     public function form(Form $form): Form
     {
@@ -140,7 +143,8 @@ class CreateInteraction extends CreateRecord
                             ->relationship('initiative', 'name')
                             ->preload()
                             ->label('Initiative')
-                            ->required()
+                            ->required(fn () => $this->getSettings()->is_initiative_required)
+                            ->visible(fn () => $this->getSettings()->is_initiative_enabled)
                             ->default(
                                 fn () => InteractionInitiative::query()
                                     ->where('is_default', true)
@@ -152,13 +156,14 @@ class CreateInteraction extends CreateRecord
                             ->relationship('driver', 'name')
                             ->preload()
                             ->label('Driver')
+                            ->required(fn () => $this->getSettings()->is_driver_required)
+                            ->visible(fn () => $this->getSettings()->is_driver_enabled)
                             ->default(
                                 fn () => InteractionDriver::query()
                                     ->where('is_default', true)
                                     ->first()
                                     ?->getKey()
                             )
-                            ->required()
                             ->exists((new InteractionDriver())->getTable(), 'id'),
                         Select::make('division_id')
                             ->relationship('division', 'name')
@@ -175,7 +180,8 @@ class CreateInteraction extends CreateRecord
                                 ?->getKey())
                             ->preload()
                             ->label('Outcome')
-                            ->required()
+                            ->required(fn () => $this->getSettings()->is_outcome_required)
+                            ->visible(fn () => $this->getSettings()->is_outcome_enabled)
                             ->exists((new InteractionOutcome())->getTable(), 'id'),
                         Select::make('interaction_relation_id')
                             ->relationship('relation', 'name')
@@ -185,7 +191,8 @@ class CreateInteraction extends CreateRecord
                                 ?->getKey())
                             ->preload()
                             ->label('Relation')
-                            ->required()
+                            ->required(fn () => $this->getSettings()->is_relation_required)
+                            ->visible(fn () => $this->getSettings()->is_relation_enabled)
                             ->exists((new InteractionRelation())->getTable(), 'id'),
                         Select::make('interaction_status_id')
                             ->relationship('status', 'name')
@@ -195,7 +202,8 @@ class CreateInteraction extends CreateRecord
                                 ?->getKey())
                             ->preload()
                             ->label('Status')
-                            ->required()
+                            ->required(fn () => $this->getSettings()->is_status_required)
+                            ->visible(fn () => $this->getSettings()->is_status_enabled)
                             ->exists((new InteractionStatus())->getTable(), 'id'),
                         Select::make('interaction_type_id')
                             ->relationship('type', 'name')
@@ -207,7 +215,8 @@ class CreateInteraction extends CreateRecord
                                     ?->getKey()
                             )
                             ->label('Type')
-                            ->required()
+                            ->required(fn () => $this->getSettings()->is_type_required)
+                            ->visible(fn () => $this->getSettings()->is_type_enabled)
                             ->exists((new InteractionType())->getTable(), 'id'),
                     ]),
                 Fieldset::make('Time')
@@ -249,5 +258,14 @@ class CreateInteraction extends CreateRecord
                         auth()->user()->hasLicense(LicenseType::ConversationalAi)
                     ),
             ]);
+    }
+
+    private function getSettings(): InteractionManagementSettings
+    {
+        if ($this->settings === null) {
+            $this->settings = app(InteractionManagementSettings::class);
+        }
+
+        return $this->settings;
     }
 }

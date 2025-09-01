@@ -37,8 +37,17 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages;
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
+use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -49,9 +58,76 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class ListInteractionDrivers extends ListRecords
+class ListInteractionDrivers extends ListRecords implements HasForms
 {
+    use InteractsWithForms;
+
     protected static string $resource = InteractionDriverResource::class;
+
+    public ?array $data = [];
+
+    protected static string $view = 'interaction::filament.pages.list-interaction-drivers';
+
+    private ?InteractionManagementSettings $settings = null;
+
+    public function mount(): void
+    {
+        $this->form->fill([
+            'is_driver_enabled' => $this->getSettings()->is_driver_enabled,
+            'is_driver_required' => $this->getSettings()->is_driver_required,
+        ]);
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Section::make('Driver Settings')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Toggle::make('is_driver_enabled')
+                                    ->label('Enabled')
+                                    ->live()
+                                    ->afterStateUpdated(function ($state) {
+                                        $settings = $this->getSettings();
+                                        $settings->is_driver_enabled = $state;
+                                        $settings->save();
+
+                                        Notification::make()
+                                            ->title('Driver feature ' . ($state ? 'enabled' : 'disabled'))
+                                            ->body(
+                                                $state
+                                                    ? 'You can now create, view, and manage drivers across interactions.'
+                                                    : 'Drivers are hidden from all interactions (create, edit, view, and list).'
+                                            )
+                                            ->{ $state ? 'success' : 'warning' }()
+                                            ->send();
+                                    }),
+                                Toggle::make('is_driver_required')
+                                    ->label('Required')
+                                    ->live()
+                                    ->visible(fn (Get $get) => $get('is_driver_enabled'))
+                                    ->afterStateUpdated(function ($state) {
+                                        $settings = $this->getSettings();
+                                        $settings->is_driver_required = $state;
+                                        $settings->save();
+
+                                        Notification::make()
+                                            ->title('Driver requirement ' . ($state ? 'enabled' : 'disabled'))
+                                            ->body(
+                                                $state
+                                                ? 'Drivers are now mandatory in all interactions (create, edit, view, and list).'
+                                                : 'Drivers are now optional in interactions.'
+                                            )
+                                            ->{ $state ? 'success' : 'info' }()
+                                            ->send();
+                                    }),
+                            ]),
+                    ]),
+            ])
+            ->statePath('data');
+    }
 
     public function table(Table $table): Table
     {
@@ -84,5 +160,14 @@ class ListInteractionDrivers extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    private function getSettings(): InteractionManagementSettings
+    {
+        if ($this->settings === null) {
+            $this->settings = app(InteractionManagementSettings::class);
+        }
+
+        return $this->settings;
     }
 }
