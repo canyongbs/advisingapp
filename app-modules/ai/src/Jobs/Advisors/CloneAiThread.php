@@ -95,8 +95,6 @@ class CloneAiThread implements ShouldQueue
             $this->thread->cloned_count = $this->thread->cloned_count + 1;
             $this->thread->save();
 
-            $aiService->ensureAssistantAndThreadExists($threadReplica);
-
             $threadReplica->locked_at = null;
             $threadReplica->save();
 

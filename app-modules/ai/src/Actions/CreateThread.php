@@ -61,9 +61,6 @@ class CreateThread
         $thread = new AiThread();
         $thread->assistant()->associate($assistant);
         $thread->user()->associate(auth()->user());
-
-        $thread->assistant->model->getService()->createThread($thread);
-
         $thread->save();
 
         return $thread;
@@ -96,9 +93,6 @@ class CreateThread
         $assistant->application = $application;
         $assistant->model = $application->getDefaultModel();
         $assistant->is_default = true;
-
-        $assistant->model->getService()->createAssistant($assistant);
-
         $assistant->save();
 
         return $assistant;

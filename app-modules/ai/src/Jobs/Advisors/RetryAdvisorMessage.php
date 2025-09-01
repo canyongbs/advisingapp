@@ -95,8 +95,6 @@ class RetryAdvisorMessage implements ShouldQueue
 
         $aiService = $this->thread->assistant->model->getService();
 
-        $aiService->ensureAssistantAndThreadExists($this->thread);
-
         $response = new AiMessage();
         $response->thread()->associate($this->thread);
 

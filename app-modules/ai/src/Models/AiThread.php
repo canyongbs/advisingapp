@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 use AdvisingApp\Ai\Events\AiThreadTrashed;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use App\Models\BaseModel;
@@ -78,7 +77,6 @@ class AiThread extends BaseModel implements Wireable
 
     protected $dispatchesEvents = [
         'trashed' => AiThreadTrashed::class,
-        'forceDeleting' => AiThreadForceDeleting::class,
     ];
 
     /**

@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService;
-use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
 use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -82,13 +81,10 @@ class UploadFileForParsing
             ?->model
             ->getService();
 
-        if ($service instanceof BaseOpenAiService || $service instanceof BaseOpenAiResponsesService) {
+        if ($service instanceof BaseOpenAiResponsesService) {
             $deploymentName = $service->getModel();
             $baseUri = rtrim($service->getDeployment(), '/v1');
-            $apiVersion = match (true) {
-                $service instanceof BaseOpenAiResponsesService => '2024-05-01-preview',
-                default => $service->getApiVersion(),
-            };
+            $apiVersion = '2024-05-01-preview';
 
             $data['vendor_multimodal_model_name'] = 'custom-azure-model';
             $data['azure_openai_deployment_name'] = $deploymentName;

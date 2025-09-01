@@ -286,13 +286,6 @@ it('does not match an assistant if it is not marked as default', function () {
 it('creates a new assistant if no default assistant exists', function () {
     asSuperAdmin();
 
-    /** @phpstan-ignore-next-line */
-    $this->mock(
-        TestAiService::class,
-        fn (MockInterface $mock) => $mock
-            ->shouldReceive('createAssistant', 'createThread')->once(),
-    );
-
     $thread = app(CreateThread::class)(AiAssistantApplication::Test);
 
     $tenant = Tenant::current();

@@ -49,7 +49,6 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
-use Throwable;
 
 class EditAiAssistant extends EditRecord
 {
@@ -132,25 +131,6 @@ class EditAiAssistant extends EditRecord
         if (! $settings->allow_selection_of_model) {
             $record->model = $settings->preselected_model ?? $record->model;
         }
-
-        $aiService = $record->model->getService();
-
-        try {
-            $aiService->isAssistantExisting($record) ?
-                $aiService->updateAssistant($record) :
-                $aiService->createAssistant($record);
-        } catch (Throwable $exception) {
-            report($exception);
-
-            Notification::make()
-                ->title('Could not save assistant')
-                ->body('We failed to connect to the AI service. Support has been notified about this problem. Please try again later.')
-                ->danger()
-                ->send();
-
-            $this->halt();
-        }
-
         $record->save();
 
         if (filled($data['uploaded_files'] ?? null)) {

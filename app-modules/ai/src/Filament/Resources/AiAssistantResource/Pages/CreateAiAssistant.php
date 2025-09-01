@@ -43,10 +43,8 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
 use Exception;
 use Filament\Forms\Form;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
-use Throwable;
 
 class CreateAiAssistant extends CreateRecord
 {
@@ -73,23 +71,6 @@ class CreateAiAssistant extends CreateRecord
         if (! $settings->allow_selection_of_model) {
             $record->model = $settings->preselected_model ?? $record->model;
         }
-
-        $aiService = $record->model->getService();
-
-        try {
-            $aiService->createAssistant($record);
-        } catch (Throwable $exception) {
-            report($exception);
-
-            Notification::make()
-                ->title('Could not create assistant')
-                ->body('We failed to connect to the AI service. Support has been notified about this problem. Please try again later.')
-                ->danger()
-                ->send();
-
-            $this->halt();
-        }
-
         $record->save();
 
         if (filled($data['uploaded_files'] ?? null)) {

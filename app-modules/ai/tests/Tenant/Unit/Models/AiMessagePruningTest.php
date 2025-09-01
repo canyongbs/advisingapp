@@ -37,7 +37,6 @@
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use Illuminate\Database\Console\PruneCommand;
-use Illuminate\Support\Facades\Event;
 
 use function Pest\Laravel\artisan;
 use function PHPUnit\Framework\assertNull;
@@ -45,8 +44,6 @@ use function PHPUnit\Framework\assertTrue;
 
 it('properly prunes AiMessage models', function (AiMessage $message, bool $shouldPrune) {
     assertTrue($message->exists);
-
-    Event::fake();
 
     artisan(PruneCommand::class, [
         '--model' => AiMessage::class,

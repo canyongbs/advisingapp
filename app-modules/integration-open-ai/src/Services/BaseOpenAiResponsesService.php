@@ -40,19 +40,13 @@ use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
-use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\Ai\Support\StreamingChunks\Finish;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
-use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\AssistantsDataTransferObject;
-use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
-use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
-use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService\Concerns\InteractsWithResearchRequests;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService\Concerns\InteractsWithVectorStores;
@@ -78,7 +72,6 @@ use Throwable;
 
 abstract class BaseOpenAiResponsesService implements AiService
 {
-    use HasAiServiceHelpers;
     use InteractsWithVectorStores;
     use InteractsWithResearchRequests;
 
@@ -409,67 +402,6 @@ abstract class BaseOpenAiResponsesService implements AiService
         return $limit;
     }
 
-    public function createAssistant(AiAssistant $assistant): void {}
-
-    public function updateAssistant(AiAssistant $assistant): void {}
-
-    public function retrieveAssistant(AiAssistant $assistant): ?AssistantsDataTransferObject
-    {
-        return null;
-    }
-
-    /**
-     * @param array<string> $tools
-     */
-    public function updateAssistantTools(AiAssistant $assistant, array $tools): void {}
-
-    public function enableAssistantFileUploads(AiAssistant $assistant): void
-    {
-        throw new FileUploadsCannotBeEnabled();
-    }
-
-    public function disableAssistantFileUploads(AiAssistant $assistant): void
-    {
-        throw new FileUploadsCannotBeDisabled();
-    }
-
-    public function createThread(AiThread $thread): void {}
-
-    public function retrieveThread(AiThread $thread): ?ThreadsDataTransferObject
-    {
-        return null;
-    }
-
-    /**
-     * @param array<string, mixed> $parameters
-     */
-    public function modifyThread(AiThread $thread, array $parameters): ?ThreadsDataTransferObject
-    {
-        return null;
-    }
-
-    public function deleteThread(AiThread $thread): void {}
-
-    public function isAssistantExisting(AiAssistant $assistant): bool
-    {
-        return true;
-    }
-
-    public function isThreadExisting(AiThread $thread): bool
-    {
-        return true;
-    }
-
-    public function supportsMessageFileUploads(): bool
-    {
-        return true;
-    }
-
-    public function supportsAssistantFileUploads(): bool
-    {
-        return true;
-    }
-
     /**
      * @param array<AiFile> $files
      */
@@ -497,6 +429,8 @@ abstract class BaseOpenAiResponsesService implements AiService
     {
         return true;
     }
+
+    abstract public function getDeployment(): ?string;
 
     public function getDeploymentHash(): string
     {

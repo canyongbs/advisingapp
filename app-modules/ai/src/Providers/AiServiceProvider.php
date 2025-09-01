@@ -38,13 +38,9 @@ namespace AdvisingApp\Ai\Providers;
 
 use AdvisingApp\Ai\AiPlugin;
 use AdvisingApp\Ai\Events\AiMessageCreated;
-use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
 use AdvisingApp\Ai\Events\AiMessageTrashed;
-use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 use AdvisingApp\Ai\Events\AiThreadTrashed;
-use AdvisingApp\Ai\Events\AssistantFilesFinishedUploading;
 use AdvisingApp\Ai\Listeners\ClearQnaAdvisorInstructionsCacheOnGlobalSettingsUpdate;
-use AdvisingApp\Ai\Listeners\HandleAssistantFilesFinishedUploading;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Models\AiMessage;
@@ -67,14 +63,9 @@ use Spatie\LaravelSettings\Events\SettingsSaved;
 class AiServiceProvider extends ServiceProvider
 {
     protected $listen = [
-        AssistantFilesFinishedUploading::class => [
-            HandleAssistantFilesFinishedUploading::class,
-        ],
         AiThreadTrashed::class => AiThreadTrashed::LISTENERS,
-        AiThreadForceDeleting::class => AiThreadForceDeleting::LISTENERS,
         AiMessageCreated::class => AiMessageCreated::LISTENERS,
         AiMessageTrashed::class => AiMessageTrashed::LISTENERS,
-        AiMessageFileForceDeleting::class => AiMessageFileForceDeleting::LISTENERS,
         SettingsSaved::class => [ClearQnaAdvisorInstructionsCacheOnGlobalSettingsUpdate::class],
     ];
 

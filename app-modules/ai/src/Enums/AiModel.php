@@ -39,14 +39,6 @@ namespace AdvisingApp\Ai\Enums;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Ai\Services\TestAiService;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt41MiniService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt41NanoService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oMiniService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO1MiniService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO3MiniService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO4MiniService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGpt41MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGpt41NanoService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGpt4oMiniService;
@@ -56,6 +48,7 @@ use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGpt5NanoService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGpt5Service;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGptO3Service;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGptO4MiniService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGptTestService;
 use Exception;
 use Filament\Support\Contracts\HasLabel;
 
@@ -65,11 +58,7 @@ enum AiModel: string implements HasLabel
 
     case OpenAiGpt4oMini = 'openai_gpt_4o_mini';
 
-    case OpenAiGptO1Mini = 'openai_gpt_o1_mini';
-
     case OpenAiGptO3 = 'openai_gpt_o3';
-
-    case OpenAiGptO3Mini = 'openai_gpt_o3_mini';
 
     case OpenAiGpt41Mini = 'openai_gpt_41_mini';
 
@@ -98,9 +87,7 @@ enum AiModel: string implements HasLabel
         return match ($this) {
             self::OpenAiGpt4o => $aiIntegrationSettings->open_ai_gpt_4o_model_name ?? 'Canyon 4o',
             self::OpenAiGpt4oMini => $aiIntegrationSettings->open_ai_gpt_4o_mini_model_name ?? 'Canyon 4o mini',
-            self::OpenAiGptO1Mini => $aiIntegrationSettings->open_ai_gpt_o1_mini_model_name ?? 'Canyon o1 mini',
             self::OpenAiGptO3 => $aiIntegrationSettings->open_ai_gpt_o3_model_name ?? 'Canyon o3',
-            self::OpenAiGptO3Mini => $aiIntegrationSettings->open_ai_gpt_o3_mini_model_name ?? 'Canyon o3 mini',
             self::OpenAiGpt41Mini => $aiIntegrationSettings->open_ai_gpt_41_mini_model_name ?? 'Canyon 4.1 mini',
             self::OpenAiGpt41Nano => $aiIntegrationSettings->open_ai_gpt_41_nano_model_name ?? 'Canyon 4.1 nano',
             self::OpenAiGptO4Mini => $aiIntegrationSettings->open_ai_gpt_o4_mini_model_name ?? 'Canyon o4 mini',
@@ -124,9 +111,7 @@ enum AiModel: string implements HasLabel
         $features = match ($this) {
             self::OpenAiGpt4o => $aiIntegrationSettings->open_ai_gpt_4o_applicable_features,
             self::OpenAiGpt4oMini => $aiIntegrationSettings->open_ai_gpt_4o_mini_applicable_features,
-            self::OpenAiGptO1Mini => $aiIntegrationSettings->open_ai_gpt_o1_mini_applicable_features,
             self::OpenAiGptO3 => $aiIntegrationSettings->open_ai_gpt_o3_applicable_features,
-            self::OpenAiGptO3Mini => $aiIntegrationSettings->open_ai_gpt_o3_mini_applicable_features,
             self::OpenAiGpt41Mini => $aiIntegrationSettings->open_ai_gpt_41_mini_applicable_features,
             self::OpenAiGpt41Nano => $aiIntegrationSettings->open_ai_gpt_41_nano_applicable_features,
             self::OpenAiGptO4Mini => $aiIntegrationSettings->open_ai_gpt_o4_mini_applicable_features,
@@ -155,21 +140,17 @@ enum AiModel: string implements HasLabel
      */
     public function getServiceClass(): string
     {
-        $aiIntegrationSettings = app(AiIntegrationsSettings::class);
-
         return match ($this) {
-            self::OpenAiGpt4o => $aiIntegrationSettings->is_open_ai_gpt_4o_responses_api_enabled ? OpenAiResponsesGpt4oService::class : OpenAiGpt4oService::class,
-            self::OpenAiGpt4oMini => $aiIntegrationSettings->is_open_ai_gpt_4o_mini_responses_api_enabled ? OpenAiResponsesGpt4oMiniService::class : OpenAiGpt4oMiniService::class,
-            self::OpenAiGptO1Mini => OpenAiGptO1MiniService::class,
+            self::OpenAiGpt4o => OpenAiResponsesGpt4oService::class,
+            self::OpenAiGpt4oMini => OpenAiResponsesGpt4oMiniService::class,
             self::OpenAiGptO3 => OpenAiResponsesGptO3Service::class,
-            self::OpenAiGptO3Mini => OpenAiGptO3MiniService::class,
-            self::OpenAiGpt41Mini => $aiIntegrationSettings->is_open_ai_gpt_41_mini_responses_api_enabled ? OpenAiResponsesGpt41MiniService::class : OpenAiGpt41MiniService::class,
-            self::OpenAiGpt41Nano => $aiIntegrationSettings->is_open_ai_gpt_41_nano_responses_api_enabled ? OpenAiResponsesGpt41NanoService::class : OpenAiGpt41NanoService::class,
-            self::OpenAiGptO4Mini => $aiIntegrationSettings->is_open_ai_gpt_o4_mini_responses_api_enabled ? OpenAiResponsesGptO4MiniService::class : OpenAiGptO4MiniService::class,
+            self::OpenAiGpt41Mini => OpenAiResponsesGpt41MiniService::class,
+            self::OpenAiGpt41Nano => OpenAiResponsesGpt41NanoService::class,
+            self::OpenAiGptO4Mini => OpenAiResponsesGptO4MiniService::class,
             self::OpenAiGpt5 => OpenAiResponsesGpt5Service::class,
             self::OpenAiGpt5Mini => OpenAiResponsesGpt5MiniService::class,
             self::OpenAiGpt5Nano => OpenAiResponsesGpt5NanoService::class,
-            self::OpenAiGptTest => OpenAiGptTestService::class,
+            self::OpenAiGptTest => OpenAiResponsesGptTestService::class,
             self::Test => TestAiService::class,
             default => throw new Exception('No Service class found for this model.'),
         };
@@ -178,15 +159,6 @@ enum AiModel: string implements HasLabel
     public function getService(): AiService
     {
         return app($this->getServiceClass());
-    }
-
-    public function supportsAssistantFileUploads(): bool
-    {
-        // TODO: Not actually sure mini supports files, need to confirm
-        return match ($this) {
-            self::OpenAiGpt4o, self::OpenAiGpt4oMini, self::OpenAiGptO1Mini, self::OpenAiGptO3Mini, self::OpenAiGpt41Mini, self::OpenAiGpt41Nano, self::OpenAiGptO4Mini => true,
-            default => false,
-        };
     }
 
     public static function parse(string | self | null $value): ?self

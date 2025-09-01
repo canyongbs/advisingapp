@@ -138,22 +138,6 @@ class AiAssistantForm
                         'sm' => 1,
                         'md' => 2,
                     ])
-                    ->hidden(function (?AiAssistant $record, Get $get) {
-                        if (is_null($record)) {
-                            return true;
-                        }
-
-                        if ($record->isDefault()) {
-                            return true;
-                        }
-                        $model = $get('model');
-
-                        if (blank($model)) {
-                            return true;
-                        }
-
-                        return ! AiModel::parse($model)->supportsAssistantFileUploads();
-                    })
                     ->schema([
                         Repeater::make('files')
                             ->relationship()

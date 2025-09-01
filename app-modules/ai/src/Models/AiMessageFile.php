@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Ai\Events\AiMessageFileForceDeleting;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use App\Models\BaseModel;
@@ -64,10 +63,6 @@ class AiMessageFile extends BaseModel implements AiFile, HasMedia
         'name',
         'temporary_url',
         'parsing_results',
-    ];
-
-    protected $dispatchesEvents = [
-        'forceDeleting' => AiMessageFileForceDeleting::class,
     ];
 
     /**
