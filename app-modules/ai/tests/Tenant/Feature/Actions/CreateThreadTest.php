@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Services\TestAiService;
 use AdvisingApp\Ai\Settings\AiSettings;
 use App\Models\Tenant;
 use App\Models\User;
