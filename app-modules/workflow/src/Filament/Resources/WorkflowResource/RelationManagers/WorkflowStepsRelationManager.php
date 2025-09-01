@@ -40,6 +40,7 @@ use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
+use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use Carbon\CarbonInterval;
 use Filament\Forms\Components\Builder;
@@ -160,6 +161,32 @@ class WorkflowStepsRelationManager extends RelationManager
 
                         return 'Edit ' . Str::title($workflowStep->currentDetails->getLabel());
                     })
+                    ->fillForm(function (WorkflowStep $record): array {
+                        assert($record->currentDetails instanceof WorkflowDetails);
+
+                        $data = $record->currentDetails->toArray();
+
+                        $totalMinutes = $record->delay_minutes;
+                        $data['days'] = intval($totalMinutes / (24 * 60));
+                        $totalMinutes %= (24 * 60);
+                        $data['hours'] = intval($totalMinutes / 60);
+                        $data['minutes'] = $totalMinutes % 60;
+
+                        return $data;
+                    })
+                    ->using(function (array $data, WorkflowStep $record): WorkflowStep {
+                        assert($record->currentDetails instanceof WorkflowDetails);
+
+                        $delayMinutes = ($data['days'] * 24 * 60) + ($data['hours'] * 60) + $data['minutes'];
+                        $record->delay_minutes = $delayMinutes;
+                        $record->save();
+
+                        unset($data['days'], $data['hours'], $data['minutes']);
+
+                        $record->currentDetails->update($data);
+
+                        return $record;
+                    })
                     ->databaseTransaction(),
                 DeleteAction::make()
                     ->modalHeading(function (WorkflowStep $workflowStep) {
@@ -192,6 +219,11 @@ class WorkflowStepsRelationManager extends RelationManager
                 'assigned_to_id' => $data['assigned_to_id'],
                 'close_details' => $data['close_details'],
                 'res_details' => $data['res_details'],
+            ]),
+            'workflow_engagement_email_details' => WorkflowEngagementEmailDetails::create([
+                'channel' => $data['channel'],
+                'subject' => $data['subject'],
+                'body' => $data['body'],
             ]),
             default => null
         };

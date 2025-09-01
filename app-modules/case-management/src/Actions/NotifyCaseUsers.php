@@ -55,7 +55,7 @@ class NotifyCaseUsers
                     $query->whereHas(
                         'team',
                         fn (Builder $query) => $query->whereHas(
-                            'managableCaseTypes',
+                            'manageableCaseTypes',
                             fn (Builder $query) => $query->where('case_type_id', $case->priority->type->getKey())->whereHas(
                                 'cases',
                                 fn (Builder $query) => $query->whereKey($case),
@@ -74,7 +74,7 @@ class NotifyCaseUsers
                                 fn (Builder $query) => $query->whereKey($case),
                             ),
                         )->whereDoesntHave(
-                            'managableCaseTypes',
+                            'manageableCaseTypes',
                             fn (Builder $query) => $query->where('case_type_id', $case->priority->type->getKey())->whereHas(
                                 'cases',
                                 fn (Builder $query) => $query->whereKey($case),

@@ -34,53 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Database\Factories;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Database\Factories\WorkflowFactory;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Workflow\Models\Workflow;
+use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperWorkflow
+ * @extends Factory<Workflow>
  */
-class Workflow extends BaseModel implements Auditable
+class WorkflowFactory extends Factory
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    /** @use HasFactory<WorkflowFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'workflow_trigger_id',
-        'name',
-        'is_enabled',
-    ];
-
-    protected $casts = [
-        'is_enabled' => 'boolean',
-    ];
-
-    /**
-     * @return BelongsTo<WorkflowTrigger, $this>
-     */
-    public function workflowTrigger(): BelongsTo
+    public function definition(): array
     {
-        return $this->belongsTo(WorkflowTrigger::class);
-    }
-
-    /**
-     * @return HasMany<WorkflowStep, $this>
-     */
-    public function workflowSteps(): HasMany
-    {
-        return $this->hasMany(WorkflowStep::class);
+        return [
+            'workflow_trigger_id' => WorkflowTrigger::factory(),
+            'name' => $this->faker->sentence(3),
+            'is_enabled' => true,
+        ];
     }
 }

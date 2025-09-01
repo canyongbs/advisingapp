@@ -38,28 +38,35 @@ namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Workflow\Database\Factories\WorkflowEngagementEmailDetailsFactory;
 use AdvisingApp\Workflow\Filament\Blocks\EngagementEmailBlock;
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Jobs\EngagementEmailWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @mixin IdeHelperWorkflowEngagementEmailDetails
  */
-class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditable
+class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditable, HasMedia
 {
     use SoftDeletes;
     use AuditableTrait;
     use HasUuids;
+    use InteractsWithMedia;
+
+    /** @use HasFactory<WorkflowEngagementEmailDetailsFactory> */
+    use HasFactory;
 
     protected $fillable = [
         'channel',
         'subject',
         'body',
-        'workflow_step_id',
     ];
 
     protected $casts = [

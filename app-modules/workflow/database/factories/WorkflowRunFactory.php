@@ -34,53 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Database\Factories;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Database\Factories\WorkflowFactory;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Workflow\Models\WorkflowRun;
+use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperWorkflow
+ * @extends Factory<WorkflowRun>
  */
-class Workflow extends BaseModel implements Auditable
+class WorkflowRunFactory extends Factory
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    /** @use HasFactory<WorkflowFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'workflow_trigger_id',
-        'name',
-        'is_enabled',
-    ];
-
-    protected $casts = [
-        'is_enabled' => 'boolean',
-    ];
-
-    /**
-     * @return BelongsTo<WorkflowTrigger, $this>
-     */
-    public function workflowTrigger(): BelongsTo
+    public function definition(): array
     {
-        return $this->belongsTo(WorkflowTrigger::class);
-    }
-
-    /**
-     * @return HasMany<WorkflowStep, $this>
-     */
-    public function workflowSteps(): HasMany
-    {
-        return $this->hasMany(WorkflowStep::class);
+        return [
+            'workflow_trigger_id' => WorkflowTrigger::factory(),
+            'related_type' => (new Student())->getMorphClass(),
+            'related_id' => Student::factory(),
+            'started_at' => now(),
+        ];
     }
 }
