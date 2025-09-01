@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Report\Abstract\Concerns;
 
-use AdvisingApp\Prospect\Filament\Widgets\ProspectStats;
 use AdvisingApp\Report\Abstract\ProspectReport;
 use AdvisingApp\Report\Abstract\RecruitmentCrmDashboardReport;
 use AdvisingApp\Report\Abstract\StudentReport;
