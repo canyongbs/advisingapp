@@ -73,9 +73,6 @@ const serverOptions = computed(() => ({
         const index = fileIndexCounter.value++;
         const { get } = consumer();
         try {
-            // const data = await get(props.context.uploadUrl, {
-            //     params: { filename: file.name }
-            // })
             const data = await axios
                 .get(props.context.uploadUrl, {
                     params: { filename: file.name },

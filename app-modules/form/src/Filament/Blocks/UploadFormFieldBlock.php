@@ -37,6 +37,10 @@
 namespace AdvisingApp\Form\Filament\Blocks;
 
 use AdvisingApp\Form\Models\SubmissibleField;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
 
 class UploadFormFieldBlock extends FormFieldBlock
 {
@@ -50,6 +54,24 @@ class UploadFormFieldBlock extends FormFieldBlock
     }
 
     /**
+     * @return array<Component>
+     */
+    public function fields(): array
+    {
+        return [
+            Checkbox::make('multiple')
+                ->live(),
+            TextInput::make('limit')
+                ->numeric()
+                ->minValue(1)
+                ->maxValue(5)
+                ->default(1)
+                ->required()
+                ->visible(fn (Get $get): bool => (bool) $get('multiple')),
+        ];
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public static function getFormKitSchema(SubmissibleField $field): array
@@ -59,9 +81,9 @@ class UploadFormFieldBlock extends FormFieldBlock
             'label' => $field->label,
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
-            'multiple' => $field->config['multiple'] ?? true,
-            'accept' => $field->config['accept'] ?? static::getExtensionsFull(),
-            'limit' => $field->config['limit'] ?? 5,
+            'multiple' => $field->config['multiple'] ?? false,
+            'accept' => static::getExtensionsFull(),
+            'limit' => $field->config['limit'] ?? 1,
             'size' => $field->config['size'] ?? null,
             'uploadUrl' => route('forms.form-upload-url'),
         ];
