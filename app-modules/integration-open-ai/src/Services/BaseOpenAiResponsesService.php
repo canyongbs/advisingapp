@@ -52,6 +52,7 @@ use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService\Concerns\I
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService\Concerns\InteractsWithVectorStores;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use App\Features\OpenAiResponsesApiSettingsFeature;
 use App\Models\User;
 use Closure;
 use Exception;
@@ -365,7 +366,7 @@ abstract class BaseOpenAiResponsesService implements AiService
                 'api-key' => $this->getApiKey(),
             ])
                 ->withQueryParameters(['api-version' => $this->getApiVersion()])
-                ->baseUrl($this->getDeployment())
+                ->baseUrl(OpenAiResponsesApiSettingsFeature::active() ? "{$this->getDeployment()}/v1" : $this->getDeployment())
                 ->get("responses/{$previousResponseId}");
 
             return $response->ok() ? $previousResponseId : null;
