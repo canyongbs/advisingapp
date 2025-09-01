@@ -3,9 +3,21 @@ includes:
     - ./vendor/tpetry/laravel-postgresql-enhanced/phpstan-extension.neon
     - ./phpstan-baseline.php
     - ./vendor/pestphp/pest/extension.neon
+    - ./vendor/orrison/meliorstan/config/extension.neon
 
 rules:
-    - CanyonGBS\Common\PhpStan\Rules\MissingClosureParameterTypehintRule
+    - Orrison\MeliorStan\Rules\BooleanGetMethodName\BooleanGetMethodNameRule
+    - Orrison\MeliorStan\Rules\CamelCaseMethodName\CamelCaseMethodNameRule
+    - Orrison\MeliorStan\Rules\CamelCaseParameterName\CamelCaseParameterNameRule
+    - Orrison\MeliorStan\Rules\CamelCasePropertyName\CamelCasePropertyNameRule
+    - Orrison\MeliorStan\Rules\CamelCaseVariableName\CamelCaseVariableNameRule
+    - Orrison\MeliorStan\Rules\ConstantNamingConventions\ConstantNamingConventionsRule
+    - Orrison\MeliorStan\Rules\MissingClosureParameterTypehint\MissingClosureParameterTypehintRule
+    - Orrison\MeliorStan\Rules\PascalCaseClassName\PascalCaseClassNameRule
+    - Orrison\MeliorStan\Rules\ShortMethodName\ShortMethodNameRule
+    - Orrison\MeliorStan\Rules\ShortVariable\ShortVariableRule
+    - Orrison\MeliorStan\Rules\Superglobals\SuperglobalsRule
+    - Orrison\MeliorStan\Rules\TraitConstantNamingConventions\TraitConstantNamingConventionsRule
 
 parameters:
     # This can be removed once we have fixed all errors in our baseline. But need to be here now, so we don't have to rebuild it in every new PR.
@@ -26,6 +38,16 @@ parameters:
 
     # Level 9 is the highest level
     level: 6
+
+    meliorstan:
+        boolean_get_method_name:
+            check_parameterized_methods: true
+        short_variable:
+            exceptions: [id,at,to,as]
+        short_method_name:
+            minimum_length: 2
+        camel_case_property_name:
+            ignored_when_in_classes_descendant_of: [Spatie\LaravelSettings\Settings]
 
     ignoreErrors:
         -
@@ -58,8 +80,3 @@ parameters:
             paths:
                 - tests/*
                 - app-modules/*/tests/*
-        -
-            message: '#PHPDoc tag @SuppressWarnings has invalid value \(\(PHPMD.(CamelCasePropertyName|CamelCaseParameterName)\)\)\:.*#'
-            identifier: phpDoc.parseError
-            paths:
-                - app-modules/integration-twilio/src/DataTransferObjects/TwilioApiKey.php
