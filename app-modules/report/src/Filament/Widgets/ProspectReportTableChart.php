@@ -41,7 +41,7 @@ use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
 
 class ProspectReportTableChart extends TableWidget
@@ -75,16 +75,27 @@ class ProspectReportTableChart extends TableWidget
 
                     $startDate = $this->getStartDate();
                     $endDate = $this->getEndDate();
+                    $segmentId = $this->getSelectedSegment();
 
-                    return Prospect::whereIn($key, function ($query) use ($key, $startDate, $endDate) {
-                        $query->select($key)
-                            ->from((new Prospect())->getTable())
-                            ->when($startDate && $endDate, function (Builder $query) use ($startDate, $endDate): Builder {
+                    return Prospect::query()
+                        ->whereNotNull('created_at')
+                        ->whereNull('deleted_at')
+                        ->when(
+                            $startDate && $endDate,
+                            function (Builder $query) use ($startDate, $endDate): Builder {
                                 return $query->whereBetween('created_at', [$startDate, $endDate]);
-                            })
-                            ->orderBy('created_at', 'desc')
-                            ->take(100);
-                    })->orderBy('created_at', 'desc');
+                            }
+                        )
+                        ->when(
+                            $segmentId,
+                            function (Builder $query) use ($segmentId): Builder {
+                                $this->segmentFilter($query, $segmentId);
+
+                                return $query;
+                            }
+                        )
+                        ->orderBy('created_at', 'desc')
+                        ->take(100);
                 }
             )
             ->defaultSort('created_at', 'desc')

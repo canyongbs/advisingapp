@@ -41,6 +41,7 @@ use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\Task\Enums\TaskStatus;
 use App\Models\User;
@@ -55,6 +56,8 @@ use Livewire\Attributes\Reactive;
 
 class ProspectsActionCenterWidget extends TableWidget
 {
+    use InteractsWithPageFilters;
+
     /**
      * @var int | string | array<string, int | null>
      */
@@ -68,18 +71,33 @@ class ProspectsActionCenterWidget extends TableWidget
         /** @var User $user */
         $user = auth()->user();
 
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
+
         return $table
             ->heading('Action Center Records')
-            ->query(function () use ($user) {
-                $tab = ActionCenterTab::tryFrom($this->activeTab) ?? ActionCenterTab::Subscribed;
+            ->query(function () use ($segmentId, $startDate, $endDate) {
+                // $tab = ActionCenterTab::tryFrom($this->activeTab) ?? ActionCenterTab::Subscribed;
 
-                return match ($tab) {
-                    ActionCenterTab::All => Prospect::query(),
-                    ActionCenterTab::Subscribed => Prospect::query()
-                        ->whereHas('subscriptions', fn (Builder $query) => $query->where('user_id', $user->getKey())),
-                    ActionCenterTab::CareTeam => Prospect::query()
-                        ->whereHas('careTeam', fn (Builder $query) => $query->where('user_id', $user->getKey())),
-                };
+                // return match ($tab) {
+                //     ActionCenterTab::All => Prospect::query(),
+                //     ActionCenterTab::Subscribed => Prospect::query()
+                //         ->whereHas('subscriptions', fn (Builder $query) => $query->where('user_id', $user->getKey())),
+                //     ActionCenterTab::CareTeam => Prospect::query()
+                //         ->whereHas('careTeam', fn (Builder $query) => $query->where('user_id', $user->getKey())),
+                // };
+
+                $query = Prospect::query()->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                );
+
+                if ($segmentId) {
+                    $this->segmentFilter($query, $segmentId);
+                }
+
+                return $query;
             })
             ->columns([
                 TextColumn::make('full_name')
