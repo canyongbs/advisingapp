@@ -36,20 +36,30 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
-class OpenAiResponsesGptTestService extends BaseOpenAiResponsesService
+class OpenAiGptO3Service extends BaseOpenAiService
 {
     public function getApiKey(): string
     {
-        return 'test';
+        return $this->settings->open_ai_gpt_o3_api_key ?? config('integration-open-ai.gpt_o3_api_key');
     }
 
     public function getModel(): string
     {
-        return 'test';
+        return $this->settings->open_ai_gpt_o3_model ?? config('integration-open-ai.gpt_o3_model');
     }
 
     public function getDeployment(): ?string
     {
-        return 'https://api.openai.com/v1';
+        return $this->settings->open_ai_gpt_o3_base_uri ?? config('integration-open-ai.gpt_o3_base_uri');
+    }
+
+    public function hasReasoning(): bool
+    {
+        return true;
+    }
+
+    public function hasTemperature(): bool
+    {
+        return false;
     }
 }

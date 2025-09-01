@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
-class OpenAiResponsesGptO4MiniService extends BaseOpenAiResponsesService
+class OpenAiGptO4MiniService extends BaseOpenAiService
 {
     public function getApiKey(): string
     {

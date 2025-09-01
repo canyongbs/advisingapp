@@ -39,16 +39,16 @@ namespace AdvisingApp\Ai\Enums;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Ai\Services\TestAiService;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGpt41MiniService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGpt41NanoService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGpt4oMiniService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGpt4oService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGpt5MiniService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGpt5NanoService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGpt5Service;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGptO3Service;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGptO4MiniService;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGptTestService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt41MiniService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt41NanoService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oMiniService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt5MiniService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt5NanoService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt5Service;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO3Service;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptO4MiniService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
 use Exception;
 use Filament\Support\Contracts\HasLabel;
 
@@ -141,16 +141,16 @@ enum AiModel: string implements HasLabel
     public function getServiceClass(): string
     {
         return match ($this) {
-            self::OpenAiGpt4o => OpenAiResponsesGpt4oService::class,
-            self::OpenAiGpt4oMini => OpenAiResponsesGpt4oMiniService::class,
-            self::OpenAiGptO3 => OpenAiResponsesGptO3Service::class,
-            self::OpenAiGpt41Mini => OpenAiResponsesGpt41MiniService::class,
-            self::OpenAiGpt41Nano => OpenAiResponsesGpt41NanoService::class,
-            self::OpenAiGptO4Mini => OpenAiResponsesGptO4MiniService::class,
-            self::OpenAiGpt5 => OpenAiResponsesGpt5Service::class,
-            self::OpenAiGpt5Mini => OpenAiResponsesGpt5MiniService::class,
-            self::OpenAiGpt5Nano => OpenAiResponsesGpt5NanoService::class,
-            self::OpenAiGptTest => OpenAiResponsesGptTestService::class,
+            self::OpenAiGpt4o => OpenAiGpt4oService::class,
+            self::OpenAiGpt4oMini => OpenAiGpt4oMiniService::class,
+            self::OpenAiGptO3 => OpenAiGptO3Service::class,
+            self::OpenAiGpt41Mini => OpenAiGpt41MiniService::class,
+            self::OpenAiGpt41Nano => OpenAiGpt41NanoService::class,
+            self::OpenAiGptO4Mini => OpenAiGptO4MiniService::class,
+            self::OpenAiGpt5 => OpenAiGpt5Service::class,
+            self::OpenAiGpt5Mini => OpenAiGpt5MiniService::class,
+            self::OpenAiGpt5Nano => OpenAiGpt5NanoService::class,
+            self::OpenAiGptTest => OpenAiGptTestService::class,
             self::Test => TestAiService::class,
             default => throw new Exception('No Service class found for this model.'),
         };

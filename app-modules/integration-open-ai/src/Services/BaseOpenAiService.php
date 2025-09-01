@@ -48,8 +48,8 @@ use AdvisingApp\Ai\Support\StreamingChunks\Finish;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
-use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService\Concerns\InteractsWithResearchRequests;
-use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService\Concerns\InteractsWithVectorStores;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsWithResearchRequests;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsWithVectorStores;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use App\Features\OpenAiResponsesApiSettingsFeature;
@@ -71,7 +71,7 @@ use Prism\Prism\ValueObjects\Messages\AssistantMessage;
 use Prism\Prism\ValueObjects\Messages\UserMessage;
 use Throwable;
 
-abstract class BaseOpenAiResponsesService implements AiService
+abstract class BaseOpenAiService implements AiService
 {
     use InteractsWithVectorStores;
     use InteractsWithResearchRequests;

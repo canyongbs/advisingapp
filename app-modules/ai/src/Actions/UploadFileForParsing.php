@@ -39,7 +39,7 @@ namespace AdvisingApp\Ai\Actions;
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
 use App\Features\OpenAiResponsesApiSettingsFeature;
 use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Facades\Http;
@@ -82,7 +82,7 @@ class UploadFileForParsing
             ?->model
             ->getService();
 
-        if ($service instanceof BaseOpenAiResponsesService) {
+        if ($service instanceof BaseOpenAiService) {
             $deploymentName = $service->getModel();
 
             if (OpenAiResponsesApiSettingsFeature::active()) {

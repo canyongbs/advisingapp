@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService\Concerns;
+namespace AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns;
 
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\Contracts\AiFile;

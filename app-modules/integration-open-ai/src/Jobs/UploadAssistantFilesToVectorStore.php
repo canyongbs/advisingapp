@@ -37,7 +37,7 @@
 namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
 use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -69,7 +69,7 @@ class UploadAssistantFilesToVectorStore implements ShouldQueue, TenantAware, Sho
     {
         $service = $this->assistant->model->getService();
 
-        if (! ($service instanceof BaseOpenAiResponsesService)) {
+        if (! ($service instanceof BaseOpenAiService)) {
             return;
         }
 

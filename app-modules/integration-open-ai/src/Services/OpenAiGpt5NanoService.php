@@ -36,20 +36,25 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
-class OpenAiResponsesGpt41MiniService extends BaseOpenAiResponsesService
+class OpenAiGpt5NanoService extends BaseOpenAiService
 {
     public function getApiKey(): string
     {
-        return $this->settings->open_ai_gpt_41_mini_api_key ?? config('integration-open-ai.gpt_41_mini_api_key');
+        return $this->settings->open_ai_gpt_5_nano_api_key ?? config('integration-open-ai.gpt_5_nano_api_key');
     }
 
     public function getModel(): string
     {
-        return $this->settings->open_ai_gpt_41_mini_model ?? config('integration-open-ai.gpt_41_mini_model');
+        return $this->settings->open_ai_gpt_5_nano_model ?? config('integration-open-ai.gpt_5_nano_model');
     }
 
     public function getDeployment(): ?string
     {
-        return $this->settings->open_ai_gpt_41_mini_base_uri ?? config('integration-open-ai.gpt_41_mini_base_uri');
+        return $this->settings->open_ai_gpt_5_nano_base_uri ?? config('integration-open-ai.gpt_5_nano_base_uri');
+    }
+
+    public function hasTemperature(): bool
+    {
+        return false;
     }
 }

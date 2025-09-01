@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
-class OpenAiResponsesGpt4oService extends BaseOpenAiResponsesService
+class OpenAiGptTestService extends BaseOpenAiService
 {
     public function getApiKey(): string
     {
-        return $this->settings->open_ai_gpt_4o_api_key ?? config('integration-open-ai.gpt_4o_api_key');
+        return 'test';
     }
 
     public function getModel(): string
     {
-        return $this->settings->open_ai_gpt_4o_model ?? config('integration-open-ai.gpt_4o_model');
+        return 'test';
     }
 
     public function getDeployment(): ?string
     {
-        return $this->settings->open_ai_gpt_4o_base_uri ?? config('integration-open-ai.gpt_4o_base_uri');
+        return 'https://api.openai.com/v1';
     }
 }
