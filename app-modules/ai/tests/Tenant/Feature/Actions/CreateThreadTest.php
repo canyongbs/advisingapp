@@ -44,19 +44,11 @@ use AdvisingApp\Ai\Services\TestAiService;
 use AdvisingApp\Ai\Settings\AiSettings;
 use App\Models\Tenant;
 use App\Models\User;
-use Mockery\MockInterface;
 
 use function Tests\asSuperAdmin;
 
 it('creates a new thread', function () {
     asSuperAdmin();
-
-    /** @phpstan-ignore-next-line */
-    $this->mock(
-        TestAiService::class,
-        fn (MockInterface $mock) => $mock
-            ->shouldReceive('createThread')->once(),
-    );
 
     $assistant = AiAssistant::factory()->create([
         'application' => AiAssistantApplication::Test,
