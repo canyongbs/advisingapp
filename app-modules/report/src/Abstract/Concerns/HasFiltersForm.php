@@ -50,6 +50,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm as ConcernsHasFiltersForm;
+use Illuminate\Database\Eloquent\Builder;
 
 trait HasFiltersForm
 {
@@ -113,7 +114,7 @@ trait HasFiltersForm
 
         return Segment::query()
             ->where('model', $model)
-            ->when($search, fn ($q) => $q->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%']))
+            ->when($search, fn (Builder $query) => $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%']))
             ->orderByDesc('created_at')
             ->limit(15)
             ->pluck('name', 'id')
