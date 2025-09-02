@@ -84,13 +84,13 @@ trait HandlesCaseTemplateContent
         $assignedToKey = AssignedToMergeTagRenameFeatureFlag::active() ? 'assigned staff name' : 'assigned to';
 
         return [
-            ...['case number' => $this->case->case_number],
-            ...['created date' => $this->case->created_at->format('d-m-Y H:i')],
-            ...['updated date' => $this->case->updated_at->format('d-m-Y H:i')],
-            $assignedToKey => $this->case->assignedTo->user->name ?? 'Unassigned',
-            ...['status' => $this->case->status->name],
-            ...['type' => $this->case->priority->type->name],
-            ...['description' => $this->case->close_details],
+            'case number' => $this->case->case_number,
+            'created date' => $this->case->created_at->format('d-m-Y H:i'),
+            'updated date' => $this->case->updated_at->format('d-m-Y H:i'),
+            ...[$assignedToKey => $this->case->assignedTo->user->name ?? 'Unassigned'],
+            'status' => $this->case->status->name,
+            'type' => $this->case->priority->type->name,
+            'description' => $this->case->close_details,
         ];
 
         // @todo AssignedToMergeTagRenameFeatureFlag:
