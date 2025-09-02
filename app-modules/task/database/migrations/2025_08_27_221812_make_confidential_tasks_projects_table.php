@@ -45,7 +45,7 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
 
             $table->foreignUuid('task_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('team_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('project_id')->constrained()->cascadeOnDelete();
 
             $table->timestamps();
         });
