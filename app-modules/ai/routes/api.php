@@ -34,28 +34,17 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Http\Controllers\Advisors\CompleteResponseController;
-use AdvisingApp\Ai\Http\Controllers\Advisors\RetryMessageController;
-use AdvisingApp\Ai\Http\Controllers\Advisors\SendMessageController;
-use AdvisingApp\Ai\Http\Controllers\Advisors\ShowThreadController;
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\PreviewAdvisorEmbedController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendAdvisorMessageController as SendQnaAdvisorMessageController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\ShowAdvisorController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web', 'auth'])
-    ->name('ai.')
+Route::middleware(['api', 'signed:relative'])
+    ->name('ai.qna-advisors.')
+    ->prefix('api/ai/qna-advisors/{advisor}')
     ->group(function () {
-        Route::get('ai/advisors/threads/{thread}', ShowThreadController::class)
-            ->name('advisors.threads.show');
+        Route::get('/', ShowAdvisorController::class)
+            ->name('show');
 
-        Route::post('ai/advisors/threads/{thread}/messages', SendMessageController::class)
-            ->name('advisors.threads.messages.send');
-
-        Route::post('ai/advisors/threads/{thread}/messages/retry', RetryMessageController::class)
-            ->name('advisors.threads.messages.retry');
-
-        Route::post('ai/advisors/threads/{thread}/messages/complete-response', CompleteResponseController::class)
-            ->name('advisors.threads.messages.complete-response');
-
-        Route::get('ai/qna-advisors/{advisor}/preview-embed', PreviewAdvisorEmbedController::class)
-            ->name('qna-advisors.preview-embed');
+        Route::post('messages', SendQnaAdvisorMessageController::class)
+            ->name('messages.send');
     });
