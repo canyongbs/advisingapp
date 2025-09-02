@@ -41,6 +41,9 @@
     use AdvisingApp\Interaction\Models\InteractionOutcome;
     use AdvisingApp\Interaction\Models\InteractionRelation;
     use AdvisingApp\Interaction\Models\InteractionInitiative;
+    use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
+    
+    $settings = app(InteractionManagementSettings::class);
 @endphp
 
 <x-filament::fieldset>
@@ -49,40 +52,52 @@
     </x-slot>
 
     <dl class="max-w-md divide-y divide-gray-200 text-gray-900 dark:divide-gray-700 dark:text-white">
+        @if($settings->is_initiative_enabled)
         <div class="flex flex-col pb-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Initiative</dt>
             <dd class="text-sm font-semibold">
                 {{ InteractionInitiative::find($action['interaction_initiative_id'])?->name }}</dd>
         </div>
+        @endif
+        @if($settings->is_driver_enabled)
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Driver</dt>
             <dd class="text-sm font-semibold">{{ InteractionDriver::find($action['interaction_driver_id'])?->name }}
             </dd>
         </div>
+        @endif
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Division</dt>
             <dd class="text-sm font-semibold">{{ Division::find($action['division_id'])?->name }}</dd>
         </div>
+        @if($settings->is_outcome_enabled)
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Outcome</dt>
             <dd class="text-sm font-semibold">{{ InteractionOutcome::find($action['interaction_outcome_id'])?->name }}
             </dd>
         </div>
+        @endif
+        @if($settings->is_relation_enabled)
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Relation</dt>
             <dd class="text-sm font-semibold">{{ InteractionRelation::find($action['interaction_relation_id'])?->name }}
             </dd>
         </div>
+        @endif
+        @if($settings->is_status_enabled)
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Status</dt>
             <dd class="text-sm font-semibold">{{ InteractionStatus::find($action['interaction_status_id'])?->name }}
             </dd>
         </div>
+        @endif
+        @if($settings->is_type_enabled)
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Type</dt>
             <dd class="text-sm font-semibold">{{ InteractionType::find($action['interaction_type_id'])?->name }}
             </dd>
         </div>
+        @endif
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Start Time</dt>
             <dd class="text-sm font-semibold">{{ Carbon::parse($action['start_datetime'])->format('M j, Y H:i:s') }}

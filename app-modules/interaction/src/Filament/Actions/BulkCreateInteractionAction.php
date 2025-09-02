@@ -44,6 +44,7 @@ use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
+use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Exception;
@@ -62,6 +63,8 @@ class BulkCreateInteractionAction
 {
     public static function make(): BulkAction
     {
+        $settings = app(InteractionManagementSettings::class);
+
         return BulkAction::make('createInteraction')
             ->label('Log Interaction')
             ->icon('heroicon-o-document-text')
@@ -73,14 +76,16 @@ class BulkCreateInteractionAction
                             ->relationship('initiative', 'name')
                             ->model(Interaction::class)
                             ->label('Initiative')
-                            ->required()
+                            ->required($settings->is_initiative_required)
+                            ->visible($settings->is_initiative_enabled)
                             ->exists((new InteractionInitiative())->getTable(), 'id'),
                         Select::make('interaction_driver_id')
                             ->relationship('driver', 'name')
                             ->model(Interaction::class)
                             ->preload()
                             ->label('Driver')
-                            ->required()
+                            ->required($settings->is_driver_required)
+                            ->visible($settings->is_driver_enabled)
                             ->exists((new InteractionDriver())->getTable(), 'id'),
                         Select::make('division_id')
                             ->relationship('division', 'name')
@@ -105,28 +110,32 @@ class BulkCreateInteractionAction
                             ->model(Interaction::class)
                             ->preload()
                             ->label('Outcome')
-                            ->required()
+                            ->required($settings->is_outcome_required)
+                            ->visible($settings->is_outcome_enabled)
                             ->exists((new InteractionOutcome())->getTable(), 'id'),
                         Select::make('interaction_relation_id')
                             ->relationship('relation', 'name')
                             ->model(Interaction::class)
                             ->preload()
                             ->label('Relation')
-                            ->required()
+                            ->required($settings->is_relation_required)
+                            ->visible($settings->is_relation_enabled)
                             ->exists((new InteractionRelation())->getTable(), 'id'),
                         Select::make('interaction_status_id')
                             ->relationship('status', 'name')
                             ->model(Interaction::class)
                             ->preload()
                             ->label('Status')
-                            ->required()
+                            ->required($settings->is_status_required)
+                            ->visible($settings->is_status_enabled)
                             ->exists((new InteractionStatus())->getTable(), 'id'),
                         Select::make('interaction_type_id')
                             ->relationship('type', 'name')
                             ->model(Interaction::class)
                             ->preload()
                             ->label('Type')
-                            ->required()
+                            ->required($settings->is_type_required)
+                            ->visible($settings->is_type_enabled)
                             ->exists((new InteractionType())->getTable(), 'id'),
                     ]),
                 Fieldset::make('Time')
