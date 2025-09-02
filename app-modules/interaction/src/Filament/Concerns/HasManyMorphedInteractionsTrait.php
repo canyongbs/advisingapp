@@ -39,6 +39,7 @@ namespace AdvisingApp\Interaction\Filament\Concerns;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Features\InteractionMetadataFeature;
 use Carbon\CarbonInterface;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
@@ -70,18 +71,18 @@ trait HasManyMorphedInteractionsTrait
                 Fieldset::make('Details')
                     ->schema([
                         TextEntry::make('initiative.name')
-                            ->visible(fn () => $this->getSettings()->is_initiative_enabled),
+                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_initiative_enabled : true),
                         TextEntry::make('driver.name')
-                            ->visible(fn () => $this->getSettings()->is_driver_enabled),
+                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_driver_enabled : true),
                         TextEntry::make('division.name'),
                         TextEntry::make('outcome.name')
-                            ->visible(fn () => $this->getSettings()->is_outcome_enabled),
+                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_outcome_enabled : true),
                         TextEntry::make('relation.name')
-                            ->visible(fn () => $this->getSettings()->is_relation_enabled),
+                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_relation_enabled : true),
                         TextEntry::make('status.name')
-                            ->visible(fn () => $this->getSettings()->is_status_enabled),
+                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_status_enabled : true),
                         TextEntry::make('type.name')
-                            ->visible(fn () => $this->getSettings()->is_type_enabled),
+                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_type_enabled : true),
                     ]),
                 Fieldset::make('Time')
                     ->schema([
@@ -110,21 +111,27 @@ trait HasManyMorphedInteractionsTrait
             ->defaultSort('end_datetime', 'desc')
             ->columns([
                 TextColumn::make('subject')
-                    ->description(fn ($record) => collect([
-                        $this->getSettings()->is_initiative_enabled ? $record->initiative?->name : null,
-                        ($this->getSettings()->is_driver_enabled && $record->driver?->name) ? '(' . $record->driver->name . ')' : null,
-                    ])->filter()->implode(' '))
+                    ->description(function (Interaction $record) {
+                        if (InteractionMetadataFeature::active()) {
+                            return collect([
+                                $this->getSettings()->is_initiative_enabled ? $record->initiative?->name : null,
+                                ($this->getSettings()->is_driver_enabled && $record->driver?->name) ? '(' . $record->driver->name . ')' : null,
+                            ])->filter()->implode(' ');
+                        }
+
+                        return $record->initiative?->name . ' (' . $record->driver?->name . ')';
+                    })
                     ->icon(fn ($record) => $record->is_confidential ? 'heroicon-m-lock-closed' : null)
                     ->tooltip(fn ($record) => $record->is_confidential ? 'Confidential' : null),
                 TextColumn::make('type.name')
                     ->label('Type')
                     ->toggleable()
-                    ->visible(fn () => $this->getSettings()->is_type_enabled)
+                    ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_type_enabled : true)
                     ->sortable(),
                 TextColumn::make('status.name')
                     ->label('Status')
                     ->toggleable()
-                    ->visible(fn () => $this->getSettings()->is_status_enabled)
+                    ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_status_enabled : true)
                     ->sortable(),
                 TextColumn::make('start_datetime')
                     ->label('Start Time')
@@ -139,18 +146,18 @@ trait HasManyMorphedInteractionsTrait
                     ->sortable(),
                 TextColumn::make('initiative.name')
                     ->toggleable(isToggledHiddenByDefault: true)
-                    ->visible(fn () => $this->getSettings()->is_initiative_enabled),
+                    ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_initiative_enabled : true),
                 TextColumn::make('driver.name')
                     ->toggleable(isToggledHiddenByDefault: true)
-                    ->visible(fn () => $this->getSettings()->is_driver_enabled),
+                    ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_driver_enabled : true),
                 TextColumn::make('division.name')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('outcome.name')
                     ->toggleable(isToggledHiddenByDefault: true)
-                    ->visible(fn () => $this->getSettings()->is_outcome_enabled),
+                    ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_outcome_enabled : true),
                 TextColumn::make('relation.name')
                     ->toggleable(isToggledHiddenByDefault: true)
-                    ->visible(fn () => $this->getSettings()->is_relation_enabled),
+                    ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_relation_enabled : true),
             ])
             ->headerActions([
                 CreateAction::make()
@@ -176,22 +183,22 @@ trait HasManyMorphedInteractionsTrait
                     ->relationship('initiative', 'name')
                     ->label('Initiative')
                     ->multiple()
-                    ->visible(fn () => $this->getSettings()->is_initiative_enabled),
+                    ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_initiative_enabled : true),
                 SelectFilter::make('interaction_driver_id')
                     ->relationship('driver', 'name')
                     ->label('Driver')
                     ->multiple()
-                    ->visible(fn () => $this->getSettings()->is_driver_enabled),
+                    ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_driver_enabled : true),
                 SelectFilter::make('interaction_type_id')
                     ->label('Type')
                     ->relationship('type', 'name')
                     ->multiple()
-                    ->visible(fn () => $this->getSettings()->is_type_enabled),
+                    ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_type_enabled : true),
                 SelectFilter::make('interaction_status_id')
                     ->relationship('status', 'name')
                     ->label('Status')
                     ->multiple()
-                    ->visible(fn () => $this->getSettings()->is_status_enabled),
+                    ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_status_enabled : true),
                 SelectFilter::make('user_id')
                     ->relationship('user', 'name')
                     ->label('Created By')

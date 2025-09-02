@@ -47,6 +47,7 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\InteractionMetadataFeature;
 use Exception;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
@@ -76,16 +77,16 @@ class BulkCreateInteractionAction
                             ->relationship('initiative', 'name')
                             ->model(Interaction::class)
                             ->label('Initiative')
-                            ->required($settings->is_initiative_required)
-                            ->visible($settings->is_initiative_enabled)
+                            ->required(fn () => InteractionMetadataFeature::active() ? $settings->is_initiative_required : true)
+                            ->visible(fn () => InteractionMetadataFeature::active() ? $settings->is_initiative_enabled : true)
                             ->exists((new InteractionInitiative())->getTable(), 'id'),
                         Select::make('interaction_driver_id')
                             ->relationship('driver', 'name')
                             ->model(Interaction::class)
                             ->preload()
                             ->label('Driver')
-                            ->required($settings->is_driver_required)
-                            ->visible($settings->is_driver_enabled)
+                            ->required(fn () => InteractionMetadataFeature::active() ? $settings->is_driver_required : true)
+                            ->visible(fn () => InteractionMetadataFeature::active() ? $settings->is_driver_enabled : true)
                             ->exists((new InteractionDriver())->getTable(), 'id'),
                         Select::make('division_id')
                             ->relationship('division', 'name')
@@ -110,32 +111,32 @@ class BulkCreateInteractionAction
                             ->model(Interaction::class)
                             ->preload()
                             ->label('Outcome')
-                            ->required($settings->is_outcome_required)
-                            ->visible($settings->is_outcome_enabled)
+                            ->required(fn () => InteractionMetadataFeature::active() ? $settings->is_outcome_required : true)
+                            ->visible(fn () => InteractionMetadataFeature::active() ? $settings->is_outcome_enabled : true)
                             ->exists((new InteractionOutcome())->getTable(), 'id'),
                         Select::make('interaction_relation_id')
                             ->relationship('relation', 'name')
                             ->model(Interaction::class)
                             ->preload()
                             ->label('Relation')
-                            ->required($settings->is_relation_required)
-                            ->visible($settings->is_relation_enabled)
+                            ->required(fn () => InteractionMetadataFeature::active() ? $settings->is_relation_required : true)
+                            ->visible(fn () => InteractionMetadataFeature::active() ? $settings->is_relation_enabled : true)
                             ->exists((new InteractionRelation())->getTable(), 'id'),
                         Select::make('interaction_status_id')
                             ->relationship('status', 'name')
                             ->model(Interaction::class)
                             ->preload()
                             ->label('Status')
-                            ->required($settings->is_status_required)
-                            ->visible($settings->is_status_enabled)
+                            ->required(fn () => InteractionMetadataFeature::active() ? $settings->is_status_required : true)
+                            ->visible(fn () => InteractionMetadataFeature::active() ? $settings->is_status_enabled : true)
                             ->exists((new InteractionStatus())->getTable(), 'id'),
                         Select::make('interaction_type_id')
                             ->relationship('type', 'name')
                             ->model(Interaction::class)
                             ->preload()
                             ->label('Type')
-                            ->required($settings->is_type_required)
-                            ->visible($settings->is_type_enabled)
+                            ->required(fn () => InteractionMetadataFeature::active() ? $settings->is_type_required : true)
+                            ->visible(fn () => InteractionMetadataFeature::active() ? $settings->is_type_enabled : true)
                             ->exists((new InteractionType())->getTable(), 'id'),
                     ]),
                 Fieldset::make('Time')

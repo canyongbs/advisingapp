@@ -38,6 +38,7 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
+use App\Features\InteractionMetadataFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions;
 use Filament\Forms\Components\Grid;
@@ -73,16 +74,22 @@ class ListInteractionRelations extends ListRecords implements HasForms
 
     public function mount(): void
     {
-        $settings = $this->getSettings();
+        if (InteractionMetadataFeature::active()) {
+            $settings = $this->getSettings();
 
-        $this->data = [
-            'is_relation_enabled' => $settings->is_relation_enabled,
-            'is_relation_required' => $settings->is_relation_required,
-        ];
+            $this->data = [
+                'is_relation_enabled' => $settings->is_relation_enabled,
+                'is_relation_required' => $settings->is_relation_required,
+            ];
+        }
     }
 
     public function form(Form $form): Form
     {
+        if (! InteractionMetadataFeature::active()) {
+            return $form->schema([]);
+        }
+
         return $form
             ->schema([
                 Section::make('Relation Settings')

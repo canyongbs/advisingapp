@@ -38,6 +38,7 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource\Pag
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
+use App\Features\InteractionMetadataFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions;
 use Filament\Forms\Components\Grid;
@@ -73,16 +74,22 @@ class ListInteractionTypes extends ListRecords implements HasForms
 
     public function mount(): void
     {
-        $settings = $this->getSettings();
+        if (InteractionMetadataFeature::active()) {
+            $settings = $this->getSettings();
 
-        $this->data = [
-            'is_type_enabled' => $settings->is_type_enabled,
-            'is_type_required' => $settings->is_type_required,
-        ];
+            $this->data = [
+                'is_type_enabled' => $settings->is_type_enabled,
+                'is_type_required' => $settings->is_type_required,
+            ];
+        }
     }
 
     public function form(Form $form): Form
     {
+        if (! InteractionMetadataFeature::active()) {
+            return $form->schema([]);
+        }
+
         return $form
             ->schema([
                 Section::make('Type Settings')

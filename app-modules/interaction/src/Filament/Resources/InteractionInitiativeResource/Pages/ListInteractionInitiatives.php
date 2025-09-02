@@ -38,6 +38,7 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResour
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
+use App\Features\InteractionMetadataFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Grid;
@@ -73,16 +74,22 @@ class ListInteractionInitiatives extends ListRecords implements HasForms
 
     public function mount(): void
     {
-        $settings = $this->getSettings();
+        if (InteractionMetadataFeature::active()) {
+            $settings = $this->getSettings();
 
-        $this->data = [
-            'is_initiative_enabled' => $settings->is_initiative_enabled,
-            'is_initiative_required' => $settings->is_initiative_required,
-        ];
+            $this->data = [
+                'is_initiative_enabled' => $settings->is_initiative_enabled,
+                'is_initiative_required' => $settings->is_initiative_required,
+            ];
+        }
     }
 
     public function form(Form $form): Form
     {
+        if (! InteractionMetadataFeature::active()) {
+            return $form->schema([]);
+        }
+
         return $form
             ->schema([
                 Section::make('Initiative Settings')
