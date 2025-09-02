@@ -49,7 +49,7 @@ class CalendarEventResource extends Resource
 
     protected static ?string $navigationGroup = 'CRM';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 60;
 
     protected static ?string $navigationLabel = 'Schedule & Appointments';
 
