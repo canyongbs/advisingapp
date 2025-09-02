@@ -41,6 +41,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
+use Illuminate\Support\Facades\Storage;
 
 class UploadFormFieldBlock extends FormFieldBlock
 {
@@ -131,6 +132,25 @@ class UploadFormFieldBlock extends FormFieldBlock
             'text/plain' => ['txt', 'text'],
             'application/octet-stream' => ['log'],
             '.log' => ['log'],
+        ];
+    }
+
+    public static function getSubmissionState(SubmissibleField $field, mixed $response): array
+    {
+        $media = $field->pivot->hasMedia('files') ? $field->pivot->getMedia('files')->map(fn ($media) => [
+            'id' => $media->id,
+            'name' => $media->file_name,
+            'temporary_url' => Storage::disk($media->disk)->temporaryUrl(
+                $media->getPathRelativeToRoot(),
+                now()->addDay(),
+                ['ResponseContentDisposition' => 'attachment; filename="' . $media->file_name . '"']
+            ),
+        ])
+            ->toArray() : [];
+
+        return [
+            ...parent::getSubmissionState($field, $response),
+            'media' => $media,
         ];
     }
 }

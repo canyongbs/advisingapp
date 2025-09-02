@@ -37,7 +37,11 @@
 namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\Form\Models\FormField;
 use AdvisingApp\Form\Models\Submission;
+use Illuminate\Filesystem\AwsS3V3Adapter;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProcessSubmissionField
@@ -52,6 +56,34 @@ class ProcessSubmissionField
             'id' => Str::orderedUuid(),
             'response' => $response,
         ]);
+
+        $field = FormField::find($fieldId);
+        if ($field && $field->type === 'upload' && is_array($response)) {
+            /** @var FormFieldSubmission $formFieldSubmission */
+            $formFieldSubmission = $submission
+                ->fields()
+                ->where('field_id', $fieldId)
+                ->latest('created_at')
+                ->first()
+                ->pivot;
+
+            foreach ($response as $file) {
+                $key = ltrim($file['path'], '/');
+
+                $url = Storage::disk('s3')->temporaryUrl(
+                    $key,
+                    now()->addMinutes(5),
+                    [
+                        'ResponseContentDisposition' => 'attachment; filename="' . basename($file['originalFileName'] ?? $key) . '"',
+                    ]
+                );
+
+                $formFieldSubmission
+                    ->addMediaFromUrl($url)
+                    ->usingFileName($file['originalFileName'] ?? basename($key))
+                    ->toMediaCollection('files', 's3-public');
+            }
+        }
 
         if ($submission->author) {
             return;

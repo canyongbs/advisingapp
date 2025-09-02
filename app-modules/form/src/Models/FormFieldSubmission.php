@@ -39,13 +39,16 @@ namespace AdvisingApp\Form\Models;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @mixin IdeHelperFormFieldSubmission
  */
-class FormFieldSubmission extends Pivot
+class FormFieldSubmission extends Pivot implements HasMedia
 {
     use HasUuids;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'response',
@@ -70,5 +73,10 @@ class FormFieldSubmission extends Pivot
     public function submission(): BelongsTo
     {
         return $this->belongsTo(FormSubmission::class, 'submission_id');
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('files');
     }
 }

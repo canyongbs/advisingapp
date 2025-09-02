@@ -37,23 +37,18 @@
     :$isRequired
 >
     <div class="flex flex-col space-y-2">
-        @foreach ($response as $file)
-            @php
-                $url = Storage::disk('s3')->temporaryUrl($file['path'], now()->addMinutes(5), [
-                    'ResponseContentDisposition' => 'attachment; filename="' . basename($file['path']) . '"',
-                ]);
-            @endphp
-            <a
-                class="inline-flex items-center space-x-1 text-sm text-primary-600 hover:underline"
-                href="{{ $url }}"
-            >
-                <span>{{ $file['originalFileName'] }}</span>
-                <x-heroicon-s-arrow-down-tray class="h-4 w-4" />
-            </a>
-        @endforeach
+        @if ($media && count($media) > 0)
+            @foreach ($media as $item)
+                <a
+                    class="inline-flex items-center space-x-1 text-sm text-primary-600 hover:underline"
+                    href="{{ $item['temporary_url'] }}"
+                >
+                    <span>{{ $item['name'] }}</span>
+                    <x-heroicon-s-arrow-down-tray class="h-4 w-4" />
+                </a>
+            @endforeach
+        @else
+            <span class="text-gray-500">No response</span>
+        @endif
     </div>
-
-    @if (blank($response ?? null))
-        <span class="text-gray-500">No response</span>
-    @endif
 </x-form::blocks.field-wrapper>
