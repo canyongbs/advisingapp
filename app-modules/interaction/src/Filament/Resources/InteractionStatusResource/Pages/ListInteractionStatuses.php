@@ -65,6 +65,7 @@ class ListInteractionStatuses extends ListRecords implements HasForms
 
     protected static string $resource = InteractionStatusResource::class;
 
+    /** @var array<string, mixed> */
     public ?array $data = [];
 
     protected static string $view = 'interaction::filament.pages.list-interaction-statuses';
@@ -73,10 +74,12 @@ class ListInteractionStatuses extends ListRecords implements HasForms
 
     public function mount(): void
     {
-        $this->form->fill([
-            'is_status_enabled' => $this->getSettings()->is_status_enabled,
-            'is_status_required' => $this->getSettings()->is_status_required,
-        ]);
+        $settings = $this->getSettings();
+
+        $this->data = [
+            'is_status_enabled' => $settings->is_status_enabled,
+            'is_status_required' => $settings->is_status_required,
+        ];
     }
 
     public function form(Form $form): Form
@@ -90,7 +93,7 @@ class ListInteractionStatuses extends ListRecords implements HasForms
                                 Toggle::make('is_status_enabled')
                                     ->label('Enabled')
                                     ->live()
-                                    ->afterStateUpdated(function ($state) {
+                                    ->afterStateUpdated(function (bool $state): void {
                                         $settings = $this->getSettings();
                                         $settings->is_status_enabled = $state;
                                         $settings->save();
@@ -115,7 +118,7 @@ class ListInteractionStatuses extends ListRecords implements HasForms
                                     ->label('Required')
                                     ->live()
                                     ->visible(fn (Get $get) => $get('is_status_enabled'))
-                                    ->afterStateUpdated(function ($state) {
+                                    ->afterStateUpdated(function (bool $state): void {
                                         $settings = $this->getSettings();
                                         $settings->is_status_required = $state;
                                         $settings->save();

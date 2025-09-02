@@ -64,6 +64,7 @@ class ListInteractionTypes extends ListRecords implements HasForms
 
     protected static string $resource = InteractionTypeResource::class;
 
+    /** @var array<string, mixed> */
     public ?array $data = [];
 
     protected static string $view = 'interaction::filament.pages.list-interaction-types';
@@ -72,10 +73,12 @@ class ListInteractionTypes extends ListRecords implements HasForms
 
     public function mount(): void
     {
-        $this->form->fill([
-            'is_type_enabled' => $this->getSettings()->is_type_enabled,
-            'is_type_required' => $this->getSettings()->is_type_required,
-        ]);
+        $settings = $this->getSettings();
+
+        $this->data = [
+            'is_type_enabled' => $settings->is_type_enabled,
+            'is_type_required' => $settings->is_type_required,
+        ];
     }
 
     public function form(Form $form): Form
@@ -89,7 +92,7 @@ class ListInteractionTypes extends ListRecords implements HasForms
                                 Toggle::make('is_type_enabled')
                                     ->label('Enabled')
                                     ->live()
-                                    ->afterStateUpdated(function ($state) {
+                                    ->afterStateUpdated(function (bool $state): void {
                                         $settings = $this->getSettings();
                                         $settings->is_type_enabled = $state;
                                         $settings->save();
@@ -108,7 +111,7 @@ class ListInteractionTypes extends ListRecords implements HasForms
                                     ->label('Required')
                                     ->live()
                                     ->visible(fn (Get $get) => $get('is_type_enabled'))
-                                    ->afterStateUpdated(function ($state) {
+                                    ->afterStateUpdated(function (bool $state): void {
                                         $settings = $this->getSettings();
                                         $settings->is_type_required = $state;
                                         $settings->save();

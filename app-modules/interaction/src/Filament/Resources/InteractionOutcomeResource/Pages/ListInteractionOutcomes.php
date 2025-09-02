@@ -64,6 +64,7 @@ class ListInteractionOutcomes extends ListRecords implements HasForms
 
     protected static string $resource = InteractionOutcomeResource::class;
 
+    /** @var array<string, mixed> */
     public ?array $data = [];
 
     protected static string $view = 'interaction::filament.pages.list-interaction-outcomes';
@@ -72,10 +73,12 @@ class ListInteractionOutcomes extends ListRecords implements HasForms
 
     public function mount(): void
     {
-        $this->form->fill([
-            'is_outcome_enabled' => $this->getSettings()->is_outcome_enabled,
-            'is_outcome_required' => $this->getSettings()->is_outcome_required,
-        ]);
+        $settings = $this->getSettings();
+
+        $this->data = [
+            'is_outcome_enabled' => $settings->is_outcome_enabled,
+            'is_outcome_required' => $settings->is_outcome_required,
+        ];
     }
 
     public function form(Form $form): Form
@@ -89,7 +92,7 @@ class ListInteractionOutcomes extends ListRecords implements HasForms
                                 Toggle::make('is_outcome_enabled')
                                     ->label('Enabled')
                                     ->live()
-                                    ->afterStateUpdated(function ($state) {
+                                    ->afterStateUpdated(function (bool $state): void {
                                         $settings = $this->getSettings();
                                         $settings->is_outcome_enabled = $state;
                                         $settings->save();
@@ -108,7 +111,7 @@ class ListInteractionOutcomes extends ListRecords implements HasForms
                                     ->label('Required')
                                     ->live()
                                     ->visible(fn (Get $get) => $get('is_outcome_enabled'))
-                                    ->afterStateUpdated(function ($state) {
+                                    ->afterStateUpdated(function (bool $state): void {
                                         $settings = $this->getSettings();
                                         $settings->is_outcome_required = $state;
                                         $settings->save();

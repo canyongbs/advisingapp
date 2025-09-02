@@ -64,6 +64,7 @@ class ListInteractionDrivers extends ListRecords implements HasForms
 
     protected static string $resource = InteractionDriverResource::class;
 
+    /** @var array<string, mixed> */
     public ?array $data = [];
 
     protected static string $view = 'interaction::filament.pages.list-interaction-drivers';
@@ -72,10 +73,12 @@ class ListInteractionDrivers extends ListRecords implements HasForms
 
     public function mount(): void
     {
-        $this->form->fill([
-            'is_driver_enabled' => $this->getSettings()->is_driver_enabled,
-            'is_driver_required' => $this->getSettings()->is_driver_required,
-        ]);
+        $settings = $this->getSettings();
+
+        $this->data = [
+            'is_driver_enabled' => $settings->is_driver_enabled,
+            'is_driver_required' => $settings->is_driver_required,
+        ];
     }
 
     public function form(Form $form): Form
@@ -89,7 +92,7 @@ class ListInteractionDrivers extends ListRecords implements HasForms
                                 Toggle::make('is_driver_enabled')
                                     ->label('Enabled')
                                     ->live()
-                                    ->afterStateUpdated(function ($state) {
+                                    ->afterStateUpdated(function (bool $state): void {
                                         $settings = $this->getSettings();
                                         $settings->is_driver_enabled = $state;
                                         $settings->save();
@@ -108,7 +111,7 @@ class ListInteractionDrivers extends ListRecords implements HasForms
                                     ->label('Required')
                                     ->live()
                                     ->visible(fn (Get $get) => $get('is_driver_enabled'))
-                                    ->afterStateUpdated(function ($state) {
+                                    ->afterStateUpdated(function (bool $state): void {
                                         $settings = $this->getSettings();
                                         $settings->is_driver_required = $state;
                                         $settings->save();

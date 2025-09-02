@@ -64,6 +64,7 @@ class ListInteractionRelations extends ListRecords implements HasForms
 
     protected static string $resource = InteractionRelationResource::class;
 
+    /** @var array<string, mixed> */
     public ?array $data = [];
 
     protected static string $view = 'interaction::filament.pages.list-interaction-relations';
@@ -72,10 +73,12 @@ class ListInteractionRelations extends ListRecords implements HasForms
 
     public function mount(): void
     {
-        $this->form->fill([
-            'is_relation_enabled' => $this->getSettings()->is_relation_enabled,
-            'is_relation_required' => $this->getSettings()->is_relation_required,
-        ]);
+        $settings = $this->getSettings();
+
+        $this->data = [
+            'is_relation_enabled' => $settings->is_relation_enabled,
+            'is_relation_required' => $settings->is_relation_required,
+        ];
     }
 
     public function form(Form $form): Form
@@ -89,7 +92,7 @@ class ListInteractionRelations extends ListRecords implements HasForms
                                 Toggle::make('is_relation_enabled')
                                     ->label('Enabled')
                                     ->live()
-                                    ->afterStateUpdated(function ($state) {
+                                    ->afterStateUpdated(function (bool $state): void {
                                         $settings = $this->getSettings();
                                         $settings->is_relation_enabled = $state;
                                         $settings->save();
@@ -108,7 +111,7 @@ class ListInteractionRelations extends ListRecords implements HasForms
                                     ->label('Required')
                                     ->live()
                                     ->visible(fn (Get $get) => $get('is_relation_enabled'))
-                                    ->afterStateUpdated(function ($state) {
+                                    ->afterStateUpdated(function (bool $state): void {
                                         $settings = $this->getSettings();
                                         $settings->is_relation_required = $state;
                                         $settings->save();
