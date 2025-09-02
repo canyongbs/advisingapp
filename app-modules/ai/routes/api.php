@@ -34,17 +34,30 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisorAuthenticationConfirmController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisorRequestAuthenticationController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendAdvisorMessageController as SendQnaAdvisorMessageController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\ShowAdvisorController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['api', 'signed:relative'])
+// TODO: Make the routes non-relative signed
+Route::middleware(['api'])
     ->name('ai.qna-advisors.')
     ->prefix('api/ai/qna-advisors/{advisor}')
     ->group(function () {
         Route::get('/', ShowAdvisorController::class)
+            ->middleware(['signed:relative'])
             ->name('show');
 
         Route::post('messages', SendQnaAdvisorMessageController::class)
+            ->middleware(['signed:relative'])
             ->name('messages.send');
+
+        Route::post('/authenticate/request', QnaAdvisorRequestAuthenticationController::class)
+            ->middleware(['signed'])
+            ->name('authentication.request');
+
+        Route::post('/authenticate/confirm/{authentication}', QnaAdvisorAuthenticationConfirmController::class)
+            ->middleware(['signed'])
+            ->name('authentication.confirm');
     });

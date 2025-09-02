@@ -38,9 +38,18 @@ import { defineProps, onMounted, onUnmounted, ref } from 'vue';
 import headshotAgent from '../../../resources/images/canyon-ai-headshot.jpg?url';
 import loadingSpinner from '../public/images/loading-spinner.svg?url';
 import userAvatar from '../public/images/user-default-avatar.svg?url';
+import axios from 'axios';
 
 const props = defineProps(['url']);
 const requiresAuthentication = ref(false);
+const authentication = ref({
+    requestUrl: null,
+    email: null,
+    code: null,
+    isRequested: false,
+    requestedMessage: null,
+    confirmationUrl: null,
+});
 const sendMessageUrl = ref(null);
 const chatId = ref(null);
 const message = ref('');
@@ -62,6 +71,7 @@ onMounted(async () => {
         if (json.error) throw new Error(json.error);
         chatId.value = json.chat_id;
         requiresAuthentication.value = json.requires_authentication;
+        authentication.value.requestUrl = json.authentication_url;
         sendMessageUrl.value = json.send_message_url;
 
         setupWebsockets(json.websockets_config);
@@ -151,6 +161,75 @@ async function sendMessage() {
         console.error('Send message error:', error);
         isLoading.value = false;
     }
+}
+
+async function authenticate(formData, node) {
+    node.clearErrors();
+
+    // const { setToken } = useTokenStore();
+    // const { setUser } = useAuthStore();
+
+    if (authentication.value.isRequested) {
+        $data = {
+            code: formData.code,
+        };
+
+        axios
+            .post(authentication.value.confirmationUrl, $data)
+            .then((response) => {
+                if (response.errors) {
+                    node.setErrors([], response.errors);
+
+                    return;
+                }
+
+                if (response.data.is_expired) {
+                    node.setErrors(['The authentication code is expired. Please authenticate again.']);
+
+                    authentication.value.isRequested = false;
+                    authentication.value.requestedMessage = null;
+                    authentication.value.confirmationUrl = null;
+
+                    return;
+                }
+
+                if (response.data.success === true) {
+                    // setToken(response.data.token);
+                    // setUser(response.data.user);
+
+                    // userIsAuthenticated.value = true;
+
+                    // getData();
+                    console.log('We did it!');
+                }
+            })
+            .catch((error) => {
+                node.setErrors([], error.response.data.errors);
+            });
+
+        return;
+    }
+
+    axios
+        .post(authentication.value.requestUrl, {
+            email: formData.email,
+        })
+        .then((response) => {
+            if (!response.data.authentication_url) {
+                node.setErrors([response.data.message]);
+
+                return;
+            }
+
+            authentication.value.isRequested = true;
+            authentication.value.requestedMessage = response.data.message;
+            authentication.value.confirmationUrl = response.data.authentication_url;
+        })
+        .catch((error) => {
+            const data = error.response.data;
+
+            node.setErrors([], data.errors);
+        });
 }
 </script>
 

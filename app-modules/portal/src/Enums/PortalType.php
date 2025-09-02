@@ -42,6 +42,8 @@ enum PortalType: string implements HasLabel
 {
     case ResourceHub = 'resource_hub';
 
+    case QnaAdvisorWidget = 'qna_advisor_widget';
+
     public function getLabel(): ?string
     {
         return match ($this) {
