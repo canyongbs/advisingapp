@@ -39,8 +39,6 @@ namespace AdvisingApp\Form\Actions;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 use AdvisingApp\Form\Models\FormField;
 use AdvisingApp\Form\Models\Submission;
-use Illuminate\Filesystem\AwsS3V3Adapter;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -58,6 +56,7 @@ class ProcessSubmissionField
         ]);
 
         $field = FormField::find($fieldId);
+
         if ($field && $field->type === 'upload' && is_array($response)) {
             /** @var FormFieldSubmission $formFieldSubmission */
             $formFieldSubmission = $submission
