@@ -65,34 +65,34 @@ class TaskBlock extends CampaignActionBlock
         return [
             Fieldset::make('Details')
                 ->schema([
-                  Fieldset::make($fieldPrefix . 'Confidentiality')
-                    ->visible(ConfidentialTaskFeature::active())
-                    ->schema([
-                        Checkbox::make('is_confidential')
-                            ->label('Confidential')
-                            ->live(),
-                        Select::make('confidential_task_projects')
-                            ->relationship('confidentialAccessProjects', 'name')
-                            ->preload()
-                            ->label('Projects')
-                            ->multiple()
-                            ->exists('projects', 'id')
-                            ->visible(fn (Get $get) => $get('is_confidential')),
-                        Select::make('confidential_task_users')
-                            ->relationship('confidentialAccessUsers', 'name')
-                            ->preload()
-                            ->label('Users')
-                            ->multiple()
-                            ->exists('users', 'id')
-                            ->visible(fn (Get $get) => $get('is_confidential')),
-                        Select::make('confidential_task_teams')
-                            ->relationship('confidentialAccessTeams', 'name')
-                            ->preload()
-                            ->label('Teams')
-                            ->multiple()
-                            ->exists('teams', 'id')
-                            ->visible(fn (Get $get) => $get('is_confidential')),
-                    ]),
+                    Fieldset::make($fieldPrefix . 'Confidentiality')
+                        ->visible(ConfidentialTaskFeature::active())
+                        ->schema([
+                            Checkbox::make('is_confidential')
+                                ->label('Confidential')
+                                ->live(),
+                            Select::make('confidential_task_projects')
+                                ->relationship('confidentialAccessProjects', 'name')
+                                ->preload()
+                                ->label('Projects')
+                                ->multiple()
+                                ->exists('projects', 'id')
+                                ->visible(fn (Get $get) => $get('is_confidential')),
+                            Select::make('confidential_task_users')
+                                ->relationship('confidentialAccessUsers', 'name')
+                                ->preload()
+                                ->label('Users')
+                                ->multiple()
+                                ->exists('users', 'id')
+                                ->visible(fn (Get $get) => $get('is_confidential')),
+                            Select::make('confidential_task_teams')
+                                ->relationship('confidentialAccessTeams', 'name')
+                                ->preload()
+                                ->label('Teams')
+                                ->multiple()
+                                ->exists('teams', 'id')
+                                ->visible(fn (Get $get) => $get('is_confidential')),
+                        ]),
                     TextInput::make($fieldPrefix . 'title')
                         ->required()
                         ->maxLength(100)
