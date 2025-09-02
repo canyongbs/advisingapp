@@ -135,9 +135,12 @@ class UploadFormFieldBlock extends FormFieldBlock
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public static function getSubmissionState(SubmissibleField $field, mixed $response): array
     {
-        $media = $field->pivot->hasMedia('files') ? $field->pivot->getMedia('files')->map(fn ($media) => [
+        $media = (isset($field->pivot) && $field->pivot->hasMedia('files')) ? $field->pivot->getMedia('files')->map(fn ($media) => [
             'id' => $media->id,
             'name' => $media->file_name,
             'temporary_url' => Storage::disk($media->disk)->temporaryUrl(
