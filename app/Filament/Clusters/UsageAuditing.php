@@ -42,5 +42,5 @@ class UsageAuditing extends Cluster
 {
     protected static ?string $navigationGroup = 'Data and Analytics';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 30;
 }
