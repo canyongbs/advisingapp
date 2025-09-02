@@ -83,9 +83,10 @@ class AzureOpenAi extends OpenAI
         return $this->baseClient()
             ->withHeaders([
                 'api-key' => $options['apiKey'],
+                ...$options['headers'] ?? [],
             ])
             ->withQueryParameters(['api-version' => $options['apiVersion']])
-            ->withOptions(Arr::except($options, ['apiKey', 'apiVersion', 'deployment']))
+            ->withOptions(Arr::except($options, ['apiKey', 'apiVersion', 'deployment', 'headers']))
             ->when($retry !== [], fn ($client) => $client->retry(...$retry))
             ->baseUrl(OpenAiResponsesApiSettingsFeature::active() ? "{$options['deployment']}/v1" : $options['deployment']);
     }

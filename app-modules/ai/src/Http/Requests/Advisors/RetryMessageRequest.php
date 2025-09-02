@@ -62,6 +62,7 @@ class RetryMessageRequest extends FormRequest
             'content' => ['required', 'string', 'max:1000'],
             'files' => ['array', 'max:1'],
             'files.*' => [Rule::exists(AiMessageFile::class, 'id')],
+            'has_image_generation' => ['nullable', 'boolean'],
         ];
     }
 }

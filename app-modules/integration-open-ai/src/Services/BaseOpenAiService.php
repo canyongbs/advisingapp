@@ -237,7 +237,7 @@ abstract class BaseOpenAiService implements AiService
      * @param array<string, mixed> $options
      * @param ?array<Message> $messages
      */
-    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null): Closure
+    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null, bool $hasImageGeneration = false): Closure
     {
         $aiSettings = app(AiSettings::class);
 
@@ -250,32 +250,86 @@ abstract class BaseOpenAiService implements AiService
                     'apiKey' => $this->getApiKey(),
                     'apiVersion' => $this->getApiVersion(),
                     'deployment' => $this->getDeployment(),
+                    ...($hasImageGeneration ? ['headers' => ['x-ms-oai-image-generation-deployment' => $this->getImageGenerationDeployment()]] : []),
                 ])
                 ->withProviderOptions([
                     'instructions' => $prompt,
                     'truncation' => 'auto',
-                    ...(filled($vectorStoreId) ? [
-                        'tools' => [[
-                            'type' => 'file_search',
-                            'vector_store_ids' => [$vectorStoreId],
-                        ]],
+                    ...((filled($vectorStoreId) || $hasImageGeneration) ? [
+                        'tools' => [
+                            ...filled($vectorStoreId) ? [[
+                                'type' => 'file_search',
+                                'vector_store_ids' => [$vectorStoreId],
+                            ]] : [],
+                            ...$hasImageGeneration ? [[
+                                'type' => 'image_generation',
+                            ]] : [],
+                        ],
                     ] : []),
                     ...$options,
                 ]);
 
             if (filled($messages)) {
-                $request = $request->withMessages($messages);
+                $request->withMessages($messages);
             } else {
-                $request = $request->withPrompt($content);
+                $request->withPrompt($content);
             }
 
-            $stream = $request
+            $request
                 ->withMaxTokens($aiSettings->max_tokens->getTokens())
-                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
-                ->asStream();
+                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null);
 
-            return function () use ($shouldTrack, $stream): Generator {
+            if ($hasImageGeneration) {
+                return function () use ($shouldTrack, $request): Generator {
+                    try {
+                        $response = $request->asText();
+
+                        if (filled($response->meta->id)) {
+                            yield new Meta(
+                                messageId: $response->meta->id,
+                                nextRequestOptions: ['previous_response_id' => $response->meta->id],
+                            );
+                        }
+
+                        if (filled($response->text)) {
+                            yield new Text($response->text);
+                        }
+
+                        yield new Finish(
+                            isIncomplete: $response->finishReason === FinishReason::Length,
+                            error: ($response->finishReason === FinishReason::Error) ? 'Something went wrong' : null,
+                        );
+                    } catch (PrismRateLimitedException $exception) {
+                        foreach ($exception->rateLimits as $rateLimit) {
+                            if ($rateLimit->resetsAt?->isFuture()) {
+                                yield new Finish(
+                                    rateLimitResetsAt: $rateLimit->resetsAt,
+                                );
+
+                                break;
+                            }
+                        }
+                    } catch (Throwable $exception) {
+                        report($exception);
+
+                        yield new Finish(
+                            error: 'Something went wrong',
+                        );
+                    }
+
+                    if ($shouldTrack) {
+                        dispatch(new RecordTrackedEvent(
+                            type: TrackedEventType::AiExchange,
+                            occurredAt: now(),
+                        ));
+                    }
+                };
+            }
+
+            return function () use ($shouldTrack, $request): Generator {
                 try {
+                    $stream = $request->asStream();
+
                     foreach ($stream as $chunk) {
                         if (
                             ($chunk->chunkType === ChunkType::Meta) &&
@@ -336,12 +390,17 @@ abstract class BaseOpenAiService implements AiService
         }
     }
 
+    public function hasImageGeneration(): bool
+    {
+        return filled($this->getImageGenerationDeployment());
+    }
+
     /**
      * @param array<AiMessageFile> $files
      */
-    public function sendMessage(AiMessage $message, array $files): Closure
+    public function sendMessage(AiMessage $message, array $files, bool $hasImageGeneration = false): Closure
     {
-        return $this->sendNewMessage($message, $files);
+        return $this->sendNewMessage($message, $files, $hasImageGeneration);
     }
 
     public function getMessagePreviousResponseId(AiMessage $message): ?string
@@ -379,15 +438,15 @@ abstract class BaseOpenAiService implements AiService
 
     public function completeResponse(AiMessage $response): Closure
     {
-        return $this->sendNewMessage($response, [], new UserMessage('Continue generating the response, do not mention that I told you as I will paste it directly after the last message.'));
+        return $this->sendNewMessage($response, [], userMessage: new UserMessage('Continue generating the response, do not mention that I told you as I will paste it directly after the last message.'));
     }
 
     /**
      * @param array<AiMessageFile> $files
      */
-    public function retryMessage(AiMessage $message, array $files): Closure
+    public function retryMessage(AiMessage $message, array $files, bool $hasImageGeneration = false): Closure
     {
-        return $this->sendNewMessage($message, $files);
+        return $this->sendNewMessage($message, $files, $hasImageGeneration);
     }
 
     public function getMaxAssistantInstructionsLength(): int
@@ -506,11 +565,20 @@ abstract class BaseOpenAiService implements AiService
         });
     }
 
+    public function getImageGenerationDeployment(): ?string
+    {
+        return null;
+    }
+
     /**
      * @param array<AiMessageFile> $files
      */
-    protected function sendNewMessage(AiMessage $message, array $files, ?UserMessage $userMessage = null): Closure
+    protected function sendNewMessage(AiMessage $message, array $files, bool $hasImageGeneration = false, ?UserMessage $userMessage = null): Closure
     {
+        if ($hasImageGeneration && (! $this->hasImageGeneration())) {
+            $hasImageGeneration = false;
+        }
+
         $previousMessages = [];
 
         $previousResponseId = $this->getMessagePreviousResponseId($message);
@@ -559,20 +627,23 @@ abstract class BaseOpenAiService implements AiService
                             'effort' => $aiSettings->reasoning_effort->value,
                         ],
                     ] : []),
-                    ...(filled($vectorStoreIds) ? [
-                        'tool_choice' => filled($files) ? [
-                            'type' => 'file_search',
-                        ] : 'auto',
-                        'tools' => [[
-                            'type' => 'file_search',
-                            'vector_store_ids' => $vectorStoreIds,
-                        ]],
+                    ...((filled($vectorStoreIds) || $hasImageGeneration) ? [
+                        'tools' => [
+                            ...filled($vectorStoreIds) ? [[
+                                'type' => 'file_search',
+                                'vector_store_ids' => [$vectorStoreIds],
+                            ]] : [],
+                            ...$hasImageGeneration ? [[
+                                'type' => 'image_generation',
+                            ]] : [],
+                        ],
                     ] : []),
                 ],
                 messages: [
                     ...$previousMessages,
                     $userMessage ?? new UserMessage($message->content),
                 ],
+                hasImageGeneration: $hasImageGeneration,
             );
         } catch (Throwable $exception) {
             report($exception);

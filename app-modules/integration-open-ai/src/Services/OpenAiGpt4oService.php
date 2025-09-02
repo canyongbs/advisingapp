@@ -52,4 +52,9 @@ class OpenAiGpt4oService extends BaseOpenAiService
     {
         return $this->settings->open_ai_gpt_4o_base_uri ?? config('integration-open-ai.gpt_4o_base_uri');
     }
+
+    public function getImageGenerationDeployment(): ?string
+    {
+        return $this->settings->open_ai_gpt_4o_image_generation_deployment;
+    }
 }

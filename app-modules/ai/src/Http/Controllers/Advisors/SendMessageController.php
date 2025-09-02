@@ -66,6 +66,7 @@ class SendMessageController
                 $thread,
                 $request->validated('prompt_id') ? Prompt::find($request->validated('prompt_id')) : $request->validated('content'),
                 AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
+                $request->validated('has_image_generation') ?? false,
             ));
 
             return response()->json([]);

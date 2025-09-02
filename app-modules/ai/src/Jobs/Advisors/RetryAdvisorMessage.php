@@ -68,6 +68,7 @@ class RetryAdvisorMessage implements ShouldQueue
         protected AiThread $thread,
         protected string $content,
         protected array $files = [],
+        protected bool $hasImageGeneration = false,
     ) {}
 
     public function handle(): void
@@ -101,7 +102,8 @@ class RetryAdvisorMessage implements ShouldQueue
         try {
             $stream = $aiService->retryMessage(
                 message: $message,
-                files: $this->files
+                files: $this->files,
+                hasImageGeneration: $this->hasImageGeneration,
             );
         } catch (Throwable $exception) {
             report($exception);

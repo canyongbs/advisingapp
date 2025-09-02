@@ -74,7 +74,7 @@ interface AiService
      * The method should return a new unsaved `AiMessage` model with the content
      * from the AI service set only, the other attributes will be set later.
      */
-    public function sendMessage(AiMessage $message, array $files): Closure;
+    public function sendMessage(AiMessage $message, array $files, bool $hasImageGeneration = false): Closure;
 
     /**
      * This method is passed an `AiMessage` model and should recover the
@@ -85,7 +85,7 @@ interface AiService
      * The method should return a new unsaved `AiMessage` model with the content
      * from the AI service set only, the other attributes will be set later.
      */
-    public function retryMessage(AiMessage $message, array $files): Closure;
+    public function retryMessage(AiMessage $message, array $files, bool $hasImageGeneration = false): Closure;
 
     public function completeResponse(AiMessage $response): Closure;
 
@@ -114,4 +114,6 @@ interface AiService
      * @param array<string, mixed> $options
      */
     public function getResearchRequestRequestSection(ResearchRequest $researchRequest, string $prompt, string $content, array $options, Closure $nextRequestOptions): Generator;
+
+    public function hasImageGeneration(): bool;
 }

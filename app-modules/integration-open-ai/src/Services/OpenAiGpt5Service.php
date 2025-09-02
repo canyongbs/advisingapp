@@ -53,6 +53,11 @@ class OpenAiGpt5Service extends BaseOpenAiService
         return $this->settings->open_ai_gpt_5_base_uri ?? config('integration-open-ai.gpt_5_base_uri');
     }
 
+    public function getImageGenerationDeployment(): ?string
+    {
+        return $this->settings->open_ai_gpt_5_image_generation_deployment;
+    }
+
     public function hasTemperature(): bool
     {
         return false;

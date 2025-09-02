@@ -69,6 +69,7 @@ class SendAdvisorMessage implements ShouldQueue
         protected AiThread $thread,
         protected string | Prompt $content,
         protected array $files = [],
+        protected bool $hasImageGeneration = false,
     ) {}
 
     public function handle(): void
@@ -122,7 +123,8 @@ class SendAdvisorMessage implements ShouldQueue
         try {
             $stream = $aiService->sendMessage(
                 message: $message,
-                files: $this->files
+                files: $this->files,
+                hasImageGeneration: $this->hasImageGeneration,
             );
         } catch (Throwable $exception) {
             report($exception);

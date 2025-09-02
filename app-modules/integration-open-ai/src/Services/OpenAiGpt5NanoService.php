@@ -53,6 +53,11 @@ class OpenAiGpt5NanoService extends BaseOpenAiService
         return $this->settings->open_ai_gpt_5_nano_base_uri ?? config('integration-open-ai.gpt_5_nano_base_uri');
     }
 
+    public function getImageGenerationDeployment(): ?string
+    {
+        return $this->settings->open_ai_gpt_5_nano_image_generation_deployment;
+    }
+
     public function hasTemperature(): bool
     {
         return false;
