@@ -90,12 +90,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Pages/Assistant/Concerns/CanManageThreads.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Class name "ManageAiICustomAdvisorSettings" is not in PascalCase\\.$#',
-    'identifier' => 'MeliorStan.classNameNotPascalCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Pages/ManageAiICustomAdvisorSettings.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Ai\\\\Filament\\\\Pages\\\\ManageAiIntegratedAssistantSettings\\:\\:getFormActions\\(\\) has invalid return type AdvisingApp\\\\Ai\\\\Filament\\\\Pages\\\\Action\\.$#',
     'identifier' => 'class.notFound',
     'count' => 1,
@@ -140,30 +134,12 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$archived_at\\.$#',
     'identifier' => 'property.notFound',
-    'count' => 5,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistantResource/Pages/EditAiAssistant.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$model\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
+    'count' => 4,
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistantResource/Pages/EditAiAssistant.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^PHPDoc tag @var above a method has no effect\\.$#',
     'identifier' => 'varTag.misplaced',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistantResource/Pages/EditAiAssistant.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$assistant of callable AdvisingApp\\\\Ai\\\\Actions\\\\ReInitializeAiServiceAssistant expects AdvisingApp\\\\Ai\\\\Models\\\\AiAssistant, Illuminate\\\\Database\\\\Eloquent\\\\Model given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistantResource/Pages/EditAiAssistant.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$assistant of callable AdvisingApp\\\\Ai\\\\Actions\\\\ResetAiServiceIdsForAssistant expects AdvisingApp\\\\Ai\\\\Models\\\\AiAssistant, Illuminate\\\\Database\\\\Eloquent\\\\Model given\\.$#',
-    'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistantResource/Pages/EditAiAssistant.php',
 ];
@@ -204,70 +180,52 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/QnaAdvisorResource/Pages/ManageQnaQuestions.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\CloneAiThread\\:\\:middleware\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\Advisors\\\\CloneAiThread\\:\\:middleware\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/CloneAiThread.php',
+    'path' => __DIR__ . '/app-modules/ai/src/Jobs/Advisors/CloneAiThread.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
     'identifier' => 'MeliorStan.shortVariable',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/CloneAiThread.php',
+    'path' => __DIR__ . '/app-modules/ai/src/Jobs/Advisors/CloneAiThread.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\EmailAiThread\\:\\:middleware\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\Advisors\\\\EmailAiThread\\:\\:middleware\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/EmailAiThread.php',
+    'path' => __DIR__ . '/app-modules/ai/src/Jobs/Advisors/EmailAiThread.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Filament\\\\Notifications\\\\Notification\\:\\:error\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/PrepareAiThreadCloning.php',
+    'path' => __DIR__ . '/app-modules/ai/src/Jobs/Advisors/PrepareAiThreadCloning.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\PrepareAiThreadCloning\\:\\:__construct\\(\\) has parameter \\$targetIds with no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\Advisors\\\\PrepareAiThreadCloning\\:\\:__construct\\(\\) has parameter \\$targetIds with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/PrepareAiThreadCloning.php',
+    'path' => __DIR__ . '/app-modules/ai/src/Jobs/Advisors/PrepareAiThreadCloning.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\PrepareAiThreadCloning\\:\\:generateSingleUserShareJobs\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\Advisors\\\\PrepareAiThreadCloning\\:\\:generateSingleUserShareJobs\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/PrepareAiThreadCloning.php',
+    'path' => __DIR__ . '/app-modules/ai/src/Jobs/Advisors/PrepareAiThreadCloning.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\PrepareAiThreadCloning\\:\\:generateTeamShareJobs\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\Advisors\\\\PrepareAiThreadCloning\\:\\:generateTeamShareJobs\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/PrepareAiThreadCloning.php',
+    'path' => __DIR__ . '/app-modules/ai/src/Jobs/Advisors/PrepareAiThreadCloning.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\PrepareAiThreadEmailing\\:\\:__construct\\(\\) has parameter \\$targetIds with no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\Advisors\\\\PrepareAiThreadEmailing\\:\\:__construct\\(\\) has parameter \\$targetIds with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/PrepareAiThreadEmailing.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Ai\\\\Jobs\\\\ReInitializeAiAssistant\\:\\:\\$maxExceptions has no type specified\\.$#',
-    'identifier' => 'missingType.property',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/ReInitializeAiAssistant.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Ai\\\\Jobs\\\\ReInitializeAiAssistantThreads\\:\\:\\$maxExceptions has no type specified\\.$#',
-    'identifier' => 'missingType.property',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/ReInitializeAiAssistantThreads.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Ai\\\\Jobs\\\\ReInitializeAiThread\\:\\:\\$maxExceptions has no type specified\\.$#',
-    'identifier' => 'missingType.property',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/ReInitializeAiThread.php',
+    'path' => __DIR__ . '/app-modules/ai/src/Jobs/Advisors/PrepareAiThreadEmailing.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe property access on non\\-nullable type AdvisingApp\\\\Ai\\\\Models\\\\AiAssistant\\. Use \\-\\> instead\\.$#',
@@ -420,28 +378,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/CompletePromptTest.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TValue in call to function expect$#',
-    'identifier' => 'argument.templateType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/CompleteResponseTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:once\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 2,
     'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/CreateThreadTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TValue in call to function expect$#',
-    'identifier' => 'argument.templateType',
-    'count' => 5,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/RetryMessageTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TValue in call to function expect$#',
-    'identifier' => 'argument.templateType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/SendMessageTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
@@ -478,24 +418,6 @@ $ignoreErrors[] = [
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Filament/Resources/AiAssistantResource/RequestFactories/EditAiAssistantRequestFactory.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:once\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 4,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Http/Controllers/CompleteResponseControllerTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:once\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 4,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Http/Controllers/RetryMessageControllerTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:once\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 4,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Http/Controllers/SendMessageControllerTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
@@ -5058,27 +4980,15 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Using nullsafe property access "\\?\\-\\>message" on left side of \\?\\? is unnecessary\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Using nullsafe property access "\\?\\-\\>vectorStoreIds" on left side of \\?\\? is unnecessary\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 2,
     'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Using nullsafe property access on non\\-nullable type OpenAI\\\\Responses\\\\Threads\\\\Runs\\\\ThreadRunResponse\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
     'identifier' => 'MeliorStan.shortVariable',
-    'count' => 3,
+    'count' => 2,
     'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
 ];
 $ignoreErrors[] = [
@@ -5206,54 +5116,6 @@ $ignoreErrors[] = [
     'identifier' => 'MeliorStan.shortVariable',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO4MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$responseClass of class OpenAI\\\\Responses\\\\StreamResponse constructor expects class\\-string\\<\\>, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/tests/Tenant/Feature/Services/OpenAiGptTestServiceTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$responses of method OpenAI\\\\Testing\\\\ClientFake\\:\\:addResponses\\(\\) expects array\\<OpenAI\\\\Testing\\\\Response\\>, array\\<int, OpenAI\\\\Responses\\\\Assistants\\\\AssistantResponse\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/tests/Tenant/Feature/Services/OpenAiGptTestServiceTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$responses of method OpenAI\\\\Testing\\\\ClientFake\\:\\:addResponses\\(\\) expects array\\<OpenAI\\\\Testing\\\\Response\\>, array\\<int, OpenAI\\\\Responses\\\\StreamResponse\\<\\>\\|OpenAI\\\\Responses\\\\Threads\\\\Messages\\\\ThreadMessageResponse\\|OpenAI\\\\Responses\\\\Threads\\\\Runs\\\\ThreadRunListResponse\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/tests/Tenant/Feature/Services/OpenAiGptTestServiceTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$responses of method OpenAI\\\\Testing\\\\ClientFake\\:\\:addResponses\\(\\) expects array\\<OpenAI\\\\Testing\\\\Response\\>, array\\<int, OpenAI\\\\Responses\\\\Threads\\\\Messages\\\\ThreadMessageListResponse\\|OpenAI\\\\Responses\\\\Threads\\\\Runs\\\\ThreadRunListResponse\\|OpenAI\\\\Responses\\\\Threads\\\\Runs\\\\ThreadRunResponse\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/tests/Tenant/Feature/Services/OpenAiGptTestServiceTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$responses of method OpenAI\\\\Testing\\\\ClientFake\\:\\:addResponses\\(\\) expects array\\<OpenAI\\\\Testing\\\\Response\\>, array\\<int, OpenAI\\\\Responses\\\\Threads\\\\Messages\\\\ThreadMessageResponse\\|OpenAI\\\\Responses\\\\Threads\\\\ThreadResponse\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/tests/Tenant/Feature/Services/OpenAiGptTestServiceTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$responses of method OpenAI\\\\Testing\\\\ClientFake\\:\\:addResponses\\(\\) expects array\\<OpenAI\\\\Testing\\\\Response\\>, array\\<int, OpenAI\\\\Responses\\\\Threads\\\\ThreadDeleteResponse\\|OpenAI\\\\Responses\\\\Threads\\\\ThreadResponse\\|OpenAI\\\\Responses\\\\VectorStores\\\\VectorStoreDeleteResponse\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/tests/Tenant/Feature/Services/OpenAiGptTestServiceTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$responses of method OpenAI\\\\Testing\\\\ClientFake\\:\\:addResponses\\(\\) expects array\\<OpenAI\\\\Testing\\\\Response\\>, array\\<int, OpenAI\\\\Responses\\\\Threads\\\\ThreadResponse\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/tests/Tenant/Feature/Services/OpenAiGptTestServiceTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TValue in call to function expect$#',
-    'identifier' => 'argument.templateType',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/tests/Tenant/Feature/Services/OpenAiGptTestServiceTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Match expression does not handle remaining value\\: string$#',

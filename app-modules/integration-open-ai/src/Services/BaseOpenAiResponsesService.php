@@ -46,34 +46,32 @@ use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\Ai\Settings\AiSettings;
+use AdvisingApp\Ai\Support\StreamingChunks\Finish;
+use AdvisingApp\Ai\Support\StreamingChunks\Meta;
+use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\AssistantsDataTransferObject;
 use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
 use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
-use AdvisingApp\IntegrationOpenAi\Models\OpenAiResearchRequestVectorStore;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService\Concerns\InteractsWithResearchRequests;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService\Concerns\InteractsWithVectorStores;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use AdvisingApp\Research\Models\ResearchRequest;
-use Carbon\CarbonImmutable;
+use App\Models\User;
 use Closure;
 use Exception;
 use Generator;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 use Prism\Prism\Contracts\Message;
 use Prism\Prism\Contracts\Schema;
 use Prism\Prism\Enums\ChunkType;
 use Prism\Prism\Enums\FinishReason;
 use Prism\Prism\Exceptions\PrismRateLimitedException;
 use Prism\Prism\Prism;
-use Prism\Prism\Schema\ArraySchema;
-use Prism\Prism\Schema\ObjectSchema;
-use Prism\Prism\Schema\StringSchema;
 use Prism\Prism\ValueObjects\Messages\AssistantMessage;
 use Prism\Prism\ValueObjects\Messages\UserMessage;
 use Throwable;
@@ -81,6 +79,8 @@ use Throwable;
 abstract class BaseOpenAiResponsesService implements AiService
 {
     use HasAiServiceHelpers;
+    use InteractsWithVectorStores;
+    use InteractsWithResearchRequests;
 
     public const FORMATTING_INSTRUCTIONS = 'When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.';
 
@@ -241,15 +241,16 @@ abstract class BaseOpenAiResponsesService implements AiService
      *
      * @param array<AiFile> $files
      * @param array<string, mixed> $options
+     * @param ?array<Message> $messages
      */
-    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = []): Closure
+    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null): Closure
     {
         $aiSettings = app(AiSettings::class);
 
         try {
             $vectorStoreId = $this->getReadyVectorStoreId($files);
 
-            $stream = Prism::text()
+            $request = Prism::text()
                 ->using('azure_open_ai', $this->getModel())
                 ->withClientOptions([
                     'apiKey' => $this->getApiKey(),
@@ -266,8 +267,15 @@ abstract class BaseOpenAiResponsesService implements AiService
                         ]],
                     ] : []),
                     ...$options,
-                ])
-                ->withPrompt($content)
+                ]);
+
+            if (filled($messages)) {
+                $request = $request->withMessages($messages);
+            } else {
+                $request = $request->withPrompt($content);
+            }
+
+            $stream = $request
                 ->withMaxTokens($aiSettings->max_tokens->getTokens())
                 ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
                 ->asStream();
@@ -279,10 +287,10 @@ abstract class BaseOpenAiResponsesService implements AiService
                             ($chunk->chunkType === ChunkType::Meta) &&
                             filled($chunk->meta?->id)
                         ) {
-                            yield [
-                                'type' => 'next_request_options',
-                                'options' => ['previous_response_id' => $chunk->meta->id],
-                            ];
+                            yield new Meta(
+                                messageId: $chunk->meta->id,
+                                nextRequestOptions: ['previous_response_id' => $chunk->meta->id],
+                            );
 
                             continue;
                         }
@@ -291,24 +299,33 @@ abstract class BaseOpenAiResponsesService implements AiService
                             continue;
                         }
 
-                        yield ['type' => 'text', 'content' => $chunk->text];
+                        yield new Text($chunk->text);
 
-                        if ($chunk->finishReason === FinishReason::Error) {
-                            report(new MessageResponseException('Stream not successful.'));
+                        if ($chunk->finishReason) {
+                            yield new Finish(
+                                isIncomplete: $chunk->finishReason === FinishReason::Length,
+                                error: ($chunk->finishReason === FinishReason::Error) ? 'Something went wrong' : null,
+                            );
+
+                            break;
                         }
                     }
                 } catch (PrismRateLimitedException $exception) {
                     foreach ($exception->rateLimits as $rateLimit) {
                         if ($rateLimit->resetsAt?->isFuture()) {
-                            throw new MessageResponseException("Rate limit exceeded, retry at {$rateLimit->resetsAt}.");
+                            yield new Finish(
+                                rateLimitResetsAt: $rateLimit->resetsAt,
+                            );
+
+                            break;
                         }
                     }
-
-                    throw new MessageResponseException('Rate limit exceeded, please try again later.');
                 } catch (Throwable $exception) {
                     report($exception);
 
-                    throw new MessageResponseException('Failed to complete the prompt: [' . $exception->getMessage() . '].');
+                    yield new Finish(
+                        error: 'Something went wrong',
+                    );
                 }
 
                 if ($shouldTrack) {
@@ -326,328 +343,11 @@ abstract class BaseOpenAiResponsesService implements AiService
     }
 
     /**
-     * @return array<string>
-     */
-    public function getResearchRequestRequestSearchQueries(ResearchRequest $researchRequest, string $prompt, string $content): array
-    {
-        return $this->structured(
-            prompt: $prompt,
-            content: $content,
-            schema: app(ArraySchema::class, [
-                'name' => 'search_queries',
-                'description' => 'An array of search queries to be used for web searches.',
-                'items' => app(StringSchema::class, [
-                    'name' => 'query',
-                    'description' => 'A search query that can be used in Google to find relevant web pages.',
-                ]),
-            ]),
-            providerOptions: [
-                'tool_choice' => [
-                    'type' => 'file_search',
-                ],
-                'tools' => [[
-                    'type' => 'file_search',
-                    'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
-                ]],
-            ],
-        )['description'] ?? [];
-    }
-
-    /**
-     * @return array{response: array<mixed>, nextRequestOptions: array<string, mixed>}
-     */
-    public function getResearchRequestRequestOutline(ResearchRequest $researchRequest, string $prompt, string $content): array
-    {
-        $responseId = null;
-
-        $response = $this->structured(
-            prompt: $prompt,
-            content: $content,
-            schema: app(ObjectSchema::class, [
-                'name' => 'outline',
-                'description' => 'An outline for the research report, including sections and subsections.',
-                'properties' => [
-                    app(ObjectSchema::class, [
-                        'name' => 'abstract',
-                        'description' => 'An abstract for the research report.',
-                        'properties' => [
-                            app(StringSchema::class, [
-                                'name' => 'heading',
-                                'description' => 'The heading of the abstract section.',
-                            ]),
-                        ],
-                        'requiredFields' => ['heading'],
-                    ]),
-                    app(ObjectSchema::class, [
-                        'name' => 'introduction',
-                        'description' => 'An introduction for the research report.',
-                        'properties' => [
-                            app(StringSchema::class, [
-                                'name' => 'heading',
-                                'description' => 'The heading of the introduction section.',
-                            ]),
-                        ],
-                        'requiredFields' => ['heading'],
-                    ]),
-                    app(ArraySchema::class, [
-                        'name' => 'sections',
-                        'description' => 'An array of sections for the research report, each with a heading and subsections. There should be 6 sections in total.',
-                        'items' => app(ObjectSchema::class, [
-                            'name' => 'section',
-                            'description' => 'A section in the research report.',
-                            'properties' => [
-                                app(StringSchema::class, [
-                                    'name' => 'heading',
-                                    'description' => 'The heading of the section.',
-                                ]),
-                                app(ArraySchema::class, [
-                                    'name' => 'subsections',
-                                    'description' => 'An array of subsections within the section. There should be 3 subsections in this section.',
-                                    'items' => app(ObjectSchema::class, [
-                                        'name' => 'subsection',
-                                        'description' => 'A subsection within a section of the research report.',
-                                        'properties' => [
-                                            app(StringSchema::class, [
-                                                'name' => 'heading',
-                                                'description' => 'The heading of the subsection.',
-                                            ]),
-                                        ],
-                                        'requiredFields' => ['heading'],
-                                    ]),
-                                ]),
-                            ],
-                            'requiredFields' => ['heading', 'subsections'],
-                        ]),
-                    ]),
-                    app(ObjectSchema::class, [
-                        'name' => 'conclusion',
-                        'description' => 'A conclusion for the research report.',
-                        'properties' => [
-                            app(StringSchema::class, [
-                                'name' => 'heading',
-                                'description' => 'The heading of the conclusion section.',
-                            ]),
-                        ],
-                        'requiredFields' => ['heading'],
-                    ]),
-                ],
-                'requiredFields' => ['abstract', 'introduction', 'sections', 'conclusion'],
-            ]),
-            providerOptions: [
-                'tool_choice' => [
-                    'type' => 'file_search',
-                ],
-                'tools' => [[
-                    'type' => 'file_search',
-                    'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
-                ]],
-            ],
-            responseId: $responseId,
-        );
-
-        return [
-            'response' => $response['properties'] ?? [],
-            'nextRequestOptions' => filled($responseId) ? [
-                'previous_response_id' => $responseId,
-            ] : [],
-        ];
-    }
-
-    /**
-     * @param array<string, mixed> $options
-     */
-    public function getResearchRequestRequestSection(ResearchRequest $researchRequest, string $prompt, string $content, array $options, Closure $nextRequestOptions): Generator
-    {
-        $aiSettings = app(AiSettings::class);
-
-        try {
-            $stream = Prism::text()
-                ->using('azure_open_ai', $this->getModel())
-                ->withClientOptions([
-                    'apiKey' => $this->getApiKey(),
-                    'apiVersion' => $this->getApiVersion(),
-                    'deployment' => $this->getDeployment(),
-                ])
-                ->withProviderOptions([
-                    'tool_choice' => [
-                        'type' => 'file_search',
-                    ],
-                    'tools' => [[
-                        'type' => 'file_search',
-                        'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
-                    ]],
-                    'truncation' => 'auto',
-                    ...$options,
-                ])
-                ->withSystemPrompt($prompt)
-                ->withPrompt($content)
-                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
-                ->asStream();
-
-            foreach ($stream as $chunk) {
-                if (
-                    ($chunk->chunkType === ChunkType::Meta) &&
-                    filled($chunk->meta?->id)
-                ) {
-                    $nextRequestOptions(['previous_response_id' => $chunk->meta->id]);
-
-                    continue;
-                }
-
-                if ($chunk->chunkType !== ChunkType::Text) {
-                    continue;
-                }
-
-                yield $chunk->text;
-
-                if ($chunk->finishReason === FinishReason::Error) {
-                    report(new MessageResponseException('Stream not successful.'));
-                }
-            }
-        } catch (PrismRateLimitedException $exception) {
-            foreach ($exception->rateLimits as $rateLimit) {
-                if ($rateLimit->resetsAt?->isFuture()) {
-                    throw new MessageResponseException("Rate limit exceeded, retry at {$rateLimit->resetsAt}.");
-                }
-            }
-
-            throw new MessageResponseException('Rate limit exceeded, please try again later.');
-        } catch (Throwable $exception) {
-            report($exception);
-
-            throw new MessageResponseException('Failed to complete the prompt: [' . $exception->getMessage() . '].');
-        }
-    }
-
-    /**
-     * @return array<string>
-     */
-    public function getReadyResearchRequestVectorStoreIds(ResearchRequest $researchRequest): array
-    {
-        return OpenAiResearchRequestVectorStore::query()
-            ->where('deployment_hash', $this->getDeploymentHash())
-            ->whereBelongsTo($researchRequest)
-            ->whereNotNull('ready_until')
-            ->where('ready_until', '>=', now())
-            ->whereNotNull('vector_store_id')
-            ->pluck('vector_store_id')
-            ->all();
-    }
-
-    /**
      * @param array<AiMessageFile> $files
      */
-    public function sendMessage(AiMessage $message, array $files, Closure $saveResponse, ?UserMessage $userMessage = null): Closure
+    public function sendMessage(AiMessage $message, array $files): Closure
     {
-        $previousMessages = [];
-
-        $previousResponseId = $this->getMessagePreviousResponseId($message);
-
-        if (blank(value: $previousResponseId)) {
-            $previousMessages = $message->thread->messages()
-                ->oldest()
-                ->get()
-                ->map(fn (AiMessage $message): Message => filled($message->user_id)
-                    ? new UserMessage($message->content)
-                    : new AssistantMessage($message->content))
-                ->all();
-        }
-
-        $aiSettings = app(AiSettings::class);
-        $instructions = $this->generateAssistantInstructions($message->thread->assistant, withDynamicContext: true);
-
-        try {
-            $vectorStoreIds = array_values(array_filter([
-                $this->getReadyVectorStoreId([
-                    ...$files,
-                    ...AiMessageFile::query()
-                        ->whereNotNull('parsing_results')
-                        ->whereHas(
-                            'message',
-                            fn (Builder $query) => $query
-                                ->whereKeyNot($message->getKey())
-                                ->whereBelongsTo($message->thread, 'thread'),
-                        )
-                        ->get()
-                        ->all(),
-                ]),
-                $this->getReadyVectorStoreId($message->thread->assistant->files()
-                    ->whereNotNull('parsing_results')
-                    ->get()
-                    ->all()),
-            ]));
-
-            $stream = Prism::text()
-                ->using('azure_open_ai', $this->getModel())
-                ->withClientOptions([
-                    'apiKey' => $this->getApiKey(),
-                    'apiVersion' => $this->getApiVersion(),
-                    'deployment' => $this->getDeployment(),
-                ])
-                ->withProviderOptions([
-                    'previous_response_id' => $previousResponseId,
-                    ...($this->hasReasoning() ? [
-                        'reasoning' => [
-                            'effort' => $aiSettings->reasoning_effort->value,
-                        ],
-                    ] : []),
-                    'truncation' => 'auto',
-                    ...(filled($vectorStoreIds) ? [
-                        'tool_choice' => filled($files) ? [
-                            'type' => 'file_search',
-                        ] : 'auto',
-                        'tools' => [[
-                            'type' => 'file_search',
-                            'vector_store_ids' => $vectorStoreIds,
-                        ]],
-                    ] : []),
-                ])
-                ->withSystemPrompt($instructions)
-                ->withMessages([
-                    ...$previousMessages,
-                    $userMessage ?? new UserMessage($message->content),
-                ])
-                ->withMaxTokens($aiSettings->max_tokens->getTokens())
-                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
-                ->asStream();
-
-            return $this->streamMessageResponse($stream, $message, $saveResponse);
-        } catch (Throwable $exception) {
-            report($exception);
-
-            throw new MessageResponseException('Failed to send a message: [' . $exception->getMessage() . '].');
-        } finally {
-            try {
-                if (is_null($message->thread->name)) {
-                    $prompt = $message->context . "\nThe following is the start of a chat between you and a user:\n" . $message->content;
-
-                    $message->thread->name = $this->complete($prompt, 'Generate a title for this chat, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:');
-
-                    $message->thread->saved_at = now();
-
-                    $message->thread->save();
-
-                    dispatch(new RecordTrackedEvent(
-                        type: TrackedEventType::AiThreadSaved,
-                        occurredAt: now(),
-                    ));
-                }
-            } catch (Exception $exception) {
-                report($exception);
-
-                $message->thread->name = 'Untitled Chat';
-            }
-
-            $message->context = $instructions;
-            $message->save();
-
-            $message->files()->saveMany($files);
-
-            dispatch(new RecordTrackedEvent(
-                type: TrackedEventType::AiExchange,
-                occurredAt: now(),
-            ));
-        }
+        return $this->sendNewMessage($message, $files);
     }
 
     public function getMessagePreviousResponseId(AiMessage $message): ?string
@@ -683,17 +383,17 @@ abstract class BaseOpenAiResponsesService implements AiService
         }
     }
 
-    public function completeResponse(AiMessage $response, Closure $saveResponse): Closure
+    public function completeResponse(AiMessage $response): Closure
     {
-        return $this->sendMessage($response, [], $saveResponse, new UserMessage('Continue generating the response, do not mention that I told you as I will paste it directly after the last message.'));
+        return $this->sendNewMessage($response, [], new UserMessage('Continue generating the response, do not mention that I told you as I will paste it directly after the last message.'));
     }
 
     /**
      * @param array<AiMessageFile> $files
      */
-    public function retryMessage(AiMessage $message, array $files, Closure $saveResponse): Closure
+    public function retryMessage(AiMessage $message, array $files): Closure
     {
-        return $this->sendMessage($message, $files, $saveResponse);
+        return $this->sendNewMessage($message, $files);
     }
 
     public function getMaxAssistantInstructionsLength(): int
@@ -803,40 +503,6 @@ abstract class BaseOpenAiResponsesService implements AiService
         return md5($this->getDeployment());
     }
 
-    public function isResearchRequestReady(ResearchRequest $researchRequest): bool
-    {
-        $vectorStore = $this->findOrCreateVectorStoreRecordForResearchRequest($researchRequest);
-
-        if ($vectorStore->ready_until?->isFuture()) {
-            return true;
-        }
-
-        if (($isResearchRequestReady = $this->isResearchRequestReadyInExistingVectorStore($researchRequest, $vectorStore)) !== null) {
-            return $isResearchRequestReady;
-        }
-
-        $this->createVectorStoreForResearchRequest($researchRequest, $vectorStore);
-
-        return false;
-    }
-
-    public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void
-    {
-        DB::transaction(function () use ($researchRequest) {
-            $vectorStore = $this->findOrCreateVectorStoreRecordForResearchRequest($researchRequest);
-            $vectorStore->ready_until = null;
-            $vectorStore->save();
-
-            $fileIds = $this->uploadResearchRequestParsedSearchResultFilesForVectorStore($researchRequest, $vectorStore);
-
-            if (blank($fileIds)) {
-                return;
-            }
-
-            $this->attachResearchRequestFilesToVectorStore($fileIds, $vectorStore);
-        });
-    }
-
     /**
      * @param array<AiFile> $files
      */
@@ -906,6 +572,107 @@ abstract class BaseOpenAiResponsesService implements AiService
     }
 
     /**
+     * @param array<AiMessageFile> $files
+     */
+    protected function sendNewMessage(AiMessage $message, array $files, ?UserMessage $userMessage = null): Closure
+    {
+        $previousMessages = [];
+
+        $previousResponseId = $this->getMessagePreviousResponseId($message);
+
+        if (blank($previousResponseId)) {
+            $previousMessages = $message->thread->messages()
+                ->oldest()
+                ->get()
+                ->map(fn (AiMessage $message): Message => filled($message->user_id)
+                    ? new UserMessage($message->content)
+                    : new AssistantMessage($message->content))
+                ->all();
+        }
+
+        $aiSettings = app(AiSettings::class);
+        $instructions = $this->generateAssistantInstructions($message->thread->assistant, $message->thread->user, withDynamicContext: true);
+
+        try {
+            $vectorStoreIds = array_values(array_filter([
+                $this->getReadyVectorStoreId([
+                    ...$files,
+                    ...AiMessageFile::query()
+                        ->whereNotNull('parsing_results')
+                        ->whereHas(
+                            'message',
+                            fn (Builder $query) => $query
+                                ->whereKeyNot($message->getKey())
+                                ->whereBelongsTo($message->thread, 'thread'),
+                        )
+                        ->get()
+                        ->all(),
+                ]),
+                $this->getReadyVectorStoreId($message->thread->assistant->files()
+                    ->whereNotNull('parsing_results')
+                    ->get()
+                    ->all()),
+            ]));
+
+            return $this->streamRaw(
+                prompt: $instructions,
+                content: $message->content,
+                options: [
+                    'previous_response_id' => $previousResponseId,
+                    ...($this->hasReasoning() ? [
+                        'reasoning' => [
+                            'effort' => $aiSettings->reasoning_effort->value,
+                        ],
+                    ] : []),
+                    ...(filled($vectorStoreIds) ? [
+                        'tool_choice' => filled($files) ? [
+                            'type' => 'file_search',
+                        ] : 'auto',
+                        'tools' => [[
+                            'type' => 'file_search',
+                            'vector_store_ids' => $vectorStoreIds,
+                        ]],
+                    ] : []),
+                ],
+                messages: [
+                    ...$previousMessages,
+                    $userMessage ?? new UserMessage($message->content),
+                ],
+            );
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw new MessageResponseException('Failed to send a message: [' . $exception->getMessage() . '].');
+        } finally {
+            try {
+                if (is_null($message->thread->name)) {
+                    $prompt = $message->context . "\nThe following is the start of a chat between you and a user:\n" . $message->content;
+
+                    $message->thread->name = $this->complete($prompt, 'Generate a title for this chat, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:');
+
+                    $message->thread->saved_at = now();
+
+                    $message->thread->save();
+
+                    dispatch(new RecordTrackedEvent(
+                        type: TrackedEventType::AiThreadSaved,
+                        occurredAt: now(),
+                    ));
+                }
+            } catch (Exception $exception) {
+                report($exception);
+
+                $message->thread->name = 'Untitled Chat';
+            }
+
+            $message->context = $instructions;
+            $message->save();
+
+            $message->files()->saveMany($files);
+        }
+    }
+
+    /**
      * @param array<string, mixed> $providerOptions
      *
      * @return array<mixed>
@@ -955,259 +722,7 @@ abstract class BaseOpenAiResponsesService implements AiService
         return $response->structured;
     }
 
-    protected function findOrCreateVectorStoreRecordForResearchRequest(ResearchRequest $researchRequest): OpenAiResearchRequestVectorStore
-    {
-        $deploymentHash = $this->getDeploymentHash();
-
-        $vectorStore = OpenAiResearchRequestVectorStore::query()
-            ->whereBelongsTo($researchRequest)
-            ->where('deployment_hash', $deploymentHash)
-            ->first();
-
-        if ($vectorStore) {
-            return $vectorStore;
-        }
-
-        $vectorStore = new OpenAiResearchRequestVectorStore();
-        $vectorStore->researchRequest()->associate($researchRequest);
-        $vectorStore->deployment_hash = $deploymentHash;
-
-        return $vectorStore;
-    }
-
-    protected function isResearchRequestReadyInExistingVectorStore(ResearchRequest $researchRequest, OpenAiResearchRequestVectorStore $vectorStore): ?bool
-    {
-        if (blank($vectorStore->vector_store_id)) {
-            return null;
-        }
-
-        $getVectorStoreResponse = $this->vectorStoresHttpClient()
-            ->get("vector_stores/{$vectorStore->vector_store_id}");
-
-        $hasVectorStoreCompletedAllFiles = $getVectorStoreResponse->successful()
-            && ($getVectorStoreResponse->json('status') === 'completed')
-            && ($getVectorStoreResponse->json('file_counts.completed') === $getVectorStoreResponse->json('file_counts.total'));
-
-        $isVectorStoreProcessingFiles = $getVectorStoreResponse->successful()
-            && ($getVectorStoreResponse->json('status') === 'in_progress')
-            && $getVectorStoreResponse->json('file_counts.in_progress');
-
-        if ((! $hasVectorStoreCompletedAllFiles) && $isVectorStoreProcessingFiles) {
-            return false;
-        } elseif (
-            $hasVectorStoreCompletedAllFiles
-            && $getVectorStoreResponse->json('expires_at')
-            && (($vectorStoreExpiresAt = CarbonImmutable::createFromTimestampUTC($getVectorStoreResponse->json('expires_at')))->diffInHours() < -3)
-        ) {
-            $vectorStore->ready_until = $vectorStoreExpiresAt->subHours(2);
-            $this->deleteExistingResearchRequestVectorStoreFiles($researchRequest, $vectorStore);
-            $vectorStore->save();
-
-            return true;
-        }
-
-        $vectorStore->vector_store_id = null;
-
-        return null;
-    }
-
-    protected function deleteExistingResearchRequestVectorStoreFiles(ResearchRequest $researchRequest, OpenAiResearchRequestVectorStore $vectorStore): void
-    {
-        $listFilesResponse = $this->vectorStoresHttpClient()
-            ->get("vector_stores/{$vectorStore->vector_store_id}/files");
-
-        if ((! $listFilesResponse->successful()) || ! is_array($listFilesResponse->json('data'))) {
-            report(new Exception('Failed to list files for vector store [' . $vectorStore->vector_store_id . '] for research request [' . $researchRequest->getKey() . '], as a [' . $listFilesResponse->status() . '] response was returned: [' . $listFilesResponse->body() . '].'));
-
-            return;
-        }
-
-        foreach (Arr::pluck($listFilesResponse->json('data'), 'id') as $fileId) {
-            $deleteFileResponse = $this->filesHttpClient()
-                ->delete("files/{$fileId}");
-
-            if ((! $deleteFileResponse->successful()) && (! $deleteFileResponse->notFound())) {
-                report(new Exception('Failed to delete file [' . $fileId . '] associated with vector store [' . $vectorStore->vector_store_id . '] for research request [' . $researchRequest->getKey() . '], as a [' . $deleteFileResponse->status() . '] response was returned: [' . $deleteFileResponse->body() . '].'));
-            }
-        }
-    }
-
-    protected function createVectorStoreForResearchRequest(ResearchRequest $researchRequest, OpenAiResearchRequestVectorStore $vectorStore): void
-    {
-        $fileIds = $this->uploadResearchRequestFilesForVectorStore($researchRequest, $vectorStore);
-
-        $createVectorStoreResponse = $this->vectorStoresHttpClient()
-            ->acceptJson()
-            ->asJson()
-            ->post('vector_stores', [
-                'name' => Str::limit($researchRequest->topic, 100),
-                'file_ids' => $fileIds,
-                'expires_after' => [
-                    'anchor' => 'last_active_at',
-                    'days' => 1,
-                ],
-            ]);
-
-        if ((! $createVectorStoreResponse->successful()) || blank($createVectorStoreResponse->json('id'))) {
-            report(new Exception('Failed to create vector store for research request [' . $researchRequest->getKey() . '], as a [' . $createVectorStoreResponse->status() . '] response was returned: [' . $createVectorStoreResponse->body() . '].'));
-
-            $vectorStore->save();
-
-            return;
-        }
-
-        $vectorStore->vector_store_id = $createVectorStoreResponse->json('id');
-        $vectorStore->save();
-    }
-
-    /**
-     * @return ?array<string>
-     */
-    protected function uploadResearchRequestFilesForVectorStore(ResearchRequest $researchRequest, OpenAiResearchRequestVectorStore $vectorStore): ?array
-    {
-        $fileIds = [];
-
-        foreach ($researchRequest->parsedFiles as $file) {
-            $createFileResponse = $this->filesHttpClient()
-                ->attach('file', $file->results, (string) str($file->media->name)->limit(100)->slug()->append('.md'), ['Content-Type' => 'text/markdown'])
-                ->post('files', [
-                    'purpose' => 'assistants',
-                ]);
-
-            if ((! $createFileResponse->successful()) || blank($createFileResponse->json('id'))) {
-                report(new Exception('Failed to create research request file [' . $file->getKey() . '] for vector store, as a [' . $createFileResponse->status() . '] response was returned: [' . $createFileResponse->body() . '].'));
-
-                continue;
-            }
-
-            $fileIds[] = $createFileResponse->json('id');
-        }
-
-        foreach ($researchRequest->parsedLinks as $link) {
-            $createFileResponse = $this->filesHttpClient()
-                ->attach('file', $link->results, (string) str($link->url)->limit(100)->slug()->append('.md'), ['Content-Type' => 'text/markdown'])
-                ->post('files', [
-                    'purpose' => 'assistants',
-                ]);
-
-            if ((! $createFileResponse->successful()) || blank($createFileResponse->json('id'))) {
-                report(new Exception('Failed to create research request link file [' . $link->getKey() . '] for vector store, as a [' . $createFileResponse->status() . '] response was returned: [' . $createFileResponse->body() . '].'));
-
-                continue;
-            }
-
-            $fileIds[] = $createFileResponse->json('id');
-        }
-
-        return [
-            ...$fileIds,
-            ...$this->uploadResearchRequestParsedSearchResultFilesForVectorStore($researchRequest, $vectorStore),
-        ];
-    }
-
-    /**
-     * @return ?array<string>
-     */
-    protected function uploadResearchRequestParsedSearchResultFilesForVectorStore(ResearchRequest $researchRequest, OpenAiResearchRequestVectorStore $vectorStore): ?array
-    {
-        $fileIds = [];
-
-        foreach ($researchRequest->parsedSearchResults as $searchResult) {
-            $createFileResponse = $this->filesHttpClient()
-                ->attach('file', $searchResult->results, (string) str($searchResult->search_query)->limit(100)->slug()->append('.md'), ['Content-Type' => 'text/markdown'])
-                ->post('files', [
-                    'purpose' => 'assistants',
-                ]);
-
-            if ((! $createFileResponse->successful()) || blank($createFileResponse->json('id'))) {
-                report(new Exception('Failed to create research request search result file [' . $searchResult->getKey() . '] for vector store, as a [' . $createFileResponse->status() . '] response was returned: [' . $createFileResponse->body() . '].'));
-
-                continue;
-            }
-
-            $fileIds[] = $createFileResponse->json('id');
-        }
-
-        return $fileIds;
-    }
-
-    protected function vectorStoresHttpClient(): PendingRequest
-    {
-        return Http::withHeaders([
-            'api-key' => $this->getApiKey(),
-        ])
-            ->withQueryParameters(['api-version' => '2025-04-01-preview'])
-            ->baseUrl((string) str($this->getDeployment())->beforeLast('/v1'));
-    }
-
-    protected function filesHttpClient(): PendingRequest
-    {
-        return Http::withHeaders([
-            'api-key' => $this->getApiKey(),
-        ])
-            ->withQueryParameters(['api-version' => '2024-10-21'])
-            ->baseUrl((string) str($this->getDeployment())->beforeLast('/v1'));
-    }
-
-    protected function streamMessageResponse(Generator $stream, AiMessage $message, Closure $saveResponse): Closure
-    {
-        return function () use ($message, $saveResponse, $stream): Generator {
-            try {
-                // If the message was sent by the user, save the response to a new record.
-                // If the message was sent by the assistant, and we are completing the response, save it to the existing record.
-                $response = filled($message->user_id) ? (new AiMessage()) : $message;
-
-                foreach ($stream as $chunk) {
-                    if (
-                        ($chunk->chunkType === ChunkType::Meta) &&
-                        filled($chunk->meta?->id)
-                    ) {
-                        $response->message_id = $chunk->meta->id;
-
-                        continue;
-                    }
-
-                    if ($chunk->chunkType !== ChunkType::Text) {
-                        continue;
-                    }
-
-                    yield json_encode(['type' => 'content', 'content' => base64_encode($chunk->text)]);
-                    $response->content .= $chunk->text;
-
-                    if ($chunk->finishReason === FinishReason::Length) {
-                        yield json_encode(['type' => 'content', 'content' => base64_encode('...'), 'incomplete' => true]);
-                        $response->content .= '...';
-                    }
-
-                    if ($chunk->finishReason === FinishReason::Error) {
-                        yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
-
-                        report(new MessageResponseException('Stream not successful.'));
-                    }
-                }
-
-                $saveResponse($response);
-            } catch (PrismRateLimitedException $exception) {
-                foreach ($exception->rateLimits as $rateLimit) {
-                    if ($rateLimit->resetsAt?->isFuture()) {
-                        yield json_encode(['type' => 'rate_limited', 'message' => 'Heavy traffic, just a few more moments...', 'retry_after_seconds' => now()->diffInSeconds($rateLimit->resetsAt) + 1]);
-
-                        return;
-                    }
-                }
-
-                yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
-
-                report(new MessageResponseException('Thread run was rate limited, but the system was unable to extract the number of retry seconds: [' . $exception->getMessage() . '].'));
-            } catch (Throwable $exception) {
-                yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
-
-                report($exception);
-            }
-        };
-    }
-
-    protected function generateAssistantInstructions(AiAssistant $assistant, bool $withDynamicContext = false): string
+    protected function generateAssistantInstructions(AiAssistant $assistant, User $user, bool $withDynamicContext = false): string
     {
         $assistantInstructions = rtrim($assistant->instructions, '. ');
 
@@ -1223,315 +738,11 @@ abstract class BaseOpenAiResponsesService implements AiService
         $formattingInstructions = static::FORMATTING_INSTRUCTIONS;
 
         if ($withDynamicContext) {
-            $dynamicContext = rtrim(auth()->user()->getDynamicContext(), '. ');
+            $dynamicContext = rtrim($user->getDynamicContext(), '. ');
 
             return "{$dynamicContext}.\n\n{$assistantInstructions}.\n\n{$formattingInstructions}";
         }
 
         return "{$assistantInstructions}.\n\n{$formattingInstructions}";
-    }
-
-    /**
-     * @param array<string> $fileIds
-     */
-    protected function attachResearchRequestFilesToVectorStore(array $fileIds, OpenAiResearchRequestVectorStore $vectorStore): void
-    {
-        foreach ($fileIds as $fileId) {
-            $attachFileResponse = $this->vectorStoresHttpClient()
-                ->post("vector_stores/{$vectorStore->vector_store_id}/files", [
-                    'file_id' => $fileId,
-                ]);
-
-            if ((! $attachFileResponse->successful()) || ! $attachFileResponse->json('id')) {
-                report(new Exception('Failed to attach file [' . $fileId . '] to vector store [' . $vectorStore->vector_store_id . '], as a [' . $attachFileResponse->status() . '] response was returned: [' . $attachFileResponse->body() . '].'));
-            }
-        }
-    }
-
-    /**
-     * @param array<AiFile> $files
-     *
-     * @return array<OpenAiVectorStore>
-     */
-    protected function getValidExistingVectorStoresForFiles(array $files): array
-    {
-        $vectorStores = $this->getExistingVectorStoresForFiles($files);
-
-        foreach ($vectorStores as $vectorStoreIndex => $vectorStore) {
-            $vectorStoreId ??= $vectorStore->vector_store_id;
-
-            if (filled($vectorStore->vector_store_id) && ($vectorStore->vector_store_id !== $vectorStoreId)) {
-                $this->deleteVectorStore($vectorStore);
-
-                unset($vectorStores[$vectorStoreIndex]);
-            }
-        }
-
-        return $vectorStores;
-    }
-
-    /**
-     * @param array<AiFile> $files
-     */
-    protected function deleteExpiredVectorStoresForFiles(array $files): void
-    {
-        if (! $files) {
-            return;
-        }
-
-        $vectorStores = OpenAiVectorStore::query()
-            ->where('deployment_hash', $this->getDeploymentHash())
-            ->whereMorphedTo('file', $files) /** @phpstan-ignore argument.type */
-            ->whereNotNull('ready_until')
-            ->where('ready_until', '<', now())
-            ->whereNotNull('vector_store_id')
-            ->get();
-
-        foreach ($vectorStores as $vectorStore) {
-            $this->deleteVectorStore($vectorStore);
-        }
-    }
-
-    /**
-     * @param array<AiFile> $files
-     *
-     * @return array<OpenAiVectorStore>
-     */
-    protected function getExistingVectorStoresForFiles(array $files): array
-    {
-        if (! $files) {
-            return [];
-        }
-
-        return OpenAiVectorStore::query()
-            ->where('deployment_hash', $this->getDeploymentHash())
-            ->whereMorphedTo('file', $files) /** @phpstan-ignore argument.type */
-            ->whereNotNull('vector_store_id')
-            ->get()
-            ->all();
-    }
-
-    protected function deleteVectorStore(OpenAiVectorStore $vectorStore): void
-    {
-        if (! $vectorStore->exists()) {
-            return;
-        }
-
-        foreach ($this->getVectorStoreFileIds($vectorStore) as $fileId) {
-            $this->deleteFile($fileId);
-        }
-
-        $deleteVectorStoreResponse = $this->vectorStoresHttpClient()
-            ->delete("vector_stores/{$vectorStore->vector_store_id}");
-
-        if ((! $deleteVectorStoreResponse->successful()) && (! $deleteVectorStoreResponse->notFound())) {
-            report(new Exception('Failed to delete vector store [' . $vectorStore->vector_store_id . '], as a [' . $deleteVectorStoreResponse->status() . '] response was returned: [' . $deleteVectorStoreResponse->body() . '].'));
-        }
-
-        OpenAiVectorStore::query()
-            ->where('deployment_hash', $this->getDeploymentHash())
-            ->where('vector_store_id', $vectorStore->vector_store_id)
-            ->delete();
-    }
-
-    /**
-     * @return array<string>
-     */
-    protected function getVectorStoreFileIds(OpenAiVectorStore $vectorStore): array
-    {
-        $listVectorStoreFilesResponse = $this->vectorStoresHttpClient()
-            ->get("vector_stores/{$vectorStore->vector_store_id}/files");
-
-        if ((! $listVectorStoreFilesResponse->successful()) || (! is_array($listVectorStoreFilesResponse->json('data')))) {
-            report(new Exception('Failed to list files for vector store [' . $vectorStore->vector_store_id . '], as a [' . $listVectorStoreFilesResponse->status() . '] response was returned: [' . $listVectorStoreFilesResponse->body() . '].'));
-
-            return [];
-        }
-
-        return Arr::pluck($listVectorStoreFilesResponse->json('data'), 'id');
-    }
-
-    protected function deleteFile(string $fileId): void
-    {
-        $deleteFileResponse = $this->filesHttpClient()
-            ->delete("files/{$fileId}");
-
-        if ((! $deleteFileResponse->successful()) && (! $deleteFileResponse->notFound())) {
-            report(new Exception('Failed to delete file [' . $fileId . '], as a [' . $deleteFileResponse->status() . '] response was returned: [' . $deleteFileResponse->body() . '].'));
-        }
-    }
-
-    /**
-     * @param array<AiFile> $newFiles
-     */
-    protected function deleteOldFilesFromVectorStore(OpenAiVectorStore $vectorStore, array $newFiles): void
-    {
-        if (! $newFiles) {
-            return;
-        }
-
-        $oldFilesInVectorStore = OpenAiVectorStore::query()
-            ->where('deployment_hash', $this->getDeploymentHash())
-            ->where('vector_store_id', $vectorStore->vector_store_id)
-            ->whereNot(fn (Builder $query) => $query->whereMorphedTo('file', $newFiles)) /** @phpstan-ignore argument.type */
-            ->whereNotNull('vector_store_file_id')
-            ->get();
-
-        foreach ($oldFilesInVectorStore as $fileToDelete) {
-            $this->removeFileFromVectorStore($vectorStore, $fileToDelete->vector_store_file_id);
-            $this->deleteFile($fileToDelete->vector_store_file_id);
-
-            $fileToDelete->delete();
-        }
-    }
-
-    protected function removeFileFromVectorStore(OpenAiVectorStore $vectorStore, string $fileId): void
-    {
-        $removeFileResponse = $this->vectorStoresHttpClient()
-            ->delete("vector_stores/{$vectorStore->vector_store_id}/files/{$fileId}");
-
-        if ((! $removeFileResponse->successful()) && (! $removeFileResponse->notFound())) {
-            report(new Exception('Failed to remove file [' . $fileId . '] from vector store [' . $vectorStore->vector_store_id . '], as a [' . $removeFileResponse->status() . '] response was returned: [' . $removeFileResponse->body() . '].'));
-        }
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getVectorStoreState(OpenAiVectorStore $vectorStore): ?array
-    {
-        $getVectorStoreResponse = $this->vectorStoresHttpClient()
-            ->get("vector_stores/{$vectorStore->vector_store_id}");
-
-        if ((! $getVectorStoreResponse->successful()) || (! is_array($getVectorStoreResponse->json()))) {
-            report(new Exception('Failed to get vector store state for vector store [' . $vectorStore->vector_store_id . '], as a [' . $getVectorStoreResponse->status() . '] response was returned: [' . $getVectorStoreResponse->body() . '].'));
-
-            return null;
-        }
-
-        return $getVectorStoreResponse->json();
-    }
-
-    /**
-     * @param array<AiFile> $files
-     */
-    protected function createVectorStoreForFiles(array $files): void
-    {
-        $vectorStores = [];
-
-        foreach ($files as $file) {
-            if ($vectorStore = $this->uploadFileForVectorStore($file)) {
-                $vectorStores[] = $vectorStore;
-            }
-        }
-
-        $createVectorStoreResponse = $this->vectorStoresHttpClient()
-            ->acceptJson()
-            ->asJson()
-            ->post('vector_stores', [
-                'name' => Arr::first($files)->getName(),
-                'file_ids' => Arr::pluck($vectorStores, 'vector_store_file_id'),
-                'expires_after' => [
-                    'anchor' => 'last_active_at',
-                    'days' => Arr::first($files) instanceof AiMessageFile ? 7 : 28,
-                ],
-            ]);
-
-        if ((! $createVectorStoreResponse->successful()) || blank($createVectorStoreResponse->json('id'))) {
-            report(new Exception('Failed to create vector store, as a [' . $createVectorStoreResponse->status() . '] response was returned: [' . $createVectorStoreResponse->body() . '].'));
-
-            foreach ($vectorStores as $vectorStore) {
-                $vectorStore->save();
-            }
-
-            return;
-        }
-
-        foreach ($vectorStores as $vectorStore) {
-            $vectorStore->vector_store_id = $createVectorStoreResponse->json('id');
-            $vectorStore->save();
-        }
-    }
-
-    protected function uploadFileForVectorStore(AiFile $file): ?OpenAiVectorStore
-    {
-        $vectorStore = new OpenAiVectorStore();
-        $vectorStore->file()->associate($file); /** @phpstan-ignore argument.type */
-        $vectorStore->deployment_hash = $this->getDeploymentHash();
-
-        $createFileResponse = $this->filesHttpClient()
-            ->attach('file', $file->getParsingResults(), (string) str($file->getName())->limit(100)->slug()->append('.md'), ['Content-Type' => 'text/markdown'])
-            ->post('files', [
-                'purpose' => 'assistants',
-            ]);
-
-        if ((! $createFileResponse->successful()) || blank($createFileResponse->json('id'))) {
-            report(new Exception('Failed to create file [' . $file->getKey() . '] for vector store, as a [' . $createFileResponse->status() . '] response was returned: [' . $createFileResponse->body() . '].'));
-
-            $vectorStore->save();
-
-            return null;
-        }
-
-        $vectorStore->vector_store_file_id = $createFileResponse->json('id');
-
-        return $vectorStore;
-    }
-
-    protected function uploadMissingFileToVectorStore(OpenAiVectorStore $vectorStore, AiFile $file): void
-    {
-        $fileVectorStore = $this->uploadFileForVectorStore($file);
-
-        $createFileResponse = $this->vectorStoresHttpClient()
-            ->post("vector_stores/{$vectorStore->vector_store_id}/files", [
-                'file_id' => $fileVectorStore->vector_store_file_id,
-            ]);
-
-        if ((! $createFileResponse->successful()) || ! $createFileResponse->json('id')) {
-            report(new Exception('Failed to attach file [' . $fileVectorStore->vector_store_file_id . '] to vector store [' . $vectorStore->vector_store_id . '], as a [' . $createFileResponse->status() . '] response was returned: [' . $createFileResponse->body() . '].'));
-
-            $fileVectorStore->save();
-
-            return;
-        }
-
-        $fileVectorStore->vector_store_id = $vectorStore->vector_store_id;
-        $fileVectorStore->save();
-    }
-
-    /**
-     * @param array<string, mixed> $vectorStoreState
-     */
-    protected function evaluateVectorStoreState(OpenAiVectorStore $vectorStore, array $vectorStoreState): bool
-    {
-        $hasVectorStoreCompletedAllFiles = ($vectorStoreState['status'] === 'completed')
-            && $vectorStoreState['file_counts']['completed']
-            && ($vectorStoreState['file_counts']['completed'] === $vectorStoreState['file_counts']['total']);
-
-        $isVectorStoreProcessingFiles = ($vectorStoreState['status'] === 'in_progress')
-            && $vectorStoreState['file_counts']['in_progress'];
-
-        if ((! $hasVectorStoreCompletedAllFiles) && $isVectorStoreProcessingFiles) {
-            return false;
-        }
-
-        if (
-            $hasVectorStoreCompletedAllFiles
-            && $vectorStoreState['expires_at']
-            && (($vectorStoreExpiresAt = CarbonImmutable::createFromTimestampUTC($vectorStoreState['expires_at']))->diffInHours() < -3)
-        ) {
-            OpenAiVectorStore::query()
-                ->where('deployment_hash', $this->getDeploymentHash())
-                ->where('vector_store_id', $vectorStore->vector_store_id)
-                ->update([
-                    'ready_until' => $vectorStoreExpiresAt->subHours(2),
-                ]);
-
-            return true;
-        }
-
-        $this->deleteVectorStore($vectorStore);
-
-        return false;
     }
 }

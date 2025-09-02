@@ -189,21 +189,6 @@ enum AiModel: string implements HasLabel
         };
     }
 
-    public function isSharedDeployment(AiModel $model): bool
-    {
-        if ($this === $model) {
-            return true;
-        }
-
-        $deployment = $model->getService()->getDeployment();
-
-        if (blank($deployment)) {
-            return false;
-        }
-
-        return $deployment === $this->getService()->getDeployment();
-    }
-
     public static function parse(string | self | null $value): ?self
     {
         if ($value instanceof self) {

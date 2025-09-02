@@ -36,9 +36,6 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages;
 
-use AdvisingApp\Ai\Actions\ReInitializeAiServiceAssistant;
-use AdvisingApp\Ai\Actions\ResetAiServiceIdsForAssistant;
-use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns\HandlesFileUploads;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
@@ -51,9 +48,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class EditAiAssistant extends EditRecord
@@ -66,52 +61,6 @@ class EditAiAssistant extends EditRecord
     public function form(Form $form): Form
     {
         return resolve(AiAssistantForm::class)->form($form);
-    }
-
-    public function getSaveFormAction(): Action
-    {
-        return parent::getSaveFormAction()
-            ->submit(null)
-            ->requiresConfirmation()
-            ->modalHeading('Sync all chats to this new service?')
-            ->modalDescription('If you are moving to a new account, you will need to sync all the data to the new service to minimize disruption. Advising App can do this for you, but if you just want to save the settings and do it yourself, you can choose to do so.')
-            ->modalWidth(MaxWidth::ThreeExtraLarge)
-            ->modalSubmitActionLabel('Save and sync all chats')
-            ->modalHidden(function () {
-                $newModel = AiModel::parse($this->form->getRawState()['model']);
-
-                return $this->getRecord()->model->isSharedDeployment($newModel);
-            })
-            ->extraModalFooterActions([
-                Action::make('justSave')
-                    ->label('Just save the settings')
-                    ->color('gray')
-                    ->action(fn () => $this->save())
-                    ->cancelParentActions(),
-            ])
-            ->action(function (ResetAiServiceIdsForAssistant $resetAiServiceIds, ReInitializeAiServiceAssistant $reInitializeAiServiceAssistant) {
-                $settings = app(AiCustomAdvisorSettings::class);
-
-                $model = ($settings->allow_selection_of_model) ? $this->form->getState()['model'] : $settings->preselected_model;
-
-                $newModel = AiModel::parse($model);
-
-                $modelDeploymentIsShared = $this->getRecord()->model->isSharedDeployment($newModel);
-
-                $assistant = $this->getRecord();
-
-                if (! $modelDeploymentIsShared) {
-                    DB::transaction(function () use ($assistant, $resetAiServiceIds) {
-                        $resetAiServiceIds($assistant);
-                    });
-                }
-
-                $this->save();
-
-                if ((! $modelDeploymentIsShared) && (! $assistant->archived_at)) {
-                    $reInitializeAiServiceAssistant($assistant);
-                }
-            });
     }
 
     /** @var AiAssistant $assistant */
