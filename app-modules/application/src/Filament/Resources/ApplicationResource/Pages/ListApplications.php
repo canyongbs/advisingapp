@@ -65,6 +65,13 @@ class ListApplications extends ListRecords
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name'),
+                TextColumn::make('submissions_count')
+                    ->label('Submissions')
+                    ->counts('submissions'),
+                TextColumn::make('created_at')
+                    ->label('Created')
+                    ->date()
+                    ->sortable(),
             ])
             ->actions([
                 Action::make('Respond')
@@ -100,7 +107,8 @@ class ListApplications extends ListRecords
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 
     protected function getHeaderActions(): array
