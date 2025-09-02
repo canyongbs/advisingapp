@@ -131,11 +131,11 @@ class ProspectInteractionStatusPolarAreaChart extends ChartReportWidget
         return InteractionStatus::withCount([
             'interactions' => function ($query) use ($startDate, $endDate, $segmentId) {
                 $query->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($segmentId) {
-                        $query->when(
-                            $segmentId,
-                            fn (Builder $query) => $this->segmentFilter($query, $segmentId)
-                        );
-                    })
+                    $query->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    );
+                })
                     ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
                         $query->whereBetween('created_at', [$startDate, $endDate]);
                     });
