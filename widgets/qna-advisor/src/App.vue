@@ -40,6 +40,7 @@ import loadingSpinner from '../public/images/loading-spinner.svg?url';
 import userAvatar from '../public/images/user-default-avatar.svg?url';
 
 const props = defineProps(['url']);
+const requiresAuthentication = ref(false);
 const sendMessageUrl = ref(null);
 const chatId = ref(null);
 const message = ref('');
@@ -59,8 +60,9 @@ onMounted(async () => {
         const response = await fetch(props.url);
         const json = await response.json();
         if (json.error) throw new Error(json.error);
-        sendMessageUrl.value = json.send_message_url;
         chatId.value = json.chat_id;
+        requiresAuthentication.value = json.requires_authentication;
+        sendMessageUrl.value = json.send_message_url;
 
         setupWebsockets(json.websockets_config);
     } catch (error) {
@@ -155,8 +157,8 @@ async function sendMessage() {
 <template>
     <div class="h-full" style="--primary-50: 255, 251, 235; --primary-100: 254, 243, 199; --primary-200: 253, 230, 138; --primary-300: 252, 211, 77; --primary-400: 251, 191, 36; --primary-500: 245, 158, 11; --primary-600: 217, 119, 6; --primary-700: 180, 83, 9; --primary-800: 146, 64, 14; --primary-900: 120, 53, 15; --rounding-sm: 0.25rem; --rounding: 0.375rem; --rounding-md: 0.5rem; --rounding-lg: 0.75rem; --rounding-full: 9999px;">
 
-        <!-- <div v-if="!formSubmissionUrl"> -->
-        <div>
+        <!-- TODO: Also needs to check if we are authenticated or not -->
+        <div v-if="requiresAuthentication">
             <FormKit type="form" @submit="authenticate" v-model="authentication">
                 <FormKit
                     type="email"
@@ -185,7 +187,7 @@ async function sendMessage() {
         </div>
 
 
-        <div v-show="sendMessageUrl !== null && true === false" class="flex flex-col gap-y-3 w-11/12 mx-auto">
+        <div v-show="sendMessageUrl !== null && ! requiresAuthentication" class="flex flex-col gap-y-3 w-11/12 mx-auto">
             <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/qna-advisor/style.css'" />
             <div class="flex h-[calc(100dvh-16rem)] flex-col gap-y-3">
                 <div

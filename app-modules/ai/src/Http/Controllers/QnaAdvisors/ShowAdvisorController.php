@@ -48,6 +48,7 @@ class ShowAdvisorController
         $chatId = Str::random(32);
 
         return response()->json([
+            'requires_authentication' => $advisor->is_requires_authentication_enabled ?? false,
             'chat_id' => $chatId,
             'send_message_url' => URL::to(
                 URL::temporarySignedRoute(
