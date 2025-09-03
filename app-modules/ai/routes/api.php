@@ -41,12 +41,17 @@ use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\ShowAdvisorController;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Support\Facades\Route;
 
-// TODO: Make the routes non-relative signed
-Route::middleware(['api', EncryptCookies::class])
+Route::middleware([
+    'api',
+    EncryptCookies::class,
+    // TODO: Middleware checking if the embed is enabled
+    // TODO: Middleware checking if the request is coming from an authed domain
+])
     ->name('ai.qna-advisors.')
     ->prefix('api/ai/qna-advisors/{advisor}')
     ->group(function () {
         Route::get('/', ShowAdvisorController::class)
+            // TODO: Make non-relative
             ->middleware(['signed:relative'])
             ->name('show');
 
@@ -59,6 +64,10 @@ Route::middleware(['api', EncryptCookies::class])
             ->name('authentication.confirm');
 
         Route::post('messages', SendQnaAdvisorMessageController::class)
-            ->middleware(['signed:relative'])
+            ->middleware([
+                // TODO: Make non-relative
+                'signed:relative',
+                // TODO: Middleware to check if the Advisor requires auth, reject if not authed
+            ])
             ->name('messages.send');
     });
