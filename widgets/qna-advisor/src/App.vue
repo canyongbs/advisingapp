@@ -232,7 +232,38 @@ async function authorizedPost(url, data) {
         headers['Authorization'] = `Bearer ${authStore.getAccessToken}`;
     }
 
-    return axios.post(url, data, { headers });
+    try {
+        return await axios.post(url, data, { headers });
+    } catch (error) {
+        if (error.response && error.response.status === 401) {
+            // Token expired, try to refresh
+            try {
+                const refreshResponse = await axios.post('TBD_REFRESH_URL', {}, {
+                    withCredentials: true
+                });
+
+                if (refreshResponse.data && refreshResponse.data.access_token) {
+                    // Save new token
+                    authStore.$patch({ accessToken: refreshResponse.data.access_token });
+
+                    // Retry original request with new token
+                    const newHeaders = {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authStore.getAccessToken}`
+                    };
+
+                    return await axios.post(url, data, { headers: newHeaders });
+                }
+            } catch (refreshError) {
+                console.error('Token refresh failed:', refreshError);
+                // If refresh fails, throw original error
+                throw error;
+            }
+        }
+
+        // If not a 401 error, throw the original error
+        throw error;
+    }
 }
 </script>
 
