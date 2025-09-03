@@ -164,7 +164,7 @@ class ManageCaseTypeEmailTemplate extends EditRecord
                     'description',
                     'type',
                 ])
-                ->blocks($role === CaseTypeEmailTemplateRole::Customer ? [] : [
+                ->blocks([
                     CaseTypeEmailTemplateButtonBlock::class,
                     SurveyResponseEmailTemplateTakeSurveyButtonBlock::class,
                 ])
