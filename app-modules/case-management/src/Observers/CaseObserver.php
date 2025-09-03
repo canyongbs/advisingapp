@@ -52,6 +52,7 @@ use AdvisingApp\CaseManagement\Notifications\EducatableCaseClosedNotification;
 use AdvisingApp\CaseManagement\Notifications\EducatableCaseOpenedNotification;
 use AdvisingApp\CaseManagement\Notifications\EducatableCaseStatusChangeNotification;
 use AdvisingApp\CaseManagement\Notifications\SendClosedCaseFeedbackNotification;
+use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
 use AdvisingApp\Notification\Notifications\Channels\MailChannel;
@@ -157,6 +158,10 @@ class CaseObserver
         if ($case->wasChanged('status_id')) {
             $case->status_updated_at = now();
         }
+
+        $case->division_id = $case->division_id
+            ?? Division::where('is_default', true)->value('id')
+            ?? Division::first()->getKey();
     }
 
     public function saved(CaseModel $case): void
