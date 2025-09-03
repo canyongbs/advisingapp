@@ -34,15 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\StockMedia\Providers;
 
-use Filament\Clusters\Cluster;
+use AdvisingApp\StockMedia\StockMediaPlugin;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
-class GlobalArtificialIntelligence extends Cluster
+class StockMediaServiceProvider extends ServiceProvider
 {
-    protected static ?string $navigationGroup = 'Global Administration';
+    public function register()
+    {
+        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new StockMediaPlugin()));
+    }
 
-    protected static ?int $navigationSort = 100;
-
-    protected static ?string $title = 'Artificial Intelligence';
+    public function boot(): void
+    {
+        Relation::morphMap([]);
+    }
 }
