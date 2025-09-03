@@ -57,7 +57,10 @@ class ShowAdvisorController
                 expiration: now()->addDays(3),
                 parameters: ['advisor' => $advisor, 'chat_id' => $chatId],
             ),
-            'websockets_config' => config('filament.broadcasting.echo'),
+            'websockets_config' => [
+                ...config('filament.broadcasting.echo'),
+                'authEndpoint' => url('broadcasting/auth'),
+            ],
         ]);
     }
 }
