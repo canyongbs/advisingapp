@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Project\Models\Project;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Scopes\ConfidentialTaskScope;
 use AdvisingApp\Task\Models\Task;
@@ -61,14 +62,12 @@ it('can be accessed by users when not confidential', function () {
     $tasks = Task::query()->get();
     expect($tasks)->toHaveCount(10);
 
-    expect($tasks->pluck('id'))
-        ->toContain(...$nonConfidentialTasks->pluck('id'));
+    expect($tasks->pluck('id'))->toContain(...$nonConfidentialTasks->pluck('id'));
 
-    expect($tasks->pluck('id'))
-        ->not->toContain(...$confidentialTasks->pluck('id'));
+    expect($tasks->pluck('id'))->not->toContain(...$confidentialTasks->pluck('id'));
 });
 
-it('can be accessed when confidential by users who created it or super admins', function () {
+it('can be accessed when confidential by users who created it', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user);
@@ -80,13 +79,7 @@ it('can be accessed when confidential by users who created it or super admins', 
 
     $tasks = Task::query()->get();
 
-    expect($tasks->pluck('id'))
-        ->toContain(...$userTasks->pluck('id'));
-
-    asSuperAdmin();
-
-    expect($tasks->pluck('id'))
-        ->toContain(...$userTasks->pluck('id'));
+    expect($tasks->pluck('id'))->toContain(...$userTasks->pluck('id'));
 });
 
 it('can be accessed when confidential by users on a team with access', function () {
@@ -111,9 +104,33 @@ it('can be accessed when confidential by users on a team with access', function 
     $tasks = Task::query()->get();
     expect($tasks)->toHaveCount(10);
 
-    expect($tasks->pluck('id'))
-        ->toContain(...$teamTasks->pluck('id'));
+    expect($tasks->pluck('id'))->toContain(...$teamTasks->pluck('id'));
 
-    expect($tasks->pluck('id'))
-        ->not->toContain(...$otherTeamTasks->pluck('id'));
+    expect($tasks->pluck('id'))->not->toContain(...$otherTeamTasks->pluck('id'));
+});
+
+it('can be accessed when confidential by users who have created a project the task is associated with', function () {
+    asSuperAdmin();
+
+    $user = User::factory()->create();
+
+    $project = Project::factory()->for($user, 'createdBy')->create();
+
+    $confidentialTasks = Task::factory()->count(10)->for($project)->concerningStudent(Student::factory()->create())->create(['is_confidential' => true]);
+
+    actingAs($user);
+
+    $tasks = Task::query()->get();
+
+    expect($tasks->pluck('id'))->toContain(...$confidentialTasks->pluck('id'));
+});
+
+it('can be accessed when confidential by super admins', function () {
+    $confidentialTasks = Task::factory()->count(10)->concerningStudent(Student::factory()->create())->create(['is_confidential' => true]);
+
+    asSuperAdmin();
+    
+    $tasks = Task::query()->get();
+
+    expect($tasks->pluck('id'))->toContain(...$confidentialTasks->pluck('id'));
 });
