@@ -55,7 +55,6 @@ Route::middleware([
     ->prefix('api/ai/qna-advisors/{advisor}')
     ->group(function () {
         Route::post('/', ShowAdvisorController::class)
-            // TODO: Make non-relative
             ->middleware(['signed'])
             ->name('show');
 
