@@ -179,12 +179,12 @@ async function authenticate(formData, node) {
     node.clearErrors();
 
     if (authentication.value.isRequested) {
-        $data = {
+        const data = {
             code: formData.code,
         };
 
         axios
-            .post(authentication.value.confirmationUrl, $data)
+            .post(authentication.value.confirmationUrl, data)
             .then((response) => {
                 if (response.errors) {
                     node.setErrors([], response.errors);
