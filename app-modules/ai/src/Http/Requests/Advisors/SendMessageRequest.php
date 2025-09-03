@@ -64,6 +64,7 @@ class SendMessageRequest extends FormRequest
             'files' => ['array', 'max:1'],
             'files.*' => [Rule::exists(AiMessageFile::class, 'id')],
             'prompt_id' => ['nullable', 'uuid', Rule::exists(Prompt::class, 'id')],
+            'has_image_generation' => ['nullable', 'boolean'],
         ];
     }
 }

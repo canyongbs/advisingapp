@@ -34,47 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers\Advisors;
+namespace AdvisingApp\Ai\Support\StreamingChunks;
 
-use AdvisingApp\Ai\Http\Requests\Advisors\RetryMessageRequest;
-use AdvisingApp\Ai\Jobs\Advisors\RetryAdvisorMessage;
-use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\Models\AiThread;
-use Illuminate\Http\JsonResponse;
-use Throwable;
-
-class RetryMessageController
+readonly class Image
 {
-    public function __invoke(RetryMessageRequest $request, AiThread $thread): JsonResponse
-    {
-        try {
-            if ($thread->locked_at) {
-                return response()->json([
-                    'isThreadLocked' => true,
-                    'message' => 'The assistant is currently undergoing maintenance.',
-                ], 503);
-            }
-
-            if ($thread->assistant->archived_at) {
-                return response()->json([
-                    'message' => 'This assistant has been archived and is no longer available to use.',
-                ], 404);
-            }
-
-            dispatch(new RetryAdvisorMessage(
-                $thread,
-                $request->validated('content'),
-                AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
-                $request->validated('has_image_generation') ?? false,
-            ));
-
-            return response()->json([]);
-        } catch (Throwable $exception) {
-            report($exception);
-
-            return response()->json([
-                'message' => 'An error happened when retrying your message.',
-            ], 503);
-        }
-    }
+    public function __construct(
+        public string $content,
+        public string $format,
+    ) {}
 }

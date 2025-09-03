@@ -38,6 +38,7 @@ namespace AdvisingApp\IntegrationOpenAi\Prism;
 
 use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Handlers\Stream;
 use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Handlers\Structured;
+use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Handlers\Text;
 use App\Features\OpenAiResponsesApiSettingsFeature;
 use Generator;
 use Illuminate\Http\Client\PendingRequest;
@@ -47,6 +48,7 @@ use Prism\Prism\Providers\OpenAI\OpenAI;
 use Prism\Prism\Structured\Request as StructuredRequest;
 use Prism\Prism\Structured\Response as StructuredResponse;
 use Prism\Prism\Text\Request as TextRequest;
+use Prism\Prism\Text\Response as TextResponse;
 
 class AzureOpenAi extends OpenAI
 {
@@ -74,6 +76,17 @@ class AzureOpenAi extends OpenAI
         return $handler->handle($request);
     }
 
+    #[Override]
+    public function text(TextRequest $request): TextResponse
+    {
+        $handler = new Text($this->client(
+            $request->clientOptions(),
+            $request->clientRetry()
+        ));
+
+        return $handler->handle($request);
+    }
+
     /**
      * @param  array<string, mixed>  $options
      * @param  array<mixed>  $retry
@@ -83,10 +96,12 @@ class AzureOpenAi extends OpenAI
         return $this->baseClient()
             ->withHeaders([
                 'api-key' => $options['apiKey'],
+                ...$options['headers'] ?? [],
             ])
             ->withQueryParameters(['api-version' => $options['apiVersion']])
-            ->withOptions(Arr::except($options, ['apiKey', 'apiVersion', 'deployment']))
+            ->withOptions(Arr::except($options, ['apiKey', 'apiVersion', 'deployment', 'headers']))
             ->when($retry !== [], fn ($client) => $client->retry(...$retry))
-            ->baseUrl(OpenAiResponsesApiSettingsFeature::active() ? "{$options['deployment']}/v1" : $options['deployment']);
+            ->baseUrl(OpenAiResponsesApiSettingsFeature::active() ? "{$options['deployment']}/v1" : $options['deployment'])
+            ->timeout(500);
     }
 }

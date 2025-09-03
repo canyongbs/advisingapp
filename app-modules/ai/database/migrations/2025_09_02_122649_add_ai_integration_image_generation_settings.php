@@ -34,47 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers\Advisors;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\Ai\Http\Requests\Advisors\RetryMessageRequest;
-use AdvisingApp\Ai\Jobs\Advisors\RetryAdvisorMessage;
-use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\Models\AiThread;
-use Illuminate\Http\JsonResponse;
-use Throwable;
+return new class () extends SettingsMigration {
+    /**
+     * @var array<string>
+     * */
+    private array $properties = [
+        'ai.open_ai_gpt_4o_image_generation_deployment',
+        'ai.open_ai_gpt_4o_image_generation_deployment',
+        'ai.open_ai_gpt_o3_image_generation_deployment',
+        'ai.open_ai_gpt_41_mini_image_generation_deployment',
+        'ai.open_ai_gpt_41_nano_image_generation_deployment',
+        'ai.open_ai_gpt_o4_mini_image_generation_deployment',
+        'ai.open_ai_gpt_5_image_generation_deployment',
+        'ai.open_ai_gpt_5_mini_image_generation_deployment',
+        'ai.open_ai_gpt_5_nano_image_generation_deployment',
+    ];
 
-class RetryMessageController
-{
-    public function __invoke(RetryMessageRequest $request, AiThread $thread): JsonResponse
+    public function up(): void
     {
-        try {
-            if ($thread->locked_at) {
-                return response()->json([
-                    'isThreadLocked' => true,
-                    'message' => 'The assistant is currently undergoing maintenance.',
-                ], 503);
+        foreach ($this->properties as $property) {
+            try {
+                $this->migrator->add($property, encrypted: true);
+            } catch (SettingAlreadyExists $exception) {
+                // Do nothing
             }
-
-            if ($thread->assistant->archived_at) {
-                return response()->json([
-                    'message' => 'This assistant has been archived and is no longer available to use.',
-                ], 404);
-            }
-
-            dispatch(new RetryAdvisorMessage(
-                $thread,
-                $request->validated('content'),
-                AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
-                $request->validated('has_image_generation') ?? false,
-            ));
-
-            return response()->json([]);
-        } catch (Throwable $exception) {
-            report($exception);
-
-            return response()->json([
-                'message' => 'An error happened when retrying your message.',
-            ], 503);
         }
     }
-}
+
+    public function down(): void
+    {
+        foreach ($this->properties as $property) {
+            $this->migrator->deleteIfExists($property);
+        }
+    }
+};
