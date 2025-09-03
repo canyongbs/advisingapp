@@ -80,12 +80,18 @@ class ProspectCaseTable extends BaseWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
         return $table
             ->query(
-                function () use ($startDate, $endDate): Builder {
+                function () use ($startDate, $endDate, $segmentId): Builder {
                     return CaseModel::query()
-                        ->whereHasMorph('respondent', Prospect::class)
+                        ->whereHasMorph('respondent', Prospect::class, function (Builder $query) use ($segmentId) {
+                            $query->when(
+                                $segmentId,
+                                fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                            );
+                        })
                         ->when(
                             $startDate && $endDate,
                             fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])

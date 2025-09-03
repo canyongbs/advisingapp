@@ -37,9 +37,8 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Task\Models\Task;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
@@ -98,18 +97,25 @@ class ProspectReportStats extends StatsOverviewReportWidget
                 fn (): int => Alert::query()->whereHasMorph('concern', Prospect::class)->count()
             );
 
-        $segmentsCount = $shouldBypassCache
-            ? Segment::query()
-                ->where('model', SegmentModel::Prospect)
+        $casesCount = $shouldBypassCache
+            ? CaseModel::query()
+                ->whereHasMorph('respondent', Prospect::class, function (Builder $query) use ($segmentId) {
+                    $query->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    );
+                })
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'prospect-segments-count',
+                'total-prospect-cases-count',
                 now()->addHours(24),
-                fn (): int => Segment::query()->where('model', SegmentModel::Prospect)->count()
+                fn (): int => CaseModel::query()
+                    ->whereHasMorph('respondent', Prospect::class)
+                    ->count()
             );
 
         $tasksCount = $shouldBypassCache
@@ -137,7 +143,7 @@ class ProspectReportStats extends StatsOverviewReportWidget
                 : Number::format($prospectsCount, maxPrecision: 2)),
 
             Stat::make('Total Alerts', Number::abbreviate($alertsCount, maxPrecision: 2)),
-            Stat::make('Total Segments', Number::abbreviate($segmentsCount, maxPrecision: 2)),
+            Stat::make('Total Cases', Number::abbreviate($casesCount, maxPrecision: 2)),
             Stat::make('Total Tasks', Number::abbreviate($tasksCount, maxPrecision: 2)),
         ];
     }
