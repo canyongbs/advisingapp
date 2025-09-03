@@ -35,10 +35,9 @@
 */
 
 use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Task\Models\Task;
 
 it('returns correct total prospect stats of prospects, alerts, segments and tasks within the given date range', function () {
@@ -48,7 +47,7 @@ it('returns correct total prospect stats of prospects, alerts, segments and task
     $prospectCountStart = random_int(1, 5);
     $prospectCountEnd = random_int(1, 5);
     $alertCount = random_int(1, 5);
-    $segmentCount = random_int(1, 5);
+    $casesCount = random_int(1, 5);
     $taskCount = random_int(1, 5);
 
     Prospect::factory()->count($prospectCountStart)->state([
@@ -65,8 +64,9 @@ it('returns correct total prospect stats of prospects, alerts, segments and task
         'created_at' => $startDate,
     ])->create();
 
-    Segment::factory()->count($segmentCount)->state([
-        'model' => SegmentModel::Prospect,
+    CaseModel::factory()->count($casesCount)->state([
+        'respondent_id' => Prospect::factory(),
+        'respondent_type' => app(Prospect::class)->getMorphClass(),
         'created_at' => $endDate,
     ])->create();
 
@@ -87,6 +87,6 @@ it('returns correct total prospect stats of prospects, alerts, segments and task
 
     expect($stats[0]->getValue())->toEqual($prospectCountStart + $prospectCountEnd)
         ->and($stats[1]->getValue())->toEqual($alertCount)
-        ->and($stats[2]->getValue())->toEqual($segmentCount)
+        ->and($stats[2]->getValue())->toEqual($casesCount)
         ->and($stats[3]->getValue())->toEqual($taskCount);
 });
