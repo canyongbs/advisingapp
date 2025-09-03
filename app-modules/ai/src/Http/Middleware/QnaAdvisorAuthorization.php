@@ -3,8 +3,13 @@
 namespace AdvisingApp\Ai\Http\Middleware;
 
 use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Closure;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Response;
 
 class QnaAdvisorAuthorization
@@ -27,7 +32,29 @@ class QnaAdvisorAuthorization
             return $next($request);
         }
 
-        // Check auth and login
+        $token = $request->bearerToken();
+
+        if (! $token) {
+            return response()->json(['error' => 'Bearer token missing'], 401);
+        }
+
+        $accessToken = PersonalAccessToken::findToken($token);
+
+        if (! $accessToken) {
+            return response()->json(['error' => 'Invalid bearer token'], 401);
+        }
+
+        if ($accessToken->expires_at && $accessToken->expires_at->isPast()) {
+            return response()->json(['error' => 'Bearer token expired'], 401);
+        }
+
+        $educatable = $accessToken->tokenable;
+
+        match ($educatable::class) {
+            Student::class => Auth::guard('student')->onceUsingId($educatable->getKey()),
+            Prospect::class => Auth::guard('prospect')->onceUsingId($educatable->getKey()),
+            default => throw new Exception('Unable to resolve to proper entity.')
+        };
 
         return $next($request);
     }
