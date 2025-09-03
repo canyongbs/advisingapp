@@ -34,49 +34,38 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Filament\Widgets\TaskCumulativeCountLineChart;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Task\Enums\TaskStatus;
-use AdvisingApp\Task\Models\Task;
+namespace AdvisingApp\Task\Models;
 
-it('returns correct cumulative task counts grouped by month within the given date range', function () {
-    $startDate = now()->subDays(90);
-    $endDate = now()->subDays(5);
+use AdvisingApp\Task\Database\Factories\ConfidentialTasksTeamsFactory;
+use AdvisingApp\Team\Models\Team;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-    $student = Student::factory()->create();
-    $prospect = Prospect::factory()->create();
+/**
+ * @mixin IdeHelperConfidentialTasksTeams
+ */
+class ConfidentialTasksTeams extends Pivot
+{
+    /** @use HasFactory<ConfidentialTasksTeamsFactory> */
+    use HasFactory;
 
-    Task::factory()->count(2)->state([
-        'concern_id' => $student->sisid,
-        'concern_type' => (new Student())->getMorphClass(),
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
+    use HasUuids;
 
-    Task::factory()->count(2)->state([
-        'concern_id' => $prospect->getKey(),
-        'concern_type' => (new Prospect())->getMorphClass(),
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
+    /**
+     * @return BelongsTo<Task, $this>
+     */
+    public function task(): BelongsTo
+    {
+        return $this->belongsTo(Task::class);
+    }
 
-    Task::factory()->count(2)->state([
-        'concern_id' => null,
-        'concern_type' => null,
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
-
-    $widgetInstance = new TaskCumulativeCountLineChart();
-    $widgetInstance->cacheTag = 'report-tasks';
-    $widgetInstance->filters = [
-        'startDate' => $startDate->toDateString(),
-        'endDate' => $endDate->toDateString(),
-    ];
-
-    expect($widgetInstance->getData())->toMatchSnapshot();
-});
+    /**
+     * @return BelongsTo<Team, $this>
+     */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
+}

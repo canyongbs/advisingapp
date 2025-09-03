@@ -34,49 +34,27 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Filament\Widgets\TaskCumulativeCountLineChart;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Task\Enums\TaskStatus;
+namespace AdvisingApp\Task\Database\Factories;
+
 use AdvisingApp\Task\Models\Task;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-it('returns correct cumulative task counts grouped by month within the given date range', function () {
-    $startDate = now()->subDays(90);
-    $endDate = now()->subDays(5);
-
-    $student = Student::factory()->create();
-    $prospect = Prospect::factory()->create();
-
-    Task::factory()->count(2)->state([
-        'concern_id' => $student->sisid,
-        'concern_type' => (new Student())->getMorphClass(),
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
-
-    Task::factory()->count(2)->state([
-        'concern_id' => $prospect->getKey(),
-        'concern_type' => (new Prospect())->getMorphClass(),
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
-
-    Task::factory()->count(2)->state([
-        'concern_id' => null,
-        'concern_type' => null,
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
-
-    $widgetInstance = new TaskCumulativeCountLineChart();
-    $widgetInstance->cacheTag = 'report-tasks';
-    $widgetInstance->filters = [
-        'startDate' => $startDate->toDateString(),
-        'endDate' => $endDate->toDateString(),
-    ];
-
-    expect($widgetInstance->getData())->toMatchSnapshot();
-});
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Task\Models\ConfidentialTasksUsers>
+ */
+class ConfidentialTasksUsersFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'task_id' => Task::factory(),
+            'user_id' => User::factory(),
+        ];
+    }
+}
