@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendAdvisorMessageController as 
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\ShowAdvisorController;
 use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorEmbedIsEnabled;
 use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorRequestComingFromAuthorizedDomain;
+use AdvisingApp\Ai\Http\Middleware\QnaAdvisorAuthorization;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Support\Facades\Route;
 
@@ -69,7 +70,7 @@ Route::middleware([
             ->middleware([
                 // TODO: Make non-relative
                 'signed:relative',
-                // TODO: Middleware to check if the Advisor requires auth, reject if not authed
+                QnaAdvisorAuthorization::class,
             ])
             ->name('messages.send');
     });
