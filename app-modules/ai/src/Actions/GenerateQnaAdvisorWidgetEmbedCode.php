@@ -37,16 +37,17 @@
 namespace AdvisingApp\Ai\Actions;
 
 use AdvisingApp\Ai\Models\QnaAdvisor;
+use Illuminate\Support\Facades\URL;
 
 class GenerateQnaAdvisorWidgetEmbedCode
 {
     public function handle(QnaAdvisor $qnaAdvisor): string
     {
-        $scriptUrl = url('qna-advisor-embed.js?');
-        $formDefinitionUrl = "https://advising.app/qna-advisors/{$qnaAdvisor->getKey()}";
+        $scriptUrl = url('js/widgets/qna-advisor/advising-app-qna-advisor-widget.js');
+        $formDefinitionUrl = URL::signedRoute(name: 'ai.qna-advisors.show', parameters: ['advisor' => $qnaAdvisor]);
 
         return <<<EOD
-        <qna-advisor url="{$formDefinitionUrl}"></qna-advisor>
+        <qna-advisor-embed url="{$formDefinitionUrl}"></qna-advisor-embed>
         <script src="{$scriptUrl}"></script>
         EOD;
     }
