@@ -41,11 +41,11 @@ use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use App\Features\InteractionMetadataFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
@@ -59,7 +59,10 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class ListInteractionDrivers extends ListRecords implements HasForms
+/**
+ * @property ComponentContainer $form
+ */
+class ListInteractionDrivers extends ListRecords
 {
     use InteractsWithForms;
 
@@ -75,13 +78,24 @@ class ListInteractionDrivers extends ListRecords implements HasForms
     public function mount(): void
     {
         if (InteractionMetadataFeature::active()) {
-            $settings = $this->getSettings();
-
-            $this->data = [
-                'is_driver_enabled' => $settings->is_driver_enabled,
-                'is_driver_required' => $settings->is_driver_required,
-            ];
+            $this->fillForm();
         }
+    }
+
+    public function fillForm(): void
+    {
+        $this->callHook('beforeFill');
+
+        $settings = $this->getSettings();
+
+        $data = [
+            'is_driver_enabled' => $settings->is_driver_enabled,
+            'is_driver_required' => $settings->is_driver_required,
+        ];
+
+        $this->form->fill($data);
+
+        $this->callHook('afterFill');
     }
 
     public function form(Form $form): Form
