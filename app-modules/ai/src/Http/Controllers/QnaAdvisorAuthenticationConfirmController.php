@@ -3,6 +3,7 @@
 namespace AdvisingApp\Ai\Http\Controllers;
 
 use AdvisingApp\Ai\Http\Requests\QnaAdvisorAuthenticationConfirmRequest;
+use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Authorization\Enums\TokenAbility;
 use AdvisingApp\Portal\Models\PortalAuthentication;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Hash;
 
 class QnaAdvisorAuthenticationConfirmController
 {
-    public function __invoke(QnaAdvisorAuthenticationConfirmRequest $request, PortalAuthentication $authentication): JsonResponse
+    public function __invoke(QnaAdvisorAuthenticationConfirmRequest $request, QnaAdvisor $advisor, PortalAuthentication $authentication): JsonResponse
     {
         if ($authentication->isExpired()) {
             abort(403, 'Authentication code is expired.');
@@ -39,7 +40,7 @@ class QnaAdvisorAuthenticationConfirmController
         ])
             ->withCookie(
                 Cookie::make(
-                    name: 'advapp_qna_advisor_refresh_token',
+                    name: 'advising_app_qna_advisor_refresh_token',
                     value: $refreshToken->plainTextToken,
                     minutes: 60 * 24 * 3, // 3 days
                     secure: true,

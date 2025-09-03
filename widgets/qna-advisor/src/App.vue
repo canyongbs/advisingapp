@@ -183,24 +183,14 @@ async function authenticate(formData, node) {
                     return;
                 }
 
-                if (response.data.is_expired) {
-                    node.setErrors(['The authentication code is expired. Please authenticate again.']);
-
-                    authentication.value.isRequested = false;
-                    authentication.value.requestedMessage = null;
-                    authentication.value.confirmationUrl = null;
-
-                    return;
-                }
-
-                if (response.data.success === true) {
+                if (typeof response.data.access_token !== 'undefined') {
                     // setToken(response.data.token);
                     // setUser(response.data.user);
 
                     // userIsAuthenticated.value = true;
 
                     // getData();
-                    console.log('We did it!');
+                    console.log('We did it!' . response.data.access_token);
                 }
             })
             .catch((error) => {
