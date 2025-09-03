@@ -52,7 +52,6 @@ use Filament\Resources\Pages\EditRecord;
 use FilamentTiptapEditor\TiptapEditor;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
-use Log;
 
 /** @property-read ?CaseTypeEmailTemplate $template */
 class ManageCaseTypeEmailTemplate extends EditRecord
@@ -189,10 +188,7 @@ class ManageCaseTypeEmailTemplate extends EditRecord
 
         foreach (CaseTypeEmailTemplateRole::cases() as $role) {
             if ($template = $templates[$role->value] ?? null) {
-                Log::info($role->value);
                 $state[$role->value] = $template->only(['subject', 'body']);
-                Log::info('Template:');
-                Log::info($state[$role->value]);
             }
         }
 
