@@ -37,6 +37,8 @@
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionLineChart;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 
 it('checks prospect interactions monthly line chart', function () {
     $prospectCount = 5;
@@ -81,6 +83,60 @@ it('returns correct data for prospect interactions within the given date range',
     $widgetInstance->filters = [
         'startDate' => $interactionStartDate->toDateString(),
         'endDate' => $interactionEndDate->toDateString(),
+    ];
+
+    expect($widgetInstance->getData())->toMatchSnapshot();
+});
+
+it('returns correct data for prospect interactions based on segment filter', function () {
+    $interactionStartDate = now()->subDays(90);
+    $interactionEndDate = now()->subDays(5);
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Prospect,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last_name',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    Prospect::factory()->count(5)->has(
+        Interaction::factory()
+            ->count(5)
+            ->state([
+                'created_at' => $interactionStartDate,
+            ]),
+        'interactions'
+    )->create([
+        'last_name' => 'John',
+    ]);
+
+    Prospect::factory()->count(5)->has(
+        Interaction::factory()
+            ->count(5)
+            ->state([
+                'created_at' => $interactionEndDate,
+            ]),
+        'interactions'
+    )->create([
+        'last_name' => 'Doe',
+    ]);
+
+    $widgetInstance = new ProspectInteractionLineChart();
+    $widgetInstance->cacheTag = 'report-prospect-interaction';
+    $widgetInstance->filters = [
+        'populationSegment' => $segment->getKey(),
     ];
 
     expect($widgetInstance->getData())->toMatchSnapshot();

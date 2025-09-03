@@ -37,6 +37,8 @@
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Report\Filament\Widgets\MostEngagedStudentsTable;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 use function Pest\Livewire\livewire;
@@ -84,4 +86,67 @@ it('returns top engaged students based on engagements within the given date rang
             $student2,
         ]))
         ->assertCanNotSeeTableRecords(collect([$student3]));
+});
+
+it('returns top engaged students engagements based on segment filter', function () {
+    $startDate = now()->subDays(10);
+    $endDate = now()->subDays(5);
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Student,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $student1 = Student::factory()->state(['created_at' => $startDate, 'last' => 'John'])->create();
+    $student2 = Student::factory()->state(['created_at' => $endDate, 'last' => 'Doe'])->create();
+
+    Engagement::factory()->count(5)->state([
+        'recipient_id' => $student1->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+        'created_at' => $startDate,
+    ])->create();
+
+    Engagement::factory()->count(5)->state([
+        'recipient_id' => $student2->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Sms,
+        'created_at' => $endDate,
+    ])->create();
+
+    $filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    livewire(MostEngagedStudentsTable::class, [
+        'cacheTag' => 'report-student-engagement',
+        'filters' => $filters,
+    ])
+        ->assertCanSeeTableRecords(collect([
+            $student1,
+        ]))
+        ->assertCanNotSeeTableRecords(collect([$student2]));
+
+    // without filter
+    livewire(MostEngagedStudentsTable::class, [
+        'cacheTag' => 'report-student-engagement',
+        'filters' => [],
+    ])
+        ->assertCanSeeTableRecords(collect([
+            $student1, $student2,
+        ]));
 });

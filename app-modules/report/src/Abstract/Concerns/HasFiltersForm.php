@@ -36,19 +36,18 @@
 
 namespace AdvisingApp\Report\Abstract\Concerns;
 
-use AdvisingApp\Report\Abstract\StudentReport;
+use AdvisingApp\Report\Abstract\Contracts\HasSegmentModel;
 use AdvisingApp\Report\Filament\Pages\ProspectCaseReport;
 use AdvisingApp\Report\Filament\Pages\StudentCaseReport;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
-use AdvisingApp\StudentDataModel\Filament\Pages\RetentionCrmDashboard;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm as ConcernsHasFiltersForm;
-use Illuminate\Database\Query\Expression;
+use Illuminate\Database\Eloquent\Builder;
 
 trait HasFiltersForm
 {
@@ -57,6 +56,8 @@ trait HasFiltersForm
     public function filtersForm(Form $form): Form
     {
         $heading = ($this instanceof StudentCaseReport || $this instanceof ProspectCaseReport) ? 'Date Created' : null;
+
+        $segmentModel = $this instanceof HasSegmentModel ? $this->segmentModel() : null;
 
         return $form
             ->schema([
@@ -84,18 +85,31 @@ trait HasFiltersForm
                     ->schema([
                         Select::make('populationSegment')
                             ->label('Select Segment')
-                            ->options(fn (): array => Segment::query()
-                                ->orderBy('created_at', 'desc')
-                                ->where('model', SegmentModel::Student)
-                                ->take(15)
-                                ->pluck('name', 'id')
-                                ->all())
-                            ->getSearchResultsUsing(fn (string $search): array => Segment::query()->where('model', SegmentModel::Student)->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(15)->orderBy('created_at', 'desc')->pluck('name', 'id')->all())
+                            ->options(fn (): array => $this->getSegmentOptions($segmentModel))
+                            ->getSearchResultsUsing(fn (string $search): array => $this->getSegmentOptions($segmentModel, $search))
                             ->searchable(),
                     ])
                     ->heading('Advanced Filtering')
-                    ->visible($this instanceof RetentionCrmDashboard || $this instanceof StudentReport)
+                    ->visible($this instanceof HasSegmentModel)
                     ->columns(1),
             ]);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function getSegmentOptions(?SegmentModel $model, ?string $search = null): array
+    {
+        if (! $model) {
+            return [];
+        }
+
+        return Segment::query()
+            ->where('model', $model)
+            ->when($search, fn (Builder $query) => $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%']))
+            ->orderByDesc('created_at')
+            ->limit(15)
+            ->pluck('name', 'id')
+            ->all();
     }
 }

@@ -49,12 +49,18 @@ class ProspectInteractionStats extends StatsOverviewReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
 
         $interactionsCount = $shouldBypassCache
             ? Interaction::query()
-                ->whereHasMorph('interactable', Prospect::class)
+                ->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($segmentId) {
+                    $query->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    );
+                })
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
@@ -78,6 +84,10 @@ class ProspectInteractionStats extends StatsOverviewReportWidget
                             fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                         );
                     }
+                )
+                ->when(
+                    $segmentId,
+                    fn (Builder $query) => $this->segmentFilter($query, $segmentId)
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(

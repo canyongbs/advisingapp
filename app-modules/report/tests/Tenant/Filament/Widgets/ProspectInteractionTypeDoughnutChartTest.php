@@ -38,6 +38,8 @@ use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionTypeDoughnutChart;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 
 it('checks prospect interaction types doughnut chart', function () {
     $interactionsCount = rand(1, 10);
@@ -124,4 +126,80 @@ it('returns correct interaction counts by type for prospects within the selected
     expect($interactionsCount)->toEqual($stats[0])
         ->and($interactionsCount)->toEqual($stats[1])
         ->and($interactionsCount)->not->toEqual($stats[2]);
+});
+
+it('returns correct interaction counts by type for prospects based on segment filter', function () {
+    $interactionsCount = random_int(1, 10);
+    $interactionsCountForDoe = random_int(1, 10);
+
+    $interactionTypeFirst = InteractionType::factory()->create();
+    $interactionTypeSecond = InteractionType::factory()->create();
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Prospect,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last_name',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    Prospect::factory()
+        ->has(
+            Interaction::factory()
+                ->count($interactionsCount)
+                ->for(
+                    $interactionTypeFirst,
+                    'type'
+                ),
+            'interactions'
+        )->create([
+            'last_name' => 'John',
+        ]);
+
+    Prospect::factory()
+        ->has(
+            Interaction::factory()
+                ->count($interactionsCountForDoe)
+                ->for(
+                    $interactionTypeSecond,
+                    'type'
+                ),
+            'interactions'
+        )->create([
+            'last_name' => 'Doe',
+        ]);
+
+    //  with segment filter
+    $widgetInstance = new ProspectInteractionTypeDoughnutChart();
+    $widgetInstance->cacheTag = 'report-prospect-interaction';
+    $widgetInstance->filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    $stats = $widgetInstance->getData()['datasets'][0]['data'];
+
+    expect($interactionsCount)->toEqual($stats[0])
+        ->and($interactionsCount)->not->toEqual($stats[1]);
+
+    //  with segment filter
+    $widgetInstance = new ProspectInteractionTypeDoughnutChart();
+    $widgetInstance->cacheTag = 'report-prospect-interaction';
+    $widgetInstance->filters = [];
+
+    $stats = $widgetInstance->getData()['datasets'][0]['data'];
+
+    expect($interactionsCount)->toEqual($stats[0])
+        ->and($interactionsCountForDoe)->toEqual($stats[1])
+        ->and($interactionsCount + $interactionsCountForDoe)->toEqual($stats->sum());
 });

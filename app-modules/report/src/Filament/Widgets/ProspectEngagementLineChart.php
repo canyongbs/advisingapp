@@ -40,6 +40,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
 class ProspectEngagementLineChart extends LineChartReportWidget
@@ -52,11 +53,12 @@ class ProspectEngagementLineChart extends LineChartReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
 
         $runningTotalPerMonth = $shouldBypassCache
-           ? $this->getProspectEngagementData($startDate, $endDate)
+           ? $this->getProspectEngagementData($startDate, $endDate, $segmentId)
            : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_engagements_line_chart', now()->addHours(24), function () {
                return $this->getProspectEngagementData();
            });
@@ -99,7 +101,7 @@ class ProspectEngagementLineChart extends LineChartReportWidget
     /**
      * @return array<string, array<string, int>>
      */
-    protected function getProspectEngagementData(?Carbon $startDate = null, ?Carbon $endDate = null): array
+    protected function getProspectEngagementData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $segmentId = null): array
     {
         $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
         $endDate = $endDate ?? Carbon::now()->endOfMonth();
@@ -110,7 +112,12 @@ class ProspectEngagementLineChart extends LineChartReportWidget
 
         $baseQuery = fn (string $channel) => Engagement::query()
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->where('recipient_type', $prospectType)
+            ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($segmentId) {
+                $query->when(
+                    $segmentId,
+                    fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                );
+            })
             ->where('channel', $channel)
             ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")
             ->groupByRaw("date_trunc('month', created_at)")
