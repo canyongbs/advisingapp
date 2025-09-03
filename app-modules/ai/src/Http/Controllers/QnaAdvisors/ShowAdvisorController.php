@@ -48,16 +48,19 @@ class ShowAdvisorController
         $chatId = Str::random(32);
 
         return response()->json([
+            'requires_authentication' => $advisor->is_requires_authentication_enabled ?? false,
+            'authentication_url' => URL::signedRoute(name: 'ai.qna-advisors.authentication.request', parameters: ['advisor' => $advisor]),
+            'refresh_url' => URL::signedRoute(name: 'ai.qna-advisors.authentication.refresh', parameters: ['advisor' => $advisor]),
             'chat_id' => $chatId,
-            'send_message_url' => URL::to(
-                URL::temporarySignedRoute(
-                    name: 'ai.qna-advisors.messages.send',
-                    expiration: now()->addHours(24),
-                    parameters: ['advisor' => $advisor, 'chat_id' => $chatId],
-                    absolute: false,
-                ),
+            'send_message_url' => URL::temporarySignedRoute(
+                name: 'ai.qna-advisors.messages.send',
+                expiration: now()->addDays(3),
+                parameters: ['advisor' => $advisor, 'chat_id' => $chatId],
             ),
-            'websockets_config' => config('filament.broadcasting.echo'),
+            'websockets_config' => [
+                ...config('filament.broadcasting.echo'),
+                'authEndpoint' => url('broadcasting/auth'),
+            ],
         ]);
     }
 }

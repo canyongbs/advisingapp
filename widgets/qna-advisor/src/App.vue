@@ -32,14 +32,29 @@
 </COPYRIGHT>
 -->
 <script setup>
+import axios from 'axios';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js/dist/web/pusher';
 import { defineProps, onMounted, onUnmounted, ref } from 'vue';
 import headshotAgent from '../../../resources/images/canyon-ai-headshot.jpg?url';
 import loadingSpinner from '../public/images/loading-spinner.svg?url';
 import userAvatar from '../public/images/user-default-avatar.svg?url';
+import { useAuthStore } from './stores/auth';
 
 const props = defineProps(['url']);
+const authStore = useAuthStore();
+const requiresAuthentication = ref(false);
+const authentication = ref({
+    promptToAuthenticate: false,
+    requestUrl: null,
+    refreshUrl: null,
+    email: null,
+    code: null,
+    isRequested: false,
+    requestedMessage: null,
+    confirmationUrl: null,
+});
+const loadingError = ref(null);
 const sendMessageUrl = ref(null);
 const chatId = ref(null);
 const message = ref('');
@@ -55,17 +70,30 @@ const scriptHostname = scriptUrl.hostname;
 const hostUrl = `${protocol}//${scriptHostname}`;
 
 onMounted(async () => {
-    try {
-        const response = await fetch(props.url);
-        const json = await response.json();
-        if (json.error) throw new Error(json.error);
-        sendMessageUrl.value = json.send_message_url;
-        chatId.value = json.chat_id;
+    axios
+        .post(props.url)
+        .then((response) => {
+            const json = response.data;
 
-        setupWebsockets(json.websockets_config);
-    } catch (error) {
-        console.error(`Advising App Embed QnA Advisor ${error}`);
-    }
+            chatId.value = json.chat_id;
+            requiresAuthentication.value = json.requires_authentication;
+            authentication.value.requestUrl = json.authentication_url;
+            authentication.value.refreshUrl = json.refresh_url;
+            sendMessageUrl.value = json.send_message_url;
+
+            if (requiresAuthentication.value === true && authStore.accessToken === null) {
+                authentication.value.promptToAuthenticate = true;
+            }
+
+            setupWebsockets(json.websockets_config);
+        })
+        .catch((error) => {
+            if (error.response && error.response.data.error) {
+                loadingError.value = error.response.data.error;
+            } else {
+                loadingError.value = 'An error occurred while loading the advisor.';
+            }
+        });
 });
 
 onUnmounted(() => {
@@ -136,13 +164,9 @@ async function sendMessage() {
             requestBody.options = nextRequestOptions.value;
         }
 
-        const sendMessageResponse = await fetch(sendMessageUrl.value, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody),
-        });
+        const sendMessageResponse = await authorizedPost(sendMessageUrl.value, requestBody);
 
-        const data = await sendMessageResponse.json();
+        const data = sendMessageResponse.data;
 
         message.value = '';
     } catch (error) {
@@ -150,11 +174,162 @@ async function sendMessage() {
         isLoading.value = false;
     }
 }
+
+async function authenticate(formData, node) {
+    node.clearErrors();
+
+    if (authentication.value.isRequested) {
+        const data = {
+            code: formData.code,
+        };
+
+        axios
+            .post(authentication.value.confirmationUrl, data)
+            .then((response) => {
+                if (response.errors) {
+                    node.setErrors([], response.errors);
+
+                    return;
+                }
+
+                if (typeof response.data.access_token !== 'undefined') {
+                    authStore.$patch({ accessToken: response.data.access_token });
+                    authentication.value.promptToAuthenticate = false;
+                }
+            })
+            .catch((error) => {
+                node.setErrors([], error.response.data.errors);
+            });
+
+        return;
+    }
+
+    axios
+        .post(authentication.value.requestUrl, {
+            email: formData.email,
+        })
+        .then((response) => {
+            if (!response.data.authentication_url) {
+                node.setErrors([response.data.message]);
+
+                return;
+            }
+
+            authentication.value.isRequested = true;
+            authentication.value.requestedMessage = response.data.message;
+            authentication.value.confirmationUrl = response.data.authentication_url;
+        })
+        .catch((error) => {
+            const data = error.response.data;
+
+            node.setErrors([], data.errors);
+        });
+}
+
+async function authorizedPost(url, data) {
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+
+    if (authStore.getAccessToken) {
+        headers['Authorization'] = `Bearer ${authStore.getAccessToken}`;
+    }
+
+    try {
+        return await axios.post(url, data, { headers });
+    } catch (error) {
+        if (error.response && error.response.status === 401) {
+            // Token expired, try to refresh
+            try {
+                const refreshResponse = await axios.post(
+                    authentication.value.refreshUrl,
+                    {},
+                    {
+                        withCredentials: true,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    },
+                );
+
+                if (refreshResponse.data && refreshResponse.data.access_token) {
+                    // Save new token
+                    authStore.$patch({ accessToken: refreshResponse.data.access_token });
+
+                    // Retry original request with new token
+                    const newHeaders = {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${authStore.getAccessToken}`,
+                    };
+
+                    return await axios.post(url, data, { headers: newHeaders });
+                }
+            } catch (refreshError) {
+                console.error('Token refresh failed:', refreshError);
+                // If refresh fails, throw original error
+                throw error;
+            }
+        }
+
+        // If not a 401 error, throw the original error
+        throw error;
+    }
+}
 </script>
 
 <template>
-    <div class="h-full bg-gray-50 dark:bg-gray-950">
-        <div v-show="sendMessageUrl !== null" class="flex flex-col gap-y-3 w-11/12 mx-auto">
+    <div
+        class="h-full"
+        style="
+            --primary-50: 255, 251, 235;
+            --primary-100: 254, 243, 199;
+            --primary-200: 253, 230, 138;
+            --primary-300: 252, 211, 77;
+            --primary-400: 251, 191, 36;
+            --primary-500: 245, 158, 11;
+            --primary-600: 217, 119, 6;
+            --primary-700: 180, 83, 9;
+            --primary-800: 146, 64, 14;
+            --primary-900: 120, 53, 15;
+            --rounding-sm: 0.25rem;
+            --rounding: 0.375rem;
+            --rounding-md: 0.5rem;
+            --rounding-lg: 0.75rem;
+            --rounding-full: 9999px;
+        "
+    >
+        <div v-if="authentication.promptToAuthenticate">
+            <FormKit type="form" @submit="authenticate" v-model="authentication">
+                <FormKit
+                    type="email"
+                    label="Your email address"
+                    name="email"
+                    validation="required|email"
+                    validation-visibility="submit"
+                    :disabled="authentication.isRequested"
+                />
+
+                <p v-if="authentication.requestedMessage" class="text-sm">
+                    {{ authentication.requestedMessage }}
+                </p>
+
+                <FormKit
+                    type="otp"
+                    digits="6"
+                    label="Authentication code"
+                    name="code"
+                    help="We've sent a code to your email address."
+                    validation="required"
+                    validation-visibility="submit"
+                    v-if="authentication.isRequested"
+                />
+            </FormKit>
+        </div>
+
+        <div
+            v-show="sendMessageUrl !== null && !authentication.promptToAuthenticate"
+            class="flex flex-col gap-y-3 w-11/12 mx-auto"
+        >
             <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/qna-advisor/style.css'" />
             <div class="flex h-[calc(100dvh-16rem)] flex-col gap-y-3">
                 <div
@@ -219,7 +394,7 @@ async function sendMessage() {
             </div>
         </div>
         <div class="relative h-screen" v-if="sendMessageUrl === null">
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+            <div v-if="!loadingError" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
                 <img
                     class="inline h-8 w-8 animate-spin text-gray-200 dark:text-gray-600 dark:invert"
                     style="border-radius: 40px"
@@ -228,6 +403,12 @@ async function sendMessage() {
                     title="spinner"
                 />
                 <span class="sr-only">Loading...</span>
+            </div>
+            <div
+                v-if="loadingError"
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-red-600 dark:text-red-400"
+            >
+                <p>Error loading the advisor: {{ loadingError }}</p>
             </div>
         </div>
     </div>

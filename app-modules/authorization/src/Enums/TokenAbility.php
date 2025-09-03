@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,10 +32,13 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
+*/
 
-@php
-    use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
-@endphp
+namespace AdvisingApp\Authorization\Enums;
 
-{!! resolve(GenerateQnaAdvisorWidgetEmbedCode::class)->handle($advisor) !!}
+enum TokenAbility: string
+{
+    case AccessQnaAdvisorApi = 'access_qna_advisor_api';
+
+    case IssueQnaAdvisorAccessToken = 'issue_qna_advisor_access_token';
+}

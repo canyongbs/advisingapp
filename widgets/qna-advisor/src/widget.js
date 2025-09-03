@@ -31,8 +31,11 @@
 
 </COPYRIGHT>
 */
+import { defaultConfig, plugin } from '@formkit/vue';
+import { createPinia } from 'pinia';
 import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
 import App from './App.vue';
+import config from './formkit.config.js';
 import './widget.css';
 
 customElements.define(
@@ -40,6 +43,10 @@ customElements.define(
     defineCustomElement({
         setup(props) {
             const app = createApp();
+            const pinia = createPinia();
+
+            app.use(pinia);
+            app.use(plugin, defaultConfig(config));
 
             app.config.devtools = true;
 

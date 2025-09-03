@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,10 +32,16 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
+*/
 
-@php
-    use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
-@endphp
+namespace App\Features;
 
-{!! resolve(GenerateQnaAdvisorWidgetEmbedCode::class)->handle($advisor) !!}
+use App\Support\AbstractFeatureFlag;
+
+class QnaAdvisorRequireAuthenticationFeature extends AbstractFeatureFlag
+{
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
+}

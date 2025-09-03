@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,10 +32,24 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
+*/
 
-@php
-    use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
-@endphp
+namespace AdvisingApp\Ai\Http\Requests;
 
-{!! resolve(GenerateQnaAdvisorWidgetEmbedCode::class)->handle($advisor) !!}
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+
+class QnaAdvisorAuthenticationConfirmRequest extends FormRequest
+{
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'code' => ['required', 'integer', 'digits:6'],
+        ];
+    }
+}
