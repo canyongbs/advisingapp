@@ -37,7 +37,11 @@
 namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\UploadFormFieldBlock;
+use AdvisingApp\Form\Models\FormField;
+use AdvisingApp\Form\Models\FormFieldSubmission;
 use AdvisingApp\Form\Models\Submission;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProcessSubmissionField
@@ -52,6 +56,32 @@ class ProcessSubmissionField
             'id' => Str::orderedUuid(),
             'response' => $response,
         ]);
+
+        /** @var FormField|null $field */
+        $field = $submission->fields()->find($fieldId);
+
+        if ($field && $field->type === UploadFormFieldBlock::type() && is_array($response)) {
+            /** @var FormFieldSubmission $formFieldSubmission */
+            $formFieldSubmission = $field->pivot;
+
+            foreach ($response as $file) {
+                $key = ltrim($file['path'], '/');
+
+                $media = $formFieldSubmission
+                    ->addMediaFromDisk($key, 's3')
+                    ->usingFileName($file['originalFileName'] ?? basename($key))
+                    ->toMediaCollection('files', 's3');
+
+                Storage::disk('s3')->delete($key);
+                $formFieldSubmission->update([
+                    'response' => [
+                        'media_id' => $media->id,
+                        'file_name' => $media->file_name,
+                        'original_name' => $file['originalFileName'] ?? $media->file_name,
+                    ],
+                ]);
+            }
+        }
 
         if ($submission->author) {
             return;

@@ -46,6 +46,7 @@ use AdvisingApp\Form\Listeners\TriggerFormSubmissionWorkflows;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormEmailAutoReply;
 use AdvisingApp\Form\Models\FormField;
+use AdvisingApp\Form\Models\FormFieldSubmission;
 use AdvisingApp\Form\Models\FormSubmission;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -66,6 +67,7 @@ class FormServiceProvider extends ServiceProvider
             'form_field' => FormField::class,
             'form_submission' => FormSubmission::class,
             'form_email_auto_reply' => FormEmailAutoReply::class,
+            'form_field_submission' => FormFieldSubmission::class,
         ]);
         $this->registerEvents();
     }

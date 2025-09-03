@@ -1,4 +1,4 @@
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,22 +30,25 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-import { upload } from '@formkit/icons';
-import { createInput } from '@formkit/vue';
-import OneTimePassword from './OneTimePassword.vue';
-import Signature from './Signature.vue';
-import Upload from './Upload.vue';
-
-export default {
-    otp: createInput(OneTimePassword, {
-        props: ['digits'],
-    }),
-    signature: createInput(Signature, {
-        props: [],
-    }),
-    upload: createInput(Upload, {
-        props: ['accept', 'multiple', 'limit', 'size', 'uploadUrl'],
-        icon: upload,
-    }),
-};
+--}}
+<x-form::blocks.field-wrapper
+    class="py-3"
+    :$label
+    :$isRequired
+>
+    <div class="flex flex-col space-y-2">
+        @if (isset($media) && count($media) > 0)
+            @foreach ($media as $item)
+                <a
+                    class="inline-flex items-center space-x-1 text-sm text-primary-600 hover:underline"
+                    href="{{ $item['temporary_url'] }}"
+                >
+                    <span>{{ $item['name'] }}</span>
+                    <x-heroicon-s-arrow-down-tray class="h-4 w-4" />
+                </a>
+            @endforeach
+        @else
+            <span class="text-gray-500">No response</span>
+        @endif
+    </div>
+</x-form::blocks.field-wrapper>
