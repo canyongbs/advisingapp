@@ -36,14 +36,11 @@
 
 namespace AdvisingApp\Report\Abstract\Concerns;
 
-use AdvisingApp\Report\Abstract\ProspectReport;
-use AdvisingApp\Report\Abstract\RecruitmentCrmDashboardReport;
-use AdvisingApp\Report\Abstract\StudentReport;
+use AdvisingApp\Report\Abstract\Contracts\HasSegmentModel;
 use AdvisingApp\Report\Filament\Pages\ProspectCaseReport;
 use AdvisingApp\Report\Filament\Pages\StudentCaseReport;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
-use AdvisingApp\StudentDataModel\Filament\Pages\RetentionCrmDashboard;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -52,6 +49,14 @@ use Filament\Forms\Get;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm as ConcernsHasFiltersForm;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @phpstan-self-out \AdvisingApp\Report\Abstract\StudentReport
+ * @phpstan-self-out \AdvisingApp\Report\Abstract\ProspectReport
+ * @phpstan-self-out \AdvisingApp\Report\Abstract\RecruitmentCrmDashboardReport
+ * @phpstan-self-out \AdvisingApp\Report\Filament\Pages\ProspectCaseReport
+ * @phpstan-self-out \AdvisingApp\Report\Filament\Pages\StudentCaseReport
+ * @phpstan-self-out \AdvisingApp\StudentDataModel\Filament\Pages\RetentionCrmDashboard
+ */
 trait HasFiltersForm
 {
     use ConcernsHasFiltersForm;
@@ -60,15 +65,7 @@ trait HasFiltersForm
     {
         $heading = ($this instanceof StudentCaseReport || $this instanceof ProspectCaseReport) ? 'Date Created' : null;
 
-        $segmentModel = match (true) {
-            $this instanceof RetentionCrmDashboard,
-            $this instanceof StudentReport => SegmentModel::Student,
-
-            $this instanceof RecruitmentCrmDashboardReport,
-            $this instanceof ProspectReport => SegmentModel::Prospect,
-
-            default => null,
-        };
+        $segmentModel = $this instanceof HasSegmentModel ? $this->segmentModel() : null;
 
         return $form
             ->schema([
@@ -101,11 +98,14 @@ trait HasFiltersForm
                             ->searchable(),
                     ])
                     ->heading('Advanced Filtering')
-                    ->visible($this instanceof RetentionCrmDashboard || $this instanceof StudentReport || $this instanceof RecruitmentCrmDashboardReport || $this instanceof ProspectReport)
+                    ->visible($this instanceof HasSegmentModel)
                     ->columns(1),
             ]);
     }
 
+    /**
+     * @return array<int, string>
+     */
     protected function getSegmentOptions(?SegmentModel $model, ?string $search = null): array
     {
         if (! $model) {
