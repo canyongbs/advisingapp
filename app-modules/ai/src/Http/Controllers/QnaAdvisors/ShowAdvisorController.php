@@ -50,6 +50,7 @@ class ShowAdvisorController
         return response()->json([
             'requires_authentication' => $advisor->is_requires_authentication_enabled ?? false,
             'authentication_url' => URL::signedRoute(name: 'ai.qna-advisors.authentication.request', parameters: ['advisor' => $advisor]),
+            'refresh_url' => URL::signedRoute(name: 'ai.qna-advisors.authentication.refresh', parameters: ['advisor' => $advisor]),
             'chat_id' => $chatId,
             'send_message_url' => URL::to(
                 URL::temporarySignedRoute(

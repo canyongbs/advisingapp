@@ -47,6 +47,7 @@ const requiresAuthentication = ref(false);
 const authentication = ref({
     promptToAuthenticate: false,
     requestUrl: null,
+    refreshUrl: null,
     email: null,
     code: null,
     isRequested: false,
@@ -77,6 +78,7 @@ onMounted(async () => {
             chatId.value = json.chat_id;
             requiresAuthentication.value = json.requires_authentication;
             authentication.value.requestUrl = json.authentication_url;
+            authentication.value.refreshUrl = json.refresh_url;
             sendMessageUrl.value = json.send_message_url;
 
             if (requiresAuthentication.value === true && authStore.accessToken === null) {
@@ -238,8 +240,11 @@ async function authorizedPost(url, data) {
         if (error.response && error.response.status === 401) {
             // Token expired, try to refresh
             try {
-                const refreshResponse = await axios.post('TBD_REFRESH_URL', {}, {
-                    withCredentials: true
+                const refreshResponse = await axios.post(authentication.value.refreshUrl, null, {
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
                 });
 
                 if (refreshResponse.data && refreshResponse.data.access_token) {
