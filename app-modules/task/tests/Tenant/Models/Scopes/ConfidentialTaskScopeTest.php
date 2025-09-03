@@ -110,19 +110,29 @@ it('can be accessed when confidential by users on a team with access', function 
 });
 
 it('can be accessed when confidential by users who have created a project the task is associated with', function () {
-    asSuperAdmin();
-
     $user = User::factory()->create();
-
     $project = Project::factory()->for($user, 'createdBy')->create();
-
-    $confidentialTasks = Task::factory()->count(10)->for($project)->concerningStudent(Student::factory()->create())->create(['is_confidential' => true]);
 
     actingAs($user);
 
-    $tasks = Task::query()->get();
+    $projectTasks = Task::factory()
+        ->hasAttached($project, [], 'confidentialAccessProjects')
+        ->count(10)
+        ->concerningStudent(Student::factory()->create())
+        ->create(['is_confidential' => true]);
+    
+    $otherProjectTasks = Task::factory()
+        ->hasAttached(Project::factory()->create(), [], 'confidentialAccessProjects')
+        ->count(10)
+        ->concerningStudent(Student::factory()->create())
+        ->create(['is_confidential' => true]);
 
-    expect($tasks->pluck('id'))->toContain(...$confidentialTasks->pluck('id'));
+    $tasks = Task::query()->get();
+    expect($tasks)->toHaveCount(10);
+
+    expect($tasks->pluck('id'))->toContain(...$projectTasks->pluck('id'));
+
+    expect($tasks->pluck('id'))->not->toContain(...$otherProjectTasks->pluck('id'));
 });
 
 it('can be accessed when confidential by super admins', function () {
