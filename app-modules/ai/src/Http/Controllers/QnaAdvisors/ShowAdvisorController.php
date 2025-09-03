@@ -55,7 +55,7 @@ class ShowAdvisorController
             'send_message_url' => URL::to(
                 URL::temporarySignedRoute(
                     name: 'ai.qna-advisors.messages.send',
-                    expiration: now()->addHours(24),
+                    expiration: now()->addDays(3),
                     parameters: ['advisor' => $advisor, 'chat_id' => $chatId],
                     absolute: false,
                 ),
