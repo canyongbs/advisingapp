@@ -48,6 +48,7 @@ enum PortalType: string implements HasLabel
     {
         return match ($this) {
             PortalType::ResourceHub => 'Resource Hub',
+            PortalType::QnaAdvisorWidget => 'Q&A Advisor Widget',
         };
     }
 }
