@@ -44,7 +44,7 @@ class GenerateQnaAdvisorWidgetEmbedCode
     public function handle(QnaAdvisor $qnaAdvisor): string
     {
         $scriptUrl = url('js/widgets/qna-advisor/advising-app-qna-advisor-widget.js');
-        $formDefinitionUrl = URL::signedRoute(name: 'ai.qna-advisors.show', parameters: ['advisor' => $qnaAdvisor]);
+        $formDefinitionUrl = URL::route(name: 'ai.qna-advisors.show', parameters: ['advisor' => $qnaAdvisor]);
 
         return <<<EOD
         <qna-advisor-embed url="{$formDefinitionUrl}"></qna-advisor-embed>

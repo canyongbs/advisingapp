@@ -55,7 +55,6 @@ Route::middleware([
     ->prefix('api/ai/qna-advisors/{advisor}')
     ->group(function () {
         Route::post('/', ShowAdvisorController::class)
-            ->middleware(['signed'])
             ->name('show');
 
         Route::post('/authenticate/request', QnaAdvisorRequestAuthenticationController::class)
