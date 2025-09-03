@@ -129,7 +129,7 @@ it('can be accessed when confidential by super admins', function () {
     $confidentialTasks = Task::factory()->count(10)->concerningStudent(Student::factory()->create())->create(['is_confidential' => true]);
 
     asSuperAdmin();
-    
+
     $tasks = Task::query()->get();
 
     expect($tasks->pluck('id'))->toContain(...$confidentialTasks->pluck('id'));
