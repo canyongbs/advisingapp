@@ -45,6 +45,7 @@ use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\Ai\Support\StreamingChunks\Finish;
+use AdvisingApp\Ai\Support\StreamingChunks\Image;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
@@ -293,6 +294,15 @@ abstract class BaseOpenAiService implements AiService
 
                         if (filled($response->text)) {
                             yield new Text($response->text);
+                        }
+
+                        if (filled($response->additionalContent['generated_images'] ?? [])) {
+                            foreach ($response->additionalContent['generated_images'] as $image) {
+                                yield new Image(
+                                    content: $image['result'],
+                                    format: $image['output_format'],
+                                );
+                            }
                         }
 
                         yield new Finish(
@@ -635,6 +645,7 @@ abstract class BaseOpenAiService implements AiService
                             ]] : [],
                             ...$hasImageGeneration ? [[
                                 'type' => 'image_generation',
+                                'output_format' => 'jpeg',
                             ]] : [],
                         ],
                     ] : []),
