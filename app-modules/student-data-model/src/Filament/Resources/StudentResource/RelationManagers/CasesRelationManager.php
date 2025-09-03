@@ -91,8 +91,8 @@ class CasesRelationManager extends RelationManager
             ])
             ->filters([
                 SelectFilter::make('priority')
-                    ->relationship('priority', 'name', fn(Builder $query) => $query->with('type'))
-                    ->getOptionLabelFromRecordUsing(fn(CasePriority $record) => "{$record->type->name} - {$record->name}")
+                    ->relationship('priority', 'name', fn (Builder $query) => $query->with('type'))
+                    ->getOptionLabelFromRecordUsing(fn (CasePriority $record) => "{$record->type->name} - {$record->name}")
                     ->multiple()
                     ->preload(),
                 SelectFilter::make('status')
@@ -118,9 +118,9 @@ class CasesRelationManager extends RelationManager
             ])
             ->actions([
                 ViewAction::make()
-                    ->url(fn(CaseModel $record) => CaseResource::getUrl('view', ['record' => $record, 'referrer' => 'respondentProfile'])),
+                    ->url(fn (CaseModel $record) => CaseResource::getUrl('view', ['record' => $record, 'referrer' => 'respondentProfile'])),
                 EditAction::make()
-                    ->url(fn(CaseModel $record) => CaseResource::getUrl('edit', ['record' => $record, 'referrer' => 'respondentProfile'])),
+                    ->url(fn (CaseModel $record) => CaseResource::getUrl('edit', ['record' => $record, 'referrer' => 'respondentProfile'])),
             ])
             ->defaultSort('created_at', 'desc');
     }
