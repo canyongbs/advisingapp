@@ -42,6 +42,6 @@ export const useAuthStore = defineStore('auth', () => {
 
     return {
         accessToken,
-        getAccessToken
+        getAccessToken,
     };
 });

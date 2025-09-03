@@ -32,13 +32,13 @@
 </COPYRIGHT>
 -->
 <script setup>
+import axios from 'axios';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js/dist/web/pusher';
 import { defineProps, onMounted, onUnmounted, ref } from 'vue';
 import headshotAgent from '../../../resources/images/canyon-ai-headshot.jpg?url';
 import loadingSpinner from '../public/images/loading-spinner.svg?url';
 import userAvatar from '../public/images/user-default-avatar.svg?url';
-import axios from 'axios';
 import { useAuthStore } from './stores/auth';
 
 const props = defineProps(['url']);
@@ -74,7 +74,7 @@ onMounted(async () => {
         .post(props.url)
         .then((response) => {
             const json = response.data;
-            
+
             chatId.value = json.chat_id;
             requiresAuthentication.value = json.requires_authentication;
             authentication.value.requestUrl = json.authentication_url;
@@ -86,7 +86,8 @@ onMounted(async () => {
             }
 
             setupWebsockets(json.websockets_config);
-        }).catch(error => {
+        })
+        .catch((error) => {
             if (error.response && error.response.data.error) {
                 loadingError.value = error.response.data.error;
             } else {
@@ -240,12 +241,16 @@ async function authorizedPost(url, data) {
         if (error.response && error.response.status === 401) {
             // Token expired, try to refresh
             try {
-                const refreshResponse = await axios.post(authentication.value.refreshUrl, {}, {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
+                const refreshResponse = await axios.post(
+                    authentication.value.refreshUrl,
+                    {},
+                    {
+                        withCredentials: true,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    },
+                );
 
                 if (refreshResponse.data && refreshResponse.data.access_token) {
                     // Save new token
@@ -254,7 +259,7 @@ async function authorizedPost(url, data) {
                     // Retry original request with new token
                     const newHeaders = {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authStore.getAccessToken}`
+                        Authorization: `Bearer ${authStore.getAccessToken}`,
                     };
 
                     return await axios.post(url, data, { headers: newHeaders });
@@ -273,8 +278,26 @@ async function authorizedPost(url, data) {
 </script>
 
 <template>
-    <div class="h-full" style="--primary-50: 255, 251, 235; --primary-100: 254, 243, 199; --primary-200: 253, 230, 138; --primary-300: 252, 211, 77; --primary-400: 251, 191, 36; --primary-500: 245, 158, 11; --primary-600: 217, 119, 6; --primary-700: 180, 83, 9; --primary-800: 146, 64, 14; --primary-900: 120, 53, 15; --rounding-sm: 0.25rem; --rounding: 0.375rem; --rounding-md: 0.5rem; --rounding-lg: 0.75rem; --rounding-full: 9999px;">
-
+    <div
+        class="h-full"
+        style="
+            --primary-50: 255, 251, 235;
+            --primary-100: 254, 243, 199;
+            --primary-200: 253, 230, 138;
+            --primary-300: 252, 211, 77;
+            --primary-400: 251, 191, 36;
+            --primary-500: 245, 158, 11;
+            --primary-600: 217, 119, 6;
+            --primary-700: 180, 83, 9;
+            --primary-800: 146, 64, 14;
+            --primary-900: 120, 53, 15;
+            --rounding-sm: 0.25rem;
+            --rounding: 0.375rem;
+            --rounding-md: 0.5rem;
+            --rounding-lg: 0.75rem;
+            --rounding-full: 9999px;
+        "
+    >
         <div v-if="authentication.promptToAuthenticate">
             <FormKit type="form" @submit="authenticate" v-model="authentication">
                 <FormKit
@@ -303,8 +326,10 @@ async function authorizedPost(url, data) {
             </FormKit>
         </div>
 
-
-        <div v-show="sendMessageUrl !== null && ! authentication.promptToAuthenticate" class="flex flex-col gap-y-3 w-11/12 mx-auto">
+        <div
+            v-show="sendMessageUrl !== null && !authentication.promptToAuthenticate"
+            class="flex flex-col gap-y-3 w-11/12 mx-auto"
+        >
             <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/qna-advisor/style.css'" />
             <div class="flex h-[calc(100dvh-16rem)] flex-col gap-y-3">
                 <div
@@ -369,7 +394,7 @@ async function authorizedPost(url, data) {
             </div>
         </div>
         <div class="relative h-screen" v-if="sendMessageUrl === null">
-            <div v-if="! loadingError" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+            <div v-if="!loadingError" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
                 <img
                     class="inline h-8 w-8 animate-spin text-gray-200 dark:text-gray-600 dark:invert"
                     style="border-radius: 40px"
@@ -379,7 +404,10 @@ async function authorizedPost(url, data) {
                 />
                 <span class="sr-only">Loading...</span>
             </div>
-            <div v-if="loadingError" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-red-600 dark:text-red-400">
+            <div
+                v-if="loadingError"
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-red-600 dark:text-red-400"
+            >
                 <p>Error loading the advisor: {{ loadingError }}</p>
             </div>
         </div>

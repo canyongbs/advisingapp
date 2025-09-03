@@ -31,12 +31,12 @@
 
 </COPYRIGHT>
 */
+import { defaultConfig, plugin } from '@formkit/vue';
+import { createPinia } from 'pinia';
 import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
 import App from './App.vue';
-import './widget.css';
-import { defaultConfig, plugin } from '@formkit/vue';
 import config from './formkit.config.js';
-import { createPinia } from 'pinia';
+import './widget.css';
 
 customElements.define(
     'qna-advisor-embed',
