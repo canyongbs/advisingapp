@@ -36,12 +36,13 @@
 
 namespace AdvisingApp\Form\Actions;
 
-use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use Illuminate\Support\Str;
 use AdvisingApp\Form\Models\FormField;
-use AdvisingApp\Form\Models\FormFieldSubmission;
 use AdvisingApp\Form\Models\Submission;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use AdvisingApp\Form\Models\FormFieldSubmission;
+use AdvisingApp\Form\Filament\Blocks\UploadFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 
 class ProcessSubmissionField
 {
@@ -56,32 +57,29 @@ class ProcessSubmissionField
             'response' => $response,
         ]);
 
-        $field = FormField::find($fieldId);
+        /** @var FormField|null $field */
+        $field = $submission->fields()->find($fieldId);
 
-        if ($field && $field->type === 'upload' && is_array($response)) {
+        if ($field && $field->type === UploadFormFieldBlock::type() && is_array($response)) {
             /** @var FormFieldSubmission $formFieldSubmission */
-            $formFieldSubmission = $submission
-                ->fields()
-                ->where('field_id', $fieldId)
-                ->latest('created_at')
-                ->first()
-                ->pivot;
+            $formFieldSubmission = $field->pivot;
 
             foreach ($response as $file) {
                 $key = ltrim($file['path'], '/');
 
-                $url = Storage::disk('s3')->temporaryUrl(
-                    $key,
-                    now()->addMinutes(5),
-                    [
-                        'ResponseContentDisposition' => 'attachment; filename="' . basename($file['originalFileName'] ?? $key) . '"',
-                    ]
-                );
-
-                $formFieldSubmission
-                    ->addMediaFromUrl($url)
+                $media = $formFieldSubmission
+                    ->addMediaFromDisk($key, 's3')
                     ->usingFileName($file['originalFileName'] ?? basename($key))
-                    ->toMediaCollection('files', 's3-public');
+                    ->toMediaCollection('files', 's3');
+
+                Storage::disk('s3')->delete($key);
+                $formFieldSubmission->update([
+                    'response' => [
+                        'media_id' => $media->id,
+                        'file_name' => $media->file_name,
+                        'original_name' => $file['originalFileName'] ?? $media->file_name,
+                    ],
+                ]);
             }
         }
 
