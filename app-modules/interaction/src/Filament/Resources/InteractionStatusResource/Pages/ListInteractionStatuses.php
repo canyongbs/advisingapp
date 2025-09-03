@@ -85,8 +85,6 @@ class ListInteractionStatuses extends ListRecords
 
     public function fillForm(): void
     {
-        $this->callHook('beforeFill');
-
         $settings = $this->getSettings();
 
         $data = [
@@ -95,8 +93,6 @@ class ListInteractionStatuses extends ListRecords
         ];
 
         $this->form->fill($data);
-
-        $this->callHook('afterFill');
     }
 
     public function form(Form $form): Form
