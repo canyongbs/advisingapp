@@ -78,12 +78,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Enums/AiModel.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Events\\\\AssistantFilesFinishedUploading\\:\\:__construct\\(\\) has parameter \\$files with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Events/AssistantFilesFinishedUploading.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Trait AdvisingApp\\\\Ai\\\\Filament\\\\Pages\\\\Assistant\\\\Concerns\\\\CanManageThreads has PHPDoc tag @property\\-read for property \\$customAssistants with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -240,18 +234,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Listeners/CreateAiMessageLog.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Using nullsafe property access on non\\-nullable type AdvisingApp\\\\Ai\\\\Models\\\\AiMessageFile\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Listeners/DeleteExternalAiMessageFile.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Listeners/DeleteExternalAiThread.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:withTrashed\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
@@ -268,12 +250,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Models/AiMessage.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Ai\\\\Models\\\\AiMessageFile\\:\\:\\$dispatchesEvents type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Models/AiMessageFile.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:withTrashed\\(\\)\\.$#',
@@ -380,7 +356,7 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:once\\(\\)\\.$#',
     'identifier' => 'method.notFound',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/CreateThreadTest.php',
 ];
 $ignoreErrors[] = [
@@ -478,18 +454,6 @@ $ignoreErrors[] = [
     'identifier' => 'return.type',
     'count' => 2,
     'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Unit/AiThreadCascadeDeleteAiMessagesTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:once\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Unit/Listeners/DeleteExternalAiMessageFileTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:with\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Unit/Listeners/DeleteExternalAiThreadTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/alert/database/migrations/2024_11_14_130353_seed_permissions_for_alert_status\\.php\\:42\\:\\:\\$guards type has no value type specified in iterable type array\\.$#',
@@ -4860,262 +4824,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/integration-microsoft-clarity/src/Providers/IntegrationMicrosoftClarityServiceProvider.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\DataTransferObjects\\\\Assistants\\\\AssistantsDataTransferObject\\:\\:__construct\\(\\) has parameter \\$tools with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/DataTransferObjects/Assistants/AssistantsDataTransferObject.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\DataTransferObjects\\\\Assistants\\\\FileSearchDataTransferObject\\:\\:__construct\\(\\) has parameter \\$vectorStoreIds with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/DataTransferObjects/Assistants/FileSearchDataTransferObject.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\DataTransferObjects\\\\Threads\\\\ThreadsDataTransferObject\\:\\:__construct\\(\\) has parameter \\$vectorStoreIds with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/DataTransferObjects/Threads/ThreadsDataTransferObject.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\DataTransferObjects\\\\VectorStoreFiles\\\\VectorStoreFilesDataTransferObject\\:\\:__construct\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/DataTransferObjects/VectorStoreFiles/VectorStoreFilesDataTransferObject.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\DataTransferObjects\\\\VectorStores\\\\VectorStoresDataTransferObject\\:\\:__construct\\(\\) has parameter \\$fileCounts with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/DataTransferObjects/VectorStores/VectorStoresDataTransferObject.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Exceptions\\\\FileUploadException\\:\\:__construct\\(\\) has parameter \\$message with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Exceptions/FileUploadException.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Exceptions\\\\FileUploadsCannotBeDisabled\\:\\:__construct\\(\\) has parameter \\$message with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Exceptions/FileUploadsCannotBeDisabled.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Exceptions\\\\FileUploadsCannotBeEnabled\\:\\:__construct\\(\\) has parameter \\$message with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Exceptions/FileUploadsCannotBeEnabled.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Jobs\\\\UploadFilesToAssistant\\:\\:__construct\\(\\) has parameter \\$files with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Jobs/UploadFilesToAssistant.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\IntegrationOpenAi\\\\Jobs\\\\UploadFilesToAssistant\\:\\:\\$deleteWhenMissingModels has no type specified\\.$#',
-    'identifier' => 'missingType.property',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Jobs/UploadFilesToAssistant.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\IntegrationOpenAi\\\\Jobs\\\\UploadFilesToAssistant\\:\\:\\$maxExceptions has no type specified\\.$#',
-    'identifier' => 'missingType.property',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Jobs/UploadFilesToAssistant.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Providers\\\\IntegrationOpenAiServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/integration-open-ai/src/Providers/IntegrationOpenAiServiceProvider.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:modifyThread\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:retryMessage\\(\\) has parameter \\$files with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:sendMessage\\(\\) has parameter \\$files with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\:\\:updateAssistantTools\\(\\) has parameter \\$tools with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$file of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$tool of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$vectorStoreId of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Superglobal "\\$_SERVER" should not be used\\.$#',
-    'identifier' => 'MeliorStan.superglobalUsage',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe property access "\\?\\-\\>vectorStoreIds" on left side of \\?\\? is unnecessary\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$file of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt41MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$vectorStoreId of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt41MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt41MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$file of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt41NanoService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$vectorStoreId of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt41NanoService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt41NanoService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$file of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$vectorStoreId of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oMiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$file of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$vectorStoreId of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGpt4oService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$file of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$vectorStoreId of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO1MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$file of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$vectorStoreId of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO3MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$file of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO4MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$vectorStoreId of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO4MiniService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/OpenAiGptO4MiniService.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Match expression does not handle remaining value\\: string$#',
@@ -10828,12 +10540,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.property',
     'count' => 1,
     'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 2,
-    'path' => __DIR__ . '/database/migrations/2024_06_10_164958_data_update_existing_assistants_to_use_file_search_tool.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Variable name "\\$analytics_roles" is not in camelCase\\.$#',

@@ -38,24 +38,9 @@ namespace AdvisingApp\IntegrationOpenAi\Services;
 
 class OpenAiGptTestService extends BaseOpenAiService
 {
-    public function __construct()
-    {
-        $this->fake();
-    }
-
-    public function supportsAssistantFileUploads(): bool
-    {
-        return false;
-    }
-
     public function getApiKey(): string
     {
         return 'test';
-    }
-
-    public function getApiVersion(): string
-    {
-        return '1.0.0';
     }
 
     public function getModel(): string
@@ -65,6 +50,6 @@ class OpenAiGptTestService extends BaseOpenAiService
 
     public function getDeployment(): ?string
     {
-        return null;
+        return 'https://api.openai.com/v1';
     }
 }

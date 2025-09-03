@@ -42,7 +42,7 @@ use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
-use AdvisingApp\IntegrationOpenAi\Services\OpenAiResponsesGptTestService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use Illuminate\Support\Facades\Http;
@@ -63,7 +63,7 @@ it('can send a message', function () {
 
     asSuperAdmin();
 
-    $service = app(OpenAiResponsesGptTestService::class);
+    $service = app(OpenAiGptTestService::class);
 
     $message = AiMessage::factory()
         ->for(AiThread::factory()
@@ -96,7 +96,7 @@ it('can complete a message response', function () {
 
     asSuperAdmin();
 
-    $service = app(OpenAiResponsesGptTestService::class);
+    $service = app(OpenAiGptTestService::class);
 
     $message = AiMessage::factory()
         ->for(AiThread::factory()
@@ -139,7 +139,7 @@ it('can retry a message', function () {
 
     asSuperAdmin();
 
-    $service = app(OpenAiResponsesGptTestService::class);
+    $service = app(OpenAiGptTestService::class);
 
     $message = AiMessage::factory()
         ->for(AiThread::factory()
@@ -172,7 +172,7 @@ it('can complete a prompt', function () {
 
     asSuperAdmin();
 
-    $service = app(OpenAiResponsesGptTestService::class);
+    $service = app(OpenAiGptTestService::class);
 
     Prism::fake([
         TextResponseFake::make()
@@ -196,7 +196,7 @@ it('can fetch a valid previous response ID for a message', function () {
 
     asSuperAdmin();
 
-    $service = app(OpenAiResponsesGptTestService::class);
+    $service = app(OpenAiGptTestService::class);
 
     $previousAssistantResponse = AiMessage::factory()
         ->for(AiThread::factory()
@@ -229,7 +229,7 @@ it('can discard an invalid previous response ID for a message', function () {
 
     asSuperAdmin();
 
-    $service = app(OpenAiResponsesGptTestService::class);
+    $service = app(OpenAiGptTestService::class);
 
     $previousAssistantResponse = AiMessage::factory()
         ->for(AiThread::factory()
@@ -256,7 +256,7 @@ it('can discard an invalid previous response ID for a message', function () {
 });
 
 it('can confirm that a file is ready if it has a stored timestamp', function () {
-    $service = app(OpenAiResponsesGptTestService::class);
+    $service = app(OpenAiGptTestService::class);
 
     $file = AiMessageFile::factory()
         ->has(OpenAiVectorStore::factory()->state([
@@ -281,7 +281,7 @@ it('can confirm that a file is not ready if it is still processing', function ()
         ], 200),
     ]);
 
-    $service = app(OpenAiResponsesGptTestService::class);
+    $service = app(OpenAiGptTestService::class);
 
     $file = AiMessageFile::factory()
         ->has(OpenAiVectorStore::factory()->state([
@@ -306,7 +306,7 @@ it('can confirm that a file is ready if all files are finished processing', func
         ], 200),
     ]);
 
-    $service = app(OpenAiResponsesGptTestService::class);
+    $service = app(OpenAiGptTestService::class);
 
     $file = AiMessageFile::factory()
         ->has(OpenAiVectorStore::factory()->state([
@@ -336,7 +336,7 @@ it('can delete an existing vector store file to ensure storage space is used eff
         '*/files/*' => Http::response(null, 200),
     ]);
 
-    $service = app(OpenAiResponsesGptTestService::class);
+    $service = app(OpenAiGptTestService::class);
 
     $file = AiMessageFile::factory()
         ->has(OpenAiVectorStore::factory()->state([
@@ -362,7 +362,7 @@ it('can upload a file and create a new vector store', function () {
         ], 200),
     ]);
 
-    $service = app(OpenAiResponsesGptTestService::class);
+    $service = app(OpenAiGptTestService::class);
 
     $file = AiMessageFile::factory()->create();
 

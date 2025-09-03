@@ -34,11 +34,9 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Events\AiThreadForceDeleting;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Database\Console\PruneCommand;
-use Illuminate\Support\Facades\Event;
 
 use function Pest\Laravel\artisan;
 use function PHPUnit\Framework\assertNull;
@@ -47,20 +45,14 @@ use function PHPUnit\Framework\assertTrue;
 it('properly prunes AiThread models', function (AiThread $thread, bool $shouldPrune) {
     assertTrue($thread->exists);
 
-    Event::fake();
-
     artisan(PruneCommand::class, [
         '--model' => AiThread::class,
     ]);
 
     if ($shouldPrune) {
         assertNull($thread->fresh());
-
-        Event::assertDispatched(AiThreadForceDeleting::class);
     } else {
         assertTrue($thread->fresh()->exists);
-
-        Event::assertNotDispatched(AiThreadForceDeleting::class);
     }
 })->with([
     'Not soft deleted' => [

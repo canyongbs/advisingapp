@@ -36,11 +36,8 @@
 
 namespace AdvisingApp\Ai\Services;
 
-use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
-use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Services\Contracts\AiService;
 use AdvisingApp\Ai\Support\StreamingChunks\Finish;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
@@ -53,8 +50,6 @@ use Generator;
 
 class TestAiService implements AiService
 {
-    use HasAiServiceHelpers;
-
     public function complete(string $prompt, string $content, bool $shouldTrack = true): string
     {
         if ($shouldTrack) {
@@ -83,24 +78,6 @@ class TestAiService implements AiService
     public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = []): Closure
     {
         throw new Exception('Plain text streaming is not supported by this service.');
-    }
-
-    public function createAssistant(AiAssistant $assistant): void {}
-
-    public function updateAssistant(AiAssistant $assistant): void {}
-
-    public function isAssistantExisting(AiAssistant $assistant): bool
-    {
-        return true;
-    }
-
-    public function createThread(AiThread $thread): void {}
-
-    public function deleteThread(AiThread $thread): void {}
-
-    public function isThreadExisting(AiThread $thread): bool
-    {
-        return true;
     }
 
     public function sendMessage(AiMessage $message, array $files): Closure
@@ -144,30 +121,10 @@ class TestAiService implements AiService
         return 30000;
     }
 
-    public function getDeployment(): ?string
-    {
-        return null;
-    }
-
-    public function supportsMessageFileUploads(): bool
-    {
-        return true;
-    }
-
-    public function supportsAssistantFileUploads(): bool
-    {
-        return true;
-    }
-
     /**
      * @param array<AiFile> $files
      */
     public function areFilesReady(array $files): bool
-    {
-        return true;
-    }
-
-    public function hasTemperature(): bool
     {
         return true;
     }

@@ -36,53 +36,11 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
-use OpenAI;
-
-class OpenAiGpt4oService extends BaseOpenAiService implements AiServiceLifecycleHooks
+class OpenAiGpt4oService extends BaseOpenAiService
 {
-    use UploadsFiles;
-
-    public function __construct(
-        protected AiIntegrationsSettings $settings,
-    ) {
-        $this->client = OpenAI::factory()
-            ->withBaseUri($this->getDeployment())
-            ->withHttpHeader('api-key', $this->settings->open_ai_gpt_4o_api_key ?? config('integration-open-ai.gpt_4o_api_key'))
-            ->withQueryParam('api-version', $this->getApiVersion())
-            ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
-            ->withHttpHeader('Accept', '*/*')
-            ->make();
-    }
-
-    public function enableAssistantFileUploads(AiAssistant $assistant): void
-    {
-        $this->client->assistants()->modify($assistant->assistant_id, [
-            'tools' => [
-                ['type' => 'file_search'],
-            ],
-        ]);
-    }
-
-    public function disableAssistantFileUploads(AiAssistant $assistant): void
-    {
-        $this->client->assistants()->modify($assistant->assistant_id, [
-            'tools' => [],
-        ]);
-    }
-
     public function getApiKey(): string
     {
         return $this->settings->open_ai_gpt_4o_api_key ?? config('integration-open-ai.gpt_4o_api_key');
-    }
-
-    public function getApiVersion(): string
-    {
-        return '2024-05-01-preview';
     }
 
     public function getModel(): string
@@ -93,15 +51,5 @@ class OpenAiGpt4oService extends BaseOpenAiService implements AiServiceLifecycle
     public function getDeployment(): ?string
     {
         return $this->settings->open_ai_gpt_4o_base_uri ?? config('integration-open-ai.gpt_4o_base_uri');
-    }
-
-    public function supportsMessageFileUploads(): bool
-    {
-        return true;
-    }
-
-    public function beforeMessageFileForceDeleted(AiMessageFile $file): void
-    {
-        $this->deleteFile($file);
     }
 }

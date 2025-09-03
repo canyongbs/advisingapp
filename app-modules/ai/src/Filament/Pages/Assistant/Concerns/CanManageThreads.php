@@ -43,7 +43,6 @@ use AdvisingApp\Ai\Jobs\Advisors\PrepareAiThreadEmailing;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
-use AdvisingApp\Ai\Services\Contracts\AiServiceLifecycleHooks;
 use AdvisingApp\Team\Models\Team;
 use App\Models\Scopes\WithoutSuperAdmin;
 use App\Models\User;
@@ -244,12 +243,6 @@ trait CanManageThreads
 
         $this->thread = $thread;
         $this->selectedThreadId = $this->thread->getKey();
-
-        $service = $this->thread->assistant->model->getService();
-
-        if ($service instanceof AiServiceLifecycleHooks) {
-            $service->afterThreadSelected($this->thread);
-        }
     }
 
     public function deleteThreadAction(): Action

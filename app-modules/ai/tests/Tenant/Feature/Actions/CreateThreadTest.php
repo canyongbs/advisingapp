@@ -40,23 +40,14 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Services\TestAiService;
 use AdvisingApp\Ai\Settings\AiSettings;
 use App\Models\Tenant;
 use App\Models\User;
-use Mockery\MockInterface;
 
 use function Tests\asSuperAdmin;
 
 it('creates a new thread', function () {
     asSuperAdmin();
-
-    /** @phpstan-ignore-next-line */
-    $this->mock(
-        TestAiService::class,
-        fn (MockInterface $mock) => $mock
-            ->shouldReceive('createThread')->once(),
-    );
 
     $assistant = AiAssistant::factory()->create([
         'application' => AiAssistantApplication::Test,
@@ -285,13 +276,6 @@ it('does not match an assistant if it is not marked as default', function () {
 
 it('creates a new assistant if no default assistant exists', function () {
     asSuperAdmin();
-
-    /** @phpstan-ignore-next-line */
-    $this->mock(
-        TestAiService::class,
-        fn (MockInterface $mock) => $mock
-            ->shouldReceive('createAssistant', 'createThread')->once(),
-    );
 
     $thread = app(CreateThread::class)(AiAssistantApplication::Test);
 

@@ -36,20 +36,30 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
-class OpenAiResponsesGpt41MiniService extends BaseOpenAiResponsesService
+class OpenAiGptO3Service extends BaseOpenAiService
 {
     public function getApiKey(): string
     {
-        return $this->settings->open_ai_gpt_41_mini_api_key ?? config('integration-open-ai.gpt_41_mini_api_key');
+        return $this->settings->open_ai_gpt_o3_api_key ?? config('integration-open-ai.gpt_o3_api_key');
     }
 
     public function getModel(): string
     {
-        return $this->settings->open_ai_gpt_41_mini_model ?? config('integration-open-ai.gpt_41_mini_model');
+        return $this->settings->open_ai_gpt_o3_model ?? config('integration-open-ai.gpt_o3_model');
     }
 
     public function getDeployment(): ?string
     {
-        return $this->settings->open_ai_gpt_41_mini_base_uri ?? config('integration-open-ai.gpt_41_mini_base_uri');
+        return $this->settings->open_ai_gpt_o3_base_uri ?? config('integration-open-ai.gpt_o3_base_uri');
+    }
+
+    public function hasReasoning(): bool
+    {
+        return true;
+    }
+
+    public function hasTemperature(): bool
+    {
+        return false;
     }
 }

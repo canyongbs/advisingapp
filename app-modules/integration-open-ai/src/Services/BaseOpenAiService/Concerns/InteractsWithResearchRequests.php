@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiResponsesService\Concerns;
+namespace AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns;
 
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Settings\AiSettings;

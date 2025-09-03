@@ -82,8 +82,6 @@ class CompleteAdvisorResponse implements ShouldQueue
 
         $aiService = $this->thread->assistant->model->getService();
 
-        $aiService->ensureAssistantAndThreadExists($this->thread);
-
         try {
             $stream = $aiService->completeResponse($response);
         } catch (Throwable $exception) {

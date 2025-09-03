@@ -53,11 +53,9 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Notifications\Notification;
 use Filament\Pages\SettingsPage;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
-use Throwable;
 
 /**
  * @property-read ?AiAssistant $defaultAssistant
@@ -195,25 +193,6 @@ class ManageAiSettings extends SettingsPage
     {
         if (array_key_exists('defaultAssistant', $data)) {
             $this->defaultAssistant->fill($data['defaultAssistant']);
-
-            $aiService = $this->defaultAssistant->model->getService();
-
-            try {
-                $aiService->isAssistantExisting($this->defaultAssistant) ?
-                    $aiService->updateAssistant($this->defaultAssistant) :
-                    $aiService->createAssistant($this->defaultAssistant);
-            } catch (Throwable $exception) {
-                report($exception);
-
-                Notification::make()
-                    ->title('Could not save assistant')
-                    ->body('We failed to connect to the AI service. Support has been notified about this problem. Please try again later.')
-                    ->danger()
-                    ->send();
-
-                $this->halt();
-            }
-
             $this->defaultAssistant->save();
 
             unset($data['defaultAssistant']);

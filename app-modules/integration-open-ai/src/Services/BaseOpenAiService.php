@@ -40,73 +40,89 @@ use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
-use AdvisingApp\Ai\Services\Concerns\HasAiServiceHelpers;
 use AdvisingApp\Ai\Services\Contracts\AiService;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\Ai\Settings\AiSettings;
-use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\AssistantsDataTransferObject;
-use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\FileSearchDataTransferObject;
-use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Assistants\ToolResourcesDataTransferObject;
-use AdvisingApp\IntegrationOpenAi\DataTransferObjects\Threads\ThreadsDataTransferObject;
-use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeDisabled;
-use AdvisingApp\IntegrationOpenAi\Exceptions\FileUploadsCannotBeEnabled;
-use AdvisingApp\IntegrationOpenAi\Services\Concerns\UploadsFiles;
+use AdvisingApp\Ai\Support\StreamingChunks\Finish;
+use AdvisingApp\Ai\Support\StreamingChunks\Meta;
+use AdvisingApp\Ai\Support\StreamingChunks\Text;
+use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsWithResearchRequests;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsWithVectorStores;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use AdvisingApp\Research\Models\ResearchRequest;
+use App\Features\OpenAiResponsesApiSettingsFeature;
+use App\Models\User;
 use Closure;
 use Exception;
 use Generator;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use OpenAI\Contracts\ClientContract;
-use OpenAI\Exceptions\ErrorException;
-use OpenAI\Responses\Threads\Messages\ThreadMessageResponse;
-use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
-use OpenAI\Responses\Threads\ThreadResponse;
-use OpenAI\Testing\ClientFake;
+use Prism\Prism\Contracts\Message;
+use Prism\Prism\Contracts\Schema;
+use Prism\Prism\Enums\ChunkType;
+use Prism\Prism\Enums\FinishReason;
+use Prism\Prism\Exceptions\PrismRateLimitedException;
+use Prism\Prism\Prism;
+use Prism\Prism\ValueObjects\Messages\AssistantMessage;
+use Prism\Prism\ValueObjects\Messages\UserMessage;
 use Throwable;
 
 abstract class BaseOpenAiService implements AiService
 {
-    use HasAiServiceHelpers;
-    use UploadsFiles;
+    use InteractsWithVectorStores;
+    use InteractsWithResearchRequests;
 
     public const FORMATTING_INSTRUCTIONS = 'When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.';
 
-    protected ClientContract $client;
+    public function __construct(
+        protected AiIntegrationsSettings $settings,
+    ) {}
 
     abstract public function getApiKey(): string;
 
-    abstract public function getApiVersion(): string;
+    public function getApiVersion(): string
+    {
+        return 'preview';
+    }
 
     abstract public function getModel(): string;
 
-    public function getClient(): ClientContract
-    {
-        return $this->client;
-    }
-
     public function complete(string $prompt, string $content, bool $shouldTrack = true): string
     {
+        $aiSettings = app(AiSettings::class);
+
         try {
-            $response = Http::asJson()
-                ->withHeader('api-key', $this->getApiKey())
-                ->post("{$this->getDeployment()}/deployments/{$this->getModel()}/chat/completions?api-version={$this->getApiVersion()}", [
-                    'messages' => [
-                        ['role' => 'system', 'content' => $prompt],
-                        ['role' => 'user', 'content' => $content],
-                    ],
-                    'temperature' => app(AiSettings::class)->temperature,
-                ]);
+            $response = Prism::text()
+                ->using('azure_open_ai', $this->getModel())
+                ->withClientOptions([
+                    'apiKey' => $this->getApiKey(),
+                    'apiVersion' => $this->getApiVersion(),
+                    'deployment' => $this->getDeployment(),
+                ])
+                ->withProviderOptions([
+                    'truncation' => 'auto',
+                ])
+                ->withSystemPrompt($prompt)
+                ->withPrompt($content)
+                ->withMaxTokens($aiSettings->max_tokens->getTokens())
+                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
+                ->asText();
+        } catch (PrismRateLimitedException $exception) {
+            foreach ($exception->rateLimits as $rateLimit) {
+                if ($rateLimit->resetsAt?->isFuture()) {
+                    throw new MessageResponseException("Rate limit exceeded, retry at {$rateLimit->resetsAt}.");
+                }
+            }
+
+            throw new MessageResponseException('Rate limit exceeded, please try again later.');
         } catch (Throwable $exception) {
             report($exception);
 
             throw new MessageResponseException('Failed to complete the prompt: [' . $exception->getMessage() . '].');
-        }
-
-        if (! $response->successful()) {
-            throw new MessageResponseException('Failed to complete the prompt: [' . $response->body() . '].');
         }
 
         if ($shouldTrack) {
@@ -116,10 +132,7 @@ abstract class BaseOpenAiService implements AiService
             ));
         }
 
-        return $response->json(
-            key: 'choices.0.message.content',
-            default: fn () => throw new MessageResponseException('Missing response content when completing a prompt: [' . $response->body() . '].'),
-        );
+        return $response->text;
     }
 
     /**
@@ -128,177 +141,253 @@ abstract class BaseOpenAiService implements AiService
      */
     public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = []): Closure
     {
-        throw new Exception('Streaming a single response is not supported by this service.');
+        $aiSettings = app(AiSettings::class);
+
+        try {
+            $vectorStoreId = $this->getReadyVectorStoreId($files);
+
+            $stream = Prism::text()
+                ->using('azure_open_ai', $this->getModel())
+                ->withClientOptions([
+                    'apiKey' => $this->getApiKey(),
+                    'apiVersion' => $this->getApiVersion(),
+                    'deployment' => $this->getDeployment(),
+                ])
+                ->withProviderOptions([
+                    'instructions' => $prompt,
+                    'truncation' => 'auto',
+                    ...(filled($vectorStoreId) ? [
+                        'tools' => [[
+                            'type' => 'file_search',
+                            'vector_store_ids' => [$vectorStoreId],
+                        ]],
+                    ] : []),
+                    ...$options,
+                ])
+                ->withPrompt($content)
+                ->withMaxTokens($aiSettings->max_tokens->getTokens())
+                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
+                ->asStream();
+
+            return function () use ($shouldTrack, $stream): Generator {
+                try {
+                    foreach ($stream as $chunk) {
+                        if (
+                            ($chunk->chunkType === ChunkType::Meta) &&
+                            filled($chunk->meta?->id)
+                        ) {
+                            yield json_encode(['type' => 'next_request_options', 'options' => base64_encode(json_encode(['previous_response_id' => $chunk->meta->id]))]);
+
+                            continue;
+                        }
+
+                        if ($chunk->chunkType !== ChunkType::Text) {
+                            continue;
+                        }
+
+                        yield json_encode(['type' => 'content', 'content' => base64_encode($chunk->text)]);
+
+                        if ($chunk->finishReason === FinishReason::Length) {
+                            yield json_encode(['type' => 'content', 'content' => base64_encode('...'), 'incomplete' => true]);
+                        }
+
+                        if ($chunk->finishReason === FinishReason::Error) {
+                            yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
+
+                            report(new MessageResponseException('Stream not successful.'));
+                        }
+                    }
+                } catch (PrismRateLimitedException $exception) {
+                    foreach ($exception->rateLimits as $rateLimit) {
+                        if ($rateLimit->resetsAt?->isFuture()) {
+                            yield json_encode(['type' => 'rate_limited', 'message' => 'Heavy traffic, just a few more moments...', 'retry_after_seconds' => now()->diffInSeconds($rateLimit->resetsAt) + 1]);
+
+                            return;
+                        }
+                    }
+
+                    yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
+
+                    report(new MessageResponseException('Thread run was rate limited, but the system was unable to extract the number of retry seconds: [' . $exception->getMessage() . '].'));
+                } catch (Throwable $exception) {
+                    yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
+
+                    report($exception);
+                }
+
+                if ($shouldTrack) {
+                    dispatch(new RecordTrackedEvent(
+                        type: TrackedEventType::AiExchange,
+                        occurredAt: now(),
+                    ));
+                }
+            };
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw new MessageResponseException('Failed to stream the response: [' . $exception->getMessage() . '].');
+        }
     }
 
     /**
+     * Stream method that yields plain text chunks instead of base64 encoded JSON
+     * Yields arrays with 'type' => 'text'/'next_request_options' and corresponding content
+     *
      * @param array<AiFile> $files
      * @param array<string, mixed> $options
+     * @param ?array<Message> $messages
      */
-    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = []): Closure
+    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null): Closure
     {
-        throw new Exception('Plain text streaming is not supported by this service.');
-    }
+        $aiSettings = app(AiSettings::class);
 
-    public function createAssistant(AiAssistant $assistant): void
-    {
-        $newAssistantResponse = $this->client->assistants()->create([
-            'name' => $assistant->name,
-            'instructions' => $this->generateAssistantInstructions($assistant),
-            'model' => $this->getModel(),
-            'metadata' => [
-                'last_updated_at' => now(),
-            ],
-        ]);
+        try {
+            $vectorStoreId = $this->getReadyVectorStoreId($files);
 
-        $assistant->assistant_id = $newAssistantResponse->id;
-    }
-
-    public function updateAssistant(AiAssistant $assistant): void
-    {
-        $this->client->assistants()->modify($assistant->assistant_id, [
-            'instructions' => $this->generateAssistantInstructions($assistant),
-            'name' => $assistant->name,
-            'model' => $this->getModel(),
-        ]);
-    }
-
-    public function retrieveAssistant(AiAssistant $assistant): ?AssistantsDataTransferObject
-    {
-        $assistantResponse = $this->client->assistants()->retrieve($assistant->assistant_id);
-
-        return AssistantsDataTransferObject::from([
-            'id' => $assistantResponse->id,
-            'name' => $assistantResponse->name,
-            'description' => $assistantResponse->description,
-            'model' => $assistantResponse->model,
-            'instructions' => $assistantResponse->instructions,
-            'tools' => $assistantResponse->tools,
-            'toolResources' => ToolResourcesDataTransferObject::from([
-                'codeInterpreter' => $assistantResponse->toolResources->codeInterpreter ?? null,
-                'fileSearch' => FileSearchDataTransferObject::from([
-                    'vectorStoreIds' => $assistantResponse->toolResources->fileSearch->vectorStoreIds ?? [],
-                ]),
-            ]),
-        ]);
-    }
-
-    public function updateAssistantTools(AiAssistant $assistant, array $tools): void
-    {
-        $tools = collect($tools)->map(function ($tool) {
-            return [
-                'type' => $tool,
-            ];
-        })->toArray();
-
-        $this->client->assistants()->modify($assistant->assistant_id, [
-            'tools' => $tools,
-        ]);
-    }
-
-    public function enableAssistantFileUploads(AiAssistant $assistant): void
-    {
-        throw new FileUploadsCannotBeEnabled();
-    }
-
-    public function disableAssistantFileUploads(AiAssistant $assistant): void
-    {
-        throw new FileUploadsCannotBeDisabled();
-    }
-
-    public function createThread(AiThread $thread): void
-    {
-        $existingMessagePopulationLimit = 32;
-        $existingMessages = [];
-        $existingMessagesOverflow = [];
-
-        if ($thread->exists) {
-            $allExistingMessages = $thread->messages()
-                ->orderBy('id')
-                ->get()
-                ->toBase()
-                ->map(fn (AiMessage $message): array => [
-                    'content' => $message->content,
-                    'role' => $message->user_id ? 'user' : 'assistant',
+            $request = Prism::text()
+                ->using('azure_open_ai', $this->getModel())
+                ->withClientOptions([
+                    'apiKey' => $this->getApiKey(),
+                    'apiVersion' => $this->getApiVersion(),
+                    'deployment' => $this->getDeployment(),
+                ])
+                ->withProviderOptions([
+                    'instructions' => $prompt,
+                    'truncation' => 'auto',
+                    ...(filled($vectorStoreId) ? [
+                        'tools' => [[
+                            'type' => 'file_search',
+                            'vector_store_ids' => [$vectorStoreId],
+                        ]],
+                    ] : []),
+                    ...$options,
                 ]);
 
-            $existingMessages = $allExistingMessages
-                ->take($existingMessagePopulationLimit)
-                ->values()
-                ->all();
-
-            $existingMessagesOverflow = $allExistingMessages
-                ->slice($existingMessagePopulationLimit)
-                ->values()
-                ->all();
-        }
-
-        $newThreadResponse = $this->client->threads()->create([
-            'messages' => $existingMessages,
-        ]);
-
-        $thread->thread_id = $newThreadResponse->id;
-
-        if (count($existingMessagesOverflow)) {
-            foreach ($existingMessagesOverflow as $overflowMessage) {
-                $this->client->threads()->messages()->create($thread->thread_id, $overflowMessage);
-            }
-        }
-    }
-
-    public function retrieveThread(AiThread $thread): ?ThreadsDataTransferObject
-    {
-        $threadResponse = $this->client->threads()->retrieve($thread->thread_id);
-
-        return ThreadsDataTransferObject::from([
-            'id' => $thread->thread_id,
-            'vectorStoreIds' => $threadResponse->toolResources?->fileSearch?->vectorStoreIds ?? [],
-        ]);
-    }
-
-    public function modifyThread(AiThread $thread, array $parameters): ?ThreadsDataTransferObject
-    {
-        /** @var ThreadResponse $updatedThreadResponse */
-        $updatedThreadResponse = $this->client->threads()->modify($thread->thread_id, $parameters);
-
-        return ThreadsDataTransferObject::from([
-            'id' => $updatedThreadResponse->id,
-            'vectorStoreIds' => $updatedThreadResponse->toolResources?->fileSearch?->vectorStoreIds ?? [],
-        ]);
-    }
-
-    public function deleteThread(AiThread $thread): void
-    {
-        try {
-            foreach ($this->retrieveThread($thread)?->vectorStoreIds as $vectorStoreId) {
-                $this->deleteVectorStore($vectorStoreId);
+            if (filled($messages)) {
+                $request = $request->withMessages($messages);
+            } else {
+                $request = $request->withPrompt($content);
             }
 
-            $this->client->threads()->delete($thread->thread_id);
-        } catch (ErrorException $e) {
-            if ($e->getMessage() !== 'Resource not found') {
-                throw $e;
-            }
+            $stream = $request
+                ->withMaxTokens($aiSettings->max_tokens->getTokens())
+                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
+                ->asStream();
 
-            report($e);
+            return function () use ($shouldTrack, $stream): Generator {
+                try {
+                    foreach ($stream as $chunk) {
+                        if (
+                            ($chunk->chunkType === ChunkType::Meta) &&
+                            filled($chunk->meta?->id)
+                        ) {
+                            yield new Meta(
+                                messageId: $chunk->meta->id,
+                                nextRequestOptions: ['previous_response_id' => $chunk->meta->id],
+                            );
+
+                            continue;
+                        }
+
+                        if ($chunk->chunkType !== ChunkType::Text) {
+                            continue;
+                        }
+
+                        yield new Text($chunk->text);
+
+                        if ($chunk->finishReason) {
+                            yield new Finish(
+                                isIncomplete: $chunk->finishReason === FinishReason::Length,
+                                error: ($chunk->finishReason === FinishReason::Error) ? 'Something went wrong' : null,
+                            );
+
+                            break;
+                        }
+                    }
+                } catch (PrismRateLimitedException $exception) {
+                    foreach ($exception->rateLimits as $rateLimit) {
+                        if ($rateLimit->resetsAt?->isFuture()) {
+                            yield new Finish(
+                                rateLimitResetsAt: $rateLimit->resetsAt,
+                            );
+
+                            break;
+                        }
+                    }
+                } catch (Throwable $exception) {
+                    report($exception);
+
+                    yield new Finish(
+                        error: 'Something went wrong',
+                    );
+                }
+
+                if ($shouldTrack) {
+                    dispatch(new RecordTrackedEvent(
+                        type: TrackedEventType::AiExchange,
+                        occurredAt: now(),
+                    ));
+                }
+            };
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw new MessageResponseException('Failed to stream the response: [' . $exception->getMessage() . '].');
         }
-
-        $thread->thread_id = null;
     }
 
+    /**
+     * @param array<AiMessageFile> $files
+     */
     public function sendMessage(AiMessage $message, array $files): Closure
     {
-        throw new Exception('Sending a message is not supported by this service.');
+        return $this->sendNewMessage($message, $files);
+    }
+
+    public function getMessagePreviousResponseId(AiMessage $message): ?string
+    {
+        $previousResponseId = $message->thread->messages()
+            ->whereDoesntHave('user')
+            ->whereKeyNot($message)
+            ->latest()
+            ->first()
+            ?->message_id;
+
+        if (blank($previousResponseId)) {
+            return null;
+        }
+
+        if (! str_starts_with($previousResponseId, 'resp_')) {
+            return null;
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'api-key' => $this->getApiKey(),
+            ])
+                ->withQueryParameters(['api-version' => $this->getApiVersion()])
+                ->baseUrl(OpenAiResponsesApiSettingsFeature::active() ? "{$this->getDeployment()}/v1" : $this->getDeployment())
+                ->get("responses/{$previousResponseId}");
+
+            return $response->ok() ? $previousResponseId : null;
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return null;
+        }
     }
 
     public function completeResponse(AiMessage $response): Closure
     {
-        throw new Exception('Completing a message is not supported by this service.');
+        return $this->sendNewMessage($response, [], new UserMessage('Continue generating the response, do not mention that I told you as I will paste it directly after the last message.'));
     }
 
+    /**
+     * @param array<AiMessageFile> $files
+     */
     public function retryMessage(AiMessage $message, array $files): Closure
     {
-        throw new Exception('Retrying a message is not supported by this service.');
+        return $this->sendNewMessage($message, $files);
     }
 
     public function getMaxAssistantInstructionsLength(): int
@@ -314,37 +403,27 @@ abstract class BaseOpenAiService implements AiService
         return $limit;
     }
 
-    public function isAssistantExisting(AiAssistant $assistant): bool
-    {
-        return filled($assistant->assistant_id);
-    }
-
-    public function isThreadExisting(AiThread $thread): bool
-    {
-        return filled($thread->thread_id);
-    }
-
-    public function supportsMessageFileUploads(): bool
-    {
-        return true;
-    }
-
-    public function supportsAssistantFileUploads(): bool
-    {
-        return true;
-    }
-
     /**
      * @param array<AiFile> $files
      */
-    public function areFilesReady(array $files): bool
+    public function getReadyVectorStoreId(array $files): ?string
     {
-        return true;
+        if (blank($files)) {
+            return null;
+        }
+
+        return OpenAiVectorStore::query()
+            ->where('deployment_hash', $this->getDeploymentHash())
+            ->whereMorphedTo('file', $files) /** @phpstan-ignore argument.type */
+            ->whereNotNull('ready_until')
+            ->where('ready_until', '>=', now())
+            ->whereNotNull('vector_store_id')
+            ->value('vector_store_id');
     }
 
-    public function fake(): void
+    public function hasReasoning(): bool
     {
-        $this->client = new ClientFake();
+        return false;
     }
 
     public function hasTemperature(): bool
@@ -352,146 +431,233 @@ abstract class BaseOpenAiService implements AiService
         return true;
     }
 
-    public function isResearchRequestReady(ResearchRequest $researchRequest): bool
+    abstract public function getDeployment(): ?string;
+
+    public function getDeploymentHash(): string
     {
-        return true;
+        return md5($this->getDeployment());
     }
 
     /**
-     * @return array<string>
+     * @param array<AiFile> $files
      */
-    public function getResearchRequestRequestSearchQueries(ResearchRequest $researchRequest, string $prompt, string $content): array
+    public function areFilesReady(array $files): bool
     {
-        return [];
-    }
+        if (! $files) {
+            return true;
+        }
 
-    /**
-     * @return array{response: array<mixed>, nextRequestOptions: array<string, mixed>}
-     */
-    public function getResearchRequestRequestOutline(ResearchRequest $researchRequest, string $prompt, string $content): array
-    {
-        return ['response' => [], 'nextRequestOptions' => []];
-    }
+        return DB::transaction(function () use ($files): bool {
+            $this->deleteExpiredVectorStoresForFiles($files);
 
-    /**
-     * @param array<string, mixed> $options
-     */
-    public function getResearchRequestRequestSection(ResearchRequest $researchRequest, string $prompt, string $content, array $options, Closure $nextRequestOptions): Generator
-    {
-        yield '';
-    }
+            $vectorStores = $this->getValidExistingVectorStoresForFiles($files);
 
-    public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void {}
+            $vectorStore = Arr::first($vectorStores);
+
+            if (filled($vectorStore)) {
+                $this->deleteOldFilesFromVectorStore($vectorStore, newFiles: $files);
+            }
+
+            if (blank($vectorStore)) {
+                $this->createVectorStoreForFiles($files);
+
+                return false;
+            }
+
+            $missingFiles = [];
+
+            foreach ($files as $file) {
+                foreach ($vectorStores as $vectorStore) {
+                    if ($vectorStore->file()->is($file)) { /** @phpstan-ignore argument.type */
+                        continue 2;
+                    }
+                }
+
+                $missingFiles[] = $file;
+            }
+
+            $vectorStore = Arr::first($vectorStores);
+
+            if (filled($missingFiles)) {
+                $vectorStoreState = $this->getVectorStoreState($vectorStore);
+
+                if (blank($vectorStoreState)) {
+                    $this->createVectorStoreForFiles($files);
+
+                    return false;
+                }
+
+                foreach ($missingFiles as $missingFile) {
+                    $this->uploadMissingFileToVectorStore($vectorStore, $missingFile);
+                }
+
+                return false;
+            }
+
+            foreach ($vectorStores as $vectorStore) {
+                if (! $vectorStore->ready_until?->isFuture()) {
+                    $vectorStoreState = $this->getVectorStoreState($vectorStore);
+
+                    return $this->evaluateVectorStoreState($vectorStore, $vectorStoreState);
+                }
+            }
+
+            return true;
+        });
+    }
 
     /**
      * @param array<AiMessageFile> $files
      */
-    protected function createMessage(string $threadId, string $content, array $files = []): ThreadMessageResponse
+    protected function sendNewMessage(AiMessage $message, array $files, ?UserMessage $userMessage = null): Closure
     {
-        if (filled($files)) {
-            $content .= <<<'EOT'
+        $previousMessages = [];
 
-                ---
+        $previousResponseId = $this->getMessagePreviousResponseId($message);
 
-                Consider the content from the following files. These have already been converted by Canyon GBS' technology to Markdown for improved processing. When you reference these files, reference the file names as user uploaded files as noted below:
-
-                EOT;
-
-            foreach ($files as $file) {
-                $content .= <<<EOT
-                    ---
-
-                    File Name: {$file->name}
-                    Type: {$file->mime_type}
-                    Source: User Uploaded
-                    Contents: {$file->parsing_results}
-
-                    EOT;
-            }
+        if (blank($previousResponseId)) {
+            $previousMessages = $message->thread->messages()
+                ->oldest()
+                ->get()
+                ->map(fn (AiMessage $message): Message => filled($message->user_id)
+                    ? new UserMessage($message->content)
+                    : new AssistantMessage($message->content))
+                ->all();
         }
 
-        return $this->client->threads()->messages()->create($threadId, [
-            'role' => 'user',
-            'content' => $content,
-        ]);
+        $aiSettings = app(AiSettings::class);
+        $instructions = $this->generateAssistantInstructions($message->thread->assistant, $message->thread->user, withDynamicContext: true);
+
+        try {
+            $vectorStoreIds = array_values(array_filter([
+                $this->getReadyVectorStoreId([
+                    ...$files,
+                    ...AiMessageFile::query()
+                        ->whereNotNull('parsing_results')
+                        ->whereHas(
+                            'message',
+                            fn (Builder $query) => $query
+                                ->whereKeyNot($message->getKey())
+                                ->whereBelongsTo($message->thread, 'thread'),
+                        )
+                        ->get()
+                        ->all(),
+                ]),
+                $this->getReadyVectorStoreId($message->thread->assistant->files()
+                    ->whereNotNull('parsing_results')
+                    ->get()
+                    ->all()),
+            ]));
+
+            return $this->streamRaw(
+                prompt: $instructions,
+                content: $message->content,
+                options: [
+                    'previous_response_id' => $previousResponseId,
+                    ...($this->hasReasoning() ? [
+                        'reasoning' => [
+                            'effort' => $aiSettings->reasoning_effort->value,
+                        ],
+                    ] : []),
+                    ...(filled($vectorStoreIds) ? [
+                        'tool_choice' => filled($files) ? [
+                            'type' => 'file_search',
+                        ] : 'auto',
+                        'tools' => [[
+                            'type' => 'file_search',
+                            'vector_store_ids' => $vectorStoreIds,
+                        ]],
+                    ] : []),
+                ],
+                messages: [
+                    ...$previousMessages,
+                    $userMessage ?? new UserMessage($message->content),
+                ],
+            );
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw new MessageResponseException('Failed to send a message: [' . $exception->getMessage() . '].');
+        } finally {
+            try {
+                if (is_null($message->thread->name)) {
+                    $prompt = $message->context . "\nThe following is the start of a chat between you and a user:\n" . $message->content;
+
+                    $message->thread->name = $this->complete($prompt, 'Generate a title for this chat, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:');
+
+                    $message->thread->saved_at = now();
+
+                    $message->thread->save();
+
+                    dispatch(new RecordTrackedEvent(
+                        type: TrackedEventType::AiThreadSaved,
+                        occurredAt: now(),
+                    ));
+                }
+            } catch (Exception $exception) {
+                report($exception);
+
+                $message->thread->name = 'Untitled Chat';
+            }
+
+            $message->context = $instructions;
+            $message->save();
+
+            $message->files()->saveMany($files);
+        }
     }
 
-    protected function isThreadRunCompleted(ThreadRunResponse $threadRunResponse): bool
+    /**
+     * @param array<string, mixed> $providerOptions
+     *
+     * @return array<mixed>
+     */
+    protected function structured(string $prompt, string $content, Schema $schema, array $providerOptions = [], ?string &$responseId = null): array
     {
-        if ($threadRunResponse->requiredAction) {
-            return true;
+        $aiSettings = app(AiSettings::class);
+
+        try {
+            $response = Prism::structured()
+                ->using('azure_open_ai', $this->getModel())
+                ->withClientOptions([
+                    'apiKey' => $this->getApiKey(),
+                    'apiVersion' => $this->getApiVersion(),
+                    'deployment' => $this->getDeployment(),
+                ])
+                ->withProviderOptions([
+                    'schema' => [
+                        'strict' => true,
+                    ],
+                    'truncation' => 'auto',
+                    ...$providerOptions,
+                ])
+                ->withSystemPrompt($prompt)
+                ->withPrompt($content)
+                ->withSchema($schema)
+                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
+                ->asStructured();
+        } catch (PrismRateLimitedException $exception) {
+            foreach ($exception->rateLimits as $rateLimit) {
+                if ($rateLimit->resetsAt?->isFuture()) {
+                    throw new MessageResponseException("Rate limit exceeded, retry at {$rateLimit->resetsAt}.");
+                }
+            }
+
+            throw new MessageResponseException('Rate limit exceeded, please try again later.');
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw new MessageResponseException('Failed to complete the prompt: [' . $exception->getMessage() . '].');
         }
 
-        return in_array($threadRunResponse->status, ['completed', 'incomplete', 'failed', 'expired', 'requires_action']);
+        if (filled($response->meta->id)) {
+            $responseId = $response->meta->id;
+        }
+
+        return $response->structured;
     }
 
-    protected function isThreadRunRateLimited(ThreadRunResponse $threadRunResponse): bool
-    {
-        if ($threadRunResponse->status !== 'failed') {
-            return false;
-        }
-
-        return $threadRunResponse->lastError?->code === 'rate_limit_exceeded';
-    }
-
-    protected function awaitPreviousThreadRunCompletion(ThreadRunResponse $threadRunResponse, bool $shouldCancelIfQueued = true): ThreadRunResponse
-    {
-        if ($this->isThreadRunCompleted($threadRunResponse)) {
-            return $threadRunResponse;
-        }
-
-        $runId = $threadRunResponse->id;
-
-        // 60 second total request timeout, with a 10-second buffer.
-        $currentTime = time();
-        $requestTime = app()->runningUnitTests() ? time() : $_SERVER['REQUEST_TIME'];
-        $timeoutInSeconds = 60 - ($currentTime - $requestTime) - 10;
-        $expiration = $currentTime + $timeoutInSeconds;
-
-        while (! (
-            in_array($threadRunResponse->status, ['completed', 'incomplete', 'cancelled']) ||
-            $this->isThreadRunRateLimited($threadRunResponse)
-        )) {
-            if (time() >= $expiration) {
-                return $threadRunResponse;
-            }
-
-            if (($threadRunResponse->status === 'queued') && $shouldCancelIfQueued) {
-                $this->client->threads()->runs()->cancel($threadRunResponse->threadId, $runId);
-
-                $threadRunResponse = $this->client->threads()->runs()->retrieve($threadRunResponse->threadId, $runId);
-
-                continue;
-            }
-
-            if (
-                ($threadRunResponse->status === 'requires_action') ||
-                $threadRunResponse->requiredAction
-            ) {
-                report(new MessageResponseException('Awaited previous thread run not successful as an action was required: [' . json_encode($threadRunResponse->toArray()) . '].'));
-
-                return $threadRunResponse;
-            }
-
-            if (in_array($threadRunResponse->status, ['failed', 'expired'])) {
-                report(new MessageResponseException('Awaited previous thread run not successful: [' . json_encode($threadRunResponse->toArray()) . '].'));
-
-                return $threadRunResponse;
-            }
-
-            if (! in_array($threadRunResponse->status, ['in_progress', 'cancelling', 'queued'])) {
-                report(new MessageResponseException('An unexpected awaited previous thread run response status was encountered, which may be causing users to wait unnecessarily for the previous thread run to complete: [' . json_encode($threadRunResponse->toArray()) . '].'));
-            }
-
-            usleep(500000);
-
-            $threadRunResponse = $this->client->threads()->runs()->retrieve($threadRunResponse->threadId, $runId);
-        }
-
-        return $threadRunResponse;
-    }
-
-    protected function generateAssistantInstructions(AiAssistant $assistant, bool $withDynamicContext = false): string
+    protected function generateAssistantInstructions(AiAssistant $assistant, User $user, bool $withDynamicContext = false): string
     {
         $assistantInstructions = rtrim($assistant->instructions, '. ');
 
@@ -507,34 +673,11 @@ abstract class BaseOpenAiService implements AiService
         $formattingInstructions = static::FORMATTING_INSTRUCTIONS;
 
         if ($withDynamicContext) {
-            $dynamicContext = rtrim(auth()->user()->getDynamicContext(), '. ');
+            $dynamicContext = rtrim($user->getDynamicContext(), '. ');
 
-            $instructions = "{$dynamicContext}.\n\n{$assistantInstructions}.\n\n{$formattingInstructions}";
-        } else {
-            $instructions = "{$assistantInstructions}.\n\n{$formattingInstructions}";
+            return "{$dynamicContext}.\n\n{$assistantInstructions}.\n\n{$formattingInstructions}";
         }
 
-        if (filled($files = $assistant->files()->whereNotNull('parsing_results')->get()->all())) {
-            $instructions .= <<<'EOT'
-
-                ---
-
-                Consider the following additional knowledge, which has already been handled by Canyon GBS' technology to Markdown for improved processing. When you reference the information, describe that it is part of the assistant's knowledge:
-
-                EOT;
-
-            foreach ($files as $file) {
-                $instructions .= <<<EOT
-                    ---
-
-                    Type: {$file->mime_type}
-                    Source: Assistant Knowledge
-                    Contents: {$file->parsing_results}
-
-                    EOT;
-            }
-        }
-
-        return $instructions;
+        return "{$assistantInstructions}.\n\n{$formattingInstructions}";
     }
 }
