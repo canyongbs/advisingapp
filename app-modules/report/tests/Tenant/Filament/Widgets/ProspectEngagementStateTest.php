@@ -38,6 +38,8 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectEngagementState;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 use App\Models\User;
 
 it('returns correct counts of prospects, emails, texts, and staff based on the given date range', function () {
@@ -81,4 +83,99 @@ it('returns correct counts of prospects, emails, texts, and staff based on the g
         ->and($stats[1]->getValue())->toEqual($emailCount)
         ->and($stats[2]->getValue())->toEqual($textCount)
         ->and($stats[3]->getValue())->toEqual(2);
+});
+
+it('returns correct counts of prospects, emails, texts, and staff engagements based on segment filters', function () {
+    $startDate = now()->subDays(10);
+    $endDate = now()->subDays(5);
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Prospect,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last_name',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $prospectOne = Prospect::factory()->state(['created_at' => $startDate, 'last_name' => 'John'])->create();
+    $prospectTwo = Prospect::factory()->state(['created_at' => $endDate, 'last_name' => 'John'])->create();
+    $prospectThree = Prospect::factory()->state(['created_at' => $startDate, 'last_name' => 'Doe'])->create();
+    $prospectFour = Prospect::factory()->state(['created_at' => $endDate, 'last_name' => 'Doe'])->create();
+
+    $emailCountForJohnName = 2;
+    $textCountForJohnName = 3;
+    $emailCountForDoeName = 2;
+    $textCountForDoeName = 3;
+
+    $user1 = User::factory()->create();
+    Engagement::factory()->count($emailCountForJohnName)->state([
+        'user_id' => $user1->getKey(),
+        'recipient_id' => $prospectOne->getKey(),
+        'recipient_type' => (new Prospect())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+        'created_at' => $startDate,
+    ])->create();
+
+    $user2 = User::factory()->create();
+    Engagement::factory()->count($textCountForJohnName)->state([
+        'user_id' => $user2->getKey(),
+        'recipient_id' => $prospectTwo->getKey(),
+        'recipient_type' => (new Prospect())->getMorphClass(),
+        'channel' => NotificationChannel::Sms,
+        'created_at' => $endDate,
+    ])->create();
+
+    $user3 = User::factory()->create();
+    Engagement::factory()->count($emailCountForDoeName)->state([
+        'user_id' => $user3->getKey(),
+        'recipient_id' => $prospectThree->getKey(),
+        'recipient_type' => (new Prospect())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+        'created_at' => $startDate,
+    ])->create();
+
+    $user4 = User::factory()->create();
+    Engagement::factory()->count($textCountForDoeName)->state([
+        'user_id' => $user4->getKey(),
+        'recipient_id' => $prospectFour->getKey(),
+        'recipient_type' => (new Prospect())->getMorphClass(),
+        'channel' => NotificationChannel::Sms,
+        'created_at' => $endDate,
+    ])->create();
+
+    $widget = new ProspectEngagementState();
+    $widget->cacheTag = 'report-prospect-engagement';
+    $widget->filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    $stats = $widget->getStats();
+
+    expect($stats[0]->getValue())->toEqual(2)
+        ->and($stats[1]->getValue())->toEqual($emailCountForJohnName)
+        ->and($stats[2]->getValue())->toEqual($textCountForJohnName)
+        ->and($stats[3]->getValue())->toEqual(2);
+
+    // without filter
+    $widget = new ProspectEngagementState();
+    $widget->cacheTag = 'report-prospect-engagement';
+    $widget->filters = [];
+
+    $stats = $widget->getStats();
+
+    expect($stats[0]->getValue())->toEqual(4)
+        ->and($stats[1]->getValue())->toEqual($emailCountForJohnName + $emailCountForDoeName)
+        ->and($stats[2]->getValue())->toEqual($textCountForJohnName + $textCountForDoeName)
+        ->and($stats[3]->getValue())->toEqual(0);
 });

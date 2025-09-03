@@ -70,6 +70,7 @@ class MostEngagedProspectsTable extends BaseWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
         return $table
             ->query(
@@ -97,7 +98,10 @@ class MostEngagedProspectsTable extends BaseWidget
                             );
                         }
                     )
-
+                    ->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    )
                     ->orderBy('engagements_count', 'desc')
                     ->limit(10)
             )
