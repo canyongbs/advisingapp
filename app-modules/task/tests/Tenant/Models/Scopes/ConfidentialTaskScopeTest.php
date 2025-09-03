@@ -110,7 +110,7 @@ it('can be accessed when confidential by users on a team with access', function 
 });
 
 it('can be accessed when confidential by users who have created a project the task is associated with', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
     $project = Project::factory()->for($user, 'createdBy')->create();
 
     actingAs($user);
@@ -122,7 +122,7 @@ it('can be accessed when confidential by users who have created a project the ta
         ->create(['is_confidential' => true]);
 
     $otherProjectTasks = Task::factory()
-        ->hasAttached(Project::factory()->create(), [], 'confidentialAccessProjects')
+        ->hasAttached(Project::factory()->for(User::factory()->licensed(LicenseType::cases())->create(), 'createdBy')->create(), [], 'confidentialAccessProjects')
         ->count(10)
         ->concerningStudent(Student::factory()->create())
         ->create(['is_confidential' => true]);
