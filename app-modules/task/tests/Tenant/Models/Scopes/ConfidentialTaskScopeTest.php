@@ -120,7 +120,7 @@ it('can be accessed when confidential by users who have created a project the ta
         ->count(10)
         ->concerningStudent(Student::factory()->create())
         ->create(['is_confidential' => true]);
-    
+
     $otherProjectTasks = Task::factory()
         ->hasAttached(Project::factory()->create(), [], 'confidentialAccessProjects')
         ->count(10)
