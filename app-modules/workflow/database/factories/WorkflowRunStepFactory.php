@@ -40,6 +40,9 @@ use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowRun;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use Exception;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
  * @extends Factory<WorkflowRunStep>
  */
 class WorkflowRunStepFactory extends Factory
