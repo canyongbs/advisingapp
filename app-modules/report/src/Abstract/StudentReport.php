@@ -38,9 +38,11 @@ namespace AdvisingApp\Report\Abstract;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
+use AdvisingApp\Report\Abstract\Contracts\HasSegmentModel;
+use AdvisingApp\Segment\Enums\SegmentModel;
 use Filament\Pages\Dashboard;
 
-abstract class StudentReport extends Dashboard
+abstract class StudentReport extends Dashboard implements HasSegmentModel
 {
     use HasFiltersForm;
 
@@ -52,5 +54,10 @@ abstract class StudentReport extends Dashboard
         $user = auth()->user();
 
         return $user->hasLicense(LicenseType::RetentionCrm) && $user->can('report-library.view-any');
+    }
+
+    public function segmentModel(): ?SegmentModel
+    {
+        return SegmentModel::Student;
     }
 }

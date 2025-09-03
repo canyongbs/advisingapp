@@ -39,6 +39,8 @@ use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectCaseTable;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 
 use function Pest\Livewire\livewire;
 
@@ -98,4 +100,93 @@ it('returns all cases information created for prospects in given time range', fu
             $inProgressCases,
         ]))
         ->assertCanNotSeeTableRecords(collect([$otherCases]));
+});
+
+it('returns all cases information created for prospects based on segment filters', function () {
+    $startDate = now()->subDays(10);
+    $endDate = now()->subDays(5);
+    $otherDate = now()->subDays(15);
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Prospect,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last_name',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $openCases = CaseModel::factory()->state([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::Open,
+        ])->getKey(),
+        'created_at' => $startDate,
+        'respondent_id' => Prospect::factory()->create(['last_name' => 'John']),
+        'respondent_type' => (new Prospect())->getMorphClass(),
+    ])->create();
+
+    $closedCases = CaseModel::factory()->state([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::Closed,
+        ])->getKey(),
+        'created_at' => $startDate,
+        'respondent_id' => Prospect::factory()->create(['last_name' => 'John']),
+        'respondent_type' => (new Prospect())->getMorphClass(),
+    ])->create();
+
+    $inProgressCases = CaseModel::factory()->state([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::InProgress,
+        ])->getKey(),
+        'created_at' => $endDate,
+        'respondent_id' => Prospect::factory()->create(['last_name' => 'John']),
+        'respondent_type' => (new Prospect())->getMorphClass(),
+    ])->create();
+
+    $otherCases = CaseModel::factory()->state([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::Open,
+        ])->getKey(),
+        'created_at' => $otherDate,
+        'respondent_id' => Prospect::factory()->create(['last_name' => 'Doe']),
+        'respondent_type' => (new Prospect())->getMorphClass(),
+    ])->create();
+
+    $filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    // with segment filter
+    livewire(ProspectCaseTable::class, [
+        'cacheTag' => 'report-prospect-case',
+        'filters' => $filters,
+    ])
+        ->assertCanSeeTableRecords(collect([
+            $openCases,
+            $closedCases,
+            $inProgressCases,
+        ]))
+        ->assertCanNotSeeTableRecords(collect([$otherCases]));
+
+    // without filter
+    livewire(ProspectCaseTable::class, [
+        'cacheTag' => 'report-prospect-case',
+        'filters' => [],
+    ])
+        ->assertCanSeeTableRecords(collect([
+            $openCases,
+            $closedCases,
+            $inProgressCases,
+            $otherCases,
+        ]));
 });

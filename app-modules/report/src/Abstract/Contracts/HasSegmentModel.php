@@ -34,30 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Abstract;
+namespace AdvisingApp\Report\Abstract\Contracts;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use AdvisingApp\Report\Abstract\Contracts\HasSegmentModel;
 use AdvisingApp\Segment\Enums\SegmentModel;
-use Filament\Pages\Dashboard;
 
-abstract class ProspectReport extends Dashboard implements HasSegmentModel
+interface HasSegmentModel
 {
-    use HasFiltersForm;
-
-    protected static string $view = 'report::filament.pages.report';
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->hasLicense(LicenseType::RecruitmentCrm) && $user->can('report-library.view-any');
-    }
-
-    public function segmentModel(): ?SegmentModel
-    {
-        return SegmentModel::Prospect;
-    }
+    public function segmentModel(): ?SegmentModel;
 }
