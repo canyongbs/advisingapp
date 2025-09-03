@@ -49,14 +49,6 @@ use Filament\Forms\Get;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm as ConcernsHasFiltersForm;
 use Illuminate\Database\Eloquent\Builder;
 
-/**
- * @phpstan-self-out \AdvisingApp\Report\Abstract\StudentReport
- * @phpstan-self-out \AdvisingApp\Report\Abstract\ProspectReport
- * @phpstan-self-out \AdvisingApp\Report\Abstract\RecruitmentCrmDashboardReport
- * @phpstan-self-out \AdvisingApp\Report\Filament\Pages\ProspectCaseReport
- * @phpstan-self-out \AdvisingApp\Report\Filament\Pages\StudentCaseReport
- * @phpstan-self-out \AdvisingApp\StudentDataModel\Filament\Pages\RetentionCrmDashboard
- */
 trait HasFiltersForm
 {
     use ConcernsHasFiltersForm;

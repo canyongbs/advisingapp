@@ -42,9 +42,7 @@ use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
-use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\Task\Enums\TaskStatus;
-use App\Models\User;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -68,9 +66,6 @@ class ProspectsActionCenterWidget extends TableWidget
 
     public function table(Table $table): Table
     {
-        /** @var User $user */
-        $user = auth()->user();
-
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
         $segmentId = $this->getSelectedSegment();
@@ -78,16 +73,6 @@ class ProspectsActionCenterWidget extends TableWidget
         return $table
             ->heading('Action Center Records')
             ->query(function () use ($segmentId, $startDate, $endDate) {
-                // $tab = ActionCenterTab::tryFrom($this->activeTab) ?? ActionCenterTab::Subscribed;
-
-                // return match ($tab) {
-                //     ActionCenterTab::All => Prospect::query(),
-                //     ActionCenterTab::Subscribed => Prospect::query()
-                //         ->whereHas('subscriptions', fn (Builder $query) => $query->where('user_id', $user->getKey())),
-                //     ActionCenterTab::CareTeam => Prospect::query()
-                //         ->whereHas('careTeam', fn (Builder $query) => $query->where('user_id', $user->getKey())),
-                // };
-
                 $query = Prospect::query()->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])

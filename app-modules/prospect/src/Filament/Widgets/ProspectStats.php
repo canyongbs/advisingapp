@@ -44,7 +44,6 @@ use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
-use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
 use Filament\Widgets\StatsOverviewWidget;
@@ -65,15 +64,6 @@ class ProspectStats extends StatsOverviewWidget
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
         $segmentId = $this->getSelectedSegment();
-
-        // $tab = ActionCenterTab::tryFrom($this->activeTab) ?? ActionCenterTab::Subscribed;
-
-        // $prospectQuery = fn (Builder $query) => match ($tab) {
-        //     ActionCenterTab::All => $query,
-        //     ActionCenterTab::Subscribed => Prospect::query()
-        //         ->whereHas('subscriptions', fn (Builder $query) => $query->where('user_id', $user->getKey())),
-        //     ActionCenterTab::CareTeam => Prospect::query()
-        //         ->whereHas('careTeam', fn (Builder $query) => $query->where('user_id', $user->getKey())),
 
         $prospectQuery = function (Builder $query) use ($segmentId) {
             if ($segmentId) {
