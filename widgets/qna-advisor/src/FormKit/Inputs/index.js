@@ -1,4 +1,4 @@
-{{--
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,10 +30,12 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
+*/
+import { createInput } from '@formkit/vue';
+import OneTimePassword from './OneTimePassword.vue';
 
-@php
-    use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
-@endphp
-
-{!! resolve(GenerateQnaAdvisorWidgetEmbedCode::class)->handle($advisor) !!}
+export default {
+    otp: createInput(OneTimePassword, {
+        props: ['digits'],
+    }),
+};

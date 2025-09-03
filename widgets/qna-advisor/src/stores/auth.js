@@ -1,4 +1,4 @@
-{{--
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,10 +30,18 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
+*/
 
-@php
-    use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
-@endphp
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
-{!! resolve(GenerateQnaAdvisorWidgetEmbedCode::class)->handle($advisor) !!}
+export const useAuthStore = defineStore('auth', () => {
+    const accessToken = ref(null);
+
+    const getAccessToken = computed(() => accessToken.value);
+
+    return {
+        accessToken,
+        getAccessToken,
+    };
+});

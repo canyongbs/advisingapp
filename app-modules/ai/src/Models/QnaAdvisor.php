@@ -66,6 +66,7 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
         'description',
         'is_embed_enabled',
         'authorized_domains',
+        'is_requires_authentication_enabled',
     ];
 
     protected $casts = [
@@ -73,6 +74,7 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
         'model' => AiModel::class,
         'is_embed_enabled' => 'boolean',
         'authorized_domains' => 'json',
+        'is_requires_authentication_enabled' => 'boolean',
     ];
 
     /**

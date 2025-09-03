@@ -1,4 +1,4 @@
-{{--
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,10 +30,18 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
+*/
+import { genesisIcons } from '@formkit/icons';
+import { generateClasses } from '@formkit/themes';
+import inputs from './FormKit/Inputs/index';
+import theme from './FormKit/theme';
 
-@php
-    use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
-@endphp
-
-{!! resolve(GenerateQnaAdvisorWidgetEmbedCode::class)->handle($advisor) !!}
+export default {
+    icons: {
+        ...genesisIcons,
+    },
+    inputs,
+    config: {
+        classes: generateClasses(theme),
+    },
+};

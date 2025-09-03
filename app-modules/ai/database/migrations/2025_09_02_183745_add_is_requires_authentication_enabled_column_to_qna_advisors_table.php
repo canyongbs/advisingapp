@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,10 +32,34 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
+*/
 
-@php
-    use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
-@endphp
+use App\Features\QnaAdvisorRequireAuthenticationFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-{!! resolve(GenerateQnaAdvisorWidgetEmbedCode::class)->handle($advisor) !!}
+return new class () extends Migration {
+    public function up(): void
+    {
+        DB::transaction(function () {
+            Schema::table('qna_advisors', function (Blueprint $table) {
+                $table->boolean('is_requires_authentication_enabled')->default(false);
+            });
+
+            QnaAdvisorRequireAuthenticationFeature::activate();
+        });
+    }
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            QnaAdvisorRequireAuthenticationFeature::deactivate();
+
+            Schema::table('qna_advisors', function (Blueprint $table) {
+                $table->dropColumn('is_requires_authentication_enabled');
+            });
+        });
+    }
+};
