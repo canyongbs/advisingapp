@@ -161,9 +161,17 @@ async function sendMessage() {
             requestBody.options = nextRequestOptions.value;
         }
 
+        const headers = {
+            'Content-Type': 'application/json',
+        };
+
+        if (authStore.getAccessToken) {
+            headers['Authorization'] = `Bearer ${authStore.getAccessToken}`;
+        }
+
         const sendMessageResponse = await fetch(sendMessageUrl.value, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers,
             body: JSON.stringify(requestBody),
         });
 
