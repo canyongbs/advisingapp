@@ -139,12 +139,11 @@ class ManageCaseTypeEmailTemplate extends EditRecord
                 ->placeholder('Enter the email subject here...')
                 ->extraInputAttributes(['style' => 'min-height: 2rem; overflow-y:none;'])
                 ->disableToolbarMenus()
-                // @todo AssignedToMergeTagRenameFeatureFlag:
-                // Once this feature flag is removed, replace the current mergeTags array with the
-                // static version below and remove the conditional:
-                // ->mergeTags(['case number', 'created date', 'updated date', 'status', 'assigned staff name', 'type'])
                 ->mergeTags([
-                    ...['case number', 'created date', 'updated date', 'status'],
+                    'case number',
+                    'created date',
+                    'updated date',
+                    'status',
                     AssignedToMergeTagRenameFeatureFlag::active() ? 'assigned staff name' : 'assigned to',
                     'type',
                 ])
@@ -156,14 +155,14 @@ class ManageCaseTypeEmailTemplate extends EditRecord
                 ->profile('email_template')
                 ->placeholder('Enter the email body here...')
                 ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                // @todo AssignedToMergeTagRenameFeatureFlag:
-                // Once this feature flag is removed, replace the current mergeTags array with the
-                // static version below and remove the conditional:
-                // ->mergeTags(['case number', 'created date', 'updated date', 'status', 'assigned staff name', 'description', 'type'])
                 ->mergeTags([
-                    ...['case number', 'created date', 'updated date', 'status'],
+                    'case number',
+                    'created date',
+                    'updated date',
+                    'status',
                     AssignedToMergeTagRenameFeatureFlag::active() ? 'assigned staff name' : 'assigned to',
-                    ...['description', 'type'],
+                    'description',
+                    'type',
                 ])
                 ->blocks($role === CaseTypeEmailTemplateRole::Customer ? [] : [
                     CaseTypeEmailTemplateButtonBlock::class,
