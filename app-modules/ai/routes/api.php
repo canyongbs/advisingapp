@@ -50,10 +50,6 @@ Route::middleware(['api', EncryptCookies::class])
             ->middleware(['signed:relative'])
             ->name('show');
 
-        Route::post('messages', SendQnaAdvisorMessageController::class)
-            ->middleware(['signed:relative'])
-            ->name('messages.send');
-
         Route::post('/authenticate/request', QnaAdvisorRequestAuthenticationController::class)
             ->middleware(['signed'])
             ->name('authentication.request');
@@ -61,4 +57,8 @@ Route::middleware(['api', EncryptCookies::class])
         Route::post('/authenticate/confirm/{authentication}', QnaAdvisorAuthenticationConfirmController::class)
             ->middleware(['signed'])
             ->name('authentication.confirm');
+
+        Route::post('messages', SendQnaAdvisorMessageController::class)
+            ->middleware(['signed:relative'])
+            ->name('messages.send');
     });
