@@ -84,8 +84,6 @@ class QnaAdvisorAuthenticationRefreshController
         $accessToken = $educatable->createToken('qna_advisor_access_token', [TokenAbility::AccessQnaAdvisorApi], now()->addMinutes(15));
         $newRefreshToken = $educatable->createToken('qna_advisor_refresh_token', [TokenAbility::IssueQnaAdvisorAccessToken], now()->addDays(3));
 
-        logger()->debug('refreshed!');
-
         return response()->json([
             'access_token' => $accessToken->plainTextToken,
         ])
