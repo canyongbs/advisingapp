@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\Ai\Http\Middleware;
 
+use AdvisingApp\Ai\Models\QnaAdvisor;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,22 +16,36 @@ class EnsureQnaAdvisorRequestComingFromAuthorizedDomain
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $referer = $request->headers->get('referer');
+        $advisor = $request->route('advisor');
+
+        if (! $advisor instanceof QnaAdvisor) {
+            return response()->json(status: Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $origin = $request->headers->get('origin');
+
+        if (! $origin) {
+            return response()->json(['error' => 'Missing origin header.'], 400);
+        }
+
         $appRootDomain = parse_url(config('app.url'))['host'];
 
-        // If we are on the root domain
-        if (parse_url($request->url())['host'] === $appRootDomain) {
-            return $next($request);
+        $allowedDomains = [$appRootDomain];
+
+        $authorizedDomains = $advisor->authorized_domains;
+
+        if (is_array($authorizedDomains)) {
+            $flatAuthorized = [];
+            array_walk_recursive($authorizedDomains, function (string $domain) use (&$flatAuthorized) {
+                $flatAuthorized[] = $domain;
+            });
+            $allowedDomains = array_merge($allowedDomains, $flatAuthorized);
         }
 
-        if (! $referer) {
-            return response()->json(['error' => 'Missing referer header.'], 400);
-        }
+        $origin = parse_url($origin)['host'];
 
-        $referer = parse_url($referer)['host'];
-
-        if ($referer != $appRootDomain) {
-            return response()->json(['error' => 'Referer not allowed'], 403);
+        if (! in_array($origin, $allowedDomains)) {
+            return response()->json(['error' => 'Origin not allowed'], 403);
         }
 
         return $next($request);

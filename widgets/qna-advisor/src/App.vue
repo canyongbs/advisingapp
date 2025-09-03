@@ -85,8 +85,8 @@ onMounted(async () => {
 
             setupWebsockets(json.websockets_config);
         }).catch(error => {
-            if (error.response && error.response.data && error.response.data.embed_enabled === false) {
-                loadingError.value = 'Embed is not enabled for this advisor.';
+            if (error.response && error.response.data.error) {
+                loadingError.value = error.response.data.error;
             } else {
                 loadingError.value = 'An error occurred while loading the advisor.';
             }
