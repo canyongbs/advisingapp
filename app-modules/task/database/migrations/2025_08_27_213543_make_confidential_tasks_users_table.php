@@ -34,49 +34,25 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Filament\Widgets\TaskCumulativeCountLineChart;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Task\Enums\TaskStatus;
-use AdvisingApp\Task\Models\Task;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-it('returns correct cumulative task counts grouped by month within the given date range', function () {
-    $startDate = now()->subDays(90);
-    $endDate = now()->subDays(5);
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('confidential_task_users', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-    $student = Student::factory()->create();
-    $prospect = Prospect::factory()->create();
+            $table->foreignUuid('task_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
 
-    Task::factory()->count(2)->state([
-        'concern_id' => $student->sisid,
-        'concern_type' => (new Student())->getMorphClass(),
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
+            $table->timestamps();
+        });
+    }
 
-    Task::factory()->count(2)->state([
-        'concern_id' => $prospect->getKey(),
-        'concern_type' => (new Prospect())->getMorphClass(),
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
-
-    Task::factory()->count(2)->state([
-        'concern_id' => null,
-        'concern_type' => null,
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
-
-    $widgetInstance = new TaskCumulativeCountLineChart();
-    $widgetInstance->cacheTag = 'report-tasks';
-    $widgetInstance->filters = [
-        'startDate' => $startDate->toDateString(),
-        'endDate' => $endDate->toDateString(),
-    ];
-
-    expect($widgetInstance->getData())->toMatchSnapshot();
-});
+    public function down(): void
+    {
+        Schema::dropIfExists('confidential_task_users');
+    }
+};

@@ -34,49 +34,37 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Filament\Widgets\TaskCumulativeCountLineChart;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Task\Enums\TaskStatus;
-use AdvisingApp\Task\Models\Task;
+namespace AdvisingApp\Task\Models\Scopes;
 
-it('returns correct cumulative task counts grouped by month within the given date range', function () {
-    $startDate = now()->subDays(90);
-    $endDate = now()->subDays(5);
+use App\Features\ConfidentialTaskFeature;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Scope;
 
-    $student = Student::factory()->create();
-    $prospect = Prospect::factory()->create();
+class ConfidentialTaskScope implements Scope
+{
+    public function apply(Builder $builder, Model $model)
+    {
+        if (! ConfidentialTaskFeature::active() || auth()->user()?->isSuperAdmin()) {
+            return;
+        }
 
-    Task::factory()->count(2)->state([
-        'concern_id' => $student->sisid,
-        'concern_type' => (new Student())->getMorphClass(),
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
-
-    Task::factory()->count(2)->state([
-        'concern_id' => $prospect->getKey(),
-        'concern_type' => (new Prospect())->getMorphClass(),
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
-
-    Task::factory()->count(2)->state([
-        'concern_id' => null,
-        'concern_type' => null,
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
-
-    $widgetInstance = new TaskCumulativeCountLineChart();
-    $widgetInstance->cacheTag = 'report-tasks';
-    $widgetInstance->filters = [
-        'startDate' => $startDate->toDateString(),
-        'endDate' => $endDate->toDateString(),
-    ];
-
-    expect($widgetInstance->getData())->toMatchSnapshot();
-});
+        $builder->where('is_confidential', false)->orWhere(function (Builder $query) {
+            $query->where('is_confidential', true)
+                ->where('created_by', auth()->id())
+                ->orWhereHas('confidentialAccessTeams', function (Builder $query) {
+                    $query->whereHas('users', function (Builder $query) {
+                        $query->where('users.id', auth()->id());
+                    });
+                })
+                ->orWhereHas('confidentialAccessUsers', function (Builder $query) {
+                    $query->where('user_id', auth()->id());
+                })
+                ->orWhereHas('confidentialAccessProjects', function (Builder $query) {
+                    $query->whereHas('createdBy', function (Builder $query) {
+                        $query->where('created_by_id', auth()->id());
+                    });
+                });
+        });
+    }
+}

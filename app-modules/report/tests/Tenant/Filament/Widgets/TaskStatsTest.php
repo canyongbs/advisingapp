@@ -51,11 +51,13 @@ it('returns correct task statistics for total tasks, staff, students, and prospe
     Task::factory()->count($taskCount)->state([
         'status' => TaskStatus::Completed,
         'created_at' => $startDate,
+        'is_confidential' => false,
     ])->create();
 
     Task::factory()->count($taskCount)->state([
         'status' => TaskStatus::Canceled,
         'created_at' => $endDate,
+        'is_confidential' => false,
     ])->create();
 
     $staffTasks = Task::factory()->assigned()->count($taskCount)->state([
@@ -63,6 +65,7 @@ it('returns correct task statistics for total tasks, staff, students, and prospe
         'concern_type' => (new Student())->getMorphClass(),
         'status' => TaskStatus::InProgress,
         'created_at' => $startDate,
+        'is_confidential' => false,
     ])->create();
 
     Task::factory()->count($taskCount)->state([
@@ -70,6 +73,7 @@ it('returns correct task statistics for total tasks, staff, students, and prospe
         'concern_type' => (new Student())->getMorphClass(),
         'status' => TaskStatus::Pending,
         'created_at' => $endDate,
+        'is_confidential' => false,
     ])->create();
 
     Task::factory()->count($taskCount)->state([
@@ -77,6 +81,7 @@ it('returns correct task statistics for total tasks, staff, students, and prospe
         'concern_type' => (new Prospect())->getMorphClass(),
         'status' => TaskStatus::Pending,
         'created_at' => $endDate,
+        'is_confidential' => false,
     ])->create();
 
     $widget = new TaskStats();
