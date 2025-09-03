@@ -37,7 +37,7 @@
     :$isRequired
 >
     <div class="flex flex-col space-y-2">
-        @if ($media && count($media) > 0)
+        @if (isset($media) && count($media) > 0)
             @foreach ($media as $item)
                 <a
                     class="inline-flex items-center space-x-1 text-sm text-primary-600 hover:underline"
