@@ -42,7 +42,8 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Settings\LicenseSettings;
 use Closure;
 use Exception;
@@ -54,7 +55,6 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 
@@ -65,6 +65,8 @@ class DraftWithAiAction extends Action
      */
     protected array | Closure $mergeTags = [];
 
+    protected Student | Prospect | null $educatable = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -74,13 +76,7 @@ class DraftWithAiAction extends Action
             ->link()
             ->icon('heroicon-m-pencil')
             ->modalContent(function (Page $livewire): View {
-                throw_unless(method_exists($livewire, 'getRecord'), new Exception('The Livewire component must have a [getRecord()] method.'));
-
-                $educatable = $livewire->getRecord();
-
-                throw_unless($educatable instanceof Model, new Exception('The educatable must be a model.'));
-
-                throw_unless($educatable instanceof Educatable, new Exception('The educatable must have the [Educatable] interface.'));
+                $educatable = $this->getEducatable();
 
                 $educatableName = $educatable->getAttributeValue($educatable::displayNameKey());
 
@@ -100,14 +96,12 @@ class DraftWithAiAction extends Action
                     ->required(),
             ])
             ->action(function (array $data, Get $get, Set $set, Page $livewire) {
-                throw_unless(method_exists($livewire, 'getRecord'), new Exception('The Livewire component must have a [getRecord()] method.'));
-
                 $model = app(AiIntegratedAssistantSettings::class)->getDefaultModel();
 
                 $userName = auth()->user()->name;
                 $userJobTitle = auth()->user()->job_title ?? 'staff member';
                 $clientName = app(LicenseSettings::class)->data->subscription->clientName;
-                $educatableLabel = $livewire->getRecord()::getLabel();
+                $educatableLabel = $this->getEducatable()::getLabel();
 
                 $mergeTagsList = collect($this->getMergeTags())
                     ->map(fn (string $tag): string => <<<HTML
@@ -217,5 +211,25 @@ class DraftWithAiAction extends Action
     public function getMergeTags(): array
     {
         return $this->evaluate($this->mergeTags);
+    }
+
+    public function educatable(Student | Prospect | null $educatable): static
+    {
+        $this->educatable = $educatable;
+
+        return $this;
+    }
+
+    public function getEducatable(): Student | Prospect
+    {
+        if ($this->educatable) {
+            return $this->educatable;
+        }
+
+        $livewire = $this->getLivewire();
+
+        throw_unless(method_exists($livewire, 'getRecord'), new Exception('The Livewire component must have a [getRecord()] method.'));
+
+        return $livewire->getRecord();
     }
 }

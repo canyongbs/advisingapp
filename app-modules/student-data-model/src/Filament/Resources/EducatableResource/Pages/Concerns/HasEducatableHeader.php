@@ -37,6 +37,8 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns;
 
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Livewire\Attributes\On;
 
 trait HasEducatableHeader
@@ -55,7 +57,11 @@ trait HasEducatableHeader
 
     public function engage(): SendEngagementAction
     {
+        $record = $this->getRecord();
+
+        assert($record instanceof Student || $record instanceof Prospect);
+
         return SendEngagementAction::make()
-            ->educatable($this->getRecord());
+            ->educatable($record);
     }
 }
