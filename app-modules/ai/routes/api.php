@@ -56,7 +56,7 @@ Route::middleware([
     ->group(function () {
         Route::post('/', ShowAdvisorController::class)
             // TODO: Make non-relative
-            ->middleware(['signed:relative'])
+            ->middleware(['signed'])
             ->name('show');
 
         Route::post('/authenticate/request', QnaAdvisorRequestAuthenticationController::class)
