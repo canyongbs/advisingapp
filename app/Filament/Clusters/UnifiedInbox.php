@@ -34,36 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Segment\Filament\Resources;
+namespace App\Filament\Clusters;
 
-use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\CreateSegment;
-use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\EditSegment;
-use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\ListSegments;
-use AdvisingApp\Segment\Models\Segment;
-use Filament\Resources\Resource;
+use Filament\Clusters\Cluster;
 
-class SegmentResource extends Resource
+class UnifiedInbox extends Cluster
 {
-    protected static ?string $model = Segment::class;
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $navigationGroup = 'CRM';
 
-    protected static ?int $navigationSort = 50;
-
-    protected static ?string $navigationLabel = 'Segments';
-
-    protected static ?string $breadcrumb = 'Segments';
-
-    protected static ?string $modelLabel = 'Segment';
-
-    protected static ?string $pluralModelLabel = 'Segments';
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListSegments::route('/'),
-            'create' => CreateSegment::route('/create'),
-            'edit' => EditSegment::route('/{record}/edit'),
-        ];
-    }
+    protected static ?string $navigationLabel = 'Unified Inbox';
 }

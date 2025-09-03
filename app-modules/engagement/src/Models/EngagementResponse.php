@@ -56,6 +56,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
+use League\HTMLToMarkdown\HtmlConverter;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -107,6 +108,11 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
     public static function getTimelineData(Model $forModel): Collection
     {
         return $forModel->orderedEngagementResponses()->get();
+    }
+
+    public function getBodyMarkdown(): string
+    {
+        return stripslashes((new HtmlConverter())->convert($this->getBody()));
     }
 
     public function getBody(): HtmlString
