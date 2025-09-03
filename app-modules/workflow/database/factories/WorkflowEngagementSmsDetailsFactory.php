@@ -34,54 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Database\Factories;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Workflow\Database\Factories\WorkflowEngagementSmsDetailsFactory;
-use AdvisingApp\Workflow\Filament\Blocks\EngagementSmsBlock;
-use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
-use AdvisingApp\Workflow\Jobs\EngagementSmsWorkflowActionJob;
-use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperWorkflowEngagementSmsDetails
+ * @extends Factory<WorkflowEngagementSmsDetails>
  */
-class WorkflowEngagementSmsDetails extends WorkflowDetails implements Auditable
+class WorkflowEngagementSmsDetailsFactory extends Factory
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    /** @use HasFactory<WorkflowEngagementSmsDetailsFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'channel',
-        'body',
-    ];
-
-    protected $casts = [
-        'channel' => NotificationChannel::class,
-        'body' => 'array',
-    ];
-
-    public function getLabel(): string
+    public function definition(): array
     {
-        return 'Text Message';
-    }
-
-    public function getBlock(): WorkflowActionBlock
-    {
-        return EngagementSmsBlock::make();
-    }
-
-    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
-    {
-        return new EngagementSmsWorkflowActionJob($workflowRunStep);
+        return [
+            'channel' => NotificationChannel::Sms,
+            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraph]]]]],
+        ];
     }
 }

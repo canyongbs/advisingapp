@@ -41,6 +41,7 @@ use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
+use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use Carbon\CarbonInterval;
 use Filament\Forms\Components\Builder;
@@ -223,6 +224,10 @@ class WorkflowStepsRelationManager extends RelationManager
             'workflow_engagement_email_details' => WorkflowEngagementEmailDetails::create([
                 'channel' => $data['channel'],
                 'subject' => $data['subject'],
+                'body' => $data['body'],
+            ]),
+            'workflow_engagement_sms_details' => WorkflowEngagementSmsDetails::create([
+                'channel' => $data['channel'],
                 'body' => $data['body'],
             ]),
             default => null
