@@ -1,27 +1,82 @@
 <?php
 
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
     public function up(): void
     {
-        $this->migrator->add('interaction_management.is_initiative_enabled', true);
-        $this->migrator->add('interaction_management.is_initiative_required', true);
+        try {
+            $this->migrator->add('interaction_management.is_initiative_enabled', true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-        $this->migrator->add('interaction_management.is_driver_enabled', true);
-        $this->migrator->add('interaction_management.is_driver_required', true);
+        try {
+            $this->migrator->add('interaction_management.is_initiative_required', true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-        $this->migrator->add('interaction_management.is_outcome_enabled', true);
-        $this->migrator->add('interaction_management.is_outcome_required', true);
+        try {
+            $this->migrator->add('interaction_management.is_driver_enabled', true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-        $this->migrator->add('interaction_management.is_relation_enabled', true);
-        $this->migrator->add('interaction_management.is_relation_required', true);
+        try {
+            $this->migrator->add('interaction_management.is_driver_required', true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-        $this->migrator->add('interaction_management.is_status_enabled', true);
-        $this->migrator->add('interaction_management.is_status_required', true);
+        try {
+            $this->migrator->add('interaction_management.is_outcome_enabled', true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-        $this->migrator->add('interaction_management.is_type_enabled', true);
-        $this->migrator->add('interaction_management.is_type_required', true);
+        try {
+            $this->migrator->add('interaction_management.is_outcome_required', true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
+
+        try {
+            $this->migrator->add('interaction_management.is_relation_enabled', true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
+
+        try {
+            $this->migrator->add('interaction_management.is_relation_required', true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
+
+        try {
+            $this->migrator->add('interaction_management.is_status_enabled', true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
+
+        try {
+            $this->migrator->add('interaction_management.is_status_required', true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
+
+        try {
+            $this->migrator->add('interaction_management.is_type_enabled', true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
+
+        try {
+            $this->migrator->add('interaction_management.is_type_required', true);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
     }
 
     public function down(): void
