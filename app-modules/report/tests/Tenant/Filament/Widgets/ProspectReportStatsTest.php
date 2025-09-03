@@ -38,9 +38,11 @@ use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Task\Models\Task;
 
-it('returns correct total prospect stats of prospects, alerts, segments and tasks within the given date range', function () {
+it('returns correct total prospect stats of prospects, alerts, cases and tasks within the given date range', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -89,4 +91,100 @@ it('returns correct total prospect stats of prospects, alerts, segments and task
         ->and($stats[1]->getValue())->toEqual($alertCount)
         ->and($stats[2]->getValue())->toEqual($casesCount)
         ->and($stats[3]->getValue())->toEqual($taskCount);
+});
+
+it('returns correct total prospect stats of prospects, alerts, cases and tasks based on segment filter', function () {
+    $count = random_int(1, 5);
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Prospect,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last_name',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    Prospect::factory()
+        ->count($count)
+        ->state([
+            'last_name' => 'John',
+        ])->create();
+
+    Prospect::factory()
+        ->count($count)
+        ->state([
+            'last_name' => 'Doe',
+        ])->create();
+
+    Alert::factory()
+        ->count($count)
+        ->for(
+            Prospect::factory()->create(['last_name' => 'John']),
+            'concern'
+        )
+        ->create();
+
+    Alert::factory()
+        ->count($count)
+        ->for(
+            Prospect::factory()->create(['last_name' => 'Doe']),
+            'concern'
+        )
+        ->create();
+
+    CaseModel::factory()
+        ->count($count)
+        ->for(
+            Prospect::factory()->create(['last_name' => 'John']),
+            'respondent'
+        )
+        ->create();
+
+    CaseModel::factory()
+        ->count($count)
+        ->for(
+            Prospect::factory()->create(['last_name' => 'Doe']),
+            'respondent'
+        )
+        ->create();
+
+    Task::factory()
+        ->count($count)
+        ->for(
+            Prospect::factory()->create(['last_name' => 'John']),
+            'concern'
+        )
+        ->create();
+
+    Task::factory()
+        ->count($count)
+        ->for(
+            Prospect::factory()->create(['last_name' => 'Doe']),
+            'concern'
+        )
+        ->create();
+
+    $widget = new ProspectReportStats();
+    $widget->cacheTag = 'prospect-report-cache';
+    $widget->filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    $stats = $widget->getStats();
+
+    expect($stats[0]->getValue())->toEqual($count + 3)
+        ->and($stats[1]->getValue())->toEqual($count)
+        ->and($stats[2]->getValue())->toEqual($count)
+        ->and($stats[3]->getValue())->toEqual($count);
 });
