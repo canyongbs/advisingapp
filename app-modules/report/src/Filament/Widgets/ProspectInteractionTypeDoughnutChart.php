@@ -73,11 +73,12 @@ class ProspectInteractionTypeDoughnutChart extends ChartReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
 
         $interactionsByType = $shouldBypassCache
-            ? $this->getInteractionTypeData($startDate, $endDate)
+            ? $this->getInteractionTypeData($startDate, $endDate, $segmentId)
             : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_by_type', now()->addHours(24), function () {
                 return $this->getInteractionTypeData();
             });
@@ -130,11 +131,16 @@ class ProspectInteractionTypeDoughnutChart extends ChartReportWidget
     /**
      * @return Collection<int, InteractionType>
      */
-    protected function getInteractionTypeData(?Carbon $startDate = null, ?Carbon $endDate = null): Collection
+    protected function getInteractionTypeData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $segmentId = null): Collection
     {
         $query = InteractionType::withCount([
-            'interactions' => function ($query) use ($startDate, $endDate) {
-                $query->whereHasMorph('interactable', Prospect::class)
+            'interactions' => function ($query) use ($startDate, $endDate, $segmentId) {
+                $query->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($segmentId) {
+                    $query->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    );
+                })
                     ->when(
                         $startDate && $endDate,
                         fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
