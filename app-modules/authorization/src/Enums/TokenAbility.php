@@ -34,31 +34,11 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisorAuthenticationConfirmController;
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisorRequestAuthenticationController;
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendAdvisorMessageController as SendQnaAdvisorMessageController;
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\ShowAdvisorController;
-use App\Http\Middleware\EncryptCookies;
-use Illuminate\Support\Facades\Route;
+namespace AdvisingApp\Authorization\Enums;
 
-// TODO: Make the routes non-relative signed
-Route::middleware(['api', EncryptCookies::class])
-    ->name('ai.qna-advisors.')
-    ->prefix('api/ai/qna-advisors/{advisor}')
-    ->group(function () {
-        Route::get('/', ShowAdvisorController::class)
-            ->middleware(['signed:relative'])
-            ->name('show');
+enum TokenAbility: string
+{
+    case AccessQnaAdvisorApi = 'access_qna_advisor_api';
 
-        Route::post('messages', SendQnaAdvisorMessageController::class)
-            ->middleware(['signed:relative'])
-            ->name('messages.send');
-
-        Route::post('/authenticate/request', QnaAdvisorRequestAuthenticationController::class)
-            ->middleware(['signed'])
-            ->name('authentication.request');
-
-        Route::post('/authenticate/confirm/{authentication}', QnaAdvisorAuthenticationConfirmController::class)
-            ->middleware(['signed'])
-            ->name('authentication.confirm');
-    });
+    case IssueQnaAdvisorAccessToken = 'issue_qna_advisor_access_token';
+}
