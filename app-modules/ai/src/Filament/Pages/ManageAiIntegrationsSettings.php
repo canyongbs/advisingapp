@@ -95,6 +95,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_4o_model')
                                     ->label('Model'),
+                                TextInput::make('open_ai_gpt_4o_image_generation_deployment')
+                                    ->label('Image generation model'),
                                 Select::make('open_ai_gpt_4o_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
@@ -120,6 +122,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_4o_mini_model')
                                     ->label('Model'),
+                                TextInput::make('open_ai_gpt_4o_mini_image_generation_deployment')
+                                    ->label('Image generation model'),
                                 Select::make('open_ai_gpt_4o_mini_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
@@ -145,6 +149,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_o3_model')
                                     ->label('Model'),
+                                TextInput::make('open_ai_gpt_o3_image_generation_deployment')
+                                    ->label('Image generation model'),
                                 Select::make('open_ai_gpt_o3_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
@@ -170,6 +176,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_41_mini_model')
                                     ->label('Model'),
+                                TextInput::make('open_ai_gpt_41_mini_image_generation_deployment')
+                                    ->label('Image generation model'),
                                 Select::make('open_ai_gpt_41_mini_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
@@ -195,6 +203,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_41_nano_model')
                                     ->label('Model'),
+                                TextInput::make('open_ai_gpt_41_nano_image_generation_deployment')
+                                    ->label('Image generation model'),
                                 Select::make('open_ai_gpt_41_nano_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
@@ -220,6 +230,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_o4_mini_model')
                                     ->label('Model'),
+                                TextInput::make('open_ai_gpt_o4_mini_image_generation_deployment')
+                                    ->label('Image generation model'),
                                 Select::make('open_ai_gpt_o4_mini_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
@@ -246,6 +258,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_5_model')
                                     ->label('Model'),
+                                TextInput::make('open_ai_gpt_5_image_generation_deployment')
+                                    ->label('Image generation model'),
                                 Select::make('open_ai_gpt_5_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
@@ -272,6 +286,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_5_mini_model')
                                     ->label('Model'),
+                                TextInput::make('open_ai_gpt_5_mini_image_generation_deployment')
+                                    ->label('Image generation model'),
                                 Select::make('open_ai_gpt_5_mini_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
@@ -298,6 +314,8 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->autocomplete(false),
                                 TextInput::make('open_ai_gpt_5_nano_model')
                                     ->label('Model'),
+                                TextInput::make('open_ai_gpt_5_nano_image_generation_deployment')
+                                    ->label('Image generation model'),
                                 Select::make('open_ai_gpt_5_nano_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)

@@ -43,6 +43,7 @@ use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Support\StreamingChunks\Finish;
+use AdvisingApp\Ai\Support\StreamingChunks\Image;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use Illuminate\Bus\Queueable;
@@ -51,6 +52,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Throwable;
 
 class SendAdvisorMessage implements ShouldQueue
@@ -69,6 +71,7 @@ class SendAdvisorMessage implements ShouldQueue
         protected AiThread $thread,
         protected string | Prompt $content,
         protected array $files = [],
+        protected bool $hasImageGeneration = false,
     ) {}
 
     public function handle(): void
@@ -118,11 +121,13 @@ class SendAdvisorMessage implements ShouldQueue
 
         $response = new AiMessage();
         $response->thread()->associate($this->thread);
+        $response->content = '';
 
         try {
             $stream = $aiService->sendMessage(
                 message: $message,
-                files: $this->files
+                files: $this->files,
+                hasImageGeneration: $this->hasImageGeneration,
             );
         } catch (Throwable $exception) {
             report($exception);
@@ -151,6 +156,14 @@ class SendAdvisorMessage implements ShouldQueue
                 $finishChunk = $chunk;
 
                 continue;
+            }
+
+            if ($chunk instanceof Image) {
+                $media = $this->thread->addMediaFromBase64($chunk->content)
+                    ->usingFileName(Str::random() . '.' . $chunk->format)
+                    ->toMediaCollection('generated_images', diskName: 's3-public');
+
+                $chunk = new Text("![Generated image]({$media->getUrl()})");
             }
 
             if ($chunk instanceof Text) {

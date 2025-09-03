@@ -44,6 +44,7 @@ document.addEventListener('alpine:init', () => {
             isSendingMessage: false,
             isRateLimited: false,
             isRetryable: true,
+            hasImageGeneration: false,
             latestMessage: '',
             message: '',
             rawIncomingResponse: '',
@@ -181,6 +182,7 @@ document.addEventListener('alpine:init', () => {
                                                     ? {
                                                           content: this.latestMessage,
                                                           files: this.$wire.files,
+                                                          has_image_generation: this.hasImageGeneration,
                                                       }
                                                     : {},
                                             ),
@@ -273,6 +275,7 @@ document.addEventListener('alpine:init', () => {
                             body: JSON.stringify({
                                 ...(prompt ? { prompt_id: prompt.id } : { content: message }),
                                 files: this.$wire.files,
+                                has_image_generation: this.hasImageGeneration,
                             }),
                         }),
                     });
@@ -310,6 +313,7 @@ document.addEventListener('alpine:init', () => {
                             body: JSON.stringify({
                                 content: this.latestMessage,
                                 files: this.$wire.files,
+                                has_image_generation: this.hasImageGeneration,
                             }),
                         }),
                     });

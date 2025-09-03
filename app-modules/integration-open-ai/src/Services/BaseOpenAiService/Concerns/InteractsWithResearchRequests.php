@@ -76,9 +76,6 @@ trait InteractsWithResearchRequests
                 ]),
             ]),
             providerOptions: [
-                'tool_choice' => [
-                    'type' => 'file_search',
-                ],
                 'tools' => [[
                     'type' => 'file_search',
                     'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
@@ -168,9 +165,6 @@ trait InteractsWithResearchRequests
                 'requiredFields' => ['abstract', 'introduction', 'sections', 'conclusion'],
             ]),
             providerOptions: [
-                'tool_choice' => [
-                    'type' => 'file_search',
-                ],
                 'tools' => [[
                     'type' => 'file_search',
                     'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
@@ -203,9 +197,6 @@ trait InteractsWithResearchRequests
                     'deployment' => $this->getDeployment(),
                 ])
                 ->withProviderOptions([
-                    'tool_choice' => [
-                        'type' => 'file_search',
-                    ],
                     'tools' => [[
                         'type' => 'file_search',
                         'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),

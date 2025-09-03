@@ -53,6 +53,11 @@ class OpenAiGptO4MiniService extends BaseOpenAiService
         return $this->settings->open_ai_gpt_o4_mini_base_uri ?? config('integration-open-ai.gpt_o4_mini_base_uri');
     }
 
+    public function getImageGenerationDeployment(): ?string
+    {
+        return $this->settings->open_ai_gpt_o4_mini_image_generation_deployment;
+    }
+
     public function hasReasoning(): bool
     {
         return true;

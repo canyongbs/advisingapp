@@ -80,7 +80,7 @@ class TestAiService implements AiService
         throw new Exception('Plain text streaming is not supported by this service.');
     }
 
-    public function sendMessage(AiMessage $message, array $files): Closure
+    public function sendMessage(AiMessage $message, array $files, bool $hasImageGeneration = false): Closure
     {
         $message->context = fake()->paragraph();
         $message->save();
@@ -106,7 +106,7 @@ class TestAiService implements AiService
         };
     }
 
-    public function retryMessage(AiMessage $message, array $files): Closure
+    public function retryMessage(AiMessage $message, array $files, bool $hasImageGeneration = false): Closure
     {
         return $this->sendMessage($message, $files);
     }
@@ -159,4 +159,9 @@ class TestAiService implements AiService
     }
 
     public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void {}
+
+    public function hasImageGeneration(): bool
+    {
+        return false;
+    }
 }
