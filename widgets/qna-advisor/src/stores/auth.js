@@ -31,31 +31,17 @@
 
 </COPYRIGHT>
 */
-import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import App from './App.vue';
-import './widget.css';
-import { defaultConfig, plugin } from '@formkit/vue';
-import config from './formkit.config.js';
-import { createPinia } from 'pinia';
 
-customElements.define(
-    'qna-advisor-embed',
-    defineCustomElement({
-        setup(props) {
-            const app = createApp();
-            const pinia = createPinia();
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
-            app.use(pinia);
-            app.use(plugin, defaultConfig(config));
+export const useAuthStore = defineStore('auth', () => {
+    const accessToken = ref(null);
 
-            app.config.devtools = true;
+    const getAccessToken = computed(() => accessToken.value);
 
-            const inst = getCurrentInstance();
-            Object.assign(inst.appContext, app._context);
-            Object.assign(inst.provides, app._context.provides);
-
-            return () => h(App, props);
-        },
-        props: ['url'],
-    }),
-);
+    return {
+        accessToken,
+        getAccessToken
+    };
+});

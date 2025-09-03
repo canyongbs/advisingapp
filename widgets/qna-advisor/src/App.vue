@@ -39,10 +39,13 @@ import headshotAgent from '../../../resources/images/canyon-ai-headshot.jpg?url'
 import loadingSpinner from '../public/images/loading-spinner.svg?url';
 import userAvatar from '../public/images/user-default-avatar.svg?url';
 import axios from 'axios';
+import { useAuthStore } from './stores/auth';
 
 const props = defineProps(['url']);
+const authStore = useAuthStore();
 const requiresAuthentication = ref(false);
 const authentication = ref({
+    promptToAuthenticate: false,
     requestUrl: null,
     email: null,
     code: null,
@@ -73,6 +76,10 @@ onMounted(async () => {
         requiresAuthentication.value = json.requires_authentication;
         authentication.value.requestUrl = json.authentication_url;
         sendMessageUrl.value = json.send_message_url;
+
+        if (requiresAuthentication.value === true && authStore.accessToken === null) {
+            authentication.value.promptToAuthenticate = true;
+        }
 
         setupWebsockets(json.websockets_config);
     } catch (error) {
@@ -166,9 +173,6 @@ async function sendMessage() {
 async function authenticate(formData, node) {
     node.clearErrors();
 
-    // const { setToken } = useTokenStore();
-    // const { setUser } = useAuthStore();
-
     if (authentication.value.isRequested) {
         $data = {
             code: formData.code,
@@ -184,13 +188,8 @@ async function authenticate(formData, node) {
                 }
 
                 if (typeof response.data.access_token !== 'undefined') {
-                    // setToken(response.data.token);
-                    // setUser(response.data.user);
-
-                    // userIsAuthenticated.value = true;
-
-                    // getData();
-                    console.log('We did it!' . response.data.access_token);
+                    authStore.$patch({ accessToken: response.data.access_token });
+                    authentication.value.promptToAuthenticate = false;
                 }
             })
             .catch((error) => {
@@ -226,8 +225,7 @@ async function authenticate(formData, node) {
 <template>
     <div class="h-full" style="--primary-50: 255, 251, 235; --primary-100: 254, 243, 199; --primary-200: 253, 230, 138; --primary-300: 252, 211, 77; --primary-400: 251, 191, 36; --primary-500: 245, 158, 11; --primary-600: 217, 119, 6; --primary-700: 180, 83, 9; --primary-800: 146, 64, 14; --primary-900: 120, 53, 15; --rounding-sm: 0.25rem; --rounding: 0.375rem; --rounding-md: 0.5rem; --rounding-lg: 0.75rem; --rounding-full: 9999px;">
 
-        <!-- TODO: Also needs to check if we are authenticated or not -->
-        <div v-if="requiresAuthentication">
+        <div v-if="authentication.promptToAuthenticate">
             <FormKit type="form" @submit="authenticate" v-model="authentication">
                 <FormKit
                     type="email"
@@ -256,7 +254,7 @@ async function authenticate(formData, node) {
         </div>
 
 
-        <div v-show="sendMessageUrl !== null && ! requiresAuthentication" class="flex flex-col gap-y-3 w-11/12 mx-auto">
+        <div v-show="sendMessageUrl !== null && ! authentication.promptToAuthenticate" class="flex flex-col gap-y-3 w-11/12 mx-auto">
             <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/qna-advisor/style.css'" />
             <div class="flex h-[calc(100dvh-16rem)] flex-col gap-y-3">
                 <div
