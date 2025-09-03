@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisorAuthenticationConfirmController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisorAuthenticationRefreshController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisorRequestAuthenticationController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendAdvisorMessageController as SendQnaAdvisorMessageController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\ShowAdvisorController;
@@ -65,6 +66,10 @@ Route::middleware([
         Route::post('/authenticate/confirm/{authentication}', QnaAdvisorAuthenticationConfirmController::class)
             ->middleware(['signed'])
             ->name('authentication.confirm');
+
+        Route::post('/authenticate/refresh', QnaAdvisorAuthenticationRefreshController::class)
+            ->middleware(['signed'])
+            ->name('authentication.refresh');
 
         Route::post('messages', SendQnaAdvisorMessageController::class)
             ->middleware([
