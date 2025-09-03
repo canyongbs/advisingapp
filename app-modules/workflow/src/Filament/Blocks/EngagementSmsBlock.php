@@ -59,12 +59,12 @@ class EngagementSmsBlock extends WorkflowActionBlock
     /**
      * @return array<int, Field|Section|Actions>
      */
-    public function generateFields(): array
+    public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            Hidden::make('channel')
+            Hidden::make($fieldPrefix . 'channel')
                 ->default(NotificationChannel::Sms->value),
-            EngagementSmsBodyInput::make(context: 'create'),
+            EngagementSmsBodyInput::make(context: 'create', fieldPrefix: $fieldPrefix),
             Actions::make([
                 DraftEngagementBlockWithAi::make()
                     ->channel(NotificationChannel::Sms)
@@ -106,6 +106,6 @@ class EngagementSmsBlock extends WorkflowActionBlock
 
     public static function type(): string
     {
-        return 'workflow_engagement_sms_block';
+        return 'workflow_engagement_sms_details';
     }
 }
