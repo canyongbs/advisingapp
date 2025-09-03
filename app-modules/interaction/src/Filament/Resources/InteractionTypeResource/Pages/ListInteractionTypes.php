@@ -37,8 +37,18 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource\Pages;
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
+use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
+use App\Features\InteractionMetadataFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions;
+use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -49,9 +59,95 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @property ComponentContainer $form
+ */
 class ListInteractionTypes extends ListRecords
 {
+    use InteractsWithForms;
+
     protected static string $resource = InteractionTypeResource::class;
+
+    /** @var array<string, mixed> */
+    public ?array $data = [];
+
+    protected static string $view = 'interaction::filament.pages.list-interaction-types';
+
+    private ?InteractionManagementSettings $settings = null;
+
+    public function mount(): void
+    {
+        if (InteractionMetadataFeature::active()) {
+            $this->fillForm();
+        }
+    }
+
+    public function fillForm(): void
+    {
+        $settings = $this->getSettings();
+
+        $data = [
+            'is_type_enabled' => $settings->is_type_enabled,
+            'is_type_required' => $settings->is_type_required,
+        ];
+
+        $this->form->fill($data);
+    }
+
+    public function form(Form $form): Form
+    {
+        if (! InteractionMetadataFeature::active()) {
+            return $form->schema([]);
+        }
+
+        return $form
+            ->schema([
+                Section::make('Type Settings')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Toggle::make('is_type_enabled')
+                                    ->label('Enabled')
+                                    ->live()
+                                    ->afterStateUpdated(function (bool $state): void {
+                                        $settings = $this->getSettings();
+                                        $settings->is_type_enabled = $state;
+                                        $settings->save();
+
+                                        Notification::make()
+                                            ->title('Type feature ' . ($state ? 'enabled' : 'disabled'))
+                                            ->body(
+                                                $state
+                                                    ? 'You can now create, view, and manage types across interactions.'
+                                                    : 'Types are hidden from all interactions (create, edit, view, and list).'
+                                            )
+                                            ->{ $state ? 'success' : 'warning' }()
+                                            ->send();
+                                    }),
+                                Toggle::make('is_type_required')
+                                    ->label('Required')
+                                    ->live()
+                                    ->visible(fn (Get $get) => $get('is_type_enabled'))
+                                    ->afterStateUpdated(function (bool $state): void {
+                                        $settings = $this->getSettings();
+                                        $settings->is_type_required = $state;
+                                        $settings->save();
+
+                                        Notification::make()
+                                            ->title('Type requirement ' . ($state ? 'enabled' : 'disabled'))
+                                            ->body(
+                                                $state
+                                                ? 'Types are now mandatory in all interactions (create, edit, view, and list).'
+                                                : 'Types are now optional in interactions.'
+                                            )
+                                            ->{ $state ? 'success' : 'info' }()
+                                            ->send();
+                                    }),
+                            ]),
+                    ]),
+            ])
+            ->statePath('data');
+    }
 
     public function table(Table $table): Table
     {
@@ -84,5 +180,14 @@ class ListInteractionTypes extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    private function getSettings(): InteractionManagementSettings
+    {
+        if ($this->settings === null) {
+            $this->settings = app(InteractionManagementSettings::class);
+        }
+
+        return $this->settings;
     }
 }
