@@ -161,21 +161,9 @@ async function sendMessage() {
             requestBody.options = nextRequestOptions.value;
         }
 
-        const headers = {
-            'Content-Type': 'application/json',
-        };
+        const sendMessageResponse = await authorizedPost(sendMessageUrl.value, requestBody);
 
-        if (authStore.getAccessToken) {
-            headers['Authorization'] = `Bearer ${authStore.getAccessToken}`;
-        }
-
-        const sendMessageResponse = await fetch(sendMessageUrl.value, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify(requestBody),
-        });
-
-        const data = await sendMessageResponse.json();
+        const data = sendMessageResponse.data;
 
         message.value = '';
     } catch (error) {
@@ -233,6 +221,18 @@ async function authenticate(formData, node) {
 
             node.setErrors([], data.errors);
         });
+}
+
+async function authorizedPost(url, data) {
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+
+    if (authStore.getAccessToken) {
+        headers['Authorization'] = `Bearer ${authStore.getAccessToken}`;
+    }
+
+    return axios.post(url, data, { headers });
 }
 </script>
 
