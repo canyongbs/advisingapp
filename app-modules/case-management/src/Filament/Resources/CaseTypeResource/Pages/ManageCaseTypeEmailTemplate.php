@@ -52,6 +52,7 @@ use Filament\Resources\Pages\EditRecord;
 use FilamentTiptapEditor\TiptapEditor;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
+use Log;
 
 /** @property-read ?CaseTypeEmailTemplate $template */
 class ManageCaseTypeEmailTemplate extends EditRecord
@@ -85,7 +86,7 @@ class ManageCaseTypeEmailTemplate extends EditRecord
                     ->persistTab()
                     ->id('email-template-role-tabs')
                     ->tabs(array_map(
-                        fn (CaseTypeEmailTemplateRole $role) => Tab::make($role->getLabel())
+                        fn(CaseTypeEmailTemplateRole $role) => Tab::make($role->getLabel())
                             ->schema($this->getEmailTemplateFormSchema($role))
                             ->statePath($role->value),
                         $roles
@@ -182,13 +183,16 @@ class ManageCaseTypeEmailTemplate extends EditRecord
             ->where('type', $this->type)
             ->get();
 
-        $templates = $templates->keyBy(fn (CaseTypeEmailTemplate $template) => $template->role->value);
+        $templates = $templates->keyBy(fn(CaseTypeEmailTemplate $template) => $template->role->value);
 
         $state = [];
 
         foreach (CaseTypeEmailTemplateRole::cases() as $role) {
             if ($template = $templates[$role->value] ?? null) {
+                Log::info($role->value);
                 $state[$role->value] = $template->only(['subject', 'body']);
+                Log::info('Template:');
+                Log::info($state[$role->value]);
             }
         }
 
