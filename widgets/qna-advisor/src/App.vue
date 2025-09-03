@@ -53,6 +53,7 @@ const authentication = ref({
     requestedMessage: null,
     confirmationUrl: null,
 });
+const loadingError = ref(null);
 const sendMessageUrl = ref(null);
 const chatId = ref(null);
 const message = ref('');
@@ -68,23 +69,28 @@ const scriptHostname = scriptUrl.hostname;
 const hostUrl = `${protocol}//${scriptHostname}`;
 
 onMounted(async () => {
-    try {
-        const response = await fetch(props.url);
-        const json = await response.json();
-        if (json.error) throw new Error(json.error);
-        chatId.value = json.chat_id;
-        requiresAuthentication.value = json.requires_authentication;
-        authentication.value.requestUrl = json.authentication_url;
-        sendMessageUrl.value = json.send_message_url;
+    axios
+        .post(props.url)
+        .then((response) => {
+            const json = response.data;
+            
+            chatId.value = json.chat_id;
+            requiresAuthentication.value = json.requires_authentication;
+            authentication.value.requestUrl = json.authentication_url;
+            sendMessageUrl.value = json.send_message_url;
 
-        if (requiresAuthentication.value === true && authStore.accessToken === null) {
-            authentication.value.promptToAuthenticate = true;
-        }
+            if (requiresAuthentication.value === true && authStore.accessToken === null) {
+                authentication.value.promptToAuthenticate = true;
+            }
 
-        setupWebsockets(json.websockets_config);
-    } catch (error) {
-        console.error(`Advising App Embed QnA Advisor ${error}`);
-    }
+            setupWebsockets(json.websockets_config);
+        }).catch(error => {
+            if (error.response && error.response.data && error.response.data.embed_enabled === false) {
+                loadingError.value = 'Embed is not enabled for this advisor.';
+            } else {
+                loadingError.value = 'An error occurred while loading the advisor.';
+            }
+        });
 });
 
 onUnmounted(() => {
@@ -319,7 +325,7 @@ async function authenticate(formData, node) {
             </div>
         </div>
         <div class="relative h-screen" v-if="sendMessageUrl === null">
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+            <div v-if="! loadingError" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
                 <img
                     class="inline h-8 w-8 animate-spin text-gray-200 dark:text-gray-600 dark:invert"
                     style="border-radius: 40px"
@@ -328,6 +334,9 @@ async function authenticate(formData, node) {
                     title="spinner"
                 />
                 <span class="sr-only">Loading...</span>
+            </div>
+            <div v-if="loadingError" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-red-600 dark:text-red-400">
+                <p>Error loading the advisor: {{ loadingError }}</p>
             </div>
         </div>
     </div>

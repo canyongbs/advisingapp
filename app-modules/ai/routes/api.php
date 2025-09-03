@@ -38,19 +38,20 @@ use AdvisingApp\Ai\Http\Controllers\QnaAdvisorAuthenticationConfirmController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisorRequestAuthenticationController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendAdvisorMessageController as SendQnaAdvisorMessageController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\ShowAdvisorController;
+use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorEmbedIsEnabled;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([
     'api',
     EncryptCookies::class,
-    // TODO: Middleware checking if the embed is enabled
+    EnsureQnaAdvisorEmbedIsEnabled::class,
     // TODO: Middleware checking if the request is coming from an authed domain
 ])
     ->name('ai.qna-advisors.')
     ->prefix('api/ai/qna-advisors/{advisor}')
     ->group(function () {
-        Route::get('/', ShowAdvisorController::class)
+        Route::post('/', ShowAdvisorController::class)
             // TODO: Make non-relative
             ->middleware(['signed:relative'])
             ->name('show');
