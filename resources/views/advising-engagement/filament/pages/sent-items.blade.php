@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,38 +30,7 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace AdvisingApp\Segment\Filament\Resources;
-
-use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\CreateSegment;
-use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\EditSegment;
-use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\ListSegments;
-use AdvisingApp\Segment\Models\Segment;
-use Filament\Resources\Resource;
-
-class SegmentResource extends Resource
-{
-    protected static ?string $model = Segment::class;
-
-    protected static ?string $navigationGroup = 'CRM';
-
-    protected static ?int $navigationSort = 50;
-
-    protected static ?string $navigationLabel = 'Segments';
-
-    protected static ?string $breadcrumb = 'Segments';
-
-    protected static ?string $modelLabel = 'Segment';
-
-    protected static ?string $pluralModelLabel = 'Segments';
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListSegments::route('/'),
-            'create' => CreateSegment::route('/create'),
-            'edit' => EditSegment::route('/{record}/edit'),
-        ];
-    }
-}
+--}}
+<x-filament-panels::page>
+    {{ $this->table }}
+</x-filament-panels::page>
