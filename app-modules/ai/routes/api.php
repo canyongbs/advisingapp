@@ -73,8 +73,7 @@ Route::middleware([
 
         Route::post('messages', SendQnaAdvisorMessageController::class)
             ->middleware([
-                // TODO: Make non-relative
-                'signed:relative',
+                'signed',
                 QnaAdvisorAuthorization::class,
             ])
             ->name('messages.send');
