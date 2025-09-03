@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\Ai\Http\Controllers;
 
+use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Authorization\Enums\TokenAbility;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -12,9 +13,8 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class QnaAdvisorAuthenticationRefreshController
 {
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(Request $request, QnaAdvisor $advisor): JsonResponse
     {
-        logger()->debug('entered refresh');
         $refreshTokenValue = $request->cookie('advising_app_qna_advisor_refresh_token');
 
         if (! $refreshTokenValue) {

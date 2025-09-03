@@ -240,7 +240,7 @@ async function authorizedPost(url, data) {
         if (error.response && error.response.status === 401) {
             // Token expired, try to refresh
             try {
-                const refreshResponse = await axios.post(authentication.value.refreshUrl, null, {
+                const refreshResponse = await axios.post(authentication.value.refreshUrl, {}, {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json',
