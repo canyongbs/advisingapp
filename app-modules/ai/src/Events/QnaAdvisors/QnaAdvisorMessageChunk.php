@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Ai\Events\QnaAdvisors;
 
+use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 
@@ -47,6 +49,7 @@ class QnaAdvisorMessageChunk implements ShouldBroadcastNow
     use InteractsWithSockets;
 
     public function __construct(
+        public QnaAdvisor $advisor,
         public string $chatId,
         public string $content,
         public bool $isComplete = false,
@@ -75,8 +78,12 @@ class QnaAdvisorMessageChunk implements ShouldBroadcastNow
      */
     public function broadcastOn(): array
     {
+        $channelName = "qna-advisor-chat-{$this->chatId}";
+
         return [
-            new Channel("qna-advisor-chat-{$this->chatId}"),
+            $this->advisor->is_requires_authentication_enabled
+                ? new PrivateChannel($channelName)
+                : new Channel($channelName),
         ];
     }
 }
