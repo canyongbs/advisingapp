@@ -125,7 +125,6 @@ function setupWebsockets(config, authRequired = false) {
                                 'Content-Type': 'application/json',
                                 ...(authRequired && authStore.getAccessToken ? { 'Authorization': `Bearer ${authStore.getAccessToken}` } : {})
                             },
-                            // withCredentials: true
                         })
                         .then(response => {
                             callback(false, response.data);
