@@ -39,7 +39,6 @@ namespace AdvisingApp\StockMedia\Filament\Pages;
 use AdvisingApp\StockMedia\Enums\StockMediaProvider;
 use AdvisingApp\StockMedia\Settings\StockMediaSettings;
 use App\Features\StockMediaFeature;
-use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -60,11 +59,7 @@ class ManageStockMediaSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
-        $user = auth()->user();
-
-        assert($user instanceof User);
-
-        return StockMediaFeature::active() && $user->isSuperAdmin();
+        return StockMediaFeature::active() && auth()->user()->isSuperAdmin();
     }
 
     public function form(Form $form): Form
