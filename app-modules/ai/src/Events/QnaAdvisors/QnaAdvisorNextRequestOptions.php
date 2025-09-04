@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Events\QnaAdvisors;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 
@@ -76,7 +75,7 @@ class QnaAdvisorNextRequestOptions implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel("qna-advisor-chat-{$this->chatId}"),
+            new Channel("qna-advisor-chat-{$this->chatId}"),
         ];
     }
 }

@@ -109,10 +109,34 @@ onUnmounted(() => {
 function setupWebsockets(config) {
     try {
         window.Pusher = Pusher;
-        window.Echo = new Echo(config);
+        window.Echo = new Echo({
+            ...config,
+            authorizer: (channel, options) => {
+                return {
+                    authorize: (socketId, callback) => {
+                        axios.post(config.authEndpoint, {
+                            socket_id: socketId,
+                            channel_name: channel.name
+                        }, {
+                            headers: {
+                                'Content-Type': 'application/json',
+                                ...(authStore.getAccessToken ? { 'Authorization': `Bearer ${authStore.getAccessToken}` } : {})
+                            },
+                            withCredentials: true
+                        })
+                        .then(response => {
+                            callback(false, response.data);
+                        })
+                        .catch(error => {
+                            callback(true, error);
+                        });
+                    }
+                };
+            },
+        });
 
         if (chatId.value) {
-            privateChannel = window.Echo.private(`qna-advisor-chat-${chatId.value}`)
+            privateChannel = window.Echo.channel(`qna-advisor-chat-${chatId.value}`)
                 .listen('.qna-advisor-message.chunk', (data) => {
                     if (data.error) {
                         console.error('Advisor message error:', data.error);
