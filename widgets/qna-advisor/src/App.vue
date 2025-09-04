@@ -83,9 +83,11 @@ onMounted(async () => {
 
             if (requiresAuthentication.value === true && authStore.accessToken === null) {
                 authentication.value.promptToAuthenticate = true;
+            } else {
+                // If authentication is not required or we already have a token, ensure prompt is false and setup websockets
+                authentication.value.promptToAuthenticate = false;
+                setupWebsockets(json.websockets_config);
             }
-
-            setupWebsockets(json.websockets_config);
         })
         .catch((error) => {
             if (error.response && error.response.data.error) {
