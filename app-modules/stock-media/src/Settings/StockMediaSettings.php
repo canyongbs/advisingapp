@@ -56,8 +56,8 @@ class StockMediaSettings extends Settings
      */
     public static function encrypted(): array
     {
-      return [
-        'pexels_api_key',
-      ];
+        return [
+            'pexels_api_key',
+        ];
     }
 }
