@@ -89,6 +89,7 @@ class SendQnaAdvisorMessage implements ShouldQueue
             foreach ($stream() as $chunk) {
                 if ($chunk instanceof Meta) {
                     event(new QnaAdvisorNextRequestOptions(
+                        $this->advisor,
                         $this->chatId,
                         $chunk->nextRequestOptions,
                     ));
