@@ -52,10 +52,9 @@ class BroadcastServiceProvider extends ServiceProvider
 
         Broadcast::routes();
 
-        // TODO: Possibly add the student and prospect guards
         Broadcast::routes([
             'prefix' => 'api',
-            'middleware' => ['api'],
+            'middleware' => ['api', 'auth:sanctum'],
         ]);
 
         require base_path('routes/channels.php');
