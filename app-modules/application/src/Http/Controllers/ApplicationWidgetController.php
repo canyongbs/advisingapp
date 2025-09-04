@@ -43,6 +43,7 @@ use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\UploadFormFieldBlock;
 use AdvisingApp\Form\Http\Requests\RegisterProspectRequestForApplication;
 use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
@@ -263,7 +264,7 @@ class ApplicationWidgetController extends Controller
                     continue;
                 }
 
-                if ($applicationFields[$fieldId] !== EducatableEmailFormFieldBlock::type()) {
+                if ($applicationFields[$fieldId] !== EducatableEmailFormFieldBlock::type() || $applicationFields[$fieldId] !== UploadFormFieldBlock::type()) {
                     continue;
                 }
 
