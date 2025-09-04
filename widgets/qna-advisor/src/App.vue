@@ -117,22 +117,29 @@ function setupWebsockets(config, authRequired = false) {
             authorizer: (channel, options) => {
                 return {
                     authorize: (socketId, callback) => {
-                        axios.post(config.authEndpoint, {
-                            socket_id: socketId,
-                            channel_name: channel.name
-                        }, {
-                            headers: {
-                                'Content-Type': 'application/json',
-                                ...(authRequired && authStore.getAccessToken ? { 'Authorization': `Bearer ${authStore.getAccessToken}` } : {})
-                            },
-                        })
-                        .then(response => {
-                            callback(false, response.data);
-                        })
-                        .catch(error => {
-                            callback(true, error);
-                        });
-                    }
+                        axios
+                            .post(
+                                config.authEndpoint,
+                                {
+                                    socket_id: socketId,
+                                    channel_name: channel.name,
+                                },
+                                {
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        ...(authRequired && authStore.getAccessToken
+                                            ? { Authorization: `Bearer ${authStore.getAccessToken}` }
+                                            : {}),
+                                    },
+                                },
+                            )
+                            .then((response) => {
+                                callback(false, response.data);
+                            })
+                            .catch((error) => {
+                                callback(true, error);
+                            });
+                    },
                 };
             },
         });
@@ -140,7 +147,7 @@ function setupWebsockets(config, authRequired = false) {
         if (chatId.value) {
             let channelName = `qna-advisor-chat-${chatId.value}`;
 
-            websocketChannel = authRequired ? window.Echo.private(channelName) : window.Echo.channel(channelName)
+            websocketChannel = authRequired ? window.Echo.private(channelName) : window.Echo.channel(channelName);
 
             websocketChannel
                 .listen('.qna-advisor-message.chunk', (data) => {
