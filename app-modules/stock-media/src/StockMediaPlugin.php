@@ -48,9 +48,9 @@ class StockMediaPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel->discoverResources(
-            in: __DIR__ . '/Filament/Resources',
-            for: 'AdvisingApp\\StockMedia\\Filament\\Resources'
+        $panel->discoverPages(
+            in: __DIR__ . '/Filament/Pages',
+            for: 'AdvisingApp\\StockMedia\\Filament\\Pages'
         );
     }
 

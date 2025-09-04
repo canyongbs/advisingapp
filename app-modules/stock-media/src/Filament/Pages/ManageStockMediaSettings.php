@@ -67,11 +67,14 @@ class ManageStockMediaSettings extends SettingsPage
         return $form
             ->schema([
                 Toggle::make('active')
+                    ->inline(false)
                     ->live(),
                 Select::make('provider')
                     ->options(StockMediaProvider::class)
-                    ->default('pexels')
-                    ->visible(fn (Get $get) => $get('active')),
+                    ->enum(StockMediaProvider::class)
+                    ->visible(fn (Get $get) => $get('active'))
+                    ->afterStateHydrated(fn(Select $component) => $component->state(StockMediaProvider::Pexels))
+                    ->disabled(true),
                 //get the correct api key
             ]);
     }
