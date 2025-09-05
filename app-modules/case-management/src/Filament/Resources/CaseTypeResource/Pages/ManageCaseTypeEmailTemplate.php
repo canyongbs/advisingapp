@@ -43,7 +43,6 @@ use AdvisingApp\CaseManagement\Filament\Blocks\SurveyResponseEmailTemplateTakeSu
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
-use App\Features\AssignedToMergeTagRenameFeatureFlag;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -145,7 +144,7 @@ class ManageCaseTypeEmailTemplate extends EditRecord
                     'created date',
                     'updated date',
                     'status',
-                    AssignedToMergeTagRenameFeatureFlag::active() ? 'assigned staff name' : 'assigned to',
+                    'assigned staff name',
                     'type',
                 ])
                 ->showMergeTagsInBlocksPanel(false)
@@ -162,7 +161,7 @@ class ManageCaseTypeEmailTemplate extends EditRecord
                     'created date',
                     'updated date',
                     'status',
-                    AssignedToMergeTagRenameFeatureFlag::active() ? 'assigned staff name' : 'assigned to',
+                    'assigned staff name',
                     'description',
                     'type',
                 ])
