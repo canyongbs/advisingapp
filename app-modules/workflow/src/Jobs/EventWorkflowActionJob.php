@@ -40,6 +40,7 @@ use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Notifications\RegistrationLinkToEventAttendeeNotification;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowEventDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use App\Models\User;
@@ -50,6 +51,8 @@ use Throwable;
 
 class EventWorkflowActionJob extends ExecuteWorkflowActionJob
 {
+    use SchedulesNextWorkflowStep;
+
     public function handle(): void
     {
         try {
@@ -85,6 +88,8 @@ class EventWorkflowActionJob extends ExecuteWorkflowActionJob
 
                 $workflowRunStepRelated->save();
 
+                $this->markStepCompletedAndScheduleNext($this->workflowRunStep);
+
                 DB::commit();
 
                 return;
@@ -107,6 +112,8 @@ class EventWorkflowActionJob extends ExecuteWorkflowActionJob
             $workflowRunStepRelated->related()->associate($event);
 
             $workflowRunStepRelated->save();
+
+            $this->markStepCompletedAndScheduleNext($this->workflowRunStep);
 
             DB::commit();
         } catch (Throwable $throw) {

@@ -39,6 +39,7 @@ namespace AdvisingApp\Workflow\Jobs;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use App\Models\User;
@@ -49,6 +50,8 @@ use Throwable;
 
 class CaseWorkflowActionJob extends ExecuteWorkflowActionJob
 {
+    use SchedulesNextWorkflowStep;
+
     public function handle(): void
     {
         try {
@@ -99,8 +102,7 @@ class CaseWorkflowActionJob extends ExecuteWorkflowActionJob
 
             $workflowRunStepRelated->save();
 
-            $this->workflowRunStep->succeeded_at = now();
-            $this->workflowRunStep->saveOrFail();
+            $this->markStepCompletedAndScheduleNext($this->workflowRunStep);
 
             DB::commit();
         } catch (Throwable $throw) {

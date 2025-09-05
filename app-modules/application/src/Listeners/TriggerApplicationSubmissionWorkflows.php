@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -76,17 +76,23 @@ class TriggerApplicationSubmissionWorkflows implements ShouldQueueAfterCommit
                 $workflowRun->workflowTrigger()->associate($workflowTrigger);
                 $workflowRun->saveOrFail();
 
-                $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step) use ($event, $workflowRun) {
+                $previousRunStep = null;
+
+                $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step, int $index) use ($event, $workflowRun, &$previousRunStep) {
                     assert($step->currentDetails instanceof WorkflowDetails);
 
                     $workflowRunStep = new WorkflowRunStep([
-                        'execute_at' => $this->getStepScheduledAt($step, $event),
+                        'execute_at' => $this->getStepScheduledAt($step, $event, $index),
+                        'offset_minutes' => $step->delay_minutes,
+                        'previous_workflow_run_step_id' => $previousRunStep?->id,
                     ]);
 
                     $workflowRunStep->workflowRun()->associate($workflowRun);
                     $workflowRunStep->details()->associate($step->currentDetails);
 
                     $workflowRunStep->saveOrFail();
+
+                    $previousRunStep = $workflowRunStep;
                 });
             });
 
@@ -98,20 +104,15 @@ class TriggerApplicationSubmissionWorkflows implements ShouldQueueAfterCommit
         }
     }
 
-    private function getStepScheduledAt(WorkflowStep $workflowStep, ApplicationSubmissionCreated $event): Carbon
+    private function getStepScheduledAt(WorkflowStep $workflowStep, ApplicationSubmissionCreated $event, int $index): ?Carbon
     {
-        $delayFrom = $event->submission->created_at->toMutable();
+        if ($index === 0) {
+            $delayFrom = $event->submission->created_at->toMutable();
+            $delayFrom->addMinutes($workflowStep->delay_minutes);
 
-        $delayFrom->addMinutes($workflowStep->delay_minutes);
-
-        $prevStep = $workflowStep->previousWorkflowStep;
-
-        while (! is_null($prevStep)) {
-            $delayFrom->addMinutes($prevStep->delay_minutes);
-
-            $prevStep = $prevStep->previousWorkflowStep;
+            return $delayFrom;
         }
 
-        return $delayFrom;
+        return null;
     }
 }

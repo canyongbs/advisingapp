@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,60 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Concerns;
 
-use AdvisingApp\Workflow\Database\Factories\WorkflowRunStepFactory;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\Workflow\Models\WorkflowRunStep;
+use AdvisingApp\Workflow\Services\SequentialWorkflowStepScheduler;
 
-/**
- * @mixin IdeHelperWorkflowRunStep
- */
-class WorkflowRunStep extends BaseModel
+trait SchedulesNextWorkflowStep
 {
-    use SoftDeletes;
-    use HasUuids;
-
-    /** @use HasFactory<WorkflowRunStepFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'execute_at',
-        'offset_minutes',
-        'previous_workflow_run_step_id',
-        'dispatched_at',
-        'succeeded_at',
-        'last_failed_at',
-        'workflow_run_id',
-        'details_id',
-        'details_type',
-    ];
-
-    protected $casts = [
-        'execute_at' => 'datetime',
-        'dispatched_at' => 'datetime',
-        'succeeded_at' => 'datetime',
-        'last_failed_at' => 'datetime',
-    ];
-
-    /**
-     * @return BelongsTo<WorkflowRun, $this>
-     */
-    public function workflowRun(): BelongsTo
+    protected function markStepCompletedAndScheduleNext(WorkflowRunStep $workflowRunStep): void
     {
-        return $this->belongsTo(WorkflowRun::class);
-    }
+        $workflowRunStep->succeeded_at = now();
+        $workflowRunStep->saveOrFail();
 
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function details(): MorphTo
-    {
-        return $this->morphTo();
+        app(SequentialWorkflowStepScheduler::class)->scheduleNextSteps($workflowRunStep);
     }
 }

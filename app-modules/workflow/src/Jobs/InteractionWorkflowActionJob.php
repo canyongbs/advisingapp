@@ -38,6 +38,7 @@ namespace AdvisingApp\Workflow\Jobs;
 
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowInteractionDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use App\Models\User;
@@ -46,6 +47,8 @@ use Throwable;
 
 class InteractionWorkflowActionJob extends ExecuteWorkflowActionJob
 {
+    use SchedulesNextWorkflowStep;
+
     public function handle(): void
     {
         try {
@@ -82,6 +85,8 @@ class InteractionWorkflowActionJob extends ExecuteWorkflowActionJob
             $workflowRunStepRelated->related()->associate($interaction);
 
             $workflowRunStepRelated->save();
+
+            $this->markStepCompletedAndScheduleNext($this->workflowRunStep);
 
             DB::commit();
         } catch (Throwable $throw) {

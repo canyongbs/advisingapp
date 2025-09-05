@@ -38,6 +38,7 @@ namespace AdvisingApp\Workflow\Jobs;
 
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
 use App\Models\User;
@@ -46,6 +47,8 @@ use Throwable;
 
 class TaskWorkflowActionJob extends ExecuteWorkflowActionJob
 {
+    use SchedulesNextWorkflowStep;
+
     public function handle(): void
     {
         try {
@@ -83,6 +86,8 @@ class TaskWorkflowActionJob extends ExecuteWorkflowActionJob
             $workflowRunStepRelated->related()->associate($task);
 
             $workflowRunStepRelated->save();
+
+            $this->markStepCompletedAndScheduleNext($this->workflowRunStep);
 
             DB::commit();
         } catch (Throwable $throw) {
