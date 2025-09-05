@@ -42,6 +42,7 @@ use AdvisingApp\StudentDataModel\Models\StudentAddress;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use App\Features\AthleticFieldsFeature;
+use App\Features\StudentSisCategoryFeature;
 use App\Infolists\Components\Subsection;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Section;
@@ -123,6 +124,10 @@ class StudentProfileInfolist
                             TextEntry::make('holds')
                                 ->label('SIS Holds')
                                 ->placeholder('-'),
+                            TextEntry::make('sis_category')
+                                ->label('SIS Category')
+                                ->placeholder('-')
+                                ->visible(StudentSisCategoryFeature::active() && Student::query()->whereNotNull('sis_category')->exists()),
                             TextEntry::make('standing')
                                 ->label('Academic Standing')
                                 ->placeholder('-'),
