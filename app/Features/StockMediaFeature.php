@@ -34,15 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace App\Features;
 
-use Filament\Clusters\Cluster;
+use App\Support\AbstractFeatureFlag;
 
-class GlobalArtificialIntelligence extends Cluster
+class StockMediaFeature extends AbstractFeatureFlag
 {
-    protected static ?string $navigationGroup = 'Global Administration';
-
-    protected static ?int $navigationSort = 100;
-
-    protected static ?string $title = 'Artificial Intelligence';
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
 }

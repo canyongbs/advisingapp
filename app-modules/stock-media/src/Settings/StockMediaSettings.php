@@ -34,15 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\StockMedia\Settings;
 
-use Filament\Clusters\Cluster;
+use Spatie\LaravelSettings\Settings;
 
-class GlobalArtificialIntelligence extends Cluster
+class StockMediaSettings extends Settings
 {
-    protected static ?string $navigationGroup = 'Global Administration';
+    public bool $active = false;
 
-    protected static ?int $navigationSort = 100;
+    public ?string $provider = null;
 
-    protected static ?string $title = 'Artificial Intelligence';
+    public ?string $pexels_api_key = null;
+
+    public static function group(): string
+    {
+        return 'stock-media';
+    }
+
+    /**
+     * @return array<string>
+     */
+    public static function encrypted(): array
+    {
+        return [
+            'pexels_api_key',
+        ];
+    }
 }

@@ -34,15 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\StockMedia;
 
-use Filament\Clusters\Cluster;
+use Filament\Contracts\Plugin;
+use Filament\Panel;
 
-class GlobalArtificialIntelligence extends Cluster
+class StockMediaPlugin implements Plugin
 {
-    protected static ?string $navigationGroup = 'Global Administration';
+    public function getId(): string
+    {
+        return 'stock-media';
+    }
 
-    protected static ?int $navigationSort = 100;
+    public function register(Panel $panel): void
+    {
+        $panel->discoverPages(
+            in: __DIR__ . '/Filament/Pages',
+            for: 'AdvisingApp\\StockMedia\\Filament\\Pages'
+        );
+    }
 
-    protected static ?string $title = 'Artificial Intelligence';
+    public function boot(Panel $panel): void {}
 }

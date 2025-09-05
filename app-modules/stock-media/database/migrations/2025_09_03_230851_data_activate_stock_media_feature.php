@@ -34,15 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+use App\Features\StockMediaFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Clusters\Cluster;
+return new class () extends Migration {
+    public function up(): void
+    {
+        StockMediaFeature::activate();
+    }
 
-class GlobalArtificialIntelligence extends Cluster
-{
-    protected static ?string $navigationGroup = 'Global Administration';
-
-    protected static ?int $navigationSort = 100;
-
-    protected static ?string $title = 'Artificial Intelligence';
-}
+    public function down(): void
+    {
+        StockMediaFeature::deactivate();
+    }
+};
