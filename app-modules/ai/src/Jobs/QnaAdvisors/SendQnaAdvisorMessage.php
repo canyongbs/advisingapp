@@ -89,6 +89,7 @@ class SendQnaAdvisorMessage implements ShouldQueue
             foreach ($stream() as $chunk) {
                 if ($chunk instanceof Meta) {
                     event(new QnaAdvisorNextRequestOptions(
+                        $this->advisor,
                         $this->chatId,
                         $chunk->nextRequestOptions,
                     ));
@@ -102,6 +103,7 @@ class SendQnaAdvisorMessage implements ShouldQueue
 
                     if ($chunkCount >= 30) {
                         event(new QnaAdvisorMessageChunk(
+                            $this->advisor,
                             $this->chatId,
                             content: implode('', $chunkBuffer),
                         ));
@@ -114,12 +116,14 @@ class SendQnaAdvisorMessage implements ShouldQueue
 
             if (! empty($chunkBuffer)) {
                 event(new QnaAdvisorMessageChunk(
+                    $this->advisor,
                     $this->chatId,
                     content: implode('', $chunkBuffer),
                 ));
             }
 
             event(new QnaAdvisorMessageChunk(
+                $this->advisor,
                 $this->chatId,
                 content: '',
                 isComplete: true,
@@ -128,6 +132,7 @@ class SendQnaAdvisorMessage implements ShouldQueue
             report($exception);
 
             event(new QnaAdvisorMessageChunk(
+                $this->advisor,
                 $this->chatId,
                 content: '',
                 isComplete: false,

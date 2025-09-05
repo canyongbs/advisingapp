@@ -34,56 +34,54 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Events\QnaAdvisors;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
-use Illuminate\Foundation\Events\Dispatchable;
-
-class QnaAdvisorMessageChunk implements ShouldBroadcastNow
-{
-    use Dispatchable;
-    use InteractsWithSockets;
-
-    public function __construct(
-        public QnaAdvisor $advisor,
-        public string $chatId,
-        public string $content,
-        public bool $isComplete = false,
-        public ?string $error = null,
-    ) {}
-
-    public function broadcastAs(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'qna-advisor-message.chunk';
+        Schema::table('enrollments', function (Blueprint $table) {
+            $table->index('sisid');
+        });
+
+        Schema::table('programs', function (Blueprint $table) {
+            $table->index('sisid');
+        });
+
+        Schema::table('student_email_addresses', function (Blueprint $table) {
+            $table->index('sisid');
+        });
+
+        Schema::table('student_phone_numbers', function (Blueprint $table) {
+            $table->index('sisid');
+        });
+
+        Schema::table('student_addresses', function (Blueprint $table) {
+            $table->index('sisid');
+        });
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function broadcastWith(): array
+    public function down(): void
     {
-        return [
-            'content' => $this->content,
-            'is_complete' => $this->isComplete,
-            'error' => $this->error,
-        ];
-    }
+        Schema::table('enrollments', function (Blueprint $table) {
+            $table->dropIndex(['sisid']);
+        });
 
-    /**
-     * @return array<int, Channel>
-     */
-    public function broadcastOn(): array
-    {
-        $channelName = "qna-advisor-chat-{$this->chatId}";
+        Schema::table('programs', function (Blueprint $table) {
+            $table->dropIndex(['sisid']);
+        });
 
-        return [
-            $this->advisor->is_requires_authentication_enabled
-                ? new PrivateChannel($channelName)
-                : new Channel($channelName),
-        ];
+        Schema::table('student_email_addresses', function (Blueprint $table) {
+            $table->dropIndex(['sisid']);
+        });
+
+        Schema::table('student_phone_numbers', function (Blueprint $table) {
+            $table->dropIndex(['sisid']);
+        });
+
+        Schema::table('student_addresses', function (Blueprint $table) {
+            $table->dropIndex(['sisid']);
+        });
     }
-}
+};

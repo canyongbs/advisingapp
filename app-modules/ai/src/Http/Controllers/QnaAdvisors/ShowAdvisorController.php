@@ -59,7 +59,7 @@ class ShowAdvisorController
             ),
             'websockets_config' => [
                 ...config('filament.broadcasting.echo'),
-                'authEndpoint' => url('broadcasting/auth'),
+                'authEndpoint' => url('api/broadcasting/auth'),
             ],
         ]);
     }
