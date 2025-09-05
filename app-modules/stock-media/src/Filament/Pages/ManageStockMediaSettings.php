@@ -40,6 +40,7 @@ use AdvisingApp\StockMedia\Enums\StockMediaProvider;
 use AdvisingApp\StockMedia\Settings\StockMediaSettings;
 use App\Features\StockMediaFeature;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -73,9 +74,13 @@ class ManageStockMediaSettings extends SettingsPage
                     ->options(StockMediaProvider::class)
                     ->enum(StockMediaProvider::class)
                     ->visible(fn (Get $get) => $get('active'))
-                    ->afterStateHydrated(fn (Select $component) => $component->state(StockMediaProvider::Pexels))
+                    ->afterStateHydrated(fn (Select $component) => $component->state(StockMediaProvider::Pexels->value))
                     ->disabled(true),
-                //get the correct api key
+                TextInput::make('pexels_api_key')
+                  ->label('API Key')
+                  ->visible(fn (Get $get) => $get('active') && $get('provider') === StockMediaProvider::Pexels->value)
+                  ->password()
+                  ->autocomplete(false),
             ]);
     }
 }
