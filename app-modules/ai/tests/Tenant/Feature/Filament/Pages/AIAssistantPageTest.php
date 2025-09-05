@@ -55,6 +55,7 @@ use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 
 use function Pest\Laravel\{actingAs, assertDatabaseHas, assertDatabaseMissing, assertNotSoftDeleted, assertSoftDeleted};
@@ -393,7 +394,7 @@ it('can not rename a folder belonging to a different user', function () use ($se
 
     Livewire::test(InstitutionalAdvisor::class)
         ->callAction('renameFolder', [
-            'name' => $newFolderName = AiThreadFolder::factory()->make()->name,
+            'name' => $newFolderName = Str::random(),
         ], arguments: [
             'folder' => $folder->getKey(),
         ]);
@@ -822,7 +823,7 @@ it('can not rename a thread belonging to a different user', function () use ($se
 
     Livewire::test(InstitutionalAdvisor::class)
         ->callAction('editThread', [
-            'name' => $newThreadName = AiThread::factory()->make()->name,
+            'name' => $newThreadName = Str::random(),
         ], arguments: [
             'thread' => $thread->getKey(),
         ])

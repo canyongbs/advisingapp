@@ -166,7 +166,9 @@ it('returns correct total prospect stats of prospects, alerts, cases and tasks b
             Prospect::factory()->create(['last_name' => 'John']),
             'concern'
         )
-        ->create();
+        ->create([
+            'is_confidential' => false,
+        ]);
 
     Task::factory()
         ->count($count)
@@ -174,7 +176,9 @@ it('returns correct total prospect stats of prospects, alerts, cases and tasks b
             Prospect::factory()->create(['last_name' => 'Doe']),
             'concern'
         )
-        ->create();
+        ->create([
+            'is_confidential' => false,
+        ]);
 
     $widget = new ProspectReportStats();
     $widget->cacheTag = 'prospect-report-cache';
