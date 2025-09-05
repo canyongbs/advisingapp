@@ -214,7 +214,7 @@ class CreateInteraction extends CreateRecord
                         ->default(fn () => now()->toDateTimeString())
                         ->required()
                         ->live(onBlur: true)
-                        ->afterStateUpdated(fn(Get $get, Set $set) => $this->getEndDateTime($get, $set)),
+                        ->afterStateUpdated(fn (Get $get, Set $set) => $this->getEndDateTime($get, $set)),
                     TextInput::make('duration')
                         ->label('Duration (Minutes)')
                         ->integer()
@@ -222,7 +222,7 @@ class CreateInteraction extends CreateRecord
                         ->required()
                         ->dehydrated(false)
                         ->live(onBlur: true)
-                        ->afterStateUpdated(fn(Get $get, Set $set) => $this->getEndDateTime($get, $set)),
+                        ->afterStateUpdated(fn (Get $get, Set $set) => $this->getEndDateTime($get, $set)),
                     DateTimePicker::make('end_datetime')
                         ->label('End Date and Time')
                         ->seconds(false)
@@ -256,22 +256,22 @@ class CreateInteraction extends CreateRecord
     {
         $startDateTime = $get('start_datetime');
 
-            if (blank($startDateTime)) {
-                $set('end_datetime', null);
+        if (blank($startDateTime)) {
+            $set('end_datetime', null);
 
-                return;
-            }
+            return;
+        }
 
-            $duration = $get('duration');
+        $duration = $get('duration');
 
-            if (blank($duration)) {
-                $set('end_datetime', null);
+        if (blank($duration)) {
+            $set('end_datetime', null);
 
-                return;
-            }
+            return;
+        }
 
-            $set('end_datetime', Carbon::parse($startDateTime)
-                ->addMinutes((int) $duration)
-                ->toDateTimeString());
+        $set('end_datetime', Carbon::parse($startDateTime)
+            ->addMinutes((int) $duration)
+            ->toDateTimeString());
     }
 }
