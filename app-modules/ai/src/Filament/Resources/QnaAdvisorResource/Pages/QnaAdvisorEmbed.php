@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Form\Rules\IsDomain;
-use App\Features\QnaAdvisorRequireAuthenticationFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Forms\Components\Actions;
@@ -97,8 +96,7 @@ class QnaAdvisorEmbed extends EditRecord
                             ),
                         Toggle::make('is_requires_authentication_enabled')
                             ->label('Requires Authentication')
-                            ->hidden(fn (Get $get) => ! $get('is_embed_enabled'))
-                            ->visible(fn () => QnaAdvisorRequireAuthenticationFeature::active()),
+                            ->hidden(fn (Get $get) => ! $get('is_embed_enabled')),
                         Actions::make([
                             Action::make('embed_snippet')
                                 ->label('Embed Snippet')
