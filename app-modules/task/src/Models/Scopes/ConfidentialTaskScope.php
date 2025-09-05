@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Task\Models\Scopes;
 
-use App\Features\ConfidentialTaskFeature;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
@@ -45,7 +44,7 @@ class ConfidentialTaskScope implements Scope
 {
     public function apply(Builder $builder, Model $model)
     {
-        if (! ConfidentialTaskFeature::active() || auth()->user()?->isSuperAdmin()) {
+        if (auth()->user()?->isSuperAdmin()) {
             return;
         }
 

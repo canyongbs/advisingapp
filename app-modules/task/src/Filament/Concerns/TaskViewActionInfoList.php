@@ -42,7 +42,6 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
-use App\Features\ConfidentialTaskFeature;
 use App\Filament\Resources\UserResource;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Grid;
@@ -62,7 +61,7 @@ trait TaskViewActionInfoList
                             ->label('')
                             ->badge()
                             ->formatStateUsing(fn ($state): string => $state ? 'Confidential' : '')
-                            ->visible(fn ($record): bool => ConfidentialTaskFeature::active() && $record->is_confidential),
+                            ->visible(fn ($record): bool => $record->is_confidential),
                         TextEntry::make('title')
                             ->columnSpanFull(),
                         TextEntry::make('description')

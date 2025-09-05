@@ -43,7 +43,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 use AdvisingApp\Task\Models\Task;
-use App\Features\ConfidentialTaskFeature;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
@@ -75,7 +74,6 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
         return $form
             ->schema([
                 Fieldset::make('Confidentiality')
-                    ->visible(ConfidentialTaskFeature::active())
                     ->schema([
                         Checkbox::make('is_confidential')
                             ->label('Confidential')
@@ -137,8 +135,8 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                     ->searchable()
                     ->wrap()
                     ->limit(50)
-                    ->icon(fn (Task $record) => ConfidentialTaskFeature::active() && $record->is_confidential ? 'heroicon-m-lock-closed' : null)
-                    ->tooltip(fn (Task $record) => ConfidentialTaskFeature::active() && $record->is_confidential ? 'Confidential' : null),
+                    ->icon(fn (Task $record) => $record->is_confidential ? 'heroicon-m-lock-closed' : null)
+                    ->tooltip(fn (Task $record) => $record->is_confidential ? 'Confidential' : null),
                 TextColumn::make('status')
                     ->formatStateUsing(fn (TaskStatus $state): string => str($state->value)->title()->headline())
                     ->badge()
