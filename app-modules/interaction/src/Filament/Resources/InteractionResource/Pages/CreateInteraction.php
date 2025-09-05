@@ -60,10 +60,12 @@ use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Resources\RelationManagers\RelationManager;
 use Illuminate\Database\Eloquent\Builder;
@@ -71,11 +73,16 @@ use Illuminate\Support\Carbon;
 
 class CreateInteraction extends CreateRecord
 {
+    use HasWizard;
+
     protected static string $resource = InteractionResource::class;
 
     private ?InteractionManagementSettings $settings = null;
 
-    public function form(Form $form): Form
+    /**
+     * @return array<mixed>
+     */
+    public function getSteps(): array
     {
         $calculateEndDateTime = function (Get $get, Set $set) {
             $startDateTime = $get('start_datetime');
@@ -99,166 +106,164 @@ class CreateInteraction extends CreateRecord
                 ->toDateTimeString());
         };
 
-        return $form
-            ->schema([
-                MorphToSelect::make('interactable')
-                    ->label('Related To')
-                    ->searchable()
-                    ->required()
-                    ->types([
-                        ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [MorphToSelect\Type::make(Student::class)
-                            ->titleAttribute(Student::displayNameKey())] : []),
-                        ...(auth()->user()->hasLicense(Prospect::getLicenseType()) ? [MorphToSelect\Type::make(Prospect::class)
-                            ->titleAttribute(Prospect::displayNameKey())
-                            ->modifyOptionsQueryUsing(fn (Builder $query) => $query->tap(new ExcludeConvertedProspects())),
-                        ] : []),
-                        MorphToSelect\Type::make(CaseModel::class)
-                            ->label('Case')
-                            ->titleAttribute('case_number'),
-                    ])
-                    ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
-                Fieldset::make('Confidentiality')
-                    ->schema([
-                        Checkbox::make('is_confidential')
-                            ->label('Confidential')
-                            ->live()
-                            ->columnSpanFull(),
-                        Select::make('interaction_confidential_users')
-                            ->relationship('confidentialAccessUsers', 'name')
-                            ->preload()
-                            ->label('Users')
-                            ->multiple()
-                            ->exists('users', 'id')
-                            ->visible(fn (Get $get) => $get('is_confidential')),
-                        Select::make('interaction_confidential_teams')
-                            ->relationship('confidentialAccessTeams', 'name')
-                            ->preload()
-                            ->label('Teams')
-                            ->multiple()
-                            ->exists('teams', 'id')
-                            ->visible(fn (Get $get) => $get('is_confidential')),
-                    ]),
-                Fieldset::make('Details')
-                    ->schema([
-                        Select::make('interaction_initiative_id')
-                            ->relationship('initiative', 'name')
-                            ->preload()
-                            ->label('Initiative')
-                            ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_initiative_required : true)
-                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_initiative_enabled : true)
-                            ->default(
-                                fn () => InteractionInitiative::query()
-                                    ->where('is_default', true)
-                                    ->first()
-                                    ?->getKey()
-                            )
-                            ->exists((new InteractionInitiative())->getTable(), 'id'),
-                        Select::make('interaction_driver_id')
-                            ->relationship('driver', 'name')
-                            ->preload()
-                            ->label('Driver')
-                            ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_driver_required : true)
-                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_driver_enabled : true)
-                            ->default(
-                                fn () => InteractionDriver::query()
-                                    ->where('is_default', true)
-                                    ->first()
-                                    ?->getKey()
-                            )
-                            ->exists((new InteractionDriver())->getTable(), 'id'),
-                        Select::make('division_id')
-                            ->relationship('division', 'name')
-                            ->default(fn () => auth()->user()->team?->division?->getKey())
-                            ->preload()
-                            ->label('Division')
-                            ->required()
-                            ->exists((new Division())->getTable(), 'id'),
-                        Select::make('interaction_outcome_id')
-                            ->relationship('outcome', 'name')
-                            ->default(fn () => InteractionOutcome::query()
+        return [
+            Step::make('Related To')
+                ->schema([
+                    MorphToSelect::make('interactable')
+                        ->label('Related To')
+                        ->searchable()
+                        ->required()
+                        ->types([
+                            ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [MorphToSelect\Type::make(Student::class)
+                                ->titleAttribute(Student::displayNameKey())] : []),
+                            ...(auth()->user()->hasLicense(Prospect::getLicenseType()) ? [MorphToSelect\Type::make(Prospect::class)
+                                ->titleAttribute(Prospect::displayNameKey())
+                                ->modifyOptionsQueryUsing(fn (Builder $query) => $query->tap(new ExcludeConvertedProspects())),
+                            ] : []),
+                            MorphToSelect\Type::make(CaseModel::class)
+                                ->label('Case')
+                                ->titleAttribute('case_number'),
+                        ])
+                        ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
+                    Fieldset::make('Confidentiality')
+                        ->schema([
+                            Checkbox::make('is_confidential')
+                                ->label('Confidential')
+                                ->live()
+                                ->columnSpanFull(),
+                            Select::make('interaction_confidential_users')
+                                ->relationship('confidentialAccessUsers', 'name')
+                                ->preload()
+                                ->label('Users')
+                                ->multiple()
+                                ->exists('users', 'id')
+                                ->visible(fn (Get $get) => $get('is_confidential')),
+                            Select::make('interaction_confidential_teams')
+                                ->relationship('confidentialAccessTeams', 'name')
+                                ->preload()
+                                ->label('Teams')
+                                ->multiple()
+                                ->exists('teams', 'id')
+                                ->visible(fn (Get $get) => $get('is_confidential')),
+                        ]),
+                ]),
+            Step::make('Details')
+                ->schema([
+                    Select::make('interaction_initiative_id')
+                        ->relationship('initiative', 'name')
+                        ->preload()
+                        ->label('Initiative')
+                        ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_initiative_required : true)
+                        ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_initiative_enabled : true)
+                        ->default(
+                            fn () => InteractionInitiative::query()
                                 ->where('is_default', true)
                                 ->first()
-                                ?->getKey())
-                            ->preload()
-                            ->label('Outcome')
-                            ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_outcome_required : true)
-                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_outcome_enabled : true)
-                            ->exists((new InteractionOutcome())->getTable(), 'id'),
-                        Select::make('interaction_relation_id')
-                            ->relationship('relation', 'name')
-                            ->default(fn () => InteractionRelation::query()
+                                ?->getKey()
+                        )
+                        ->exists((new InteractionInitiative())->getTable(), 'id'),
+                    Select::make('interaction_driver_id')
+                        ->relationship('driver', 'name')
+                        ->preload()
+                        ->label('Driver')
+                        ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_driver_required : true)
+                        ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_driver_enabled : true)
+                        ->default(
+                            fn () => InteractionDriver::query()
                                 ->where('is_default', true)
                                 ->first()
-                                ?->getKey())
-                            ->preload()
-                            ->label('Relation')
-                            ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_relation_required : true)
-                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_relation_enabled : true)
-                            ->exists((new InteractionRelation())->getTable(), 'id'),
-                        Select::make('interaction_status_id')
-                            ->relationship('status', 'name')
-                            ->default(fn () => InteractionStatus::query()
+                                ?->getKey()
+                        )
+                        ->exists((new InteractionDriver())->getTable(), 'id'),
+                    Select::make('division_id')
+                        ->relationship('division', 'name')
+                        ->default(fn () => auth()->user()->team?->division?->getKey())
+                        ->preload()
+                        ->label('Division')
+                        ->required()
+                        ->exists((new Division())->getTable(), 'id'),
+                    Select::make('interaction_outcome_id')
+                        ->relationship('outcome', 'name')
+                        ->default(fn () => InteractionOutcome::query()
+                            ->where('is_default', true)
+                            ->first()
+                            ?->getKey())
+                        ->preload()
+                        ->label('Outcome')
+                        ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_outcome_required : true)
+                        ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_outcome_enabled : true)
+                        ->exists((new InteractionOutcome())->getTable(), 'id'),
+                    Select::make('interaction_relation_id')
+                        ->relationship('relation', 'name')
+                        ->default(fn () => InteractionRelation::query()
+                            ->where('is_default', true)
+                            ->first()
+                            ?->getKey())
+                        ->preload()
+                        ->label('Relation')
+                        ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_relation_required : true)
+                        ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_relation_enabled : true)
+                        ->exists((new InteractionRelation())->getTable(), 'id'),
+                    Select::make('interaction_status_id')
+                        ->relationship('status', 'name')
+                        ->default(fn () => InteractionStatus::query()
+                            ->where('is_default', true)
+                            ->first()
+                            ?->getKey())
+                        ->preload()
+                        ->label('Status')
+                        ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_status_required : true)
+                        ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_status_enabled : true)
+                        ->exists((new InteractionStatus())->getTable(), 'id'),
+                    Select::make('interaction_type_id')
+                        ->relationship('type', 'name')
+                        ->preload()
+                        ->default(
+                            fn () => InteractionType::query()
                                 ->where('is_default', true)
                                 ->first()
-                                ?->getKey())
-                            ->preload()
-                            ->label('Status')
-                            ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_status_required : true)
-                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_status_enabled : true)
-                            ->exists((new InteractionStatus())->getTable(), 'id'),
-                        Select::make('interaction_type_id')
-                            ->relationship('type', 'name')
-                            ->preload()
-                            ->default(
-                                fn () => InteractionType::query()
-                                    ->where('is_default', true)
-                                    ->first()
-                                    ?->getKey()
-                            )
-                            ->label('Type')
-                            ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_type_required : true)
-                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_type_enabled : true)
-                            ->exists((new InteractionType())->getTable(), 'id'),
-                    ]),
-                Fieldset::make('Time')
-                    ->schema([
-                        DateTimePicker::make('start_datetime')
-                            ->label('Start Date and Time')
-                            ->seconds(false)
-                            ->default(fn () => now()->toDateTimeString())
-                            ->required()
-                            ->live(onBlur: true)
-                            ->afterStateUpdated($calculateEndDateTime),
-                        TextInput::make('duration')
-                            ->label('Duration (Minutes)')
-                            ->integer()
-                            ->minValue(0)
-                            ->required()
-                            ->dehydrated(false)
-                            ->live(onBlur: true)
-                            ->afterStateUpdated($calculateEndDateTime),
-                        DateTimePicker::make('end_datetime')
-                            ->label('End Date and Time')
-                            ->seconds(false)
-                            ->disabled()
-                            ->dehydrated()
-                            ->required(),
-                    ]),
-                Fieldset::make('Notes')
-                    ->schema([
-                        TextInput::make('subject')
-                            ->required(),
-                        Textarea::make('description')
-                            ->required(),
-                    ])
-                    ->columns(1),
-                Actions::make([
-                    DraftInteractionWithAiAction::make(),
+                                ?->getKey()
+                        )
+                        ->label('Type')
+                        ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_type_required : true)
+                        ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_type_enabled : true)
+                        ->exists((new InteractionType())->getTable(), 'id'),
+                ]),
+            Step::make('Time')
+                ->schema([
+                    DateTimePicker::make('start_datetime')
+                        ->label('Start Date and Time')
+                        ->seconds(false)
+                        ->default(fn () => now()->toDateTimeString())
+                        ->required()
+                        ->live(onBlur: true)
+                        ->afterStateUpdated($calculateEndDateTime),
+                    TextInput::make('duration')
+                        ->label('Duration (Minutes)')
+                        ->integer()
+                        ->minValue(0)
+                        ->required()
+                        ->dehydrated(false)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated($calculateEndDateTime),
+                    DateTimePicker::make('end_datetime')
+                        ->label('End Date and Time')
+                        ->seconds(false)
+                        ->disabled()
+                        ->dehydrated()
+                        ->required(),
+                ]),
+            Step::make('Notes')
+                ->schema([
+                    TextInput::make('subject')
+                        ->required(),
+                    Textarea::make('description')
+                        ->required(),
+                    Actions::make([DraftInteractionWithAiAction::make()])
+                        ->visible(auth()->user()->hasLicense(LicenseType::ConversationalAi)),
                 ])
-                    ->visible(
-                        auth()->user()->hasLicense(LicenseType::ConversationalAi)
-                    ),
-            ]);
+                ->columns(1),
+        ];
     }
 
     private function getSettings(): InteractionManagementSettings
