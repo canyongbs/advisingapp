@@ -58,7 +58,7 @@ class WorkflowRunStep extends BaseModel
 
     protected $fillable = [
         'execute_at',
-        'offset_minutes',
+        'delay_minutes',
         'previous_workflow_run_step_id',
         'dispatched_at',
         'succeeded_at',

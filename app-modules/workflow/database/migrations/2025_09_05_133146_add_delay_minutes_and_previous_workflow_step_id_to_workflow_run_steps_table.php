@@ -34,26 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Services;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Workflow\Models\WorkflowRunStep;
-use Illuminate\Support\Carbon;
-
-class SequentialWorkflowStepScheduler
-{
-    public function scheduleNextSteps(WorkflowRunStep $completedStep): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $nextSteps = WorkflowRunStep::query()
-            ->where('workflow_run_id', $completedStep->workflow_run_id)
-            ->where('previous_workflow_run_step_id', $completedStep->id)
-            ->whereNull('dispatched_at')
-            ->get();
+        Schema::table('workflow_run_steps', function (Blueprint $table) {
+            $table->integer('delay_minutes')->default(0);
 
-        foreach ($nextSteps as $nextStep) {
-            $executeAt = Carbon::now()->addMinutes($nextStep->offset_minutes);
+            $table->dateTime('execute_at')->nullable()->change();
 
-            $nextStep->execute_at = $executeAt;
-            $nextStep->save();
-        }
+            $table->foreignUuid('previous_workflow_run_step_id')->nullable()->constrained('workflow_run_steps', 'id');
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('workflow_run_steps', function (Blueprint $table) {
+            $table->dropForeign(['previous_workflow_run_step_id']);
+            $table->dropColumn(['delay_minutes', 'previous_workflow_run_step_id']);
+        });
+    }
+};

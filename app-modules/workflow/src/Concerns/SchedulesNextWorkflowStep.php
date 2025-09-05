@@ -37,7 +37,7 @@
 namespace AdvisingApp\Workflow\Concerns;
 
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
-use AdvisingApp\Workflow\Services\SequentialWorkflowStepScheduler;
+use Illuminate\Support\Carbon;
 
 trait SchedulesNextWorkflowStep
 {
@@ -46,6 +46,17 @@ trait SchedulesNextWorkflowStep
         $workflowRunStep->succeeded_at = now();
         $workflowRunStep->saveOrFail();
 
-        app(SequentialWorkflowStepScheduler::class)->scheduleNextSteps($workflowRunStep);
+        $nextSteps = WorkflowRunStep::query()
+            ->where('workflow_run_id', $workflowRunStep->workflow_run_id)
+            ->where('previous_workflow_run_step_id', $workflowRunStep->id)
+            ->whereNull('dispatched_at')
+            ->get();
+
+        foreach ($nextSteps as $nextStep) {
+            $executeAt = Carbon::now()->addMinutes($nextStep->delay_minutes);
+
+            $nextStep->execute_at = $executeAt;
+            $nextStep->save();
+        }
     }
 }

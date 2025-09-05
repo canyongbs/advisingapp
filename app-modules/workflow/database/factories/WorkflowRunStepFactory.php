@@ -80,7 +80,7 @@ class WorkflowRunStepFactory extends Factory
                 throw new Exception("Could not determine model type for details_id: {$attributes['details_id']}");
             },
             'execute_at' => now()->addMinutes($this->faker->numberBetween(1, 60)),
-            'offset_minutes' => $this->faker->numberBetween(1, 60),
+            'delay_minutes' => $this->faker->numberBetween(1, 60),
             'previous_workflow_run_step_id' => null,
             'dispatched_at' => null,
             'succeeded_at' => null,
