@@ -43,6 +43,7 @@ use AdvisingApp\Workflow\Models\WorkflowRun;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use App\Features\WorkflowSequentialExecutionFeature;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Support\Facades\DB;
@@ -78,28 +79,43 @@ class TriggerApplicationSubmissionWorkflows implements ShouldQueueAfterCommit
 
                 $previousRunStep = null;
 
-                $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step, int $index) use ($event, $workflowRun, &$previousRunStep) {
-                    assert($step->currentDetails instanceof WorkflowDetails);
+                if (WorkflowSequentialExecutionFeature::active()) {
+                    $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step, int $index) use ($event, $workflowRun, &$previousRunStep) {
+                        assert($step->currentDetails instanceof WorkflowDetails);
 
-                    $executeAt = null;
+                        $executeAt = null;
 
-                    if ($index === 0) {
-                        $executeAt = $this->getStepScheduledAt($step, $event);
-                    }
+                        if ($index === 0) {
+                            $executeAt = $this->getStepScheduledAt($step, $event);
+                        }
 
-                    $workflowRunStep = new WorkflowRunStep([
-                        'execute_at' => $executeAt,
-                        'delay_minutes' => $step->delay_minutes,
-                        'previous_workflow_run_step_id' => $previousRunStep?->id,
-                    ]);
+                        $workflowRunStep = new WorkflowRunStep([
+                            'execute_at' => $executeAt,
+                            'delay_minutes' => $step->delay_minutes,
+                            'previous_workflow_run_step_id' => $previousRunStep?->id,
+                        ]);
 
-                    $workflowRunStep->workflowRun()->associate($workflowRun);
-                    $workflowRunStep->details()->associate($step->currentDetails);
+                        $workflowRunStep->workflowRun()->associate($workflowRun);
+                        $workflowRunStep->details()->associate($step->currentDetails);
 
-                    $workflowRunStep->saveOrFail();
+                        $workflowRunStep->saveOrFail();
 
-                    $previousRunStep = $workflowRunStep;
-                });
+                        $previousRunStep = $workflowRunStep;
+                    });
+                } else {
+                    $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step) use ($event, $workflowRun) {
+                        assert($step->currentDetails instanceof WorkflowDetails);
+
+                        $workflowRunStep = new WorkflowRunStep([
+                            'execute_at' => $this->getStepScheduledAt($step, $event),
+                        ]);
+
+                        $workflowRunStep->workflowRun()->associate($workflowRun);
+                        $workflowRunStep->details()->associate($step->currentDetails);
+
+                        $workflowRunStep->saveOrFail();
+                    });
+                }
             });
 
             DB::commit();
@@ -114,6 +130,16 @@ class TriggerApplicationSubmissionWorkflows implements ShouldQueueAfterCommit
     {
         $delayFrom = $event->submission->created_at->toMutable();
         $delayFrom->addMinutes($workflowStep->delay_minutes);
+
+        if (! WorkflowSequentialExecutionFeature::active()) {
+            $prevStep = $workflowStep->previousWorkflowStep;
+
+            while (! is_null($prevStep)) {
+                $delayFrom->addMinutes($prevStep->delay_minutes);
+
+                $prevStep = $prevStep->previousWorkflowStep;
+            }
+        }
 
         return $delayFrom;
     }
