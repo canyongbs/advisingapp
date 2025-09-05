@@ -140,6 +140,7 @@ class ManageCaseTypeEmailTemplate extends EditRecord
                 ->extraInputAttributes(['style' => 'min-height: 2rem; overflow-y:none;'])
                 ->disableToolbarMenus()
                 ->mergeTags([
+                    'contact name',
                     'case number',
                     'created date',
                     'updated date',
@@ -156,6 +157,7 @@ class ManageCaseTypeEmailTemplate extends EditRecord
                 ->placeholder('Enter the email body here...')
                 ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                 ->mergeTags([
+                    'contact name',
                     'case number',
                     'created date',
                     'updated date',
