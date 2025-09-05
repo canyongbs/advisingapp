@@ -38,7 +38,6 @@ namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Task\Models\Task;
-use App\Features\ConfidentialTaskFeature;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
@@ -66,7 +65,6 @@ class TaskBlock extends CampaignActionBlock
             Fieldset::make('Details')
                 ->schema([
                     Fieldset::make($fieldPrefix . 'Confidentiality')
-                        ->visible(ConfidentialTaskFeature::active())
                         ->schema([
                             Checkbox::make('is_confidential')
                                 ->label('Confidential')
