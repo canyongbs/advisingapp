@@ -85,7 +85,7 @@ class ManageCaseTypeEmailTemplate extends EditRecord
                     ->persistTab()
                     ->id('email-template-role-tabs')
                     ->tabs(array_map(
-                        fn(CaseTypeEmailTemplateRole $role) => Tab::make($role->getLabel())
+                        fn (CaseTypeEmailTemplateRole $role) => Tab::make($role->getLabel())
                             ->schema($this->getEmailTemplateFormSchema($role))
                             ->statePath($role->value),
                         $roles
@@ -184,7 +184,7 @@ class ManageCaseTypeEmailTemplate extends EditRecord
             ->where('type', $this->type)
             ->get();
 
-        $templates = $templates->keyBy(fn(CaseTypeEmailTemplate $template) => $template->role->value);
+        $templates = $templates->keyBy(fn (CaseTypeEmailTemplate $template) => $template->role->value);
 
         $state = [];
 
