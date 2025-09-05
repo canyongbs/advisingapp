@@ -34,52 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Jobs;
+namespace AdvisingApp\Workflow\Concerns;
 
-use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
-use App\Features\WorkflowSequentialExecutionFeature;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\DB;
-use Throwable;
+use Illuminate\Support\Carbon;
 
-class ExecuteWorkflowActionStepsJob implements ShouldQueue
+trait SchedulesNextWorkflowStep
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-
-    public function handle(): void
+    protected function markStepCompletedAndScheduleNext(WorkflowRunStep $workflowRunStep): void
     {
-        if (! WorkflowSequentialExecutionFeature::active()) {
-            $steps = WorkflowRunStep::query()->where('execute_at', '<=', now())->whereNull('dispatched_at');
+        $workflowRunStep->succeeded_at = now();
+        $workflowRunStep->saveOrFail();
+
+        $nextSteps = WorkflowRunStep::query()
+            ->where('workflow_run_id', $workflowRunStep->workflow_run_id)
+            ->where('previous_workflow_run_step_id', $workflowRunStep->id)
+            ->whereNull('dispatched_at')
+            ->get();
+
+        foreach ($nextSteps as $nextStep) {
+            $executeAt = Carbon::now()->addMinutes($nextStep->delay_minutes);
+
+            $nextStep->execute_at = $executeAt;
+            $nextStep->save();
         }
-
-        $steps = WorkflowRunStep::query()
-            ->where('execute_at', '<=', now())
-            ->whereNotNull('execute_at')
-            ->whereNull('dispatched_at');
-
-        $steps->each(function (WorkflowRunStep $step) {
-            try {
-                DB::beginTransaction();
-
-                $step->dispatched_at = now();
-                $step->save();
-
-                assert($step->details instanceof WorkflowDetails);
-
-                dispatch($step->details->getActionExecutableJob($step));
-
-                DB::commit();
-            } catch (Throwable $error) {
-                DB::rollBack();
-
-                report($error);
-            }
-        });
     }
 }

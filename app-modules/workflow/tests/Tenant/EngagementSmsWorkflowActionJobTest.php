@@ -85,6 +85,8 @@ it('executes sms workflow step successfully', function () {
     $workflowRunStep = WorkflowRunStep::factory()->withDetails($smsDetails)->create([
         'workflow_run_id' => $workflowRun->id,
         'execute_at' => now(),
+        'delay_minutes' => 5,
+        'previous_workflow_run_step_id' => null,
     ]);
 
     $job = new EngagementSmsWorkflowActionJob($workflowRunStep);
@@ -124,6 +126,8 @@ it('throws exception for non-sms channel', function () {
     $workflowRunStep = WorkflowRunStep::factory()->withDetails($smsDetails)->create([
         'workflow_run_id' => $workflowRun->id,
         'execute_at' => now(),
+        'delay_minutes' => 0,
+        'previous_workflow_run_step_id' => null,
     ]);
 
     $job = new EngagementSmsWorkflowActionJob($workflowRunStep);

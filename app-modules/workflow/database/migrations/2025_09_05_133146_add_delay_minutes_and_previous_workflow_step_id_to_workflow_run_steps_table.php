@@ -34,52 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Jobs;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Workflow\Models\WorkflowDetails;
-use AdvisingApp\Workflow\Models\WorkflowRunStep;
-use App\Features\WorkflowSequentialExecutionFeature;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\DB;
-use Throwable;
-
-class ExecuteWorkflowActionStepsJob implements ShouldQueue
-{
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-
-    public function handle(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (! WorkflowSequentialExecutionFeature::active()) {
-            $steps = WorkflowRunStep::query()->where('execute_at', '<=', now())->whereNull('dispatched_at');
-        }
+        Schema::table('workflow_run_steps', function (Blueprint $table) {
+            $table->integer('delay_minutes')->default(0);
 
-        $steps = WorkflowRunStep::query()
-            ->where('execute_at', '<=', now())
-            ->whereNotNull('execute_at')
-            ->whereNull('dispatched_at');
+            $table->dateTime('execute_at')->nullable()->change();
 
-        $steps->each(function (WorkflowRunStep $step) {
-            try {
-                DB::beginTransaction();
-
-                $step->dispatched_at = now();
-                $step->save();
-
-                assert($step->details instanceof WorkflowDetails);
-
-                dispatch($step->details->getActionExecutableJob($step));
-
-                DB::commit();
-            } catch (Throwable $error) {
-                DB::rollBack();
-
-                report($error);
-            }
+            $table->foreignUuid('previous_workflow_run_step_id')->nullable()->constrained('workflow_run_steps', 'id');
         });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('workflow_run_steps', function (Blueprint $table) {
+            $table->dropForeign(['previous_workflow_run_step_id']);
+            $table->dropColumn(['delay_minutes', 'previous_workflow_run_step_id']);
+        });
+    }
+};
