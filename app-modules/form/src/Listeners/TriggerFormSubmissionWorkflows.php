@@ -81,9 +81,15 @@ class TriggerFormSubmissionWorkflows implements ShouldQueueAfterCommit
                 $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step, int $index) use ($event, $workflowRun, &$previousRunStep) {
                     assert($step->currentDetails instanceof WorkflowDetails);
 
+                    $executeAt = null;
+
+                    if ($index === 0) {
+                        $executeAt = $this->getStepScheduledAt($step, $event);
+                    }
+
                     $workflowRunStep = new WorkflowRunStep([
-                        'execute_at' => $this->getStepScheduledAt($step, $event, $index),
-                        'offset_minutes' => $step->delay_minutes,
+                        'execute_at' => $executeAt,
+                        'delay_minutes' => $step->delay_minutes,
                         'previous_workflow_run_step_id' => $previousRunStep?->id,
                     ]);
 
@@ -104,15 +110,11 @@ class TriggerFormSubmissionWorkflows implements ShouldQueueAfterCommit
         }
     }
 
-    private function getStepScheduledAt(WorkflowStep $step, FormSubmissionCreated $event, int $index): ?Carbon
+    private function getStepScheduledAt(WorkflowStep $step, FormSubmissionCreated $event): Carbon
     {
-        if ($index === 0) {
-            $delayFrom = $event->submission->submitted_at->toMutable();
-            $delayFrom->addMinutes($step->delay_minutes);
+        $delayFrom = $event->submission->submitted_at->toMutable();
+        $delayFrom->addMinutes($step->delay_minutes);
 
-            return $delayFrom;
-        }
-
-        return null;
+        return $delayFrom;
     }
 }
