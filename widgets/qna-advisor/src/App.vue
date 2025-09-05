@@ -62,7 +62,7 @@ const messages = ref([]);
 const currentResponse = ref('');
 const isLoading = ref(false);
 const nextRequestOptions = ref(null);
-let privateChannel = null;
+let websocketChannel = null;
 
 const scriptUrl = new URL(document.currentScript.getAttribute('src'));
 const protocol = scriptUrl.protocol;
@@ -83,9 +83,11 @@ onMounted(async () => {
 
             if (requiresAuthentication.value === true && authStore.accessToken === null) {
                 authentication.value.promptToAuthenticate = true;
+            } else {
+                // If authentication is not required or we already have a token, ensure prompt is false and setup websockets
+                authentication.value.promptToAuthenticate = false;
+                setupWebsockets(json.websockets_config);
             }
-
-            setupWebsockets(json.websockets_config);
         })
         .catch((error) => {
             if (error.response && error.response.data.error) {
@@ -97,22 +99,57 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
-    if (privateChannel) {
-        privateChannel.stopListening('advisor-message.chunk');
-        privateChannel.stopListening('advisor-message.next-request-options');
+    if (websocketChannel) {
+        websocketChannel.stopListening('advisor-message.chunk');
+        websocketChannel.stopListening('advisor-message.next-request-options');
     }
     if (window.Echo) {
         window.Echo.disconnect();
     }
 });
 
-function setupWebsockets(config) {
+function setupWebsockets(config, authRequired = false) {
     try {
         window.Pusher = Pusher;
-        window.Echo = new Echo(config);
+
+        window.Echo = new Echo({
+            ...config,
+            authorizer: (channel, options) => {
+                return {
+                    authorize: (socketId, callback) => {
+                        axios
+                            .post(
+                                config.authEndpoint,
+                                {
+                                    socket_id: socketId,
+                                    channel_name: channel.name,
+                                },
+                                {
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        ...(authRequired && authStore.getAccessToken
+                                            ? { Authorization: `Bearer ${authStore.getAccessToken}` }
+                                            : {}),
+                                    },
+                                },
+                            )
+                            .then((response) => {
+                                callback(false, response.data);
+                            })
+                            .catch((error) => {
+                                callback(true, error);
+                            });
+                    },
+                };
+            },
+        });
 
         if (chatId.value) {
-            privateChannel = window.Echo.private(`qna-advisor-chat-${chatId.value}`)
+            let channelName = `qna-advisor-chat-${chatId.value}`;
+
+            websocketChannel = authRequired ? window.Echo.private(channelName) : window.Echo.channel(channelName);
+
+            websocketChannel
                 .listen('.qna-advisor-message.chunk', (data) => {
                     if (data.error) {
                         console.error('Advisor message error:', data.error);
@@ -195,6 +232,8 @@ async function authenticate(formData, node) {
                 if (typeof response.data.access_token !== 'undefined') {
                     authStore.$patch({ accessToken: response.data.access_token });
                     authentication.value.promptToAuthenticate = false;
+
+                    setupWebsockets(response.data.websockets_config, true);
                 }
             })
             .catch((error) => {

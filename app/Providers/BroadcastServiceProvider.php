@@ -50,7 +50,14 @@ class BroadcastServiceProvider extends ServiceProvider
             return;
         }
 
+        // This registers the default in-app broadcasting routes
         Broadcast::routes();
+
+        // This registers the broadcasting routes with custom prefix and middleware used for widget webhooks
+        Broadcast::routes([
+            'prefix' => 'api',
+            'middleware' => ['api', 'auth:sanctum'],
+        ]);
 
         require base_path('routes/channels.php');
     }

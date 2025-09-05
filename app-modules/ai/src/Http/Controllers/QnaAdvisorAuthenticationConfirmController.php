@@ -71,6 +71,10 @@ class QnaAdvisorAuthenticationConfirmController
 
         return response()->json([
             'access_token' => $accessToken->plainTextToken,
+            'websockets_config' => [
+                ...config('filament.broadcasting.echo'),
+                'authEndpoint' => url('api/broadcasting/auth'),
+            ],
         ])
             ->withCookie(
                 Cookie::make(
