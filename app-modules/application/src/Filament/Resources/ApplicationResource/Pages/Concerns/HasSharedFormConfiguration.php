@@ -138,7 +138,7 @@ trait HasSharedFormConfiguration
     {
         return TiptapEditor::make('content')
             ->blocks(FormFieldBlockRegistry::get())
-            ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
+            ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks', 'media'])
             ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()
             ->saveRelationshipsUsing(function (TiptapEditor $component, Application | ApplicationStep $record) {
