@@ -43,6 +43,7 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
+use App\Features\WorkflowSequentialExecutionFeature;
 use App\Models\User;
 use Exception;
 use Illuminate\Queue\Middleware\RateLimitedWithRedis;
@@ -104,7 +105,12 @@ class EngagementEmailWorkflowActionJob extends ExecuteWorkflowActionJob
 
             $workflowRunStepRelated->save();
 
-            $this->markStepCompletedAndScheduleNext($this->workflowRunStep);
+            if (WorkflowSequentialExecutionFeature::active()) {
+                $this->markStepCompletedAndScheduleNext($this->workflowRunStep);
+            } else {
+                $this->workflowRunStep->succeeded_at = now();
+                $this->workflowRunStep->saveOrFail();
+            }
 
             DB::commit();
         } catch (Throwable $throw) {

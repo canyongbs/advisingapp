@@ -41,6 +41,7 @@ use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
+use App\Features\WorkflowSequentialExecutionFeature;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -87,7 +88,12 @@ class TaskWorkflowActionJob extends ExecuteWorkflowActionJob
 
             $workflowRunStepRelated->save();
 
-            $this->markStepCompletedAndScheduleNext($this->workflowRunStep);
+            if (WorkflowSequentialExecutionFeature::active()) {
+                $this->markStepCompletedAndScheduleNext($this->workflowRunStep);
+            } else {
+                $this->workflowRunStep->succeeded_at = now();
+                $this->workflowRunStep->saveOrFail();
+            }
 
             DB::commit();
         } catch (Throwable $throw) {
