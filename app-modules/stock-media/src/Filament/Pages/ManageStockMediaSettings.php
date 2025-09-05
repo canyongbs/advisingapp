@@ -77,10 +77,10 @@ class ManageStockMediaSettings extends SettingsPage
                     ->afterStateHydrated(fn (Select $component) => $component->state(StockMediaProvider::Pexels->value))
                     ->disabled(true),
                 TextInput::make('pexels_api_key')
-                  ->label('API Key')
-                  ->visible(fn (Get $get) => $get('active') && $get('provider') === StockMediaProvider::Pexels->value)
-                  ->password()
-                  ->autocomplete(false),
+                    ->label('API Key')
+                    ->visible(fn (Get $get) => $get('active') && $get('provider') === StockMediaProvider::Pexels->value)
+                    ->password()
+                    ->autocomplete(false),
             ]);
     }
 }
