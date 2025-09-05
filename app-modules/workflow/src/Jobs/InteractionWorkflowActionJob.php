@@ -83,6 +83,8 @@ class InteractionWorkflowActionJob extends ExecuteWorkflowActionJob
 
             $workflowRunStepRelated->save();
 
+            $this->markStepAsCompleted();
+
             DB::commit();
         } catch (Throwable $throw) {
             DB::rollBack();

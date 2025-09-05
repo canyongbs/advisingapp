@@ -101,8 +101,7 @@ class EngagementEmailWorkflowActionJob extends ExecuteWorkflowActionJob
 
             $workflowRunStepRelated->save();
 
-            $this->workflowRunStep->succeeded_at = now();
-            $this->workflowRunStep->saveOrFail();
+            $this->markStepAsCompleted();
 
             DB::commit();
         } catch (Throwable $throw) {

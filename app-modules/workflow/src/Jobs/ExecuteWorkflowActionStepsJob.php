@@ -53,7 +53,12 @@ class ExecuteWorkflowActionStepsJob implements ShouldQueue
 
     public function handle(): void
     {
-        $steps = WorkflowRunStep::query()->where('execute_at', '<=', now())->whereNull('dispatched_at');
+        // Get workflow steps that are ready to execute (have execute_at set and not dispatched)
+        $steps = WorkflowRunStep::query()
+            ->where('execute_at', '<=', now())
+            ->whereNotNull('execute_at') // Only steps that have been scheduled
+            ->whereNull('dispatched_at')
+            ->get();
 
         $steps->each(function (WorkflowRunStep $step) {
             try {

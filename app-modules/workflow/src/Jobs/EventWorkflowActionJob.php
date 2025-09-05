@@ -85,6 +85,8 @@ class EventWorkflowActionJob extends ExecuteWorkflowActionJob
 
                 $workflowRunStepRelated->save();
 
+                $this->markStepAsCompleted();
+
                 DB::commit();
 
                 return;
@@ -107,6 +109,8 @@ class EventWorkflowActionJob extends ExecuteWorkflowActionJob
             $workflowRunStepRelated->related()->associate($event);
 
             $workflowRunStepRelated->save();
+
+            $this->markStepAsCompleted();
 
             DB::commit();
         } catch (Throwable $throw) {

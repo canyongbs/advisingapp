@@ -64,6 +64,8 @@ class WorkflowRunStep extends BaseModel
         'workflow_run_id',
         'details_id',
         'details_type',
+        'offset_minutes',
+        'previous_workflow_run_step_id',
     ];
 
     protected $casts = [

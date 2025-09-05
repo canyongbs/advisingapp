@@ -40,6 +40,8 @@ use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 abstract class ExecuteWorkflowActionJob implements ShouldQueue
@@ -61,5 +63,45 @@ abstract class ExecuteWorkflowActionJob implements ShouldQueue
         $this->workflowRunStep->save();
 
         report($exception);
+    }
+
+    /**
+     * Mark this workflow step as successfully completed and trigger next steps
+     */
+    protected function markStepAsCompleted(): void
+    {
+        $this->workflowRunStep->succeeded_at = now();
+        $this->workflowRunStep->save();
+
+        // Schedule next steps in the sequence
+        $this->scheduleNextSteps();
+    }
+
+    /**
+     * Schedule next workflow steps that depend on this completed step
+     */
+    private function scheduleNextSteps(): void
+    {
+        DB::transaction(function () {
+            // Find all workflow run steps that are waiting for this step to complete
+            $nextSteps = WorkflowRunStep::query()
+                ->where('previous_workflow_run_step_id', $this->workflowRunStep->id)
+                ->whereNull('execute_at') // Only unscheduled steps
+                ->whereNull('dispatched_at')
+                ->get();
+
+            foreach ($nextSteps as $nextStep) {
+                // Schedule the next step with its offset from now
+                $nextStep->execute_at = now()->addMinutes($nextStep->offset_minutes ?? 0);
+                $nextStep->save();
+
+                Log::info('Scheduled next workflow step', [
+                    'workflow_run_step_id' => $nextStep->id,
+                    'previous_step_id' => $this->workflowRunStep->id,
+                    'execute_at' => $nextStep->execute_at,
+                    'offset_minutes' => $nextStep->offset_minutes,
+                ]);
+            }
+        });
     }
 }

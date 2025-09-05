@@ -43,9 +43,9 @@ use AdvisingApp\Workflow\Models\WorkflowRun;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
-use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class TriggerFormSubmissionWorkflows implements ShouldQueueAfterCommit
@@ -76,18 +76,8 @@ class TriggerFormSubmissionWorkflows implements ShouldQueueAfterCommit
                 $workflowRun->workflowTrigger()->associate($workflowTrigger);
                 $workflowRun->saveOrFail();
 
-                $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step) use ($event, $workflowRun) {
-                    assert($step->currentDetails instanceof WorkflowDetails);
-
-                    $workflowRunStep = new WorkflowRunStep([
-                        'execute_at' => $this->getStepScheduledAt($step, $event),
-                    ]);
-
-                    $workflowRunStep->workflowRun()->associate($workflowRun);
-                    $workflowRunStep->details()->associate($step->currentDetails);
-
-                    $workflowRunStep->saveOrFail();
-                });
+                // Create workflow steps with sequential execution logic
+                $this->createSequentialWorkflowSteps($workflowTrigger->workflow->workflowSteps, $workflowRun);
             });
 
             DB::commit();
@@ -98,20 +88,44 @@ class TriggerFormSubmissionWorkflows implements ShouldQueueAfterCommit
         }
     }
 
-    private function getStepScheduledAt(WorkflowStep $step, FormSubmissionCreated $event): Carbon
+    /**
+     * Create workflow run steps with sequential execution logic
+     *
+     * @param mixed $workflowSteps
+     */
+    private function createSequentialWorkflowSteps($workflowSteps, WorkflowRun $workflowRun): void
     {
-        $delayFrom = $event->submission->submitted_at->toMutable();
+        $previousWorkflowRunStep = null;
 
-        $delayFrom->addMinutes($step->delay_minutes);
+        foreach ($workflowSteps as $workflowStep) {
+            assert($workflowStep instanceof WorkflowStep);
+            assert($workflowStep->currentDetails instanceof WorkflowDetails);
 
-        $prevStep = $step->previousWorkflowStep;
+            $workflowRunStep = new WorkflowRunStep([
+                'execute_at' => $previousWorkflowRunStep === null
+                    ? now()->addMinutes($workflowStep->delay_minutes)  // First step gets scheduled immediately
+                    : null, // Subsequent steps will be scheduled when previous step completes
+                'offset_minutes' => $workflowStep->delay_minutes,
+            ]);
 
-        while (! is_null($prevStep)) {
-            $delayFrom->addMinutes($prevStep->delay_minutes);
+            $workflowRunStep->workflowRun()->associate($workflowRun);
+            $workflowRunStep->details()->associate($workflowStep->currentDetails);
 
-            $prevStep = $prevStep->previousWorkflowStep;
+            if ($previousWorkflowRunStep !== null) {
+                $workflowRunStep->previous_workflow_run_step_id = $previousWorkflowRunStep->id;
+            }
+
+            $workflowRunStep->saveOrFail();
+
+            Log::info('Created workflow run step', [
+                'workflow_run_step_id' => $workflowRunStep->id,
+                'workflow_run_id' => $workflowRun->id,
+                'execute_at' => $workflowRunStep->execute_at,
+                'offset_minutes' => $workflowRunStep->offset_minutes,
+                'previous_step_id' => $previousWorkflowRunStep?->id,
+            ]);
+
+            $previousWorkflowRunStep = $workflowRunStep;
         }
-
-        return $delayFrom;
     }
 }
