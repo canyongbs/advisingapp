@@ -76,17 +76,23 @@ class TriggerFormSubmissionWorkflows implements ShouldQueueAfterCommit
                 $workflowRun->workflowTrigger()->associate($workflowTrigger);
                 $workflowRun->saveOrFail();
 
-                $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step) use ($event, $workflowRun) {
+                $previousRunStep = null;
+
+                $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step, int $index) use ($event, $workflowRun, &$previousRunStep) {
                     assert($step->currentDetails instanceof WorkflowDetails);
 
                     $workflowRunStep = new WorkflowRunStep([
-                        'execute_at' => $this->getStepScheduledAt($step, $event),
+                        'execute_at' => $this->getStepScheduledAt($step, $event, $index),
+                        'offset_minutes' => $step->delay_minutes,
+                        'previous_workflow_run_step_id' => $previousRunStep?->id,
                     ]);
 
                     $workflowRunStep->workflowRun()->associate($workflowRun);
                     $workflowRunStep->details()->associate($step->currentDetails);
 
                     $workflowRunStep->saveOrFail();
+
+                    $previousRunStep = $workflowRunStep;
                 });
             });
 
@@ -98,20 +104,15 @@ class TriggerFormSubmissionWorkflows implements ShouldQueueAfterCommit
         }
     }
 
-    private function getStepScheduledAt(WorkflowStep $step, FormSubmissionCreated $event): Carbon
+    private function getStepScheduledAt(WorkflowStep $step, FormSubmissionCreated $event, int $index): ?Carbon
     {
-        $delayFrom = $event->submission->submitted_at->toMutable();
+        if ($index === 0) {
+            $delayFrom = $event->submission->submitted_at->toMutable();
+            $delayFrom->addMinutes($step->delay_minutes);
 
-        $delayFrom->addMinutes($step->delay_minutes);
-
-        $prevStep = $step->previousWorkflowStep;
-
-        while (! is_null($prevStep)) {
-            $delayFrom->addMinutes($prevStep->delay_minutes);
-
-            $prevStep = $prevStep->previousWorkflowStep;
+            return $delayFrom;
         }
 
-        return $delayFrom;
+        return null;
     }
 }

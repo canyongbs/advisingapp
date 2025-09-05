@@ -99,6 +99,8 @@ it('executes email workflow step successfully', function () {
     $workflowRunStep = WorkflowRunStep::factory()->withDetails($emailDetails)->create([
         'workflow_run_id' => $workflowRun->id,
         'execute_at' => now(),
+        'offset_minutes' => 0,
+        'previous_workflow_run_step_id' => null,
     ]);
 
     $job = new EngagementEmailWorkflowActionJob($workflowRunStep);
@@ -138,6 +140,8 @@ it('throws exception for non-email channel', function () {
     $workflowRunStep = WorkflowRunStep::factory()->withDetails($emailDetails)->create([
         'workflow_run_id' => $workflowRun->id,
         'execute_at' => now(),
+        'offset_minutes' => 5,
+        'previous_workflow_run_step_id' => null,
     ]);
 
     $job = new EngagementEmailWorkflowActionJob($workflowRunStep);

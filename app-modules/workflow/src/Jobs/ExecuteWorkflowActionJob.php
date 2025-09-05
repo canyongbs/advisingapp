@@ -60,6 +60,15 @@ abstract class ExecuteWorkflowActionJob implements ShouldQueue
         $this->workflowRunStep->last_failed_at = now();
         $this->workflowRunStep->save();
 
+        WorkflowRunStep::query()
+            ->where('workflow_run_id', $this->workflowRunStep->workflow_run_id)
+            ->whereNull('succeeded_at')
+            ->whereNull('last_failed_at')
+            ->where('id', '!=', $this->workflowRunStep->id)
+            ->update([
+                'last_failed_at' => now(),
+            ]);
+
         report($exception);
     }
 }

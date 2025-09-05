@@ -38,6 +38,7 @@ namespace AdvisingApp\Workflow\Jobs;
 
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowCareTeamDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use Illuminate\Support\Facades\DB;
@@ -45,6 +46,8 @@ use Throwable;
 
 class CareTeamWorkflowActionJob extends ExecuteWorkflowActionJob
 {
+    use SchedulesNextWorkflowStep;
+
     public function handle(): void
     {
         try {
@@ -94,6 +97,8 @@ class CareTeamWorkflowActionJob extends ExecuteWorkflowActionJob
 
                     $workflowRunStepRelated->save();
                 });
+
+            $this->markStepCompletedAndScheduleNext($this->workflowRunStep);
 
             DB::commit();
         } catch (Throwable $throw) {
