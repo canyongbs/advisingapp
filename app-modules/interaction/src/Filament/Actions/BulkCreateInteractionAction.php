@@ -49,11 +49,14 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\InteractionMetadataFeature;
 use Exception;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Wizard\Step;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
@@ -70,17 +73,17 @@ class BulkCreateInteractionAction
             ->label('Log Interaction')
             ->icon('heroicon-o-document-text')
             ->modalHeading('Create Interaction')
-            ->form([
-                Fieldset::make('Details')
-                    ->schema([
-                        Select::make('interaction_initiative_id')
+            ->steps([
+            Step::make('Details')
+                ->schema([
+                    Select::make('interaction_initiative_id')
                             ->relationship('initiative', 'name')
                             ->model(Interaction::class)
                             ->label('Initiative')
                             ->required(fn () => InteractionMetadataFeature::active() ? $settings->is_initiative_required : true)
                             ->visible(fn () => InteractionMetadataFeature::active() ? $settings->is_initiative_enabled : true)
                             ->exists((new InteractionInitiative())->getTable(), 'id'),
-                        Select::make('interaction_driver_id')
+                    Select::make('interaction_driver_id')
                             ->relationship('driver', 'name')
                             ->model(Interaction::class)
                             ->preload()
@@ -88,7 +91,7 @@ class BulkCreateInteractionAction
                             ->required(fn () => InteractionMetadataFeature::active() ? $settings->is_driver_required : true)
                             ->visible(fn () => InteractionMetadataFeature::active() ? $settings->is_driver_enabled : true)
                             ->exists((new InteractionDriver())->getTable(), 'id'),
-                        Select::make('division_id')
+                    Select::make('division_id')
                             ->relationship('division', 'name')
                             ->model(Interaction::class)
                             ->preload()
@@ -106,7 +109,7 @@ class BulkCreateInteractionAction
                             ->dehydratedWhenHidden()
                             ->required()
                             ->exists((new Division())->getTable(), 'id'),
-                        Select::make('interaction_outcome_id')
+                    Select::make('interaction_outcome_id')
                             ->relationship('outcome', 'name')
                             ->model(Interaction::class)
                             ->preload()
@@ -114,7 +117,7 @@ class BulkCreateInteractionAction
                             ->required(fn () => InteractionMetadataFeature::active() ? $settings->is_outcome_required : true)
                             ->visible(fn () => InteractionMetadataFeature::active() ? $settings->is_outcome_enabled : true)
                             ->exists((new InteractionOutcome())->getTable(), 'id'),
-                        Select::make('interaction_relation_id')
+                    Select::make('interaction_relation_id')
                             ->relationship('relation', 'name')
                             ->model(Interaction::class)
                             ->preload()
@@ -122,7 +125,7 @@ class BulkCreateInteractionAction
                             ->required(fn () => InteractionMetadataFeature::active() ? $settings->is_relation_required : true)
                             ->visible(fn () => InteractionMetadataFeature::active() ? $settings->is_relation_enabled : true)
                             ->exists((new InteractionRelation())->getTable(), 'id'),
-                        Select::make('interaction_status_id')
+                    Select::make('interaction_status_id')
                             ->relationship('status', 'name')
                             ->model(Interaction::class)
                             ->preload()
@@ -138,9 +141,9 @@ class BulkCreateInteractionAction
                             ->required(fn () => InteractionMetadataFeature::active() ? $settings->is_type_required : true)
                             ->visible(fn () => InteractionMetadataFeature::active() ? $settings->is_type_enabled : true)
                             ->exists((new InteractionType())->getTable(), 'id'),
-                    ]),
-                Fieldset::make('Time')
-                    ->schema([
+                ]),
+            Step::make('Time')
+                ->schema([
                         DateTimePicker::make('start_datetime')
                             ->seconds(false)
                             ->required(),
@@ -148,14 +151,15 @@ class BulkCreateInteractionAction
                             ->seconds(false)
                             ->required(),
                     ]),
-                Fieldset::make('Notes')
-                    ->schema([
-                        TextInput::make('subject')
-                            ->required(),
-                        Textarea::make('description')
-                            ->required(),
-                    ]),
-            ])
+            Step::make('Notes')
+                ->schema([
+                    TextInput::make('subject')
+                        ->required(),
+                    Textarea::make('description')
+                        ->required(),
+                ])
+                ->columns(1),
+        ])
             ->action(function (Collection $records, array $data) {
                 try {
                     DB::beginTransaction();
