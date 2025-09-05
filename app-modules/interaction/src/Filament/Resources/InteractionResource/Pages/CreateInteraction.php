@@ -84,7 +84,7 @@ class CreateInteraction extends CreateRecord
     public function getSteps(): array
     {
         return [
-            Step::make('Related To')
+            Step::make('Confidentiality')
                 ->schema([
                     MorphToSelect::make('interactable')
                         ->label('Related To')
