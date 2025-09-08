@@ -40,8 +40,10 @@ use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Notifications\RegistrationLinkToEventAttendeeNotification;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowEventDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
+use App\Features\WorkflowSequentialExecutionFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Exception;
@@ -50,6 +52,8 @@ use Throwable;
 
 class EventWorkflowActionJob extends ExecuteWorkflowActionJob
 {
+    use SchedulesNextWorkflowStep;
+
     public function handle(): void
     {
         try {
@@ -85,6 +89,13 @@ class EventWorkflowActionJob extends ExecuteWorkflowActionJob
 
                 $workflowRunStepRelated->save();
 
+                if (WorkflowSequentialExecutionFeature::active()) {
+                    $this->markStepCompletedAndScheduleNext();
+                } else {
+                    $this->workflowRunStep->succeeded_at = now();
+                    $this->workflowRunStep->saveOrFail();
+                }
+
                 DB::commit();
 
                 return;
@@ -107,6 +118,13 @@ class EventWorkflowActionJob extends ExecuteWorkflowActionJob
             $workflowRunStepRelated->related()->associate($event);
 
             $workflowRunStepRelated->save();
+
+            if (WorkflowSequentialExecutionFeature::active()) {
+                $this->markStepCompletedAndScheduleNext();
+            } else {
+                $this->workflowRunStep->succeeded_at = now();
+                $this->workflowRunStep->saveOrFail();
+            }
 
             DB::commit();
         } catch (Throwable $throw) {

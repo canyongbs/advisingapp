@@ -37,14 +37,18 @@
 namespace AdvisingApp\Workflow\Jobs;
 
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use AdvisingApp\Workflow\Models\WorkflowTagsDetails;
+use App\Features\WorkflowSequentialExecutionFeature;
 use App\Models\Taggable;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class TagsWorkflowActionJob extends ExecuteWorkflowActionJob
 {
+    use SchedulesNextWorkflowStep;
+
     public function handle(): void
     {
         try {
@@ -87,6 +91,13 @@ class TagsWorkflowActionJob extends ExecuteWorkflowActionJob
 
                     $workflowRunStepRelated->save();
                 });
+
+            if (WorkflowSequentialExecutionFeature::active()) {
+                $this->markStepCompletedAndScheduleNext();
+            } else {
+                $this->workflowRunStep->succeeded_at = now();
+                $this->workflowRunStep->saveOrFail();
+            }
 
             DB::commit();
         } catch (Throwable $throw) {
