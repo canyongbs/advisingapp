@@ -39,23 +39,19 @@ namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
 
 class ShowAdvisorController
 {
     public function __invoke(QnaAdvisor $advisor): JsonResponse
     {
-        $chatId = Str::random(32);
-
         return response()->json([
             'requires_authentication' => $advisor->is_requires_authentication_enabled ?? false,
             'authentication_url' => URL::signedRoute(name: 'ai.qna-advisors.authentication.request', parameters: ['advisor' => $advisor]),
             'refresh_url' => URL::signedRoute(name: 'ai.qna-advisors.authentication.refresh', parameters: ['advisor' => $advisor]),
-            'chat_id' => $chatId,
             'send_message_url' => URL::temporarySignedRoute(
                 name: 'ai.qna-advisors.messages.send',
                 expiration: now()->addDays(3),
-                parameters: ['advisor' => $advisor, 'chat_id' => $chatId],
+                parameters: ['advisor' => $advisor],
             ),
             'websockets_config' => [
                 ...config('filament.broadcasting.echo'),

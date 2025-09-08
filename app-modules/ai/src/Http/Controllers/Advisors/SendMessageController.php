@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Arr;
 use Throwable;
 
 class SendMessageController
@@ -65,8 +66,15 @@ class SendMessageController
             dispatch(new SendAdvisorMessage(
                 $thread,
                 $request->validated('prompt_id') ? Prompt::find($request->validated('prompt_id')) : $request->validated('content'),
-                AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
-                $request->validated('has_image_generation') ?? false,
+                request: [
+                    'headers' => Arr::only(
+                        request()->headers->all(),
+                        ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
+                    ),
+                    'ip' => request()->ip(),
+                ],
+                files: AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
+                hasImageGeneration: $request->validated('has_image_generation') ?? false,
             ));
 
             return response()->json([]);

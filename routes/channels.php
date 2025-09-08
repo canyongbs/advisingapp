@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -52,31 +53,22 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
+Broadcast::channel('App.Models.User.{id}', function ($user, $id): bool {
     return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('research-request-{researchRequestId}', function (User $user, string $researchRequestId) {
-    return ResearchRequest::find($researchRequestId)?->user()->is($user);
+Broadcast::channel('research-request-{researchRequestId}', function (User $user, string $researchRequestId): bool {
+    return ResearchRequest::find($researchRequestId)?->user()->is($user) ?? false;
 });
 
-Broadcast::channel('user-research-requests-{userId}', function (User $user, string $userId) {
-    return User::find($userId)?->is($user);
+Broadcast::channel('user-research-requests-{userId}', function (User $user, string $userId): bool {
+    return User::find($userId)?->is($user) ?? false;
 });
 
-Broadcast::channel('advisor-thread-{threadId}', function (User $user, string $threadId) {
-    return AiThread::find($threadId)?->user()->is($user);
+Broadcast::channel('advisor-thread-{threadId}', function (User $user, string $threadId): bool {
+    return AiThread::find($threadId)?->user()->is($user) ?? false;
 });
 
-Broadcast::channel('qna-advisor-chat-{chatId}', function () {
-    return true;
+Broadcast::channel('qna-advisor-thread-{threadId}', function (Student | Prospect | null $user, string $threadId): bool {
+    return QnaAdvisorThread::find($threadId)?->author()->is($user) ?? false;
 });
-
-Broadcast::channel(
-    'qna-advisor-chat-{chatId}',
-    function (Student|Prospect $user) {
-        // TODO: In the near future when we save these chats in the database we can verify that this user is part of this chat
-
-        return true;
-    }
-);

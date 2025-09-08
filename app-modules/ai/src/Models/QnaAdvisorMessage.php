@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * @mixin IdeHelperQnaAdvisorMessage
+ */
 class QnaAdvisorMessage extends BaseModel
 {
     public $fillable = [
@@ -18,11 +21,13 @@ class QnaAdvisorMessage extends BaseModel
         'thread_id',
         'author_type',
         'author_id',
+        'is_advisor',
     ];
 
     protected $casts = [
         'next_request_options' => 'array',
         'request' => 'encrypted:array',
+        'is_advisor' => 'boolean',
     ];
 
     /**

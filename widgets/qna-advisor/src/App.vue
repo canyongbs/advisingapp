@@ -56,12 +56,11 @@ const authentication = ref({
 });
 const loadingError = ref(null);
 const sendMessageUrl = ref(null);
-const chatId = ref(null);
+const threadId = ref(null);
 const message = ref('');
 const messages = ref([]);
 const currentResponse = ref('');
 const isLoading = ref(false);
-const nextRequestOptions = ref(null);
 let websocketChannel = null;
 
 const scriptUrl = new URL(document.currentScript.getAttribute('src'));
@@ -75,7 +74,6 @@ onMounted(async () => {
         .then((response) => {
             const json = response.data;
 
-            chatId.value = json.chat_id;
             requiresAuthentication.value = json.requires_authentication;
             authentication.value.requestUrl = json.authentication_url;
             authentication.value.refreshUrl = json.refresh_url;
@@ -101,7 +99,6 @@ onMounted(async () => {
 onUnmounted(() => {
     if (websocketChannel) {
         websocketChannel.stopListening('advisor-message.chunk');
-        websocketChannel.stopListening('advisor-message.next-request-options');
     }
     if (window.Echo) {
         window.Echo.disconnect();
@@ -143,39 +140,6 @@ function setupWebsockets(config, authRequired = false) {
                 };
             },
         });
-
-        if (chatId.value) {
-            let channelName = `qna-advisor-chat-${chatId.value}`;
-
-            websocketChannel = authRequired ? window.Echo.private(channelName) : window.Echo.channel(channelName);
-
-            websocketChannel
-                .listen('.qna-advisor-message.chunk', (data) => {
-                    if (data.error) {
-                        console.error('Advisor message error:', data.error);
-                        isLoading.value = false;
-                        return;
-                    }
-
-                    if (data.content) {
-                        currentResponse.value += data.content;
-                    }
-
-                    if (data.is_complete) {
-                        messages.value.push({
-                            from: 'agent',
-                            content: currentResponse.value,
-                        });
-                        currentResponse.value = '';
-                        isLoading.value = false;
-                    }
-                })
-                .listen('.qna-advisor-message.next-request-options', (data) => {
-                    if (data.options) {
-                        nextRequestOptions.value = data.options;
-                    }
-                });
-        }
     } catch (error) {
         console.error('Failed to setup websockets:', error);
     }
@@ -197,13 +161,38 @@ async function sendMessage() {
             content: message.value,
         };
 
-        if (nextRequestOptions.value) {
-            requestBody.options = nextRequestOptions.value;
-        }
-
         const sendMessageResponse = await authorizedPost(sendMessageUrl.value, requestBody);
 
         const data = sendMessageResponse.data;
+
+        if (!threadId.value) {
+            threadId.value = data.thread_id;
+
+            let channelName = `qna-advisor-thread-${threadId.value}`;
+
+            websocketChannel = authRequired ? window.Echo.private(channelName) : window.Echo.channel(channelName);
+
+            websocketChannel.listen('.qna-advisor-message.chunk', (data) => {
+                if (data.error) {
+                    console.error('Advisor message error:', data.error);
+                    isLoading.value = false;
+                    return;
+                }
+
+                if (data.content) {
+                    currentResponse.value += data.content;
+                }
+
+                if (data.is_complete) {
+                    messages.value.push({
+                        from: 'agent',
+                        content: currentResponse.value,
+                    });
+                    currentResponse.value = '';
+                    isLoading.value = false;
+                }
+            });
+        }
 
         message.value = '';
     } catch (error) {
