@@ -56,8 +56,6 @@ class ManageStockMediaSettings extends SettingsPage
 
     protected static string $settings = StockMediaSettings::class;
 
-    protected static ?string $title = 'Stock Media Settings';
-
     public static function canAccess(): bool
     {
         return StockMediaFeature::active() && auth()->user()->isSuperAdmin();
