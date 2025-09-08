@@ -36,20 +36,76 @@
 
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
+use AdvisingApp\Alert\Enums\AlertSeverity;
+use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\AlertStatus;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 
 class ProactiveAlertBlock extends WorkflowActionBlock
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->label('Alert');
+
+        $this->schema($this->createFields());
+    }
+
     //TODO: implement
-    public function generateFields(): array
+    public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            Select::make('temp'),
+            Textarea::make($fieldPrefix . 'description')
+                ->required()
+                ->string(),
+            Select::make($fieldPrefix . 'severity')
+                ->options(AlertSeverity::class)
+                ->default(AlertSeverity::default())
+                ->required()
+                ->enum(AlertSeverity::class),
+            Textarea::make($fieldPrefix . 'suggested_intervention')
+                ->required()
+                ->string(),
+            Select::make($fieldPrefix . 'status_id')
+                ->label('Status')
+                ->options(AlertStatus::orderBy('order')->pluck('name', 'id'))
+                ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
+                ->exists('alert_statuses', 'id')
+                ->required(),
+            Section::make('How long after the previous step should this occur?')
+                ->schema([
+                    TextInput::make('days')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+                    TextInput::make('hours')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+                    TextInput::make('minutes')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+                ])
+                ->columns(3),
         ];
     }
 
     public static function type(): string
     {
-        return 'workflow_proactive_alert_block';
+        return 'workflow_proactive_alert_details';
     }
 }

@@ -38,6 +38,7 @@ namespace AdvisingApp\Workflow\Database\Factories;
 
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
+use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
 use AdvisingApp\Workflow\Models\WorkflowRun;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use Exception;
@@ -53,6 +54,7 @@ class WorkflowRunStepFactory extends Factory
         $detailFactories = [
             WorkflowEngagementEmailDetails::factory(),
             WorkflowEngagementSmsDetails::factory(),
+            WorkflowProactiveAlertDetails::factory(),
             // WorkflowCareTeamDetails::factory(),
             // WorkflowCaseDetails::factory(),
             // WorkflowTaskDetails::factory(),
@@ -66,6 +68,7 @@ class WorkflowRunStepFactory extends Factory
                 $possibleModels = [
                     WorkflowEngagementEmailDetails::class,
                     WorkflowEngagementSmsDetails::class,
+                    WorkflowProactiveAlertDetails::class,
                     // WorkflowCareTeamDetails::class,
                     // WorkflowCaseDetails::class,
                     // WorkflowTaskDetails::class,
