@@ -37,23 +37,22 @@
 namespace AdvisingApp\Workflow\Concerns;
 
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
-use Illuminate\Support\Carbon;
 
 trait SchedulesNextWorkflowStep
 {
-    protected function markStepCompletedAndScheduleNext(WorkflowRunStep $workflowRunStep): void
+    protected function markStepCompletedAndScheduleNext(): void
     {
-        $workflowRunStep->succeeded_at = now();
-        $workflowRunStep->saveOrFail();
+        $this->workflowRunStep->succeeded_at = now();
+        $this->workflowRunStep->saveOrFail();
 
         $nextSteps = WorkflowRunStep::query()
-            ->where('workflow_run_id', $workflowRunStep->workflow_run_id)
-            ->where('previous_workflow_run_step_id', $workflowRunStep->id)
+            ->where('workflow_run_id', $this->workflowRunStep->workflow_run_id)
+            ->where('previous_workflow_run_step_id', $this->workflowRunStep->id)
             ->whereNull('dispatched_at')
             ->get();
 
         foreach ($nextSteps as $nextStep) {
-            $executeAt = Carbon::now()->addMinutes($nextStep->delay_minutes);
+            $executeAt = now()->addMinutes($nextStep->delay_minutes);
 
             $nextStep->execute_at = $executeAt;
             $nextStep->save();

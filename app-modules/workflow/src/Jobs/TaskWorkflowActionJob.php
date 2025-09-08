@@ -89,7 +89,7 @@ class TaskWorkflowActionJob extends ExecuteWorkflowActionJob
             $workflowRunStepRelated->save();
 
             if (WorkflowSequentialExecutionFeature::active()) {
-                $this->markStepCompletedAndScheduleNext($this->workflowRunStep);
+                $this->markStepCompletedAndScheduleNext();
             } else {
                 $this->workflowRunStep->succeeded_at = now();
                 $this->workflowRunStep->saveOrFail();
