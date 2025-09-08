@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Requests;
+namespace AdvisingApp\Ai\Http\Requests\QnaAdvisors;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class QnaAdvisorRequestAuthenticationRequest extends FormRequest
+class RequestAuthenticationRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.

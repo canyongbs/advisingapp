@@ -34,52 +34,63 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers;
+namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
-use AdvisingApp\Ai\Http\Requests\QnaAdvisorAuthenticationConfirmRequest;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Authorization\Enums\TokenAbility;
-use AdvisingApp\Portal\Models\PortalAuthentication;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\PersonalAccessToken;
 
-class QnaAdvisorAuthenticationConfirmController
+class AuthenticationRefreshController
 {
-    public function __invoke(QnaAdvisorAuthenticationConfirmRequest $request, QnaAdvisor $advisor, PortalAuthentication $authentication): JsonResponse
+    public function __invoke(Request $request, QnaAdvisor $advisor): JsonResponse
     {
-        if ($authentication->isExpired()) {
-            abort(403, 'Authentication code is expired.');
+        $refreshTokenValue = $request->cookie('advising_app_qna_advisor_refresh_token');
+
+        if (! $refreshTokenValue) {
+            abort(401, 'Unauthorized');
         }
 
-        if (! Hash::check($request->safe()['code'], $authentication->code)) {
-            abort(403, 'Authentication code is invalid.');
+        $refreshToken = PersonalAccessToken::findToken($refreshTokenValue);
+
+        if (! $refreshToken || ! $refreshToken->can(TokenAbility::IssueQnaAdvisorAccessToken->value)) {
+            abort(401, 'Unauthorized');
         }
 
-        $educatable = $authentication->educatable;
+        if ($refreshToken->expires_at && $refreshToken->expires_at->isPast()) {
+            abort(401, 'Unauthorized');
+        }
+
+        $educatable = $refreshToken->tokenable;
 
         if (! $educatable instanceof Student && ! $educatable instanceof Prospect) {
-            abort(403, 'Something is wrong with the authentication.');
+            abort(401, 'Unauthorized');
         }
 
-        // If we reached this point, the authentication was successful
+        // Invalidate current refresh token
+        $refreshToken->delete();
 
+        // Invalidate any existing access tokens
+        PersonalAccessToken::where('tokenable_type', $educatable->getMorphClass())
+            ->where('tokenable_id', $educatable->getKey())
+            ->where('name', 'qna_advisor_access_token')
+            ->delete();
+
+        // Generate new tokens
         $accessToken = $educatable->createToken('qna_advisor_access_token', [TokenAbility::AccessQnaAdvisorApi], now()->addMinutes(15));
-        $refreshToken = $educatable->createToken('qna_advisor_refresh_token', [TokenAbility::IssueQnaAdvisorAccessToken], now()->addDays(3));
+        $newRefreshToken = $educatable->createToken('qna_advisor_refresh_token', [TokenAbility::IssueQnaAdvisorAccessToken], now()->addDays(3));
 
         return response()->json([
             'access_token' => $accessToken->plainTextToken,
-            'websockets_config' => [
-                ...config('filament.broadcasting.echo'),
-                'authEndpoint' => url('api/broadcasting/auth'),
-            ],
         ])
             ->withCookie(
                 Cookie::make(
                     name: 'advising_app_qna_advisor_refresh_token',
-                    value: $refreshToken->plainTextToken,
+                    value: $newRefreshToken->plainTextToken,
                     minutes: 60 * 24 * 3, // 3 days
                     secure: true,
                     httpOnly: true,

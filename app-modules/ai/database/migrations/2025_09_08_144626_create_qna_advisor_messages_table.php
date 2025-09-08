@@ -10,6 +10,12 @@ return new class () extends Migration {
         Schema::create('qna_advisor_messages', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('thread_id')->constrained('qna_advisor_threads');
+            $table->nullableUuidMorphs('author');
+            $table->string('message_id')->nullable();
+            $table->text('content');
+            $table->text('context')->nullable();
+            $table->text('request')->nullable();
+            $table->jsonb('next_request_options')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

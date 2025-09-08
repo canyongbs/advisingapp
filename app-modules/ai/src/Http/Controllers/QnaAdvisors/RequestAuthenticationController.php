@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers;
+namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
-use AdvisingApp\Ai\Http\Requests\QnaAdvisorRequestAuthenticationRequest;
+use AdvisingApp\Ai\Http\Requests\QnaAdvisors\RequestAuthenticationRequest;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Portal\Enums\PortalType;
 use AdvisingApp\Portal\Models\PortalAuthentication;
@@ -49,9 +49,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
 
-class QnaAdvisorRequestAuthenticationController
+class RequestAuthenticationController
 {
-    public function __invoke(QnaAdvisorRequestAuthenticationRequest $request, QnaAdvisor $advisor, ResolveEducatableFromEmail $resolveEducatableFromEmail): JsonResponse
+    public function __invoke(RequestAuthenticationRequest $request, QnaAdvisor $advisor, ResolveEducatableFromEmail $resolveEducatableFromEmail): JsonResponse
     {
         $email = $request->safe()['email'];
 

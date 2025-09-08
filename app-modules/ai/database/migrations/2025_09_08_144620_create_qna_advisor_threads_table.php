@@ -9,6 +9,7 @@ return new class () extends Migration {
     {
         Schema::create('qna_advisor_threads', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->nullableUuidMorphs('author');
             $table->timestamps();
             $table->softDeletes();
         });
