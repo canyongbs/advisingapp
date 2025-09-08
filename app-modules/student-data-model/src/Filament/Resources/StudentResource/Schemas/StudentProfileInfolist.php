@@ -127,7 +127,7 @@ class StudentProfileInfolist
                             TextEntry::make('sis_category')
                                 ->label('SIS Category')
                                 ->placeholder('-')
-                                ->visible(StudentSisCategoryFeature::active() && Student::query()->whereNotNull('sis_category')->exists()),
+                                ->visible(StudentSisCategoryFeature::active()),
                             TextEntry::make('standing')
                                 ->label('Academic Standing')
                                 ->placeholder('-'),

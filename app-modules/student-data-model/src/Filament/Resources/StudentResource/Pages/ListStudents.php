@@ -148,7 +148,7 @@ class ListStudents extends ListRecords
                         ->limit(50)
                         ->pluck('sis_category', 'sis_category')
                         ->all())
-                    ->visible(StudentSisCategoryFeature::active() && Student::query()->whereNotNull('sis_category')->exists()),
+                    ->visible(StudentSisCategoryFeature::active()),
                 TernaryFilter::make('sap')
                     ->label('SAP'),
                 TernaryFilter::make('dual'),
