@@ -205,7 +205,8 @@ class CreateInteraction extends CreateRecord
                         ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_type_required : true)
                         ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_type_enabled : true)
                         ->exists((new InteractionType())->getTable(), 'id'),
-                ]),
+                ])
+                ->columns(2),
             Step::make('Time')
                 ->schema([
                     DateTimePicker::make('start_datetime')
@@ -214,7 +215,7 @@ class CreateInteraction extends CreateRecord
                         ->default(fn () => now()->toDateTimeString())
                         ->required()
                         ->live(onBlur: true)
-                        ->afterStateUpdated(fn (Get $get, Set $set) => $this->getEndDateTime($get, $set)),
+                        ->afterStateUpdated(fn (Get $get, Set $set) => $this->calculateEndDateTime($get, $set)),
                     TextInput::make('duration')
                         ->label('Duration (Minutes)')
                         ->integer()
@@ -222,7 +223,7 @@ class CreateInteraction extends CreateRecord
                         ->required()
                         ->dehydrated(false)
                         ->live(onBlur: true)
-                        ->afterStateUpdated(fn (Get $get, Set $set) => $this->getEndDateTime($get, $set)),
+                        ->afterStateUpdated(fn (Get $get, Set $set) => $this->calculateEndDateTime($get, $set)),
                     DateTimePicker::make('end_datetime')
                         ->label('End Date and Time')
                         ->seconds(false)
@@ -252,7 +253,7 @@ class CreateInteraction extends CreateRecord
         return $this->settings;
     }
 
-    private function getEndDateTime(Get $get, Set $set): void
+    private function calculateEndDateTime(Get $get, Set $set): void
     {
         $startDateTime = $get('start_datetime');
 
