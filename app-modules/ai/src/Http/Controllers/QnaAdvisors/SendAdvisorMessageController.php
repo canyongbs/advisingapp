@@ -88,7 +88,7 @@ class SendAdvisorMessageController
 
         $author = auth('student')->user() ?? auth('prospect')->user();
 
-        if (filled($data['thread_id'])) {
+        if (filled($data['thread_id'] ?? null)) {
             $thread = QnaAdvisorThread::query()
                 ->whereKey($data['thread_id'])
                 ->whereBelongsTo($advisor, 'advisor')

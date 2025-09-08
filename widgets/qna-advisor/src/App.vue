@@ -105,7 +105,7 @@ onUnmounted(() => {
     }
 });
 
-function setupWebsockets(config, authRequired = false) {
+function setupWebsockets(config) {
     try {
         window.Pusher = Pusher;
 
@@ -124,7 +124,7 @@ function setupWebsockets(config, authRequired = false) {
                                 {
                                     headers: {
                                         'Content-Type': 'application/json',
-                                        ...(authRequired && authStore.getAccessToken
+                                        ...(requiresAuthentication.value && authStore.getAccessToken
                                             ? { Authorization: `Bearer ${authStore.getAccessToken}` }
                                             : {}),
                                     },
@@ -170,7 +170,7 @@ async function sendMessage() {
 
             let channelName = `qna-advisor-thread-${threadId.value}`;
 
-            websocketChannel = authRequired ? window.Echo.private(channelName) : window.Echo.channel(channelName);
+            websocketChannel = requiresAuthentication.value ? window.Echo.private(channelName) : window.Echo.channel(channelName);
 
             websocketChannel.listen('.qna-advisor-message.chunk', (data) => {
                 if (data.error) {
