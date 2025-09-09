@@ -34,6 +34,38 @@
 @php
     use AdvisingApp\Engagement\Models\Engagement;
     use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
+    use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
+    use App\Settings\ImportSettings;
+    use libphonenumber\NumberParseException;
+    use libphonenumber\PhoneNumberFormat;
+    use libphonenumber\PhoneNumberUtil;
+
+    $isOptedOut = false;
+    if ($phoneNumber->number) {
+        $phoneNumberUtil = PhoneNumberUtil::getInstance();
+        try {
+            $e164Number = $phoneNumberUtil->format($phoneNumberUtil->parse($phoneNumber->number), PhoneNumberFormat::E164);
+
+            try {
+                $isOptedOut = SmsOptOutPhoneNumber::where('number', $e164Number)->exists();
+            } catch (Exception $e) {
+                $isOptedOut = false;
+            }
+        } catch (NumberParseException) {
+            $defaultCountry = app(ImportSettings::class)->default_country;
+            try {
+                $e164Number = $phoneNumberUtil->format($phoneNumberUtil->parse($phoneNumber->number, $defaultCountry), PhoneNumberFormat::E164);
+
+                try {
+                    $isOptedOut = SmsOptOutPhoneNumber::where('number', $e164Number)->exists();
+                } catch (Exception $e) {
+                    $isOptedOut = false;
+                }
+            } catch (NumberParseException) {
+                $isOptedOut = false;
+            }
+        }
+    }
 @endphp
 
 <button
@@ -66,5 +98,13 @@
 
     @if (filled($phoneNumber->type))
         ({{ $phoneNumber->type }})
+    @endif
+
+    @if ($isOptedOut)
+        <x-filament::icon
+            class="ml-1 h-6 w-6 text-danger-500"
+            icon="heroicon-s-x-circle"
+            x-tooltip.raw="SMS Opt Out"
+        />
     @endif
 </button>

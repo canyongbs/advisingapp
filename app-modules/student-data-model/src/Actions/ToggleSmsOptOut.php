@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,37 +34,57 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Providers;
+namespace AdvisingApp\StudentDataModel\Actions;
 
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\StudentAddress;
-use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use App\Settings\ImportSettings;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberUtil;
 
-class StudentDataModelServiceProvider extends ServiceProvider
+class ToggleSmsOptOut
 {
-    public function register(): void
+    public function execute(StudentPhoneNumber $phoneNumber, bool $optOut): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new StudentDataModelPlugin()));
+        $e164Number = $this->convertToE164($phoneNumber->number);
+
+        if (! $e164Number) {
+            return;
+        }
+
+        if ($optOut) {
+            SmsOptOutPhoneNumber::updateOrCreate(['number' => $e164Number]);
+        } else {
+            SmsOptOutPhoneNumber::where('number', $e164Number)->delete();
+        }
     }
 
-    public function boot(): void
+    private function convertToE164(string $phoneNumber): ?string
     {
-        Relation::morphMap([
-            'student' => Student::class,
-            'enrollment' => Enrollment::class,
-            'program' => Program::class,
-            'student_phone_number' => StudentPhoneNumber::class,
-            'student_address' => StudentAddress::class,
-            'student_email_address' => StudentEmailAddress::class,
-            'sms_opt_out_phone_number' => SmsOptOutPhoneNumber::class,
-        ]);
+        if (blank($phoneNumber)) {
+            return null;
+        }
+
+        $phoneNumberUtil = PhoneNumberUtil::getInstance();
+
+        try {
+            return $phoneNumberUtil->format(
+                $phoneNumberUtil->parse($phoneNumber),
+                PhoneNumberFormat::E164,
+            );
+        } catch (NumberParseException) {
+        }
+
+        $defaultCountry = app(ImportSettings::class)->default_country ?? 'US';
+
+        try {
+            return $phoneNumberUtil->format(
+                $phoneNumberUtil->parse($phoneNumber, $defaultCountry),
+                PhoneNumberFormat::E164,
+            );
+        } catch (NumberParseException) {
+            return null;
+        }
     }
 }

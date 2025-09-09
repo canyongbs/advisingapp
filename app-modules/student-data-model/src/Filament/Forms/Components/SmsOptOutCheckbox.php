@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,37 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Providers;
+namespace AdvisingApp\StudentDataModel\Filament\Forms\Components;
 
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\Program;
-use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\StudentAddress;
-use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use AdvisingApp\StudentDataModel\Actions\ToggleSmsOptOut;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Component;
 
-class StudentDataModelServiceProvider extends ServiceProvider
+class SmsOptOutCheckbox extends Checkbox
 {
-    public function register(): void
+    protected function setUp(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new StudentDataModelPlugin()));
-    }
+        parent::setUp();
 
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'student' => Student::class,
-            'enrollment' => Enrollment::class,
-            'program' => Program::class,
-            'student_phone_number' => StudentPhoneNumber::class,
-            'student_address' => StudentAddress::class,
-            'student_email_address' => StudentEmailAddress::class,
-            'sms_opt_out_phone_number' => SmsOptOutPhoneNumber::class,
-        ]);
+        $this
+            ->label('SMS Opt Out')
+            ->columnSpanFull()
+            ->default(false)
+            ->dehydrated(false)
+            ->afterStateHydrated(function (Component $component, mixed $state): void {
+                $phoneNumber = $component->getContainer()->getRecord();
+
+                if ($phoneNumber instanceof StudentPhoneNumber) {
+                    $component->state($phoneNumber->sms_opt_out);
+                }
+            })
+            ->afterStateUpdated(function (mixed $state, Component $component): void {
+                $phoneNumber = $component->getContainer()->getRecord();
+
+                if ($phoneNumber instanceof StudentPhoneNumber && $phoneNumber->exists) {
+                    app(ToggleSmsOptOut::class)->execute($phoneNumber, (bool) $state);
+                }
+            });
     }
 }
