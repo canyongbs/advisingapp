@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,37 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Providers;
+namespace AdvisingApp\StudentDataModel\Models;
 
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\Program;
-use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\StudentAddress;
-use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
-use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\StudentDataModel\Database\Factories\SmsOptOutPhoneNumberFactory;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class StudentDataModelServiceProvider extends ServiceProvider
+/**
+ * @mixin IdeHelperSmsOptOutPhoneNumber
+ */
+class SmsOptOutPhoneNumber extends BaseModel implements Auditable
 {
-    public function register(): void
-    {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new StudentDataModelPlugin()));
-    }
+    use AuditableTrait;
+    use HasUuids;
 
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'student' => Student::class,
-            'enrollment' => Enrollment::class,
-            'program' => Program::class,
-            'student_phone_number' => StudentPhoneNumber::class,
-            'student_address' => StudentAddress::class,
-            'student_email_address' => StudentEmailAddress::class,
-            'sms_opt_out_phone_number' => SmsOptOutPhoneNumber::class,
-        ]);
-    }
+    /** @use HasFactory<SmsOptOutPhoneNumberFactory> */
+    use HasFactory;
+
+    protected $fillable = [
+        'number',
+    ];
 }

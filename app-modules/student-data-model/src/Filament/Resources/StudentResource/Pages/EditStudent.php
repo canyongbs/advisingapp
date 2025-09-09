@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
+use AdvisingApp\StudentDataModel\Filament\Forms\Components\SmsOptOutCheckbox;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -191,6 +192,7 @@ class EditStudent extends EditRecord
                                     ->label('Can receive SMS messages')
                                     ->columnSpanFull()
                                     ->default(true),
+                                SmsOptOutCheckbox::make('sms_opt_out'),
                             ])
                             ->orderColumn('order')
                             ->itemLabel(fn (Repeater $component, ComponentContainer $container): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $container->getStatePath()) ? 'Primary phone number' : 'Additional phone number')
