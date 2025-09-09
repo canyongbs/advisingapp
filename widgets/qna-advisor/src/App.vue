@@ -247,7 +247,7 @@ async function authenticate(formData, node) {
                     authStore.$patch({ accessToken: response.data.access_token });
                     authentication.value.promptToAuthenticate = false;
 
-                    setupWebsockets(response.data.websockets_config, true);
+                    setupWebsockets(response.data.websockets_config);
                 }
             })
             .catch((error) => {
