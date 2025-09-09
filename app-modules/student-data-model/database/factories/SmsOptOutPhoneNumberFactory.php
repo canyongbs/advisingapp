@@ -47,8 +47,6 @@ class SmsOptOutPhoneNumberFactory extends Factory
     protected $model = SmsOptOutPhoneNumber::class;
 
     /**
-     * Define the model's default state.
-     *
      * @return array<string, mixed>
      */
     public function definition(): array

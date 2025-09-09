@@ -38,16 +38,13 @@ namespace AdvisingApp\StudentDataModel\Actions;
 
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use App\Settings\ImportSettings;
-use libphonenumber\NumberParseException;
-use libphonenumber\PhoneNumberFormat;
-use libphonenumber\PhoneNumberUtil;
+use AdvisingApp\StudentDataModel\Support\PhoneNumberNormalizer;
 
 class ToggleSmsOptOut
 {
     public function execute(StudentPhoneNumber $phoneNumber, bool $optOut): void
     {
-        $e164Number = $this->convertToE164($phoneNumber->number);
+        $e164Number = PhoneNumberNormalizer::toE164($phoneNumber->number);
 
         if (! $e164Number) {
             return;
@@ -57,34 +54,6 @@ class ToggleSmsOptOut
             SmsOptOutPhoneNumber::updateOrCreate(['number' => $e164Number]);
         } else {
             SmsOptOutPhoneNumber::where('number', $e164Number)->delete();
-        }
-    }
-
-    private function convertToE164(string $phoneNumber): ?string
-    {
-        if (blank($phoneNumber)) {
-            return null;
-        }
-
-        $phoneNumberUtil = PhoneNumberUtil::getInstance();
-
-        try {
-            return $phoneNumberUtil->format(
-                $phoneNumberUtil->parse($phoneNumber),
-                PhoneNumberFormat::E164,
-            );
-        } catch (NumberParseException) {
-        }
-
-        $defaultCountry = app(ImportSettings::class)->default_country ?? 'US';
-
-        try {
-            return $phoneNumberUtil->format(
-                $phoneNumberUtil->parse($phoneNumber, $defaultCountry),
-                PhoneNumberFormat::E164,
-            );
-        } catch (NumberParseException) {
-            return null;
         }
     }
 }
