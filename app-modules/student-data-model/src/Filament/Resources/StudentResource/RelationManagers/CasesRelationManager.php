@@ -90,7 +90,7 @@ class CasesRelationManager extends RelationManager
             ])
             ->filters([
                 SelectFilter::make('priority')
-                    ->relationship('priority', 'name', fn (Builder $query) => $query->with('type'))
+                    ->relationship('priority', 'name', fn (Builder $query) => $query->withWhereHas('type'))
                     ->getOptionLabelFromRecordUsing(fn (CasePriority $record) => "{$record->type->name} - {$record->name}")
                     ->multiple()
                     ->preload(),
