@@ -34,38 +34,9 @@
 @php
     use AdvisingApp\Engagement\Models\Engagement;
     use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
-    use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
-    use App\Settings\ImportSettings;
-    use libphonenumber\NumberParseException;
-    use libphonenumber\PhoneNumberFormat;
-    use libphonenumber\PhoneNumberUtil;
+    use AdvisingApp\StudentDataModel\Services\SmsOptOutService;
 
-    $isOptedOut = false;
-    if ($phoneNumber->number) {
-        $phoneNumberUtil = PhoneNumberUtil::getInstance();
-        try {
-            $e164Number = $phoneNumberUtil->format($phoneNumberUtil->parse($phoneNumber->number), PhoneNumberFormat::E164);
-
-            try {
-                $isOptedOut = SmsOptOutPhoneNumber::where('number', $e164Number)->exists();
-            } catch (Exception $e) {
-                $isOptedOut = false;
-            }
-        } catch (NumberParseException) {
-            $defaultCountry = app(ImportSettings::class)->default_country;
-            try {
-                $e164Number = $phoneNumberUtil->format($phoneNumberUtil->parse($phoneNumber->number, $defaultCountry), PhoneNumberFormat::E164);
-
-                try {
-                    $isOptedOut = SmsOptOutPhoneNumber::where('number', $e164Number)->exists();
-                } catch (Exception $e) {
-                    $isOptedOut = false;
-                }
-            } catch (NumberParseException) {
-                $isOptedOut = false;
-            }
-        }
-    }
+    $isOptedOut = app(SmsOptOutService::class)->isOptedOut($phoneNumber->number);
 @endphp
 
 <button
@@ -74,13 +45,17 @@
     x-data="{ isLoading: false }"
     x-on:engage-action-finished-loading.window="isLoading = false"
     x-on:click="isLoading = true; $dispatch('send-sms', { phoneNumberKey: @js($phoneNumber->getKey()) })"
-    x-tooltip.raw="Click to send an SMS"
+    @if (!$isOptedOut)
+        x-tooltip.raw="Click to send an SMS"
+    @endif
     @disabled(
+        $isOptedOut ||
         !$phoneNumber->can_receive_sms ||
-            !auth()->user()->can('create', [
-                    Engagement::class,
-                    $phoneNumber instanceof ProspectPhoneNumber ? $phoneNumber->prospect : null,
-                ]))
+        !auth()->user()->can('create', [
+            Engagement::class,
+            $phoneNumber instanceof ProspectPhoneNumber ? $phoneNumber->prospect : null,
+        ])
+    )
 >
     @svg('heroicon-m-phone', 'size-5', ['x-show' => '! isLoading'])
 

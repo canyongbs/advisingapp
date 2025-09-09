@@ -48,8 +48,8 @@ use OwenIt\Auditing\Contracts\Auditable;
  */
 class SmsOptOutPhoneNumber extends BaseModel implements Auditable
 {
-    use AuditableTrait;
     use HasUuids;
+    use AuditableTrait;
 
     /** @use HasFactory<SmsOptOutPhoneNumberFactory> */
     use HasFactory;

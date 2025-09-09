@@ -42,6 +42,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
 use AdvisingApp\Notification\Enums\SmsMessagingProvider;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
+use AdvisingApp\Notification\Exceptions\SmsOptOutException;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\Notification\Models\StoredAnonymousNotifiable;
@@ -49,6 +50,7 @@ use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use AdvisingApp\StudentDataModel\Services\SmsOptOutService;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Exception;
@@ -118,6 +120,18 @@ class SmsChannel
             ]);
 
             return;
+        }
+
+        if ($recipientNumber && app(SmsOptOutService::class)->isOptedOut($recipientNumber)) {
+            $smsMessage->events()->create([
+                'type' => SmsMessageEventType::FailedDispatch,
+                'payload' => [
+                    'error' => 'Recipient phone number has opted out of SMS messages.',
+                ],
+                'occurred_at' => now(),
+            ]);
+
+            throw new SmsOptOutException($recipientNumber);
         }
 
         try {
