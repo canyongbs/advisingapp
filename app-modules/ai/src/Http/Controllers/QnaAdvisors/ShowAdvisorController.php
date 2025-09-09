@@ -57,6 +57,11 @@ class ShowAdvisorController
                 ...config('filament.broadcasting.echo'),
                 'authEndpoint' => url('api/broadcasting/auth'),
             ],
+            'advisor' => [
+                'name' => $advisor->name,
+                'description' => $advisor->description,
+                'avatar_url' => $advisor->getFirstTemporaryUrl(now()->addHour(), 'avatar') ?: null,
+            ],
         ]);
     }
 }
