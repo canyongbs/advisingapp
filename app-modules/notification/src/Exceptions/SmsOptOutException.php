@@ -34,44 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Forms\Components;
+namespace AdvisingApp\Notification\Exceptions;
 
-use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use AdvisingApp\StudentDataModel\Services\SmsOptOutService;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Component;
+use Exception;
 
-class SmsOptOutCheckbox extends Checkbox
+class SmsOptOutException extends Exception
 {
-    protected function setUp(): void
+    public function __construct(string $phoneNumber)
     {
-        parent::setUp();
-
-        $this
-            ->label('SMS Opt Out')
-            ->columnSpanFull()
-            ->default(false)
-            ->dehydrated(false)
-            ->afterStateHydrated(function (Component $component, mixed $state): void {
-                $phoneNumber = $component->getContainer()->getRecord();
-
-                if ($phoneNumber instanceof StudentPhoneNumber && $phoneNumber->exists) {
-                    $smsOptOutService = app(SmsOptOutService::class);
-                    $component->state($smsOptOutService->isStudentPhoneNumberOptedOut($phoneNumber));
-                }
-            })
-            ->afterStateUpdated(function (mixed $state, Component $component): void {
-                $phoneNumber = $component->getContainer()->getRecord();
-
-                if ($phoneNumber instanceof StudentPhoneNumber && $phoneNumber->exists) {
-                    $smsOptOutService = app(SmsOptOutService::class);
-
-                    if ((bool) $state) {
-                        $smsOptOutService->optOutStudentPhoneNumber($phoneNumber);
-                    } else {
-                        $smsOptOutService->optInStudentPhoneNumber($phoneNumber);
-                    }
-                }
-            });
+        parent::__construct("Cannot send SMS to opted-out phone number: {$phoneNumber}");
     }
 }

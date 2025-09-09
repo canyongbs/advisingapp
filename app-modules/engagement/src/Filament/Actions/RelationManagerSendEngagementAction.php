@@ -49,6 +49,7 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use AdvisingApp\StudentDataModel\Services\SmsOptOutService;
 use Exception;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormComponentAction;
@@ -91,12 +92,14 @@ class RelationManagerSendEngagementAction extends CreateAction
                             ->label('What would you like to send?')
                             ->options(NotificationChannel::getEngagementOptions())
                             ->default(NotificationChannel::Email->value)
-                            ->disableOptionWhen(function (RelationManager $livewire, string $value): bool {
-                                assert($livewire->getOwnerRecord() instanceof Educatable);
+                            ->disableOptionWhen(
+                                function (RelationManager $livewire, string $value): bool {
+                                    assert($livewire->getOwnerRecord() instanceof Educatable);
 
-                                return (($value == (NotificationChannel::Sms->value) && (! $livewire->getOwnerRecord()->phoneNumbers()->where('can_receive_sms', true)->exists())))
-                                    || NotificationChannel::tryFrom($value)?->getCaseDisabled();
-                            })
+                                    return (($value == (NotificationChannel::Sms->value) && (! $livewire->getOwnerRecord()->phoneNumbers()->where('can_receive_sms', true)->exists())))
+                                        || NotificationChannel::tryFrom($value)?->getCaseDisabled();
+                                }
+                            )
                             ->selectablePlaceholder(false)
                             ->live()
                             ->afterStateUpdated(function (mixed $state, RelationManager $livewire, Set $set) {
@@ -108,12 +111,16 @@ class RelationManagerSendEngagementAction extends CreateAction
                                     NotificationChannel::Email => $livewire->getOwnerRecord()->primaryEmailAddress?->getKey(),
                                     NotificationChannel::Sms => $livewire->getOwnerRecord()->primaryPhoneNumber()
                                         ->where('can_receive_sms', true)
+                                        ->get()
+                                        ->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))
                                         ->first()?->getKey(),
                                 } ?? match ($channel) {
                                     NotificationChannel::Email => $livewire->getOwnerRecord()->emailAddresses()
                                         ->first()?->getKey(),
                                     NotificationChannel::Sms => $livewire->getOwnerRecord()->phoneNumbers()
                                         ->where('can_receive_sms', true)
+                                        ->get()
+                                        ->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))
                                         ->first()?->getKey(),
                                 };
 
@@ -346,5 +353,10 @@ class RelationManagerSendEngagementAction extends CreateAction
     public static function getDefaultName(): ?string
     {
         return 'engage';
+    }
+
+    protected function isPhoneNumberOptedOut(string $phoneNumber): bool
+    {
+        return app(SmsOptOutService::class)->isOptedOut($phoneNumber);
     }
 }
