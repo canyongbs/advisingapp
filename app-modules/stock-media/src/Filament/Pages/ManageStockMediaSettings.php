@@ -65,19 +65,20 @@ class ManageStockMediaSettings extends SettingsPage
     {
         return $form
             ->schema([
-                Toggle::make('active')
+                Toggle::make('is_active')
+                    ->label('Active')
                     ->inline(false)
                     ->live(),
                 Select::make('provider')
                     ->options(StockMediaProvider::class)
                     ->enum(StockMediaProvider::class)
-                    ->visible(fn (Get $get) => $get('active'))
+                    ->visible(fn (Get $get) => $get('is_active'))
                     ->afterStateHydrated(fn (Select $component) => $component->state(StockMediaProvider::Pexels))
                     ->disabled(true)
                     ->dehydrated(),
                 TextInput::make('pexels_api_key')
                     ->label('API Key')
-                    ->visible(fn (Get $get) => $get('active') && $get('provider') === StockMediaProvider::Pexels)
+                    ->visible(fn (Get $get) => $get('is_active') && $get('provider') === StockMediaProvider::Pexels)
                     ->password()
                     ->autocomplete(false),
             ]);

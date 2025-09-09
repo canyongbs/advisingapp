@@ -39,7 +39,7 @@ use Spatie\LaravelSettings\Migrations\SettingsMigration;
 return new class () extends SettingsMigration {
     public function up(): void
     {
-        $this->migrator->add('stock_media.active', false);
+        $this->migrator->add('stock_media.is_active', false);
 
         $this->migrator->add('stock_media.provider');
 
@@ -48,7 +48,7 @@ return new class () extends SettingsMigration {
 
     public function down(): void
     {
-        $this->migrator->deleteIfExists('stock_media.active');
+        $this->migrator->deleteIfExists('stock_media.is_active');
 
         $this->migrator->deleteIfExists('stock_media.provider');
 

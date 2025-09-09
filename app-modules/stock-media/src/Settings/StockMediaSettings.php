@@ -41,7 +41,7 @@ use Spatie\LaravelSettings\Settings;
 
 class StockMediaSettings extends Settings
 {
-    public bool $active = false;
+    public bool $is_active = false;
 
     public ?StockMediaProvider $provider = null;
 
