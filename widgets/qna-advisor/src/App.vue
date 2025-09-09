@@ -159,6 +159,7 @@ async function sendMessage() {
     try {
         const requestBody = {
             content: message.value,
+            thread_id: threadId.value,
         };
 
         const sendMessageResponse = await authorizedPost(sendMessageUrl.value, requestBody);
@@ -170,7 +171,9 @@ async function sendMessage() {
 
             let channelName = `qna-advisor-thread-${threadId.value}`;
 
-            websocketChannel = requiresAuthentication.value ? window.Echo.private(channelName) : window.Echo.channel(channelName);
+            websocketChannel = requiresAuthentication.value
+                ? window.Echo.private(channelName)
+                : window.Echo.channel(channelName);
 
             websocketChannel.listen('.qna-advisor-message.chunk', (data) => {
                 if (data.error) {
