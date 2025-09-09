@@ -51,6 +51,11 @@ class QnaAdvisorThread extends BaseModel
         'advisor_id',
         'author_type',
         'author_id',
+        'finished_at',
+    ];
+
+    protected $casts = [
+        'finished_at' => 'datetime',
     ];
 
     /**

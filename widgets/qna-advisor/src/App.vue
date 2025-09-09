@@ -57,10 +57,12 @@ const authentication = ref({
 const loadingError = ref(null);
 const sendMessageUrl = ref(null);
 const threadId = ref(null);
+const finishThreadUrl = ref(null);
 const message = ref('');
 const messages = ref([]);
 const currentResponse = ref('');
 const isLoading = ref(false);
+const isThreadFinished = ref(false);
 let websocketChannel = null;
 
 const scriptUrl = new URL(document.currentScript.getAttribute('src'));
@@ -168,6 +170,7 @@ async function sendMessage() {
 
         if (!threadId.value) {
             threadId.value = data.thread_id;
+            finishThreadUrl.value = data.finish_thread_url;
 
             let channelName = `qna-advisor-thread-${threadId.value}`;
 
@@ -201,6 +204,18 @@ async function sendMessage() {
     } catch (error) {
         console.error('Send message error:', error);
         isLoading.value = false;
+    }
+}
+
+async function finishThread() {
+    if (!finishThreadUrl.value) return;
+
+    try {
+        isThreadFinished.value = true;
+
+        await authorizedPost(finishThreadUrl.value);
+    } catch (error) {
+        console.error('Finish thread error:', error);
     }
 }
 
@@ -329,32 +344,34 @@ async function authorizedPost(url, data) {
             --rounding-full: 9999px;
         "
     >
-        <div v-if="authentication.promptToAuthenticate">
-            <FormKit type="form" @submit="authenticate" v-model="authentication">
-                <FormKit
-                    type="email"
-                    label="Your email address"
-                    name="email"
-                    validation="required|email"
-                    validation-visibility="submit"
-                    :disabled="authentication.isRequested"
-                />
+        <div class="flex h-full items-center justify-center" v-if="authentication.promptToAuthenticate">
+            <div class="w-full max-w-sm">
+                <FormKit type="form" @submit="authenticate" v-model="authentication">
+                    <FormKit
+                        type="email"
+                        label="Your email address"
+                        name="email"
+                        validation="required|email"
+                        validation-visibility="submit"
+                        :disabled="authentication.isRequested"
+                    />
 
-                <p v-if="authentication.requestedMessage" class="text-sm">
-                    {{ authentication.requestedMessage }}
-                </p>
+                    <p v-if="authentication.requestedMessage" class="text-sm">
+                        {{ authentication.requestedMessage }}
+                    </p>
 
-                <FormKit
-                    type="otp"
-                    digits="6"
-                    label="Authentication code"
-                    name="code"
-                    help="We've sent a code to your email address."
-                    validation="required"
-                    validation-visibility="submit"
-                    v-if="authentication.isRequested"
-                />
-            </FormKit>
+                    <FormKit
+                        type="otp"
+                        digits="6"
+                        label="Authentication code"
+                        name="code"
+                        help="We've sent a code to your email address."
+                        validation="required"
+                        validation-visibility="submit"
+                        v-if="authentication.isRequested"
+                    />
+                </FormKit>
+            </div>
         </div>
 
         <div
@@ -389,6 +406,7 @@ async function authorizedPost(url, data) {
                     </div>
                 </div>
                 <div
+                    v-if="!isThreadFinished"
                     class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700"
                 >
                     <div
@@ -414,10 +432,18 @@ async function authorizedPost(url, data) {
                             <button
                                 @click="sendMessage"
                                 :disabled="isLoading || !message.trim()"
-                                style="border-radius: 12px"
-                                class="relative font-semibold outline-none focus-visible:ring-2 px-3 py-2 text-sm bg-gray-600 text-white hover:bg-gray-500 focus-visible:ring-gray-500/50 w-full sm:w-auto dark:bg-amber-500 dark:hover:bg-amber-400 dark:focus-visible:ring-amber-400/50"
+                                class="relative rounded-md font-semibold outline-none focus-visible:ring-2 px-3 py-2 text-sm bg-gray-600 text-white hover:bg-gray-500 focus-visible:ring-gray-500/50 w-full sm:w-auto dark:bg-amber-500 dark:hover:bg-amber-400 dark:focus-visible:ring-amber-400/50"
                             >
                                 Send
+                            </button>
+
+                            <button
+                                v-if="finishThreadUrl"
+                                @click="finishThread"
+                                :disabled="isLoading"
+                                class="relative rounded-md font-semibold outline-none focus-visible:ring-2 px-3 py-2 text-sm bg-white text-gray-900 hover:bg-gray-100 focus-visible:ring-gray-500/50 w-full sm:w-auto dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:focus-visible:ring-gray-500/50 ring-1 ring-gray-300/50"
+                            >
+                                End chat
                             </button>
                         </div>
                     </div>

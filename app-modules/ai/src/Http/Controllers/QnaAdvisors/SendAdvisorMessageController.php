@@ -43,6 +43,7 @@ use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
@@ -93,6 +94,7 @@ class SendAdvisorMessageController
                 ->whereKey($data['thread_id'])
                 ->whereBelongsTo($advisor, 'advisor')
                 ->whereMorphedTo('author', $author)
+                ->whereNull('finished_at')
                 ->firstOrFail();
         } else {
             $thread = new QnaAdvisorThread();
@@ -117,6 +119,11 @@ class SendAdvisorMessageController
         return response()->json([
             'message' => 'Message dispatched for processing via websockets.',
             'thread_id' => $thread->getKey(),
+            'finish_thread_url' => URL::temporarySignedRoute(
+                name: 'ai.qna-advisors.threads.finish',
+                expiration: now()->addDays(3),
+                parameters: ['advisor' => $advisor, 'thread' => $thread],
+            ),
         ]);
     }
 }

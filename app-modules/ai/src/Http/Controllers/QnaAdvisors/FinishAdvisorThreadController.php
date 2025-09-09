@@ -34,42 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Actions;
+namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
-use AdvisingApp\Ai\Enums\AiMessageLogFeature;
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Models\LegacyAiMessageLog;
-use Illuminate\Support\Arr;
+use AdvisingApp\Ai\Jobs\QnaAdvisors\CreateQnaAdvisorThreadInteraction;
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use Illuminate\Http\JsonResponse;
 
-class CompletePrompt
+class FinishAdvisorThreadController
 {
-    public function execute(AiModel $aiModel, string $prompt, string $content): string
+    public function __invoke(QnaAdvisor $advisor, QnaAdvisorThread $thread): JsonResponse
     {
-        $service = $aiModel->getService();
-
-        $completion = $service->complete($prompt, $content);
-
-        if (auth()->hasUser()) {
-            LegacyAiMessageLog::create([
-                'message' => $content,
-                'metadata' => [
-                    'prompt' => $prompt,
-                    'completion' => $completion,
-                ],
-                'request' => [
-                    'headers' => Arr::only(
-                        request()->headers->all(),
-                        ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
-                    ),
-                    'ip' => request()->ip(),
-                ],
-                'sent_at' => now(),
-                'user_id' => auth()->id(),
-                'ai_assistant_name' => 'Institutional Advisor',
-                'feature' => AiMessageLogFeature::DraftWithAi,
-            ]);
+        if ($thread->finished_at) {
+            abort(403, 'This thread is already finished.');
         }
 
-        return $completion;
+        $author = auth('student')->user() ?? auth('prospect')->user();
+
+        if ($author && (! $thread->author()->is($author))) {
+            abort(403, 'You are not the author of this thread.');
+        }
+
+        $thread->touch('finished_at');
+
+        if ($thread->author) {
+            dispatch(new CreateQnaAdvisorThreadInteraction($thread));
+        }
+
+        return response()->json([
+            'message' => 'Thread marked as finished.',
+        ]);
     }
 }

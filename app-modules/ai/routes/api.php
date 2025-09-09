@@ -36,6 +36,7 @@
 
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\AuthenticationConfirmController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\AuthenticationRefreshController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\FinishAdvisorThreadController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\RequestAuthenticationController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendAdvisorMessageController as SendQnaAdvisorMessageController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\ShowAdvisorController;
@@ -75,4 +76,11 @@ Route::middleware([
                 QnaAdvisorAuthorization::class,
             ])
             ->name('messages.send');
+
+        Route::post('/threads/{thread}/finish', FinishAdvisorThreadController::class)
+            ->middleware([
+                'signed',
+                QnaAdvisorAuthorization::class,
+            ])
+            ->name('threads.finish');
     });

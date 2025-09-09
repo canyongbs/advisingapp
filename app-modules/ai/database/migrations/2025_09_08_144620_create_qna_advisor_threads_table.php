@@ -45,6 +45,7 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
             $table->foreignUuid('advisor_id')->constrained('qna_advisors');
             $table->nullableUuidMorphs('author');
+            $table->dateTime('finished_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -98,8 +98,13 @@ trait HasManyMorphedInteractionsTrait
                     ]),
                 Fieldset::make('Notes')
                     ->schema([
-                        TextEntry::make('subject'),
-                        TextEntry::make('description'),
+                        TextEntry::make('subject')
+                            ->hidden(fn ($state): bool => blank($state))
+                            ->columnSpanFull(),
+                        TextEntry::make('description')
+                            ->getStateUsing(fn (Interaction $interaction): string => $interaction->description ?? 'N/A')
+                            ->markdown()
+                            ->columnSpanFull(),
                     ]),
             ]);
     }
