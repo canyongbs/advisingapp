@@ -34,52 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Jobs;
-
-use AdvisingApp\Workflow\Models\WorkflowDetails;
-use AdvisingApp\Workflow\Models\WorkflowRunStep;
-use App\Features\WorkflowSequentialExecutionFeature;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Queue\InteractsWithQueue;
+use App\Features\StudentSisCategoryFeature;
+use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
-use Throwable;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-class ExecuteWorkflowActionStepsJob implements ShouldQueue
-{
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-
-    public function handle(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (! WorkflowSequentialExecutionFeature::active()) {
-            $steps = WorkflowRunStep::query()->where('execute_at', '<=', now())->whereNull('dispatched_at');
-        }
+        DB::transaction(function () {
+            Schema::table('students', function (Blueprint $table) {
+                $table->string('sis_category')->nullable();
+            });
 
-        $steps = WorkflowRunStep::query()
-            ->where('execute_at', '<=', now())
-            ->whereNotNull('execute_at')
-            ->whereNull('dispatched_at');
-
-        $steps->each(function (WorkflowRunStep $step) {
-            try {
-                DB::beginTransaction();
-
-                $step->dispatched_at = now();
-                $step->save();
-
-                assert($step->details instanceof WorkflowDetails);
-
-                dispatch($step->details->getActionExecutableJob($step));
-
-                DB::commit();
-            } catch (Throwable $error) {
-                DB::rollBack();
-
-                report($error);
-            }
+            StudentSisCategoryFeature::activate();
         });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            Schema::table('students', function (Blueprint $table) {
+                $table->dropColumn('sis_category');
+            });
+
+            StudentSisCategoryFeature::deactivate();
+        });
+    }
+};

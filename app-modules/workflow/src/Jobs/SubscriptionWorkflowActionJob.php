@@ -39,14 +39,18 @@ namespace AdvisingApp\Workflow\Jobs;
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use AdvisingApp\Workflow\Models\WorkflowSubscriptionDetails;
+use App\Features\WorkflowSequentialExecutionFeature;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class SubscriptionWorkflowActionJob extends ExecuteWorkflowActionJob
 {
+    use SchedulesNextWorkflowStep;
+
     public function handle(): void
     {
         try {
@@ -85,6 +89,13 @@ class SubscriptionWorkflowActionJob extends ExecuteWorkflowActionJob
                 $workflowRunStepRelated->related()->associate($subscription);
 
                 $workflowRunStepRelated->save();
+            }
+
+            if (WorkflowSequentialExecutionFeature::active()) {
+                $this->markStepCompletedAndScheduleNext();
+            } else {
+                $this->workflowRunStep->succeeded_at = now();
+                $this->workflowRunStep->saveOrFail();
             }
 
             DB::commit();

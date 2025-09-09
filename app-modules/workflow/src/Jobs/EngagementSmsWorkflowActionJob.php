@@ -40,8 +40,10 @@ use AdvisingApp\Engagement\Actions\CreateEngagement;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
+use App\Features\WorkflowSequentialExecutionFeature;
 use App\Models\User;
 use Exception;
 use Illuminate\Queue\Middleware\RateLimitedWithRedis;
@@ -50,6 +52,8 @@ use Throwable;
 
 class EngagementSmsWorkflowActionJob extends ExecuteWorkflowActionJob
 {
+    use SchedulesNextWorkflowStep;
+
     /**
      * @return array<object>
      */
@@ -100,8 +104,12 @@ class EngagementSmsWorkflowActionJob extends ExecuteWorkflowActionJob
 
             $workflowRunStepRelated->save();
 
-            $this->workflowRunStep->succeeded_at = now();
-            $this->workflowRunStep->saveOrFail();
+            if (WorkflowSequentialExecutionFeature::active()) {
+                $this->markStepCompletedAndScheduleNext();
+            } else {
+                $this->workflowRunStep->succeeded_at = now();
+                $this->workflowRunStep->saveOrFail();
+            }
 
             DB::commit();
         } catch (Throwable $throw) {
