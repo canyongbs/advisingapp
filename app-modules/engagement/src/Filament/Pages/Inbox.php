@@ -43,9 +43,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\Split;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -58,7 +56,7 @@ class Inbox extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected static string $view = 'advising-engagement.filament.pages.inbox';
+    protected static string $view = 'engagement::filament.pages.inbox';
 
     protected static ?string $cluster = UnifiedInbox::class;
 
@@ -114,27 +112,22 @@ class Inbox extends Page implements HasTable
             ])
             ->actions([
                 ViewAction::make()
-                    ->modalHeading('View Engagement Response')
-                    ->infolist([
-                        Split::make([
-                            Section::make([
-                                TextEntry::make('subject')
-                                    ->columnSpanFull(),
-                                TextEntry::make('content')
-                                    ->columnSpanFull(),
-                            ]),
-                            Section::make([
-                                TextEntry::make('sent_at')
-                                    ->dateTime(),
-                            ])->grow(false),
-                        ])
-                            ->from('md')
-                            ->columnSpanFull(),
-                    ]),
+                    ->url(fn (EngagementResponse $record): string => ViewEngagementResponse::getUrl(['record' => $record])),
             ])
-            ->recordAction('view')
+            ->recordUrl(fn (EngagementResponse $record): string => ViewEngagementResponse::getUrl(['record' => $record]))
             ->defaultSort('sent_at', 'desc')
             ->emptyStateHeading('No Engagements yet.');
+    }
+
+    /**
+     * @return array<NavigationItem>
+     */
+    public static function getNavigationItems(): array
+    {
+        return [
+            parent::getNavigationItems()[0]
+                ->isActiveWhen(fn (): bool => request()->routeIs(static::getNavigationItemActiveRoutePattern(), ViewEngagementResponse::getNavigationItemActiveRoutePattern())),
+        ];
     }
 
     protected function getHeaderActions(): array
