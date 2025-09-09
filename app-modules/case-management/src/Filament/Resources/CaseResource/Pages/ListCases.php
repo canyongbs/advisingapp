@@ -164,7 +164,7 @@ class ListCases extends ListRecords
             ])
             ->filters([
                 SelectFilter::make('priority')
-                    ->relationship('priority', 'name', fn (Builder $query) => $query->with('type')->whereRelation('type', 'deleted_at'))
+                    ->relationship('priority', 'name', fn (Builder $query) => $query->withWhereHas('type'))
                     ->getOptionLabelFromRecordUsing(fn (CasePriority $record) => "{$record->type->name} - {$record->name}")
                     ->multiple()
                     ->preload(),
