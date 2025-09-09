@@ -72,6 +72,7 @@ use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Notification;
 
 class RelationManagerSendEngagementAction extends CreateAction
 {
@@ -88,27 +89,25 @@ class RelationManagerSendEngagementAction extends CreateAction
 
                 return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
             })
-            ->form(fn (Form $form, RelationManager $livewire) => $form->schema([
-                Wizard::make()
-                    ->steps([
-                        Step::make('Contact Information')
-                            ->schema([
-                                Select::make('channel')
-                                    ->label('What would you like to send?')
-                                    ->options(NotificationChannel::getEngagementOptions())
-                                    ->default(NotificationChannel::Email->value)
-                                    ->disableOptionWhen(function (RelationManager $livewire, string $value): bool {
-                                        assert($livewire->getOwnerRecord() instanceof Educatable);
+            ->steps([
+                Step::make('Contact Information')
+                    ->schema([
+                        Select::make('channel')
+                            ->label('What would you like to send?')
+                            ->options(NotificationChannel::getEngagementOptions())
+                            ->default(NotificationChannel::Email->value)
+                            ->disableOptionWhen(function (RelationManager $livewire, string $value): bool {
+                                assert($livewire->getOwnerRecord() instanceof Educatable);
 
-                                        return (($value == (NotificationChannel::Sms->value) && (! $livewire->getOwnerRecord()->phoneNumbers()->where('can_receive_sms', true)->exists())))
-                                            || NotificationChannel::tryFrom($value)?->getCaseDisabled();
-                                    })
-                                    ->selectablePlaceholder(false)
-                                    ->live()
-                                    ->afterStateUpdated(function (mixed $state, RelationManager $livewire, Set $set) {
-                                        assert($livewire->getOwnerRecord() instanceof Educatable);
+                                return (($value == (NotificationChannel::Sms->value) && (!$livewire->getOwnerRecord()->phoneNumbers()->where('can_receive_sms', true)->exists()))) 
+                                    || NotificationChannel::tryFrom($value)?->getCaseDisabled();
+                            })
+                            ->selectablePlaceholder(false)
+                            ->live()
+                            ->afterStateUpdated(function (mixed $state, RelationManager $livewire, Set $set) {
+                                assert($livewire->getOwnerRecord() instanceof Educatable);
 
-                                        $channel = NotificationChannel::parse($state);
+                                $channel = NotificationChannel::parse($state);
 
                                         $route = match ($channel) {
                                             NotificationChannel::Email => $livewire->getOwnerRecord()->primaryEmailAddress?->getKey(),
@@ -284,8 +283,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                     ->required()
                                     ->visible(fn (Get $get) => $get('send_later')),
                             ]),
-                    ]),
-            ]))
+                    ])
             ->action(function (array $data, Form $form, RelationManager $livewire) {
                 $recipient = $livewire->getOwnerRecord();
 
