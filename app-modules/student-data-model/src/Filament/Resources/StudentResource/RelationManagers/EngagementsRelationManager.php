@@ -295,7 +295,7 @@ class EngagementsRelationManager extends RelationManager
                                 )
                             )
                     ),
-            ])->poll('5s');
+            ]);
     }
 
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
