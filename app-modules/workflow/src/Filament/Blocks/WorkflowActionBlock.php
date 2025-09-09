@@ -37,6 +37,8 @@
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
 use AdvisingApp\Workflow\Models\WorkflowDetails;
+use AdvisingApp\Workflow\Settings\WorkflowSettings;
+use Carbon\CarbonInterface;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Field;
@@ -44,38 +46,55 @@ use Filament\Forms\Components\Section;
 
 abstract class WorkflowActionBlock extends Block
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
+  protected function setUp(): void
+  {
+    parent::setUp();
+  }
+
+  public static function make(?string $name = null): static
+  {
+    return parent::make($name ?? static::type());
+  }
+
+  /**
+   * @return array<int, covariant Field | Section>
+   */
+  public function createFields(): array
+  {
+    return $this->generateFields();
+  }
+
+  /**
+   * @return array<int, covariant Field | Section>
+   */
+  public function editFields(): array
+  {
+    return $this->generateFields();
+  }
+
+  /**
+   * @return array<int, covariant Field | Section>
+   */
+  abstract public function generateFields(): array;
+
+  abstract public static function type(): string;
+
+  public function afterCreated(WorkflowDetails $action, ComponentContainer $componentContainer): void {}
+
+  public function generateUserTimezoneHint(CarbonInterface $dateTime): ?string
+  {
+    if (blank(auth()->user()->timezone)) {
+      return null;
     }
 
-    public static function make(?string $name = null): static
-    {
-        return parent::make($name ?? static::type());
+    $actionExecutionTimezone = app(WorkflowSettings::class)->getActionExecutionTimezone();
+
+    if (auth()->user()->timezone === $actionExecutionTimezone) {
+      return null;
     }
 
-    /**
-     * @return array<int, covariant Field | Section>
-     */
-    public function createFields(): array
-    {
-        return $this->generateFields();
-    }
-
-    /**
-     * @return array<int, covariant Field | Section>
-     */
-    public function editFields(): array
-    {
-        return $this->generateFields();
-    }
-
-    /**
-     * @return array<int, covariant Field | Section>
-     */
-    abstract public function generateFields(): array;
-
-    abstract public static function type(): string;
-
-    public function afterCreated(WorkflowDetails $action, ComponentContainer $componentContainer): void {}
+    return $dateTime
+      ->shiftTimezone($actionExecutionTimezone)
+      ->setTimezone(auth()->user()->timezone)->format('M j, Y H:i:s') . ' in your timezone';
+  }
 }

@@ -44,6 +44,7 @@ use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
 use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
 use AdvisingApp\Workflow\Models\WorkflowStep;
+use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
 use Carbon\CarbonInterval;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Group;
@@ -97,7 +98,7 @@ class WorkflowStepsRelationManager extends RelationManager
                     }),
                 TextColumn::make('delay_minutes')
                     ->label('Delay from Previous Step')
-                    ->state(fn (WorkflowStep $record) => CarbonInterval::minutes($record->delay_minutes)->cascade()->forHumans()),
+                    ->state(fn(WorkflowStep $record) => CarbonInterval::minutes($record->delay_minutes)->cascade()->forHumans()),
             ])
             ->headerActions([
                 Action::make('create')
@@ -154,7 +155,7 @@ class WorkflowStepsRelationManager extends RelationManager
                                 }
                             }),
                     ])
-                    ->action(fn () => null),
+                    ->action(fn() => null),
             ])
             ->actions([
                 EditAction::make()
@@ -236,6 +237,12 @@ class WorkflowStepsRelationManager extends RelationManager
                 'severity' => $data['severity'],
                 'suggested_intervention' => $data['suggested_intervention'],
                 'status_id' => $data['status_id'],
+            ]),
+            'workflow_task_details' => WorkflowTaskDetails::create([
+                'title' => $data['title'],
+                'description' => $data['description'],
+                'due' => $data['due'],
+                'assigned_to' => $data['assigned_to'],
             ]),
             default => null
         };

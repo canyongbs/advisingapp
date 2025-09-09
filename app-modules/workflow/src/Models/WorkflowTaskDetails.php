@@ -37,11 +37,18 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Project\Models\Project;
+use AdvisingApp\Task\Models\ConfidentialTasksProjects;
+use AdvisingApp\Task\Models\ConfidentialTasksTeams;
+use AdvisingApp\Task\Models\ConfidentialTasksUsers;
+use AdvisingApp\Team\Models\Team;
 use AdvisingApp\Workflow\Filament\Blocks\TaskBlock;
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\TaskWorkflowActionJob;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -50,33 +57,65 @@ use OwenIt\Auditing\Contracts\Auditable;
  */
 class WorkflowTaskDetails extends WorkflowDetails implements Auditable
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
+  use SoftDeletes;
+  use AuditableTrait;
+  use HasUuids;
 
-    protected $fillable = [
-        'title',
-        'description',
-        'due',
-        'workflow_step_id',
-    ];
+  protected $fillable = [
+    'title',
+    'description',
+    'due',
+    'is_confidential',
 
-    protected $casts = [
-        'due' => 'datetime',
-    ];
+  ];
 
-    public function getLabel(): string
-    {
-        return 'Task';
-    }
+  protected $casts = [
+    'due' => 'datetime',
+    'is_confidential' => 'boolean',
+  ];
 
-    public function getBlock(): WorkflowActionBlock
-    {
-        return TaskBlock::make();
-    }
+  public function getLabel(): string
+  {
+    return 'Task';
+  }
 
-    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
-    {
-        return new TaskWorkflowActionJob($workflowRunStep);
-    }
+  public function getBlock(): WorkflowActionBlock
+  {
+    return TaskBlock::make();
+  }
+
+  public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
+  {
+    return new TaskWorkflowActionJob($workflowRunStep);
+  }
+
+  /**
+   * @return BelongsToMany<User, $this, covariant ConfidentialTasksUsers>
+   */
+  public function confidentialAccessUsers(): BelongsToMany
+  {
+    return $this->belongsToMany(User::class, 'confidential_task_users')
+      ->using(ConfidentialTasksUsers::class)
+      ->withTimestamps();
+  }
+
+  /**
+   * @return BelongsToMany<Team, $this, covariant ConfidentialTasksTeams>
+   */
+  public function confidentialAccessTeams(): BelongsToMany
+  {
+    return $this->belongsToMany(Team::class, 'confidential_task_teams')
+      ->using(ConfidentialTasksTeams::class)
+      ->withTimestamps();
+  }
+
+  /**
+   * @return BelongsToMany<Project, $this, covariant ConfidentialTasksProjects>
+   */
+  public function confidentialAccessProjects(): BelongsToMany
+  {
+    return $this->belongsToMany(Project::class, 'confidential_task_projects', 'task_id', 'project_id')
+      ->using(ConfidentialTasksProjects::class)
+      ->withTimestamps();
+  }
 }

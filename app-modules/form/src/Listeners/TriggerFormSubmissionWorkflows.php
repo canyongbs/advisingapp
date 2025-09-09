@@ -51,11 +51,11 @@ use Throwable;
 
 class TriggerFormSubmissionWorkflows implements ShouldQueueAfterCommit
 {
-    public function handle(FormSubmissionCreated $event): void
-    {
-        $form = $event->submission->submissible;
+  public function handle(FormSubmissionCreated $event): void
+  {
+    $form = $event->submission->submissible;
 
-        assert($form instanceof Form);
+    assert($form instanceof Form);
 
         if (is_null($event->submission->author)) {
             // If the submission has no author, we cannot trigger workflows.
@@ -141,6 +141,47 @@ class TriggerFormSubmissionWorkflows implements ShouldQueueAfterCommit
             }
         }
 
-        return $delayFrom;
+        $workflowRun = new WorkflowRun(['started_at' => now()]);
+        $workflowRun->related()->associate($event->submission->author);
+        $workflowRun->workflowTrigger()->associate($workflowTrigger);
+        $workflowRun->saveOrFail();
+
+        $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step) use ($event, $workflowRun) {
+          assert($step->currentDetails instanceof WorkflowDetails);
+
+          $workflowRunStep = new WorkflowRunStep([
+            'execute_at' => $this->getStepScheduledAt($step, $event),
+          ]);
+
+          $workflowRunStep->workflowRun()->associate($workflowRun);
+          $workflowRunStep->details()->associate($step->currentDetails);
+
+          $workflowRunStep->saveOrFail();
+        });
+      });
+
+      DB::commit();
+    } catch (Throwable $error) {
+      DB::rollBack();
+
+      throw $error;
     }
+  }
+
+  private function getStepScheduledAt(WorkflowStep $step, FormSubmissionCreated $event): Carbon
+  {
+    $delayFrom = $event->submission->submitted_at->toMutable();
+
+    $delayFrom->addMinutes($step->delay_minutes);
+
+    $prevStep = $step->previousWorkflowStep;
+
+    while (! is_null($prevStep)) {
+      $delayFrom->addMinutes($prevStep->delay_minutes);
+
+      $prevStep = $prevStep->previousWorkflowStep;
+    }
+
+    return $delayFrom;
+  }
 }

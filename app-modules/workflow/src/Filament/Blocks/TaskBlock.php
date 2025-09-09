@@ -36,20 +36,112 @@
 
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
+use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
+use AdvisingApp\Workflow\Settings\WorkflowSettings;
+use Carbon\CarbonImmutable;
+use Closure;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class TaskBlock extends WorkflowActionBlock
 {
-    //TODO: implement
-    public function generateFields(): array
-    {
-        return [
-            Select::make('temp'),
-        ];
-    }
+  protected Model | string | Closure | null $model = WorkflowTaskDetails::class;
 
-    public static function type(): string
-    {
-        return 'workflow_task_details';
-    }
+  protected function setUp(): void
+  {
+    parent::setUp();
+
+    $this->label('Task');
+
+    $this->schema($this->createFields());
+  }
+
+  /**
+   * @return array<int, Section|Fieldset|Checkbox|Select|Textarea|TextInput|DateTimePicker>
+   */
+  public function generateFields(string $fieldPrefix = ''): array
+  {
+    return [
+      // Checkbox::make('is_confidential')
+      //   ->label('Confidential')
+      //   ->live(),
+      // Select::make('confidential_task_projects')
+      //   ->relationship('confidentialAccessProjects', 'name')
+      //   ->preload()
+      //   ->label('Projects')
+      //   ->multiple()
+      //   ->exists('projects', 'id')
+      //   ->visible(fn(Get $get) => $get('is_confidential')),
+      // Select::make('confidential_task_users')
+      //   ->relationship('confidentialAccessUsers', 'name')
+      //   ->preload()
+      //   ->label('Users')
+      //   ->multiple()
+      //   ->exists('users', 'id')
+      //   ->visible(fn(Get $get) => $get('is_confidential')),
+      // Select::make('confidential_task_teams')
+      //   ->relationship('confidentialAccessTeams', 'name')
+      //   ->preload()
+      //   ->label('Teams')
+      //   ->multiple()
+      //   ->exists('teams', 'id')
+      //   ->visible(fn(Get $get) => $get('is_confidential')),
+      TextInput::make($fieldPrefix . 'title')
+        ->required()
+        ->maxLength(100)
+        ->string(),
+      Textarea::make($fieldPrefix . 'description')
+        ->required()
+        ->string(),
+      DateTimePicker::make($fieldPrefix . 'due')
+        ->label('Due Date'),
+      Select::make($fieldPrefix . 'assigned_to')
+        ->label('Assigned To')
+        ->relationship('assignedTo', 'name')
+        ->model(Task::class)
+        ->nullable()
+        ->searchable()
+        ->default(Auth::id()),
+      Section::make('How long after the previous step should this occur?')
+        ->schema([
+          TextInput::make('days')
+            ->translateLabel()
+            ->numeric()
+            ->step(1)
+            ->minValue(0)
+            ->default(0)
+            ->inlineLabel(),
+          TextInput::make('hours')
+            ->translateLabel()
+            ->numeric()
+            ->step(1)
+            ->minValue(0)
+            ->default(0)
+            ->inlineLabel(),
+          TextInput::make('minutes')
+            ->translateLabel()
+            ->numeric()
+            ->step(1)
+            ->minValue(0)
+            ->default(0)
+            ->inlineLabel(),
+        ])
+        ->columns(3),
+
+    ];
+  }
+
+  public static function type(): string
+  {
+    return 'workflow_task_details';
+  }
 }
