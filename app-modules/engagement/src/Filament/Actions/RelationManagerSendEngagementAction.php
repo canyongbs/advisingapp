@@ -298,7 +298,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                 $data['subject']['content'] = [
                     ...($data['subject']['content'] ?? []),
                 ];
-                
+
                 $data['body'] ??= ['type' => 'doc', 'content' => []];
                 $data['body']['content'] = [
                     ...($data['body']['content'] ?? []),
