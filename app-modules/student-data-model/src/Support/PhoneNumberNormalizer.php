@@ -34,53 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Services;
+namespace AdvisingApp\StudentDataModel\Support;
 
-use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use AdvisingApp\StudentDataModel\Support\PhoneNumberNormalizer;
+use App\Settings\ImportSettings;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberUtil;
 
-class SmsOptOutService
+class PhoneNumberNormalizer
 {
-    public function isStudentPhoneNumberOptedOut(StudentPhoneNumber $phoneNumber): bool
+    public static function toE164(string $phoneNumber): ?string
     {
-        $e164Number = PhoneNumberNormalizer::toE164($phoneNumber->number);
-
-        if (! $e164Number) {
-            return false;
+        if (blank($phoneNumber)) {
+            return null;
         }
 
-        return SmsOptOutPhoneNumber::where('number', $e164Number)->exists();
-    }
+        $phoneUtil = PhoneNumberUtil::getInstance();
 
-    public function isOptedOut(string $phoneNumber): bool
-    {
-        $e164Number = PhoneNumberNormalizer::toE164($phoneNumber);
+        try {
+            $parsedNumber = $phoneUtil->parse($phoneNumber);
 
-        if (! $e164Number) {
-            return false;
-        }
+            return $phoneUtil->format($parsedNumber, PhoneNumberFormat::E164);
+        } catch (NumberParseException) {
+            $defaultCountry = app(ImportSettings::class)->default_country ?? 'US';
 
-        return SmsOptOutPhoneNumber::where('number', $e164Number)->exists();
-    }
+            try {
+                $parsedNumber = $phoneUtil->parse($phoneNumber, $defaultCountry);
 
-    public function optOutStudentPhoneNumber(StudentPhoneNumber $phoneNumber): void
-    {
-        $e164Number = PhoneNumberNormalizer::toE164($phoneNumber->number);
-
-        if ($e164Number) {
-            SmsOptOutPhoneNumber::firstOrCreate([
-                'number' => $e164Number,
-            ]);
-        }
-    }
-
-    public function optInStudentPhoneNumber(StudentPhoneNumber $phoneNumber): void
-    {
-        $e164Number = PhoneNumberNormalizer::toE164($phoneNumber->number);
-
-        if ($e164Number) {
-            SmsOptOutPhoneNumber::where('number', $e164Number)->delete();
+                return $phoneUtil->format($parsedNumber, PhoneNumberFormat::E164);
+            } catch (NumberParseException) {
+                return null;
+            }
         }
     }
 }

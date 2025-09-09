@@ -419,9 +419,6 @@ class SendEngagementAction extends Action
         return $this->educatable;
     }
 
-    /**
-     * Check if a phone number is opted out of SMS
-     */
     protected function isPhoneNumberOptedOut(string $phoneNumber): bool
     {
         return app(SmsOptOutService::class)->isOptedOut($phoneNumber);
