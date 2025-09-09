@@ -215,7 +215,7 @@ class CreateInteraction extends CreateRecord
                         ->default(fn () => now()->toDateTimeString())
                         ->required()
                         ->live(onBlur: true)
-                        ->afterStateUpdated(fn (Get $get, Set $set) => $this->calculateEndDateTime($get, $set)),
+                        ->afterStateUpdated($this->calculateEndDateTime(...)),
                     TextInput::make('duration')
                         ->label('Duration (Minutes)')
                         ->integer()
@@ -223,7 +223,7 @@ class CreateInteraction extends CreateRecord
                         ->required()
                         ->dehydrated(false)
                         ->live(onBlur: true)
-                        ->afterStateUpdated(fn (Get $get, Set $set) => $this->calculateEndDateTime($get, $set)),
+                        ->afterStateUpdated($this->calculateEndDateTime(...)),
                     DateTimePicker::make('end_datetime')
                         ->label('End Date and Time')
                         ->seconds(false)
