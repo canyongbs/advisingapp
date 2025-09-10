@@ -50,10 +50,10 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\InteractionMetadataFeature;
 use Exception;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Wizard\Step;
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
@@ -70,8 +70,8 @@ class BulkCreateInteractionAction
             ->label('Log Interaction')
             ->icon('heroicon-o-document-text')
             ->modalHeading('Create Interaction')
-            ->form([
-                Fieldset::make('Details')
+            ->steps([
+                Step::make('Details')
                     ->schema([
                         Select::make('interaction_initiative_id')
                             ->relationship('initiative', 'name')
@@ -139,7 +139,7 @@ class BulkCreateInteractionAction
                             ->visible(fn () => InteractionMetadataFeature::active() ? $settings->is_type_enabled : true)
                             ->exists((new InteractionType())->getTable(), 'id'),
                     ]),
-                Fieldset::make('Time')
+                Step::make('Time')
                     ->schema([
                         DateTimePicker::make('start_datetime')
                             ->seconds(false)
@@ -148,13 +148,14 @@ class BulkCreateInteractionAction
                             ->seconds(false)
                             ->required(),
                     ]),
-                Fieldset::make('Notes')
+                Step::make('Notes')
                     ->schema([
                         TextInput::make('subject')
                             ->required(),
                         Textarea::make('description')
                             ->required(),
-                    ]),
+                    ])
+                    ->columns(1),
             ])
             ->action(function (Collection $records, array $data) {
                 try {
