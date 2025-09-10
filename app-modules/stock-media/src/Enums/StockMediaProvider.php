@@ -46,4 +46,13 @@ enum StockMediaProvider: string implements HasLabel
     {
         return $this->name;
     }
+
+    public static function parse(string | self | null $value): ?self
+    {
+        if ($value instanceof self) {
+            return $value;
+        }
+
+        return self::tryFrom($value);
+    }
 }

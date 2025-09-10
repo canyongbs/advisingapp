@@ -81,4 +81,13 @@ class ManageStockMediaSettings extends SettingsPage
                     ->autocomplete(false),
             ]);
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+      if (filled($data['provider'] ?? null)) {
+            $data['provider'] = StockMediaProvider::parse($data['provider']);
+        }
+
+        return parent::mutateFormDataBeforeSave($data);
+    }
 }
