@@ -73,12 +73,10 @@ class ManageStockMediaSettings extends SettingsPage
                     ->options(StockMediaProvider::class)
                     ->enum(StockMediaProvider::class)
                     ->visible(fn (Get $get) => $get('is_active'))
-                    ->afterStateHydrated(fn (Select $component) => $component->state(StockMediaProvider::Pexels))
-                    ->disabled(true)
-                    ->dehydrated(),
+                    ->live(),
                 TextInput::make('pexels_api_key')
                     ->label('API Key')
-                    ->visible(fn (Get $get) => $get('is_active') && $get('provider') === StockMediaProvider::Pexels)
+                    ->visible(fn (Get $get) => $get('is_active') && ($get('provider') === StockMediaProvider::Pexels || $get('provider') === StockMediaProvider::Pexels->value))
                     ->password()
                     ->autocomplete(false),
             ]);
