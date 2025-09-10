@@ -48,7 +48,6 @@ use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use AdvisingApp\StudentDataModel\Services\SmsOptOutService;
 use App\Filament\Forms\Components\EducatableSelect;
 use Exception;
 use Filament\Actions\Action;
@@ -417,10 +416,5 @@ class SendEngagementAction extends Action
     public function getEducatable(): Student | Prospect | null
     {
         return $this->educatable;
-    }
-
-    protected function isPhoneNumberOptedOut(string $phoneNumber): bool
-    {
-        return app(SmsOptOutService::class)->isOptedOut($phoneNumber);
     }
 }

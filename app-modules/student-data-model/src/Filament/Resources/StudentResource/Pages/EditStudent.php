@@ -38,9 +38,8 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
+use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use AdvisingApp\StudentDataModel\Services\SmsOptOutService;
 use App\Features\AthleticFieldsFeature;
 use App\Features\SmsOptOutFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -49,7 +48,6 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Grid;
@@ -62,7 +60,6 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class EditStudent extends EditRecord
@@ -74,9 +71,6 @@ class EditStudent extends EditRecord
 
     // TODO: Automatically set from Filament
     protected static ?string $navigationLabel = 'Edit';
-
-    /** @var array<string, bool> */
-    public array $smsOptOutStates = [];
 
     public function form(Form $form): Form
     {
@@ -203,29 +197,50 @@ class EditStudent extends EditRecord
                                     ->label('SMS Opt Out')
                                     ->columnSpanFull()
                                     ->default(false)
-                                    ->dehydrated(false)
-                                    ->live()
-                                    ->afterStateHydrated(function (Component $component): void {
-                                        $phoneNumber = $component->getContainer()->getRecord();
-
-                                        if ($phoneNumber instanceof StudentPhoneNumber && $phoneNumber->exists) {
-                                            $isOptedOut = app(SmsOptOutService::class)->isStudentPhoneNumberOptedOut($phoneNumber);
-                                            $component->state($isOptedOut);
-                                        }
-                                    })
-                                    ->afterStateUpdated(function (mixed $state, Component $component): void {
-                                        $record = $component->getContainer()->getRecord();
-
-                                        if ($record instanceof StudentPhoneNumber && $record->exists) {
-                                            $key = $record->id;
-                                        } else {
-                                            $key = $component->getContainer()->getStatePath();
-                                        }
-
-                                        $this->smsOptOutStates[$key] = (bool) $state;
-                                    })
                                     ->visible(SmsOptOutFeature::active()),
                             ])
+                            ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
+                                if (isset($data['number'])) {
+                                    $data['sms_opt_out_phone_number'] = SmsOptOutPhoneNumber::where('number', $data['number'])->exists();
+                                } else {
+                                    $data['sms_opt_out_phone_number'] = false;
+                                }
+
+                                return $data;
+                            })
+                            ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
+                                if ($data['sms_opt_out_phone_number'] === true) {
+                                    SmsOptOutPhoneNumber::firstOrCreate([
+                                        'number' => $data['number'],
+                                    ]);
+                                }
+
+                                unset($data['sms_opt_out_phone_number']);
+
+                                return $data;
+                            })
+                            ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
+                                if ($data['sms_opt_out_phone_number'] === true) {
+                                    SmsOptOutPhoneNumber::firstOrCreate([
+                                        'number' => $data['number'],
+                                    ]);
+                                } else {
+                                    SmsOptOutPhoneNumber::where('number', $data['number'])->delete();
+                                }
+
+                                unset($data['sms_opt_out_phone_number']);
+
+                                return $data;
+                            })
+                            ->deleteAction(
+                                fn (Action $action) => $action->before(function () use ($action) {
+                                    $data = $action->getArguments();
+
+                                    if (isset($data['number'])) {
+                                        SmsOptOutPhoneNumber::where('number', $data['number'])->delete();
+                                    }
+                                })
+                            )
                             ->orderColumn('order')
                             ->itemLabel(fn (Repeater $component, ComponentContainer $container): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $container->getStatePath()) ? 'Primary phone number' : 'Additional phone number')
                             ->extraItemActions([
@@ -352,47 +367,5 @@ class EditStudent extends EditRecord
         $student->primaryAddress()->associate($student->addresses()->first());
         $student->updated_at_source = now();
         $student->save();
-
-        if (SmsOptOutFeature::active()) {
-            $this->processSmsOptOutPreferences($student);
-        }
-    }
-
-    private function processSmsOptOutPreferences(Student $student): void
-    {
-        if (empty($this->smsOptOutStates)) {
-            return;
-        }
-
-        $smsOptOutService = app(SmsOptOutService::class);
-        $phoneNumbers = $student->phoneNumbers()->orderBy('order')->get();
-
-        [$existingStates, $newStates] = collect($this->smsOptOutStates)
-            ->partition(fn ($state, $key) => Str::isUuid((string) $key));
-
-        $existingStates->each(function (bool $isOptedOut, string $phoneId) use ($phoneNumbers, $smsOptOutService): void {
-            $phoneNumber = $phoneNumbers->firstWhere('id', $phoneId);
-
-            if ($phoneNumber) {
-                $isOptedOut
-                    ? $smsOptOutService->optOutStudentPhoneNumber($phoneNumber)
-                    : $smsOptOutService->optInStudentPhoneNumber($phoneNumber);
-            }
-        });
-
-        if ($newStates->isNotEmpty()) {
-            $recentPhones = $phoneNumbers
-                ->where('created_at', '>=', now()->subMinutes(5))
-                ->sortByDesc('created_at')
-                ->values();
-
-            $newStates->values()->each(function (bool $isOptedOut, int $index) use ($recentPhones, $smsOptOutService): void {
-                if (isset($recentPhones[$index])) {
-                    $isOptedOut
-                        ? $smsOptOutService->optOutStudentPhoneNumber($recentPhones[$index])
-                        : $smsOptOutService->optInStudentPhoneNumber($recentPhones[$index]);
-                }
-            });
-        }
     }
 }
