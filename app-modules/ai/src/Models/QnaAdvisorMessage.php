@@ -34,22 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Requests;
+namespace AdvisingApp\Ai\Models;
 
-use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class QnaAdvisorRequestAuthenticationRequest extends FormRequest
+/**
+ * @mixin IdeHelperQnaAdvisorMessage
+ */
+class QnaAdvisorMessage extends BaseModel
 {
+    public $fillable = [
+        'message_id',
+        'content',
+        'context',
+        'request',
+        'next_request_options',
+        'thread_id',
+        'author_type',
+        'author_id',
+        'is_advisor',
+    ];
+
+    protected $casts = [
+        'next_request_options' => 'array',
+        'request' => 'encrypted:array',
+        'is_advisor' => 'boolean',
+    ];
+
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return BelongsTo<QnaAdvisorThread, $this>
      */
-    public function rules(): array
+    public function thread(): BelongsTo
     {
-        return [
-            'email' => ['required', 'email'],
-        ];
+        return $this->belongsTo(QnaAdvisorThread::class, 'thread_id');
+    }
+
+    /**
+     * @return MorphTo<Model, $this>
+     */
+    public function author(): MorphTo
+    {
+        return $this->morphTo('author');
     }
 }

@@ -34,41 +34,22 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Research\Models\ResearchRequest;
-use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\User;
-use Illuminate\Support\Facades\Broadcast;
+namespace AdvisingApp\Ai\Http\Requests\QnaAdvisors;
 
-/*
-|--------------------------------------------------------------------------
-| Broadcast Channels
-|--------------------------------------------------------------------------
-|
-| Here you may register all of the event broadcasting channels that your
-| application supports. The given channel authorization callbacks are
-| used to check if an authenticated user can listen to the channel.
-|
-*/
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id): bool {
-    return (int) $user->id === (int) $id;
-});
-
-Broadcast::channel('research-request-{researchRequestId}', function (User $user, string $researchRequestId): bool {
-    return ResearchRequest::find($researchRequestId)?->user()->is($user) ?? false;
-});
-
-Broadcast::channel('user-research-requests-{userId}', function (User $user, string $userId): bool {
-    return User::find($userId)?->is($user) ?? false;
-});
-
-Broadcast::channel('advisor-thread-{threadId}', function (User $user, string $threadId): bool {
-    return AiThread::find($threadId)?->user()->is($user) ?? false;
-});
-
-Broadcast::channel('qna-advisor-thread-{threadId}', function (Student | Prospect | null $user, string $threadId): bool {
-    return QnaAdvisorThread::find($threadId)?->author()->is($user) ?? false;
-});
+class RequestAuthenticationRequest extends FormRequest
+{
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'email' => ['required', 'email'],
+        ];
+    }
+}

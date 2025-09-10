@@ -49,24 +49,26 @@ class CompletePrompt
 
         $completion = $service->complete($prompt, $content);
 
-        LegacyAiMessageLog::create([
-            'message' => $content,
-            'metadata' => [
-                'prompt' => $prompt,
-                'completion' => $completion,
-            ],
-            'request' => [
-                'headers' => Arr::only(
-                    request()->headers->all(),
-                    ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
-                ),
-                'ip' => request()->ip(),
-            ],
-            'sent_at' => now(),
-            'user_id' => auth()->id(),
-            'ai_assistant_name' => 'Institutional Advisor',
-            'feature' => AiMessageLogFeature::DraftWithAi,
-        ]);
+        if (auth()->hasUser()) {
+            LegacyAiMessageLog::create([
+                'message' => $content,
+                'metadata' => [
+                    'prompt' => $prompt,
+                    'completion' => $completion,
+                ],
+                'request' => [
+                    'headers' => Arr::only(
+                        request()->headers->all(),
+                        ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
+                    ),
+                    'ip' => request()->ip(),
+                ],
+                'sent_at' => now(),
+                'user_id' => auth()->id(),
+                'ai_assistant_name' => 'Institutional Advisor',
+                'feature' => AiMessageLogFeature::DraftWithAi,
+            ]);
+        }
 
         return $completion;
     }

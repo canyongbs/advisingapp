@@ -36,7 +36,7 @@ import axios from 'axios';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js/dist/web/pusher';
 import { defineProps, onMounted, onUnmounted, ref } from 'vue';
-import headshotAgent from '../../../resources/images/canyon-ai-headshot.jpg?url';
+import advisorDefaultAvatarUrl from '../../../resources/images/canyon-ai-headshot.jpg?url';
 import loadingSpinner from '../public/images/loading-spinner.svg?url';
 import userAvatar from '../public/images/user-default-avatar.svg?url';
 import { useAuthStore } from './stores/auth';
@@ -56,12 +56,19 @@ const authentication = ref({
 });
 const loadingError = ref(null);
 const sendMessageUrl = ref(null);
-const chatId = ref(null);
+const threadId = ref(null);
+const finishThreadUrl = ref(null);
 const message = ref('');
 const messages = ref([]);
 const currentResponse = ref('');
 const isLoading = ref(false);
-const nextRequestOptions = ref(null);
+const isThreadFinished = ref(false);
+const isSplashScreenVisible = ref(true);
+const advisor = ref({
+    name: null,
+    description: null,
+    avatar_url: null,
+});
 let websocketChannel = null;
 
 const scriptUrl = new URL(document.currentScript.getAttribute('src'));
@@ -75,11 +82,11 @@ onMounted(async () => {
         .then((response) => {
             const json = response.data;
 
-            chatId.value = json.chat_id;
             requiresAuthentication.value = json.requires_authentication;
             authentication.value.requestUrl = json.authentication_url;
             authentication.value.refreshUrl = json.refresh_url;
             sendMessageUrl.value = json.send_message_url;
+            advisor.value = json.advisor;
 
             if (requiresAuthentication.value === true && authStore.accessToken === null) {
                 authentication.value.promptToAuthenticate = true;
@@ -101,14 +108,13 @@ onMounted(async () => {
 onUnmounted(() => {
     if (websocketChannel) {
         websocketChannel.stopListening('advisor-message.chunk');
-        websocketChannel.stopListening('advisor-message.next-request-options');
     }
     if (window.Echo) {
         window.Echo.disconnect();
     }
 });
 
-function setupWebsockets(config, authRequired = false) {
+function setupWebsockets(config) {
     try {
         window.Pusher = Pusher;
 
@@ -127,7 +133,7 @@ function setupWebsockets(config, authRequired = false) {
                                 {
                                     headers: {
                                         'Content-Type': 'application/json',
-                                        ...(authRequired && authStore.getAccessToken
+                                        ...(requiresAuthentication.value && authStore.getAccessToken
                                             ? { Authorization: `Bearer ${authStore.getAccessToken}` }
                                             : {}),
                                     },
@@ -143,39 +149,6 @@ function setupWebsockets(config, authRequired = false) {
                 };
             },
         });
-
-        if (chatId.value) {
-            let channelName = `qna-advisor-chat-${chatId.value}`;
-
-            websocketChannel = authRequired ? window.Echo.private(channelName) : window.Echo.channel(channelName);
-
-            websocketChannel
-                .listen('.qna-advisor-message.chunk', (data) => {
-                    if (data.error) {
-                        console.error('Advisor message error:', data.error);
-                        isLoading.value = false;
-                        return;
-                    }
-
-                    if (data.content) {
-                        currentResponse.value += data.content;
-                    }
-
-                    if (data.is_complete) {
-                        messages.value.push({
-                            from: 'agent',
-                            content: currentResponse.value,
-                        });
-                        currentResponse.value = '';
-                        isLoading.value = false;
-                    }
-                })
-                .listen('.qna-advisor-message.next-request-options', (data) => {
-                    if (data.options) {
-                        nextRequestOptions.value = data.options;
-                    }
-                });
-        }
     } catch (error) {
         console.error('Failed to setup websockets:', error);
     }
@@ -195,20 +168,61 @@ async function sendMessage() {
     try {
         const requestBody = {
             content: message.value,
+            thread_id: threadId.value,
         };
-
-        if (nextRequestOptions.value) {
-            requestBody.options = nextRequestOptions.value;
-        }
 
         const sendMessageResponse = await authorizedPost(sendMessageUrl.value, requestBody);
 
         const data = sendMessageResponse.data;
 
+        if (!threadId.value) {
+            threadId.value = data.thread_id;
+            finishThreadUrl.value = data.finish_thread_url;
+
+            let channelName = `qna-advisor-thread-${threadId.value}`;
+
+            websocketChannel = requiresAuthentication.value
+                ? window.Echo.private(channelName)
+                : window.Echo.channel(channelName);
+
+            websocketChannel.listen('.qna-advisor-message.chunk', (data) => {
+                if (data.error) {
+                    console.error('Advisor message error:', data.error);
+                    isLoading.value = false;
+                    return;
+                }
+
+                if (data.content) {
+                    currentResponse.value += data.content;
+                }
+
+                if (data.is_complete) {
+                    messages.value.push({
+                        from: 'advisor',
+                        content: currentResponse.value,
+                    });
+                    currentResponse.value = '';
+                    isLoading.value = false;
+                }
+            });
+        }
+
         message.value = '';
     } catch (error) {
         console.error('Send message error:', error);
         isLoading.value = false;
+    }
+}
+
+async function finishThread() {
+    if (!finishThreadUrl.value) return;
+
+    try {
+        isThreadFinished.value = true;
+
+        await authorizedPost(finishThreadUrl.value);
+    } catch (error) {
+        console.error('Finish thread error:', error);
     }
 }
 
@@ -233,7 +247,7 @@ async function authenticate(formData, node) {
                     authStore.$patch({ accessToken: response.data.access_token });
                     authentication.value.promptToAuthenticate = false;
 
-                    setupWebsockets(response.data.websockets_config, true);
+                    setupWebsockets(response.data.websockets_config);
                 }
             })
             .catch((error) => {
@@ -263,6 +277,10 @@ async function authenticate(formData, node) {
 
             node.setErrors([], data.errors);
         });
+}
+
+function startNewChat() {
+    isSplashScreenVisible.value = false;
 }
 
 async function authorizedPost(url, data) {
@@ -318,7 +336,7 @@ async function authorizedPost(url, data) {
 
 <template>
     <div
-        class="h-full"
+        class="h-full ring-1 ring-gray-300/50 rounded"
         style="
             --primary-50: 255, 251, 235;
             --primary-100: 254, 243, 199;
@@ -337,36 +355,82 @@ async function authorizedPost(url, data) {
             --rounding-full: 9999px;
         "
     >
-        <div v-if="authentication.promptToAuthenticate">
-            <FormKit type="form" @submit="authenticate" v-model="authentication">
-                <FormKit
-                    type="email"
-                    label="Your email address"
-                    name="email"
-                    validation="required|email"
-                    validation-visibility="submit"
-                    :disabled="authentication.isRequested"
-                />
+        <div
+            class="flex h-full items-center justify-center"
+            v-if="isSplashScreenVisible && sendMessageUrl !== null && advisor.name"
+        >
+            <div class="w-full max-w-4xl mx-auto p-8">
+                <div class="flex flex-col md:flex-row gap-8 items-center">
+                    <div class="flex-shrink-0">
+                        <img
+                            v-if="advisor.avatar_url"
+                            class="h-32 w-32 md:h-48 md:w-48 object-cover rounded-full shadow-lg"
+                            :src="advisor.avatar_url"
+                            :alt="advisor.name"
+                            :title="advisor.name"
+                        />
+                        <img
+                            v-else
+                            class="h-32 w-32 md:h-48 md:w-48 object-cover rounded-full shadow-lg"
+                            :src="advisorDefaultAvatarUrl"
+                            :alt="advisor.name"
+                            :title="advisor.name"
+                        />
+                    </div>
 
-                <p v-if="authentication.requestedMessage" class="text-sm">
-                    {{ authentication.requestedMessage }}
-                </p>
-
-                <FormKit
-                    type="otp"
-                    digits="6"
-                    label="Authentication code"
-                    name="code"
-                    help="We've sent a code to your email address."
-                    validation="required"
-                    validation-visibility="submit"
-                    v-if="authentication.isRequested"
-                />
-            </FormKit>
+                    <div class="flex-1 text-center md:text-left">
+                        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                            {{ advisor.name }}
+                        </h1>
+                        <p class="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+                            {{ advisor.description }}
+                        </p>
+                        <button
+                            @click="startNewChat"
+                            class="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-primary-500 hover:bg-primary-400 focus:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-400/50 rounded-md shadow-md transition-colors duration-200"
+                        >
+                            Start New Chat
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div
-            v-show="sendMessageUrl !== null && !authentication.promptToAuthenticate"
+            class="flex h-full items-center justify-center"
+            v-if="!isSplashScreenVisible && authentication.promptToAuthenticate"
+        >
+            <div class="w-full max-w-sm">
+                <FormKit type="form" @submit="authenticate" v-model="authentication">
+                    <FormKit
+                        type="email"
+                        label="Your email address"
+                        name="email"
+                        validation="required|email"
+                        validation-visibility="submit"
+                        :disabled="authentication.isRequested"
+                    />
+
+                    <p v-if="authentication.requestedMessage" class="text-sm">
+                        {{ authentication.requestedMessage }}
+                    </p>
+
+                    <FormKit
+                        type="otp"
+                        digits="6"
+                        label="Authentication code"
+                        name="code"
+                        help="We've sent a code to your email address."
+                        validation="required"
+                        validation-visibility="submit"
+                        v-if="authentication.isRequested"
+                    />
+                </FormKit>
+            </div>
+        </div>
+
+        <div
+            v-show="!isSplashScreenVisible && sendMessageUrl !== null && !authentication.promptToAuthenticate"
             class="flex flex-col gap-y-3 w-11/12 mx-auto"
         >
             <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/qna-advisor/style.css'" />
@@ -383,11 +447,15 @@ async function authorizedPost(url, data) {
                             <div class="relative flex flex-shrink-0 flex-col items-end">
                                 <img
                                     class="h-8 w-8 object-cover object-center"
-                                    :class="{ 'dark:invert': message.from !== 'agent' }"
+                                    :class="{ 'dark:invert': message.from !== 'advisor' }"
                                     style="border-radius: 40px"
-                                    :src="message.from === 'agent' ? headshotAgent : userAvatar"
-                                    alt="Canyon AI"
-                                    title="Canyon AI"
+                                    :src="
+                                        message.from === 'advisor'
+                                            ? advisor.avatar_url || advisorDefaultAvatarUrl
+                                            : userAvatar
+                                    "
+                                    :alt="message.from === 'advisor' ? advisor.name : 'User'"
+                                    :title="message.from === 'advisor' ? advisor.name : 'User'"
                                 />
                             </div>
                             <div class="relative flex w-full flex-col gap-1 md:gap-3 tex-gray-900 dark:text-white">
@@ -397,6 +465,7 @@ async function authorizedPost(url, data) {
                     </div>
                 </div>
                 <div
+                    v-if="!isThreadFinished"
                     class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700"
                 >
                     <div
@@ -422,16 +491,25 @@ async function authorizedPost(url, data) {
                             <button
                                 @click="sendMessage"
                                 :disabled="isLoading || !message.trim()"
-                                style="border-radius: 12px"
-                                class="relative font-semibold outline-none focus-visible:ring-2 px-3 py-2 text-sm bg-gray-600 text-white hover:bg-gray-500 focus-visible:ring-gray-500/50 w-full sm:w-auto dark:bg-amber-500 dark:hover:bg-amber-400 dark:focus-visible:ring-amber-400/50"
+                                class="relative rounded-md font-semibold outline-none focus-visible:ring-2 px-3 py-2 text-sm bg-gray-600 text-white hover:bg-gray-500 focus-visible:ring-gray-500/50 w-full sm:w-auto dark:bg-primary-500 dark:hover:bg-primary-400 dark:focus-visible:ring-primary-400/50"
                             >
                                 Send
+                            </button>
+
+                            <button
+                                v-if="finishThreadUrl"
+                                @click="finishThread"
+                                :disabled="isLoading"
+                                class="relative rounded-md font-semibold outline-none focus-visible:ring-2 px-3 py-2 text-sm bg-white text-gray-900 hover:bg-gray-100 focus-visible:ring-gray-500/50 w-full sm:w-auto dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:focus-visible:ring-gray-500/50 ring-1 ring-gray-300/50"
+                            >
+                                End chat
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
         <div class="relative h-screen" v-if="sendMessageUrl === null">
             <div v-if="!loadingError" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
                 <img

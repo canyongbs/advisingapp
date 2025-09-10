@@ -34,55 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Events\QnaAdvisors;
+namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
+use AdvisingApp\Ai\Jobs\QnaAdvisors\CreateQnaAdvisorThreadInteraction;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
-use Illuminate\Foundation\Events\Dispatchable;
+use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use Illuminate\Http\JsonResponse;
 
-class QnaAdvisorNextRequestOptions implements ShouldBroadcastNow
+class FinishAdvisorThreadController
 {
-    use Dispatchable;
-    use InteractsWithSockets;
-
-    /**
-     * @param array<string, mixed> $options
-     */
-    public function __construct(
-        public QnaAdvisor $advisor,
-        public string $chatId,
-        public array $options,
-    ) {}
-
-    public function broadcastAs(): string
+    public function __invoke(QnaAdvisor $advisor, QnaAdvisorThread $thread): JsonResponse
     {
-        return 'qna-advisor-message.next-request-options';
-    }
+        if ($thread->finished_at) {
+            abort(403, 'This thread is already finished.');
+        }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function broadcastWith(): array
-    {
-        return [
-            'options' => $this->options,
-        ];
-    }
+        $author = auth('student')->user() ?? auth('prospect')->user();
 
-    /**
-     * @return array<int, Channel>
-     */
-    public function broadcastOn(): array
-    {
-        $channelName = "qna-advisor-chat-{$this->chatId}";
+        if ($author && (! $thread->author()->is($author))) {
+            abort(403, 'You are not the author of this thread.');
+        }
 
-        return [
-            $this->advisor->is_requires_authentication_enabled
-                ? new PrivateChannel($channelName)
-                : new Channel($channelName),
-        ];
+        $thread->touch('finished_at');
+
+        if ($thread->author) {
+            dispatch(new CreateQnaAdvisorThreadInteraction($thread));
+        }
+
+        return response()->json([
+            'message' => 'Thread marked as finished.',
+        ]);
     }
 }

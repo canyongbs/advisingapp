@@ -50,7 +50,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -64,11 +63,13 @@ class RetryAdvisorMessage implements ShouldQueue
     public int $timeout = 600;
 
     /**
+     * @param array<string, mixed> $request
      * @param array<AiMessageFile> $files
      */
     public function __construct(
         protected AiThread $thread,
         protected string $content,
+        protected array $request = [],
         protected array $files = [],
         protected bool $hasImageGeneration = false,
     ) {}
@@ -84,13 +85,7 @@ class RetryAdvisorMessage implements ShouldQueue
             $message->user()->associate($this->thread->user);
         }
 
-        $message->request = [
-            'headers' => Arr::only(
-                request()->headers->all(),
-                ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
-            ),
-            'ip' => request()->ip(),
-        ];
+        $message->request = $this->request;
         $message->thread()->associate($this->thread);
         $message->user()->associate($this->thread->user);
 

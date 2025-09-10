@@ -38,8 +38,9 @@ namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
 
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Events\QnaAdvisors\QnaAdvisorMessageChunk;
-use AdvisingApp\Ai\Events\QnaAdvisors\QnaAdvisorNextRequestOptions;
 use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\QnaAdvisorMessage;
+use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use Illuminate\Bus\Queueable;
@@ -59,40 +60,51 @@ class SendQnaAdvisorMessage implements ShouldQueue
     public int $timeout = 600;
 
     /**
-     * @param array<string, mixed> $options
+     * @param array<string, mixed> $request
      */
     public function __construct(
-        protected string $chatId,
         protected QnaAdvisor $advisor,
+        protected QnaAdvisorThread $thread,
         protected string $content,
-        protected array $options = [],
+        protected array $request = [],
     ) {}
 
     public function handle(GetQnaAdvisorInstructions $getQnaAdvisorInstructions): void
     {
+        $message = new QnaAdvisorMessage();
+        $message->thread()->associate($this->thread);
+        $message->author()->associate($this->thread->author);
+        $message->content = $this->content;
+        $message->request = $this->request;
+        $message->is_advisor = false;
+        $message->save();
+
         try {
             $aiService = $this->advisor->model->getService();
 
             $stream = $aiService->streamRaw(
-                prompt: $getQnaAdvisorInstructions->execute($this->advisor),
+                prompt: $context = $getQnaAdvisorInstructions->execute($this->advisor),
                 content: $this->content,
                 files: [
                     ...$this->advisor->files()->whereNotNull('parsing_results')->get()->all(),
                     ...$this->advisor->links()->whereNotNull('parsing_results')->get()->all(),
                 ],
-                options: $this->options,
+                options: $this->thread->messages()->where('is_advisor', true)->latest()->value('next_request_options') ?? [],
             );
+
+            $response = new QnaAdvisorMessage();
+            $response->thread()->associate($this->thread);
+            $response->content = '';
+            $response->context = $context;
+            $response->is_advisor = true;
 
             $chunkBuffer = [];
             $chunkCount = 0;
 
             foreach ($stream() as $chunk) {
                 if ($chunk instanceof Meta) {
-                    event(new QnaAdvisorNextRequestOptions(
-                        $this->advisor,
-                        $this->chatId,
-                        $chunk->nextRequestOptions,
-                    ));
+                    $response->message_id = $chunk->messageId;
+                    $response->next_request_options = $chunk->nextRequestOptions;
 
                     continue;
                 }
@@ -104,9 +116,10 @@ class SendQnaAdvisorMessage implements ShouldQueue
                     if ($chunkCount >= 30) {
                         event(new QnaAdvisorMessageChunk(
                             $this->advisor,
-                            $this->chatId,
+                            $this->thread,
                             content: implode('', $chunkBuffer),
                         ));
+                        $response->content .= implode('', $chunkBuffer);
 
                         $chunkBuffer = [];
                         $chunkCount = 0;
@@ -117,23 +130,27 @@ class SendQnaAdvisorMessage implements ShouldQueue
             if (! empty($chunkBuffer)) {
                 event(new QnaAdvisorMessageChunk(
                     $this->advisor,
-                    $this->chatId,
+                    $this->thread,
                     content: implode('', $chunkBuffer),
                 ));
+                $response->content .= implode('', $chunkBuffer);
             }
 
             event(new QnaAdvisorMessageChunk(
                 $this->advisor,
-                $this->chatId,
+                $this->thread,
                 content: '',
                 isComplete: true,
             ));
+
+            $response->save();
+            $this->thread->touch();
         } catch (Throwable $exception) {
             report($exception);
 
             event(new QnaAdvisorMessageChunk(
                 $this->advisor,
-                $this->chatId,
+                $this->thread,
                 content: '',
                 isComplete: false,
                 error: 'An error happened when sending your message.',

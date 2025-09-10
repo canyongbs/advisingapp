@@ -39,8 +39,11 @@ namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Jobs\QnaAdvisors\SendQnaAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
@@ -50,51 +53,77 @@ class SendAdvisorMessageController
     {
         $data = $request->validate([
             'content' => ['required', 'string', 'max:25000'],
+            'thread_id' => ['nullable', 'string', 'max:255'],
             'options' => ['nullable', 'array'],
         ]);
 
-        $chatId = $request->query('chat_id');
+        if ($request->query('preview')) {
+            $aiService = $advisor->model->getService();
 
-        if ($chatId) {
-            dispatch(new SendQnaAdvisorMessage(
-                $chatId,
-                $advisor,
-                $data['content'],
-                $data['options'] ?? []
-            ));
-
-            return response()->json([
-                'message' => 'Message dispatched for processing via websockets.',
-                'chat_id' => $chatId,
-            ]);
-        }
-
-        $aiService = $advisor->model->getService();
-
-        try {
-            return new StreamedResponse(
-                $aiService->stream(
-                    prompt: $getQnaAdvisorInstructions->execute($advisor),
-                    content: $data['content'],
-                    files: [
-                        ...$advisor->files()->whereNotNull('parsing_results')->get()->all(),
-                        ...$advisor->links()->whereNotNull('parsing_results')->get()->all(),
+            try {
+                return new StreamedResponse(
+                    $aiService->stream(
+                        prompt: $getQnaAdvisorInstructions->execute($advisor),
+                        content: $data['content'],
+                        files: [
+                            ...$advisor->files()->whereNotNull('parsing_results')->get()->all(),
+                            ...$advisor->links()->whereNotNull('parsing_results')->get()->all(),
+                        ],
+                        shouldTrack: false,
+                        options: $data['options'] ?? [],
+                    ),
+                    headers: [
+                        'Content-Type' => 'text/html; charset=utf-8;',
+                        'Cache-Control' => 'no-cache',
+                        'X-Accel-Buffering' => 'no',
                     ],
-                    shouldTrack: false,
-                    options: $data['options'] ?? [],
-                ),
-                headers: [
-                    'Content-Type' => 'text/html; charset=utf-8;',
-                    'Cache-Control' => 'no-cache',
-                    'X-Accel-Buffering' => 'no',
-                ],
-            );
-        } catch (Throwable $exception) {
-            report($exception);
+                );
+            } catch (Throwable $exception) {
+                report($exception);
 
-            return response()->json([
-                'message' => 'An error happened when sending your message.',
-            ], 503);
+                return response()->json([
+                    'message' => 'An error happened when sending your message.',
+                ], 503);
+            }
         }
+
+        $author = auth('student')->user() ?? auth('prospect')->user();
+
+        if (filled($data['thread_id'] ?? null)) {
+            $thread = QnaAdvisorThread::query()
+                ->whereKey($data['thread_id'])
+                ->whereBelongsTo($advisor, 'advisor')
+                ->whereMorphedTo('author', $author)
+                ->whereNull('finished_at')
+                ->firstOrFail();
+        } else {
+            $thread = new QnaAdvisorThread();
+            $thread->advisor()->associate($advisor);
+            $thread->author()->associate($author);
+            $thread->save();
+        }
+
+        dispatch(new SendQnaAdvisorMessage(
+            $advisor,
+            $thread,
+            $data['content'],
+            request: [
+                'headers' => Arr::only(
+                    request()->headers->all(),
+                    ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
+                ),
+                'ip' => request()->ip(),
+            ],
+        ));
+
+        return response()->json([
+            'message' => 'Message dispatched for processing via websockets.',
+            'thread_id' => $thread->getKey(),
+            'finish_thread_url' => URL::temporarySignedRoute(
+                name: 'ai.qna-advisors.threads.finish',
+                expiration: now()->addDays(3),
+                parameters: ['advisor' => $advisor, 'thread' => $thread],
+            ),
+        ]);
     }
 }

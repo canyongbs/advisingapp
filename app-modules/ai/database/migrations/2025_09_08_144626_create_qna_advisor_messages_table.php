@@ -34,41 +34,30 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Research\Models\ResearchRequest;
-use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\User;
-use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-/*
-|--------------------------------------------------------------------------
-| Broadcast Channels
-|--------------------------------------------------------------------------
-|
-| Here you may register all of the event broadcasting channels that your
-| application supports. The given channel authorization callbacks are
-| used to check if an authenticated user can listen to the channel.
-|
-*/
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('qna_advisor_messages', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('thread_id')->constrained('qna_advisor_threads');
+            $table->nullableUuidMorphs('author');
+            $table->string('message_id')->nullable();
+            $table->text('content');
+            $table->text('context')->nullable();
+            $table->text('request')->nullable();
+            $table->jsonb('next_request_options')->nullable();
+            $table->boolean('is_advisor')->default(false);
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id): bool {
-    return (int) $user->id === (int) $id;
-});
-
-Broadcast::channel('research-request-{researchRequestId}', function (User $user, string $researchRequestId): bool {
-    return ResearchRequest::find($researchRequestId)?->user()->is($user) ?? false;
-});
-
-Broadcast::channel('user-research-requests-{userId}', function (User $user, string $userId): bool {
-    return User::find($userId)?->is($user) ?? false;
-});
-
-Broadcast::channel('advisor-thread-{threadId}', function (User $user, string $threadId): bool {
-    return AiThread::find($threadId)?->user()->is($user) ?? false;
-});
-
-Broadcast::channel('qna-advisor-thread-{threadId}', function (Student | Prospect | null $user, string $threadId): bool {
-    return QnaAdvisorThread::find($threadId)?->author()->is($user) ?? false;
-});
+    public function down(): void
+    {
+        Schema::dropIfExists('qna_advisor_messages');
+    }
+};

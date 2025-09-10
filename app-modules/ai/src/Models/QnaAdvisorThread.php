@@ -34,41 +34,51 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Research\Models\ResearchRequest;
-use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\User;
-use Illuminate\Support\Facades\Broadcast;
+namespace AdvisingApp\Ai\Models;
 
-/*
-|--------------------------------------------------------------------------
-| Broadcast Channels
-|--------------------------------------------------------------------------
-|
-| Here you may register all of the event broadcasting channels that your
-| application supports. The given channel authorization callbacks are
-| used to check if an authenticated user can listen to the channel.
-|
-*/
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id): bool {
-    return (int) $user->id === (int) $id;
-});
+/**
+ * @mixin IdeHelperQnaAdvisorThread
+ */
+class QnaAdvisorThread extends BaseModel
+{
+    public $fillable = [
+        'advisor_id',
+        'author_type',
+        'author_id',
+        'finished_at',
+    ];
 
-Broadcast::channel('research-request-{researchRequestId}', function (User $user, string $researchRequestId): bool {
-    return ResearchRequest::find($researchRequestId)?->user()->is($user) ?? false;
-});
+    protected $casts = [
+        'finished_at' => 'datetime',
+    ];
 
-Broadcast::channel('user-research-requests-{userId}', function (User $user, string $userId): bool {
-    return User::find($userId)?->is($user) ?? false;
-});
+    /**
+     * @return HasMany<QnaAdvisorMessage, $this>
+     */
+    public function messages(): HasMany
+    {
+        return $this->hasMany(QnaAdvisorMessage::class, 'thread_id');
+    }
 
-Broadcast::channel('advisor-thread-{threadId}', function (User $user, string $threadId): bool {
-    return AiThread::find($threadId)?->user()->is($user) ?? false;
-});
+    /**
+     * @return BelongsTo<QnaAdvisor, $this>
+     */
+    public function advisor(): BelongsTo
+    {
+        return $this->belongsTo(QnaAdvisor::class, 'advisor_id');
+    }
 
-Broadcast::channel('qna-advisor-thread-{threadId}', function (Student | Prospect | null $user, string $threadId): bool {
-    return QnaAdvisorThread::find($threadId)?->author()->is($user) ?? false;
-});
+    /**
+     * @return MorphTo<Model, $this>
+     */
+    public function author(): MorphTo
+    {
+        return $this->morphTo('author');
+    }
+}

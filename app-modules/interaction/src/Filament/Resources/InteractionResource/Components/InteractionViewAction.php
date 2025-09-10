@@ -58,6 +58,7 @@ class InteractionViewAction extends ViewAction
                             ->columnSpanFull(),
                         TextEntry::make('description')
                             ->getStateUsing(fn (Interaction $interaction): string => $interaction->description ?? 'N/A')
+                            ->markdown()
                             ->columnSpanFull(),
                     ]),
                 Fieldset::make('Interaction Information')

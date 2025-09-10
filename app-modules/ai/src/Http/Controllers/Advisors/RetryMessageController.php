@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Jobs\Advisors\RetryAdvisorMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Arr;
 use Throwable;
 
 class RetryMessageController
@@ -64,8 +65,15 @@ class RetryMessageController
             dispatch(new RetryAdvisorMessage(
                 $thread,
                 $request->validated('content'),
-                AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
-                $request->validated('has_image_generation') ?? false,
+                request: [
+                    'headers' => Arr::only(
+                        request()->headers->all(),
+                        ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
+                    ),
+                    'ip' => request()->ip(),
+                ],
+                files: AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
+                hasImageGeneration: $request->validated('has_image_generation') ?? false,
             ));
 
             return response()->json([]);

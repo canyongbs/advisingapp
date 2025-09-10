@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Events\QnaAdvisors;
 
 use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -50,7 +51,7 @@ class QnaAdvisorMessageChunk implements ShouldBroadcastNow
 
     public function __construct(
         public QnaAdvisor $advisor,
-        public string $chatId,
+        public QnaAdvisorThread $thread,
         public string $content,
         public bool $isComplete = false,
         public ?string $error = null,
@@ -78,7 +79,7 @@ class QnaAdvisorMessageChunk implements ShouldBroadcastNow
      */
     public function broadcastOn(): array
     {
-        $channelName = "qna-advisor-chat-{$this->chatId}";
+        $channelName = "qna-advisor-thread-{$this->thread->getKey()}";
 
         return [
             $this->advisor->is_requires_authentication_enabled
