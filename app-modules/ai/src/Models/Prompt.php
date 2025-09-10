@@ -115,7 +115,7 @@ class Prompt extends BaseModel
             ->withTimestamps();
     }
 
-    public function confidentialPromptUsers()
+    public function confidentialPromptUsers(): BelongsToMany
     {
         return $this->belongsToMany(
             User::class,
