@@ -191,6 +191,10 @@ trait HasSharedFormConfiguration
 
             $componentAttributes = $component['attrs'] ?? [];
 
+            if (array_key_exists('type', $componentAttributes) && $componentAttributes['type'] === 'image') {
+                $currentSrc = $componentAttributes['src'] ?? null;
+            }
+
             if (array_key_exists('id', $componentAttributes)) {
                 $id = $componentAttributes['id'] ?? null;
                 unset($componentAttributes['id']);
