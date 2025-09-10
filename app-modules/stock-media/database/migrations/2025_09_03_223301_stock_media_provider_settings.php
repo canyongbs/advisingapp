@@ -34,15 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use Filament\Clusters\Cluster;
+return new class () extends SettingsMigration {
+    public function up(): void
+    {
+        $this->migrator->add('stock_media.is_active', false);
 
-class GlobalArtificialIntelligence extends Cluster
-{
-    protected static ?string $navigationGroup = 'Global Administration';
+        $this->migrator->add('stock_media.provider');
 
-    protected static ?int $navigationSort = 100;
+        $this->migrator->addEncrypted('stock_media.pexels_api_key');
+    }
 
-    protected static ?string $title = 'Artificial Intelligence';
-}
+    public function down(): void
+    {
+        $this->migrator->deleteIfExists('stock_media.is_active');
+
+        $this->migrator->deleteIfExists('stock_media.provider');
+
+        $this->migrator->deleteIfExists('stock_media.pexels_api_key');
+    }
+};

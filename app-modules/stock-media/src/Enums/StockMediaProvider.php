@@ -34,15 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\StockMedia\Enums;
 
-use Filament\Clusters\Cluster;
+use Filament\Support\Contracts\HasLabel;
 
-class GlobalArtificialIntelligence extends Cluster
+enum StockMediaProvider: string implements HasLabel
 {
-    protected static ?string $navigationGroup = 'Global Administration';
+    case Pexels = 'pexels';
 
-    protected static ?int $navigationSort = 100;
+    public function getLabel(): string
+    {
+        return $this->name;
+    }
 
-    protected static ?string $title = 'Artificial Intelligence';
+    public static function parse(string | self | null $value): ?self
+    {
+        if ($value instanceof self) {
+            return $value;
+        }
+
+        return self::tryFrom($value);
+    }
 }
