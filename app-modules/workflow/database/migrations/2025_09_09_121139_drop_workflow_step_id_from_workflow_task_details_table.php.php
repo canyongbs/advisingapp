@@ -34,64 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Database\Factories\WorkflowTaskDetailsFactory;
-use AdvisingApp\Workflow\Filament\Blocks\TaskBlock;
-use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
-use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
-use AdvisingApp\Workflow\Jobs\TaskWorkflowActionJob;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
-
-/**
- * @mixin IdeHelperWorkflowTaskDetails
- */
-class WorkflowTaskDetails extends WorkflowDetails implements Auditable
-{
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    /** @use HasFactory<WorkflowTaskDetailsFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'title',
-        'description',
-        'due',
-        'assigned_to',
-    ];
-
-    protected $casts = [
-        'due' => 'datetime',
-    ];
-
-    public function getLabel(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'Task';
+        Schema::table('workflow_task_details', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('workflow_step_id');
+        });
     }
 
-    public function getBlock(): WorkflowActionBlock
+    public function down(): void
     {
-        return TaskBlock::make();
+        Schema::table('workflow_task_details', function (Blueprint $table) {
+            $table->foreignUuid('workflow_step_id')->nullable()->constrained('workflow_steps');
+        });
     }
-
-    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
-    {
-        return new TaskWorkflowActionJob($workflowRunStep);
-    }
-
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function assignedTo(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'assigned_to');
-    }
-}
+};

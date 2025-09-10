@@ -34,64 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Database\Factories;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Database\Factories\WorkflowTaskDetailsFactory;
-use AdvisingApp\Workflow\Filament\Blocks\TaskBlock;
-use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
-use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
-use AdvisingApp\Workflow\Jobs\TaskWorkflowActionJob;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperWorkflowTaskDetails
+ * @extends Factory<WorkflowProactiveAlertDetails>
  */
-class WorkflowTaskDetails extends WorkflowDetails implements Auditable
+class WorkflowTaskDetailsFactory extends Factory
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    /** @use HasFactory<WorkflowTaskDetailsFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'title',
-        'description',
-        'due',
-        'assigned_to',
-    ];
-
-    protected $casts = [
-        'due' => 'datetime',
-    ];
-
-    public function getLabel(): string
-    {
-        return 'Task';
-    }
-
-    public function getBlock(): WorkflowActionBlock
-    {
-        return TaskBlock::make();
-    }
-
-    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
-    {
-        return new TaskWorkflowActionJob($workflowRunStep);
-    }
-
     /**
-     * @return BelongsTo<User, $this>
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
      */
-    public function assignedTo(): BelongsTo
+    public function definition(): array
     {
-        return $this->belongsTo(User::class, 'assigned_to');
+        return [
+            'title' => $this->faker->sentence,
+            'description' => $this->faker->paragraph,
+            'due' => $this->faker->dateTimeBetween('now', '+1 month'),
+            'assigned_to' => null,
+        ];
     }
 }

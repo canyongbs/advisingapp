@@ -36,15 +36,74 @@
 
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
+use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Facades\Auth;
 
 class TaskBlock extends WorkflowActionBlock
 {
-    //TODO: implement
-    public function generateFields(): array
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->label('Task');
+
+        $this->schema($this->createFields());
+    }
+
+    /**
+     * @return array<int, Section|Fieldset|Checkbox|Select|Textarea|TextInput|DateTimePicker>
+     */
+    public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            Select::make('temp'),
+            TextInput::make($fieldPrefix . 'title')
+                ->required()
+                ->maxLength(100)
+                ->string(),
+            Textarea::make($fieldPrefix . 'description')
+                ->required()
+                ->string(),
+            DateTimePicker::make($fieldPrefix . 'due')
+                ->label('Due Date'),
+            Select::make($fieldPrefix . 'assigned_to')
+                ->label('Assigned To')
+                ->relationship('assignedTo', 'name')
+                ->model(WorkflowTaskDetails::class)
+                ->nullable()
+                ->searchable()
+                ->default(Auth::id()),
+            Section::make('How long after the previous step should this occur?')
+                ->schema([
+                    TextInput::make('days')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+                    TextInput::make('hours')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+                    TextInput::make('minutes')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+                ])
+                ->columns(3),
         ];
     }
 

@@ -74,7 +74,7 @@ abstract class WorkflowDetails extends BaseModel
             ProactiveAlertBlock::make(),
             //            SubscriptionBlock::make(),
             //            TagsBlock::make(),
-            //            TaskBlock::make(),
+            TaskBlock::make(),
         ];
 
         if (app(LicenseSettings::class)->data->addons->caseManagement) {

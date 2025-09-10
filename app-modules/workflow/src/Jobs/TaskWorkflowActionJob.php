@@ -38,6 +38,7 @@ namespace AdvisingApp\Workflow\Jobs;
 
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Task\Notifications\TaskAssignedToUserNotification;
 use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
@@ -75,6 +76,10 @@ class TaskWorkflowActionJob extends ExecuteWorkflowActionJob
 
             $task->assignedTo()->associate($details->assigned_to);
 
+            if (! empty($task->assignedTo)) {
+                $task->assignedTo->notify(new TaskAssignedToUserNotification($task));
+            }
+
             $task->createdBy()->associate($user);
 
             $task->concern()->associate($educatable);
@@ -94,7 +99,6 @@ class TaskWorkflowActionJob extends ExecuteWorkflowActionJob
                 $this->workflowRunStep->succeeded_at = now();
                 $this->workflowRunStep->saveOrFail();
             }
-
             DB::commit();
         } catch (Throwable $throw) {
             DB::rollBack();
