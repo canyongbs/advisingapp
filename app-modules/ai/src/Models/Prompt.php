@@ -115,6 +115,9 @@ class Prompt extends BaseModel
             ->withTimestamps();
     }
 
+    /**
+     * @return BelongsToMany<User, $this, covariant ConfidentialPromptTeam>
+     */
     public function confidentialPromptUsers(): BelongsToMany
     {
         return $this->belongsToMany(
