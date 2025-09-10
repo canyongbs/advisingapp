@@ -39,7 +39,6 @@ namespace AdvisingApp\IntegrationOpenAi\Prism;
 use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Handlers\Stream;
 use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Handlers\Structured;
 use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Handlers\Text;
-use App\Features\OpenAiResponsesApiSettingsFeature;
 use Generator;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Arr;
@@ -101,7 +100,7 @@ class AzureOpenAi extends OpenAI
             ->withQueryParameters(['api-version' => $options['apiVersion']])
             ->withOptions(Arr::except($options, ['apiKey', 'apiVersion', 'deployment', 'headers']))
             ->when($retry !== [], fn ($client) => $client->retry(...$retry))
-            ->baseUrl(OpenAiResponsesApiSettingsFeature::active() ? "{$options['deployment']}/v1" : $options['deployment'])
+            ->baseUrl("{$options['deployment']}/v1")
             ->timeout(500);
     }
 }

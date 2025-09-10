@@ -39,7 +39,6 @@ namespace AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
-use App\Features\OpenAiResponsesApiSettingsFeature;
 use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -55,7 +54,7 @@ trait InteractsWithVectorStores
             'api-key' => $this->getApiKey(),
         ])
             ->withQueryParameters(['api-version' => '2025-04-01-preview'])
-            ->baseUrl(OpenAiResponsesApiSettingsFeature::active() ? $this->getDeployment() : (string) str($this->getDeployment())->beforeLast('/v1'));
+            ->baseUrl($this->getDeployment());
     }
 
     protected function filesHttpClient(): PendingRequest
@@ -64,7 +63,7 @@ trait InteractsWithVectorStores
             'api-key' => $this->getApiKey(),
         ])
             ->withQueryParameters(['api-version' => '2024-10-21'])
-            ->baseUrl(OpenAiResponsesApiSettingsFeature::active() ? $this->getDeployment() : (string) str($this->getDeployment())->beforeLast('/v1'));
+            ->baseUrl($this->getDeployment());
     }
 
     /**
