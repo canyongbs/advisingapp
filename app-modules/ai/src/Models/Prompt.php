@@ -116,7 +116,7 @@ class Prompt extends BaseModel
     }
 
     /**
-     * @return BelongsToMany<User, $this, covariant ConfidentialPromptTeam>
+     * @return BelongsToMany<User, $this, covariant ConfidentialPromptUser>
      */
     public function confidentialPromptUsers(): BelongsToMany
     {
