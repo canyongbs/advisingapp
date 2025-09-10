@@ -36,10 +36,16 @@
 
 namespace AdvisingApp\Application\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class ApplicationFieldSubmission extends Pivot
+class ApplicationFieldSubmission extends Pivot implements HasMedia
 {
+    use HasUuids;
+    use InteractsWithMedia;
+
     protected $table = 'application_field_submission';
 
     protected $fillable = [
@@ -52,4 +58,9 @@ class ApplicationFieldSubmission extends Pivot
     protected $casts = [
         'response' => 'array',
     ];
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('files');
+    }
 }

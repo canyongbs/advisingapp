@@ -44,6 +44,7 @@ use AdvisingApp\Application\Listeners\TriggerApplicationSubmissionWorkflows;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Application\Models\ApplicationField;
+use AdvisingApp\Application\Models\ApplicationFieldSubmission;
 use AdvisingApp\Application\Models\ApplicationStep;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
@@ -68,6 +69,7 @@ class ApplicationServiceProvider extends ServiceProvider
             'application_step' => ApplicationStep::class,
             'application_authentication' => ApplicationAuthentication::class,
             'application_submission_state' => ApplicationSubmissionState::class,
+            'application_field_submission' => ApplicationFieldSubmission::class,
         ]);
         $this->registerEvents();
     }
