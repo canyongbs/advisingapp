@@ -41,6 +41,9 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+/**
+ * @mixin IdeHelperApplicationFieldSubmission
+ */
 class ApplicationFieldSubmission extends Pivot implements HasMedia
 {
     use HasUuids;

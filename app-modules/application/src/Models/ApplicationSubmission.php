@@ -64,7 +64,7 @@ class ApplicationSubmission extends Submission
     }
 
     /**
-     * @return BelongsToMany<ApplicationField, $this>
+     * @return BelongsToMany<ApplicationField, $this, covariant ApplicationFieldSubmission>
      */
     public function fields(): BelongsToMany
     {
