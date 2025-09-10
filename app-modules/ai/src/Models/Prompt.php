@@ -37,10 +37,12 @@
 namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Observers\PromptObserver;
+use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -58,10 +60,12 @@ class Prompt extends BaseModel
         'prompt',
         'type_id',
         'is_smart',
+        'is_confidential',
     ];
 
     protected $casts = [
         'is_smart' => 'boolean',
+        'is_confidential' => 'boolean',
     ];
 
     protected ?bool $isUpvoted = null;
@@ -96,6 +100,29 @@ class Prompt extends BaseModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return BelongsToMany<Team, $this, covariant ConfidentialPromptTeam>
+     */
+    public function confidentialPromptTeams(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Team::class,
+            'confidential_prompt_teams'
+        )
+            ->using(ConfidentialPromptTeam::class)
+            ->withTimestamps();
+    }
+
+    public function confidentialPromptUsers()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'confidential_prompt_users',
+        )
+            ->using(ConfidentialPromptUser::class)
+            ->withTimestamps();
     }
 
     public function isUpvoted(): bool
