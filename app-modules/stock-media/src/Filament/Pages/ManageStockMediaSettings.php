@@ -84,7 +84,7 @@ class ManageStockMediaSettings extends SettingsPage
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-      if (filled($data['provider'] ?? null)) {
+        if (filled($data['provider'] ?? null)) {
             $data['provider'] = StockMediaProvider::parse($data['provider']);
         }
 
