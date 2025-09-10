@@ -42,6 +42,7 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -72,5 +73,13 @@ class StudentPhoneNumber extends BaseModel implements Auditable
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'sisid', 'sisid');
+    }
+
+    /**
+     * @return HasOne<SmsOptOutPhoneNumber, $this>
+     */
+    public function smsOptOut(): HasOne
+    {
+        return $this->hasOne(SmsOptOutPhoneNumber::class, 'number', 'number');
     }
 }

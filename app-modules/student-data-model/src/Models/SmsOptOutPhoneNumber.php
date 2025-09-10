@@ -41,6 +41,7 @@ use AdvisingApp\StudentDataModel\Database\Factories\SmsOptOutPhoneNumberFactory;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -57,4 +58,12 @@ class SmsOptOutPhoneNumber extends BaseModel implements Auditable
     protected $fillable = [
         'number',
     ];
+
+    /**
+     * @return BelongsTo<StudentPhoneNumber, $this>
+     */
+    public function phoneNumber(): BelongsTo
+    {
+        return $this->belongsTo(StudentPhoneNumber::class, 'number', 'number');
+    }
 }
