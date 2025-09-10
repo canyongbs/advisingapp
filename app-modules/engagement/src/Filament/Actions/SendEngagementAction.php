@@ -60,6 +60,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -112,28 +113,10 @@ class SendEngagementAction extends Action
                     $form->fill();
                 }
             })
-            ->form(function (Form $form): array {
-                return [
-                    ...$this->getEducatable() ? [] : [
-                        EducatableSelect::make('recipient', isExcludingConvertedProspects: true)
-                            ->live()
-                            ->required()
-                            ->columns(2)
-                            ->afterStateUpdated(function (Get $get, Set $set) {
-                                $educatable = match ($get('recipient_type')) {
-                                    'student' => Student::find($get('recipient_id')),
-                                    'prospect' => Prospect::find($get('recipient_id')),
-                                    default => null,
-                                };
-
-                                if (! $educatable?->phoneNumbers()->where('can_receive_sms', true)->exists()) {
-                                    $set('channel', 'email');
-                                }
-
-                                $set('recipient_route_id', $educatable?->primaryEmailAddress?->getKey() ?? $educatable?->emailAddresses()->first()?->getKey());
-                            }),
-                    ],
-                    Grid::make(2)
+            ->steps([
+                Step::make('Contact Information')
+                    ->schema([
+                        Grid::make(2)
                         ->schema(function (Get $get): array {
                             $educatable = $this->getEducatable() ?? match ($get('recipient_type')) {
                                 'student' => Student::find($get('recipient_id')),
@@ -194,7 +177,8 @@ class SendEngagementAction extends Action
                                     ->required(),
                             ];
                         }),
-                    Fieldset::make('Content')
+                    ]),
+                Step::make('Content')
                         ->schema(function (Get $get): array {
                             $educatable = $this->getEducatable() ?? match ($get('recipient_type')) {
                                 'student' => Student::find($get('recipient_id')),
@@ -303,10 +287,10 @@ class SendEngagementAction extends Action
                                 ])] : [],
                             ];
                         }),
-                    Fieldset::make('Email signature')
+                Step::make('Email Signature')
                         ->schema([
                             Toggle::make('is_signature_enabled')
-                                ->label('Include signature')
+                                ->label('Include Signature')
                                 ->helperText('You may configure your email signature in Profile Settings by selecting your avatar in the upper right portion of the screen.')
                                 ->live(),
                             TiptapEditor::make('signature')
@@ -321,9 +305,8 @@ class SendEngagementAction extends Action
                                 ->saveRelationshipsUsing(null),
                         ])
                         ->visible(auth()->user()->is_signature_enabled)
-                        ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
-                        ->columns(1),
-                    Fieldset::make('Send your email or text')
+                        ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value),
+                Step::make('Send Your Email or Text')
                         ->schema([
                             Toggle::make('send_later')
                                 ->reactive()
@@ -332,8 +315,7 @@ class SendEngagementAction extends Action
                                 ->required()
                                 ->visible(fn (Get $get) => $get('send_later')),
                         ]),
-                ];
-            })
+            ])
             ->action(function (array $data, Form $form, Page $livewire) {
                 /** @var Student | Prospect $recipient */
                 $recipient = $this->getEducatable() ?? match ($data['recipient_type']) {
@@ -400,16 +382,7 @@ class SendEngagementAction extends Action
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)
             ->closeModalByClickingAway(false)
-            ->closeModalByEscaping(false)
-            ->modalCancelAction(false)
-            ->extraModalFooterActions([
-                Action::make('cancel')
-                    ->color('gray')
-                    ->cancelParentActions()
-                    ->requiresConfirmation()
-                    ->action(fn (Component $livewire) => $livewire->js('$store.previous = {}')) // This fixes an issue where the TipTap editor inside this modal is persisted after the modal is closed, and the old content is restored to the editor. This can be removed when the app is upgraded to Filament v4.
-                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('danger')),
-            ]);
+            ->closeModalByEscaping(false);
     }
 
     public static function getDefaultName(): ?string
