@@ -31,6 +31,10 @@
 
 </COPYRIGHT>
 --}}
+@use(AdvisingApp\Engagement\Models\Engagement)
+@use(AdvisingApp\Prospect\Models\Prospect)
+@use(AdvisingApp\StudentDataModel\Models\Student)
+
 <x-filament-panels::page>
     <div>
         <x-filament::link
@@ -42,4 +46,43 @@
     </div>
 
     {{ $this->infolist }}
+
+    @if (
+        ($this->record->sender instanceof Prospect || $this->record->sender instanceof Student) &&
+            auth()->user()->can('create', [
+                    Engagement::class,
+                    $this->record->sender instanceof Prospect ? $this->record->sender : null,
+                ]))
+        <div
+            class="grid gap-6"
+            x-data="{ isReplying: false }"
+        >
+            <div>
+                <x-filament::button
+                    icon="heroicon-s-arrow-uturn-left"
+                    x-on:click="isReplying = !isReplying"
+                >
+                    Reply
+                </x-filament::button>
+            </div>
+
+            <form
+                class="grid gap-6"
+                x-show="isReplying"
+                wire:submit.prevent="reply"
+            >
+                {{ $this->replyForm }}
+
+                <div>
+                    <x-filament::button
+                        type="submit"
+                        wire:target="reply"
+                        icon="heroicon-m-paper-airplane"
+                    >
+                        Send Reply
+                    </x-filament::button>
+                </div>
+            </form>
+        </div>
+    @endif
 </x-filament-panels::page>

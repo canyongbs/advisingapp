@@ -102,7 +102,7 @@ class ViewEngagement extends Page
 
     public function getTitle(): string
     {
-        return strip_tags($this->record->getSubjectMarkdown());
+        return strip_tags($this->record->getSubjectMarkdown()) ?: 'Sent Items';
     }
 
     public function infolist(Infolist $infolist): Infolist
