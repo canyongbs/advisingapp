@@ -49,6 +49,7 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use AdvisingApp\StudentDataModel\Services\SmsOptOutService;
+use App\Features\SmsOptOutFeature;
 use Exception;
 use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Actions;
@@ -96,18 +97,37 @@ class RelationManagerSendEngagementAction extends CreateAction
                             ->options(NotificationChannel::getEngagementOptions())
                             ->default(NotificationChannel::Email->value)
                             ->disableOptionWhen(
-                                fn (RelationManager $livewire, string $value): bool => (
-                                    ($value == NotificationChannel::Sms->value) &&
-                                     (
-                                         ! $livewire->getOwnerRecord()->phoneNumbers()
-                                             ->where('can_receive_sms', true)
-                                             ->get()
-                                             ->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))
-                                             ->count()
-                                     )
-                                ) ||
-                                    NotificationChannel::tryFrom($value)?->getCaseDisabled()
+                                function (RelationManager $livewire, string $value): bool {
+                                    if (($value == NotificationChannel::Sms->value)) {
+                                        $phoneQuery = $livewire->getOwnerRecord()->phoneNumbers()
+                                            ->where('can_receive_sms', true);
+
+                                        $hasAvailablePhones = SmsOptOutFeature::active()
+                                            ? $phoneQuery->get()->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))->isNotEmpty()
+                                            : $phoneQuery->exists();
+
+                                        return ! $hasAvailablePhones;
+                                    }
+
+                                    return NotificationChannel::tryFrom($value)?->getCaseDisabled() ?? false;
+                                }
                             )
+                            // @todo SmsOptOutFeature
+                            // Once this feature flag is removed, delete the above disableOptionWhen()
+                            // Then uncomment and use the disableOptionWhen() block below.
+                            // ->disableOptionWhen(
+                            //     fn (RelationManager $livewire, string $value): bool => (
+                            //         ($value == NotificationChannel::Sms->value) &&
+                            //          (
+                            //              ! $livewire->getOwnerRecord()->phoneNumbers()
+                            //                  ->where('can_receive_sms', true)
+                            //                  ->get()
+                            //                  ->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))
+                            //                  ->isNotEmpty()
+                            //          )
+                            //     ) ||
+                            //         NotificationChannel::tryFrom($value)?->getCaseDisabled()
+                            // )
                             ->selectablePlaceholder(false)
                             ->live()
                             ->afterStateUpdated(function (mixed $state, RelationManager $livewire, Set $set) {
@@ -118,7 +138,15 @@ class RelationManagerSendEngagementAction extends CreateAction
                                     NotificationChannel::Sms => $livewire->getOwnerRecord()->primaryPhoneNumber()
                                         ->where('can_receive_sms', true)
                                         ->get()
-                                        ->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))
+                                        ->filter(function (StudentPhoneNumber | ProspectPhoneNumber $phone) {
+                                            return SmsOptOutFeature::active()
+                                                ? ! $this->isPhoneNumberOptedOut($phone->number)
+                                                : true;
+                                        })
+                                        // @todo SmsOptOutFeature
+                                        // Once this feature flag is removed, delete the above filter()
+                                        // Then uncomment and use the filter() block below.
+                                        // ->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))
                                         ->first()?->getKey(),
                                 } ?? match ($channel) {
                                     NotificationChannel::Email => $livewire->getOwnerRecord()->emailAddresses()
@@ -126,7 +154,15 @@ class RelationManagerSendEngagementAction extends CreateAction
                                     NotificationChannel::Sms => $livewire->getOwnerRecord()->phoneNumbers()
                                         ->where('can_receive_sms', true)
                                         ->get()
-                                        ->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))
+                                        ->filter(function (StudentPhoneNumber | ProspectPhoneNumber $phone) {
+                                            return SmsOptOutFeature::active()
+                                                ? ! $this->isPhoneNumberOptedOut($phone->number)
+                                                : true;
+                                        })
+                                        // @todo SmsOptOutFeature
+                                        // Once this feature flag is removed, delete the above filter()
+                                        // Then uncomment and use the filter() block below.
+                                        // ->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))
                                         ->first()?->getKey(),
                                 };
 
@@ -146,7 +182,15 @@ class RelationManagerSendEngagementAction extends CreateAction
                                 NotificationChannel::Sms => $livewire->getOwnerRecord()->phoneNumbers()
                                     ->where('can_receive_sms', true)
                                     ->get()
-                                    ->filter(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber) => ! $this->isPhoneNumberOptedOut($phoneNumber->number))
+                                    ->filter(function (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber) {
+                                        return SmsOptOutFeature::active()
+                                            ? ! $this->isPhoneNumberOptedOut($phoneNumber->number)
+                                            : true;
+                                    })
+                                    // @todo SmsOptOutFeature
+                                    // Once this feature flag is removed, delete the above filter()
+                                    // Then uncomment and use the filter() block below.
+                                    // ->filter(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber) => ! $this->isPhoneNumberOptedOut($phoneNumber->number))
                                     ->mapWithKeys(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber): array => [
                                         $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
                                     ])

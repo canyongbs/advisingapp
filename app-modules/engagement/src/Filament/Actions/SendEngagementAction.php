@@ -49,6 +49,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use AdvisingApp\StudentDataModel\Services\SmsOptOutService;
+use App\Features\SmsOptOutFeature;
 use App\Filament\Forms\Components\EducatableSelect;
 use Exception;
 use Filament\Actions\Action;
@@ -127,14 +128,28 @@ class SendEngagementAction extends Action
                                     default => null,
                                 };
 
-                                if (! $educatable?->phoneNumbers()
-                                    ->where('can_receive_sms', true)
-                                    ->get()
-                                    ->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))
-                                    ->count()
-                                ) {
+                                $phoneQuery = $educatable?->phoneNumbers()
+                                    ->where('can_receive_sms', true);
+
+                                $hasAvailablePhones = SmsOptOutFeature::active()
+                                    ? $phoneQuery?->get()->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))->isNotEmpty()
+                                    : $phoneQuery?->exists();
+
+                                if (! $hasAvailablePhones) {
                                     $set('channel', 'email');
                                 }
+
+                                // @todo SmsOptOutFeature
+                                // Once this feature flag is removed, delete the above $phoneQuery and $hasAvailablePhones and if condition.
+                                // Then uncomment and use the block below.
+                                // if (! $educatable?->phoneNumbers()
+                                //     ->where('can_receive_sms', true)
+                                //     ->get()
+                                //     ->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))
+                                //     ->isNotEmpty()
+                                // ) {
+                                //     $set('channel', 'email');
+                                // }
 
                                 $set('recipient_route_id', $educatable?->primaryEmailAddress?->getKey() ?? $educatable?->emailAddresses()->first()?->getKey());
                             }),
@@ -153,18 +168,37 @@ class SendEngagementAction extends Action
                                     ->options(NotificationChannel::getEngagementOptions())
                                     ->default(NotificationChannel::Email->value)
                                     ->disableOptionWhen(
-                                        fn (string $value): bool => (
-                                            ($value == NotificationChannel::Sms->value) &&
-                                         (
-                                             ! $educatable?->phoneNumbers()
-                                                 ->where('can_receive_sms', true)
-                                                 ->get()
-                                                 ->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))
-                                                 ->count()
-                                         )
-                                        ) ||
-                                        NotificationChannel::tryFrom($value)?->getCaseDisabled()
+                                        function (string $value) use ($educatable): bool {
+                                            if ($value == NotificationChannel::Sms->value) {
+                                                $phoneQuery = $educatable?->phoneNumbers()
+                                                    ->where('can_receive_sms', true);
+
+                                                $hasAvailablePhones = SmsOptOutFeature::active()
+                                                    ? $phoneQuery?->get()->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))->isNotEmpty()
+                                                    : $phoneQuery?->exists();
+
+                                                return ! $hasAvailablePhones;
+                                            }
+
+                                            return NotificationChannel::tryFrom($value)?->getCaseDisabled() ?? false;
+                                        }
                                     )
+                                    // @todo SmsOptOutFeature
+                                    // Once this feature flag is removed, delete the above disableOptionWhen()
+                                    // Then uncomment and use the disableOptionWhen() block below.
+                                    // ->disableOptionWhen(
+                                    //     fn (string $value): bool => (
+                                    //         ($value == NotificationChannel::Sms->value) &&
+                                    //      (
+                                    //          ! $educatable?->phoneNumbers()
+                                    //              ->where('can_receive_sms', true)
+                                    //              ->get()
+                                    //              ->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))
+                                    //              ->count()
+                                    //      )
+                                    //     ) ||
+                                    //     NotificationChannel::tryFrom($value)?->getCaseDisabled()
+                                    // )
                                     ->selectablePlaceholder(false)
                                     ->live()
                                     ->afterStateUpdated(function (mixed $state, Set $set) use ($educatable) {
@@ -175,7 +209,15 @@ class SendEngagementAction extends Action
                                             NotificationChannel::Sms => $educatable?->primaryPhoneNumber()
                                                 ->where('can_receive_sms', true)
                                                 ->get()
-                                                ->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))
+                                                ->filter(function (StudentPhoneNumber|ProspectPhoneNumber $phone) {
+                                                    return SmsOptOutFeature::active()
+                                                        ? ! $this->isPhoneNumberOptedOut($phone->number)
+                                                        : true;
+                                                })
+                                                // @todo SmsOptOutFeature
+                                                // Once this feature flag is removed, delete the above filter()
+                                                // Then uncomment and use the filter() block below.
+                                                // ->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))
                                                 ->first()?->getKey(),
                                             default => null,
                                         } ?? match ($channel) {
@@ -184,7 +226,15 @@ class SendEngagementAction extends Action
                                             NotificationChannel::Sms => $educatable?->phoneNumbers()
                                                 ->where('can_receive_sms', true)
                                                 ->get()
-                                                ->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))
+                                                ->filter(function (StudentPhoneNumber|ProspectPhoneNumber $phone) {
+                                                    return SmsOptOutFeature::active()
+                                                        ? ! $this->isPhoneNumberOptedOut($phone->number)
+                                                        : true;
+                                                })
+                                                // @todo SmsOptOutFeature
+                                                // Once this feature flag is removed, delete the above filter()
+                                                // Then uncomment and use the filter() block below.
+                                                // ->filter(fn ($phone) => ! $this->isPhoneNumberOptedOut($phone->number))
                                                 ->first()?->getKey(),
                                             default => null,
                                         };
@@ -206,7 +256,15 @@ class SendEngagementAction extends Action
                                         NotificationChannel::Sms => $educatable?->phoneNumbers()
                                             ->where('can_receive_sms', true)
                                             ->get()
-                                            ->filter(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber) => ! $this->isPhoneNumberOptedOut($phoneNumber->number))
+                                            ->filter(function (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber) {
+                                                return SmsOptOutFeature::active()
+                                                    ? ! $this->isPhoneNumberOptedOut($phoneNumber->number)
+                                                    : true;
+                                            })
+                                            // @todo SmsOptOutFeature
+                                            // Once this feature flag is removed, delete the above filter()
+                                            // Then uncomment and use the filter() block below.
+                                            // ->filter(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber) => ! $this->isPhoneNumberOptedOut($phoneNumber->number))
                                             ->mapWithKeys(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber): array => [
                                                 $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
                                             ])

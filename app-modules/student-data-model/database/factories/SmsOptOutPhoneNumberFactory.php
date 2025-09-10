@@ -44,8 +44,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class SmsOptOutPhoneNumberFactory extends Factory
 {
-    protected $model = SmsOptOutPhoneNumber::class;
-
     /**
      * @return array<string, mixed>
      */

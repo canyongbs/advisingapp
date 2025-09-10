@@ -51,6 +51,7 @@ use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use AdvisingApp\StudentDataModel\Services\SmsOptOutService;
+use App\Features\SmsOptOutFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Exception;
@@ -122,7 +123,7 @@ class SmsChannel
             return;
         }
 
-        if ($recipientNumber && app(SmsOptOutService::class)->isOptedOut($recipientNumber)) {
+        if (SmsOptOutFeature::active() && $recipientNumber && app(SmsOptOutService::class)->isOptedOut($recipientNumber)) {
             $smsMessage->events()->create([
                 'type' => SmsMessageEventType::FailedDispatch,
                 'payload' => [
