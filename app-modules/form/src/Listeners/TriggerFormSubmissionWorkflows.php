@@ -57,88 +57,19 @@ class TriggerFormSubmissionWorkflows implements ShouldQueueAfterCommit
 
     assert($form instanceof Form);
 
-        if (is_null($event->submission->author)) {
-            // If the submission has no author, we cannot trigger workflows.
-            return;
-        }
-
-        try {
-            DB::beginTransaction();
-
-            $form->loadMissing('workflowTriggers.workflow.workflowSteps.currentDetails');
-
-            $form->workflowTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($event) {
-                if (! $workflowTrigger->workflow->is_enabled) {
-                    return;
-                }
-
-                $workflowRun = new WorkflowRun(['started_at' => now()]);
-                $workflowRun->related()->associate($event->submission->author);
-                $workflowRun->workflowTrigger()->associate($workflowTrigger);
-                $workflowRun->saveOrFail();
-
-                $previousRunStep = null;
-
-                if (WorkflowSequentialExecutionFeature::active()) {
-                    $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step, int $index) use ($event, $workflowRun, &$previousRunStep) {
-                        assert($step->currentDetails instanceof WorkflowDetails);
-
-                        $executeAt = null;
-
-                        if ($index === 0) {
-                            $executeAt = $this->getStepScheduledAt($step, $event);
-                        }
-
-                        $workflowRunStep = new WorkflowRunStep([
-                            'execute_at' => $executeAt,
-                            'delay_minutes' => $step->delay_minutes,
-                            'previous_workflow_run_step_id' => $previousRunStep?->id,
-                        ]);
-
-                        $workflowRunStep->workflowRun()->associate($workflowRun);
-                        $workflowRunStep->details()->associate($step->currentDetails);
-
-                        $workflowRunStep->saveOrFail();
-
-                        $previousRunStep = $workflowRunStep;
-                    });
-                } else {
-                    $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step) use ($event, $workflowRun) {
-                        assert($step->currentDetails instanceof WorkflowDetails);
-
-                        $workflowRunStep = new WorkflowRunStep([
-                            'execute_at' => $this->getStepScheduledAt($step, $event),
-                        ]);
-
-                        $workflowRunStep->workflowRun()->associate($workflowRun);
-                        $workflowRunStep->details()->associate($step->currentDetails);
-
-                        $workflowRunStep->saveOrFail();
-                    });
-                }
-            });
-
-            DB::commit();
-        } catch (Throwable $error) {
-            DB::rollBack();
-
-            throw $error;
-        }
+    if (is_null($event->submission->author)) {
+      // If the submission has no author, we cannot trigger workflows.
+      return;
     }
 
-    private function getStepScheduledAt(WorkflowStep $step, FormSubmissionCreated $event): Carbon
-    {
-        $delayFrom = $event->submission->submitted_at->toMutable();
-        $delayFrom->addMinutes($step->delay_minutes);
+    try {
+      DB::beginTransaction();
 
-        if (! WorkflowSequentialExecutionFeature::active()) {
-            $prevStep = $step->previousWorkflowStep;
+      $form->loadMissing('workflowTriggers.workflow.workflowSteps.currentDetails');
 
-            while (! is_null($prevStep)) {
-                $delayFrom->addMinutes($prevStep->delay_minutes);
-
-                $prevStep = $prevStep->previousWorkflowStep;
-            }
+      $form->workflowTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($event) {
+        if (! $workflowTrigger->workflow->is_enabled) {
+          return;
         }
 
         $workflowRun = new WorkflowRun(['started_at' => now()]);
@@ -146,18 +77,45 @@ class TriggerFormSubmissionWorkflows implements ShouldQueueAfterCommit
         $workflowRun->workflowTrigger()->associate($workflowTrigger);
         $workflowRun->saveOrFail();
 
-        $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step) use ($event, $workflowRun) {
-          assert($step->currentDetails instanceof WorkflowDetails);
+        $previousRunStep = null;
 
-          $workflowRunStep = new WorkflowRunStep([
-            'execute_at' => $this->getStepScheduledAt($step, $event),
-          ]);
+        if (WorkflowSequentialExecutionFeature::active()) {
+          $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step, int $index) use ($event, $workflowRun, &$previousRunStep) {
+            assert($step->currentDetails instanceof WorkflowDetails);
 
-          $workflowRunStep->workflowRun()->associate($workflowRun);
-          $workflowRunStep->details()->associate($step->currentDetails);
+            $executeAt = null;
 
-          $workflowRunStep->saveOrFail();
-        });
+            if ($index === 0) {
+              $executeAt = $this->getStepScheduledAt($step, $event);
+            }
+
+            $workflowRunStep = new WorkflowRunStep([
+              'execute_at' => $executeAt,
+              'delay_minutes' => $step->delay_minutes,
+              'previous_workflow_run_step_id' => $previousRunStep?->id,
+            ]);
+
+            $workflowRunStep->workflowRun()->associate($workflowRun);
+            $workflowRunStep->details()->associate($step->currentDetails);
+
+            $workflowRunStep->saveOrFail();
+
+            $previousRunStep = $workflowRunStep;
+          });
+        } else {
+          $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step) use ($event, $workflowRun) {
+            assert($step->currentDetails instanceof WorkflowDetails);
+
+            $workflowRunStep = new WorkflowRunStep([
+              'execute_at' => $this->getStepScheduledAt($step, $event),
+            ]);
+
+            $workflowRunStep->workflowRun()->associate($workflowRun);
+            $workflowRunStep->details()->associate($step->currentDetails);
+
+            $workflowRunStep->saveOrFail();
+          });
+        }
       });
 
       DB::commit();
@@ -171,15 +129,16 @@ class TriggerFormSubmissionWorkflows implements ShouldQueueAfterCommit
   private function getStepScheduledAt(WorkflowStep $step, FormSubmissionCreated $event): Carbon
   {
     $delayFrom = $event->submission->submitted_at->toMutable();
-
     $delayFrom->addMinutes($step->delay_minutes);
 
-    $prevStep = $step->previousWorkflowStep;
+    if (! WorkflowSequentialExecutionFeature::active()) {
+      $prevStep = $step->previousWorkflowStep;
 
-    while (! is_null($prevStep)) {
-      $delayFrom->addMinutes($prevStep->delay_minutes);
+      while (! is_null($prevStep)) {
+        $delayFrom->addMinutes($prevStep->delay_minutes);
 
-      $prevStep = $prevStep->previousWorkflowStep;
+        $prevStep = $prevStep->previousWorkflowStep;
+      }
     }
 
     return $delayFrom;

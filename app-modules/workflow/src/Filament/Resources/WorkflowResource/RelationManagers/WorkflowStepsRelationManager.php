@@ -98,7 +98,7 @@ class WorkflowStepsRelationManager extends RelationManager
                     }),
                 TextColumn::make('delay_minutes')
                     ->label('Delay from Previous Step')
-                    ->state(fn(WorkflowStep $record) => CarbonInterval::minutes($record->delay_minutes)->cascade()->forHumans()),
+                    ->state(fn (WorkflowStep $record) => CarbonInterval::minutes($record->delay_minutes)->cascade()->forHumans()),
             ])
             ->headerActions([
                 Action::make('create')
@@ -155,7 +155,7 @@ class WorkflowStepsRelationManager extends RelationManager
                                 }
                             }),
                     ])
-                    ->action(fn() => null),
+                    ->action(fn () => null),
             ])
             ->actions([
                 EditAction::make()

@@ -2,14 +2,10 @@
 
 /*
 <COPYRIGHT>
-
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
-
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
     Notice:
-
     - You may not provide the software to third parties as a hosted or managed
       service, where the service provides users with access to any substantial set of
       the features or functionality of the software.
@@ -27,71 +23,33 @@
       Software as a Service (SaaS) by Canyon GBS LLC.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
-
     For more information or inquiries please visit our website at
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Database\Factories;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Database\Factories\WorkflowTaskDetailsFactory;
-use AdvisingApp\Workflow\Filament\Blocks\TaskBlock;
-use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
-use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
-use AdvisingApp\Workflow\Jobs\TaskWorkflowActionJob;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperWorkflowTaskDetails
+ * @extends Factory<WorkflowProactiveAlertDetails>
  */
-class WorkflowTaskDetails extends WorkflowDetails implements Auditable
+class WorkflowTaskDetailsFactory extends Factory
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    /** @use HasFactory<WorkflowTaskDetailsFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'title',
-        'description',
-        'due',
-        'assigned_to',
-    ];
-
-    protected $casts = [
-        'due' => 'datetime',
-    ];
-
-    public function getLabel(): string
-    {
-        return 'Task';
-    }
-
-    public function getBlock(): WorkflowActionBlock
-    {
-        return TaskBlock::make();
-    }
-
-    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
-    {
-        return new TaskWorkflowActionJob($workflowRunStep);
-    }
-
     /**
-     * @return BelongsTo<User, $this>
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
      */
-    public function assignedTo(): BelongsTo
+    public function definition(): array
     {
-        return $this->belongsTo(User::class, 'assigned_to');
+        return [
+            'title' => $this->faker->sentence,
+            'description' => $this->faker->paragraph,
+            'due' => $this->faker->dateTimeBetween('now', '+1 month'),
+            'assigned_to' => null,
+        ];
     }
 }

@@ -44,6 +44,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Manage
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
 use App\Models\NotificationSetting;
 use App\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
@@ -56,7 +57,7 @@ class TaskAssignedToUserNotification extends Notification implements ShouldQueue
     use Queueable;
 
     public function __construct(
-        public Task $task,
+        public WorkflowTaskDetails| Task $task,
     ) {}
 
     /**
