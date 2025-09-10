@@ -37,8 +37,6 @@
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
 use AdvisingApp\Workflow\Models\WorkflowDetails;
-use AdvisingApp\Workflow\Settings\WorkflowSettings;
-use Carbon\CarbonInterface;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Field;
@@ -80,21 +78,4 @@ abstract class WorkflowActionBlock extends Block
     abstract public static function type(): string;
 
     public function afterCreated(WorkflowDetails $action, ComponentContainer $componentContainer): void {}
-
-    public function generateUserTimezoneHint(CarbonInterface $dateTime): ?string
-    {
-        if (blank(auth()->user()->timezone)) {
-            return null;
-        }
-
-        $actionExecutionTimezone = app(WorkflowSettings::class)->getActionExecutionTimezone();
-
-        if (auth()->user()->timezone === $actionExecutionTimezone) {
-            return null;
-        }
-
-        return $dateTime
-            ->shiftTimezone($actionExecutionTimezone)
-            ->setTimezone(auth()->user()->timezone)->format('M j, Y H:i:s') . ' in your timezone';
-    }
 }
