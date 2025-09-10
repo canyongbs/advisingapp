@@ -48,6 +48,7 @@ use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use App\Filament\Forms\Components\EducatableSelect;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Actions;
@@ -112,6 +113,25 @@ class SendEngagementAction extends Action
             ->steps([
                 Step::make('Contact Information')
                     ->schema([
+                        ...$this->getEducatable() ? [] : [
+                            EducatableSelect::make('recipient', isExcludingConvertedProspects: true)
+                                ->live()
+                                ->required()
+                                ->columns(2)
+                                ->afterStateUpdated(function (Get $get, Set $set) {
+                                    $educatable = match ($get('recipient_type')) {
+                                        'student' => Student::find($get('recipient_id')),
+                                        'prospect' => Prospect::find($get('recipient_id')),
+                                        default => null,
+                                    };
+
+                                    if (! $educatable?->phoneNumbers()->where('can_receive_sms', true)->exists()) {
+                                        $set('channel', 'email');
+                                    }
+
+                                    $set('recipient_route_id', $educatable?->primaryEmailAddress?->getKey() ?? $educatable?->emailAddresses()->first()?->getKey());
+                                }),
+                        ],
                         Grid::make(2)
                             ->schema(function (Get $get): array {
                                 $educatable = $this->getEducatable() ?? match ($get('recipient_type')) {
