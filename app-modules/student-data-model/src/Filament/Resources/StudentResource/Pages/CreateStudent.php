@@ -36,10 +36,12 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
-use AdvisingApp\StudentDataModel\Filament\Forms\Components\SmsOptOutCheckbox;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use AdvisingApp\StudentDataModel\Services\SmsOptOutService;
 use App\Features\AthleticFieldsFeature;
+use App\Features\SmsOptOutFeature;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -211,7 +213,11 @@ class CreateStudent extends CreateRecord
                                     ->label('Can receive SMS messages')
                                     ->columnSpanFull()
                                     ->default(true),
-                                SmsOptOutCheckbox::make('sms_opt_out'),
+                                Checkbox::make('sms_opt_out_phone_number')
+                                    ->label('SMS Opt Out')
+                                    ->columnSpanFull()
+                                    ->default(false)
+                                    ->visible(SmsOptOutFeature::active()),
                             ])
                             ->orderColumn('order')
                             ->itemLabel(fn (Repeater $component, ComponentContainer $container): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $container->getStatePath()) ? 'Primary phone number' : 'Additional phone number')
@@ -332,5 +338,39 @@ class CreateStudent extends CreateRecord
         $student->primaryPhoneNumber()->associate($student->phoneNumbers()->first());
         $student->primaryAddress()->associate($student->addresses()->first());
         $student->save();
+
+        if (SmsOptOutFeature::active()) {
+            $this->processSmsOptOutPreferences($student);
+        }
+    }
+
+    private function processSmsOptOutPreferences(Student $student): void
+    {
+        $formData = $this->form->getRawState();
+
+        if (! isset($formData['phoneNumbers']) || ! is_array($formData['phoneNumbers'])) {
+            return;
+        }
+
+        $smsOptOutService = app(SmsOptOutService::class);
+        $phoneNumbers = $student->phoneNumbers()->orderBy('order')->get();
+
+        $phoneNumbersFormData = array_values($formData['phoneNumbers']);
+
+        foreach ($phoneNumbersFormData as $index => $phoneNumberData) {
+            if (isset($phoneNumberData['sms_opt_out_phone_number'])) {
+                $phoneNumber = $phoneNumbers->get($index);
+
+                if ($phoneNumber instanceof StudentPhoneNumber) {
+                    $isOptedOut = (bool) $phoneNumberData['sms_opt_out_phone_number'];
+
+                    if ($isOptedOut) {
+                        $smsOptOutService->optOutStudentPhoneNumber($phoneNumber);
+                    } else {
+                        $smsOptOutService->optInStudentPhoneNumber($phoneNumber);
+                    }
+                }
+            }
+        }
     }
 }
