@@ -51,96 +51,96 @@ use Throwable;
 
 class TriggerFormSubmissionWorkflows implements ShouldQueueAfterCommit
 {
-  public function handle(FormSubmissionCreated $event): void
-  {
-    $form = $event->submission->submissible;
+    public function handle(FormSubmissionCreated $event): void
+    {
+        $form = $event->submission->submissible;
 
-    assert($form instanceof Form);
+        assert($form instanceof Form);
 
-    if (is_null($event->submission->author)) {
-      // If the submission has no author, we cannot trigger workflows.
-      return;
-    }
-
-    try {
-      DB::beginTransaction();
-
-      $form->loadMissing('workflowTriggers.workflow.workflowSteps.currentDetails');
-
-      $form->workflowTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($event) {
-        if (! $workflowTrigger->workflow->is_enabled) {
-          return;
+        if (is_null($event->submission->author)) {
+            // If the submission has no author, we cannot trigger workflows.
+            return;
         }
 
-        $workflowRun = new WorkflowRun(['started_at' => now()]);
-        $workflowRun->related()->associate($event->submission->author);
-        $workflowRun->workflowTrigger()->associate($workflowTrigger);
-        $workflowRun->saveOrFail();
+        try {
+            DB::beginTransaction();
 
-        $previousRunStep = null;
+            $form->loadMissing('workflowTriggers.workflow.workflowSteps.currentDetails');
 
-        if (WorkflowSequentialExecutionFeature::active()) {
-          $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step, int $index) use ($event, $workflowRun, &$previousRunStep) {
-            assert($step->currentDetails instanceof WorkflowDetails);
+            $form->workflowTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($event) {
+                if (! $workflowTrigger->workflow->is_enabled) {
+                    return;
+                }
 
-            $executeAt = null;
+                $workflowRun = new WorkflowRun(['started_at' => now()]);
+                $workflowRun->related()->associate($event->submission->author);
+                $workflowRun->workflowTrigger()->associate($workflowTrigger);
+                $workflowRun->saveOrFail();
 
-            if ($index === 0) {
-              $executeAt = $this->getStepScheduledAt($step, $event);
+                $previousRunStep = null;
+
+                if (WorkflowSequentialExecutionFeature::active()) {
+                    $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step, int $index) use ($event, $workflowRun, &$previousRunStep) {
+                        assert($step->currentDetails instanceof WorkflowDetails);
+
+                        $executeAt = null;
+
+                        if ($index === 0) {
+                            $executeAt = $this->getStepScheduledAt($step, $event);
+                        }
+
+                        $workflowRunStep = new WorkflowRunStep([
+                            'execute_at' => $executeAt,
+                            'delay_minutes' => $step->delay_minutes,
+                            'previous_workflow_run_step_id' => $previousRunStep?->id,
+                        ]);
+
+                        $workflowRunStep->workflowRun()->associate($workflowRun);
+                        $workflowRunStep->details()->associate($step->currentDetails);
+
+                        $workflowRunStep->saveOrFail();
+
+                        $previousRunStep = $workflowRunStep;
+                    });
+                } else {
+                    $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step) use ($event, $workflowRun) {
+                        assert($step->currentDetails instanceof WorkflowDetails);
+
+                        $workflowRunStep = new WorkflowRunStep([
+                            'execute_at' => $this->getStepScheduledAt($step, $event),
+                        ]);
+
+                        $workflowRunStep->workflowRun()->associate($workflowRun);
+                        $workflowRunStep->details()->associate($step->currentDetails);
+
+                        $workflowRunStep->saveOrFail();
+                    });
+                }
+            });
+
+            DB::commit();
+        } catch (Throwable $error) {
+            DB::rollBack();
+
+            throw $error;
+        }
+    }
+
+    private function getStepScheduledAt(WorkflowStep $step, FormSubmissionCreated $event): Carbon
+    {
+        $delayFrom = $event->submission->submitted_at->toMutable();
+        $delayFrom->addMinutes($step->delay_minutes);
+
+        if (! WorkflowSequentialExecutionFeature::active()) {
+            $prevStep = $step->previousWorkflowStep;
+
+            while (! is_null($prevStep)) {
+                $delayFrom->addMinutes($prevStep->delay_minutes);
+
+                $prevStep = $prevStep->previousWorkflowStep;
             }
-
-            $workflowRunStep = new WorkflowRunStep([
-              'execute_at' => $executeAt,
-              'delay_minutes' => $step->delay_minutes,
-              'previous_workflow_run_step_id' => $previousRunStep?->id,
-            ]);
-
-            $workflowRunStep->workflowRun()->associate($workflowRun);
-            $workflowRunStep->details()->associate($step->currentDetails);
-
-            $workflowRunStep->saveOrFail();
-
-            $previousRunStep = $workflowRunStep;
-          });
-        } else {
-          $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step) use ($event, $workflowRun) {
-            assert($step->currentDetails instanceof WorkflowDetails);
-
-            $workflowRunStep = new WorkflowRunStep([
-              'execute_at' => $this->getStepScheduledAt($step, $event),
-            ]);
-
-            $workflowRunStep->workflowRun()->associate($workflowRun);
-            $workflowRunStep->details()->associate($step->currentDetails);
-
-            $workflowRunStep->saveOrFail();
-          });
         }
-      });
 
-      DB::commit();
-    } catch (Throwable $error) {
-      DB::rollBack();
-
-      throw $error;
+        return $delayFrom;
     }
-  }
-
-  private function getStepScheduledAt(WorkflowStep $step, FormSubmissionCreated $event): Carbon
-  {
-    $delayFrom = $event->submission->submitted_at->toMutable();
-    $delayFrom->addMinutes($step->delay_minutes);
-
-    if (! WorkflowSequentialExecutionFeature::active()) {
-      $prevStep = $step->previousWorkflowStep;
-
-      while (! is_null($prevStep)) {
-        $delayFrom->addMinutes($prevStep->delay_minutes);
-
-        $prevStep = $prevStep->previousWorkflowStep;
-      }
-    }
-
-    return $delayFrom;
-  }
 }

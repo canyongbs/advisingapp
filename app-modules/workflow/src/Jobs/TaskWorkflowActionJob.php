@@ -38,8 +38,8 @@ namespace AdvisingApp\Workflow\Jobs;
 
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Task\Notifications\TaskAssignedToUserNotification;
+use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
 use App\Features\WorkflowSequentialExecutionFeature;
@@ -49,64 +49,64 @@ use Throwable;
 
 class TaskWorkflowActionJob extends ExecuteWorkflowActionJob
 {
-  use SchedulesNextWorkflowStep;
+    use SchedulesNextWorkflowStep;
 
-  public function handle(): void
-  {
-    try {
-      DB::beginTransaction();
+    public function handle(): void
+    {
+        try {
+            DB::beginTransaction();
 
-      $educatable = $this->workflowRunStep->workflowRun->related;
+            $educatable = $this->workflowRunStep->workflowRun->related;
 
-      assert($educatable instanceof Educatable);
+            assert($educatable instanceof Educatable);
 
-      $details = $this->workflowRunStep->details;
+            $details = $this->workflowRunStep->details;
 
-      assert($details instanceof WorkflowTaskDetails);
+            assert($details instanceof WorkflowTaskDetails);
 
-      $user = $this->workflowRunStep->workflowRun->workflowTrigger->createdBy;
+            $user = $this->workflowRunStep->workflowRun->workflowTrigger->createdBy;
 
-      assert($user instanceof User);
+            assert($user instanceof User);
 
-      $task = Task::query()->make([
-        'title' => $details->title,
-        'description' => $details->description,
-        'due' => $details->due,
-      ]);
+            $task = Task::query()->make([
+                'title' => $details->title,
+                'description' => $details->description,
+                'due' => $details->due,
+            ]);
 
-      $task->assignedTo()->associate($details->assigned_to);
+            $task->assignedTo()->associate($details->assigned_to);
 
-      if (! empty($task->assignedTo)) {
-        $task->assignedTo->notify(new TaskAssignedToUserNotification($task));
-      }
+            if (! empty($task->assignedTo)) {
+                $task->assignedTo->notify(new TaskAssignedToUserNotification($task));
+            }
 
-      $task->createdBy()->associate($user);
+            $task->createdBy()->associate($user);
 
-      $task->concern()->associate($educatable);
+            $task->concern()->associate($educatable);
 
-      $task->save();
+            $task->save();
 
-      $workflowRunStepRelated = new WorkflowRunStepRelated();
+            $workflowRunStepRelated = new WorkflowRunStepRelated();
 
-      $workflowRunStepRelated->workflowRunStep()->associate($this->workflowRunStep);
-      $workflowRunStepRelated->related()->associate($task);
+            $workflowRunStepRelated->workflowRunStep()->associate($this->workflowRunStep);
+            $workflowRunStepRelated->related()->associate($task);
 
-      $workflowRunStepRelated->save();
+            $workflowRunStepRelated->save();
 
-      $this->workflowRunStep->succeeded_at = now();
-      $this->workflowRunStep->saveOrFail();
+            $this->workflowRunStep->succeeded_at = now();
+            $this->workflowRunStep->saveOrFail();
 
-      if (WorkflowSequentialExecutionFeature::active()) {
-        $this->markStepCompletedAndScheduleNext();
-      } else {
-        $this->workflowRunStep->succeeded_at = now();
-        $this->workflowRunStep->saveOrFail();
-      }
-      DB::commit();
-    } catch (Throwable $throw) {
-      DB::rollBack();
+            if (WorkflowSequentialExecutionFeature::active()) {
+                $this->markStepCompletedAndScheduleNext();
+            } else {
+                $this->workflowRunStep->succeeded_at = now();
+                $this->workflowRunStep->saveOrFail();
+            }
+            DB::commit();
+        } catch (Throwable $throw) {
+            DB::rollBack();
 
-      throw $throw;
+            throw $throw;
+        }
     }
-  }
 }
