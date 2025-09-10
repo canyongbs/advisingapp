@@ -53,7 +53,7 @@ use Illuminate\Database\Query\Expression;
 
 class EngagementSmsBodyInput
 {
-    public static function make(string $context, ?Form $form = null, string $fieldPrefix = '')
+    public static function make(string $context, ?Form $form = null, string $fieldPrefix = '', bool $withTemplateAction = true)
     {
         // TODO Implement length validation (320 characters max)
         // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
@@ -69,7 +69,7 @@ class EngagementSmsBodyInput
             ->showMergeTagsInBlocksPanel(is_null($form) ? false : ! ($form->getLivewire() instanceof RelationManager))
             ->profile('sms')
             ->required()
-            ->hintAction(fn (TiptapEditor $component) => Action::make('loadSmsTemplate')
+            ->when($withTemplateAction, fn (TiptapEditor $component) => $component->hintAction(fn (TiptapEditor $component) => Action::make('loadSmsTemplate')
                 ->label('Load SMS template')
                 ->form([
                     Select::make('smsTemplate')
@@ -119,7 +119,7 @@ class EngagementSmsBodyInput
                     }
 
                     $component->state($template->content);
-                }))
+                })))
             ->when($context === 'create', function (Field $field) {
                 $field->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Email->value);
             })

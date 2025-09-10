@@ -67,6 +67,12 @@ class DraftWithAiAction extends Action
 
     protected Student | Prospect | null $educatable = null;
 
+    protected string | Closure | null $suffixContent = null;
+
+    protected NotificationChannel | Closure | null $channel = null;
+
+    protected bool | Closure $hasSubject = true;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -109,7 +115,7 @@ class DraftWithAiAction extends Action
                     HTML)
                     ->join(', ', ' and ');
 
-                if ($get('channel') === NotificationChannel::Sms->value) {
+                if (($this->getChannel()->value ?? $get('channel')) === NotificationChannel::Sms->value) {
                     try {
                         $content = app(CompletePrompt::class)->execute(
                             aiModel: $model,
@@ -179,11 +185,13 @@ class DraftWithAiAction extends Action
                     return;
                 }
 
-                $set('subject', (string) str($content)
-                    ->before("\n")
-                    ->trim());
+                if ($this->hasSubject()) {
+                    $set('subject', (string) str($content)
+                        ->before("\n")
+                        ->trim());
+                }
 
-                $set('body', (string) str($content)->after("\n")->markdown());
+                $set('body', (string) str($content)->after("\n")->markdown()->append($this->getSuffixContent() ?? ''));
             })
             ->visible(
                 auth()->user()->hasLicense(LicenseType::ConversationalAi)
@@ -231,5 +239,41 @@ class DraftWithAiAction extends Action
         throw_unless(method_exists($livewire, 'getRecord'), new Exception('The Livewire component must have a [getRecord()] method.'));
 
         return $livewire->getRecord();
+    }
+
+    public function suffixContent(string | Closure | null $content): static
+    {
+        $this->suffixContent = $content;
+
+        return $this;
+    }
+
+    public function getSuffixContent(): ?string
+    {
+        return $this->evaluate($this->suffixContent);
+    }
+
+    public function channel(NotificationChannel | Closure | null $channel): static
+    {
+        $this->channel = $channel;
+
+        return $this;
+    }
+
+    public function getChannel(): ?NotificationChannel
+    {
+        return $this->evaluate($this->channel);
+    }
+
+    public function subject(bool | Closure $condition = true): static
+    {
+        $this->hasSubject = $condition;
+
+        return $this;
+    }
+
+    public function hasSubject(): bool
+    {
+        return (bool) $this->evaluate($this->hasSubject);
     }
 }

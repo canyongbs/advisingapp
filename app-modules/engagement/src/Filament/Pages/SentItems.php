@@ -40,25 +40,15 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Models\EmailMessageEvent;
-use AdvisingApp\Notification\Models\SmsMessageEvent;
 use App\Filament\Clusters\UnifiedInbox;
-use App\Infolists\Components\EngagementBody;
 use App\Models\User;
-use Filament\Infolists\Components\Fieldset;
-use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Tabs\Tab;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class SentItems extends Page implements HasTable
@@ -67,7 +57,7 @@ class SentItems extends Page implements HasTable
 
     protected static ?string $navigationLabel = 'Sent Items';
 
-    protected static string $view = 'advising-engagement.filament.pages.sent-items';
+    protected static string $view = 'engagement::filament.pages.sent-items';
 
     protected static ?string $cluster = UnifiedInbox::class;
 
@@ -123,57 +113,22 @@ class SentItems extends Page implements HasTable
             ])
             ->actions([
                 ViewAction::make()
-                    ->modalHeading('View Engagement')
-                    ->infolist([
-                        Tabs::make()
-                            ->columnSpanFull()
-                            ->tabs([
-                                Tab::make('Content')
-                                    ->schema([
-                                        TextEntry::make('user.name')
-                                            ->label('Created By'),
-                                        Fieldset::make('Content')
-                                            ->schema([
-                                                TextEntry::make('subject')
-                                                    ->state(function (Engagement $record): string {
-                                                        return strip_tags($record->getSubjectMarkdown());
-                                                    })
-                                                    ->visible(fn (Engagement $record): bool => $record->channel === NotificationChannel::Email)
-                                                    ->columnSpanFull(),
-                                                EngagementBody::make('body')
-                                                    ->getStateUsing(fn (Engagement $record): HtmlString => $record->getBody())
-                                                    ->columnSpanFull(),
-                                            ]),
-                                    ]),
-                                Tab::make('Events')
-                                    ->schema([
-                                        RepeatableEntry::make('message_events')
-                                            ->state(function (Engagement $record) {
-                                                return match ($record->channel) {
-                                                    NotificationChannel::Email => $record->latestEmailMessage?->events()?->orderBy('occurred_at', 'desc')->get() ?? [],
-                                                    NotificationChannel::Sms => $record->latestSmsMessage?->events()?->orderBy('occurred_at', 'desc')->get() ?? [],
-                                                    default => [],
-                                                };
-                                            })
-                                            ->schema([
-                                                Section::make()
-                                                    ->schema([
-                                                        TextEntry::make('type')
-                                                            ->getStateUsing(fn (EmailMessageEvent | SmsMessageEvent $record): string => $record->type->getLabel()),
-                                                        TextEntry::make('occured_at')
-                                                            ->dateTime()
-                                                            ->getStateUsing(fn (EmailMessageEvent| SmsMessageEvent $record): string => $record->occurred_at->format('Y-m-d H:i:s')),
-                                                    ])
-                                                    ->columns(),
-                                            ])
-                                            ->contained(false),
-                                    ]),
-                            ]),
-                    ]),
+                    ->url(fn (Engagement $record): string => ViewEngagement::getUrl(['record' => $record])),
             ])
-            ->recordAction('view')
+            ->recordUrl(fn (Engagement $record): string => ViewEngagement::getUrl(['record' => $record]))
             ->defaultSort('dispatched_at', 'desc')
             ->emptyStateHeading('No Engagements yet.');
+    }
+
+    /**
+     * @return array<NavigationItem>
+     */
+    public static function getNavigationItems(): array
+    {
+        return [
+            parent::getNavigationItems()[0]
+                ->isActiveWhen(fn (): bool => request()->routeIs(static::getNavigationItemActiveRoutePattern(), ViewEngagement::getNavigationItemActiveRoutePattern())),
+        ];
     }
 
     protected function getHeaderActions(): array
