@@ -48,7 +48,7 @@ class SegmentResource extends Resource
 
     protected static ?string $navigationGroup = 'CRM';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 50;
 
     protected static ?string $navigationLabel = 'Segments';
 

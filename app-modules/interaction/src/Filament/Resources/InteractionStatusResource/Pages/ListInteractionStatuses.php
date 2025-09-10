@@ -38,8 +38,18 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource\P
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
 use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
+use App\Features\InteractionMetadataFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions;
+use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -50,9 +60,100 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @property ComponentContainer $form
+ */
 class ListInteractionStatuses extends ListRecords
 {
+    use InteractsWithForms;
+
     protected static string $resource = InteractionStatusResource::class;
+
+    /** @var array<string, mixed> */
+    public ?array $data = [];
+
+    protected static string $view = 'interaction::filament.pages.list-interaction-statuses';
+
+    private ?InteractionManagementSettings $settings = null;
+
+    public function mount(): void
+    {
+        if (InteractionMetadataFeature::active()) {
+            $this->fillForm();
+        }
+    }
+
+    public function fillForm(): void
+    {
+        $settings = $this->getSettings();
+
+        $data = [
+            'is_status_enabled' => $settings->is_status_enabled,
+            'is_status_required' => $settings->is_status_required,
+        ];
+
+        $this->form->fill($data);
+    }
+
+    public function form(Form $form): Form
+    {
+        if (! InteractionMetadataFeature::active()) {
+            return $form->schema([]);
+        }
+
+        return $form
+            ->schema([
+                Section::make('Status Settings')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Toggle::make('is_status_enabled')
+                                    ->label('Enabled')
+                                    ->live()
+                                    ->afterStateUpdated(function (bool $state): void {
+                                        $settings = $this->getSettings();
+                                        $settings->is_status_enabled = $state;
+                                        $settings->save();
+
+                                        Notification::make()
+                                            ->title('Status settings updated')
+                                            ->body($state ? 'Status functionality has been enabled.' : 'Status functionality has been disabled.')
+                                            ->success()
+                                            ->send();
+
+                                        Notification::make()
+                                            ->title('Status feature ' . ($state ? 'enabled' : 'disabled'))
+                                            ->body(
+                                                $state
+                                                    ? 'You can now create, view, and manage statuses across interactions.'
+                                                    : 'Statuses are hidden from all interactions (create, edit, view, and list).'
+                                            )
+                                            ->{ $state ? 'success' : 'warning' }()
+                                            ->send();
+                                    }),
+                                Toggle::make('is_status_required')
+                                    ->label('Required')
+                                    ->live()
+                                    ->visible(fn (Get $get) => $get('is_status_enabled'))
+                                    ->afterStateUpdated(function (bool $state): void {
+                                        $settings = $this->getSettings();
+                                        $settings->is_status_required = $state;
+                                        $settings->save();
+                                        Notification::make()
+                                            ->title('Status requirement ' . ($state ? 'enabled' : 'disabled'))
+                                            ->body(
+                                                $state
+                                                ? 'Statuses are now mandatory in all interactions (create, edit, view, and list).'
+                                                : 'Statuses are now optional in interactions.'
+                                            )
+                                            ->{ $state ? 'success' : 'info' }()
+                                            ->send();
+                                    }),
+                            ]),
+                    ]),
+            ])
+            ->statePath('data');
+    }
 
     public function table(Table $table): Table
     {
@@ -89,5 +190,14 @@ class ListInteractionStatuses extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    private function getSettings(): InteractionManagementSettings
+    {
+        if ($this->settings === null) {
+            $this->settings = app(InteractionManagementSettings::class);
+        }
+
+        return $this->settings;
     }
 }

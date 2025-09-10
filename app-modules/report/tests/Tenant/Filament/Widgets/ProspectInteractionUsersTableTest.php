@@ -37,6 +37,8 @@
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionUsersTable;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
 use Carbon\Carbon;
@@ -293,6 +295,79 @@ it('displays only users with prospect interactions within the selected date rang
         ->assertCanSeeTableRecords(collect([
             $userWithOldInteractions,
             $userWithRecentAndOtherInteractions,
+        ]))
+        ->assertCanNotSeeTableRecords(collect([$userWithoutInteractions]));
+});
+
+it('displays only users with prospect interactions based on segment filter', function () {
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Prospect,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last_name',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $team = Team::factory()->create();
+
+    $userWithOldInteractions = User::factory()->create();
+
+    $userWithRecentAndOtherInteractions = User::factory()->for($team, 'team')->create();
+
+    $userWithoutInteractions = User::factory()->create();
+
+    $prospectOne = Prospect::factory()->create([
+        'last_name' => 'John',
+    ]);
+
+    $prospectTwo = Prospect::factory()->create([
+        'last_name' => 'Doe',
+    ]);
+
+    Interaction::factory()
+        ->count(5)
+        ->for($prospectOne, 'interactable')
+        ->for($userWithOldInteractions, 'user')
+        ->create();
+
+    Interaction::factory()
+        ->count(10)
+        ->for($prospectTwo, 'interactable')
+        ->for($userWithRecentAndOtherInteractions, 'user')
+        ->create();
+
+    $filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    // with segment filter
+    livewire(ProspectInteractionUsersTable::class, [
+        'cacheTag' => 'report-prospect-interaction',
+        'filters' => $filters,
+    ])
+        ->assertCanSeeTableRecords(collect([
+            $userWithOldInteractions,
+        ]))
+        ->assertCanNotSeeTableRecords(collect([$userWithoutInteractions, $userWithRecentAndOtherInteractions]));
+
+    // without filter
+    livewire(ProspectInteractionUsersTable::class, [
+        'cacheTag' => 'report-prospect-interaction',
+        'filters' => [],
+    ])
+        ->assertCanSeeTableRecords(collect([
+            $userWithOldInteractions, $userWithRecentAndOtherInteractions,
         ]))
         ->assertCanNotSeeTableRecords(collect([$userWithoutInteractions]));
 });

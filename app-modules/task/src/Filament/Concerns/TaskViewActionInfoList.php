@@ -56,6 +56,12 @@ trait TaskViewActionInfoList
             Split::make([
                 Grid::make()
                     ->schema([
+                        TextEntry::make('is_confidential')
+                            ->columnSpanFull()
+                            ->label('')
+                            ->badge()
+                            ->formatStateUsing(fn ($state): string => $state ? 'Confidential' : '')
+                            ->visible(fn ($record): bool => $record->is_confidential),
                         TextEntry::make('title')
                             ->columnSpanFull(),
                         TextEntry::make('description')

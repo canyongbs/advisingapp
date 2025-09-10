@@ -42,6 +42,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 trait SemesterSelectForOperator
 {
@@ -57,22 +58,24 @@ trait SemesterSelectForOperator
     {
         return Select::make('semesters')
             ->label('Semester')
-            ->options(static::getSemesterOptions())
+            ->options(fn (): array => Enrollment::query()
+                ->whereNotNull('semester_name')
+                ->distinct()
+                ->orderBy('semester_name')
+                ->limit(50)
+                ->pluck('semester_name', 'semester_name')
+                ->all())
+            ->getSearchResultsUsing(fn (string $search): array => Enrollment::query()
+                ->whereNotNull('semester_name')
+                ->where(DB::raw('lower(semester_name)'), 'like', '%' . Str::lower($search) . '%')
+                ->distinct()
+                ->orderBy('semester_name')
+                ->limit(50)
+                ->pluck('semester_name', 'semester_name')
+                ->all())
+            ->getOptionLabelsUsing(fn (array $values): array => array_combine($values, $values))
             ->searchable()
             ->multiple();
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    public static function getSemesterOptions(): array
-    {
-        return Enrollment::query()
-            ->whereNotNull('semester_name')
-            ->distinct()
-            ->orderBy('semester_name')
-            ->pluck('semester_name', 'semester_name')
-            ->all();
     }
 
     /**
@@ -96,7 +99,7 @@ trait SemesterSelectForOperator
         $lowerSemesters = array_map(mb_strtolower(...), $semesters);
 
         return $query->whereHas($relationshipName, function (Builder $query) use ($lowerSemesters) {
-            $query->whereIn(DB::raw('LOWER(semester_name)'), $lowerSemesters);
+            $query->whereIn(DB::raw('lower(semester_name)'), $lowerSemesters);
         }, $this->getQueryOperator(), $count);
     }
 

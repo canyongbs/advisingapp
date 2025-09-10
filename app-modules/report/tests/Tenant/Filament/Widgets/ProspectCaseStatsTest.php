@@ -39,6 +39,8 @@ use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectCaseStats;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 
 it('returns correct total cases, recent cases, open cases and closed cases of prospect within the given date range', function () {
     $startDate = now()->subDays(10);
@@ -87,4 +89,113 @@ it('returns correct total cases, recent cases, open cases and closed cases of pr
         ->and($stats[1]->getValue())->toEqual($count * 3)
         ->and($stats[2]->getValue())->toEqual($count)
         ->and($stats[3]->getValue())->toEqual($count);
+});
+
+it('returns correct total cases, recent cases, open cases and closed cases of prospect based on segment filters', function () {
+    $count = random_int(1, 5);
+    $startDate = now()->subDays(10);
+    $endDate = now()->subDays(5);
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Prospect,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last_name',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    CaseModel::factory()->count($count)->state([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::Open,
+        ])->getKey(),
+        'respondent_id' => Prospect::factory()->create(['last_name' => 'John']),
+        'respondent_type' => (new Prospect())->getMorphClass(),
+        'created_at' => $startDate,
+    ])->create();
+
+    CaseModel::factory()->count($count)->state([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::Closed,
+        ])->getKey(),
+        'respondent_id' => Prospect::factory()->create(['last_name' => 'John']),
+        'respondent_type' => (new Prospect())->getMorphClass(),
+        'created_at' => $startDate,
+    ])->create();
+
+    CaseModel::factory()->count($count)->state([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::InProgress,
+        ])->getKey(),
+        'respondent_id' => Prospect::factory()->create(['last_name' => 'John']),
+        'respondent_type' => (new Prospect())->getMorphClass(),
+        'created_at' => $endDate,
+    ])->create();
+
+    CaseModel::factory()->count($count)->state([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::Open,
+        ])->getKey(),
+        'respondent_id' => Prospect::factory()->create(['last_name' => 'Doe']),
+        'respondent_type' => (new Prospect())->getMorphClass(),
+        'created_at' => $startDate,
+    ])->create();
+
+    CaseModel::factory()->count($count)->state([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::Closed,
+        ])->getKey(),
+        'respondent_id' => Prospect::factory()->create(['last_name' => 'Doe']),
+        'respondent_type' => (new Prospect())->getMorphClass(),
+        'created_at' => $startDate,
+    ])->create();
+
+    CaseModel::factory()->count($count)->state([
+        'status_id' => CaseStatus::factory()->create([
+            'classification' => SystemCaseClassification::InProgress,
+        ])->getKey(),
+        'respondent_id' => Prospect::factory()->create(['last_name' => 'Doe']),
+        'respondent_type' => (new Prospect())->getMorphClass(),
+        'created_at' => $endDate,
+    ])->create();
+
+    // case with filter
+    $widget = new ProspectCaseStats();
+    $widget->cacheTag = 'report-prospect-case';
+    $widget->filters = [
+        'populationSegment' => $segment->getKey(),
+        'startDate' => $startDate->toDateString(),
+        'endDate' => $endDate->toDateString(),
+    ];
+
+    $stats = $widget->getStats();
+
+    expect($stats)->toHaveCount(4)
+        ->and($stats[0]->getValue())->toEqual($count * 3)
+        ->and($stats[1]->getValue())->toEqual($count * 3)
+        ->and($stats[2]->getValue())->toEqual($count)
+        ->and($stats[3]->getValue())->toEqual($count);
+
+    // case with without filter
+    $widget = new ProspectCaseStats();
+    $widget->cacheTag = 'report-prospect-case';
+    $widget->filters = [];
+
+    $stats = $widget->getStats();
+
+    expect($stats)->toHaveCount(4)
+        ->and($stats[0]->getValue())->toEqual($count * 6)
+        ->and($stats[1]->getValue())->toEqual($count * 6)
+        ->and($stats[2]->getValue())->toEqual($count * 2)
+        ->and($stats[3]->getValue())->toEqual($count * 2);
 });

@@ -667,34 +667,65 @@
                     <form x-on:submit.prevent="sendMessage()">
                         <div
                             class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
-                            <div class="flex items-center justify-start gap-x-4 gap-y-3 p-4">
-                                {{ $this->uploadFilesAction }}
+                            <div class="flex items-start justify-between gap-x-4 p-4">
+                                <div class="flex items-center justify-start gap-x-4 gap-y-3">
+                                    {{ $this->uploadFilesAction }}
 
-                                @foreach ($this->getFiles() as $file)
-                                    <x-filament::badge
-                                        :tooltip="$this->isProcessingFiles
-                                            ? 'This file is currently being parsed'
-                                            : null"
-                                        wire:target="removeUploadedFile('{{ $file->getKey() }}')"
+                                    @foreach ($this->getFiles() as $file)
+                                        <x-filament::badge
+                                            :tooltip="$this->isProcessingFiles
+                                                ? 'This file is currently being parsed'
+                                                : null"
+                                            wire:target="removeUploadedFile('{{ $file->getKey() }}')"
+                                        >
+                                            <span class="flex items-center gap-1">
+                                                @if ($this->isProcessingFiles)
+                                                    <x-filament::loading-indicator
+                                                        class="h-4 w-4 shrink-0"
+                                                        wire:loading.remove
+                                                        wire:target="removeUploadedFile('{{ $file->getKey() }}')"
+                                                    />
+                                                @endif
+                                                {{ $file->name }}
+                                            </span>
+
+                                            <x-slot
+                                                name="deleteButton"
+                                                label="Remove uploaded file {{ $file->name }}"
+                                                wire:click="removeUploadedFile('{{ $file->getKey() }}')"
+                                            ></x-slot>
+                                        </x-filament::badge>
+                                    @endforeach
+                                </div>
+
+                                @if ($this->thread->assistant->model->getService()->hasImageGeneration())
+                                    <button
+                                        class="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-gray-800 shadow-sm ring-1 ring-gray-950/5 dark:text-gray-100 dark:ring-white/10"
+                                        type="button"
+                                        x-on:click="hasImageGeneration = ! hasImageGeneration"
+                                        x-bind:class="{
+                                            'bg-primary-500 text-white dark:bg-primary-700 dark:text-white': hasImageGeneration,
+                                        }"
                                     >
-                                        <span class="flex items-center gap-1">
-                                            @if ($this->isProcessingFiles)
-                                                <x-filament::loading-indicator
-                                                    class="h-4 w-4 shrink-0"
-                                                    wire:loading.remove
-                                                    wire:target="removeUploadedFile('{{ $file->getKey() }}')"
-                                                />
-                                            @endif
-                                            {{ $file->name }}
+                                        <span
+                                            class="shrink-0"
+                                            x-show="hasImageGeneration"
+                                        >
+                                            @svg('heroicon-c-photo', 'size-4')
                                         </span>
 
-                                        <x-slot
-                                            name="deleteButton"
-                                            label="Remove uploaded file {{ $file->name }}"
-                                            wire:click="removeUploadedFile('{{ $file->getKey() }}')"
-                                        ></x-slot>
-                                    </x-filament::badge>
-                                @endforeach
+                                        <span
+                                            class="shrink-0"
+                                            x-show="! hasImageGeneration"
+                                        >
+                                            @svg('heroicon-c-x-mark', 'size-4')
+                                        </span>
+
+                                        Image generation:
+
+                                        <span x-text="hasImageGeneration ? 'on' : 'off'"></span>
+                                    </button>
+                                @endif
                             </div>
                             <div class="bg-white dark:bg-gray-800">
                                 <label

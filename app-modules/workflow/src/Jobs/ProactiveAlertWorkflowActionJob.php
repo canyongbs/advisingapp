@@ -38,13 +38,17 @@ namespace AdvisingApp\Workflow\Jobs;
 
 use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
+use App\Features\WorkflowSequentialExecutionFeature;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class ProactiveAlertWorkflowActionJob extends ExecuteWorkflowActionJob
 {
+    use SchedulesNextWorkflowStep;
+
     public function handle(): void
     {
         try {
@@ -73,6 +77,13 @@ class ProactiveAlertWorkflowActionJob extends ExecuteWorkflowActionJob
             $workflowRunStepRelated->related()->associate($alert);
 
             $workflowRunStepRelated->save();
+
+            if (WorkflowSequentialExecutionFeature::active()) {
+                $this->markStepCompletedAndScheduleNext();
+            } else {
+                $this->workflowRunStep->succeeded_at = now();
+                $this->workflowRunStep->saveOrFail();
+            }
 
             DB::commit();
         } catch (Throwable $throw) {

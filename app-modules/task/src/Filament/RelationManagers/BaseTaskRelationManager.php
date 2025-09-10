@@ -46,10 +46,13 @@ use AdvisingApp\Task\Models\Task;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\CreateAction;
@@ -70,6 +73,33 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
     {
         return $form
             ->schema([
+                Fieldset::make('Confidentiality')
+                    ->schema([
+                        Checkbox::make('is_confidential')
+                            ->label('Confidential')
+                            ->live(),
+                        Select::make('confidential_task_projects')
+                            ->relationship('confidentialAccessProjects', 'name')
+                            ->preload()
+                            ->label('Projects')
+                            ->multiple()
+                            ->exists('projects', 'id')
+                            ->visible(fn (Get $get) => $get('is_confidential')),
+                        Select::make('confidential_task_users')
+                            ->relationship('confidentialAccessUsers', 'name')
+                            ->preload()
+                            ->label('Users')
+                            ->multiple()
+                            ->exists('users', 'id')
+                            ->visible(fn (Get $get) => $get('is_confidential')),
+                        Select::make('confidential_task_teams')
+                            ->relationship('confidentialAccessTeams', 'name')
+                            ->preload()
+                            ->label('Teams')
+                            ->multiple()
+                            ->exists('teams', 'id')
+                            ->visible(fn (Get $get) => $get('is_confidential')),
+                    ]),
                 TextInput::make('title')
                     ->required()
                     ->maxLength(100)
@@ -104,7 +134,9 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                 TextColumn::make('description')
                     ->searchable()
                     ->wrap()
-                    ->limit(50),
+                    ->limit(50)
+                    ->icon(fn (Task $record) => $record->is_confidential ? 'heroicon-m-lock-closed' : null)
+                    ->tooltip(fn (Task $record) => $record->is_confidential ? 'Confidential' : null),
                 TextColumn::make('status')
                     ->formatStateUsing(fn (TaskStatus $state): string => str($state->value)->title()->headline())
                     ->badge()

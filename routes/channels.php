@@ -35,7 +35,9 @@
 */
 
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Research\Models\ResearchRequest;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 
@@ -69,3 +71,12 @@ Broadcast::channel('advisor-thread-{threadId}', function (User $user, string $th
 Broadcast::channel('qna-advisor-chat-{chatId}', function () {
     return true;
 });
+
+Broadcast::channel(
+    'qna-advisor-chat-{chatId}',
+    function (Student|Prospect $user) {
+        // TODO: In the near future when we save these chats in the database we can verify that this user is part of this chat
+
+        return true;
+    }
+);

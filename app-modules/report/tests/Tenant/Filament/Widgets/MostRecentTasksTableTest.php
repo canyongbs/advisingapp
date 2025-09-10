@@ -45,14 +45,17 @@ it('displays only tasks added within the selected date range', function () {
 
     $taskWithinRange1 = Task::factory()->state([
         'created_at' => $startDate,
+        'is_confidential' => false,
     ])->create();
 
     $taskWithinRange2 = Task::factory()->state([
         'created_at' => $endDate,
+        'is_confidential' => false,
     ])->create();
 
     $taskOutsideRange = Task::factory()->state([
         'created_at' => now()->subDays(20),
+        'is_confidential' => false,
     ])->create();
 
     $filters = [

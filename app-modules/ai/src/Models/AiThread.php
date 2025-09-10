@@ -51,15 +51,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Livewire\Wireable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @mixin IdeHelperAiThread
  */
-class AiThread extends BaseModel implements Wireable
+class AiThread extends BaseModel implements HasMedia, Wireable
 {
     use CanAddAssistantLicenseGlobalScope;
     use SoftDeletes;
     use Prunable;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'thread_id',
@@ -143,6 +146,11 @@ class AiThread extends BaseModel implements Wireable
     public static function fromLivewire($value)
     {
         return AiThread::query()->find($value['id']);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('generated_images');
     }
 
     protected function lastEngagedAt(): Attribute

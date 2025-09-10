@@ -38,14 +38,18 @@ namespace AdvisingApp\Workflow\Jobs;
 
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowInteractionDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
+use App\Features\WorkflowSequentialExecutionFeature;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class InteractionWorkflowActionJob extends ExecuteWorkflowActionJob
 {
+    use SchedulesNextWorkflowStep;
+
     public function handle(): void
     {
         try {
@@ -82,6 +86,13 @@ class InteractionWorkflowActionJob extends ExecuteWorkflowActionJob
             $workflowRunStepRelated->related()->associate($interaction);
 
             $workflowRunStepRelated->save();
+
+            if (WorkflowSequentialExecutionFeature::active()) {
+                $this->markStepCompletedAndScheduleNext();
+            } else {
+                $this->workflowRunStep->succeeded_at = now();
+                $this->workflowRunStep->saveOrFail();
+            }
 
             DB::commit();
         } catch (Throwable $throw) {

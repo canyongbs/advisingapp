@@ -38,6 +38,8 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectEngagementLineChart;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 
 it('returns correct monthly email and sms engagement data for prospects within the given date range', function () {
     $startDate = now()->subDays(90);
@@ -68,4 +70,83 @@ it('returns correct monthly email and sms engagement data for prospects within t
     ];
 
     expect($widgetInstance->getData())->toMatchSnapshot();
+});
+
+it('returns correct monthly email and sms engagement data for prospects based on segment filters', function () {
+    $startDate = now()->subDays(90);
+    $endDate = now()->subDays(5);
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Prospect,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last_name',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $prospectOne = Prospect::factory()->state(['created_at' => $startDate, 'last_name' => 'John'])->create();
+    $prospectTwo = Prospect::factory()->state(['created_at' => $endDate, 'last_name' => 'John'])->create();
+    $prospectThree = Prospect::factory()->state(['created_at' => $startDate, 'last_name' => 'Doe'])->create();
+    $prospectFour = Prospect::factory()->state(['created_at' => $endDate, 'last_name' => 'Doe'])->create();
+
+    Engagement::factory()->count(5)->state([
+        'recipient_id' => $prospectOne->getKey(),
+        'recipient_type' => (new Prospect())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+        'created_at' => $startDate,
+    ])->create();
+
+    Engagement::factory()->count(5)->state([
+        'recipient_id' => $prospectTwo->getKey(),
+        'recipient_type' => (new Prospect())->getMorphClass(),
+        'channel' => NotificationChannel::Sms,
+        'created_at' => $endDate,
+    ])->create();
+
+    Engagement::factory()->count(5)->state([
+        'recipient_id' => $prospectThree->getKey(),
+        'recipient_type' => (new Prospect())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+        'created_at' => $startDate,
+    ])->create();
+
+    Engagement::factory()->count(5)->state([
+        'recipient_id' => $prospectFour->getKey(),
+        'recipient_type' => (new Prospect())->getMorphClass(),
+        'channel' => NotificationChannel::Sms,
+        'created_at' => $endDate,
+    ])->create();
+
+    $widgetInstance = new ProspectEngagementLineChart();
+    $widgetInstance->cacheTag = 'report-prospect-engagement';
+    $widgetInstance->filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    $dataWithSegment = $widgetInstance->getData();
+
+    expect($dataWithSegment)
+        ->not->toBeEmpty()
+        ->and($dataWithSegment)->toMatchSnapshot();
+
+    $widgetInstance = new ProspectEngagementLineChart();
+    $widgetInstance->cacheTag = 'report-prospect-engagement';
+    $widgetInstance->filters = [];
+
+    $dataWithoutSegment = $widgetInstance->getData();
+
+    expect($dataWithoutSegment)
+        ->not->toBeEmpty()
+        ->and($dataWithoutSegment)->toMatchSnapshot();
 });

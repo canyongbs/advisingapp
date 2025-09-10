@@ -37,8 +37,7 @@
 namespace App\Filament\Widgets;
 
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
-use App\Models\User;
+use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
@@ -46,6 +45,8 @@ use Livewire\Attributes\Reactive;
 
 class ProspectGrowthChart extends ChartWidget
 {
+    use InteractsWithPageFilters;
+
     #[Reactive]
     public string $activeTab;
 
@@ -57,24 +58,26 @@ class ProspectGrowthChart extends ChartWidget
 
     public function getData(): array
     {
-        /** @var User $user */
-        $user = auth()->user();
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
-        $tab = ActionCenterTab::tryFrom($this->activeTab) ?? ActionCenterTab::All;
+        $baseQuery = Prospect::query()
+            ->when(
+                $segmentId,
+                fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+            );
 
-        $baseQuery = Prospect::query();
-
-        $baseQuery = match ($tab) {
-            ActionCenterTab::Subscribed => $baseQuery->whereHas('subscriptions', fn (Builder $query) => $query->where('user_id', $user->getKey())),
-            ActionCenterTab::CareTeam => $baseQuery->whereHas('careTeam', fn (Builder $query) => $query->where('user_id', $user->getKey())),
-            default => $baseQuery,
-        };
+        if ($startDate && $endDate) {
+            $baseQuery = $baseQuery->whereBetween('created_at', [$startDate, $endDate]);
+        } else {
+            $baseQuery = $baseQuery->where('created_at', '>', now()->subYear());
+        }
 
         $totalCreatedPerMonth = (clone $baseQuery)
             ->toBase()
             ->selectRaw('date_trunc(\'month\', created_at) as month')
             ->selectRaw('count(*) as total')
-            ->where('created_at', '>', now()->subYear())
             ->groupBy('month')
             ->orderBy('month')
             ->pluck('total', 'month');

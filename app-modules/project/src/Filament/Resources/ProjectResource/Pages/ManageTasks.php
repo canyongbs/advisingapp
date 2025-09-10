@@ -37,6 +37,7 @@
 namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
 
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
+use AdvisingApp\Task\Models\Task;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Actions\AssociateAction;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -64,7 +65,9 @@ class ManageTasks extends ManageRelatedRecords
             ->columns([
                 TextColumn::make('title')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->icon(fn (Task $record) => $record->is_confidential ? 'heroicon-m-lock-closed' : null)
+                    ->tooltip(fn (Task $record) => $record->is_confidential ? 'Confidential' : null),
             ])
             ->headerActions([
                 AssociateAction::make()

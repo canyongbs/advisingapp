@@ -38,6 +38,7 @@ namespace AdvisingApp\Workflow\Jobs;
 
 use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
+use App\Features\WorkflowSequentialExecutionFeature;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
@@ -53,7 +54,14 @@ class ExecuteWorkflowActionStepsJob implements ShouldQueue
 
     public function handle(): void
     {
-        $steps = WorkflowRunStep::query()->where('execute_at', '<=', now())->whereNull('dispatched_at');
+        if (! WorkflowSequentialExecutionFeature::active()) {
+            $steps = WorkflowRunStep::query()->where('execute_at', '<=', now())->whereNull('dispatched_at');
+        }
+
+        $steps = WorkflowRunStep::query()
+            ->where('execute_at', '<=', now())
+            ->whereNotNull('execute_at')
+            ->whereNull('dispatched_at');
 
         $steps->each(function (WorkflowRunStep $step) {
             try {

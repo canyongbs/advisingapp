@@ -54,6 +54,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
 use App\Enums\TagType;
+use App\Features\StudentSisCategoryFeature;
 use App\Models\Tag;
 use App\Models\User;
 use Filament\Actions\CreateAction;
@@ -138,6 +139,16 @@ class ListStudents extends ListRecords
                     ->searchable()
                     ->preload()
                     ->optionsLimit(20),
+                SelectFilter::make('sis_category')
+                    ->label('SIS Category')
+                    ->options(fn (): array => Student::query()
+                        ->whereNotNull('sis_category')
+                        ->distinct()
+                        ->orderBy('sis_category')
+                        ->limit(50)
+                        ->pluck('sis_category', 'sis_category')
+                        ->all())
+                    ->visible(StudentSisCategoryFeature::active()),
                 TernaryFilter::make('sap')
                     ->label('SAP'),
                 TernaryFilter::make('dual'),

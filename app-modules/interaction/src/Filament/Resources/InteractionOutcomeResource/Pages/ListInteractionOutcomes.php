@@ -37,8 +37,18 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource\Pages;
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource;
+use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
+use App\Features\InteractionMetadataFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions;
+use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -49,9 +59,95 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @property ComponentContainer $form
+ */
 class ListInteractionOutcomes extends ListRecords
 {
+    use InteractsWithForms;
+
     protected static string $resource = InteractionOutcomeResource::class;
+
+    /** @var array<string, mixed> */
+    public ?array $data = [];
+
+    protected static string $view = 'interaction::filament.pages.list-interaction-outcomes';
+
+    private ?InteractionManagementSettings $settings = null;
+
+    public function mount(): void
+    {
+        if (InteractionMetadataFeature::active()) {
+            $this->fillForm();
+        }
+    }
+
+    public function fillForm(): void
+    {
+        $settings = $this->getSettings();
+
+        $data = [
+            'is_outcome_enabled' => $settings->is_outcome_enabled,
+            'is_outcome_required' => $settings->is_outcome_required,
+        ];
+
+        $this->form->fill($data);
+    }
+
+    public function form(Form $form): Form
+    {
+        if (! InteractionMetadataFeature::active()) {
+            return $form->schema([]);
+        }
+
+        return $form
+            ->schema([
+                Section::make('Outcome Settings')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Toggle::make('is_outcome_enabled')
+                                    ->label('Enabled')
+                                    ->live()
+                                    ->afterStateUpdated(function (bool $state): void {
+                                        $settings = $this->getSettings();
+                                        $settings->is_outcome_enabled = $state;
+                                        $settings->save();
+
+                                        Notification::make()
+                                            ->title('Outcome feature ' . ($state ? 'enabled' : 'disabled'))
+                                            ->body(
+                                                $state
+                                                    ? 'You can now create, view, and manage outcomes across interactions.'
+                                                    : 'Outcomes are hidden from all interactions (create, edit, view, and list).'
+                                            )
+                                            ->{ $state ? 'success' : 'warning' }()
+                                            ->send();
+                                    }),
+                                Toggle::make('is_outcome_required')
+                                    ->label('Required')
+                                    ->live()
+                                    ->visible(fn (Get $get) => $get('is_outcome_enabled'))
+                                    ->afterStateUpdated(function (bool $state): void {
+                                        $settings = $this->getSettings();
+                                        $settings->is_outcome_required = $state;
+                                        $settings->save();
+
+                                        Notification::make()
+                                            ->title('Outcome requirement ' . ($state ? 'enabled' : 'disabled'))
+                                            ->body(
+                                                $state
+                                                ? 'Outcomes are now mandatory in all interactions (create, edit, view, and list).'
+                                                : 'Outcomes are now optional in interactions.'
+                                            )
+                                            ->{ $state ? 'success' : 'info' }()
+                                            ->send();
+                                    }),
+                            ]),
+                    ]),
+            ])
+            ->statePath('data');
+    }
 
     public function table(Table $table): Table
     {
@@ -84,5 +180,14 @@ class ListInteractionOutcomes extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    private function getSettings(): InteractionManagementSettings
+    {
+        if ($this->settings === null) {
+            $this->settings = app(InteractionManagementSettings::class);
+        }
+
+        return $this->settings;
     }
 }

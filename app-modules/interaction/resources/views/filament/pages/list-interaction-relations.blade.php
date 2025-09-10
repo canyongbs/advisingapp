@@ -31,30 +31,27 @@
 
 </COPYRIGHT>
 --}}
-<x-filament-panels::page
-    class="flex h-full flex-col"
-    full-height="true"
->
-    <div
-        class="h-full max-h-[calc(100vh-8rem)] w-full flex-1 flex-col rounded-lg border-0 border-gray-200 dark:border-gray-700 md:overflow-y-auto md:border">
-        <div class="grid h-full grid-cols-1 md:grid-cols-8">
-            @if ($loadingInbox)
-                <x-filament::loading-indicator class="col-span-full h-12 w-12" />
-            @else
-                <x-engagement::message-center-inbox
-                    :selectedEducatable="$recordModel"
-                    :educatables="$educatables"
-                />
+@php
+    use App\Features\InteractionMetadataFeature;
+    use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
+    $settings = app(InteractionManagementSettings::class);
+@endphp
 
-                <x-engagement::message-center-content
-                    :loadingTimeline="$loadingTimeline"
-                    :educatable="$recordModel"
-                    :timelineRecords="$timelineRecords"
-                    :hasMorePages="$hasMorePages"
-                    :emptyStateMessage="$emptyStateMessage"
-                    :noMoreRecordsMessage="$noMoreRecordsMessage"
-                />
-            @endif
+<x-filament-panels::page>
+    @if (InteractionMetadataFeature::active())
+        <div class="mb-6">
+            {{ $this->form }}
         </div>
-    </div>
+
+        @if ($settings->is_relation_enabled)
+            {{ $this->table }}
+        @else
+            <div class="py-8 text-center text-gray-500">
+                Relations are currently hidden from all interactions (create, edit, view, and list).
+                Enable the feature above to make relations available again.
+            </div>
+        @endif
+    @else
+        {{ $this->table }}
+    @endif
 </x-filament-panels::page>

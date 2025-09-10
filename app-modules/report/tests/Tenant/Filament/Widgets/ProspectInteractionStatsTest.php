@@ -39,6 +39,8 @@ use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Pages\ProspectInteractionReport;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionStats;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -156,4 +158,78 @@ it('returns correct total and unique prospect interaction counts within the give
 
     expect($prospectsWithInteractionsStat->getValue())
         ->toEqual($prospectsWithStartDateInteractions + $prospectsWithEndDateInteractions + $prospectsWithEndDateInteractions);
+});
+it('returns correct total and unique prospect interaction counts based on segment filter', function () {
+    $prospectsWithJohnNameInteractions = random_int(1, 10);
+    $prospectsWithDoeNameInteractions = random_int(1, 10);
+
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Prospect,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last_name',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    Prospect::factory()->count($prospectsWithJohnNameInteractions)
+        ->has(
+            Interaction::factory(),
+            'interactions'
+        )->create([
+            'last_name' => 'John',
+        ]);
+
+    Prospect::factory()->count($prospectsWithDoeNameInteractions)
+        ->has(
+            Interaction::factory(),
+            'interactions'
+        )->create([
+            'last_name' => 'Doe',
+        ]);
+
+    $widget = new ProspectInteractionStats();
+    $widget->cacheTag = 'report-prospect-interaction';
+    $widget->filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    $stats = $widget->getStats();
+
+    $prospectsTotalInteractionsStat = $stats[0];
+
+    expect($prospectsTotalInteractionsStat->getValue())
+        ->toEqual($prospectsWithJohnNameInteractions);
+
+    $prospectsWithInteractionsStat = $stats[1];
+
+    expect($prospectsWithInteractionsStat->getValue())
+        ->toEqual($prospectsWithJohnNameInteractions);
+
+    // without segment filter
+    $widget = new ProspectInteractionStats();
+    $widget->cacheTag = 'report-prospect-interaction';
+    $widget->filters = [];
+
+    $stats = $widget->getStats();
+
+    $prospectsTotalInteractionsStat = $stats[0];
+
+    expect($prospectsTotalInteractionsStat->getValue())
+        ->toEqual($prospectsWithJohnNameInteractions + $prospectsWithDoeNameInteractions);
+
+    $prospectsWithInteractionsStat = $stats[1];
+
+    expect($prospectsWithInteractionsStat->getValue())
+        ->toEqual($prospectsWithJohnNameInteractions + $prospectsWithDoeNameInteractions);
 });

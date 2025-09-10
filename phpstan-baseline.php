@@ -32,7 +32,9 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/ declare(strict_types = 1);
+*/
+
+declare(strict_types = 1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -352,12 +354,6 @@ $ignoreErrors[] = [
     'identifier' => 'method.notFound',
     'count' => 2,
     'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/CompletePromptTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:once\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/CreateThreadTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
@@ -1576,24 +1572,6 @@ $ignoreErrors[] = [
     'identifier' => 'return.unusedType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/campaign/src/Enums/CampaignActionType.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\Actions\\\\DraftCampaignEngagementBlockWithAi\\:\\:getMergeTags\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/Actions/DraftCampaignEngagementBlockWithAi.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\Actions\\\\DraftCampaignEngagementBlockWithAi\\:\\:mergeTags\\(\\) has parameter \\$tags with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/Actions/DraftCampaignEngagementBlockWithAi.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\Actions\\\\DraftCampaignEngagementBlockWithAi\\:\\:\\$mergeTags type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/Actions/DraftCampaignEngagementBlockWithAi.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\CampaignActionBlock\\:\\:createFields\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -2928,30 +2906,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/BulkDraftWithAiAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:\\$full_name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/MessageCenterDraftWithAiAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Actions\\\\MessageCenterDraftWithAiAction\\:\\:getMergeTags\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/MessageCenterDraftWithAiAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Actions\\\\MessageCenterDraftWithAiAction\\:\\:mergeTags\\(\\) has parameter \\$tags with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/MessageCenterDraftWithAiAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Engagement\\\\Filament\\\\Actions\\\\MessageCenterDraftWithAiAction\\:\\:\\$mergeTags type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Actions/MessageCenterDraftWithAiAction.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined static method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:displayNameKey\\(\\)\\.$#',
     'identifier' => 'staticMethod.notFound',
     'count' => 1,
@@ -3040,132 +2994,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Filament/Forms/Components/EngagementSmsBodyInput.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:timeline\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Pages\\\\MessageCenter\\:\\:getEducatableIds\\(\\) has parameter \\$engagementResponseScope with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Pages\\\\MessageCenter\\:\\:getEducatableIds\\(\\) has parameter \\$engagementScope with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Pages\\\\MessageCenter\\:\\:getEducatableIds\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Pages\\\\MessageCenter\\:\\:getLatestActivityForEducatables\\(\\) has parameter \\$ids with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Pages\\\\MessageCenter\\:\\:getProspectIds\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Pages\\\\MessageCenter\\:\\:getStudentIds\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Pages\\\\MessageCenter\\:\\:paginationView\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Pages\\\\MessageCenter\\:\\:selectChanged\\(\\) has parameter \\$value with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Pages\\\\MessageCenter\\:\\:updated\\(\\) has parameter \\$property with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Pages\\\\MessageCenter\\:\\:viewRecord\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Pages\\\\MessageCenter\\:\\:viewRecord\\(\\) has parameter \\$key with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Pages\\\\MessageCenter\\:\\:viewRecord\\(\\) has parameter \\$morphReference with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$entity of method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<AdvisingApp\\\\Timeline\\\\Models\\\\Timeline\\>\\:\\:forEntity\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Model, AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\|null given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$join of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$query of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$recordModel of method AdvisingApp\\\\Timeline\\\\Actions\\\\SyncTimelineData\\:\\:now\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Model, AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\|null given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$search of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Engagement\\\\Filament\\\\Pages\\\\MessageCenter\\:\\:\\$modelsToTimeline type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Engagement\\\\Filament\\\\Pages\\\\MessageCenter\\:\\:\\$recordModel \\(AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\|null\\) does not accept Illuminate\\\\Database\\\\Eloquent\\\\Model\\.$#',
-    'identifier' => 'assign.propertyType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Engagement\\\\Filament\\\\Pages\\\\MessageCenter\\:\\:\\$timelineRecords with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Pages/MessageCenter.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Resources\\\\Actions\\\\DraftTemplateWithAiAction\\:\\:getMergeTags\\(\\) return type has no value type specified in iterable type array\\.$#',

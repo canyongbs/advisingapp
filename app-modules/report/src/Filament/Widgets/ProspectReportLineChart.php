@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
 class ProspectReportLineChart extends ChartReportWidget
@@ -54,11 +55,12 @@ class ProspectReportLineChart extends ChartReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
 
         $runningTotalPerMonth = $shouldBypassCache
-            ? $this->getProspectRunningTotalData($startDate, $endDate)
+            ? $this->getProspectRunningTotalData($startDate, $endDate, $segmentId)
             : Cache::tags(["{{$this->cacheTag}}"])
                 ->remember('total-prospects_line_chart', now()->addHours(24), function (): array {
                     return $this->getProspectRunningTotalData();
@@ -98,7 +100,7 @@ class ProspectReportLineChart extends ChartReportWidget
     /**
      * @return array<string, int>
      */
-    protected function getProspectRunningTotalData(?Carbon $startDate = null, ?Carbon $endDate = null): array
+    protected function getProspectRunningTotalData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $segmentId = null): array
     {
         $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
         $endDate = $endDate ?? Carbon::now()->endOfMonth();
@@ -107,6 +109,10 @@ class ProspectReportLineChart extends ChartReportWidget
 
         $monthlyData = Prospect::query()
             ->whereBetween('created_at', [$startDate, $endDate])
+            ->when(
+                $segmentId,
+                fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+            )
             ->selectRaw("date_trunc('month', created_at) as month, COUNT(*) as monthly_total")
             ->groupByRaw("date_trunc('month', created_at)")
             ->get()

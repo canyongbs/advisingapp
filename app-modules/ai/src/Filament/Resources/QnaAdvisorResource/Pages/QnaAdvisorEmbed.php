@@ -94,6 +94,9 @@ class QnaAdvisorEmbed extends EditRecord
                                     new IsDomain(),
                                 ]
                             ),
+                        Toggle::make('is_requires_authentication_enabled')
+                            ->label('Requires Authentication')
+                            ->hidden(fn (Get $get) => ! $get('is_embed_enabled')),
                         Actions::make([
                             Action::make('embed_snippet')
                                 ->label('Embed Snippet')

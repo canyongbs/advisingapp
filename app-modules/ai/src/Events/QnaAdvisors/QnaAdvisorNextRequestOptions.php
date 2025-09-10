@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Events\QnaAdvisors;
 
+use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -51,6 +52,7 @@ class QnaAdvisorNextRequestOptions implements ShouldBroadcastNow
      * @param array<string, mixed> $options
      */
     public function __construct(
+        public QnaAdvisor $advisor,
         public string $chatId,
         public array $options,
     ) {}
@@ -75,8 +77,12 @@ class QnaAdvisorNextRequestOptions implements ShouldBroadcastNow
      */
     public function broadcastOn(): array
     {
+        $channelName = "qna-advisor-chat-{$this->chatId}";
+
         return [
-            new PrivateChannel("qna-advisor-chat-{$this->chatId}"),
+            $this->advisor->is_requires_authentication_enabled
+                ? new PrivateChannel($channelName)
+                : new Channel($channelName),
         ];
     }
 }

@@ -65,6 +65,7 @@ class RetryMessageController
                 $thread,
                 $request->validated('content'),
                 AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
+                $request->validated('has_image_generation') ?? false,
             ));
 
             return response()->json([]);

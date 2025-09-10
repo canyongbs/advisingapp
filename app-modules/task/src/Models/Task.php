@@ -48,17 +48,21 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Database\Factories\TaskFactory;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Histories\TaskHistory;
+use AdvisingApp\Task\Models\Scopes\ConfidentialTaskScope;
 use AdvisingApp\Task\Observers\TaskObserver;
+use AdvisingApp\Team\Models\Team;
 use AdvisingApp\Timeline\Models\Concerns\InteractsWithHistory;
 use AdvisingApp\Timeline\Models\Contracts\HasHistory;
 use App\Models\BaseModel;
 use App\Models\User;
 use Bvtterfly\ModelStateMachine\HasStateMachine;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -70,7 +74,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  *
  * @mixin IdeHelperTask
  */
-#[ObservedBy([TaskObserver::class])]
+#[ObservedBy([TaskObserver::class])] #[ScopedBy([ConfidentialTaskScope::class])]
 class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, HasHistory
 {
     use BelongsToEducatable;
@@ -90,11 +94,13 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, H
         'due',
         'concern_id',
         'concern_type',
+        'is_confidential',
     ];
 
     protected $casts = [
         'status' => TaskStatus::class,
         'due' => 'datetime',
+        'is_confidential' => 'boolean',
     ];
 
     public function processCustomHistories(string $event, Collection $old, Collection $new, Collection $pending): void
@@ -157,6 +163,36 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, H
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    /**
+     * @return BelongsToMany<User, $this, covariant ConfidentialTasksUsers>
+     */
+    public function confidentialAccessUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'confidential_task_users')
+            ->using(ConfidentialTasksUsers::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany<Team, $this, covariant ConfidentialTasksTeams>
+     */
+    public function confidentialAccessTeams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class, 'confidential_task_teams')
+            ->using(ConfidentialTasksTeams::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany<Project, $this, covariant ConfidentialTasksProjects>
+     */
+    public function confidentialAccessProjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Project::class, 'confidential_task_projects')
+            ->using(ConfidentialTasksProjects::class)
+            ->withTimestamps();
     }
 
     public function getSubscribable(): ?Subscribable
