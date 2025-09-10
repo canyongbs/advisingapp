@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\OpenAiResponsesApiSettingsFeature;
 use CanyonGBS\Common\Database\Migrations\Concerns\CanModifySettings;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
@@ -98,8 +97,6 @@ return new class () extends SettingsMigration {
                     // Blank URIs that fail decryption do not need to be processed.
                 }
             }
-
-            OpenAiResponsesApiSettingsFeature::activate();
         });
     }
 
