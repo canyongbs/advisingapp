@@ -54,56 +54,56 @@ use Illuminate\Notifications\Notification;
 
 class TaskAssignedToUserNotification extends Notification implements ShouldQueue
 {
-    use Queueable;
+  use Queueable;
 
-    public function __construct(
-        public WorkflowTaskDetails| Task $task,
-    ) {}
+  public function __construct(
+    public Task $task,
+  ) {}
 
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
-    {
-        return ['mail', 'database'];
-    }
+  /**
+   * @return array<int, string>
+   */
+  public function via(object $notifiable): array
+  {
+    return ['mail', 'database'];
+  }
 
-    public function toMail(object $notifiable): MailMessage
-    {
-        $truncatedTaskDescription = str($this->task->description)->limit(50);
+  public function toMail(object $notifiable): MailMessage
+  {
+    $truncatedTaskDescription = str($this->task->description)->limit(50);
 
-        return MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject('You have been assigned a new Task')
-            ->line('You have been assigned the task: ')
-            ->line("\"{$truncatedTaskDescription}\"");
-    }
+    return MailMessage::make()
+      ->settings($this->resolveNotificationSetting($notifiable))
+      ->subject('You have been assigned a new Task')
+      ->line('You have been assigned the task: ')
+      ->line("\"{$truncatedTaskDescription}\"");
+  }
 
-    public function toDatabase(object $notifiable): array
-    {
-        $url = match (true) {
-            $this->task->concern instanceof Student => ManageStudentTasks::getUrl(['record' => $this->task->concern]),
-            $this->task->concern instanceof Prospect => ManageProspectTasks::getUrl(['record' => $this->task->concern]),
-        };
+  public function toDatabase(object $notifiable): array
+  {
+    $url = match (true) {
+      $this->task->concern instanceof Student => ManageStudentTasks::getUrl(['record' => $this->task->concern]),
+      $this->task->concern instanceof Prospect => ManageProspectTasks::getUrl(['record' => $this->task->concern]),
+    };
 
-        $title = str($this->task->title)->limit();
+    $title = str($this->task->title)->limit();
 
-        $message = match (true) {
-            $this->task->concern instanceof Student => "You have been assigned a new Task: <a href='{$url}' target='_blank' class='underline'>{$title}</a> related to Student <a href='" . ViewStudent::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>",
+    $message = match (true) {
+      $this->task->concern instanceof Student => "You have been assigned a new Task: <a href='{$url}' target='_blank' class='underline'>{$title}</a> related to Student <a href='" . ViewStudent::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>",
 
-            $this->task->concern instanceof Prospect => "You have been assigned a new Task: <a href='{$url}' target='_blank' class='underline'>{$title}</a> related to Prospect <a href='" . ViewProspect::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>",
+      $this->task->concern instanceof Prospect => "You have been assigned a new Task: <a href='{$url}' target='_blank' class='underline'>{$title}</a> related to Prospect <a href='" . ViewProspect::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>",
 
-            default => "You have been assigned a new Task: <a href='{$url}' target='_blank' class='underline'>{$title}</a>",
-        };
+      default => "You have been assigned a new Task: <a href='{$url}' target='_blank' class='underline'>{$title}</a>",
+    };
 
-        return FilamentNotification::make()
-            ->success()
-            ->title($message)
-            ->getDatabaseMessage();
-    }
+    return FilamentNotification::make()
+      ->success()
+      ->title($message)
+      ->getDatabaseMessage();
+  }
 
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
-    {
-        return $this->task->createdBy->team?->division?->notificationSetting?->setting;
-    }
+  private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
+  {
+    return $this->task->createdBy->team?->division?->notificationSetting?->setting;
+  }
 }
