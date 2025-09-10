@@ -51,13 +51,16 @@ use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use App\Filament\Forms\Components\EducatableSelect;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Wizard;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -68,6 +71,7 @@ use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
+use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class SendEngagementAction extends Action
@@ -110,7 +114,9 @@ class SendEngagementAction extends Action
                     $form->fill();
                 }
             })
-            ->steps([
+            ->form(function (Form $form) {
+                return $form->schema([
+                    Wizard::make([
                 Step::make('Contact Information')
                     ->schema([
                         ...$this->getEducatable() ? [] : [
@@ -331,7 +337,9 @@ class SendEngagementAction extends Action
                             ->required()
                             ->visible(fn (Get $get) => $get('send_later')),
                     ]),
-            ])
+                ])
+                ]);
+            })
             ->action(function (array $data, Form $form, Page $livewire) {
                 /** @var Student | Prospect $recipient */
                 $recipient = $this->getEducatable() ?? match ($data['recipient_type']) {
@@ -398,7 +406,16 @@ class SendEngagementAction extends Action
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)
             ->closeModalByClickingAway(false)
-            ->closeModalByEscaping(false);
+            ->closeModalByEscaping(false)
+            ->modalCancelAction(false)
+            ->extraModalFooterActions([
+                Action::make('cancel')
+                    ->color('gray')
+                    ->cancelParentActions()
+                    ->requiresConfirmation()
+                    ->action(fn (Component $livewire) => $livewire->js('$store.previous = {}')) // This fixes an issue where the TipTap editor inside this modal is persisted after the modal is closed, and the old content is restored to the editor. This can be removed when the app is upgraded to Filament v4.
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('danger')),
+            ]);
     }
 
     public static function getDefaultName(): ?string
