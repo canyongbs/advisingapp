@@ -56,6 +56,10 @@ class EnsureQnaAdvisorRequestComingFromAuthorizedDomain
             return response()->json(status: Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        if ($request->hasValidSignature() && $request->query('preview')) {
+            return $next($request);
+        }
+
         $origin = $request->headers->get('origin');
 
         if (! $origin) {
