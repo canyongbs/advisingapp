@@ -219,13 +219,15 @@ class CreateStudent extends CreateRecord
                                     ->visible(SmsOptOutFeature::active()),
                             ])
                             ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
-                                if (isset($data['sms_opt_out_phone_number'])) {
-                                    SmsOptOutPhoneNumber::firstOrCreate([
-                                        'number' => $data['number'],
-                                    ]);
-                                }
+                                if (SmsOptOutFeature::active()) {
+                                    if ($data['sms_opt_out_phone_number'] === true) {
+                                        SmsOptOutPhoneNumber::firstOrCreate([
+                                            'number' => $data['number'],
+                                        ]);
+                                    }
 
-                                unset($data['sms_opt_out_phone_number']);
+                                    unset($data['sms_opt_out_phone_number']);
+                                }
 
                                 return $data;
                             })
