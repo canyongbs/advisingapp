@@ -167,6 +167,10 @@ class WorkflowStepsRelationManager extends RelationManager
                     ->fillForm(function (WorkflowStep $record): array {
                         assert($record->currentDetails instanceof WorkflowDetails);
 
+                        if ($record->currentDetails instanceof WorkflowCaseDetails) {
+                            $record->currentDetails->load('priority.type');
+                        }
+
                         $data = $record->currentDetails->toArray();
 
                         $totalMinutes = $record->delay_minutes;
@@ -185,6 +189,12 @@ class WorkflowStepsRelationManager extends RelationManager
                         $record->save();
 
                         unset($data['days'], $data['hours'], $data['minutes']);
+
+                        if ($record->currentDetails instanceof WorkflowCaseDetails) {
+                            if (isset($data['assigned_to_id']) && $data['assigned_to_id'] === 'automatic') {
+                                $data['assigned_to_id'] = null;
+                            }
+                        }
 
                         $record->currentDetails->update($data);
 
@@ -219,7 +229,7 @@ class WorkflowStepsRelationManager extends RelationManager
                 'division_id' => $data['division_id'],
                 'status_id' => $data['status_id'],
                 'priority_id' => $data['priority_id'],
-                'assigned_to_id' => $data['assigned_to_id'],
+                'assigned_to_id' => $data['assigned_to_id'] === 'automatic' ? null : $data['assigned_to_id'],
                 'close_details' => $data['close_details'],
                 'res_details' => $data['res_details'],
             ]),

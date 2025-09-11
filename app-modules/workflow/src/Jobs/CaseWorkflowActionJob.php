@@ -37,6 +37,7 @@
 namespace AdvisingApp\Workflow\Jobs;
 
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
+use AdvisingApp\CaseManagement\Enums\CaseTypeAssignmentTypes;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
@@ -84,15 +85,19 @@ class CaseWorkflowActionJob extends ExecuteWorkflowActionJob
                 'created_by_id' => $user->getKey(),
             ]);
 
-            if (isset($details->assigned_to_id)) {
-                $details->assigned_to_id === 'automatic' ?
-                  $case->priority->type->assignment_type->getAssignerClass()->execute($case) :
-                  $case->assignments()->create([
-                      'user_id' => $details->assigned_to_id,
-                      'assigned_by_id' => $user->getKey(),
-                      'assigned_at' => now(),
-                      'status' => CaseAssignmentStatus::Active,
-                  ]);
+            if (isset($details->assigned_to_id) && $details->assigned_to_id !== null) {
+                $case->assignments()->create([
+                    'user_id' => $details->assigned_to_id,
+                    'assigned_by_id' => $user->getKey(),
+                    'assigned_at' => now(),
+                    'status' => CaseAssignmentStatus::Active,
+                ]);
+            } elseif ($case->priority->type->assignment_type !== CaseTypeAssignmentTypes::None) {
+                $assignmentClass = $case->priority->type->assignment_type->getAssignerClass();
+
+                if ($assignmentClass) {
+                    $assignmentClass->execute($case);
+                }
             }
 
             $workflowRunStepRelated = new WorkflowRunStepRelated();
