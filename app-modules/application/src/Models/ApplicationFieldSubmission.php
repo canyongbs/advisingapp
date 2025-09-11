@@ -36,63 +36,34 @@
 
 namespace AdvisingApp\Application\Models;
 
-use AdvisingApp\Form\Models\SubmissibleField;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
- * @mixin IdeHelperApplicationField
- *
- * @property ApplicationFieldSubmission $pivot
+ * @mixin IdeHelperApplicationFieldSubmission
  */
-class ApplicationField extends SubmissibleField
+class ApplicationFieldSubmission extends Pivot implements HasMedia
 {
-    use SoftDeletes;
+    use HasUuids;
+    use InteractsWithMedia;
+
+    protected $table = 'application_field_submission';
 
     protected $fillable = [
-        'config',
-        'label',
-        'type',
-        'is_required',
-        'application_id',
+        'id',
+        'response',
+        'field_id',
+        'submission_id',
     ];
 
     protected $casts = [
-        'config' => 'array',
-        'is_required' => 'bool',
+        'response' => 'array',
     ];
 
-    /**
-     * @return BelongsTo<Application, $this>
-     */
-    public function submissible(): BelongsTo
+    public function registerMediaCollections(): void
     {
-        return $this
-            ->belongsTo(Application::class, 'application_id');
-    }
-
-    /**
-     * @return BelongsTo<ApplicationStep, $this>
-     */
-    public function step(): BelongsTo
-    {
-        return $this
-            ->belongsTo(ApplicationStep::class, 'step_id');
-    }
-
-    /**
-     * @return BelongsToMany<ApplicationSubmission, $this, covariant ApplicationFieldSubmission>
-     */
-    public function submissions(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            ApplicationSubmission::class,
-            'application_field_submission',
-            'field_id',
-            'submission_id',
-        )
-            ->withPivot(['id', 'response'])
-            ->using(ApplicationFieldSubmission::class);
+        $this->addMediaCollection('files');
     }
 }

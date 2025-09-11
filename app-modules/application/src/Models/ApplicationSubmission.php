@@ -64,7 +64,7 @@ class ApplicationSubmission extends Submission
     }
 
     /**
-     * @return BelongsToMany<ApplicationField, $this>
+     * @return BelongsToMany<ApplicationField, $this, covariant ApplicationFieldSubmission>
      */
     public function fields(): BelongsToMany
     {
@@ -75,7 +75,8 @@ class ApplicationSubmission extends Submission
                 'submission_id',
                 'field_id'
             )
-            ->withPivot(['id', 'response']);
+            ->withPivot(['id', 'response'])
+            ->using(ApplicationFieldSubmission::class);
     }
 
     /**

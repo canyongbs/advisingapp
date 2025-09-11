@@ -38,11 +38,14 @@ namespace AdvisingApp\Application\Http\Controllers;
 
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
+use AdvisingApp\Application\Models\ApplicationField;
+use AdvisingApp\Application\Models\ApplicationFieldSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\UploadFormFieldBlock;
 use AdvisingApp\Form\Http\Requests\RegisterProspectRequestForApplication;
 use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
@@ -57,6 +60,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -233,6 +237,10 @@ class ApplicationWidgetController extends Controller
                         ['id' => Str::orderedUuid(), 'response' => $response],
                     );
 
+                    if ($stepFields[$fieldId] === UploadFormFieldBlock::type()) {
+                        $this->uploadApplicationFiles($submission, $fieldId, $response);
+                    }
+
                     if ($submission->author) {
                         continue;
                     }
@@ -259,11 +267,15 @@ class ApplicationWidgetController extends Controller
                     ['id' => Str::orderedUuid(), 'response' => $response],
                 );
 
+                if ($applicationFields[$fieldId] === UploadFormFieldBlock::type()) {
+                    $this->uploadApplicationFiles($submission, $fieldId, $response);
+                }
+
                 if ($submission->author) {
                     continue;
                 }
 
-                if ($applicationFields[$fieldId] !== EducatableEmailFormFieldBlock::type()) {
+                if ($applicationFields[$fieldId] !== EducatableEmailFormFieldBlock::type() || $applicationFields[$fieldId] !== UploadFormFieldBlock::type()) {
                     continue;
                 }
 
@@ -376,5 +388,34 @@ class ApplicationWidgetController extends Controller
                 absolute: false,
             ),
         ]);
+    }
+
+    public function uploadApplicationFiles(ApplicationSubmission $submission, string $fieldId, mixed $response): void
+    {
+        /** @var ApplicationField|null $field */
+        $field = $submission->fields()->find($fieldId);
+
+        if ($field && $field->type === UploadFormFieldBlock::type() && is_array($response)) {
+            /** @var ApplicationFieldSubmission $applicationFieldSubmission */
+            $applicationFieldSubmission = $field->pivot;
+
+            foreach ($response as $file) {
+                $key = ltrim($file['path'], '/');
+
+                $media = $applicationFieldSubmission
+                    ->addMediaFromDisk($key, 's3')
+                    ->usingFileName($file['originalFileName'] ?? basename($key))
+                    ->toMediaCollection('files', 's3');
+
+                Storage::disk('s3')->delete($key);
+                $applicationFieldSubmission->update([
+                    'response' => [
+                        'media_id' => $media->id,
+                        'file_name' => $media->file_name,
+                        'original_name' => $file['originalFileName'] ?? $media->file_name,
+                    ],
+                ]);
+            }
+        }
     }
 }
