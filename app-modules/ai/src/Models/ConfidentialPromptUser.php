@@ -42,11 +42,17 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class ConfidentialPromptUser extends Pivot
 {
+    /**
+     * @return BelongsTo<Prompt, ConfidentialPromptUser>
+     */
     public function prompt(): BelongsTo
     {
         return $this->belongsTo(Prompt::class);
     }
 
+    /**
+     * @return BelongsTo<User, ConfidentialPromptUser>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
