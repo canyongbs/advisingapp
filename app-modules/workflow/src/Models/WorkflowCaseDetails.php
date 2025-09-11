@@ -37,11 +37,18 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\CaseManagement\Enums\CaseTypeAssignmentTypes;
+use AdvisingApp\CaseManagement\Models\CasePriority;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\CaseManagement\Models\CaseType;
+use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Workflow\Filament\Blocks\CaseBlock;
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Jobs\CaseWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -63,6 +70,38 @@ class WorkflowCaseDetails extends WorkflowDetails implements Auditable
         'res_details',
     ];
 
+    /**
+     * @return BelongsTo<Division, $this>
+     */
+    public function division(): BelongsTo
+    {
+        return $this->belongsTo(Division::class);
+    }
+
+    /**
+     * @return BelongsTo<CaseStatus, $this>
+     */
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(CaseStatus::class);
+    }
+
+    /**
+     * @return BelongsTo<CasePriority, $this>
+     */
+    public function priority(): BelongsTo
+    {
+        return $this->belongsTo(CasePriority::class);
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function assignedTo(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_to_id');
+    }
+
     public function getLabel(): string
     {
         return 'Case';
@@ -76,5 +115,30 @@ class WorkflowCaseDetails extends WorkflowDetails implements Auditable
     public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
     {
         return new CaseWorkflowActionJob($workflowRunStep);
+    }
+
+    public function toArray(): array
+    {
+        $array = parent::toArray();
+
+        if ($this->priority_id) {
+            $priority = $this->relationLoaded('priority') ? $this->priority : $this->priority()->first();
+
+            if ($priority && $priority->type_id) {
+                $array['type_id'] = $priority->type_id;
+
+                if (is_null($this->assigned_to_id)) {
+                    $caseType = $priority->relationLoaded('type')
+                        ? $priority->type
+                        : CaseType::find($priority->type_id);
+
+                    if ($caseType && $caseType->assignment_type !== CaseTypeAssignmentTypes::None) {
+                        $array['assigned_to_id'] = 'automatic';
+                    }
+                }
+            }
+        }
+
+        return $array;
     }
 }
