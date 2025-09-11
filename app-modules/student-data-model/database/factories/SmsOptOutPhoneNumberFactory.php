@@ -34,52 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+namespace AdvisingApp\StudentDataModel\Database\Factories;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\StudentDataModel\Observers\StudentPhoneNumberObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperStudentPhoneNumber
+ * @extends Factory<SmsOptOutPhoneNumber>
  */
-#[ObservedBy([StudentPhoneNumberObserver::class])]
-class StudentPhoneNumber extends BaseModel implements Auditable
+class SmsOptOutPhoneNumberFactory extends Factory
 {
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'sisid',
-        'number',
-        'ext',
-        'type',
-        'can_receive_sms',
-        'order',
-    ];
-
-    protected $casts = [
-        'can_receive_sms' => 'boolean',
-    ];
-
     /**
-     * @return BelongsTo<Student, $this>
+     * @return array<string, mixed>
      */
-    public function student(): BelongsTo
+    public function definition(): array
     {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
-    }
-
-    /**
-     * @return HasOne<SmsOptOutPhoneNumber, $this>
-     */
-    public function smsOptOut(): HasOne
-    {
-        return $this->hasOne(SmsOptOutPhoneNumber::class, 'number', 'number');
+        return [
+            'number' => $this->faker->phoneNumber(),
+        ];
     }
 }

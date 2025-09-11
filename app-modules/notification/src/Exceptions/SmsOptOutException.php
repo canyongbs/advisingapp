@@ -34,52 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+namespace AdvisingApp\Notification\Exceptions;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\StudentDataModel\Observers\StudentPhoneNumberObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use OwenIt\Auditing\Contracts\Auditable;
+use Exception;
 
-/**
- * @mixin IdeHelperStudentPhoneNumber
- */
-#[ObservedBy([StudentPhoneNumberObserver::class])]
-class StudentPhoneNumber extends BaseModel implements Auditable
+class SmsOptOutException extends Exception
 {
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'sisid',
-        'number',
-        'ext',
-        'type',
-        'can_receive_sms',
-        'order',
-    ];
-
-    protected $casts = [
-        'can_receive_sms' => 'boolean',
-    ];
-
-    /**
-     * @return BelongsTo<Student, $this>
-     */
-    public function student(): BelongsTo
+    public function __construct(string $phoneNumber)
     {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
-    }
-
-    /**
-     * @return HasOne<SmsOptOutPhoneNumber, $this>
-     */
-    public function smsOptOut(): HasOne
-    {
-        return $this->hasOne(SmsOptOutPhoneNumber::class, 'number', 'number');
+        parent::__construct("Cannot send SMS to opted-out phone number: {$phoneNumber}");
     }
 }
