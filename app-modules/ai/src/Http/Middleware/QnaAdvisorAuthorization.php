@@ -61,6 +61,10 @@ class QnaAdvisorAuthorization
             return response()->json(status: Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        if ($request->hasValidSignature() && $request->query('preview')) {
+            return $next($request);
+        }
+
         if (! $advisor->is_requires_authentication_enabled) {
             // This Advisor does not require an Educatable to be authorized. Allow request.
             return $next($request);

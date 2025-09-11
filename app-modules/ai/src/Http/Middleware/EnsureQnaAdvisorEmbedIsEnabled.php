@@ -56,6 +56,10 @@ class EnsureQnaAdvisorEmbedIsEnabled
             return response()->json(status: Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        if ($request->hasValidSignature() && $request->query('preview')) {
+            return $next($request);
+        }
+
         if (! $advisor->is_embed_enabled) {
             return response()->json(['error' => 'Embed is not enabled for this advisor.', 'embed_enabled' => false], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
