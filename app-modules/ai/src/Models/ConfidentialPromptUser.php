@@ -36,6 +36,19 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class ConfidentialPromptUser extends Pivot {}
+class ConfidentialPromptUser extends Pivot
+{
+    public function prompt(): BelongsTo
+    {
+        return $this->belongsTo(Prompt::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}

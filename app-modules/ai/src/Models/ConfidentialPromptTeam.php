@@ -36,6 +36,19 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Team\Models\Team;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class ConfidentialPromptTeam extends Pivot {}
+class ConfidentialPromptTeam extends Pivot
+{
+    public function prompt(): BelongsTo
+    {
+        return $this->belongsTo(Prompt::class);
+    }
+
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
+}
