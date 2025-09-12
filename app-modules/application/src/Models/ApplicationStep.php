@@ -41,14 +41,17 @@ use App\Models\Attributes\NoPermissions;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 #[NoPermissions]
 /**
  * @mixin IdeHelperApplicationStep
  */
-class ApplicationStep extends SubmissibleStep
+class ApplicationStep extends SubmissibleStep implements HasMedia
 {
     use SoftDeletes;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'label',
