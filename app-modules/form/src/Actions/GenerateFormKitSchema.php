@@ -39,6 +39,8 @@ namespace AdvisingApp\Form\Actions;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleStep;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class GenerateFormKitSchema
 {
@@ -71,7 +73,7 @@ class GenerateFormKitSchema
                 'paragraph' => ['$el' => 'p', 'children' => $this->content($blocks, $component['content'] ?? [], $fields)],
                 'small' => ['$el' => 'small', 'children' => $this->content($blocks, $component['content'] ?? [], $fields)],
                 'text' => $this->text($component),
-                'image' => ['$el' => 'img', 'attrs' => $component['attrs'] ?? []],
+                'image' => $this->getImageSrc($component),
                 'tiptapBlock' => ($field = ($fields[$component['attrs']['id']] ?? null)) ? $blocks[$component['attrs']['type']]::getFormKitSchema($field) : [],
                 default => [],
             },
@@ -275,5 +277,36 @@ class GenerateFormKitSchema
         }
 
         return $content;
+    }
+
+    /**
+     * @param array<string, mixed> $component
+     *
+     * @return array<string, mixed>
+     */
+    protected function getImageSrc(array $component): array
+    {
+        $attrs = $component['attrs'] ?? [];
+        $src = $attrs['src'] ?? null;
+        $id = $attrs['id'] ?? null;
+        $media = Media::where('uuid', $id)->first();
+
+        if ($media) {
+            $temporaryUrl = Storage::disk($media->disk)->temporaryUrl(
+                $media->getPathRelativeToRoot(),
+                now()->addDay(),
+                ['ResponseContentDisposition' => 'attachment; filename="' . $media->file_name . '"']
+            );
+
+            $src = $temporaryUrl;
+        }
+
+        return [
+            '$el' => 'img',
+            'attrs' => [
+                ...$attrs,
+                'src' => "{$src}",
+            ],
+        ];
     }
 }
