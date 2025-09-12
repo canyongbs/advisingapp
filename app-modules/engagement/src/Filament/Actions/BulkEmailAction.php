@@ -164,7 +164,7 @@ class BulkEmailAction
                     ->schema([
                         Toggle::make('send_later')
                             ->reactive()
-                            ->helperText('By default, this email or text will send as soon as it is created unless you schedule it to send later.'),
+                            ->helperText('By default, this email will send as soon as it is created unless you schedule it to send later.'),
                         DateTimePicker::make('scheduled_at')
                             ->required()
                             ->visible(fn (Get $get) => $get('send_later')),

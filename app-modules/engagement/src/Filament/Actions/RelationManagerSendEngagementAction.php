@@ -46,30 +46,27 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use Exception;
-use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormComponentAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
-use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class RelationManagerSendEngagementAction extends CreateAction
@@ -87,17 +84,24 @@ class RelationManagerSendEngagementAction extends CreateAction
 
                 return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
             })
-            ->form(fn (Form $form, RelationManager $livewire) => $form->schema([
-                Grid::make(2)
+            ->steps(fn (): array => [
+                Step::make('Contact Information')
                     ->schema([
                         Select::make('channel')
                             ->label('What would you like to send?')
                             ->options(NotificationChannel::getEngagementOptions())
                             ->default(NotificationChannel::Email->value)
-                            ->disableOptionWhen(fn (RelationManager $livewire, string $value): bool => (($value == (NotificationChannel::Sms->value) && (! $livewire->getOwnerRecord()->phoneNumbers()->where('can_receive_sms', true)->exists()))) || NotificationChannel::tryFrom($value)?->getCaseDisabled())
+                            ->disableOptionWhen(function (RelationManager $livewire, string $value): bool {
+                                assert($livewire->getOwnerRecord() instanceof Educatable);
+
+                                return (($value == (NotificationChannel::Sms->value) && (! $livewire->getOwnerRecord()->phoneNumbers()->where('can_receive_sms', true)->exists())))
+                                    || NotificationChannel::tryFrom($value)?->getCaseDisabled();
+                            })
                             ->selectablePlaceholder(false)
                             ->live()
                             ->afterStateUpdated(function (mixed $state, RelationManager $livewire, Set $set) {
+                                assert($livewire->getOwnerRecord() instanceof Educatable);
+
                                 $channel = NotificationChannel::parse($state);
 
                                 $route = match ($channel) {
@@ -120,24 +124,33 @@ class RelationManagerSendEngagementAction extends CreateAction
                                 NotificationChannel::Email => 'Email address',
                                 NotificationChannel::Sms => 'Phone number',
                             })
-                            ->options(fn (Get $get): array => match (NotificationChannel::parse($get('channel'))) {
-                                NotificationChannel::Email => $livewire->getOwnerRecord()->emailAddresses
-                                    ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
-                                        $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
-                                    ])
-                                    ->all(),
-                                NotificationChannel::Sms => $livewire->getOwnerRecord()->phoneNumbers()
-                                    ->where('can_receive_sms', true)
-                                    ->get()
-                                    ->mapWithKeys(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber): array => [
-                                        $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
-                                    ])
-                                    ->all(),
+                            ->options(function (Get $get, RelationManager $livewire): array {
+                                assert($livewire->getOwnerRecord() instanceof Student || $livewire->getOwnerRecord() instanceof Prospect);
+
+                                return match (NotificationChannel::parse($get('channel'))) {
+                                    NotificationChannel::Email => $livewire->getOwnerRecord()->emailAddresses
+                                        ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
+                                            $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
+                                        ])
+                                        ->all(),
+                                    NotificationChannel::Sms => $livewire->getOwnerRecord()->phoneNumbers()
+                                        ->where('can_receive_sms', true)
+                                        ->get()
+                                        ->mapWithKeys(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber): array => [
+                                            $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
+                                        ])
+                                        ->all(),
+                                };
                             })
-                            ->default(fn (): ?string => $livewire->getOwnerRecord()->primaryEmailAddress?->getKey())
+                            ->default(function (RelationManager $livewire): ?string {
+                                assert($livewire->getOwnerRecord() instanceof Educatable);
+
+                                return $livewire->getOwnerRecord()->primaryEmailAddress?->getKey();
+                            })
                             ->required(),
-                    ]),
-                Fieldset::make('Content')
+                    ])
+                    ->columns(2),
+                Step::make('Content')
                     ->schema([
                         TiptapEditor::make('subject')
                             ->label('Subject')
@@ -231,13 +244,13 @@ class RelationManagerSendEngagementAction extends CreateAction
                             ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
                             ->helperText('You can insert recipient or your information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
-                        EngagementSmsBodyInput::make(context: 'create', form: $form),
+                        EngagementSmsBodyInput::make(context: 'create'),
                         Actions::make([
                             RelationManagerDraftWithAiAction::make()
                                 ->mergeTags($mergeTags),
                         ]),
                     ]),
-                Fieldset::make('Email signature')
+                Step::make('Email Signature')
                     ->schema([
                         Toggle::make('is_signature_enabled')
                             ->label('Include signature')
@@ -255,18 +268,17 @@ class RelationManagerSendEngagementAction extends CreateAction
                             ->saveRelationshipsUsing(null),
                     ])
                     ->visible(auth()->user()->is_signature_enabled)
-                    ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
-                    ->columns(1),
-                Fieldset::make('Send your email or text')
+                    ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value),
+                Step::make('Send Your Message')
                     ->schema([
                         Toggle::make('send_later')
                             ->reactive()
-                            ->helperText('By default, this email or text will send as soon as it is created unless you schedule it to send later.'),
+                            ->helperText('By default, this message will send as soon as it is created unless you schedule it to send later.'),
                         DateTimePicker::make('scheduled_at')
                             ->required()
                             ->visible(fn (Get $get) => $get('send_later')),
                     ]),
-            ]))
+            ])
             ->action(function (array $data, Form $form, RelationManager $livewire) {
                 $recipient = $livewire->getOwnerRecord();
 
@@ -279,6 +291,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                 $data['subject']['content'] = [
                     ...($data['subject']['content'] ?? []),
                 ];
+
                 $data['body'] ??= ['type' => 'doc', 'content' => []];
                 $data['body']['content'] = [
                     ...($data['body']['content'] ?? []),
@@ -327,16 +340,7 @@ class RelationManagerSendEngagementAction extends CreateAction
             ->modalCloseButton(false)
             ->closeModalByClickingAway(false)
             ->closeModalByEscaping(false)
-            ->createAnother(false)
-            ->modalCancelAction(false)
-            ->extraModalFooterActions([
-                Action::make('cancel')
-                    ->color('gray')
-                    ->cancelParentActions()
-                    ->requiresConfirmation()
-                    ->action(fn (Component $livewire) => $livewire->js('$store.previous = {}')) // This fixes an issue where the TipTap editor inside this modal is persisted after the modal is closed, and the old content is restored to the editor. This can be removed when the app is upgraded to Filament v4.
-                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('danger')),
-            ]);
+            ->createAnother(false);
     }
 
     public static function getDefaultName(): ?string
