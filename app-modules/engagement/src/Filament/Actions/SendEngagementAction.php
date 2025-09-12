@@ -51,7 +51,6 @@ use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use App\Filament\Forms\Components\EducatableSelect;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Checkbox;
@@ -59,7 +58,6 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Wizard;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -70,7 +68,6 @@ use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
-use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class SendEngagementAction extends Action
@@ -113,93 +110,29 @@ class SendEngagementAction extends Action
                     $form->fill();
                 }
             })
-            ->form(function (Form $form) {
-                return $form->schema([
-                    Wizard::make([
-                        Step::make('Contact Information')
-                            ->schema([
-                                ...$this->getEducatable() ? [] : [
-                                    EducatableSelect::make('recipient', isExcludingConvertedProspects: true)
-                                        ->live()
-                                        ->required()
-                                        ->columns(2)
-                                        ->afterStateUpdated(function (Get $get, Set $set) {
-                                            $educatable = match ($get('recipient_type')) {
-                                                'student' => Student::find($get('recipient_id')),
-                                                'prospect' => Prospect::find($get('recipient_id')),
-                                                default => null,
-                                            };
+            ->steps(fn (): array => [
+                Step::make('Contact Information')
+                    ->schema([
+                        ...$this->getEducatable() ? [] : [
+                            EducatableSelect::make('recipient', isExcludingConvertedProspects: true)
+                                ->live()
+                                ->required()
+                                ->columns(2)
+                                ->afterStateUpdated(function (Get $get, Set $set) {
+                                    $educatable = match ($get('recipient_type')) {
+                                        'student' => Student::find($get('recipient_id')),
+                                        'prospect' => Prospect::find($get('recipient_id')),
+                                        default => null,
+                                    };
 
-                                            if (! $educatable?->phoneNumbers()->where('can_receive_sms', true)->exists()) {
-                                                $set('channel', 'email');
-                                            }
+                                    if (! $educatable?->phoneNumbers()->where('can_receive_sms', true)->exists()) {
+                                        $set('channel', 'email');
+                                    }
 
-                                            $set('recipient_route_id', $educatable?->primaryEmailAddress?->getKey() ?? $educatable?->emailAddresses()->first()?->getKey());
-                                        }),
-                                ],
-                                Grid::make(2)
-                                    ->schema(function (Get $get): array {
-                                        $educatable = $this->getEducatable() ?? match ($get('recipient_type')) {
-                                            'student' => Student::find($get('recipient_id')),
-                                            'prospect' => Prospect::find($get('recipient_id')),
-                                            default => null,
-                                        };
-
-                                        return [
-                                            Select::make('channel')
-                                                ->label('What would you like to send?')
-                                                ->options(NotificationChannel::getEngagementOptions())
-                                                ->default(NotificationChannel::Email->value)
-                                                ->disableOptionWhen(fn (string $value): bool => (($value == (NotificationChannel::Sms->value) && (! $educatable?->phoneNumbers()->where('can_receive_sms', true)->exists()))) || NotificationChannel::tryFrom($value)?->getCaseDisabled())
-                                                ->selectablePlaceholder(false)
-                                                ->live()
-                                                ->afterStateUpdated(function (mixed $state, Set $set) use ($educatable) {
-                                                    $channel = NotificationChannel::parse($state);
-
-                                                    $route = match ($channel) {
-                                                        NotificationChannel::Email => $educatable?->primaryEmailAddress?->getKey(),
-                                                        NotificationChannel::Sms => $educatable?->primaryPhoneNumber()
-                                                            ->where('can_receive_sms', true)
-                                                            ->first()?->getKey(),
-                                                        default => null,
-                                                    } ?? match ($channel) {
-                                                        NotificationChannel::Email => $educatable?->emailAddresses()
-                                                            ->first()?->getKey(),
-                                                        NotificationChannel::Sms => $educatable?->phoneNumbers()
-                                                            ->where('can_receive_sms', true)
-                                                            ->first()?->getKey(),
-                                                        default => null,
-                                                    };
-
-                                                    $set('recipient_route_id', $route);
-                                                }),
-                                            Select::make('recipient_route_id')
-                                                ->label(fn (Get $get): string => match (NotificationChannel::parse($get('channel'))) {
-                                                    NotificationChannel::Email => 'Email address',
-                                                    NotificationChannel::Sms => 'Phone number',
-                                                    default => throw new Exception('Invalid channel.'),
-                                                })
-                                                ->options(fn (Get $get): array => match (NotificationChannel::parse($get('channel'))) {
-                                                    NotificationChannel::Email => $educatable?->emailAddresses
-                                                        ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
-                                                            $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
-                                                        ])
-                                                        ->all() ?? [],
-                                                    NotificationChannel::Sms => $educatable?->phoneNumbers()
-                                                        ->where('can_receive_sms', true)
-                                                        ->get()
-                                                        ->mapWithKeys(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber): array => [
-                                                            $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
-                                                        ])
-                                                        ->all() ?? [],
-                                                    default => [],
-                                                })
-                                                ->disabled(blank($educatable))
-                                                ->required(),
-                                        ];
-                                    }),
-                            ]),
-                        Step::make('Content')
+                                    $set('recipient_route_id', $educatable?->primaryEmailAddress?->getKey() ?? $educatable?->emailAddresses()->first()?->getKey());
+                                }),
+                        ],
+                        Grid::make(2)
                             ->schema(function (Get $get): array {
                                 $educatable = $this->getEducatable() ?? match ($get('recipient_type')) {
                                     'student' => Student::find($get('recipient_id')),
@@ -208,137 +141,197 @@ class SendEngagementAction extends Action
                                 };
 
                                 return [
-                                    TiptapEditor::make('subject')
-                                        ->label('Subject')
-                                        ->mergeTags([
-                                            'recipient first name',
-                                            'recipient last name',
-                                            'recipient full name',
-                                            'recipient email',
-                                            'recipient preferred name',
-                                            'user first name',
-                                            'user full name',
-                                            'user job title',
-                                            'user email',
-                                            'user phone number',
-                                        ])
-                                        ->showMergeTagsInBlocksPanel(false)
-                                        ->helperText('You may use “merge tags” to substitute information about a student into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags')
-                                        ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
-                                        ->profile('sms')
-                                        ->required()
-                                        ->placeholder('Enter the email subject here...')
-                                        ->columnSpanFull(),
-                                    TiptapEditor::make('body')
-                                        ->disk('s3-public')
-                                        ->label('Body')
-                                        ->mergeTags($mergeTags = [
-                                            'recipient first name',
-                                            'recipient last name',
-                                            'recipient full name',
-                                            'recipient email',
-                                            'recipient preferred name',
-                                            'user first name',
-                                            'user full name',
-                                            'user job title',
-                                            'user email',
-                                            'user phone number',
-                                        ])
-                                        ->profile('email')
-                                        ->required()
-                                        ->hintAction(fn (TiptapEditor $component) => FormAction::make('loadEmailTemplate')
-                                            ->form([
-                                                Select::make('emailTemplate')
-                                                    ->searchable()
-                                                    ->options(function (Get $get): array {
-                                                        return EmailTemplate::query()
-                                                            ->when(
-                                                                $get('onlyMyTemplates'),
-                                                                fn (Builder $query) => $query->whereBelongsTo(auth()->user())
-                                                            )
-                                                            ->orderBy('name')
-                                                            ->limit(50)
-                                                            ->pluck('name', 'id')
-                                                            ->toArray();
-                                                    })
-                                                    ->getSearchResultsUsing(function (Get $get, string $search): array {
-                                                        return EmailTemplate::query()
-                                                            ->when(
-                                                                $get('onlyMyTemplates'),
-                                                                fn (Builder $query) => $query->whereBelongsTo(auth()->user())
-                                                            )
-                                                            ->when(
-                                                                $get('onlyMyTeamTemplates'),
-                                                                fn (Builder $query) => $query->whereIn('user_id', auth()->user()->team->users()->pluck('id'))
-                                                            )
-                                                            ->where(new Expression('lower(name)'), 'like', "%{$search}%")
-                                                            ->orderBy('name')
-                                                            ->limit(50)
-                                                            ->pluck('name', 'id')
-                                                            ->toArray();
-                                                    }),
-                                                Checkbox::make('onlyMyTemplates')
-                                                    ->label('Only show my templates')
-                                                    ->live()
-                                                    ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
-                                                Checkbox::make('onlyMyTeamTemplates')
-                                                    ->label("Only show my team's templates")
-                                                    ->live()
-                                                    ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
-                                            ])
-                                            ->action(function (array $data) use ($component) {
-                                                $template = EmailTemplate::find($data['emailTemplate']);
+                                    Select::make('channel')
+                                        ->label('What would you like to send?')
+                                        ->options(NotificationChannel::getEngagementOptions())
+                                        ->default(NotificationChannel::Email->value)
+                                        ->disableOptionWhen(fn (string $value): bool => (($value == (NotificationChannel::Sms->value) && (! $educatable?->phoneNumbers()->where('can_receive_sms', true)->exists()))) || NotificationChannel::tryFrom($value)?->getCaseDisabled())
+                                        ->selectablePlaceholder(false)
+                                        ->live()
+                                        ->afterStateUpdated(function (mixed $state, Set $set) use ($educatable) {
+                                            $channel = NotificationChannel::parse($state);
 
-                                                if (! $template) {
-                                                    return;
-                                                }
+                                            $route = match ($channel) {
+                                                NotificationChannel::Email => $educatable?->primaryEmailAddress?->getKey(),
+                                                NotificationChannel::Sms => $educatable?->primaryPhoneNumber()
+                                                    ->where('can_receive_sms', true)
+                                                    ->first()?->getKey(),
+                                                default => null,
+                                            } ?? match ($channel) {
+                                                NotificationChannel::Email => $educatable?->emailAddresses()
+                                                    ->first()?->getKey(),
+                                                NotificationChannel::Sms => $educatable?->phoneNumbers()
+                                                    ->where('can_receive_sms', true)
+                                                    ->first()?->getKey(),
+                                                default => null,
+                                            };
 
-                                                $component->state(
-                                                    $component->generateImageUrls($template->content),
-                                                );
-                                            }))
-                                        ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
-                                        ->helperText('You can insert student or your information by typing {{ and choosing a merge value to insert.')
-                                        ->columnSpanFull(),
-                                    EngagementSmsBodyInput::make(context: 'create'),
-                                    ...$educatable ? [Actions::make([
-                                        DraftWithAiAction::make()
-                                            ->mergeTags($mergeTags)
-                                            ->educatable($educatable),
-                                    ])] : [],
+                                            $set('recipient_route_id', $route);
+                                        }),
+                                    Select::make('recipient_route_id')
+                                        ->label(fn (Get $get): string => match (NotificationChannel::parse($get('channel'))) {
+                                            NotificationChannel::Email => 'Email address',
+                                            NotificationChannel::Sms => 'Phone number',
+                                            default => throw new Exception('Invalid channel.'),
+                                        })
+                                        ->options(fn (Get $get): array => match (NotificationChannel::parse($get('channel'))) {
+                                            NotificationChannel::Email => $educatable?->emailAddresses
+                                                ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
+                                                    $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
+                                                ])
+                                                ->all() ?? [],
+                                            NotificationChannel::Sms => $educatable?->phoneNumbers()
+                                                ->where('can_receive_sms', true)
+                                                ->get()
+                                                ->mapWithKeys(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber): array => [
+                                                    $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
+                                                ])
+                                                ->all() ?? [],
+                                            default => [],
+                                        })
+                                        ->disabled(blank($educatable))
+                                        ->required(),
                                 ];
                             }),
-                        Step::make('Email Signature')
-                            ->schema([
-                                Toggle::make('is_signature_enabled')
-                                    ->label('Include Signature')
-                                    ->helperText('You may configure your email signature in Profile Settings by selecting your avatar in the upper right portion of the screen.')
-                                    ->live(),
-                                TiptapEditor::make('signature')
-                                    ->profile('signature')
-                                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                                    ->output(TiptapOutput::Json)
-                                    ->required(fn (Get $get) => $get('is_signature_enabled'))
-                                    ->disk('s3-public')
-                                    ->visible(fn (Get $get) => $get('is_signature_enabled'))
-                                    ->default(auth()->user()->signature)
-                                    // By default, the TipTap editor will attempt to save relationships to media items, but these will instead be saved as part of the main body content.
-                                    ->saveRelationshipsUsing(null),
-                            ])
-                            ->visible(auth()->user()->is_signature_enabled)
-                            ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value),
-                        Step::make('Send Your Email or Text')
-                            ->schema([
-                                Toggle::make('send_later')
-                                    ->reactive()
-                                    ->helperText('By default, this email or text will send as soon as it is created unless you schedule it to send later.'),
-                                DateTimePicker::make('scheduled_at')
-                                    ->required()
-                                    ->visible(fn (Get $get) => $get('send_later')),
-                            ]),
                     ]),
-                ]);
-            })
+                Step::make('Content')
+                    ->schema(function (Get $get): array {
+                        $educatable = $this->getEducatable() ?? match ($get('recipient_type')) {
+                            'student' => Student::find($get('recipient_id')),
+                            'prospect' => Prospect::find($get('recipient_id')),
+                            default => null,
+                        };
+
+                        return [
+                            TiptapEditor::make('subject')
+                                ->label('Subject')
+                                ->mergeTags([
+                                    'recipient first name',
+                                    'recipient last name',
+                                    'recipient full name',
+                                    'recipient email',
+                                    'recipient preferred name',
+                                    'user first name',
+                                    'user full name',
+                                    'user job title',
+                                    'user email',
+                                    'user phone number',
+                                ])
+                                ->showMergeTagsInBlocksPanel(false)
+                                ->helperText('You may use “merge tags” to substitute information about a student into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags')
+                                ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
+                                ->profile('sms')
+                                ->required()
+                                ->placeholder('Enter the email subject here...')
+                                ->columnSpanFull(),
+                            TiptapEditor::make('body')
+                                ->disk('s3-public')
+                                ->label('Body')
+                                ->mergeTags($mergeTags = [
+                                    'recipient first name',
+                                    'recipient last name',
+                                    'recipient full name',
+                                    'recipient email',
+                                    'recipient preferred name',
+                                    'user first name',
+                                    'user full name',
+                                    'user job title',
+                                    'user email',
+                                    'user phone number',
+                                ])
+                                ->profile('email')
+                                ->required()
+                                ->hintAction(fn (TiptapEditor $component) => FormAction::make('loadEmailTemplate')
+                                    ->form([
+                                        Select::make('emailTemplate')
+                                            ->searchable()
+                                            ->options(function (Get $get): array {
+                                                return EmailTemplate::query()
+                                                    ->when(
+                                                        $get('onlyMyTemplates'),
+                                                        fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+                                                    )
+                                                    ->orderBy('name')
+                                                    ->limit(50)
+                                                    ->pluck('name', 'id')
+                                                    ->toArray();
+                                            })
+                                            ->getSearchResultsUsing(function (Get $get, string $search): array {
+                                                return EmailTemplate::query()
+                                                    ->when(
+                                                        $get('onlyMyTemplates'),
+                                                        fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+                                                    )
+                                                    ->when(
+                                                        $get('onlyMyTeamTemplates'),
+                                                        fn (Builder $query) => $query->whereIn('user_id', auth()->user()->team->users()->pluck('id'))
+                                                    )
+                                                    ->where(new Expression('lower(name)'), 'like', "%{$search}%")
+                                                    ->orderBy('name')
+                                                    ->limit(50)
+                                                    ->pluck('name', 'id')
+                                                    ->toArray();
+                                            }),
+                                        Checkbox::make('onlyMyTemplates')
+                                            ->label('Only show my templates')
+                                            ->live()
+                                            ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
+                                        Checkbox::make('onlyMyTeamTemplates')
+                                            ->label("Only show my team's templates")
+                                            ->live()
+                                            ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
+                                    ])
+                                    ->action(function (array $data) use ($component) {
+                                        $template = EmailTemplate::find($data['emailTemplate']);
+
+                                        if (! $template) {
+                                            return;
+                                        }
+
+                                        $component->state(
+                                            $component->generateImageUrls($template->content),
+                                        );
+                                    }))
+                                ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
+                                ->helperText('You can insert student or your information by typing {{ and choosing a merge value to insert.')
+                                ->columnSpanFull(),
+                            EngagementSmsBodyInput::make(context: 'create'),
+                            ...$educatable ? [Actions::make([
+                                DraftWithAiAction::make()
+                                    ->mergeTags($mergeTags)
+                                    ->educatable($educatable),
+                            ])] : [],
+                        ];
+                    }),
+                Step::make('Email Signature')
+                    ->schema([
+                        Toggle::make('is_signature_enabled')
+                            ->label('Include Signature')
+                            ->helperText('You may configure your email signature in Profile Settings by selecting your avatar in the upper right portion of the screen.')
+                            ->live(),
+                        TiptapEditor::make('signature')
+                            ->profile('signature')
+                            ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+                            ->output(TiptapOutput::Json)
+                            ->required(fn (Get $get) => $get('is_signature_enabled'))
+                            ->disk('s3-public')
+                            ->visible(fn (Get $get) => $get('is_signature_enabled'))
+                            ->default(auth()->user()->signature)
+                            // By default, the TipTap editor will attempt to save relationships to media items, but these will instead be saved as part of the main body content.
+                            ->saveRelationshipsUsing(null),
+                    ])
+                    ->visible(auth()->user()->is_signature_enabled)
+                    ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value),
+                Step::make('Send Your Message')
+                    ->schema([
+                        Toggle::make('send_later')
+                            ->reactive()
+                            ->helperText('By default, this message will send as soon as it is created unless you schedule it to send later.'),
+                        DateTimePicker::make('scheduled_at')
+                            ->required()
+                            ->visible(fn (Get $get) => $get('send_later')),
+                    ]),
+            ])
             ->action(function (array $data, Form $form, Page $livewire) {
                 /** @var Student | Prospect $recipient */
                 $recipient = $this->getEducatable() ?? match ($data['recipient_type']) {
@@ -405,16 +398,7 @@ class SendEngagementAction extends Action
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)
             ->closeModalByClickingAway(false)
-            ->closeModalByEscaping(false)
-            ->modalCancelAction(false)
-            ->extraModalFooterActions([
-                Action::make('cancel')
-                    ->color('gray')
-                    ->cancelParentActions()
-                    ->requiresConfirmation()
-                    ->action(fn (Component $livewire) => $livewire->js('$store.previous = {}')) // This fixes an issue where the TipTap editor inside this modal is persisted after the modal is closed, and the old content is restored to the editor. This can be removed when the app is upgraded to Filament v4.
-                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('danger')),
-            ]);
+            ->closeModalByEscaping(false);
     }
 
     public static function getDefaultName(): ?string

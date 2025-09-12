@@ -84,7 +84,7 @@ class RelationManagerSendEngagementAction extends CreateAction
 
                 return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
             })
-            ->steps([
+            ->steps(fn (): array => [
                 Step::make('Contact Information')
                     ->schema([
                         Select::make('channel')
@@ -269,11 +269,11 @@ class RelationManagerSendEngagementAction extends CreateAction
                     ])
                     ->visible(auth()->user()->is_signature_enabled)
                     ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value),
-                Step::make('Send your Email or Text')
+                Step::make('Send Your Message')
                     ->schema([
                         Toggle::make('send_later')
                             ->reactive()
-                            ->helperText('By default, this email or text will send as soon as it is created unless you schedule it to send later.'),
+                            ->helperText('By default, this message will send as soon as it is created unless you schedule it to send later.'),
                         DateTimePicker::make('scheduled_at')
                             ->required()
                             ->visible(fn (Get $get) => $get('send_later')),
