@@ -42,9 +42,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperApplicationField
- *
  * @property ApplicationFieldSubmission $pivot
+ *
+ * @mixin IdeHelperApplicationField
  */
 class ApplicationField extends SubmissibleField
 {
