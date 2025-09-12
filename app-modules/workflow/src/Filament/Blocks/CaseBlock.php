@@ -94,29 +94,66 @@ class CaseBlock extends WorkflowActionBlock
                 ->exists((new CaseStatus())->getTable(), 'id'),
             Select::make('type_id')
                 ->options(CaseType::pluck('name', 'id'))
-                ->afterStateUpdated(function (Set $set) {
+                ->afterStateUpdated(function (Set $set, Get $get) {
                     $set('priority_id', null);
                     $set('assigned_to_id', null);
+                })
+                ->afterStateHydrated(function (Set $set, Get $get, mixed $state): void {
+                    if (! $state && filled($get('priority_id'))) {
+                        $priority = CasePriority::find($get('priority_id'));
+
+                        if ($priority && $priority->type_id) {
+                            $set('type_id', $priority->type_id);
+                        }
+                    }
                 })
                 ->label('Type')
                 ->required()
                 ->live()
-                ->exists(CaseType::class, 'id'),
+                ->exists(CaseType::class, 'id')
+                ->dehydrated(false),
             Select::make('priority_id')
-                ->options(
-                    fn (Get $get) => CasePriority::query()
-                        ->where('type_id', $get('type_id'))
+                ->options(function (Get $get) {
+                    $typeId = $get('type_id');
+
+                    if (! $typeId) {
+                        $priorityId = $get('priority_id');
+
+                        if ($priorityId) {
+                            $priority = CasePriority::find($priorityId);
+
+                            if ($priority) {
+                                $typeId = $priority->type_id;
+                            }
+                        }
+
+                        if (! $typeId) {
+                            return [];
+                        }
+                    }
+
+                    return CasePriority::query()
+                        ->where('type_id', $typeId)
                         ->orderBy('order')
-                        ->pluck('name', 'id')
-                )
+                        ->pluck('name', 'id');
+                })
                 ->label('Priority')
                 ->required()
                 ->exists((new CasePriority())->getTable(), 'id')
-                ->visible(fn (Get $get) => filled($get('type_id'))),
+                ->visible(fn (Get $get) => filled($get('type_id')) || filled($get('priority_id')))
+                ->live(),
             Select::make('assigned_to_id')
                 ->label('Assign Case to')
                 ->options(function (Get $get) {
                     $caseTypeId = $get('type_id');
+
+                    if (! $caseTypeId && filled($get('priority_id'))) {
+                        $priority = CasePriority::find($get('priority_id'));
+
+                        if ($priority) {
+                            $caseTypeId = $priority->type_id;
+                        }
+                    }
 
                     if (! $caseTypeId) {
                         return [];
@@ -176,6 +213,14 @@ class CaseBlock extends WorkflowActionBlock
                 ])
                 ->columns(3),
         ];
+    }
+
+    /**
+     * @return array<int, covariant Field | Section>
+     */
+    public function editFields(): array
+    {
+        return $this->generateFields();
     }
 
     public static function type(): string
