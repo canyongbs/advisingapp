@@ -49,11 +49,11 @@ class ProspectEnagagementReport extends ProspectReport
 
     protected static ?string $navigationGroup = 'Prospects';
 
-    protected static ?string $title = 'Engagement';
+    protected static ?string $title = 'Messages Overview';
 
-    protected static string $routePath = 'prospect-enagement-report';
+    protected static string $routePath = 'prospect-messages-overview-report';
 
-    protected $cacheTag = 'report-prospect-engagement';
+    protected $cacheTag = 'report-prospect-messages-overview';
 
     protected static ?int $navigationSort = 40;
 
