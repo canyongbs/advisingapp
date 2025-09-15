@@ -252,9 +252,8 @@ class CaseBlock extends WorkflowActionBlock
 
     public function prepareForEdit(WorkflowDetails $details): void
     {
-        if ($details instanceof WorkflowCaseDetails) {
-            $details->load('priority.type');
-        }
+        assert($details instanceof WorkflowCaseDetails);
+        $details->load('priority.type');
     }
 
     /**
