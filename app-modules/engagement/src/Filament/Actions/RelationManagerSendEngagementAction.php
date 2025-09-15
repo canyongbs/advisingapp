@@ -96,8 +96,28 @@ class RelationManagerSendEngagementAction extends CreateAction
                                 function (RelationManager $livewire, string $value): bool {
                                     assert($livewire->getOwnerRecord() instanceof Educatable);
 
-                                    return (($value == (NotificationChannel::Sms->value) && (! $livewire->getOwnerRecord()->phoneNumbers()->where('can_receive_sms', true)->exists())))
-                                        || NotificationChannel::tryFrom($value)?->getCaseDisabled();
+                                    if (($value == NotificationChannel::Sms->value)) {
+                                        $educatable = $livewire->getOwnerRecord();
+
+                                        if ($educatable instanceof Student) {
+                                            $phoneQuery = $educatable->phoneNumbers()
+                                                ->where('can_receive_sms', true);
+
+                                            $hasAvailablePhones = SmsOptOutFeature::active()
+                                                ? $phoneQuery->whereDoesntHave('smsOptOut')->exists()
+                                                : $phoneQuery->exists();
+
+                                            return ! $hasAvailablePhones;
+                                        } elseif ($educatable instanceof Prospect) {
+                                            return ! $educatable->phoneNumbers()
+                                                ->where('can_receive_sms', true)
+                                                ->exists();
+                                        }
+
+                                        return true;
+                                    }
+
+                                    return NotificationChannel::tryFrom($value)?->getCaseDisabled() ?? false;
                                 }
                             )
                             ->selectablePlaceholder(false)
@@ -159,13 +179,25 @@ class RelationManagerSendEngagementAction extends CreateAction
                                             $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
                                         ])
                                         ->all(),
-                                    NotificationChannel::Sms => $livewire->getOwnerRecord()->phoneNumbers()
-                                        ->where('can_receive_sms', true)
-                                        ->get()
-                                        ->mapWithKeys(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber): array => [
-                                            $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
-                                        ])
-                                        ->all(),
+                                    NotificationChannel::Sms => $livewire->getOwnerRecord() instanceof Student
+                                        ? $livewire->getOwnerRecord()->phoneNumbers()
+                                            ->where('can_receive_sms', true)
+                                            ->when(
+                                                SmsOptOutFeature::active(),
+                                                fn ($query) => $query->whereDoesntHave('smsOptOut')
+                                            )
+                                            ->get()
+                                            ->mapWithKeys(fn (StudentPhoneNumber $phoneNumber): array => [
+                                                $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
+                                            ])
+                                            ->all()
+                                        : $livewire->getOwnerRecord()->phoneNumbers()
+                                            ->where('can_receive_sms', true)
+                                            ->get()
+                                            ->mapWithKeys(fn (ProspectPhoneNumber $phoneNumber): array => [
+                                                $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
+                                            ])
+                                            ->all(),
                                 };
                             })
                             ->default(function (RelationManager $livewire): ?string {
