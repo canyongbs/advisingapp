@@ -42,7 +42,6 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
-use App\Features\WorkflowSequentialExecutionFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Exception;
@@ -87,13 +86,13 @@ class CaseWorkflowActionJob extends ExecuteWorkflowActionJob
 
             if (isset($details->assigned_to_id)) {
                 $details->assigned_to_id === 'automatic' ?
-                    $case->priority->type->assignment_type->getAssignerClass()->execute($case) :
-                    $case->assignments()->create([
-                        'user_id' => $details->assigned_to_id,
-                        'assigned_by_id' => $user->getKey(),
-                        'assigned_at' => now(),
-                        'status' => CaseAssignmentStatus::Active,
-                    ]);
+                  $case->priority->type->assignment_type->getAssignerClass()->execute($case) :
+                  $case->assignments()->create([
+                      'user_id' => $details->assigned_to_id,
+                      'assigned_by_id' => $user->getKey(),
+                      'assigned_at' => now(),
+                      'status' => CaseAssignmentStatus::Active,
+                  ]);
             }
 
             $workflowRunStepRelated = new WorkflowRunStepRelated();
@@ -103,12 +102,7 @@ class CaseWorkflowActionJob extends ExecuteWorkflowActionJob
 
             $workflowRunStepRelated->save();
 
-            if (WorkflowSequentialExecutionFeature::active()) {
-                $this->markStepCompletedAndScheduleNext();
-            } else {
-                $this->workflowRunStep->succeeded_at = now();
-                $this->workflowRunStep->saveOrFail();
-            }
+            $this->markStepCompletedAndScheduleNext();
 
             DB::commit();
         } catch (Throwable $throw) {

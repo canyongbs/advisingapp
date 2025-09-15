@@ -43,7 +43,6 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowEventDetails;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
-use App\Features\WorkflowSequentialExecutionFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Exception;
@@ -89,12 +88,7 @@ class EventWorkflowActionJob extends ExecuteWorkflowActionJob
 
                 $workflowRunStepRelated->save();
 
-                if (WorkflowSequentialExecutionFeature::active()) {
-                    $this->markStepCompletedAndScheduleNext();
-                } else {
-                    $this->workflowRunStep->succeeded_at = now();
-                    $this->workflowRunStep->saveOrFail();
-                }
+                $this->markStepCompletedAndScheduleNext();
 
                 DB::commit();
 
@@ -119,12 +113,7 @@ class EventWorkflowActionJob extends ExecuteWorkflowActionJob
 
             $workflowRunStepRelated->save();
 
-            if (WorkflowSequentialExecutionFeature::active()) {
-                $this->markStepCompletedAndScheduleNext();
-            } else {
-                $this->workflowRunStep->succeeded_at = now();
-                $this->workflowRunStep->saveOrFail();
-            }
+            $this->markStepCompletedAndScheduleNext();
 
             DB::commit();
         } catch (Throwable $throw) {
