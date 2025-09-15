@@ -79,7 +79,7 @@ jobs:
 
       - name: Deploy Amazon ECS task definition
         id: task-deploy
-        uses: aws-actions/amazon-ecs-deploy-task-definition@4b08990e8909cf36bc2ca95f994312f090c41865 #2.3.4
+        uses: aws-actions/amazon-ecs-deploy-task-definition@1beffbdddb3eb5f83c7a746c3e9bafeccdccbbaa #2.4.0
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: "advisingapp-dev-service"
@@ -169,7 +169,7 @@ jobs:
 
       - name: Deploy Amazon ECS task definition
         id: task-deploy
-        uses: aws-actions/amazon-ecs-deploy-task-definition@4b08990e8909cf36bc2ca95f994312f090c41865 #2.3.4
+        uses: aws-actions/amazon-ecs-deploy-task-definition@1beffbdddb3eb5f83c7a746c3e9bafeccdccbbaa #2.4.0
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: "advisingapp-worker-dev-service"
@@ -259,7 +259,7 @@ jobs:
 
       - name: Deploy Amazon ECS task definition
         id: task-deploy
-        uses: aws-actions/amazon-ecs-deploy-task-definition@4b08990e8909cf36bc2ca95f994312f090c41865 #2.3.4
+        uses: aws-actions/amazon-ecs-deploy-task-definition@1beffbdddb3eb5f83c7a746c3e9bafeccdccbbaa #2.4.0
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: "advisingapp-scheduler-dev-service"
@@ -348,7 +348,7 @@ jobs:
           image: ${{ needs.build-release-automation.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@4b08990e8909cf36bc2ca95f994312f090c41865 #2.3.4
+        uses: aws-actions/amazon-ecs-deploy-task-definition@1beffbdddb3eb5f83c7a746c3e9bafeccdccbbaa #2.4.0
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           cluster: "advisingapp-dev"
