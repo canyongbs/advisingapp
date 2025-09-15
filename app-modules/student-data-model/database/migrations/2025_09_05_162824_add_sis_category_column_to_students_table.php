@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\StudentSisCategoryFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
@@ -47,8 +46,6 @@ return new class () extends Migration {
             Schema::table('students', function (Blueprint $table) {
                 $table->string('sis_category')->nullable();
             });
-
-            StudentSisCategoryFeature::activate();
         });
     }
 
@@ -58,8 +55,6 @@ return new class () extends Migration {
             Schema::table('students', function (Blueprint $table) {
                 $table->dropColumn('sis_category');
             });
-
-            StudentSisCategoryFeature::deactivate();
         });
     }
 };
