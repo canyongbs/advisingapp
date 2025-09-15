@@ -30,7 +30,6 @@ class HolisticEngagement extends Model
             name: 'concern',
             type: 'concern_type',
             id: 'concern_id',
-            // ownerKey: 'id',
         );
     }
 

@@ -82,6 +82,8 @@ class StudentMessagesDetailTable extends BaseWidget
         $segmentId = $this->getSelectedSegment();
 
         return $table
+            ->recordTitleAttribute('record_id')
+            ->defaultSort('record_sortable_date', 'desc')
             ->query(
                 HolisticEngagement::query()
                     ->with(['concern', 'record'])
@@ -106,6 +108,8 @@ class StudentMessagesDetailTable extends BaseWidget
             ->columns([
                 TextColumn::make('direction')
                     ->badge()
+                    // TODO: Make sortable
+                    // ->sortable()
                     ->getStateUsing(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
                         Engagement::class => 'Outbound',
                         EngagementResponse::class => 'Inbound',
@@ -117,6 +121,8 @@ class StudentMessagesDetailTable extends BaseWidget
                         default => throw new Exception('Invalid record type'),
                     } : null),
                 TextColumn::make('status')
+                    // TODO: Make sortable
+                    // ->sortable()
                     ->getStateUsing(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
                         EngagementResponse::class => $record->record->status,
                         Engagement::class => EngagementDisplayStatus::getStatus($record->record),
@@ -125,6 +131,8 @@ class StudentMessagesDetailTable extends BaseWidget
                     ->badge(),
                 TextColumn::make('sent_by')
                     ->label('Sent By')
+                    // TODO: Make sortable
+                    // ->sortable()
                     ->getStateUsing(function (HolisticEngagement $record): ?string {
                         $related = $record->record;
 
@@ -149,6 +157,8 @@ class StudentMessagesDetailTable extends BaseWidget
                     }),
                 TextColumn::make('sent_to')
                     ->label('Sent To')
+                    // TODO: Make sortable
+                    // ->sortable()
                     ->getStateUsing(function (HolisticEngagement $record): ?string {
                         $related = $record->record;
 
@@ -173,6 +183,8 @@ class StudentMessagesDetailTable extends BaseWidget
                     }),
                 TextColumn::make('type')
                     ->badge()
+                    // TODO: Make sortable
+                    // ->sortable()
                     ->getStateUsing(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
                         Engagement::class => match ($record->record->channel) {
                             NotificationChannel::Email => 'Email',
@@ -214,6 +226,10 @@ class StudentMessagesDetailTable extends BaseWidget
                     ->dateTime()
                     ->label('Date')
                     ->sortable(),
+                // TODO: Campaign column
+                // TextColumn::make('campaign')
+                //     ->sortable()
+                //     ->getStateUsing(fn (HolisticEngagement $record) => $record->record?->campaign)
             ]);
     }
 }
