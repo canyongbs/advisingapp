@@ -39,6 +39,7 @@ namespace AdvisingApp\Report\Filament\Pages;
 use AdvisingApp\Report\Abstract\StudentReport;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\StudentMessagesDetailStats;
+use AdvisingApp\Report\Filament\Widgets\StudentMessagesDetailTable;
 use App\Filament\Clusters\ReportLibrary;
 
 class StudentMessagesDetailReport extends StudentReport
@@ -69,7 +70,7 @@ class StudentMessagesDetailReport extends StudentReport
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
             StudentMessagesDetailStats::make(['cacheTag' => $this->cacheTag]),
-            // StudentMessagesTable::make(['cacheTag' => $this->cacheTag]),
+            StudentMessagesDetailTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 
