@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\HolisticEngagement;
@@ -112,6 +113,13 @@ class StudentMessagesDetailTable extends BaseWidget
                         EngagementResponse::class => 'heroicon-o-arrow-down-tray',
                         default => throw new Exception('Invalid record type'),
                     } : null),
+                TextColumn::make('status')
+                    ->getStateUsing(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
+                        EngagementResponse::class => $record->record->status,
+                        Engagement::class => EngagementDisplayStatus::getStatus($record->record),
+                        default => throw new Exception('Invalid record type'),
+                    } : null)
+                    ->badge(),
             ]);
     }
 }
