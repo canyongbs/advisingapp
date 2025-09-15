@@ -34,10 +34,6 @@
 
 <section
     class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
-    data-has-alpine-state="true"
-    x-data="{
-        isCollapsed: false,
-    }"
     wire:poll.10s=""
 >
     <header class="fi-section-header flex flex-col gap-3 px-6 py-4">
@@ -47,15 +43,15 @@
                     Activity Feed
                 </h3>
             </div>
-            <a
-                class="fi-btn fi-btn-color-gray fi-color-gray fi-size-md fi-btn-size-md [input:checked+&amp;]:bg-gray-400 [input:checked+&amp;]:text-white [input:checked+&amp;]:ring-0 [input:checked+&amp;]:hover:bg-gray-300 dark:[input:checked+&amp;]:bg-gray-600 dark:[input:checked+&amp;]:hover:bg-gray-500 relative inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-gray-950 shadow-sm outline-none ring-1 ring-gray-950/10 transition duration-75 hover:bg-gray-50 focus-visible:ring-2 dark:bg-white/5 dark:text-white dark:ring-white/20 dark:hover:bg-white/10"
-                href={{ $viewUrl }}
-                style=";"
-            >
-                <span class="fi-btn-label">
+            @if ($timelineRecords)
+                <x-filament::button
+                    color="gray"
+                    :href="$viewUrl"
+                    tag="a"
+                >
                     Full Feed
-                </span>
-            </a>
+                </x-filament::button>
+            @endif
         </div>
     </header>
 </section>
