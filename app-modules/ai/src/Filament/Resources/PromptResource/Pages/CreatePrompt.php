@@ -94,14 +94,14 @@ class CreatePrompt extends CreateRecord
                                 ->live()
                                 ->columnSpanFull(),
                             Select::make('confidential_prompt_users')
-                                ->relationship('confidentialPromptUsers', 'name')
+                                ->relationship('confidentialAccessUsers', 'name')
                                 ->preload()
                                 ->label('Users')
                                 ->multiple()
                                 ->exists('users', 'id')
                                 ->visible(fn (Get $get) => $get('is_confidential')),
                             Select::make('confidential_prompt_teams')
-                                ->relationship('confidentialPromptTeams', 'name')
+                                ->relationship('confidentialAccessTeams', 'name')
                                 ->preload()
                                 ->label('Teams')
                                 ->multiple()
