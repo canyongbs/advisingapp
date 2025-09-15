@@ -40,7 +40,9 @@ use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\HolisticEngagement;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Exception;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -120,6 +122,29 @@ class StudentMessagesDetailTable extends BaseWidget
                         default => throw new Exception('Invalid record type'),
                     } : null)
                     ->badge(),
+                TextColumn::make('sent_by')
+                    ->label('Sent By')
+                    ->getStateUsing(function (HolisticEngagement $record): ?string {
+                        $related = $record->record;
+
+                        if (is_null($related)) {
+                            return null;
+                        }
+
+                        return match ($related::class) {
+                            Engagement::class => $related->user?->name,
+
+                            EngagementResponse::class => (function () use ($related): string {
+                                $sender = $related->sender;
+
+                                assert($sender instanceof Student || $sender instanceof Prospect);
+
+                                return $sender->{$sender->displayNameKey()};
+                            })(),
+
+                            default => throw new Exception('Invalid record type'),
+                        };
+                    }),
             ]);
     }
 }
