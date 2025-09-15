@@ -53,7 +53,7 @@ class StudentMessagesOverviewReport extends StudentReport
 
     protected static ?string $navigationGroup = 'Students';
 
-    protected $cacheTag = 'report-student-messages-overview';
+    protected string $cacheTag = 'report-student-messages-overview';
 
     protected static ?int $navigationSort = 4;
 
