@@ -103,7 +103,5 @@ abstract class WorkflowActionBlock extends Block
      * Prepare WorkflowDetails for form population during editing.
      * Allows blocks to load necessary relationships before toArray() is called.
      */
-    public function prepareForEdit(WorkflowDetails $details): void
-    {
-    }
+    public function prepareForEdit(WorkflowDetails $details): void {}
 }
