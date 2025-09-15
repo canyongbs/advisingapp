@@ -139,8 +139,33 @@ class StudentMessagesDetailTable extends BaseWidget
 
                                 assert($sender instanceof Student || $sender instanceof Prospect);
 
+                                // TODO: Make a link to the Student/Prospect profile
                                 return $sender->{$sender->displayNameKey()};
                             })(),
+
+                            default => throw new Exception('Invalid record type'),
+                        };
+                    }),
+                TextColumn::make('sent_to')
+                    ->label('Sent To')
+                    ->getStateUsing(function (HolisticEngagement $record): ?string {
+                        $related = $record->record;
+
+                        if (is_null($related)) {
+                            return null;
+                        }
+
+                        return match ($related::class) {
+                            Engagement::class => (function () use ($related): string {
+                                $recipient = $related->recipient;
+
+                                assert($recipient instanceof Student || $recipient instanceof Prospect);
+
+                                // TODO: Make a link to the Student/Prospect profile
+                                return $recipient->{$recipient->displayNameKey()};
+                            })(),
+
+                            EngagementResponse::class => 'N/A',
 
                             default => throw new Exception('Invalid record type'),
                         };
