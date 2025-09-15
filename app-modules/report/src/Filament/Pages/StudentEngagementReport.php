@@ -45,15 +45,15 @@ use App\Filament\Clusters\ReportLibrary;
 
 class StudentEngagementReport extends StudentReport
 {
-    protected static ?string $title = 'Engagement';
+    protected static ?string $title = 'Messages Overview';
 
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string $routePath = 'student-engagement-report';
+    protected static string $routePath = 'student-messages-overview-report';
 
     protected static ?string $navigationGroup = 'Students';
 
-    protected $cacheTag = 'report-student-engagement';
+    protected $cacheTag = 'report-student-messages-overview';
 
     protected static ?int $navigationSort = 4;
 
