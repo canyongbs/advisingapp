@@ -50,6 +50,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 
 class StudentMessagesDetailTable extends BaseWidget
@@ -194,6 +195,19 @@ class StudentMessagesDetailTable extends BaseWidget
                             EngagementResponseType::Email => 'heroicon-o-envelope',
                             EngagementResponseType::Sms => 'heroicon-o-chat-bubble-bottom-center-text',
                         },
+                        default => throw new Exception('Invalid record type'),
+                    } : null),
+                TextColumn::make('details')
+                    ->getStateUsing(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
+                        Engagement::class => Str::limit(match ($record->record->channel) {
+                            NotificationChannel::Email => $record->record->getSubjectMarkdown(),
+                            NotificationChannel::Sms => $record->record->getBodyMarkdown(),
+                            default => 'N/A',
+                        }, 50),
+                        EngagementResponse::class => Str::limit(match ($record->record->type) {
+                            EngagementResponseType::Email => $record->record->subject,
+                            EngagementResponseType::Sms => $record->record->getBodyMarkdown(),
+                        }, 50),
                         default => throw new Exception('Invalid record type'),
                     } : null),
             ]);
