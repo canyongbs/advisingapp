@@ -108,8 +108,51 @@ class StudentMessagesStats extends StatsOverviewReportWidget
                     ->count()
             );
 
-        $smsSentCount = 0;
-        $smsReceivedCount = 0;
+        $smsSentCount = $shouldBypassCache
+            ? Engagement::query()
+                ->whereHasMorph('recipient', Student::class, function (Builder $query) use ($segmentId) {
+                    $query->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    );
+                })
+                ->where('channel', NotificationChannel::Sms)
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('dispatched_at', [$startDate, $endDate])
+                )
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'sent-sms-count',
+                now()->addHours(24),
+                fn () => Engagement::query()
+                    ->whereHasMorph('recipient', Student::class)
+                    ->where('channel', NotificationChannel::Sms)
+                    ->count()
+            );
+
+        $smsReceivedCount = $shouldBypassCache
+            ? EngagementResponse::query()
+                ->whereHasMorph('sender', Student::class, function (Builder $query) use ($segmentId) {
+                    $query->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    );
+                })
+                ->where('type', EngagementResponseType::Sms)
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('sent_at', [$startDate, $endDate])
+                )
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'received-sms-count',
+                now()->addHours(24),
+                fn () => EngagementResponse::query()
+                    ->whereHasMorph('sender', Student::class)
+                    ->where('type', EngagementResponseType::Sms)
+                    ->count()
+            );
 
         return [
             Stat::make('Emails Sent', Number::abbreviate($emailsSentCount, maxPrecision: 2)),
