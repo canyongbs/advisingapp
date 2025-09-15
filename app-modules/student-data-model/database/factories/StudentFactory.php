@@ -75,8 +75,8 @@ class StudentFactory extends Factory
             'firstgen' => $this->faker->boolean(),
             'ethnicity' => $this->faker->randomElement(['White', 'Black', 'Hispanic', 'Asian', 'Other']),
             'lastlmslogin' => $this->faker->dateTime(),
-            'f_e_term' => $this->faker->numerify('####'),
-            'mr_e_term' => $this->faker->numerify('####'),
+            // 'f_e_term' => $this->faker->numerify('####'),
+            // 'mr_e_term' => $this->faker->numerify('####'),
             'athletics_status' => $this->faker->randomElement(['Active', 'Inactive']),
             'athletic_details' => $this->faker->sentence(),
         ];

@@ -62,8 +62,8 @@ class CreateStudentRequestFactory extends RequestFactory
             'dfw' => $this->faker->optional()->randomElement([$this->faker->date('Y-m-d'), null]),
             'ethnicity' => $this->faker->optional()->text(10),
             'lastlmslogin' => $this->faker->optional()->randomElement([$this->faker->date('Y-m-d H:i:s'), null]),
-            'f_e_term' => $this->faker->optional()->text(10),
-            'mr_e_term' => $this->faker->optional()->text(10),
+            // 'f_e_term' => $this->faker->optional()->text(10),
+            // 'mr_e_term' => $this->faker->optional()->text(10),
         ], filled(...));
     }
 }

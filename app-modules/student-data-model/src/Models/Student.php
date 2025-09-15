@@ -77,6 +77,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -142,8 +143,8 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         'firstgen',
         'ethnicity',
         'lastlmslogin',
-        'f_e_term',
-        'mr_e_term',
+        // 'f_e_term',
+        // 'mr_e_term',
         'primary_email_id',
         'primary_phone_id',
         'primary_address_id',
@@ -211,6 +212,34 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             id: 'respondent_id',
             localKey: 'sisid'
         );
+    }
+
+    /**
+     * @return HasOne<Enrollment, static>
+     */
+    public function firstEnrollmentTerm(): HasOne
+    {
+        return $this->hasOne(Enrollment::class, 'sisid', 'sisid')
+            ->ofMany([
+                'start_date' => 'min',
+                'id' => 'min',
+            ], function (Builder $query) {
+                $query->whereNotNull('semester_code');
+            });
+    }
+
+    /**
+     * @return HasOne<Enrollment, static>
+     */
+    public function mostRecentEnrollmentTerm(): HasOne
+    {
+        return $this->hasOne(Enrollment::class, 'sisid', 'sisid')
+            ->ofMany([
+                'start_date' => 'max',
+                'id' => 'max',
+            ], function (Builder $query) {
+                $query->whereNotNull('semester_code');
+            });
     }
 
     /**

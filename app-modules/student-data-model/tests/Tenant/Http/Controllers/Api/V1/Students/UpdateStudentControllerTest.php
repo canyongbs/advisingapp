@@ -191,15 +191,15 @@ it('updates a student', function () {
             ->toBe($updateStudentRequestData['lastlmslogin']);
     }
 
-    if (isset($updateStudentRequestData['f_e_term'])) {
-        expect($response['data']['f_e_term'] ?? null)
-            ->toBe($updateStudentRequestData['f_e_term']);
-    }
+    // if (isset($updateStudentRequestData['f_e_term'])) {
+    //     expect($response['data']['f_e_term'] ?? null)
+    //         ->toBe($updateStudentRequestData['f_e_term']);
+    // }
 
-    if (isset($updateStudentRequestData['mr_e_term'])) {
-        expect($response['data']['mr_e_term'] ?? null)
-            ->toBe($updateStudentRequestData['mr_e_term']);
-    }
+    // if (isset($updateStudentRequestData['mr_e_term'])) {
+    //     expect($response['data']['mr_e_term'] ?? null)
+    //         ->toBe($updateStudentRequestData['mr_e_term']);
+    // }
 });
 
 it('updates a student\'s primary email address', function () {
@@ -303,8 +303,8 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     '`ethnicity` is max 255 characters' => [['ethnicity' => str_repeat('a', 256)], 'ethnicity', 'The ethnicity may not be greater than 255 characters.'],
     '`lastlmslogin` is a valid date' => [['lastlmslogin' => 'not-a-date'], 'lastlmslogin', 'The lastlmslogin is not a valid date.'],
     '`lastlmslogin` is Y-m-d H:i:s format' => [['lastlmslogin' => '2020-01-01'], 'lastlmslogin', 'The lastlmslogin does not match the format Y-m-d H:i:s.'],
-    '`f_e_term` is max 255 characters' => [['f_e_term' => str_repeat('a', 256)], 'f_e_term', 'The f e term may not be greater than 255 characters.'],
-    '`mr_e_term` is max 255 characters' => [['mr_e_term' => str_repeat('a', 256)], 'mr_e_term', 'The mr e term may not be greater than 255 characters.'],
+    // '`f_e_term` is max 255 characters' => [['f_e_term' => str_repeat('a', 256)], 'f_e_term', 'The f e term may not be greater than 255 characters.'],
+    // '`mr_e_term` is max 255 characters' => [['mr_e_term' => str_repeat('a', 256)], 'mr_e_term', 'The mr e term may not be greater than 255 characters.'],
     '`primary_email_id` is a valid UUID' => [['primary_email_id' => 'not-a-uuid'], 'primary_email_id', 'The primary email id must be a valid UUID.'],
     '`primary_email_id` is an existing email address ID' => [['primary_email_id' => (string) Str::orderedUuid()], 'primary_email_id', 'The selected primary email id is invalid.'],
     '`primary_email_id` is an email address ID for the current student' => [['primary_email_id' => ($primaryEmailId = (string) Str::orderedUuid())], 'primary_email_id', 'The selected primary email id is invalid.', function () use ($primaryEmailId) {
