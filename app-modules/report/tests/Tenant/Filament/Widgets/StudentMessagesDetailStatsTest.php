@@ -38,7 +38,7 @@ use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Report\Filament\Widgets\StudentMessagesStats;
+use AdvisingApp\Report\Filament\Widgets\StudentMessagesDetailStats;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -80,7 +80,7 @@ it('returns correct counts of emails and SMS sent/received with no filters', fun
         'type' => EngagementResponseType::Sms,
     ])->create();
 
-    $widget = new StudentMessagesStats();
+    $widget = new StudentMessagesDetailStats();
     $widget->cacheTag = 'report-student-messages';
     $widget->filters = [];
 
@@ -136,7 +136,7 @@ it('returns correct counts of emails and SMS sent/received within the given date
         'sent_at' => $endDate,
     ])->create();
 
-    $widget = new StudentMessagesStats();
+    $widget = new StudentMessagesDetailStats();
     $widget->cacheTag = 'report-student-messages';
     $widget->filters = [
         'startDate' => $startDate->toDateString(),
@@ -241,7 +241,7 @@ it('returns correct counts of emails and SMS sent/received based on segment filt
         'type' => EngagementResponseType::Sms,
     ])->create();
 
-    $widget = new StudentMessagesStats();
+    $widget = new StudentMessagesDetailStats();
     $widget->cacheTag = 'report-student-messages';
     $widget->filters = [
         'populationSegment' => $segment->getKey(),
@@ -255,7 +255,7 @@ it('returns correct counts of emails and SMS sent/received based on segment filt
         ->and($stats[3]->getValue())->toEqual($smsReceivedForJohn);
 
     // Without filter
-    $widget = new StudentMessagesStats();
+    $widget = new StudentMessagesDetailStats();
     $widget->cacheTag = 'report-student-messages';
     $widget->filters = [];
 

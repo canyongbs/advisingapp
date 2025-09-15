@@ -46,7 +46,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
 
-class StudentMessagesStats extends StatsOverviewReportWidget
+class StudentMessagesDetailStats extends StatsOverviewReportWidget
 {
     protected int | string | array $columnSpan = [
         'sm' => 2,
