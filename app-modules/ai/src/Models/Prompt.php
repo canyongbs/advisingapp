@@ -36,11 +36,13 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Ai\Models\Scopes\ConfidentialPromptScope;
 use AdvisingApp\Ai\Observers\PromptObserver;
 use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -49,7 +51,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @mixin IdeHelperPrompt
  */
-#[ObservedBy([PromptObserver::class])]
+#[ObservedBy([PromptObserver::class])] #[ScopedBy(ConfidentialPromptScope::class)]
 class Prompt extends BaseModel
 {
     use SoftDeletes;
@@ -105,7 +107,7 @@ class Prompt extends BaseModel
     /**
      * @return BelongsToMany<Team, $this, covariant ConfidentialPromptTeam>
      */
-    public function confidentialPromptTeams(): BelongsToMany
+    public function confidentialAccessTeams(): BelongsToMany
     {
         return $this->belongsToMany(
             Team::class,
@@ -118,7 +120,7 @@ class Prompt extends BaseModel
     /**
      * @return BelongsToMany<User, $this, covariant ConfidentialPromptUser>
      */
-    public function confidentialPromptUsers(): BelongsToMany
+    public function confidentialAccessUsers(): BelongsToMany
     {
         return $this->belongsToMany(
             User::class,

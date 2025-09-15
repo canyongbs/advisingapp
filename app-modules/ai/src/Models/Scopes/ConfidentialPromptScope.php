@@ -44,16 +44,20 @@ class ConfidentialPromptScope implements Scope
 {
     public function apply(Builder $builder, Model $model): void
     {
+        if (auth()->user()?->isAdmin) {
+            return;
+        }
+
         $builder->where('is_confidential', false)->orWhere(function (Builder $query) {
             $query->where('is_confidential', true)
                 ->where(function (Builder $query) {
                     $query->where('user_id', auth()->id())
-                        ->orWhereHas('confidentialPromptTeams', function (Builder $query) {
+                        ->orWhereHas('confidentialAccessTeams', function (Builder $query) {
                             $query->whereHas('users', function (Builder $query) {
                                 $query->where('users.id', auth()->id());
                             });
                         })
-                        ->orWhereHas('confidentialPromptUsers', function (Builder $query) {
+                        ->orWhereHas('confidentialAccessUsers', function (Builder $query) {
                             $query->where('users.id', auth()->id());
                         });
                 });
