@@ -38,7 +38,6 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -153,30 +152,28 @@ class StudentMessagesStats extends StatsOverviewReportWidget
         //     );
 
         $emailsSentCount = $shouldBypassCache
-            ? EmailMessage::query()
+            ? Engagement::query()
                 ->whereHasMorph('recipient', Student::class, function (Builder $query) use ($segmentId) {
                     $query->when(
                         $segmentId,
                         fn (Builder $query) => $this->segmentFilter($query, $segmentId)
                     );
                 })
+                ->where('channel', NotificationChannel::Email)
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'student-emails-sent-count',
+                'sent-emails-count',
                 now()->addHours(24),
-                fn () => EmailMessage::query()
-                    ->whereHasMorph('recipient', Student::class, function (Builder $query) use ($segmentId) {
-                        $query->when(
-                            $segmentId,
-                            fn (Builder $query) => $this->segmentFilter($query, $segmentId)
-                        );
-                    })
+                fn () => Engagement::query()
+                    ->whereHasMorph('recipient', Student::class)
+                    ->where('channel', NotificationChannel::Email)
                     ->count()
             );
+
         $emailsReceivedCount = 0;
         $smsSentCount = 0;
         $smsReceivedCount = 0;
