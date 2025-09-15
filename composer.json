@@ -118,7 +118,7 @@
         "telnyx/telnyx-php": "^3.0",
         "tpetry/laravel-postgresql-enhanced": "^3.0",
         "twilio/sdk": "^8.5.0",
-        "ysfkaya/filament-phone-input": "^3.2.2"
+        "ysfkaya/filament-phone-input": "^3.2.4"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.5",
