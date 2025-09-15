@@ -167,9 +167,8 @@ class WorkflowStepsRelationManager extends RelationManager
                     ->fillForm(function (WorkflowStep $record): array {
                         assert($record->currentDetails instanceof WorkflowDetails);
 
-                        if ($record->currentDetails instanceof WorkflowCaseDetails) {
-                            $record->currentDetails->load('priority.type');
-                        }
+                        $block = $record->currentDetails->getBlock();
+                        $block->prepareForEdit($record->currentDetails);
 
                         $data = $record->currentDetails->toArray();
 
@@ -190,13 +189,10 @@ class WorkflowStepsRelationManager extends RelationManager
 
                         unset($data['days'], $data['hours'], $data['minutes']);
 
-                        if ($record->currentDetails instanceof WorkflowCaseDetails) {
-                            if (isset($data['assigned_to_id']) && $data['assigned_to_id'] === 'automatic') {
-                                $data['assigned_to_id'] = null;
-                            }
-                        }
+                        $block = $record->currentDetails->getBlock();
+                        $transformedData = $block->beforeUpdate($data);
 
-                        $record->currentDetails->update($data);
+                        $record->currentDetails->update($transformedData);
 
                         return $record;
                     })
@@ -218,43 +214,45 @@ class WorkflowStepsRelationManager extends RelationManager
 
     /**
      * @param WorkflowActionBlock $block
-     * @param array<string> $data
+     * @param array<string, mixed> $data
      *
      * @return WorkflowDetails|null
      */
     private function createWorkflowDetails(WorkflowActionBlock $block, array $data): ?WorkflowDetails
     {
+        $transformedData = $block->beforeCreate($data);
+
         $action = match ($block->type()) {
             'workflow_case_details' => WorkflowCaseDetails::create([
-                'division_id' => $data['division_id'],
-                'status_id' => $data['status_id'],
-                'priority_id' => $data['priority_id'],
-                'assigned_to_id' => $data['assigned_to_id'] === 'automatic' ? null : $data['assigned_to_id'],
-                'close_details' => $data['close_details'],
-                'res_details' => $data['res_details'],
+                'division_id' => $transformedData['division_id'],
+                'status_id' => $transformedData['status_id'],
+                'priority_id' => $transformedData['priority_id'],
+                'assigned_to_id' => $transformedData['assigned_to_id'],
+                'close_details' => $transformedData['close_details'],
+                'res_details' => $transformedData['res_details'],
             ]),
             'workflow_engagement_email_details' => WorkflowEngagementEmailDetails::create([
-                'channel' => $data['channel'],
-                'subject' => $data['subject'],
-                'body' => $data['body'],
+                'channel' => $transformedData['channel'],
+                'subject' => $transformedData['subject'],
+                'body' => $transformedData['body'],
             ]),
             'workflow_engagement_sms_details' => WorkflowEngagementSmsDetails::create([
-                'channel' => $data['channel'],
-                'body' => $data['body'],
+                'channel' => $transformedData['channel'],
+                'body' => $transformedData['body'],
             ]),
             'workflow_proactive_alert_details' => WorkflowProactiveAlertDetails::create([
-                'description' => $data['description'],
-                'severity' => $data['severity'],
-                'suggested_intervention' => $data['suggested_intervention'],
-                'status_id' => $data['status_id'],
+                'description' => $transformedData['description'],
+                'severity' => $transformedData['severity'],
+                'suggested_intervention' => $transformedData['suggested_intervention'],
+                'status_id' => $transformedData['status_id'],
             ]),
             'workflow_task_details' => WorkflowTaskDetails::create([
-                'title' => $data['title'],
-                'description' => $data['description'],
-                'due' => $data['due'],
-                'assigned_to' => $data['assigned_to'],
+                'title' => $transformedData['title'],
+                'description' => $transformedData['description'],
+                'due' => $transformedData['due'],
+                'assigned_to' => $transformedData['assigned_to'],
             ]),
-            default => null
+            default => null,
         };
 
         return $action;

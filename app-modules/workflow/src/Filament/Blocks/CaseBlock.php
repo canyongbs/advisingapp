@@ -42,6 +42,8 @@ use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
+use AdvisingApp\Workflow\Models\WorkflowDetails;
 use App\Models\User;
 use Closure;
 use Exception;
@@ -226,5 +228,46 @@ class CaseBlock extends WorkflowActionBlock
     public static function type(): string
     {
         return 'workflow_case_details';
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     */
+    public function beforeCreate(array $data): array
+    {
+        return $this->transformAssignmentData($data);
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     */
+    public function beforeUpdate(array $data): array
+    {
+        return $this->transformAssignmentData($data);
+    }
+
+    public function prepareForEdit(WorkflowDetails $details): void
+    {
+        if ($details instanceof WorkflowCaseDetails) {
+            $details->load('priority.type');
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     */
+    private function transformAssignmentData(array $data): array
+    {
+        if (isset($data['assigned_to_id']) && $data['assigned_to_id'] === 'automatic') {
+            $data['assigned_to_id'] = null;
+        }
+
+        return $data;
     }
 }
