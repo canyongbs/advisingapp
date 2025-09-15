@@ -66,6 +66,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 
 class EngagementsRelationManager extends RelationManager
@@ -201,6 +202,18 @@ class EngagementsRelationManager extends RelationManager
                         Engagement::class => EngagementDisplayStatus::getStatus($record->timelineable),
                     })
                     ->badge(),
+                TextColumn::make('subject')
+                    ->label('Preview')
+                    ->description(
+                        fn (Timeline $record): ?string => ($record->timelineable instanceof Engagement || $record->timelineable instanceof EngagementResponse) && filled($body = $record->timelineable->getBodyMarkdown())
+                            ? Str::limit(strip_tags($body), 50)
+                            : null
+                    )
+                    ->getStateUsing(function (Timeline $record): ?string {
+                        return $record->timelineable instanceof EngagementResponse || $record->timelineable instanceof Engagement
+                            ? $record->timelineable->getSubject()
+                            : null;
+                    }),
                 TextColumn::make('type')
                     ->getStateUsing(function (Timeline $record) {
                         /** @var HasDeliveryMethod $timelineable */
