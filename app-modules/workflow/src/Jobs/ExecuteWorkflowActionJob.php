@@ -37,7 +37,6 @@
 namespace AdvisingApp\Workflow\Jobs;
 
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
-use App\Features\WorkflowSequentialExecutionFeature;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -61,16 +60,14 @@ abstract class ExecuteWorkflowActionJob implements ShouldQueue
         $this->workflowRunStep->last_failed_at = now();
         $this->workflowRunStep->save();
 
-        if (WorkflowSequentialExecutionFeature::active()) {
-            WorkflowRunStep::query()
-                ->where('workflow_run_id', $this->workflowRunStep->workflow_run_id)
-                ->whereNull('succeeded_at')
-                ->whereNull('last_failed_at')
-                ->where('id', '!=', $this->workflowRunStep->id)
-                ->update([
-                    'last_failed_at' => now(),
-                ]);
-        }
+        WorkflowRunStep::query()
+            ->where('workflow_run_id', $this->workflowRunStep->workflow_run_id)
+            ->whereNull('succeeded_at')
+            ->whereNull('last_failed_at')
+            ->where('id', '!=', $this->workflowRunStep->id)
+            ->update([
+                'last_failed_at' => now(),
+            ]);
 
         report($exception);
     }
