@@ -210,6 +210,10 @@ class StudentMessagesDetailTable extends BaseWidget
                         }, 50),
                         default => throw new Exception('Invalid record type'),
                     } : null),
+                TextColumn::make('record_sortable_date')
+                    ->dateTime()
+                    ->label('Date')
+                    ->sortable(),
             ]);
     }
 }
