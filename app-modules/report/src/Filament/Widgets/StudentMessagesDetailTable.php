@@ -37,9 +37,11 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
+use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\HolisticEngagement;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -168,6 +170,32 @@ class StudentMessagesDetailTable extends BaseWidget
                             default => throw new Exception('Invalid record type'),
                         };
                     }),
+                TextColumn::make('type')
+                    ->badge()
+                    ->getStateUsing(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
+                        Engagement::class => match ($record->record->channel) {
+                            NotificationChannel::Email => 'Email',
+                            NotificationChannel::Sms => 'SMS',
+                            default => 'Other',
+                        },
+                        EngagementResponse::class => match ($record->record->type) {
+                            EngagementResponseType::Email => 'Email',
+                            EngagementResponseType::Sms => 'SMS',
+                        },
+                        default => throw new Exception('Invalid record type'),
+                    } : null)
+                    ->icon(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
+                        Engagement::class => match ($record->record->channel) {
+                            NotificationChannel::Email => 'heroicon-o-envelope',
+                            NotificationChannel::Sms => 'heroicon-o-chat-bubble-bottom-center-text',
+                            default => 'heroicon-o-bell',
+                        },
+                        EngagementResponse::class => match ($record->record->type) {
+                            EngagementResponseType::Email => 'heroicon-o-envelope',
+                            EngagementResponseType::Sms => 'heroicon-o-chat-bubble-bottom-center-text',
+                        },
+                        default => throw new Exception('Invalid record type'),
+                    } : null),
             ]);
     }
 }
