@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
@@ -162,7 +164,7 @@ class StudentMessagesStats extends StatsOverviewReportWidget
                 ->where('channel', NotificationChannel::Email)
                 ->when(
                     $startDate && $endDate,
-                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                    fn (Builder $query): Builder => $query->whereBetween('dispatched_at', [$startDate, $endDate])
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
@@ -174,7 +176,29 @@ class StudentMessagesStats extends StatsOverviewReportWidget
                     ->count()
             );
 
-        $emailsReceivedCount = 0;
+        $emailsReceivedCount = $shouldBypassCache
+            ? EngagementResponse::query()
+                ->whereHasMorph('sender', Student::class, function (Builder $query) use ($segmentId) {
+                    $query->when(
+                        $segmentId,
+                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    );
+                })
+                ->where('type', EngagementResponseType::Email)
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('sent_at', [$startDate, $endDate])
+                )
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'received-emails-count',
+                now()->addHours(24),
+                fn () => EngagementResponse::query()
+                    ->whereHasMorph('sender', Student::class)
+                    ->where('type', EngagementResponseType::Email)
+                    ->count()
+            );
+
         $smsSentCount = 0;
         $smsReceivedCount = 0;
 
