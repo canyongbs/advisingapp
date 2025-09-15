@@ -209,10 +209,10 @@ class EngagementsRelationManager extends RelationManager
                             ? Str::limit(strip_tags($body), 50)
                             : null
                     )
-                    ->getStateUsing(function (Timeline $record): ?string {
+                    ->getStateUsing(function (Timeline $record): string {
                         return $record->timelineable instanceof EngagementResponse || $record->timelineable instanceof Engagement
                             ? $record->timelineable->getSubject()
-                            : null;
+                            : '';
                     }),
                 TextColumn::make('type')
                     ->getStateUsing(function (Timeline $record) {
