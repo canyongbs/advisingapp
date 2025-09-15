@@ -99,9 +99,7 @@ class StudentMessagesDetailTable extends BaseWidget
                     //     fn (Builder $query) => $this->segmentFilter($query, $segmentId)
                     // )
                     ->orderBy('created_at', 'desc')
-                    ->limit(10)
             )
-            // ->paginated(false)
             ->columns([
                 TextColumn::make('direction')
                     ->badge()
