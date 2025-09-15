@@ -39,7 +39,7 @@ jobs:
 
       - name: Setup cache environment
         id: extcache
-        uses: shivammathur/cache-extensions@ed47a55c463bf49c0de08e5290a3d55208e2c287 #1.13.0
+        uses: shivammathur/cache-extensions@4595bea7d6630821b0a3a4894f816402faaf324c #1.13.0
         with:
           php-version: ${{ env.php-version }}
           extensions: ${{ env.php-extensions }}
@@ -166,7 +166,7 @@ jobs:
 
       - name: Setup cache environment
         id: extcache
-        uses: shivammathur/cache-extensions@ed47a55c463bf49c0de08e5290a3d55208e2c287 #1.13.0
+        uses: shivammathur/cache-extensions@4595bea7d6630821b0a3a4894f816402faaf324c #1.13.0
         with:
           php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
           extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
@@ -282,7 +282,7 @@ jobs:
     steps:
       - name: Setup cache environment
         id: extcache
-        uses: shivammathur/cache-extensions@ed47a55c463bf49c0de08e5290a3d55208e2c287 #1.13.0
+        uses: shivammathur/cache-extensions@4595bea7d6630821b0a3a4894f816402faaf324c #1.13.0
         with:
           php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
           extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
