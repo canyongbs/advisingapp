@@ -41,19 +41,19 @@ use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\StudentMessagesStats;
 use App\Filament\Clusters\ReportLibrary;
 
-class StudentMessagesReport extends StudentReport
+class StudentMessagesDetailReport extends StudentReport
 {
-    protected static ?string $title = 'Messages';
+    protected static ?string $title = 'Messages Detail';
 
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string $routePath = 'student-messages-report';
+    protected static string $routePath = 'student-messages-detail-report';
 
     protected static ?string $navigationGroup = 'Students';
 
-    protected $cacheTag = 'report-student-messages';
+    protected string $cacheTag = 'report-student-messages-detail';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 5;
 
     public function getColumns(): int | string | array
     {
