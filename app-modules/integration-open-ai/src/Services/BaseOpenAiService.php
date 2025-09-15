@@ -640,7 +640,7 @@ abstract class BaseOpenAiService implements AiService
                         'tools' => [
                             ...filled($vectorStoreIds) ? [[
                                 'type' => 'file_search',
-                                'vector_store_ids' => [$vectorStoreIds],
+                                'vector_store_ids' => $vectorStoreIds,
                             ]] : [],
                             ...$hasImageGeneration ? [[
                                 'type' => 'image_generation',
