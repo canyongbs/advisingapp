@@ -43,7 +43,7 @@ use AdvisingApp\Report\Filament\Widgets\StudentEngagementLineChart;
 use AdvisingApp\Report\Filament\Widgets\StudentEngagementStats;
 use App\Filament\Clusters\ReportLibrary;
 
-class StudentEngagementReport extends StudentReport
+class StudentMessagesOverviewReport extends StudentReport
 {
     protected static ?string $title = 'Messages Overview';
 
