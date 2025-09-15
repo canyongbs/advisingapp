@@ -43,7 +43,7 @@ use AdvisingApp\Report\Filament\Widgets\ProspectEngagementState;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Filament\Clusters\ReportLibrary;
 
-class ProspectEnagagementReport extends ProspectReport
+class ProspectMessagesOverviewReport extends ProspectReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
