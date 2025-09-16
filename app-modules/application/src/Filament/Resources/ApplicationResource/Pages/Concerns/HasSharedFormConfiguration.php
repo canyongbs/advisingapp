@@ -146,8 +146,6 @@ trait HasSharedFormConfiguration
                     return;
                 }
 
-                $record->wasRecentlyCreated && $component->processImages();
-
                 $application = $record instanceof Application ? $record : $record->submissible;
                 $applicationStep = $record instanceof ApplicationStep ? $record : null;
 
@@ -167,6 +165,9 @@ trait HasSharedFormConfiguration
                     $content['content'] ?? [],
                     $applicationStep,
                 );
+
+                $content = $component->processImages($content);
+                $content = $component->removeImageUrls($content);
 
                 $record->content = $content;
                 $record->save();
