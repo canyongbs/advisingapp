@@ -233,3 +233,27 @@ it('ensures sent_by is properly rendered in the table', function () {
         ->assertTableColumnStateSet('sent_by', $user->name, $holisticEngagementOutbound)
         ->assertTableColumnStateSet('sent_by', $student->full_name, $holisticEngagementInbound);
 });
+
+it('ensures sent_to is properly rendered in the table', function () {
+    $student = Student::factory()->create();
+
+    $engagement = Engagement::factory()->create([
+        'recipient_id' => $student->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $engagementResponse = EngagementResponse::factory()->create([
+        'sender_id' => $student->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $holisticEngagementOutbound = HolisticEngagement::where('record_id', $engagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticEngagementInbound = HolisticEngagement::where('record_id', $engagementResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
+
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages',
+        'filters' => [],
+    ])
+        ->assertTableColumnStateSet('sent_to', $student->full_name, $holisticEngagementOutbound)
+        ->assertTableColumnStateSet('sent_to', 'N/A', $holisticEngagementInbound);
+});
