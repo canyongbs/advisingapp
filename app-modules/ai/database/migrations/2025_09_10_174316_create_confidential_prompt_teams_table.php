@@ -42,13 +42,15 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::create('confidential_prompt_teams', function (Blueprint $table) {
-            $table->id();
+            $table->uuid()->primary();
 
             $table->foreignUuid('prompt_id')
-                ->constrained('prompts');
+                ->constrained('prompts')
+                ->cascadeOnDelete();
 
             $table->foreignUuid('team_id')
-                ->constrained('teams');
+                ->constrained('teams')
+                ->cascadeOnDelete();
 
             $table->timestamps();
         });
