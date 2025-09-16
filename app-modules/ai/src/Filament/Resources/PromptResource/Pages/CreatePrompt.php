@@ -110,7 +110,7 @@ class CreatePrompt extends CreateRecord
                         ])
                             ->columns(2)
                             ->columnSpanFull()
-                            ->visible(fn (Get $get) => ConfidentialPromptsFeature::active() && $get('is_smart') == false),
+                            ->visible(fn (Get $get) => ConfidentialPromptsFeature::active() && $get('is_smart') === false),
                     ]),
             ]);
     }
