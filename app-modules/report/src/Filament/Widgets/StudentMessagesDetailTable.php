@@ -204,7 +204,25 @@ class StudentMessagesDetailTable extends BaseWidget
                     ->label('Date')
                     ->sortable(),
                 TextColumn::make('campaign')
-                    // ->sortable()
+                    ->sortable(query: function (Builder $query, string $direction) {
+                        $engagementModel = new Engagement();
+
+                        return $query->orderByRaw("
+                            CASE record_type
+                                WHEN ? THEN (
+                                    SELECT name
+                                    FROM campaigns c
+                                    INNER JOIN campaign_actions ca ON ca.campaign_id = c.id
+                                    WHERE ca.id = (
+                                        SELECT campaign_action_id
+                                        FROM engagements
+                                        WHERE id = record_id
+                                    )
+                                )
+                                ELSE NULL
+                            END {$direction}
+                        ", [$engagementModel->getMorphClass()]);
+                    })
                     ->getStateUsing(
                         fn (HolisticEngagement $record) => $record->record instanceof Engagement
                             ? $record->record->campaignAction?->campaign->name ?? 'N/A'
