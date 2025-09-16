@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * @mixin IdeHelperHolisticEngagement
+ */
 class HolisticEngagement extends Model
 {
     use HasUuids;
