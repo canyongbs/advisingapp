@@ -220,9 +220,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return $this->hasOne(Enrollment::class, 'sisid', 'sisid')
             ->ofMany([
                 'start_date' => 'min',
-                'sisid' => 'min',
             ], function (Builder $query) {
-                $query->whereNotNull('semester_code');
+                $query->whereNotNull('semester_code')
+                    ->whereNotNull('start_date');
             });
     }
 
@@ -234,9 +234,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return $this->hasOne(Enrollment::class, 'sisid', 'sisid')
             ->ofMany([
                 'start_date' => 'max',
-                'sisid' => 'max',
             ], function (Builder $query) {
-                $query->whereNotNull('semester_code');
+                $query->whereNotNull('semester_code')
+                    ->whereNotNull('start_date');
             });
     }
 

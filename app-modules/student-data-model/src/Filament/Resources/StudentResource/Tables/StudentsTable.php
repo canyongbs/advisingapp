@@ -56,6 +56,7 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Oper
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Str;
 
 class StudentsTable
@@ -229,14 +230,7 @@ class StudentsTable
                         BooleanConstraint::make('email_bounce')
                             ->icon('heroicon-m-arrow-uturn-left')
                             ->nullable(),
-                        // ExistingValuesSelectConstraint::make('firstEnrollmentTerm.semester_code')
-                        //     ->label('First Enrolled Term')
-                        //     ->icon('heroicon-m-calendar-days')
-                        //     ->multiple(),
-                        // ExistingValuesSelectConstraint::make('mostRecentEnrollmentTerm.semester_code')
-                        //     ->label('Most Recent Enrolled Term')
-                        //     ->icon('heroicon-m-calendar-days')
-                        //     ->multiple(),
+                        ...self::getEnrollmentTermConstraints(),
                     ])
                     ->constraintPickerColumns([
                         'md' => 2,
@@ -250,5 +244,65 @@ class StudentsTable
                     ->authorize('view')
                     ->url(fn (Student $record) => StudentResource::getUrl('view', ['record' => $record])),
             ]);
+    }
+
+    /**
+     * @return array<ExistingValuesSelectConstraint>
+     */
+    private static function getEnrollmentTermConstraints(): array
+    {
+        return [
+            self::createEnrollmentTermConstraint(
+                'firstEnrollmentTerm.semester_name',
+                'First Enrolled Term'
+            ),
+            self::createEnrollmentTermConstraint(
+                'mostRecentEnrollmentTerm.semester_name',
+                'Most Recent Enrolled Term'
+            ),
+        ];
+    }
+
+    private static function createEnrollmentTermConstraint(string $field, string $label): ExistingValuesSelectConstraint
+    {
+        return ExistingValuesSelectConstraint::make($field)
+            ->label($label)
+            ->icon('heroicon-m-academic-cap')
+            ->multiple()
+            ->options(function () use ($field) {
+                [$relationship, $column] = explode('.', $field, 2);
+
+                return Student::query()
+                    ->join('enrollments', function (JoinClause $join) use ($relationship) {
+                        $join->on('students.sisid', '=', 'enrollments.sisid');
+
+                        if ($relationship === 'firstEnrollmentTerm') {
+                            $join->whereRaw('enrollments.start_date = (
+                                SELECT MIN(e2.start_date) 
+                                FROM enrollments e2 
+                                WHERE e2.sisid = students.sisid 
+                                AND e2.semester_name IS NOT NULL 
+                                AND e2.start_date IS NOT NULL
+                            )');
+                        } elseif ($relationship === 'mostRecentEnrollmentTerm') {
+                            $join->whereRaw('enrollments.start_date = (
+                                SELECT MAX(e2.start_date) 
+                                FROM enrollments e2 
+                                WHERE e2.sisid = students.sisid 
+                                AND e2.semester_name IS NOT NULL 
+                                AND e2.start_date IS NOT NULL
+                            )');
+                        }
+                    })
+                    ->whereNotNull("enrollments.{$column}")
+                    ->distinct()
+                    ->orderBy("enrollments.{$column}")
+                    ->pluck("enrollments.{$column}")
+                    ->filter()
+                    ->unique()
+                    ->sort()
+                    ->mapWithKeys(fn (?string $option): array => $option ? [strtolower($option) => $option] : [])
+                    ->all();
+            });
     }
 }
