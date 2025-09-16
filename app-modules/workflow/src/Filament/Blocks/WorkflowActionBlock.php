@@ -78,4 +78,30 @@ abstract class WorkflowActionBlock extends Block
     abstract public static function type(): string;
 
     public function afterCreated(WorkflowDetails $action, ComponentContainer $componentContainer): void {}
+
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     */
+    public function beforeCreate(array $data): array
+    {
+        return $data;
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     */
+    public function beforeUpdate(array $data): array
+    {
+        return $data;
+    }
+
+    /**
+     * Prepare WorkflowDetails for form population during editing.
+     * Allows blocks to load necessary relationships before toArray() is called.
+     */
+    public function prepareForEdit(WorkflowDetails $details): void {}
 }
