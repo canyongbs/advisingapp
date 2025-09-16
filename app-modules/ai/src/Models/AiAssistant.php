@@ -40,9 +40,11 @@ use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use AdvisingApp\Ai\Models\Scopes\AiAssistantScope;
 use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable as AuditableTrait;
@@ -55,7 +57,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 /**
  * @mixin IdeHelperAiAssistant
  */
-#[ObservedBy([AiAssistantObserver::class])]
+#[ObservedBy([AiAssistantObserver::class])] #[ScopedBy(AiAssistantScope::class)]
 class AiAssistant extends BaseModel implements HasMedia, Auditable
 {
     use CanAddAssistantLicenseGlobalScope;
