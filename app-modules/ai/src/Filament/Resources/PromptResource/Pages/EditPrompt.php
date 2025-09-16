@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Filament\Resources\PromptResource\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\PromptResource;
+use AdvisingApp\Ai\Models\Prompt;
 use App\Features\ConfidentialPromptsFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\Authenticatable;
@@ -114,7 +115,7 @@ class EditPrompt extends EditRecord
                             ->columns(2)
                             ->columnSpanFull()
                             ->visible(
-                                fn (Get $get, $record) => ConfidentialPromptsFeature::active()
+                                fn (Get $get, Prompt $record) => ConfidentialPromptsFeature::active()
                                 && auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)
                                 || auth()->user()->id === $record['user_id']
                                 && $get('is_smart') === 0
