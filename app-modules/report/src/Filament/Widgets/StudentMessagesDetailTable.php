@@ -122,8 +122,7 @@ class StudentMessagesDetailTable extends BaseWidget
                     ->badge(),
                 TextColumn::make('sent_by')
                     ->label('Sent By')
-                    // TODO: Make sortable
-                    // ->sortable()
+                    ->sortable(query: fn (Builder $query, string $direction) => $query)
                     ->getStateUsing(fn (HolisticEngagement $record): ?string => match ($record->sentBy::class) {
                         Student::class, Prospect::class => $record->sentBy->{$record->sentBy->displayNameKey()},
                         User::class => $record->sentBy->name,
