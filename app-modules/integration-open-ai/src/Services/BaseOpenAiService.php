@@ -166,11 +166,11 @@ abstract class BaseOpenAiService implements AiService
 
         $image = $response->firstImage();
 
-        if ($image->hasBase64()) {
-            return $image->base64;
+        if (! $image->hasBase64()) {
+            throw new MessageResponseException('Failed to generate an image: [No image was returned].');
         }
 
-        throw new MessageResponseException('Failed to generate an image: [No image was returned].');
+        return $image->base64;
     }
 
     /**
