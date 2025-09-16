@@ -90,6 +90,7 @@ class EditPrompt extends EditRecord
                                 0 => 'Custom',
                                 1 => 'Smart',
                             ])
+                            ->live()
                             ->grouped()
                             ->visible(auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)),
                         Group::make()->schema([
