@@ -138,15 +138,13 @@ trait HasSharedFormConfiguration
     {
         return TiptapEditor::make('content')
             ->blocks(FormFieldBlockRegistry::get())
-            ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
+            ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks', 'media'])
             ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()
             ->saveRelationshipsUsing(function (TiptapEditor $component, Application | ApplicationStep $record) {
                 if ($component->isDisabled()) {
                     return;
                 }
-
-                $record->wasRecentlyCreated && $component->processImages();
 
                 $application = $record instanceof Application ? $record : $record->submissible;
                 $applicationStep = $record instanceof ApplicationStep ? $record : null;
@@ -167,6 +165,9 @@ trait HasSharedFormConfiguration
                     $content['content'] ?? [],
                     $applicationStep,
                 );
+
+                $content = $component->processImages($content);
+                $content = $component->removeImageUrls($content);
 
                 $record->content = $content;
                 $record->save();

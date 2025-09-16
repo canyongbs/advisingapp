@@ -42,15 +42,18 @@ use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * @mixin IdeHelperApplication
  */
-class Application extends Submissible
+class Application extends Submissible implements HasMedia
 {
     use HasRelationships;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'name',
