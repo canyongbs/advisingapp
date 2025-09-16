@@ -44,6 +44,7 @@ use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Illuminate\Support\Str;
 
 use function Pest\Livewire\livewire;
 
@@ -284,4 +285,46 @@ it('ensures type is properly rendered in the table', function () {
     ])
         ->assertTableColumnStateSet('type', 'email', $holisticEngagementOutbound)
         ->assertTableColumnStateSet('type', 'sms', $holisticEngagementInbound);
+});
+
+it('ensures details are properly rendered in the table', function () {
+    $student = Student::factory()->create();
+
+    $engagementEmail = Engagement::factory()->create([
+        'recipient_id' => $student->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+    ]);
+
+    $engagementSms = Engagement::factory()->create([
+        'recipient_id' => $student->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Sms,
+    ]);
+
+    $responseEmail = EngagementResponse::factory()->create([
+        'sender_id' => $student->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+        'type' => EngagementResponseType::Email,
+    ]);
+
+    $responseSms = EngagementResponse::factory()->create([
+        'sender_id' => $student->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+        'type' => EngagementResponseType::Sms,
+    ]);
+
+    $holisticEngagementEmail = HolisticEngagement::where('record_id', $engagementEmail->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticEngagementSms = HolisticEngagement::where('record_id', $engagementSms->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticResponseEmail = HolisticEngagement::where('record_id', $responseEmail->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
+    $holisticResponseSms = HolisticEngagement::where('record_id', $responseSms->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
+
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages',
+        'filters' => [],
+    ])
+        ->assertTableColumnStateSet('details', Str::limit($engagementEmail->getSubjectMarkdown(), 50), $holisticEngagementEmail)
+        ->assertTableColumnStateSet('details', Str::limit($engagementSms->getBodyMarkdown(), 50), $holisticEngagementSms)
+        ->assertTableColumnStateSet('details', Str::limit($responseEmail->subject, 50), $holisticResponseEmail)
+        ->assertTableColumnStateSet('details', Str::limit($responseSms->getBodyMarkdown(), 50), $holisticResponseSms);
 });
