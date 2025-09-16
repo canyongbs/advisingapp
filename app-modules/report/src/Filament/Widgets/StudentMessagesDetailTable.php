@@ -118,8 +118,6 @@ class StudentMessagesDetailTable extends BaseWidget
                     })
                     ->sortable(),
                 TextColumn::make('status')
-                    // TODO: Make sortable
-                    // ->sortable()
                     ->getStateUsing(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
                         EngagementResponse::class => $record->record->status,
                         Engagement::class => EngagementDisplayStatus::getStatus($record->record),
