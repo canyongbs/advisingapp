@@ -124,6 +124,9 @@ class ResearchRequest extends BaseModel implements HasMedia
     {
         $this->addMediaCollection('files')
             ->acceptsMimeTypes(config('ai.supported_file_types'));
+
+        $this->addMediaCollection('header_image')
+            ->singleFile();
     }
 
     /**

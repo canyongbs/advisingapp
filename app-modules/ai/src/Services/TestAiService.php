@@ -62,6 +62,11 @@ class TestAiService implements AiService
         return fake()->paragraph();
     }
 
+    public function image(string $prompt): string
+    {
+        return '';
+    }
+
     /**
      * @param array<AiFile> $files
      * @param array<string, mixed> $options
