@@ -150,8 +150,18 @@ class StudentMessagesDetailTable extends BaseWidget
                     ->openUrlInNewTab(),
                 TextColumn::make('sent_to')
                     ->label('Sent To')
-                    // TODO: Make sortable
-                    // ->sortable()
+                    ->sortable(query: function (Builder $query, string $direction) {
+                        $studentModel = new Student();
+                        $prospectModel = new Prospect();
+
+                        return $query->orderByRaw("
+                            CASE sent_to_type
+                                WHEN ? THEN (SELECT {$studentModel::displayNameKey()} FROM students WHERE {$studentModel->getKeyName()} = sent_to_id)
+                                WHEN ? THEN (SELECT {$prospectModel::displayNameKey()} FROM prospects WHERE {$prospectModel->getKeyName()} = sent_to_id)
+                                ELSE NULL
+                            END {$direction}
+                        ", [$studentModel->getMorphClass(), $prospectModel->getMorphClass()]);
+                    })
                     ->getStateUsing(fn (HolisticEngagement $record): ?string => $record->sentTo ? match ($record->sentTo::class) {
                         Student::class, Prospect::class => $record->sentTo->{$record->sentTo->displayNameKey()},
                         default => 'N/A',
