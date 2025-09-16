@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
 use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -202,10 +203,23 @@ class StudentMessagesDetailTable extends BaseWidget
                     ->dateTime()
                     ->label('Date')
                     ->sortable(),
-                // TODO: Campaign column
-                // TextColumn::make('campaign')
-                //     ->sortable()
-                //     ->getStateUsing(fn (HolisticEngagement $record) => $record->record?->campaign)
+                TextColumn::make('campaign')
+                    // ->sortable()
+                    ->getStateUsing(
+                        fn (HolisticEngagement $record) => $record->record instanceof Engagement
+                            ? $record->record->campaignAction?->campaign->name ?? 'N/A'
+                            : 'N/A'
+                    )
+                    ->url(
+                        fn (HolisticEngagement $record) => $record->record instanceof Engagement
+                        ? (
+                            $record->record->campaignAction?->campaign
+                                ? CampaignResource::getUrl('view', ['record' => $record->record->campaignAction->campaign->getKey()])
+                                : null
+                        )
+                        : null
+                    )
+                    ->openUrlInNewTab(),
             ]);
     }
 }
