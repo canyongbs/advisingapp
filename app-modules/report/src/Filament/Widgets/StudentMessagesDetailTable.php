@@ -42,9 +42,12 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\HolisticEngagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
 use Exception;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -127,28 +130,18 @@ class StudentMessagesDetailTable extends BaseWidget
                     ->label('Sent By')
                     // TODO: Make sortable
                     // ->sortable()
-                    ->getStateUsing(function (HolisticEngagement $record): ?string {
-                        $related = $record->record;
-
-                        if (is_null($related)) {
-                            return null;
-                        }
-
-                        return match ($related::class) {
-                            Engagement::class => $related->user?->name,
-
-                            EngagementResponse::class => (function () use ($related): string {
-                                $sender = $related->sender;
-
-                                assert($sender instanceof Student || $sender instanceof Prospect);
-
-                                // TODO: Make a link to the Student/Prospect profile
-                                return $sender->{$sender->displayNameKey()};
-                            })(),
-
-                            default => throw new Exception('Invalid record type'),
-                        };
-                    }),
+                    ->getStateUsing(fn (HolisticEngagement $record): ?string => match ($record->sentBy::class) {
+                        Student::class, Prospect::class => $record->sentBy->{$record->sentBy->displayNameKey()},
+                        User::class => $record->sentBy->name,
+                        null => 'System',
+                        default => throw new Exception('Invalid sender type'),
+                    })
+                    ->url(fn (HolisticEngagement $record): ?string => match ($record->sentBy::class) {
+                        Student::class => StudentResource::getUrl('view', ['record' => $record->sentBy->getKey()]),
+                        Prospect::class => ProspectResource::getUrl('view', ['record' => $record->sentBy->getKey()]),
+                        default => null,
+                    })
+                    ->openUrlInNewTab(),
                 TextColumn::make('sent_to')
                     ->label('Sent To')
                     // TODO: Make sortable

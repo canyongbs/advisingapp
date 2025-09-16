@@ -2,6 +2,9 @@
 
 namespace AdvisingApp\Engagement\Models;
 
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -33,6 +36,18 @@ class HolisticEngagement extends Model
             name: 'concern',
             type: 'concern_type',
             id: 'concern_id',
+        );
+    }
+
+    /**
+     * @return MorphTo<covariant Student|Prospect|User, $this>
+     */
+    public function sentBy(): MorphTo
+    {
+        return $this->morphTo(
+            name: 'sent_by',
+            type: 'sent_by_type',
+            id: 'sent_by_id',
         );
     }
 
