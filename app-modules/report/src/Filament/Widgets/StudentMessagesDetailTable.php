@@ -51,6 +51,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Exception;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
@@ -238,6 +239,13 @@ class StudentMessagesDetailTable extends BaseWidget
                         : null
                     )
                     ->openUrlInNewTab(),
+            ])
+            ->filters([
+                SelectFilter::make('direction')
+                    ->options([
+                        'outbound' => 'Outbound',
+                        'inbound' => 'Inbound',
+                    ]),
             ]);
     }
 }

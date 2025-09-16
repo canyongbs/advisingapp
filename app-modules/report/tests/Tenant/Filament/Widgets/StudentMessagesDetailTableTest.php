@@ -389,3 +389,38 @@ it('ensures campaign is properly rendered in the table', function () {
         ->assertTableColumnStateSet('campaign', 'N/A', $holisticEngagementWithoutCampaign)
         ->assertTableColumnStateSet('campaign', 'N/A', $holisticEngagementResponse);
 });
+
+it('filters by direction properly', function () {
+    $student = Student::factory()->create();
+
+    $engagement = Engagement::factory()->create([
+        'recipient_id' => $student->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $engagementResponse = EngagementResponse::factory()->create([
+        'sender_id' => $student->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $holisticEngagementOutbound = HolisticEngagement::where('record_id', $engagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticEngagementInbound = HolisticEngagement::where('record_id', $engagementResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
+
+    // Filter by outbound
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages',
+        'filters' => [],
+    ])
+        ->filterTable('direction', 'outbound')
+        ->assertCanSeeTableRecords(collect([$holisticEngagementOutbound]))
+        ->assertCanNotSeeTableRecords(collect([$holisticEngagementInbound]));
+
+    // Filter by inbound
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages',
+        'filters' => [],
+    ])
+        ->filterTable('direction', 'inbound')
+        ->assertCanSeeTableRecords(collect([$holisticEngagementInbound]))
+        ->assertCanNotSeeTableRecords(collect([$holisticEngagementOutbound]));
+});
