@@ -37,11 +37,14 @@
 namespace AdvisingApp\Ai\Models;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class ConfidentialPromptUser extends Pivot
 {
+    use HasUuids;
+
     /**
      * @return BelongsTo<Prompt, $this>
      */
