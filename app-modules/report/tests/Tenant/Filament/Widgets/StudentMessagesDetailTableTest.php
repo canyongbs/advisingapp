@@ -1,0 +1,184 @@
+<?php
+
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
+
+    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS LLC respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
+      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS LLC.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Engagement\Models\HolisticEngagement;
+use AdvisingApp\Report\Filament\Widgets\StudentMessagesDetailTable;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\StudentDataModel\Models\Student;
+
+use function Pest\Livewire\livewire;
+
+it('displays properly with no filters', function () {
+    $student = Student::factory()->create();
+
+    $engagement = Engagement::factory()->create([
+        'recipient_id' => $student->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $engagementResponse = EngagementResponse::factory()->create([
+        'sender_id' => $student->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $holisticEngagementOutbound = HolisticEngagement::where('record_id', $engagement->id)->where('record_type', Engagement::class)->first();
+    $holisticEngagementInbound = HolisticEngagement::where('record_id', $engagementResponse->id)->where('record_type', EngagementResponse::class)->first();
+
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages',
+        'filters' => [],
+    ])
+        ->assertCanSeeTableRecords(collect([
+            $holisticEngagementOutbound,
+            $holisticEngagementInbound,
+        ]));
+});
+
+it('displays engagements and responses within the given date range', function () {
+    $startDate = now()->subDays(10);
+    $endDate = now()->subDays(5);
+
+    $studentOne = Student::factory()->create();
+    $studentTwo = Student::factory()->create();
+
+    $engagementInRange = Engagement::factory()->create([
+        'recipient_id' => $studentOne->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'dispatched_at' => $startDate,
+    ]);
+
+    $engagementResponseInRange = EngagementResponse::factory()->create([
+        'sender_id' => $studentTwo->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+        'sent_at' => $endDate,
+    ]);
+
+    $engagementOutOfRange = Engagement::factory()->create([
+        'recipient_id' => $studentOne->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'dispatched_at' => now()->subDays(20),
+    ]);
+
+    $holisticEngagementInRangeOutbound = HolisticEngagement::where('record_id', $engagementInRange->id)->where('record_type', Engagement::class)->first();
+    $holisticEngagementInRangeInbound = HolisticEngagement::where('record_id', $engagementResponseInRange->id)->where('record_type', EngagementResponse::class)->first();
+    $holisticEngagementOutOfRange = HolisticEngagement::where('record_id', $engagementOutOfRange->id)->where('record_type', Engagement::class)->first();
+
+    $filters = [
+        'startDate' => $startDate->toDateString(),
+        'endDate' => $endDate->toDateString(),
+    ];
+
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages',
+        'filters' => $filters,
+    ])
+        ->assertCanSeeTableRecords(collect([
+            $holisticEngagementInRangeOutbound,
+            $holisticEngagementInRangeInbound,
+        ]))
+        ->assertCanNotSeeTableRecords(collect([$holisticEngagementOutOfRange]));
+});
+
+it('displays engagements and responses based on segment filters', function () {
+    $segment = Segment::factory()->create([
+        'model' => SegmentModel::Student,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $studentJohn = Student::factory()->state(['last' => 'John'])->create();
+    $studentDoe = Student::factory()->state(['last' => 'Doe'])->create();
+
+    $engagementJohn = Engagement::factory()->create([
+        'recipient_id' => $studentJohn->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $engagementResponseJohn = EngagementResponse::factory()->create([
+        'sender_id' => $studentJohn->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $engagementDoe = Engagement::factory()->create([
+        'recipient_id' => $studentDoe->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $holisticEngagementJohnOutbound = HolisticEngagement::where('record_id', $engagementJohn->id)->where('record_type', Engagement::class)->first();
+    $holisticEngagementJohnInbound = HolisticEngagement::where('record_id', $engagementResponseJohn->id)->where('record_type', EngagementResponse::class)->first();
+    $holisticEngagementDoe = HolisticEngagement::where('record_id', $engagementDoe->id)->where('record_type', Engagement::class)->first();
+
+    $filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages',
+        'filters' => $filters,
+    ])
+        ->assertCanSeeTableRecords(collect([
+            $holisticEngagementJohnOutbound,
+            $holisticEngagementJohnInbound,
+        ]))
+        ->assertCanNotSeeTableRecords(collect([$holisticEngagementDoe]));
+
+    // Without filter
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages',
+        'filters' => [],
+    ])
+        ->assertCanSeeTableRecords(collect([
+            $holisticEngagementJohnOutbound,
+            $holisticEngagementJohnInbound,
+            $holisticEngagementDoe,
+        ]));
+});
