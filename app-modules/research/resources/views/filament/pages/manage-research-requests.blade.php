@@ -573,7 +573,7 @@
                                 class="max-h-80 max-w-3xl rounded-lg object-contain"
                                 alt="title ?? 'Header image'"
                                 x-bind:src="headerImageUrl"
-                                x-show="headerImageUrl?.length > 0"
+                                x-show="(title?.length > 0) && (headerImageUrl?.length > 0)"
                                 loading="lazy"
                             />
 
