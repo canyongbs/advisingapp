@@ -174,32 +174,17 @@ class StudentMessagesDetailTable extends BaseWidget
                     ->openUrlInNewTab(),
                 TextColumn::make('type')
                     ->badge()
-                    // TODO: Make sortable
-                    // ->sortable()
-                    ->getStateUsing(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
-                        Engagement::class => match ($record->record->channel) {
-                            NotificationChannel::Email => 'Email',
-                            NotificationChannel::Sms => 'SMS',
-                            default => 'Other',
-                        },
-                        EngagementResponse::class => match ($record->record->type) {
-                            EngagementResponseType::Email => 'Email',
-                            EngagementResponseType::Sms => 'SMS',
-                        },
-                        default => throw new Exception('Invalid record type'),
-                    } : null)
-                    ->icon(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
-                        Engagement::class => match ($record->record->channel) {
-                            NotificationChannel::Email => 'heroicon-o-envelope',
-                            NotificationChannel::Sms => 'heroicon-o-chat-bubble-bottom-center-text',
-                            default => 'heroicon-o-bell',
-                        },
-                        EngagementResponse::class => match ($record->record->type) {
-                            EngagementResponseType::Email => 'heroicon-o-envelope',
-                            EngagementResponseType::Sms => 'heroicon-o-chat-bubble-bottom-center-text',
-                        },
-                        default => throw new Exception('Invalid record type'),
-                    } : null),
+                    ->sortable()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'email' => 'Email',
+                        'sms' => 'SMS',
+                        default => throw new Exception('Invalid type'),
+                    })
+                    ->icon(fn (string $state) => match ($state) {
+                        'email' => 'heroicon-o-envelope',
+                        'sms' => 'heroicon-o-chat-bubble-bottom-center-text',
+                        default => throw new Exception('Invalid type'),
+                    }),
                 TextColumn::make('details')
                     ->getStateUsing(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
                         Engagement::class => Str::limit(match ($record->record->channel) {
