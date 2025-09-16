@@ -86,6 +86,8 @@ class ListStudentsController
         'primary_email_address' => new Example('primary_email_address'),
         'phone_numbers' => new Example('phone_numbers'),
         'primary_phone_number' => new Example('primary_phone_number'),
+        'first_enrollment_term' => new Example('first_enrollment_term'),
+        'most_recent_enrollment_term' => new Example('most_recent_enrollment_term'),
     ])]
     #[QueryParameter('page[number]', description: 'Control which page of students is returned in the response.', type: 'int', default: 1)]
     #[QueryParameter('page[size]', description: 'Control how many students are returned in the response.', type: 'int', default: 30)]

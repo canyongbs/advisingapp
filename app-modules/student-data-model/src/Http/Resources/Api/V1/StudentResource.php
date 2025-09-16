@@ -81,6 +81,8 @@ class StudentResource extends JsonResource
             'primary_email_address' => $this->whenLoaded('primaryEmailAddress', fn (): StudentEmailAddressResource => new StudentEmailAddressResource($this->resource->primaryEmailAddress)),
             'phone_numbers' => StudentPhoneNumberResource::collection($this->whenLoaded('phoneNumbers')),
             'primary_phone_number' => $this->whenLoaded('primaryPhoneNumber', fn (): StudentPhoneNumberResource => new StudentPhoneNumberResource($this->resource->primaryPhoneNumber)),
+            'first_enrollment_term' => $this->whenLoaded('firstEnrollmentTerm'),
+            'most_recent_enrollment_term' => $this->whenLoaded('mostRecentEnrollmentTerm'),
         ];
     }
 }
