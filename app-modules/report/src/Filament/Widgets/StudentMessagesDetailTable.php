@@ -123,14 +123,18 @@ class StudentMessagesDetailTable extends BaseWidget
                 TextColumn::make('sent_by')
                     ->label('Sent By')
                     ->sortable(query: function (Builder $query, string $direction) {
+                        $studentModel = new Student();
+                        $prospectModel = new Prospect();
+                        $userModel = new User();
+
                         return $query->orderByRaw("
                             CASE sent_by_type
-                                WHEN ? THEN (SELECT full_name FROM students WHERE sisid = sent_by_id)
-                                WHEN ? THEN (SELECT full_name FROM prospects WHERE id = sent_by_id)
-                                WHEN ? THEN (SELECT name FROM users WHERE id = sent_by_id)
+                                WHEN ? THEN (SELECT {$studentModel::displayNameKey()} FROM students WHERE {$studentModel->getKeyName()} = sent_by_id)
+                                WHEN ? THEN (SELECT {$prospectModel::displayNameKey()} FROM prospects WHERE {$prospectModel->getKeyName()} = sent_by_id)
+                                WHEN ? THEN (SELECT name FROM users WHERE {$userModel->getKeyName()} = sent_by_id)
                                 ELSE NULL
                             END {$direction}
-                        ", ['student', 'prospect', 'user']);
+                        ", [$studentModel->getMorphClass(), $prospectModel->getMorphClass(), $userModel->getMorphClass()]);
                     })
                     ->getStateUsing(fn (HolisticEngagement $record): ?string => match ($record->sentBy::class) {
                         Student::class, Prospect::class => $record->sentBy->{$record->sentBy->displayNameKey()},
