@@ -37,31 +37,31 @@
 namespace AdvisingApp\Report\Filament\Pages;
 
 use AdvisingApp\Report\Abstract\ProspectReport;
-use AdvisingApp\Report\Filament\Widgets\ProspectCaseStats;
-use AdvisingApp\Report\Filament\Widgets\ProspectCaseTable;
+use AdvisingApp\Report\Filament\Widgets\ProspectMessagesDetailStats;
+use AdvisingApp\Report\Filament\Widgets\ProspectMessagesDetailTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Filament\Clusters\ReportLibrary;
 
-class ProspectCaseReport extends ProspectReport
+class ProspectMessagesDetailReport extends ProspectReport
 {
-    protected static ?string $title = 'Cases';
+    protected static ?string $title = 'Messages Detail';
 
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string $routePath = 'prospect-case-report';
+    protected static string $routePath = 'prospect-messages-detail-report';
 
     protected static ?string $navigationGroup = 'Prospects';
 
-    protected string $cacheTag = 'report-prospect-case';
+    protected string $cacheTag = 'report-prospect-messages-detail';
 
-    protected static ?int $navigationSort = 60;
+    protected static ?int $navigationSort = 50;
 
     public function getColumns(): int | string | array
     {
         return [
-            'sm' => 12,
-            'md' => 12,
-            'lg' => 12,
+            'sm' => 2,
+            'md' => 4,
+            'lg' => 4,
         ];
     }
 
@@ -69,8 +69,8 @@ class ProspectCaseReport extends ProspectReport
     {
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            ProspectCaseStats::make(['cacheTag' => $this->cacheTag]),
-            ProspectCaseTable::make(['cacheTag' => $this->cacheTag]),
+            ProspectMessagesDetailStats::make(['cacheTag' => $this->cacheTag]),
+            ProspectMessagesDetailTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 
