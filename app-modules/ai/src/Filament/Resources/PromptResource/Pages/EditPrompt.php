@@ -113,10 +113,12 @@ class EditPrompt extends EditRecord
                         ])
                             ->columns(2)
                             ->columnSpanFull()
-                            ->visible(fn (Get $get) => ConfidentialPromptsFeature::active()
+                            ->visible(
+                                fn (Get $get, $record) => ConfidentialPromptsFeature::active()
                                 && auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)
-                                || auth()->user()->id === $get('user_id')
-                                && $get('is_smart') === false),
+                                || auth()->user()->id === $record['user_id']
+                                && $get('is_smart') === 0
+                            ),
                     ]),
             ]);
     }

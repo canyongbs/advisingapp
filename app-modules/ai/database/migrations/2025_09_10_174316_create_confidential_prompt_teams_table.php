@@ -42,7 +42,7 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::create('confidential_prompt_teams', function (Blueprint $table) {
-            $table->uuid()->primary();
+            $table->uuid('id')->primary();
 
             $table->foreignUuid('prompt_id')
                 ->constrained('prompts')
