@@ -90,22 +90,18 @@ class StudentMessagesDetailTable extends BaseWidget
             ->query(
                 HolisticEngagement::query()
                     ->with(['concern', 'record'])
-                // ->select('sisid', 'full_name', 'primary_email_id')
-                // ->when(
-                //     $startDate && $endDate,
-                //     function (Builder $query) use ($startDate, $endDate): Builder {
-                //         return $query->whereHas(
-                //             'engagements',
-                //             function (Builder $query) use ($startDate, $endDate): Builder {
-                //                 return $query->whereBetween('created_at', [$startDate, $endDate]);
-                //             }
-                //         );
-                //     }
-                // )
-                // ->when(
-                //     $segmentId,
-                //     fn (Builder $query) => $this->segmentFilter($query, $segmentId)
-                // )
+                    ->when(
+                        $startDate && $endDate,
+                        function (Builder $query) use ($startDate, $endDate): Builder {
+                            return $query->whereBetween('record_sortable_date', [$startDate, $endDate]);
+                        }
+                    )
+                    ->whereHasMorph('concern', Student::class, function (Builder $query) use ($segmentId) {
+                        $query->when(
+                            $segmentId,
+                            fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        );
+                    })
             )
             ->columns([
                 TextColumn::make('direction')
