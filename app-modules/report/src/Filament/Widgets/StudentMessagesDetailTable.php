@@ -87,39 +87,33 @@ class StudentMessagesDetailTable extends BaseWidget
             ->query(
                 HolisticEngagement::query()
                     ->with(['concern', 'record'])
-                    // ->select('sisid', 'full_name', 'primary_email_id')
-                    // ->when(
-                    //     $startDate && $endDate,
-                    //     function (Builder $query) use ($startDate, $endDate): Builder {
-                    //         return $query->whereHas(
-                    //             'engagements',
-                    //             function (Builder $query) use ($startDate, $endDate): Builder {
-                    //                 return $query->whereBetween('created_at', [$startDate, $endDate]);
-                    //             }
-                    //         );
-                    //     }
-                    // )
-                    // ->when(
-                    //     $segmentId,
-                    //     fn (Builder $query) => $this->segmentFilter($query, $segmentId)
-                    // )
-                    ->orderBy('created_at', 'desc')
+                // ->select('sisid', 'full_name', 'primary_email_id')
+                // ->when(
+                //     $startDate && $endDate,
+                //     function (Builder $query) use ($startDate, $endDate): Builder {
+                //         return $query->whereHas(
+                //             'engagements',
+                //             function (Builder $query) use ($startDate, $endDate): Builder {
+                //                 return $query->whereBetween('created_at', [$startDate, $endDate]);
+                //             }
+                //         );
+                //     }
+                // )
+                // ->when(
+                //     $segmentId,
+                //     fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                // )
             )
             ->columns([
                 TextColumn::make('direction')
                     ->badge()
-                    // TODO: Make sortable
-                    // ->sortable()
-                    ->getStateUsing(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
-                        Engagement::class => 'Outbound',
-                        EngagementResponse::class => 'Inbound',
+                    ->formatStateUsing(fn (string $state): string => Str::title($state))
+                    ->icon(fn (HolisticEngagement $record) => match ($record->direction) {
+                        'outbound' => 'heroicon-o-arrow-up-tray',
+                        'inbound' => 'heroicon-o-arrow-down-tray',
                         default => throw new Exception('Invalid record type'),
-                    } : null)
-                    ->icon(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
-                        Engagement::class => 'heroicon-o-arrow-up-tray',
-                        EngagementResponse::class => 'heroicon-o-arrow-down-tray',
-                        default => throw new Exception('Invalid record type'),
-                    } : null),
+                    })
+                    ->sortable(),
                 TextColumn::make('status')
                     // TODO: Make sortable
                     // ->sortable()
