@@ -143,8 +143,6 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         'firstgen',
         'ethnicity',
         'lastlmslogin',
-        // 'f_e_term',
-        // 'mr_e_term',
         'primary_email_id',
         'primary_phone_id',
         'primary_address_id',
@@ -215,28 +213,28 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     }
 
     /**
-     * @return HasOne<Enrollment, static>
+     * @return HasOne<Enrollment, $this>
      */
     public function firstEnrollmentTerm(): HasOne
     {
         return $this->hasOne(Enrollment::class, 'sisid', 'sisid')
             ->ofMany([
                 'start_date' => 'min',
-                'id' => 'min',
+                'sisid' => 'min',
             ], function (Builder $query) {
                 $query->whereNotNull('semester_code');
             });
     }
 
     /**
-     * @return HasOne<Enrollment, static>
+     * @return HasOne<Enrollment, $this>
      */
     public function mostRecentEnrollmentTerm(): HasOne
     {
         return $this->hasOne(Enrollment::class, 'sisid', 'sisid')
             ->ofMany([
                 'start_date' => 'max',
-                'id' => 'max',
+                'sisid' => 'max',
             ], function (Builder $query) {
                 $query->whereNotNull('semester_code');
             });

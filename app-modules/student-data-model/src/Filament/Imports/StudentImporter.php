@@ -200,22 +200,6 @@ class StudentImporter extends Importer
                     'nullable',
                     'date',
                 ]),
-            // ImportColumn::make('f_e_term')
-            //     ->label('First Enrollment Term')
-            //     ->example('1234')
-            //     ->rules([
-            //         'nullable',
-            //         'string',
-            //         'max:255',
-            //     ]),
-            // ImportColumn::make('mr_e_term')
-            //     ->label('Most Recent Enrollment Term')
-            //     ->example('1234')
-            //     ->rules([
-            //         'nullable',
-            //         'string',
-            //         'max:255',
-            //     ]),
             ImportColumn::make('athletics_status')
                 ->label('Athletics Status')
                 ->example('Active')

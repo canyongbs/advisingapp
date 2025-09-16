@@ -77,10 +77,6 @@ class StudentExporter extends Exporter
             static::notDefault($type::make('ethnicity')),
             static::notDefault($type::make('lastlsmlogin')
                 ->label('Last LMS Login')),
-            // static::notDefault($type::make('f_e_term')
-            //     ->label('First Enrollment Term')),
-            // static::notDefault($type::make('mr_e_term')
-            //     ->label('Most Recent Enrollment Term')),
             static::notDefault($type::make('programs_count')
                 ->label('Count of Programs')
                 ->counts('programs')),

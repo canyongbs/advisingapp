@@ -89,8 +89,6 @@ class UpdateStudentController
             'dfw' => ['sometimes', 'date', 'date_format:Y-m-d'],
             'ethnicity' => ['sometimes', 'max:255'],
             'lastlmslogin' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
-            // 'f_e_term' => ['sometimes', 'max:255'],
-            // 'mr_e_term' => ['sometimes', 'max:255'],
             'primary_email_id' => ['sometimes', 'uuid:4', Rule::exists(StudentEmailAddress::class, 'id')->where('sisid', $student->sisid)],
             'primary_phone_id' => ['sometimes', 'uuid:4', Rule::exists(StudentPhoneNumber::class, 'id')->where('sisid', $student->sisid)],
         ]);

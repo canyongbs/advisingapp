@@ -229,11 +229,11 @@ class StudentsTable
                         BooleanConstraint::make('email_bounce')
                             ->icon('heroicon-m-arrow-uturn-left')
                             ->nullable(),
-                        // ExistingValuesSelectConstraint::make('f_e_term')
+                        // ExistingValuesSelectConstraint::make('firstEnrollmentTerm.semester_code')
                         //     ->label('First Enrolled Term')
                         //     ->icon('heroicon-m-calendar-days')
                         //     ->multiple(),
-                        // ExistingValuesSelectConstraint::make('mr_e_term')
+                        // ExistingValuesSelectConstraint::make('mostRecentEnrollmentTerm.semester_code')
                         //     ->label('Most Recent Enrolled Term')
                         //     ->icon('heroicon-m-calendar-days')
                         //     ->multiple(),

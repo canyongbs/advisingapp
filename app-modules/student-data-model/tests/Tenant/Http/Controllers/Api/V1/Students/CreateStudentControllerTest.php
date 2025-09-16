@@ -191,16 +191,6 @@ it('creates a student', function () {
             ->toBe($createStudentRequestData['lastlmslogin']);
     }
 
-    // if (isset($createStudentRequestData['f_e_term'])) {
-    //     expect($response['data']['f_e_term'] ?? null)
-    //         ->toBe($createStudentRequestData['f_e_term']);
-    // }
-
-    // if (isset($createStudentRequestData['mr_e_term'])) {
-    //     expect($response['data']['mr_e_term'] ?? null)
-    //         ->toBe($createStudentRequestData['mr_e_term']);
-    // }
-
     assertDatabaseHas(Student::class, [
         'sisid' => $createStudentRequestData['sisid'],
     ]);
@@ -375,8 +365,6 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     '`ethnicity` is max 255 characters' => [['ethnicity' => str_repeat('a', 256)], 'ethnicity', 'The ethnicity may not be greater than 255 characters.'],
     '`lastlmslogin` is a valid date' => [['lastlmslogin' => 'not-a-date'], 'lastlmslogin', 'The lastlmslogin is not a valid date.'],
     '`lastlmslogin` is Y-m-d H:i:s format' => [['lastlmslogin' => '2020-01-01'], 'lastlmslogin', 'The lastlmslogin does not match the format Y-m-d H:i:s.'],
-    // '`f_e_term` is max 255 characters' => [['f_e_term' => str_repeat('a', 256)], 'f_e_term', 'The f e term may not be greater than 255 characters.'],
-    // '`mr_e_term` is max 255 characters' => [['mr_e_term' => str_repeat('a', 256)], 'mr_e_term', 'The mr e term may not be greater than 255 characters.'],
     '`email_addresses` is an array' => [['email_addresses' => 'not-an-array'], 'email_addresses', 'The email addresses must be an array.'],
     '`email_addresses.*` is an array' => [['email_addresses' => ['not-an-array']], 'email_addresses.0', 'The email_addresses.0 must be an array.'],
     '`email_addresses.*.address` is required' => [['email_addresses' => [['address' => null]]], 'email_addresses.0.address', 'The email_addresses.0.address field is required.'],

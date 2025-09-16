@@ -287,12 +287,6 @@ class EditStudent extends EditRecord
                             ->closeOnDateSelection()
                             ->format('Y-m-d H:i:s')
                             ->displayFormat('Y-m-d H:i:s'),
-                        // TextInput::make('f_e_term')
-                        //     ->label('First Enrollment Term')
-                        //     ->maxLength(255),
-                        // TextInput::make('mr_e_term')
-                        //     ->label('Most Recent Enrollment Term')
-                        //     ->maxLength(255),
                         TextInput::make('athletics_status')
                             ->label('Athletics Status')
                             ->maxLength(255)
