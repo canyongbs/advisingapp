@@ -41,6 +41,7 @@ use AdvisingApp\Report\Filament\Widgets\StudentMessagesDetailTable;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
 
 use function Pest\Livewire\livewire;
 
@@ -205,4 +206,30 @@ it('ensures direction is set properly for engagements and responses', function (
     ])
         ->assertTableColumnStateSet('direction', 'outbound', record: $holisticEngagementOutbound)
         ->assertTableColumnStateSet('direction', 'inbound', record: $holisticEngagementInbound);
+});
+
+it('ensures sent_by is properly rendered in the table', function () {
+    $user = User::factory()->create();
+    $student = Student::factory()->create();
+
+    $engagement = Engagement::factory()->create([
+        'user_id' => $user->id,
+        'recipient_id' => $student->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $engagementResponse = EngagementResponse::factory()->create([
+        'sender_id' => $student->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $holisticEngagementOutbound = HolisticEngagement::where('record_id', $engagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticEngagementInbound = HolisticEngagement::where('record_id', $engagementResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
+
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages',
+        'filters' => [],
+    ])
+        ->assertTableColumnStateSet('sent_by', $user->name, $holisticEngagementOutbound)
+        ->assertTableColumnStateSet('sent_by', $student->full_name, $holisticEngagementInbound);
 });
