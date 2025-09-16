@@ -34,9 +34,11 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\HolisticEngagement;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Report\Filament\Widgets\StudentMessagesDetailTable;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
@@ -256,4 +258,30 @@ it('ensures sent_to is properly rendered in the table', function () {
     ])
         ->assertTableColumnStateSet('sent_to', $student->full_name, $holisticEngagementOutbound)
         ->assertTableColumnStateSet('sent_to', 'N/A', $holisticEngagementInbound);
+});
+
+it('ensures type is properly rendered in the table', function () {
+    $student = Student::factory()->create();
+
+    $engagement = Engagement::factory()->create([
+        'recipient_id' => $student->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+    ]);
+
+    $engagementResponse = EngagementResponse::factory()->create([
+        'sender_id' => $student->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+        'type' => EngagementResponseType::Sms,
+    ]);
+
+    $holisticEngagementOutbound = HolisticEngagement::where('record_id', $engagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticEngagementInbound = HolisticEngagement::where('record_id', $engagementResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
+
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages',
+        'filters' => [],
+    ])
+        ->assertTableColumnStateSet('type', 'email', $holisticEngagementOutbound)
+        ->assertTableColumnStateSet('type', 'sms', $holisticEngagementInbound);
 });
