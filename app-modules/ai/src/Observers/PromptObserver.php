@@ -37,11 +37,20 @@
 namespace AdvisingApp\Ai\Observers;
 
 use AdvisingApp\Ai\Models\Prompt;
+use App\Models\Authenticatable;
+use Exception;
 
 class PromptObserver
 {
     public function creating(Prompt $prompt): void
     {
         $prompt->user()->associate(auth()->user());
+    }
+
+    public function updating(Prompt $prompt): void
+    {
+        if (auth()->user()->id() !== $prompt->user_id || ! auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)) {
+            throw new Exception('You do not have permission to update this prompt.');
+        }
     }
 }
