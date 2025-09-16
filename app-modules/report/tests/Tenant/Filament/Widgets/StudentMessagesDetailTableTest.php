@@ -34,6 +34,8 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
@@ -327,4 +329,39 @@ it('ensures details are properly rendered in the table', function () {
         ->assertTableColumnStateSet('details', Str::limit($engagementSms->getBodyMarkdown(), 50), $holisticEngagementSms)
         ->assertTableColumnStateSet('details', Str::limit($responseEmail->subject, 50), $holisticResponseEmail)
         ->assertTableColumnStateSet('details', Str::limit($responseSms->getBodyMarkdown(), 50), $holisticResponseSms);
+});
+
+it('ensures campaign is properly rendered in the table', function () {
+    $student = Student::factory()->create();
+
+    $campaign = Campaign::factory()->create();
+    $campaignAction = CampaignAction::factory()->create(['campaign_id' => $campaign->id]);
+
+    $engagementWithCampaign = Engagement::factory()->create([
+        'recipient_id' => $student->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'campaign_action_id' => $campaignAction->id,
+    ]);
+
+    $engagementWithoutCampaign = Engagement::factory()->create([
+        'recipient_id' => $student->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $engagementResponse = EngagementResponse::factory()->create([
+        'sender_id' => $student->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $holisticEngagementWithCampaign = HolisticEngagement::where('record_id', $engagementWithCampaign->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticEngagementWithoutCampaign = HolisticEngagement::where('record_id', $engagementWithoutCampaign->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticEngagementResponse = HolisticEngagement::where('record_id', $engagementResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
+
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages',
+        'filters' => [],
+    ])
+        ->assertTableColumnStateSet('campaign', $campaign->name, $holisticEngagementWithCampaign)
+        ->assertTableColumnStateSet('campaign', 'N/A', $holisticEngagementWithoutCampaign)
+        ->assertTableColumnStateSet('campaign', 'N/A', $holisticEngagementResponse);
 });
