@@ -57,8 +57,8 @@ it('displays properly with no filters', function () {
         'sender_type' => (new Student())->getMorphClass(),
     ]);
 
-    $holisticEngagementOutbound = HolisticEngagement::where('record_id', $engagement->id)->where('record_type', Engagement::class)->first();
-    $holisticEngagementInbound = HolisticEngagement::where('record_id', $engagementResponse->id)->where('record_type', EngagementResponse::class)->first();
+    $holisticEngagementOutbound = HolisticEngagement::where('record_id', $engagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticEngagementInbound = HolisticEngagement::where('record_id', $engagementResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
 
     livewire(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
@@ -95,9 +95,9 @@ it('displays engagements and responses within the given date range', function ()
         'dispatched_at' => now()->subDays(20),
     ]);
 
-    $holisticEngagementInRangeOutbound = HolisticEngagement::where('record_id', $engagementInRange->id)->where('record_type', Engagement::class)->first();
-    $holisticEngagementInRangeInbound = HolisticEngagement::where('record_id', $engagementResponseInRange->id)->where('record_type', EngagementResponse::class)->first();
-    $holisticEngagementOutOfRange = HolisticEngagement::where('record_id', $engagementOutOfRange->id)->where('record_type', Engagement::class)->first();
+    $holisticEngagementInRangeOutbound = HolisticEngagement::where('record_id', $engagementInRange->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticEngagementInRangeInbound = HolisticEngagement::where('record_id', $engagementResponseInRange->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
+    $holisticEngagementOutOfRange = HolisticEngagement::where('record_id', $engagementOutOfRange->id)->where('record_type', new Engagement()->getMorphClass())->first();
 
     $filters = [
         'startDate' => $startDate->toDateString(),
@@ -153,9 +153,9 @@ it('displays engagements and responses based on segment filters', function () {
         'recipient_type' => (new Student())->getMorphClass(),
     ]);
 
-    $holisticEngagementJohnOutbound = HolisticEngagement::where('record_id', $engagementJohn->id)->where('record_type', Engagement::class)->first();
-    $holisticEngagementJohnInbound = HolisticEngagement::where('record_id', $engagementResponseJohn->id)->where('record_type', EngagementResponse::class)->first();
-    $holisticEngagementDoe = HolisticEngagement::where('record_id', $engagementDoe->id)->where('record_type', Engagement::class)->first();
+    $holisticEngagementJohnOutbound = HolisticEngagement::where('record_id', $engagementJohn->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticEngagementJohnInbound = HolisticEngagement::where('record_id', $engagementResponseJohn->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
+    $holisticEngagementDoe = HolisticEngagement::where('record_id', $engagementDoe->id)->where('record_type', new Engagement()->getMorphClass())->first();
 
     $filters = [
         'populationSegment' => $segment->getKey(),
@@ -181,4 +181,28 @@ it('displays engagements and responses based on segment filters', function () {
             $holisticEngagementJohnInbound,
             $holisticEngagementDoe,
         ]));
+});
+
+it('ensures direction is set properly for engagements and responses', function () {
+    $student = Student::factory()->create();
+
+    $engagement = Engagement::factory()->create([
+        'recipient_id' => $student->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $engagementResponse = EngagementResponse::factory()->create([
+        'sender_id' => $student->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $holisticEngagementOutbound = HolisticEngagement::where('record_id', $engagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticEngagementInbound = HolisticEngagement::where('record_id', $engagementResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
+
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages',
+        'filters' => [],
+    ])
+        ->assertTableColumnStateSet('direction', 'outbound', record: $holisticEngagementOutbound)
+        ->assertTableColumnStateSet('direction', 'inbound', record: $holisticEngagementInbound);
 });
