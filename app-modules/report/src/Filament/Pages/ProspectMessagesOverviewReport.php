@@ -53,7 +53,7 @@ class ProspectMessagesOverviewReport extends ProspectReport
 
     protected static string $routePath = 'prospect-messages-overview-report';
 
-    protected $cacheTag = 'report-prospect-messages-overview';
+    protected string $cacheTag = 'report-prospect-messages-overview';
 
     protected static ?int $navigationSort = 40;
 
