@@ -34,29 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Database\Factories;
-
+use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ListPrompts;
 use AdvisingApp\Ai\Models\Prompt;
-use AdvisingApp\Ai\Models\PromptType;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\User;
 
-/**
- * @extends Factory<Prompt>
- */
-class PromptFactory extends Factory
-{
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            'title' => str($this->faker->unique()->words(asText: true))->ucfirst()->toString(),
-            'description' => $this->faker->optional()->sentences(asText: true),
-            'prompt' => $this->faker->sentences(asText: true),
-            'type_id' => PromptType::query()->inRandomOrder()->first() ?? PromptType::factory()->create(),
-            'is_confidential' => $this->faker->boolean(50),
-            'user_id' => null,
-        ];
-    }
-}
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+
+test('List only shows confidential prompts to users with the correct permissions', function (): void {
+    $user = User::factory()
+        // ->licensed(LicenseType::ConversationalAi)
+        ->create();
+
+    $prompt = Prompt::factory()->create([
+        'is_confidential' => false,
+    ]);
+
+    $confidentialPrompt = Prompt::factory()->create([
+        'is_confidential' => true,
+    ]);
+
+    actingAs($user);
+
+    livewire(ListPrompts::class)
+        ->assertCanSeeTableRecords([$prompt])
+        ->assertCanNotSeeTableRecords([$confidentialPrompt]);
+});
