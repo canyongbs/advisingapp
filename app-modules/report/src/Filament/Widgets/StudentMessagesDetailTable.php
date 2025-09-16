@@ -146,28 +146,16 @@ class StudentMessagesDetailTable extends BaseWidget
                     ->label('Sent To')
                     // TODO: Make sortable
                     // ->sortable()
-                    ->getStateUsing(function (HolisticEngagement $record): ?string {
-                        $related = $record->record;
-
-                        if (is_null($related)) {
-                            return null;
-                        }
-
-                        return match ($related::class) {
-                            Engagement::class => (function () use ($related): string {
-                                $recipient = $related->recipient;
-
-                                assert($recipient instanceof Student || $recipient instanceof Prospect);
-
-                                // TODO: Make a link to the Student/Prospect profile
-                                return $recipient->{$recipient->displayNameKey()};
-                            })(),
-
-                            EngagementResponse::class => 'N/A',
-
-                            default => throw new Exception('Invalid record type'),
-                        };
-                    }),
+                    ->getStateUsing(fn (HolisticEngagement $record): ?string => $record->sentTo ? match ($record->sentTo::class) {
+                        Student::class, Prospect::class => $record->sentTo->{$record->sentTo->displayNameKey()},
+                        default => 'N/A',
+                    } : 'N/A')
+                    ->url(fn (HolisticEngagement $record): ?string => $record->sentTo ? match ($record->sentTo::class) {
+                        Student::class => StudentResource::getUrl('view', ['record' => $record->sentTo->getKey()]),
+                        Prospect::class => ProspectResource::getUrl('view', ['record' => $record->sentTo->getKey()]),
+                        default => null,
+                    } : null)
+                    ->openUrlInNewTab(),
                 TextColumn::make('type')
                     ->badge()
                     // TODO: Make sortable

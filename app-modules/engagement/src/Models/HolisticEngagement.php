@@ -52,6 +52,18 @@ class HolisticEngagement extends Model
     }
 
     /**
+     * @return MorphTo<covariant Student|Prospect, $this>
+     */
+    public function sentTo(): MorphTo
+    {
+        return $this->morphTo(
+            name: 'sent_to',
+            type: 'sent_to_type',
+            id: 'sent_to_id',
+        );
+    }
+
+    /**
      * @return MorphTo<contravariant Engagement|EngagementResponse, $this>
      */
     public function record(): MorphTo
