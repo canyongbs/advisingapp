@@ -424,3 +424,54 @@ it('filters by direction properly', function () {
         ->assertCanSeeTableRecords(collect([$holisticEngagementInbound]))
         ->assertCanNotSeeTableRecords(collect([$holisticEngagementOutbound]));
 });
+
+it('filters by type properly', function () {
+    $student = Student::factory()->create();
+
+    $engagementEmail = Engagement::factory()->create([
+        'recipient_id' => $student->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+    ]);
+
+    $engagementSms = Engagement::factory()->create([
+        'recipient_id' => $student->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Sms,
+    ]);
+
+    $responseEmail = EngagementResponse::factory()->create([
+        'sender_id' => $student->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+        'type' => EngagementResponseType::Email,
+    ]);
+
+    $responseSms = EngagementResponse::factory()->create([
+        'sender_id' => $student->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+        'type' => EngagementResponseType::Sms,
+    ]);
+
+    $holisticEngagementEmail = HolisticEngagement::where('record_id', $engagementEmail->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticEngagementSms = HolisticEngagement::where('record_id', $engagementSms->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticResponseEmail = HolisticEngagement::where('record_id', $responseEmail->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
+    $holisticResponseSms = HolisticEngagement::where('record_id', $responseSms->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
+
+    // Filter by email
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages',
+        'filters' => [],
+    ])
+        ->filterTable('type', 'email')
+        ->assertCanSeeTableRecords(collect([$holisticEngagementEmail, $holisticResponseEmail]))
+        ->assertCanNotSeeTableRecords(collect([$holisticEngagementSms, $holisticResponseSms]));
+
+    // Filter by sms
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages',
+        'filters' => [],
+    ])
+        ->filterTable('type', 'sms')
+        ->assertCanSeeTableRecords(collect([$holisticEngagementSms, $holisticResponseSms]))
+        ->assertCanNotSeeTableRecords(collect([$holisticEngagementEmail, $holisticResponseEmail]));
+});

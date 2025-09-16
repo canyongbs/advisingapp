@@ -246,6 +246,11 @@ class StudentMessagesDetailTable extends BaseWidget
                         'outbound' => 'Outbound',
                         'inbound' => 'Inbound',
                     ]),
+                SelectFilter::make('type')
+                    ->options([
+                        'email' => 'Email',
+                        'sms' => 'SMS',
+                    ]),
             ]);
     }
 }
