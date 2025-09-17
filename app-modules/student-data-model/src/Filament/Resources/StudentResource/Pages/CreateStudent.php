@@ -210,11 +210,9 @@ class CreateStudent extends CreateRecord
                                     ]),
                                 Checkbox::make('can_receive_sms')
                                     ->label('Can receive SMS messages')
-                                    ->columnSpanFull()
                                     ->default(true),
                                 Checkbox::make('sms_opt_out_phone_number')
                                     ->label('SMS Opt Out')
-                                    ->columnSpanFull()
                                     ->default(false)
                                     ->visible(SmsOptOutFeature::active()),
                             ])
