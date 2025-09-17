@@ -37,8 +37,10 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\AthleticFieldsFeature;
+use App\Features\SmsOptOutFeature;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -208,9 +210,25 @@ class CreateStudent extends CreateRecord
                                     ]),
                                 Checkbox::make('can_receive_sms')
                                     ->label('Can receive SMS messages')
-                                    ->columnSpanFull()
                                     ->default(true),
+                                Checkbox::make('sms_opt_out_phone_number')
+                                    ->label('SMS Opt Out')
+                                    ->default(false)
+                                    ->visible(SmsOptOutFeature::active()),
                             ])
+                            ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
+                                if (SmsOptOutFeature::active()) {
+                                    if ($data['sms_opt_out_phone_number'] === true) {
+                                        SmsOptOutPhoneNumber::firstOrCreate([
+                                            'number' => $data['number'],
+                                        ]);
+                                    }
+
+                                    unset($data['sms_opt_out_phone_number']);
+                                }
+
+                                return $data;
+                            })
                             ->orderColumn('order')
                             ->itemLabel(fn (Repeater $component, ComponentContainer $container): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $container->getStatePath()) ? 'Primary phone number' : 'Additional phone number')
                             ->extraItemActions([

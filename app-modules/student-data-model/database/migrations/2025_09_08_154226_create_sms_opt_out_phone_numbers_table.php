@@ -34,52 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\StudentDataModel\Observers\StudentPhoneNumberObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use OwenIt\Auditing\Contracts\Auditable;
-
-/**
- * @mixin IdeHelperStudentPhoneNumber
- */
-#[ObservedBy([StudentPhoneNumberObserver::class])]
-class StudentPhoneNumber extends BaseModel implements Auditable
-{
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'sisid',
-        'number',
-        'ext',
-        'type',
-        'can_receive_sms',
-        'order',
-    ];
-
-    protected $casts = [
-        'can_receive_sms' => 'boolean',
-    ];
-
-    /**
-     * @return BelongsTo<Student, $this>
-     */
-    public function student(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+        Schema::create('sms_opt_out_phone_numbers', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('number')->unique();
+            $table->timestamps();
+
+            $table->index('number');
+        });
     }
 
-    /**
-     * @return HasOne<SmsOptOutPhoneNumber, $this>
-     */
-    public function smsOptOut(): HasOne
+    public function down(): void
     {
-        return $this->hasOne(SmsOptOutPhoneNumber::class, 'number', 'number');
+        Schema::dropIfExists('sms_opt_out_phone_numbers');
     }
-}
+};

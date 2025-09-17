@@ -49,6 +49,7 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use App\Features\SmsOptOutFeature;
 use Exception;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormComponentAction;
@@ -91,30 +92,75 @@ class RelationManagerSendEngagementAction extends CreateAction
                             ->label('What would you like to send?')
                             ->options(NotificationChannel::getEngagementOptions())
                             ->default(NotificationChannel::Email->value)
-                            ->disableOptionWhen(function (RelationManager $livewire, string $value): bool {
-                                assert($livewire->getOwnerRecord() instanceof Educatable);
+                            ->disableOptionWhen(
+                                function (RelationManager $livewire, string $value): bool {
+                                    assert($livewire->getOwnerRecord() instanceof Educatable);
 
-                                return (($value == (NotificationChannel::Sms->value) && (! $livewire->getOwnerRecord()->phoneNumbers()->where('can_receive_sms', true)->exists())))
-                                    || NotificationChannel::tryFrom($value)?->getCaseDisabled();
-                            })
+                                    if (($value == NotificationChannel::Sms->value)) {
+                                        $educatable = $livewire->getOwnerRecord();
+
+                                        if ($educatable instanceof Student) {
+                                            $phoneQuery = $educatable->phoneNumbers()
+                                                ->where('can_receive_sms', true);
+
+                                            $hasAvailablePhones = SmsOptOutFeature::active()
+                                                ? $phoneQuery->whereDoesntHave('smsOptOut')->exists()
+                                                : $phoneQuery->exists();
+
+                                            return ! $hasAvailablePhones;
+                                        } elseif ($educatable instanceof Prospect) {
+                                            return ! $educatable->phoneNumbers()
+                                                ->where('can_receive_sms', true)
+                                                ->exists();
+                                        }
+
+                                        return true;
+                                    }
+
+                                    return NotificationChannel::tryFrom($value)?->getCaseDisabled() ?? false;
+                                }
+                            )
                             ->selectablePlaceholder(false)
                             ->live()
                             ->afterStateUpdated(function (mixed $state, RelationManager $livewire, Set $set) {
                                 assert($livewire->getOwnerRecord() instanceof Educatable);
 
                                 $channel = NotificationChannel::parse($state);
+                                $educatable = $livewire->getOwnerRecord();
 
                                 $route = match ($channel) {
-                                    NotificationChannel::Email => $livewire->getOwnerRecord()->primaryEmailAddress?->getKey(),
-                                    NotificationChannel::Sms => $livewire->getOwnerRecord()->primaryPhoneNumber()
-                                        ->where('can_receive_sms', true)
-                                        ->first()?->getKey(),
+                                    NotificationChannel::Email => $educatable->primaryEmailAddress?->getKey(),
+                                    NotificationChannel::Sms => $educatable instanceof Student
+                                        ? $educatable->primaryPhoneNumber()
+                                            ->where('can_receive_sms', true)
+                                            ->when(
+                                                SmsOptOutFeature::active(),
+                                                fn ($query) => $query->whereDoesntHave('smsOptOut')
+                                            )
+                                            ->first()?->getKey()
+                                        : ($educatable instanceof Prospect
+                                            ? $educatable->primaryPhoneNumber()
+                                                ->where('can_receive_sms', true)
+                                                ->first()?->getKey()
+                                            : null),
+                                    default => null,
                                 } ?? match ($channel) {
-                                    NotificationChannel::Email => $livewire->getOwnerRecord()->emailAddresses()
+                                    NotificationChannel::Email => $educatable->emailAddresses()
                                         ->first()?->getKey(),
-                                    NotificationChannel::Sms => $livewire->getOwnerRecord()->phoneNumbers()
-                                        ->where('can_receive_sms', true)
-                                        ->first()?->getKey(),
+                                    NotificationChannel::Sms => $educatable instanceof Student
+                                        ? $educatable->phoneNumbers()
+                                            ->where('can_receive_sms', true)
+                                            ->when(
+                                                SmsOptOutFeature::active(),
+                                                fn ($query) => $query->whereDoesntHave('smsOptOut')
+                                            )
+                                            ->first()?->getKey()
+                                        : ($educatable instanceof Prospect
+                                            ? $educatable->phoneNumbers()
+                                                ->where('can_receive_sms', true)
+                                                ->first()?->getKey()
+                                            : null),
+                                    default => null,
                                 };
 
                                 $set('recipient_route_id', $route);
@@ -133,13 +179,25 @@ class RelationManagerSendEngagementAction extends CreateAction
                                             $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
                                         ])
                                         ->all(),
-                                    NotificationChannel::Sms => $livewire->getOwnerRecord()->phoneNumbers()
-                                        ->where('can_receive_sms', true)
-                                        ->get()
-                                        ->mapWithKeys(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber): array => [
-                                            $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
-                                        ])
-                                        ->all(),
+                                    NotificationChannel::Sms => $livewire->getOwnerRecord() instanceof Student
+                                        ? $livewire->getOwnerRecord()->phoneNumbers()
+                                            ->where('can_receive_sms', true)
+                                            ->when(
+                                                SmsOptOutFeature::active(),
+                                                fn ($query) => $query->whereDoesntHave('smsOptOut')
+                                            )
+                                            ->get()
+                                            ->mapWithKeys(fn (StudentPhoneNumber $phoneNumber): array => [
+                                                $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
+                                            ])
+                                            ->all()
+                                        : $livewire->getOwnerRecord()->phoneNumbers()
+                                            ->where('can_receive_sms', true)
+                                            ->get()
+                                            ->mapWithKeys(fn (ProspectPhoneNumber $phoneNumber): array => [
+                                                $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
+                                            ])
+                                            ->all(),
                                 };
                             })
                             ->default(function (RelationManager $livewire): ?string {
