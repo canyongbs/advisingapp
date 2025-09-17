@@ -57,7 +57,10 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class EnrollmentsRelationManager extends RelationManager
@@ -117,6 +120,16 @@ class EnrollmentsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $query
+                    ->leftJoin('enrollment_semesters', function (JoinClause $join) {
+                        $join
+                            ->on(DB::raw('LOWER(enrollments.semester_name)'), '=', DB::raw('LOWER(enrollment_semesters.name)'))
+                            ->whereNull('enrollment_semesters.deleted_at');
+                    })
+                    ->orderByRaw('enrollment_semesters."order" NULLS FIRST')
+                    ->select('enrollments.*');
+            })
             ->recordTitleAttribute('division')
             ->defaultGroup('semester_name')
             ->groups([
@@ -124,7 +137,6 @@ class EnrollmentsRelationManager extends RelationManager
                     ->label('Semester'),
             ])
             ->groupingSettingsHidden()
-            ->defaultSort('start_date', 'desc')
             ->columns([
                 TextColumn::make('name')
                     ->label('Name')
