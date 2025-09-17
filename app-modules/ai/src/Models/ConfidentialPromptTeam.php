@@ -45,6 +45,8 @@ class ConfidentialPromptTeam extends Pivot
 {
     use HasUuids;
 
+    protected $table = 'confidential_prompt_teams';
+
     /**
      * @return BelongsTo<Prompt, $this>
      */

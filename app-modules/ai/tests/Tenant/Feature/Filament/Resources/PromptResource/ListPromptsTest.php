@@ -36,8 +36,12 @@
 
 use AdvisingApp\Ai\Filament\Resources\PromptResource;
 use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ListPrompts;
+use AdvisingApp\Ai\Models\ConfidentialPromptTeam;
+use AdvisingApp\Ai\Models\ConfidentialPromptUser;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Team\Models\Team;
+use App\Models\Authenticatable;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
@@ -124,4 +128,99 @@ it('Filter prompts based on Smart', function () use ($licenses, $permissions) {
         ->filterTable('is_smart', false)
         ->assertCanSeeTableRecords($recordsCustom)
         ->assertCanNotSeeTableRecords($recordsSmart);
+});
+
+test('only shows confidential prompts to authorized users', function () use ($licenses, $permissions): void {
+    $unauthorizedUser = user(
+        licenses: $licenses,
+        permissions: $permissions
+    );
+
+    $promptCreator = user(
+        licenses: $licenses,
+        permissions: $permissions
+    );
+
+    $superAdmin = user(
+        licenses: $licenses,
+        permissions: $permissions
+    )
+        ->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    $confidentialPromptUser = user(
+        licenses: $licenses,
+        permissions: $permissions
+    );
+
+    $nonConfidentialPrompt = Prompt::factory()->create([
+        'is_confidential' => false,
+    ]);
+
+    actingAs($promptCreator);
+    $confidentialPrompt = Prompt::factory()->create([
+        'is_confidential' => true,
+    ]);
+
+    ConfidentialPromptUser::create([
+        'user_id' => $confidentialPromptUser->id,
+        'prompt_id' => $confidentialPrompt->id,
+    ]);
+
+    $team = Team::factory()->create();
+
+    ConfidentialPromptTeam::create([
+        'team_id' => $team->id,
+        'prompt_id' => $confidentialPrompt->id,
+    ]);
+
+    $confidentialPromptTeamUser = user(
+        licenses: $licenses,
+        permissions: $permissions
+    );
+    $confidentialPromptTeamUser->team_id = $team->id;
+    $confidentialPromptTeamUser->save();
+
+    assertDatabaseCount(Prompt::class, 2);
+
+    actingAs($unauthorizedUser);
+    livewire(ListPrompts::class)
+        ->assertSuccessful()
+        ->assertCanNotSeeTableRecords([
+            $confidentialPrompt,
+        ])
+        ->assertCanSeeTableRecords([
+            $nonConfidentialPrompt,
+        ]);
+
+    actingAs($superAdmin);
+    livewire(ListPrompts::class)
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords([
+            $confidentialPrompt,
+            $nonConfidentialPrompt,
+        ]);
+
+    actingAs($promptCreator);
+    livewire(ListPrompts::class)
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords([
+            $confidentialPrompt,
+            $nonConfidentialPrompt,
+        ]);
+
+    actingAs($confidentialPromptUser);
+    livewire(ListPrompts::class)
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords([
+            $confidentialPrompt,
+            $nonConfidentialPrompt,
+        ]);
+
+    actingAs($confidentialPromptTeamUser);
+    livewire(ListPrompts::class)
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords([
+            $confidentialPrompt,
+            $nonConfidentialPrompt,
+        ]);
 });
