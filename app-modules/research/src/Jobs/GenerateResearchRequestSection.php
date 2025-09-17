@@ -129,8 +129,15 @@ class GenerateResearchRequestSection implements ShouldQueue
             return;
         }
 
+        $hasGeneratedAbstract = array_key_exists('abstract', $this->researchRequest->remaining_outline)
+            && (! array_key_exists('abstract', $remainingOutline));
+
         $this->researchRequest->remaining_outline = $remainingOutline;
         $this->researchRequest->save();
+
+        if ($hasGeneratedAbstract) {
+            $this->batch()->add(new GenerateResearchRequestHeaderImage($this->researchRequest));
+        }
 
         broadcast(new ResearchRequestProgress(
             researchRequest: $this->researchRequest,

@@ -34,52 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Research\Events;
+namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Research\Models\ResearchRequest;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
-use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Bus\Batchable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
+use Throwable;
 
-class ResearchRequestFinished implements ShouldBroadcastNow
+class GenerateResearchRequestHeaderImage implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithSockets;
+    use Batchable;
+    use Queueable;
+    use SerializesModels;
 
-    /**
-     * Create a new event instance.
-     */
+    public int $timeout = 600;
+
+    public int $tries = 3;
+
     public function __construct(
-        public ResearchRequest $researchRequest,
+        protected ResearchRequest $researchRequest,
     ) {}
 
-    public function broadcastAs(): string
+    public function handle(): void
     {
-        return 'research-request.finished';
-    }
+        if (blank($this->researchRequest->results)) {
+            return;
+        }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function broadcastWith(): array
-    {
-        return [
-            'title' => $this->researchRequest->title,
-            'header_image_url' => $this->researchRequest->getFirstTemporaryUrl(now()->addHour(), collectionName: 'header_image') ?: null,
-        ];
-    }
+        $service = $this->researchRequest->research_model->getService();
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, Channel>
-     */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel("research-request-{$this->researchRequest->getKey()}"),
-        ];
+        if (! $service->hasImageGeneration()) {
+            return;
+        }
+
+        try {
+            $image = $service->image(
+                prompt: Str::limit($this->researchRequest->results, limit: 1000) . PHP_EOL . PHP_EOL . ' Create a header image to accompany this research report, which will be featured right below the title, that is 16:9 in dimensions, and contains no text on the image.',
+            );
+
+            $this->researchRequest->addMediaFromBase64($image)
+                ->usingFileName(Str::random() . '.jpg')
+                ->toMediaCollection('header_image');
+        } catch (Throwable $exception) {
+            report($exception);
+        }
     }
 }

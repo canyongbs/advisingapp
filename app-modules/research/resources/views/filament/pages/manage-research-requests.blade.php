@@ -527,6 +527,7 @@
                             parsedLinks: @js($this->request->parsedLinks->map(fn($link): array => Arr::except($link->toArray(), ['results']))->toArray()),
                             parsedSearchResults: @js($this->request->parsedSearchResults->map(fn($searchResults): array => Arr::except($searchResults->toArray(), ['results']))->toArray()),
                             title: @js($this->request->title),
+                            headerImageUrl: @js($this->request->getFirstTemporaryUrl(now()->addHour(), collectionName: 'header_image') ?: null),
                             isFinished: @js((bool) $this->request->finished_at),
                         })"
                         wire:key="{{ Str::random() }}"
@@ -567,6 +568,14 @@
                                 x-text="title"
                                 x-show="title?.length > 0"
                             ></h1>
+
+                            <img
+                                class="max-h-80 max-w-3xl rounded-lg object-contain"
+                                alt="title ?? 'Header image'"
+                                x-bind:src="headerImageUrl"
+                                x-show="(title?.length > 0) && (headerImageUrl?.length > 0)"
+                                loading="lazy"
+                            />
 
                             <h2 x-show="resultsContentsHtml.length > 0">
                                 Table of Contents

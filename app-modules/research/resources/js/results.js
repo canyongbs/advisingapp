@@ -51,6 +51,7 @@ document.addEventListener('alpine:init', () => {
             parsedLinks,
             parsedSearchResults,
             title,
+            headerImageUrl,
             isFinished,
         }) => ({
             reasoningPoints: [],
@@ -68,6 +69,8 @@ document.addEventListener('alpine:init', () => {
             isFinished,
 
             title,
+
+            headerImageUrl,
 
             outline,
 
@@ -95,6 +98,7 @@ document.addEventListener('alpine:init', () => {
                     })
                     .listen('.research-request.finished', (event) => {
                         this.title = event.title;
+                        this.headerImageUrl = event.header_image_url;
                         this.isFinished = true;
                     })
                     .listen('.research-request.link-parsed', (event) => {

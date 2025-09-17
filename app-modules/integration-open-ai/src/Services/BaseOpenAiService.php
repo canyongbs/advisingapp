@@ -135,6 +135,44 @@ abstract class BaseOpenAiService implements AiService
         return $response->text;
     }
 
+    public function image(string $prompt): string
+    {
+        try {
+            $response = Prism::image()
+                ->using('azure_open_ai', $this->getImageGenerationDeployment())
+                ->withClientOptions([
+                    'apiKey' => $this->getApiKey(),
+                    'apiVersion' => $this->getApiVersion(),
+                    'deployment' => $this->getDeployment(),
+                ])
+                ->withProviderOptions([
+                    'output_format' => 'jpeg',
+                ])
+                ->withPrompt($prompt)
+                ->generate();
+        } catch (PrismRateLimitedException $exception) {
+            foreach ($exception->rateLimits as $rateLimit) {
+                if ($rateLimit->resetsAt?->isFuture()) {
+                    throw new MessageResponseException("Rate limit exceeded, retry at {$rateLimit->resetsAt}.");
+                }
+            }
+
+            throw new MessageResponseException('Rate limit exceeded, please try again later.');
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw new MessageResponseException('Failed to generate an image: [' . $exception->getMessage() . '].');
+        }
+
+        $image = $response->firstImage();
+
+        if (! $image->hasBase64()) {
+            throw new MessageResponseException('Failed to generate an image: [No image was returned].');
+        }
+
+        return $image->base64;
+    }
+
     /**
      * @param array<AiFile> $files
      * @param array<string, mixed> $options

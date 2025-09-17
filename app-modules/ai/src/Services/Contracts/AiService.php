@@ -50,6 +50,11 @@ interface AiService
     public function complete(string $prompt, string $content, bool $shouldTrack = true): string;
 
     /**
+     * This method is passed a prompt and should return a Base64 encoded image.
+     */
+    public function image(string $prompt): string;
+
+    /**
      * This method is passed a prompt and message and should return a stream of the response.
      *
      * @param array<AiFile> $files
