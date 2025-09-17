@@ -90,9 +90,7 @@ it('can create a record', function () use ($licenses, $permissions) {
         permissions: $permissions
     ));
 
-    $record = Prompt::factory()->make([
-        'is_confidential' => false,
-    ]);
+    $record = Prompt::factory()->make();
 
     assertDatabaseCount(Prompt::class, 0);
 

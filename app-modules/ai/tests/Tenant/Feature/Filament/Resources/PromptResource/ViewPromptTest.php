@@ -61,9 +61,7 @@ it('cannot render without a license', function () use ($permissions) {
         permissions: $permissions
     ));
 
-    $record = Prompt::factory()->create([
-        'is_confidential' => false,
-    ]);
+    $record = Prompt::factory()->create();
 
     get(PromptResource::getUrl('view', [
         'record' => $record->getRouteKey(),
@@ -76,9 +74,7 @@ it('cannot render without permissions', function () use ($licenses) {
         licenses: $licenses,
     ));
 
-    $record = Prompt::factory()->create([
-        'is_confidential' => false,
-    ]);
+    $record = Prompt::factory()->create();
 
     get(PromptResource::getUrl('view', [
         'record' => $record->getRouteKey(),
@@ -92,9 +88,7 @@ it('can render', function () use ($licenses, $permissions) {
         permissions: $permissions
     ));
 
-    $record = Prompt::factory()->create([
-        'is_confidential' => false,
-    ]);
+    $record = Prompt::factory()->create();
 
     get(PromptResource::getUrl('view', [
         'record' => $record->getRouteKey(),
@@ -110,9 +104,7 @@ it('can view a record', function () use ($licenses, $permissions) {
 
     assertDatabaseCount(Prompt::class, 0);
 
-    $record = Prompt::factory()->create([
-        'is_confidential' => false,
-    ]);
+    $record = Prompt::factory()->create();
 
     assertDatabaseCount(Prompt::class, 1);
 

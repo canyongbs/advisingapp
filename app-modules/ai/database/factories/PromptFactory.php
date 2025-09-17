@@ -55,8 +55,6 @@ class PromptFactory extends Factory
             'description' => $this->faker->optional()->sentences(asText: true),
             'prompt' => $this->faker->sentences(asText: true),
             'type_id' => PromptType::query()->inRandomOrder()->first() ?? PromptType::factory()->create(),
-            'is_confidential' => $this->faker->boolean(50),
-            'user_id' => null,
         ];
     }
 }

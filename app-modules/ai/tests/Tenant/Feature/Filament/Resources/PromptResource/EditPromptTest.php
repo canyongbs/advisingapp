@@ -65,9 +65,7 @@ it('cannot render without a license', function () use ($permissions) {
         permissions: $permissions
     ));
 
-    $record = Prompt::factory()->create([
-        'is_confidential' => false,
-    ]);
+    $record = Prompt::factory()->create();
 
     get(PromptResource::getUrl('edit', [
         'record' => $record->getRouteKey(),
@@ -80,9 +78,7 @@ it('cannot render without permissions', function () use ($licenses) {
         licenses: $licenses,
     ));
 
-    $record = Prompt::factory()->create([
-        'is_confidential' => false,
-    ]);
+    $record = Prompt::factory()->create();
 
     get(PromptResource::getUrl('edit', [
         'record' => $record->getRouteKey(),
@@ -96,9 +92,7 @@ it('can render', function () use ($licenses, $permissions) {
         permissions: $permissions
     ));
 
-    $record = Prompt::factory()->create([
-        'is_confidential' => false,
-    ]);
+    $record = Prompt::factory()->create();
 
     get(PromptResource::getUrl('edit', [
         'record' => $record->getRouteKey(),
@@ -112,14 +106,10 @@ it('can edit a record', function () use ($licenses, $permissions) {
         permissions: $permissions
     ));
 
-    $record = Prompt::factory()->make([
-        'is_confidential' => false,
-    ]);
+    $record = Prompt::factory()->make();
 
     livewire(EditPrompt::class, [
-        'record' => Prompt::factory()->create([
-            'is_confidential' => false,
-        ])->getRouteKey(),
+        'record' => Prompt::factory()->create()->getRouteKey(),
     ])
         ->assertSuccessful()
         ->fillForm($record->attributesToArray())
@@ -137,9 +127,7 @@ it('can delete a record', function () use ($licenses, $permissions) {
         permissions: $permissions
     ));
 
-    $record = Prompt::factory()->create([
-        'is_confidential' => false,
-    ]);
+    $record = Prompt::factory()->create();
 
     assertDatabaseCount(Prompt::class, 1);
 
