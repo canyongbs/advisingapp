@@ -43,8 +43,8 @@ class EnrollmentSemesterObserver
 {
     public function creating(EnrollmentSemester $enrollmentSemester): void
     {
-        if (blank($enrollmentSemester->order)) { /** @phpstan-ignore property.notFound */
-            $enrollmentSemester->order = DB::raw("(SELECT COALESCE(MAX(\"{$enrollmentSemester->getTable()}\".order), 0) + 1 FROM \"{$enrollmentSemester->getTable()}\")"); /** @phpstan-ignore property.notFound */
+        if (blank($enrollmentSemester->order)) {
+            $enrollmentSemester->order = DB::raw("(SELECT COALESCE(MAX(\"{$enrollmentSemester->getTable()}\".order), 0) + 1 FROM \"{$enrollmentSemester->getTable()}\")"); /** @phpstan-ignore assign.propertyType */
         }
     }
 }

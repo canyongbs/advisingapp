@@ -45,10 +45,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
-#[ObservedBy(EnrollmentSemesterObserver::class)]
 /**
  * @mixin IdeHelperEnrollmentSemester
  */
+#[ObservedBy(EnrollmentSemesterObserver::class)]
 class EnrollmentSemester extends BaseModel implements Auditable
 {
     /** @use HasFactory<EnrollmentSemesterFactory> */
