@@ -63,8 +63,6 @@ class ListStudentsController
     #[QueryParameter('filter[preferred]', description: 'Filter the results where the student\'s preferred name contains the provided string.', type: 'string')]
     #[QueryParameter('filter[gender]', description: 'Filter the results where the student\'s gender contains the provided string.', type: 'string')]
     #[QueryParameter('filter[ethnicity]', description: 'Filter the results where the student\'s ethnicity contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[f_e_term]', description: 'Filter the results where the student\'s first enrolled term contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[mr_e_term]', description: 'Filter the results where the student\'s most recent enrolled term contains the provided string.', type: 'string')]
     #[QueryParameter('filter[emailAddress]', description: 'Filter the results where any of the student\'s email addresses contains the provided string.', type: 'string')]
     #[QueryParameter('filter[primaryEmailAddress]', description: 'Filter the results where the student\'s primary email address contains the provided string.', type: 'string')]
     #[QueryParameter('filter[birthdate]', description: 'Filter the results where the student\'s birthdate matches the provided date.', type: 'date')]
@@ -88,6 +86,8 @@ class ListStudentsController
         'primary_email_address' => new Example('primary_email_address'),
         'phone_numbers' => new Example('phone_numbers'),
         'primary_phone_number' => new Example('primary_phone_number'),
+        'first_enrollment_term' => new Example('first_enrollment_term'),
+        'most_recent_enrollment_term' => new Example('most_recent_enrollment_term'),
     ])]
     #[QueryParameter('page[number]', description: 'Control which page of students is returned in the response.', type: 'int', default: 1)]
     #[QueryParameter('page[size]', description: 'Control how many students are returned in the response.', type: 'int', default: 30)]
@@ -100,8 +100,6 @@ class ListStudentsController
         'preferred' => new Example('preferred'),
         'gender' => new Example('gender'),
         'ethnicity' => new Example('ethnicity'),
-        'f_e_term' => new Example('f_e_term'),
-        'mr_e_term' => new Example('mr_e_term'),
         'birthdate' => new Example('birthdate'),
         'dfw' => new Example('dfw'),
         'lastlmslogin' => new Example('lastlmslogin'),
@@ -127,8 +125,6 @@ class ListStudentsController
                 AllowedFilter::partial('preferred'),
                 AllowedFilter::partial('gender'),
                 AllowedFilter::partial('ethnicity'),
-                AllowedFilter::partial('f_e_term'),
-                AllowedFilter::partial('mr_e_term'),
                 AllowedFilter::partial('emailAddress', 'emailAddresses.address'),
                 AllowedFilter::partial('primaryEmailAddress', 'primaryEmailAddress.address'),
                 AllowedFilter::exact('birthdate'),
@@ -153,6 +149,8 @@ class ListStudentsController
                 AllowedInclude::relationship('primary_email_address', 'primaryEmailAddress'),
                 AllowedInclude::relationship('phone_numbers', 'phoneNumbers'),
                 AllowedInclude::relationship('primary_phone_number', 'primaryPhoneNumber'),
+                AllowedInclude::relationship('first_enrollment_term', 'firstEnrollmentTerm'),
+                AllowedInclude::relationship('most_recent_enrollment_term', 'mostRecentEnrollmentTerm'),
             ])
             ->allowedSorts([
                 AllowedSort::field('sisid'),
@@ -163,8 +161,6 @@ class ListStudentsController
                 AllowedSort::field('preferred'),
                 AllowedSort::field('gender'),
                 AllowedSort::field('ethnicity'),
-                AllowedSort::field('f_e_term'),
-                AllowedSort::field('mr_e_term'),
                 AllowedSort::field('birthdate'),
                 AllowedSort::field('dfw'),
                 AllowedSort::field('lastlmslogin'),

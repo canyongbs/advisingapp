@@ -72,8 +72,6 @@ class StudentResource extends JsonResource
             'firstgen' => $this->resource->firstgen,
             'ethnicity' => $this->resource->ethnicity,
             'lastlmslogin' => $this->resource->lastlmslogin,
-            'f_e_term' => $this->resource->f_e_term,
-            'mr_e_term' => $this->resource->mr_e_term,
             'primary_email_id' => $this->resource->primary_email_id,
             'primary_phone_id' => $this->resource->primary_phone_id,
             'primary_address_id' => $this->resource->primary_address_id,
@@ -83,6 +81,8 @@ class StudentResource extends JsonResource
             'primary_email_address' => $this->whenLoaded('primaryEmailAddress', fn (): StudentEmailAddressResource => new StudentEmailAddressResource($this->resource->primaryEmailAddress)),
             'phone_numbers' => StudentPhoneNumberResource::collection($this->whenLoaded('phoneNumbers')),
             'primary_phone_number' => $this->whenLoaded('primaryPhoneNumber', fn (): StudentPhoneNumberResource => new StudentPhoneNumberResource($this->resource->primaryPhoneNumber)),
+            'first_enrollment_term' => $this->whenLoaded('firstEnrollmentTerm'),
+            'most_recent_enrollment_term' => $this->whenLoaded('mostRecentEnrollmentTerm'),
         ];
     }
 }
