@@ -40,11 +40,14 @@ use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
-use AdvisingApp\Ai\Models\Scopes\AiAssistantScope;
+use AdvisingApp\Ai\Models\Scopes\AiAssistantConfidentialScope;
 use AdvisingApp\Ai\Observers\AiAssistantObserver;
+use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable as AuditableTrait;
@@ -57,7 +60,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 /**
  * @mixin IdeHelperAiAssistant
  */
-#[ObservedBy([AiAssistantObserver::class])] #[ScopedBy(AiAssistantScope::class)]
+#[ObservedBy([AiAssistantObserver::class])] #[ScopedBy(AiAssistantConfidentialScope::class)]
 class AiAssistant extends BaseModel implements HasMedia, Auditable
 {
     use CanAddAssistantLicenseGlobalScope;
@@ -75,6 +78,7 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
         'description',
         'instructions',
         'knowledge',
+        'is_confidential',
     ];
 
     protected $casts = [
@@ -82,6 +86,7 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
         'archived_at' => 'datetime',
         'is_default' => 'bool',
         'model' => AiModel::class,
+        'is_confidential' => 'bool',
     ];
 
     protected ?bool $isUpvoted = null;
@@ -171,5 +176,25 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
     public function isDefault(): bool
     {
         return $this->is_default ?? false;
+    }
+
+    /**
+     * @return BelongsToMany<User, $this, covariant AiAssistantConfidentialUser>
+     */
+    public function confidentialAccessUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'ai_assistant_confidential_users')
+            ->using(AiAssistantConfidentialUser::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany<Team, $this, covariant AiAssistantConfidentialTeam>
+     */
+    public function confidentialAccessTeams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class, 'ai_assistant_confidential_teams')
+            ->using(AiAssistantConfidentialTeam::class)
+            ->withTimestamps();
     }
 }

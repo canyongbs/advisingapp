@@ -45,7 +45,6 @@ use App\Models\User;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
@@ -78,27 +77,6 @@ class AiAssistantForm
                         'image/png',
                         'image/jpeg',
                         'image/gif',
-                    ]),
-                Fieldset::make('Confidentiality')
-                    ->schema([
-                        Checkbox::make('is_confidential')
-                            ->label('Confidential')
-                            ->live()
-                            ->columnSpanFull(),
-                        Select::make('interaction_confidential_users')
-                            ->relationship('confidentialAccessUsers', 'name')
-                            ->preload()
-                            ->label('Users')
-                            ->multiple()
-                            ->exists('users', 'id')
-                            ->visible(fn (Get $get) => $get('is_confidential')),
-                        Select::make('interaction_confidential_teams')
-                            ->relationship('confidentialAccessTeams', 'name')
-                            ->preload()
-                            ->label('Teams')
-                            ->multiple()
-                            ->exists('teams', 'id')
-                            ->visible(fn (Get $get) => $get('is_confidential')),
                     ]),
                 TextInput::make('name')
                     ->required()
@@ -213,6 +191,31 @@ class AiAssistantForm
 
                                 return 1;
                             }),
+                    ]),
+                Section::make('Confidentiality')
+                    ->columns([
+                        'sm' => 1,
+                        'md' => 2,
+                    ])
+                    ->schema([
+                        Checkbox::make('is_confidential')
+                            ->label('Confidential')
+                            ->live()
+                            ->columnSpanFull(),
+                        Select::make('interaction_confidential_users')
+                            ->relationship('confidentialAccessUsers', 'name')
+                            ->preload()
+                            ->label('Users')
+                            ->multiple()
+                            ->exists('users', 'id')
+                            ->visible(fn (Get $get) => $get('is_confidential')),
+                        Select::make('interaction_confidential_teams')
+                            ->relationship('confidentialAccessTeams', 'name')
+                            ->preload()
+                            ->label('Teams')
+                            ->multiple()
+                            ->exists('teams', 'id')
+                            ->visible(fn (Get $get) => $get('is_confidential')),
                     ]),
             ]);
     }

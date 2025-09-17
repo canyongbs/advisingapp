@@ -38,11 +38,13 @@ namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Events\AiThreadTrashed;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use AdvisingApp\Ai\Models\Scopes\AiThreadScope;
 use App\Models\BaseModel;
 use App\Models\User;
 use App\Settings\DisplaySettings;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Prunable;
@@ -57,6 +59,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 /**
  * @mixin IdeHelperAiThread
  */
+#[ScopedBy(AiThreadScope::class)]
 class AiThread extends BaseModel implements HasMedia, Wireable
 {
     use CanAddAssistantLicenseGlobalScope;

@@ -34,23 +34,36 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+namespace AdvisingApp\Ai\Models\Scopes;
 
-return new class () extends Migration {
-    public function up(): void
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Scope;
+use Illuminate\Support\Facades\Auth;
+
+class AiAssistantConfidentialScope implements Scope
+{
+    /**
+     * Apply the scope to a given Eloquent query builder.
+     */
+    public function apply(Builder $builder, Model $model): void
     {
-        Schema::create('ai_assistant_confidential_teams', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('ai_assistant_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('team_id')->constrained()->cascadeOnDelete();
-            $table->timestamps();
+        if (! Auth::check() || Auth::user()?->isAdmin) {
+            return;
+        }
+
+        $builder->where('is_confidential', false)->orWhere(function (Builder $query) {
+            $query->where('is_confidential', true)
+                ->where(function (Builder $query) {
+                    $query->whereHas('confidentialAccessTeams', function (Builder $query) {
+                        $query->whereHas('users', function (Builder $query) {
+                            $query->where('users.id', Auth::id());
+                        });
+                    })
+                        ->orWhereHas('confidentialAccessUsers', function (Builder $query) {
+                            $query->where('users.id', Auth::id());
+                        });
+                });
         });
     }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('ai_assistant_confidential_teams');
-    }
-};
+}

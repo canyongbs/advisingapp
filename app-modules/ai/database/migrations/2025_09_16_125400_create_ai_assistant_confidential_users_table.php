@@ -43,8 +43,9 @@ return new class () extends Migration {
     {
         Schema::create('ai_assistant_confidential_users', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->foreignUuid('ai_assistant_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
