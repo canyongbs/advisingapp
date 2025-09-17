@@ -217,7 +217,8 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
      */
     public function firstEnrollmentTerm(): HasOne
     {
-        return $this->hasOne(Enrollment::class, 'sisid', 'sisid')
+        return $this->enrollments()
+            ->one()
             ->ofMany([
                 'start_date' => 'min',
             ], function (Builder $query) {
@@ -231,7 +232,8 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
      */
     public function mostRecentEnrollmentTerm(): HasOne
     {
-        return $this->hasOne(Enrollment::class, 'sisid', 'sisid')
+        return $this->enrollments()
+            ->one()
             ->ofMany([
                 'start_date' => 'max',
             ], function (Builder $query) {
