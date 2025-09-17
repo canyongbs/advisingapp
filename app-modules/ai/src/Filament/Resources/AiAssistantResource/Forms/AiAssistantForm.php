@@ -41,8 +41,10 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
+use App\Features\AiAssistantConfidentialFeature;
 use App\Models\User;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
@@ -191,6 +193,32 @@ class AiAssistantForm
                                 return 1;
                             }),
                     ]),
+                Section::make('Confidentiality')
+                    ->columns([
+                        'sm' => 1,
+                        'md' => 2,
+                    ])
+                    ->schema([
+                        Checkbox::make('is_confidential')
+                            ->label('Confidential')
+                            ->live()
+                            ->columnSpanFull(),
+                        Select::make('ai_assistant_confidential_users')
+                            ->relationship('confidentialAccessUsers', 'name')
+                            ->preload()
+                            ->label('Users')
+                            ->multiple()
+                            ->exists('users', 'id')
+                            ->visible(fn (Get $get) => $get('is_confidential')),
+                        Select::make('ai_assistant_confidential_teams')
+                            ->relationship('confidentialAccessTeams', 'name')
+                            ->preload()
+                            ->label('Teams')
+                            ->multiple()
+                            ->exists('teams', 'id')
+                            ->visible(fn (Get $get) => $get('is_confidential')),
+                    ])
+                    ->visible(fn (): bool => AiAssistantConfidentialFeature::active()),
             ]);
     }
 }
