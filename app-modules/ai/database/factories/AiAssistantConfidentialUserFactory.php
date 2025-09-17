@@ -36,10 +36,13 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiAssistantConfidentialUser;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Ai\Models\Model>
+ * @extends Factory<AiAssistantConfidentialUser>
  */
 class AiAssistantConfidentialUserFactory extends Factory
 {
@@ -51,6 +54,8 @@ class AiAssistantConfidentialUserFactory extends Factory
     public function definition(): array
     {
         return [
+            'ai_assistant_id' => AiAssistant::factory(),
+            'user_id' => User::factory(),
         ];
     }
 }
