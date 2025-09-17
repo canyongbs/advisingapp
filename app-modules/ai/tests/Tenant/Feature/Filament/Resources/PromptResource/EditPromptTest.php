@@ -106,10 +106,11 @@ it('can edit a record', function () use ($licenses, $permissions) {
         permissions: $permissions
     ));
 
+    $orginal = Prompt::factory()->create();
     $record = Prompt::factory()->make();
 
     livewire(EditPrompt::class, [
-        'record' => Prompt::factory()->create()->getRouteKey(),
+        'record' => $orginal->getRouteKey(),
     ])
         ->assertSuccessful()
         ->fillForm($record->attributesToArray())
