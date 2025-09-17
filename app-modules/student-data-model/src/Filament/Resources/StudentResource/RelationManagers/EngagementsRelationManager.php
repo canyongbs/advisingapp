@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Relati
 
 use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
+use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Filament\Actions\RelationManagerSendEngagementAction;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -205,14 +206,30 @@ class EngagementsRelationManager extends RelationManager
                 TextColumn::make('subject')
                     ->label('Preview')
                     ->description(
-                        fn (Timeline $record): ?string => ($record->timelineable instanceof Engagement || $record->timelineable instanceof EngagementResponse) && filled($body = $record->timelineable->getBodyMarkdown())
-                            ? Str::limit(strip_tags($body), 50)
-                            : null
+                        function (Timeline $record): ?string {
+                            $timelineable = $record->timelineable;
+
+                            $isEmail = (
+                                ($timelineable instanceof Engagement && $timelineable->channel === NotificationChannel::Email) ||
+                                ($timelineable instanceof EngagementResponse && $timelineable->type === EngagementResponseType::Email)
+                            );
+
+                            if ($isEmail && filled($body = $timelineable->getBodyMarkdown())) {
+                                return Str::limit(strip_tags($body), 50);
+                            }
+
+                            return null;
+                        }
                     )
-                    ->getStateUsing(function (Timeline $record): string {
-                        return $record->timelineable instanceof EngagementResponse || $record->timelineable instanceof Engagement
-                            ? $record->timelineable->getSubject()
-                            : '';
+                    ->getStateUsing(fn (Timeline $record) => match ($record->timelineable::class) {
+                        Engagement::class => $record->timelineable->channel === NotificationChannel::Sms
+                                ? Str::limit(strip_tags($record->timelineable->getBodyMarkdown()), 50)
+                                : Str::limit(strip_tags($record->timelineable->getSubject()), 50),
+                        EngagementResponse::class => $record->timelineable->type === EngagementResponseType::Sms
+                                ? Str::limit(strip_tags($record->timelineable->getBodyMarkdown()), 50)
+                                : Str::limit(strip_tags($record->timelineable->subject), 50),
+
+                        default => '',
                     }),
                 TextColumn::make('type')
                     ->getStateUsing(function (Timeline $record) {
