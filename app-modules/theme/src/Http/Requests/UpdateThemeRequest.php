@@ -40,6 +40,9 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateThemeRequest extends FormRequest
 {
+    /**
+     * @return array<string, array<int, string>>
+     */
     public function rules(): array
     {
         return [

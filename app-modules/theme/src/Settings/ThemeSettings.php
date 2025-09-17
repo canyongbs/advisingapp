@@ -45,6 +45,9 @@ class ThemeSettings extends SettingsWithMedia
 
     public bool $is_favicon_active = false;
 
+    /**
+     * @var array<string, string>
+     */
     public array $color_overrides = [];
 
     public bool $has_dark_mode = true;

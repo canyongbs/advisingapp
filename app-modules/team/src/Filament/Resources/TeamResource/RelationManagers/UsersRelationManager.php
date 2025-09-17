@@ -82,7 +82,7 @@ class UsersRelationManager extends RelationManager
                     ->form(fn (AssociateAction $action): array => [
                         $action->getRecordSelect()
                             ->rules([
-                                fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                                fn (): Closure => function (string $attribute, mixed $value, Closure $fail) {
                                     //TODO: remove this if we support multiple teams
                                     if (User::findOrFail($value)->team) {
                                         $fail('This user already belongs to a team.');
@@ -100,7 +100,6 @@ class UsersRelationManager extends RelationManager
                 DissociateAction::make()
                     ->label('Remove from this team'),
             ])
-            ->bulkActions([
-            ]);
+            ->bulkActions([]);
     }
 }
