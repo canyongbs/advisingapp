@@ -203,14 +203,14 @@ class AiAssistantForm
                             ->label('Confidential')
                             ->live()
                             ->columnSpanFull(),
-                        Select::make('interaction_confidential_users')
+                        Select::make('ai_assistant_confidential_users')
                             ->relationship('confidentialAccessUsers', 'name')
                             ->preload()
                             ->label('Users')
                             ->multiple()
                             ->exists('users', 'id')
                             ->visible(fn (Get $get) => $get('is_confidential')),
-                        Select::make('interaction_confidential_teams')
+                        Select::make('ai_assistant_confidential_teams')
                             ->relationship('confidentialAccessTeams', 'name')
                             ->preload()
                             ->label('Teams')
