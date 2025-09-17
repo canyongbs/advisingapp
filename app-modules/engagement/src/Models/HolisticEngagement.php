@@ -42,6 +42,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @mixin IdeHelperHolisticEngagement
@@ -49,6 +50,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class HolisticEngagement extends Model
 {
     use HasUuids;
+    use SoftDeletes;
 
     protected $table = 'holistic_engagements';
 
