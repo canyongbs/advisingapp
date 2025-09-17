@@ -54,7 +54,7 @@ class ProspectCaseReport extends ProspectReport
 
     protected string $cacheTag = 'report-prospect-case';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 60;
 
     public function getColumns(): int | string | array
     {

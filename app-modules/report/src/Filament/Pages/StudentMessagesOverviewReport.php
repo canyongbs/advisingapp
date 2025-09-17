@@ -37,31 +37,32 @@
 namespace AdvisingApp\Report\Filament\Pages;
 
 use AdvisingApp\Report\Abstract\StudentReport;
+use AdvisingApp\Report\Filament\Widgets\MostEngagedStudentsTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\Report\Filament\Widgets\StudentCaseStats;
-use AdvisingApp\Report\Filament\Widgets\StudentCaseTable;
+use AdvisingApp\Report\Filament\Widgets\StudentEngagementLineChart;
+use AdvisingApp\Report\Filament\Widgets\StudentEngagementStats;
 use App\Filament\Clusters\ReportLibrary;
 
-class StudentCaseReport extends StudentReport
+class StudentMessagesOverviewReport extends StudentReport
 {
-    protected static ?string $title = 'Cases';
+    protected static ?string $title = 'Messages Overview';
 
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string $routePath = 'student-case-report';
+    protected static string $routePath = 'student-messages-overview-report';
 
     protected static ?string $navigationGroup = 'Students';
 
-    protected string $cacheTag = 'report-student-case';
+    protected string $cacheTag = 'report-student-messages-overview';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 4;
 
     public function getColumns(): int | string | array
     {
         return [
-            'sm' => 12,
-            'md' => 12,
-            'lg' => 12,
+            'sm' => 2,
+            'md' => 4,
+            'lg' => 4,
         ];
     }
 
@@ -69,8 +70,9 @@ class StudentCaseReport extends StudentReport
     {
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            StudentCaseStats::make(['cacheTag' => $this->cacheTag]),
-            StudentCaseTable::make(['cacheTag' => $this->cacheTag]),
+            StudentEngagementStats::make(['cacheTag' => $this->cacheTag]),
+            StudentEngagementLineChart::make(['cacheTag' => $this->cacheTag]),
+            MostEngagedStudentsTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 

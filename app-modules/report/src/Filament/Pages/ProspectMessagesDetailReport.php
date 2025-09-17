@@ -37,25 +37,30 @@
 namespace AdvisingApp\Report\Filament\Pages;
 
 use AdvisingApp\Report\Abstract\ProspectReport;
-use AdvisingApp\Report\Filament\Widgets\MostEngagedProspectsTable;
-use AdvisingApp\Report\Filament\Widgets\ProspectEngagementLineChart;
-use AdvisingApp\Report\Filament\Widgets\ProspectEngagementState;
+use AdvisingApp\Report\Filament\Widgets\ProspectMessagesDetailStats;
+use AdvisingApp\Report\Filament\Widgets\ProspectMessagesDetailTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use App\Features\HolisticEngagementFeature;
 use App\Filament\Clusters\ReportLibrary;
 
-class ProspectEnagagementReport extends ProspectReport
+class ProspectMessagesDetailReport extends ProspectReport
 {
+    protected static ?string $title = 'Messages Detail';
+
     protected static ?string $cluster = ReportLibrary::class;
+
+    protected static string $routePath = 'prospect-messages-detail-report';
 
     protected static ?string $navigationGroup = 'Prospects';
 
-    protected static ?string $title = 'Engagement';
+    protected string $cacheTag = 'report-prospect-messages-detail';
 
-    protected static string $routePath = 'prospect-enagement-report';
+    protected static ?int $navigationSort = 50;
 
-    protected $cacheTag = 'report-prospect-engagement';
-
-    protected static ?int $navigationSort = 40;
+    public static function canAccess(): bool
+    {
+        return HolisticEngagementFeature::active() && parent::canAccess();
+    }
 
     public function getColumns(): int | string | array
     {
@@ -70,9 +75,8 @@ class ProspectEnagagementReport extends ProspectReport
     {
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            ProspectEngagementState::make(['cacheTag' => $this->cacheTag]),
-            ProspectEngagementLineChart::make(['cacheTag' => $this->cacheTag]),
-            MostEngagedProspectsTable::make(['cacheTag' => $this->cacheTag]),
+            ProspectMessagesDetailStats::make(['cacheTag' => $this->cacheTag]),
+            ProspectMessagesDetailTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 

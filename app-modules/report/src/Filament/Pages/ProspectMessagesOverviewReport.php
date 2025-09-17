@@ -36,32 +36,33 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use AdvisingApp\Report\Abstract\StudentReport;
+use AdvisingApp\Report\Abstract\ProspectReport;
+use AdvisingApp\Report\Filament\Widgets\MostEngagedProspectsTable;
+use AdvisingApp\Report\Filament\Widgets\ProspectEngagementLineChart;
+use AdvisingApp\Report\Filament\Widgets\ProspectEngagementState;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\Report\Filament\Widgets\StudentCaseStats;
-use AdvisingApp\Report\Filament\Widgets\StudentCaseTable;
 use App\Filament\Clusters\ReportLibrary;
 
-class StudentCaseReport extends StudentReport
+class ProspectMessagesOverviewReport extends ProspectReport
 {
-    protected static ?string $title = 'Cases';
-
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string $routePath = 'student-case-report';
+    protected static ?string $navigationGroup = 'Prospects';
 
-    protected static ?string $navigationGroup = 'Students';
+    protected static ?string $title = 'Messages Overview';
 
-    protected string $cacheTag = 'report-student-case';
+    protected static string $routePath = 'prospect-messages-overview-report';
 
-    protected static ?int $navigationSort = 7;
+    protected string $cacheTag = 'report-prospect-messages-overview';
+
+    protected static ?int $navigationSort = 40;
 
     public function getColumns(): int | string | array
     {
         return [
-            'sm' => 12,
-            'md' => 12,
-            'lg' => 12,
+            'sm' => 2,
+            'md' => 4,
+            'lg' => 4,
         ];
     }
 
@@ -69,8 +70,9 @@ class StudentCaseReport extends StudentReport
     {
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            StudentCaseStats::make(['cacheTag' => $this->cacheTag]),
-            StudentCaseTable::make(['cacheTag' => $this->cacheTag]),
+            ProspectEngagementState::make(['cacheTag' => $this->cacheTag]),
+            ProspectEngagementLineChart::make(['cacheTag' => $this->cacheTag]),
+            MostEngagedProspectsTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 

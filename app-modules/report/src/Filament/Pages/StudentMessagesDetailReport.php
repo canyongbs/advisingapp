@@ -37,25 +37,30 @@
 namespace AdvisingApp\Report\Filament\Pages;
 
 use AdvisingApp\Report\Abstract\StudentReport;
-use AdvisingApp\Report\Filament\Widgets\MostEngagedStudentsTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\Report\Filament\Widgets\StudentEngagementLineChart;
-use AdvisingApp\Report\Filament\Widgets\StudentEngagementStats;
+use AdvisingApp\Report\Filament\Widgets\StudentMessagesDetailStats;
+use AdvisingApp\Report\Filament\Widgets\StudentMessagesDetailTable;
+use App\Features\HolisticEngagementFeature;
 use App\Filament\Clusters\ReportLibrary;
 
-class StudentEngagementReport extends StudentReport
+class StudentMessagesDetailReport extends StudentReport
 {
-    protected static ?string $title = 'Engagement';
+    protected static ?string $title = 'Messages Detail';
 
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string $routePath = 'student-engagement-report';
+    protected static string $routePath = 'student-messages-detail-report';
 
     protected static ?string $navigationGroup = 'Students';
 
-    protected $cacheTag = 'report-student-engagement';
+    protected string $cacheTag = 'report-student-messages-detail';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
+
+    public static function canAccess(): bool
+    {
+        return HolisticEngagementFeature::active() && parent::canAccess();
+    }
 
     public function getColumns(): int | string | array
     {
@@ -70,9 +75,8 @@ class StudentEngagementReport extends StudentReport
     {
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            StudentEngagementStats::make(['cacheTag' => $this->cacheTag]),
-            StudentEngagementLineChart::make(['cacheTag' => $this->cacheTag]),
-            MostEngagedStudentsTable::make(['cacheTag' => $this->cacheTag]),
+            StudentMessagesDetailStats::make(['cacheTag' => $this->cacheTag]),
+            StudentMessagesDetailTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 

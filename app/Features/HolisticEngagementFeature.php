@@ -34,50 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+namespace App\Features;
 
-use AdvisingApp\Report\Abstract\StudentReport;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\Report\Filament\Widgets\StudentCaseStats;
-use AdvisingApp\Report\Filament\Widgets\StudentCaseTable;
-use App\Filament\Clusters\ReportLibrary;
+use App\Support\AbstractFeatureFlag;
 
-class StudentCaseReport extends StudentReport
+class HolisticEngagementFeature extends AbstractFeatureFlag
 {
-    protected static ?string $title = 'Cases';
-
-    protected static ?string $cluster = ReportLibrary::class;
-
-    protected static string $routePath = 'student-case-report';
-
-    protected static ?string $navigationGroup = 'Students';
-
-    protected string $cacheTag = 'report-student-case';
-
-    protected static ?int $navigationSort = 7;
-
-    public function getColumns(): int | string | array
+    public function resolve(mixed $scope): mixed
     {
-        return [
-            'sm' => 12,
-            'md' => 12,
-            'lg' => 12,
-        ];
-    }
-
-    public function getWidgets(): array
-    {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            StudentCaseStats::make(['cacheTag' => $this->cacheTag]),
-            StudentCaseTable::make(['cacheTag' => $this->cacheTag]),
-        ];
-    }
-
-    public function getWidgetData(): array
-    {
-        return [
-            'filters' => $this->filters,
-        ];
+        return false;
     }
 }
