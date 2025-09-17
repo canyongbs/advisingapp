@@ -91,7 +91,9 @@ it('can list records', function () use ($licenses, $permissions) {
 
     assertDatabaseCount(Prompt::class, 0);
 
-    $records = Prompt::factory()->count(10)->create();
+    $records = Prompt::factory()->count(10)->create([
+        'is_confidential' => false,
+    ]);
 
     assertDatabaseCount(Prompt::class, $records->count());
 
@@ -108,8 +110,14 @@ it('Filter prompts based on Smart', function () use ($licenses, $permissions) {
         permissions: $permissions
     ));
 
-    $recordsSmart = Prompt::factory()->count(10)->create(['is_smart' => true]);
-    $recordsCustom = Prompt::factory()->count(10)->create(['is_smart' => false]);
+    $recordsSmart = Prompt::factory()->count(10)->create([
+        'is_smart' => true,
+        'is_confidential' => false,
+    ]);
+    $recordsCustom = Prompt::factory()->count(10)->create([
+        'is_smart' => false,
+        'is_confidential' => false,
+    ]);
 
     livewire(ListPrompts::class)
         ->set('tableRecordsPerPage', 20)
