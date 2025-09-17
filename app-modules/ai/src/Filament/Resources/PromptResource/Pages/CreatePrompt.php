@@ -37,13 +37,17 @@
 namespace AdvisingApp\Ai\Filament\Resources\PromptResource\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\PromptResource;
+use App\Features\ConfidentialPromptsFeature;
 use App\Models\Authenticatable;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreatePrompt extends CreateRecord
@@ -82,7 +86,31 @@ class CreatePrompt extends CreateRecord
                             ])
                             ->default(false)
                             ->grouped()
+                            ->live()
                             ->visible(auth()->user()->hasRole(Authenticatable::SUPER_ADMIN_ROLE)),
+                        Group::make()->schema([
+                            Checkbox::make('is_confidential')
+                                ->label('Confidential')
+                                ->live()
+                                ->columnSpanFull(),
+                            Select::make('confidential_prompt_users')
+                                ->relationship('confidentialAccessUsers', 'name')
+                                ->preload()
+                                ->label('Users')
+                                ->multiple()
+                                ->exists('users', 'id')
+                                ->visible(fn (Get $get) => $get('is_confidential')),
+                            Select::make('confidential_prompt_teams')
+                                ->relationship('confidentialAccessTeams', 'name')
+                                ->preload()
+                                ->label('Teams')
+                                ->multiple()
+                                ->exists('teams', 'id')
+                                ->visible(fn (Get $get) => $get('is_confidential')),
+                        ])
+                            ->columns(2)
+                            ->columnSpanFull()
+                            ->visible(fn (Get $get) => ConfidentialPromptsFeature::active() && $get('is_smart') === 0),
                     ]),
             ]);
     }
