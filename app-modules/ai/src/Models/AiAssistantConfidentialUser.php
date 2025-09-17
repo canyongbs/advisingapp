@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Database\Factories\AiAssistantConfidentialUserFactory;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class AiAssistantConfidentialUser extends Pivot
@@ -49,12 +50,18 @@ class AiAssistantConfidentialUser extends Pivot
 
     use HasUuids;
 
-    public function assistant()
+    /**
+     * @return BelongsTo<AiAssistant, $this>
+     */
+    public function assistant(): BelongsTo
     {
         return $this->belongsTo(AiAssistant::class);
     }
 
-    public function user()
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

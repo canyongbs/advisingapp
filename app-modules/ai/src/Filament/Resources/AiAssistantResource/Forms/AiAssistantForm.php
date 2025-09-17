@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
+use App\Features\AiAssistantConfidentialFeature;
 use App\Models\User;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -216,7 +217,8 @@ class AiAssistantForm
                             ->multiple()
                             ->exists('teams', 'id')
                             ->visible(fn (Get $get) => $get('is_confidential')),
-                    ]),
+                    ])
+                    ->visible(fn (): bool => AiAssistantConfidentialFeature::active()),
             ]);
     }
 }
