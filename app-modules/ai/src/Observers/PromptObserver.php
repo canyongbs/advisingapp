@@ -49,7 +49,7 @@ class PromptObserver
 
     public function updating(Prompt $prompt): void
     {
-        if (auth()->user()?->id() !== $prompt->user_id || ! auth()->user()?->hasRole(Authenticatable::SUPER_ADMIN_ROLE)) {
+        if (auth()->user()?->id !== $prompt->user_id || ! auth()->user()?->hasRole(Authenticatable::SUPER_ADMIN_ROLE)) {
             throw new Exception('You do not have permission to update this prompt.');
         }
     }
