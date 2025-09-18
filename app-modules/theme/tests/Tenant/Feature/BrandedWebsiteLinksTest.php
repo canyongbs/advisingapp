@@ -73,7 +73,7 @@ test('Branded theme api test', function () {
     });
 });
 
-it('validates the inputs', function (RequestFactory $requestFactory, $errors) {
+it('validates the inputs', function (RequestFactory $requestFactory, array $errors) {
     $tenant = Tenant::current();
 
     $data = $requestFactory->create();

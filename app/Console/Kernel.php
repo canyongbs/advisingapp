@@ -211,13 +211,13 @@ class Kernel extends ConsoleKernel
                         ->name("Schedule Check Heartbeat | Tenant {$tenant->domain}")
                         ->monitorName("Schedule Check Heartbeat | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
-                } catch (Throwable $th) {
+                } catch (Throwable $exception) {
                     Log::error('Error scheduling tenant commands.', [
                         'tenant' => $tenant->id,
-                        'exception' => $th,
+                        'exception' => $exception,
                     ]);
 
-                    report($th);
+                    report($exception);
                 }
             });
     }

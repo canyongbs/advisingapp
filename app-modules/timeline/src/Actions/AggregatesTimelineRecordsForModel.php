@@ -44,6 +44,7 @@ use Illuminate\Support\Collection;
 
 class AggregatesTimelineRecordsForModel
 {
+    /** @var Collection<int, mixed> */
     public Collection $aggregateRecords;
 
     public function handle(Model $record, array $modelsToTimeline): Collection

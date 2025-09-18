@@ -41,10 +41,10 @@ use Illuminate\Support\Str;
 return new class () extends Migration {
     public function up(): void
     {
-        $role_details = DB::table('roles')->where('name', 'analytics.analytics_management')->whereIn('guard_name', ['web', 'api'])->get();
+        $roleDetails = DB::table('roles')->where('name', 'analytics.analytics_management')->whereIn('guard_name', ['web', 'api'])->get();
 
-        if (! $role_details->isEmpty()) {
-            foreach ($role_details as $role) {
+        if (! $roleDetails->isEmpty()) {
+            foreach ($roleDetails as $role) {
                 DB::table('model_has_roles')->where('role_id', $role->id)->delete();
                 DB::table('role_has_permissions')->where('role_id', $role->id)->delete();
                 DB::table('roles')->where('id', $role->id)->delete();
@@ -54,7 +54,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        $analytics_roles = [
+        $analyticsRoles = [
             [
                 'id' => (string) Str::orderedUuid(),
                 'name' => 'analytics.analytics_management',
@@ -68,6 +68,6 @@ return new class () extends Migration {
                 'created_at' => now(),
             ],
         ];
-        DB::table('roles')->insert($analytics_roles);
+        DB::table('roles')->insert($analyticsRoles);
     }
 };

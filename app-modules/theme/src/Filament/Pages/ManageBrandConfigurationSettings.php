@@ -39,6 +39,7 @@ namespace AdvisingApp\Theme\Filament\Pages;
 use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Multitenancy\DataTransferObjects\TenantConfig;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
@@ -81,7 +82,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                         TextInput::make('application_name')
                             ->label('Application Name')
                             ->required()
-                            ->maxLength('255'),
+                            ->maxLength(255),
                     ]),
                 Section::make('Partner Favicon')
                     ->aside()
@@ -181,7 +182,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                         TextInput::make('changelog_url')
                             ->label('Changelog URL')
                             ->url()
-                            ->maxLength('255'),
+                            ->maxLength(255),
                     ]),
 
                 Section::make('Product Resource Hub URL')
@@ -190,7 +191,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
                         TextInput::make('product_resource_hub_url')
                             ->label('Product Resource Hub URL')
                             ->url()
-                            ->maxLength('255'),
+                            ->maxLength(255),
                     ]),
             ]);
     }
