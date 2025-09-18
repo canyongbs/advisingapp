@@ -39,7 +39,6 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\AdvisingApp\StudentDat
 use AdvisingApp\StudentDataModel\Filament\Resources\AdvisingApp\StudentDataModel\Models\EnrollmentSemesterResource\Pages\ManageEnrollmentSemesters;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
-use App\Features\EnrollmentSemesterFeature;
 use App\Filament\Clusters\ConstituentManagement;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -65,11 +64,6 @@ class EnrollmentSemesterResource extends Resource
     protected static ?string $navigationLabel = 'Semester Order';
 
     protected static ?int $navigationSort = 70;
-
-    public static function canAccess(): bool
-    {
-        return EnrollmentSemesterFeature::active() && parent::canAccess();
-    }
 
     public static function form(Form $form): Form
     {

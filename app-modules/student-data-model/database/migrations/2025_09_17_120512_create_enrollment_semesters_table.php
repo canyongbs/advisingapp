@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\EnrollmentSemesterFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
@@ -55,16 +54,12 @@ return new class () extends Migration {
             Schema::table('enrollments', function (Blueprint $table) {
                 $table->index('semester_name');
             });
-
-            EnrollmentSemesterFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            EnrollmentSemesterFeature::deactivate();
-
             Schema::table('enrollments', function (Blueprint $table) {
                 $table->dropIndex(['semester_name']);
             });
