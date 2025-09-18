@@ -37,7 +37,6 @@
 namespace AdvisingApp\Ai\Filament\Resources\PromptResource\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\PromptResource;
-use App\Features\ConfidentialPromptsFeature;
 use App\Models\Authenticatable;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Group;
@@ -110,7 +109,7 @@ class CreatePrompt extends CreateRecord
                         ])
                             ->columns(2)
                             ->columnSpanFull()
-                            ->visible(fn (Get $get) => ConfidentialPromptsFeature::active() && $get('is_smart') === 0),
+                            ->visible(fn (Get $get) => $get('is_smart') === 0),
                     ]),
             ]);
     }
