@@ -103,9 +103,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                             $phoneQuery = $educatable->phoneNumbers()
                                                 ->where('can_receive_sms', true);
 
-                                            $hasAvailablePhones = SmsOptOutFeature::active()
-                                                ? $phoneQuery->whereDoesntHave('smsOptOut')->exists()
-                                                : $phoneQuery->exists();
+                                            $hasAvailablePhones = $phoneQuery->whereDoesntHave('smsOptOut')->exists();
 
                                             return ! $hasAvailablePhones;
                                         } elseif ($educatable instanceof Prospect) {

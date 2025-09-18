@@ -131,9 +131,7 @@ class SendEngagementAction extends Action
                                     if ($educatable instanceof Student) {
                                         $phoneQuery = $educatable->phoneNumbers()->where('can_receive_sms', true);
 
-                                        $hasAvailablePhones = SmsOptOutFeature::active()
-                                            ? $phoneQuery->whereDoesntHave('smsOptOut')->exists()
-                                            : $phoneQuery->exists();
+                                        $hasAvailablePhones = $phoneQuery->whereDoesntHave('smsOptOut')->exists();
                                     } elseif ($educatable instanceof Prospect) {
                                         $hasAvailablePhones = $educatable->phoneNumbers()
                                             ->where('can_receive_sms', true)
