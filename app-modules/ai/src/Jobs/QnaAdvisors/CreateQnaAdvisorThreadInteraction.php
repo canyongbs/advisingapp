@@ -78,9 +78,9 @@ class CreateQnaAdvisorThreadInteraction implements ShouldQueue
             content: $transcript,
         );
 
-        assert($this->thread->author instanceof Student || $this->thread->author instanceof Prospect);
-
         DB::transaction(function () use ($summary, $transcript) {
+            assert($this->thread->author instanceof Student || $this->thread->author instanceof Prospect);
+
             $interaction = $this->thread->author->interactions()->create([
                 'start_datetime' => $this->thread->messages()->oldest()->value('created_at'),
                 'end_datetime' => $this->thread->messages()->latest()->value('created_at'),
