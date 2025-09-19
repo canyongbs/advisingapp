@@ -53,7 +53,7 @@ class ProspectReport extends AbstractProspectReport
 
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 9;
 
     protected $cacheTag = 'prospect-report-cache';
 

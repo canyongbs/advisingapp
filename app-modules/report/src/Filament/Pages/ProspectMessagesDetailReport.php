@@ -55,7 +55,7 @@ class ProspectMessagesDetailReport extends ProspectReport
 
     protected string $cacheTag = 'report-prospect-messages-detail';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 12;
 
     public static function canAccess(): bool
     {
