@@ -37,7 +37,10 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Report\Filament\Exports\ProspectReportTableExportExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
+use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Tables\Actions\ExportAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
@@ -69,6 +72,13 @@ class ProspectReportTableChart extends TableWidget
     public function table(Table $table): Table
     {
         return $table
+            ->headerActions([
+                ExportAction::make()
+                    ->exporter(ProspectReportTableExportExporter::class)
+                    ->formats([
+                        ExportFormat::Csv,
+                    ]),
+            ])
             ->query(
                 function () {
                     $key = (new Prospect())->getKeyName();
