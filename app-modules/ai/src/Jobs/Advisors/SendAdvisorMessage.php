@@ -125,14 +125,13 @@ class SendAdvisorMessage implements ShouldQueue
                 hasImageGeneration: $this->hasImageGeneration,
             );
         } catch (Throwable $exception) {
-            report($exception);
+            if ($this->hasImageGeneration && ($this->attempts() < 3)) {
+                $this->release();
 
-            event(new AdvisorMessageFinished(
-                $this->thread,
-                error: 'An error happened when sending your message.',
-            ));
+                return;
+            }
 
-            return;
+            throw $exception;
         }
 
         $chunkBuffer = [];
@@ -200,5 +199,20 @@ class SendAdvisorMessage implements ShouldQueue
 
         $response->save();
         $this->thread->touch();
+    }
+
+    public function tries(): int
+    {
+        return $this->hasImageGeneration ? 3 : 1;
+    }
+
+    public function failed(?Throwable $exception): void
+    {
+        event(new AdvisorMessageFinished(
+            $this->thread,
+            error: 'An error happened when sending your message.',
+        ));
+
+        $exception && report($exception);
     }
 }
