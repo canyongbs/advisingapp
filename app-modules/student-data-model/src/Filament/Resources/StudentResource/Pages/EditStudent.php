@@ -41,7 +41,6 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concer
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\AthleticFieldsFeature;
-use App\Features\SmsOptOutFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -194,8 +193,7 @@ class EditStudent extends EditRecord
                                     ->default(true),
                                 Checkbox::make('sms_opt_out_phone_number')
                                     ->label('SMS Opt Out')
-                                    ->default(false)
-                                    ->visible(SmsOptOutFeature::active()),
+                                    ->default(false),
                             ])
                             ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
                                 if (isset($data['number'])) {
