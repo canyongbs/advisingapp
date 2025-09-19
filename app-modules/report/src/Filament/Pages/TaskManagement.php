@@ -47,7 +47,7 @@ class TaskManagement extends EngagementReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?string $navigationGroup = 'CRM';
+    protected static ?string $navigationGroup = 'Project Management';
 
     protected static ?string $navigationLabel = 'Tasks Management';
 
