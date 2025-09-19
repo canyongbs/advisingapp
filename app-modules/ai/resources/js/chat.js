@@ -54,6 +54,7 @@ document.addEventListener('alpine:init', () => {
             users: [],
             hasSetUpNewMessageForResponse: false,
             isCompletingPreviousResponse: false,
+            responseTimeout: null,
 
             init: async function () {
                 this.render();
@@ -109,6 +110,8 @@ document.addEventListener('alpine:init', () => {
                         this.error = null;
                         this.isRateLimited = false;
 
+                        this.startResponseTimeout();
+
                         if (!this.hasSetUpNewMessageForResponse) {
                             if (!this.isCompletingPreviousResponse) {
                                 this.messages.push({
@@ -131,6 +134,8 @@ document.addEventListener('alpine:init', () => {
                         this.pendingResponse += event.content;
                     })
                     .listen('.advisor-message.finished', (event) => {
+                        this.clearResponseTimeout();
+
                         if (this.pendingResponse) {
                             this.rawIncomingResponse += this.pendingResponse;
                             this.pendingResponse = '';
@@ -166,6 +171,8 @@ document.addEventListener('alpine:init', () => {
                                 await new Promise((resolve) =>
                                     setTimeout(resolve, event.rate_limit_resets_after_seconds * 1000),
                                 );
+
+                                this.startResponseTimeout();
 
                                 await this.handleResponse({
                                     response: await fetch(
@@ -205,8 +212,32 @@ document.addEventListener('alpine:init', () => {
                 });
             },
 
+            startResponseTimeout: function () {
+                this.clearResponseTimeout();
+
+                this.responseTimeout = setTimeout(
+                    () => {
+                        this.error = 'An error happened when sending your message.';
+                        this.isRetryable = true;
+                        this.isRateLimited = false;
+                        this.isSendingMessage = false;
+                        this.responseTimeout = null;
+                    },
+                    10 * 60 * 1000,
+                );
+            },
+
+            clearResponseTimeout: function () {
+                if (this.responseTimeout) {
+                    clearTimeout(this.responseTimeout);
+                    this.responseTimeout = null;
+                }
+            },
+
             handleResponse: async function ({ response }) {
                 if (!response.ok) {
+                    this.clearResponseTimeout();
+
                     const responseJson = await response.json();
 
                     this.error = responseJson.message;
@@ -264,6 +295,8 @@ document.addEventListener('alpine:init', () => {
                 this.$nextTick(async () => {
                     this.isCompletingPreviousResponse = false;
 
+                    this.startResponseTimeout();
+
                     await this.handleResponse({
                         response: await fetch(sendMessageUrl, {
                             method: 'POST',
@@ -302,6 +335,8 @@ document.addEventListener('alpine:init', () => {
                 this.$nextTick(async () => {
                     this.isCompletingPreviousResponse = isOriginallyIncomplete;
 
+                    this.startResponseTimeout();
+
                     await this.handleResponse({
                         response: await fetch(retryMessageUrl, {
                             method: 'POST',
@@ -329,6 +364,8 @@ document.addEventListener('alpine:init', () => {
 
                 this.$nextTick(async () => {
                     this.isCompletingPreviousResponse = true;
+
+                    this.startResponseTimeout();
 
                     await this.handleResponse({
                         response: await fetch(completeResponseUrl, {
