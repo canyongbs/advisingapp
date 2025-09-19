@@ -36,49 +36,20 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use AdvisingApp\Report\Abstract\AiReport;
-use AdvisingApp\Report\Filament\Widgets\AiStats;
-use AdvisingApp\Report\Filament\Widgets\ExchangesByMonthLineChart;
-use AdvisingApp\Report\Filament\Widgets\PromptsByCategoryDoughnutChart;
-use AdvisingApp\Report\Filament\Widgets\PromptsCreatedLineChart;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\Report\Filament\Widgets\SpecialActionsDoughnutChart;
+use AdvisingApp\Report\Abstract\ProjectManagementReport;
 use App\Filament\Clusters\ReportLibrary;
 
-class ArtificialIntelligence extends AiReport
+class ProjectReport extends ProjectManagementReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    protected static ?string $navigationGroup = 'Project Management';
 
-    protected static ?string $navigationLabel = 'Utilization';
+    protected static ?string $navigationLabel = 'Projects';
 
-    protected static ?string $title = 'Utilization';
+    protected static ?string $title = 'Projects';
 
-    protected static string $routePath = 'artificial-intelligence-utilization';
+    protected static ?int $navigationSort = 21;
 
-    protected static ?int $navigationSort = 14;
-
-    protected $cacheTag = 'report-artificial-intelligence';
-
-    public function getWidgets(): array
-    {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            AiStats::make(['cacheTag' => $this->cacheTag]),
-            ExchangesByMonthLineChart::make(['cacheTag' => $this->cacheTag]),
-            SpecialActionsDoughnutChart::make(['cacheTag' => $this->cacheTag]),
-            PromptsByCategoryDoughnutChart::make(['cacheTag' => $this->cacheTag]),
-            PromptsCreatedLineChart::make(['cacheTag' => $this->cacheTag]),
-        ];
-    }
-
-    public function getColumns(): int | string | array
-    {
-        return [
-            'sm' => 12,
-            'md' => 12,
-            'lg' => 12,
-        ];
-    }
+    protected static string $routePath = 'project-report';
 }
