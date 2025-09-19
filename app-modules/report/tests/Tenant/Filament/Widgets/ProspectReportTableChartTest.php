@@ -39,6 +39,7 @@ use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportTableChart;
 use App\Models\User;
 use Filament\Tables\Actions\ExportAction;
+use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -84,6 +85,7 @@ it('Export Action is available and correct exporter', function () {
 
 it('Trigger the export action and send the notification message', function () {
     $count = random_int(1, 5);
+    Storage::fake('s3');
 
     $user = User::factory()->create();
     actingAs($user);
