@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Interaction\Models\Interaction;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -80,5 +81,13 @@ class QnaAdvisorThread extends BaseModel
     public function author(): MorphTo
     {
         return $this->morphTo('author');
+    }
+
+    /**
+     * @return BelongsTo<Interaction, $this>
+     */
+    public function interaction(): BelongsTo
+    {
+        return $this->belongsTo(Interaction::class);
     }
 }
