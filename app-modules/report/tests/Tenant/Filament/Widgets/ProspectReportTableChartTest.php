@@ -35,8 +35,12 @@
 */
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportTableChart;
+use App\Models\User;
+use Filament\Tables\Actions\ExportAction;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 it('displays only prospects added within the selected date range', function () {
@@ -69,4 +73,34 @@ it('displays only prospects added within the selected date range', function () {
             $prospectWithinRange2,
         ]))
         ->assertCanNotSeeTableRecords(collect([$prospectOutsideRange]));
+});
+
+it('Export Action is available and correct exporter', function () {
+    livewire(ProspectReportTableChart::class, [
+        'cacheTag' => 'prospect-report-cache',
+        'filters' => [],
+    ])->assertTableActionExists(ExportAction::class);
+});
+
+it('Trigger the export action and send the notification message', function () {
+    $count = random_int(1, 5);
+
+    $user = User::factory()->create();
+    actingAs($user);
+
+    $prospects = Prospect::factory()->count($count)->for($user, 'createdBy')->create();
+
+    $prospects->each(function ($prospect) {
+        $email = ProspectEmailAddress::factory()->create([
+            'prospect_id' => $prospect->getKey(),
+        ]);
+        $prospect->update(['primary_email_id' => $email->getKey()]);
+    });
+
+    livewire(ProspectReportTableChart::class, [
+        'cacheTag' => 'prospect-report-cache',
+        'filters' => [],
+    ])
+        ->callTableAction(ExportAction::class)
+        ->assertNotified();
 });
