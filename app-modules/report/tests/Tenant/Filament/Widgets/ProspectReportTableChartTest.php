@@ -90,7 +90,7 @@ it('Trigger the export action and send the notification message', function () {
 
     $prospects = Prospect::factory()->count($count)->for($user, 'createdBy')->create();
 
-    $prospects->each(function ($prospect) {
+    $prospects->each(function (Prospect $prospect) {
         $email = ProspectEmailAddress::factory()->create([
             'prospect_id' => $prospect->getKey(),
         ]);
