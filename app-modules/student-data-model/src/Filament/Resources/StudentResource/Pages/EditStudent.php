@@ -41,7 +41,6 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concer
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\AthleticFieldsFeature;
-use App\Features\SmsOptOutFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -194,56 +193,47 @@ class EditStudent extends EditRecord
                                     ->default(true),
                                 Checkbox::make('sms_opt_out_phone_number')
                                     ->label('SMS Opt Out')
-                                    ->default(false)
-                                    ->visible(SmsOptOutFeature::active()),
+                                    ->default(false),
                             ])
                             ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
-                                if (SmsOptOutFeature::active()) {
-                                    if (isset($data['number'])) {
-                                        $data['sms_opt_out_phone_number'] = SmsOptOutPhoneNumber::where('number', $data['number'])->exists();
-                                    } else {
-                                        $data['sms_opt_out_phone_number'] = false;
-                                    }
+                                if (isset($data['number'])) {
+                                    $data['sms_opt_out_phone_number'] = SmsOptOutPhoneNumber::where('number', $data['number'])->exists();
+                                } else {
+                                    $data['sms_opt_out_phone_number'] = false;
                                 }
 
                                 return $data;
                             })
                             ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
-                                if (SmsOptOutFeature::active()) {
-                                    if ($data['sms_opt_out_phone_number'] === true) {
-                                        SmsOptOutPhoneNumber::firstOrCreate([
-                                            'number' => $data['number'],
-                                        ]);
-                                    }
-
-                                    unset($data['sms_opt_out_phone_number']);
+                                if ($data['sms_opt_out_phone_number'] === true) {
+                                    SmsOptOutPhoneNumber::firstOrCreate([
+                                        'number' => $data['number'],
+                                    ]);
                                 }
+
+                                unset($data['sms_opt_out_phone_number']);
 
                                 return $data;
                             })
                             ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
-                                if (SmsOptOutFeature::active()) {
-                                    if ($data['sms_opt_out_phone_number'] === true) {
-                                        SmsOptOutPhoneNumber::firstOrCreate([
-                                            'number' => $data['number'],
-                                        ]);
-                                    } else {
-                                        SmsOptOutPhoneNumber::where('number', $data['number'])->delete();
-                                    }
-
-                                    unset($data['sms_opt_out_phone_number']);
+                                if ($data['sms_opt_out_phone_number'] === true) {
+                                    SmsOptOutPhoneNumber::firstOrCreate([
+                                        'number' => $data['number'],
+                                    ]);
+                                } else {
+                                    SmsOptOutPhoneNumber::where('number', $data['number'])->delete();
                                 }
+
+                                unset($data['sms_opt_out_phone_number']);
 
                                 return $data;
                             })
                             ->deleteAction(
                                 fn (Action $action) => $action->before(function () use ($action) {
-                                    if (SmsOptOutFeature::active()) {
-                                        $data = $action->getArguments();
+                                    $data = $action->getArguments();
 
-                                        if (isset($data['number'])) {
-                                            SmsOptOutPhoneNumber::where('number', $data['number'])->delete();
-                                        }
+                                    if (isset($data['number'])) {
+                                        SmsOptOutPhoneNumber::where('number', $data['number'])->delete();
                                     }
                                 })
                             )

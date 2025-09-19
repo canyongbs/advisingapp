@@ -49,7 +49,6 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use App\Features\SmsOptOutFeature;
 use Exception;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormComponentAction;
@@ -103,9 +102,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                             $phoneQuery = $educatable->phoneNumbers()
                                                 ->where('can_receive_sms', true);
 
-                                            $hasAvailablePhones = SmsOptOutFeature::active()
-                                                ? $phoneQuery->whereDoesntHave('smsOptOut')->exists()
-                                                : $phoneQuery->exists();
+                                            $hasAvailablePhones = $phoneQuery->whereDoesntHave('smsOptOut')->exists();
 
                                             return ! $hasAvailablePhones;
                                         } elseif ($educatable instanceof Prospect) {
@@ -133,10 +130,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                     NotificationChannel::Sms => $educatable instanceof Student
                                         ? $educatable->primaryPhoneNumber()
                                             ->where('can_receive_sms', true)
-                                            ->when(
-                                                SmsOptOutFeature::active(),
-                                                fn ($query) => $query->whereDoesntHave('smsOptOut')
-                                            )
+                                            ->whereDoesntHave('smsOptOut')
                                             ->first()?->getKey()
                                         : ($educatable instanceof Prospect
                                             ? $educatable->primaryPhoneNumber()
@@ -150,10 +144,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                     NotificationChannel::Sms => $educatable instanceof Student
                                         ? $educatable->phoneNumbers()
                                             ->where('can_receive_sms', true)
-                                            ->when(
-                                                SmsOptOutFeature::active(),
-                                                fn ($query) => $query->whereDoesntHave('smsOptOut')
-                                            )
+                                            ->whereDoesntHave('smsOptOut')
                                             ->first()?->getKey()
                                         : ($educatable instanceof Prospect
                                             ? $educatable->phoneNumbers()
@@ -182,10 +173,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                     NotificationChannel::Sms => $livewire->getOwnerRecord() instanceof Student
                                         ? $livewire->getOwnerRecord()->phoneNumbers()
                                             ->where('can_receive_sms', true)
-                                            ->when(
-                                                SmsOptOutFeature::active(),
-                                                fn ($query) => $query->whereDoesntHave('smsOptOut')
-                                            )
+                                            ->whereDoesntHave('smsOptOut')
                                             ->get()
                                             ->mapWithKeys(fn (StudentPhoneNumber $phoneNumber): array => [
                                                 $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),

@@ -35,9 +35,8 @@
     use AdvisingApp\Engagement\Models\Engagement;
     use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
     use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-    use App\Features\SmsOptOutFeature;
 
-    $isOptedOut = SmsOptOutFeature::active() && $phoneNumber instanceof StudentPhoneNumber && $phoneNumber->smsOptOut()->exists();
+    $isOptedOut = $phoneNumber instanceof StudentPhoneNumber && $phoneNumber->smsOptOut()->exists();
 @endphp
 
 <button
