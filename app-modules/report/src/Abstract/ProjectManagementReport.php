@@ -34,35 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+namespace AdvisingApp\Report\Abstract;
 
+use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use Filament\Pages\Dashboard;
 
-/**
- * @mixin IdeHelperConfidentialPromptUser
- */
-class ConfidentialPromptUser extends Pivot
+abstract class ProjectManagementReport extends Dashboard
 {
-    use HasUuids;
+    use HasFiltersForm;
 
-    protected $table = 'confidential_prompt_users';
+    protected static string $view = 'filament.pages.coming-soon';
 
-    /**
-     * @return BelongsTo<Prompt, $this>
-     */
-    public function prompt(): BelongsTo
+    public static function canAccess(): bool
     {
-        return $this->belongsTo(Prompt::class);
-    }
+        /** @var User $user */
+        $user = auth()->user();
 
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
+        return $user->can('report-library.view-any');
     }
 }

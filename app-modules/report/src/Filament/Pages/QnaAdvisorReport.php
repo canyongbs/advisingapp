@@ -49,7 +49,7 @@ class QnaAdvisorReport extends AiReport
 
     protected static string $routePath = 'qna-advisor-report';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 18;
 
     protected string $cacheTag = 'qna-advisor-report';
 

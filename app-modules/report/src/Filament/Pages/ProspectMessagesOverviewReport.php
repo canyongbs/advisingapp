@@ -55,7 +55,7 @@ class ProspectMessagesOverviewReport extends ProspectReport
 
     protected string $cacheTag = 'report-prospect-messages-overview';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 11;
 
     public function getColumns(): int | string | array
     {
