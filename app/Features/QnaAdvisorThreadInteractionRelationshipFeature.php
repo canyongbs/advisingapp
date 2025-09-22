@@ -34,60 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+namespace App\Features;
 
-use AdvisingApp\Interaction\Models\Interaction;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @mixin IdeHelperQnaAdvisorThread
- */
-class QnaAdvisorThread extends BaseModel
+class QnaAdvisorThreadInteractionRelationshipFeature extends AbstractFeatureFlag
 {
-    public $fillable = [
-        'advisor_id',
-        'author_type',
-        'author_id',
-        'finished_at',
-    ];
-
-    protected $casts = [
-        'finished_at' => 'datetime',
-    ];
-
-    /**
-     * @return HasMany<QnaAdvisorMessage, $this>
-     */
-    public function messages(): HasMany
+    public function resolve(mixed $scope): mixed
     {
-        return $this->hasMany(QnaAdvisorMessage::class, 'thread_id');
-    }
-
-    /**
-     * @return BelongsTo<QnaAdvisor, $this>
-     */
-    public function advisor(): BelongsTo
-    {
-        return $this->belongsTo(QnaAdvisor::class, 'advisor_id');
-    }
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function author(): MorphTo
-    {
-        return $this->morphTo('author');
-    }
-
-    /**
-     * @return BelongsTo<Interaction, $this>
-     */
-    public function interaction(): BelongsTo
-    {
-        return $this->belongsTo(Interaction::class);
+        return false;
     }
 }

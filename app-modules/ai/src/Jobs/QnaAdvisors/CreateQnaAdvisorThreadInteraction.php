@@ -42,8 +42,10 @@ use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\QnaAdvisorThreadInteractionRelationshipFeature;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\DB;
 
 class CreateQnaAdvisorThreadInteraction implements ShouldQueue
 {
@@ -76,21 +78,28 @@ class CreateQnaAdvisorThreadInteraction implements ShouldQueue
             content: $transcript,
         );
 
-        assert($this->thread->author instanceof Student || $this->thread->author instanceof Prospect);
+        DB::transaction(function () use ($summary, $transcript) {
+            assert($this->thread->author instanceof Student || $this->thread->author instanceof Prospect);
 
-        $this->thread->author->interactions()->create([
-            'start_datetime' => $this->thread->messages()->oldest()->value('created_at'),
-            'end_datetime' => $this->thread->messages()->latest()->value('created_at'),
-            'subject' => "{$this->thread->advisor->name} (QnA Advisor) Chat Session",
-            'description' => <<<"EOD"
-                **Summary:**
+            $interaction = $this->thread->author->interactions()->create([
+                'start_datetime' => $this->thread->messages()->oldest()->value('created_at'),
+                'end_datetime' => $this->thread->messages()->latest()->value('created_at'),
+                'subject' => "{$this->thread->advisor->name} (QnA Advisor) Chat Session",
+                'description' => <<<"EOD"
+                    **Summary:**
 
-                {$summary}
+                    {$summary}
 
-                **Transcript:**
+                    **Transcript:**
 
-                {$transcript}
-                EOD,
-        ]);
+                    {$transcript}
+                    EOD,
+            ]);
+
+            if (QnaAdvisorThreadInteractionRelationshipFeature::active()) {
+                $this->thread->interaction()->associate($interaction);
+                $this->thread->save();
+            }
+        });
     }
 }

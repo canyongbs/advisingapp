@@ -34,60 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+use App\Features\QnaAdvisorThreadInteractionRelationshipFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Interaction\Models\Interaction;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-
-/**
- * @mixin IdeHelperQnaAdvisorThread
- */
-class QnaAdvisorThread extends BaseModel
-{
-    public $fillable = [
-        'advisor_id',
-        'author_type',
-        'author_id',
-        'finished_at',
-    ];
-
-    protected $casts = [
-        'finished_at' => 'datetime',
-    ];
-
-    /**
-     * @return HasMany<QnaAdvisorMessage, $this>
-     */
-    public function messages(): HasMany
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->hasMany(QnaAdvisorMessage::class, 'thread_id');
+        DB::transaction(function () {
+            Schema::table('qna_advisor_threads', function (Blueprint $table) {
+                $table->foreignUuid('interaction_id')->nullable()->constrained();
+            });
+
+            QnaAdvisorThreadInteractionRelationshipFeature::activate();
+        });
     }
 
-    /**
-     * @return BelongsTo<QnaAdvisor, $this>
-     */
-    public function advisor(): BelongsTo
+    public function down(): void
     {
-        return $this->belongsTo(QnaAdvisor::class, 'advisor_id');
-    }
+        DB::transaction(function () {
+            QnaAdvisorThreadInteractionRelationshipFeature::deactivate();
 
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function author(): MorphTo
-    {
-        return $this->morphTo('author');
+            Schema::table('qna_advisor_threads', function (Blueprint $table) {
+                $table->dropColumn('interaction_id');
+            });
+        });
     }
-
-    /**
-     * @return BelongsTo<Interaction, $this>
-     */
-    public function interaction(): BelongsTo
-    {
-        return $this->belongsTo(Interaction::class);
-    }
-}
+};
