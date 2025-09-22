@@ -45,6 +45,7 @@ document.addEventListener('alpine:init', () => {
             isRateLimited: false,
             isRetryable: true,
             hasImageGeneration: false,
+            hasImagePlaceholder: false,
             latestMessage: '',
             message: '',
             rawIncomingResponse: '',
@@ -109,6 +110,7 @@ document.addEventListener('alpine:init', () => {
                     .listen('.advisor-message.chunk', (event) => {
                         this.error = null;
                         this.isRateLimited = false;
+                        this.hasImagePlaceholder = false;
 
                         this.startResponseTimeout();
 
@@ -135,6 +137,7 @@ document.addEventListener('alpine:init', () => {
                     })
                     .listen('.advisor-message.finished', (event) => {
                         this.clearResponseTimeout();
+                        this.hasImagePlaceholder = false;
 
                         if (this.pendingResponse) {
                             this.rawIncomingResponse += this.pendingResponse;
@@ -221,6 +224,7 @@ document.addEventListener('alpine:init', () => {
                         this.isRetryable = true;
                         this.isRateLimited = false;
                         this.isSendingMessage = false;
+                        this.hasImagePlaceholder = false;
                         this.responseTimeout = null;
                     },
                     10 * 60 * 1000,
@@ -244,11 +248,16 @@ document.addEventListener('alpine:init', () => {
                     this.isRetryable = !responseJson.isThreadLocked;
                     this.isRateLimited = false;
                     this.isSendingMessage = false;
+                    this.hasImagePlaceholder = false;
 
                     return;
                 }
 
                 this.hasSetUpNewMessageForResponse = false;
+
+                if (this.hasImageGeneration) {
+                    this.hasImagePlaceholder = true;
+                }
 
                 if (!this.isCompletingPreviousResponse) {
                     this.$wire.clearFiles();

@@ -330,7 +330,11 @@ abstract class BaseOpenAiService implements AiService
                         }
 
                         if (filled($response->text)) {
-                            yield new Text($response->text);
+                            yield new Text(
+                                filled($response->additionalContent['generated_images'] ?? [])
+                                    ? $response->text
+                                    : ('We have determined that an image is not needed for this request.' . PHP_EOL . PHP_EOL . $response->text),
+                            );
                         }
 
                         if (filled($response->additionalContent['generated_images'] ?? [])) {
