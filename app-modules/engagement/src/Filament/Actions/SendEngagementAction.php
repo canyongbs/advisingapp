@@ -48,7 +48,6 @@ use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use App\Features\SmsOptOutFeature;
 use App\Filament\Forms\Components\EducatableSelect;
 use Exception;
 use Filament\Actions\Action;
@@ -131,9 +130,7 @@ class SendEngagementAction extends Action
                                     if ($educatable instanceof Student) {
                                         $phoneQuery = $educatable->phoneNumbers()->where('can_receive_sms', true);
 
-                                        $hasAvailablePhones = SmsOptOutFeature::active()
-                                            ? $phoneQuery->whereDoesntHave('smsOptOut')->exists()
-                                            : $phoneQuery->exists();
+                                        $hasAvailablePhones = $phoneQuery->whereDoesntHave('smsOptOut')->exists();
                                     } elseif ($educatable instanceof Prospect) {
                                         $hasAvailablePhones = $educatable->phoneNumbers()
                                             ->where('can_receive_sms', true)
@@ -167,9 +164,9 @@ class SendEngagementAction extends Action
                                                         $phoneQuery = $educatable->phoneNumbers()
                                                             ->where('can_receive_sms', true);
 
-                                                        $hasAvailablePhones = SmsOptOutFeature::active()
-                                                            ? $phoneQuery->whereDoesntHave('smsOptOut')->exists()
-                                                            : $phoneQuery->exists();
+                                                        $hasAvailablePhones = $phoneQuery
+                                                            ->whereDoesntHave('smsOptOut')
+                                                            ->exists();
 
                                                         return ! $hasAvailablePhones;
                                                     } elseif ($educatable instanceof Prospect) {
@@ -194,10 +191,7 @@ class SendEngagementAction extends Action
                                                 NotificationChannel::Sms => $educatable instanceof Student
                                                     ? $educatable->primaryPhoneNumber()
                                                         ->where('can_receive_sms', true)
-                                                        ->when(
-                                                            SmsOptOutFeature::active(),
-                                                            fn ($query) => $query->whereDoesntHave('smsOptOut')
-                                                        )
+                                                        ->whereDoesntHave('smsOptOut')
                                                         ->first()?->getKey()
                                                     : ($educatable instanceof Prospect
                                                         ? $educatable->primaryPhoneNumber()
@@ -211,10 +205,7 @@ class SendEngagementAction extends Action
                                                 NotificationChannel::Sms => $educatable instanceof Student
                                                     ? $educatable->phoneNumbers()
                                                         ->where('can_receive_sms', true)
-                                                        ->when(
-                                                            SmsOptOutFeature::active(),
-                                                            fn ($query) => $query->whereDoesntHave('smsOptOut')
-                                                        )
+                                                        ->whereDoesntHave('smsOptOut')
                                                         ->first()?->getKey()
                                                     : ($educatable instanceof Prospect
                                                         ? $educatable->phoneNumbers()
@@ -241,10 +232,7 @@ class SendEngagementAction extends Action
                                             NotificationChannel::Sms => $educatable instanceof Student
                                                 ? $educatable->phoneNumbers()
                                                     ->where('can_receive_sms', true)
-                                                    ->when(
-                                                        SmsOptOutFeature::active(),
-                                                        fn ($query) => $query->whereDoesntHave('smsOptOut')
-                                                    )
+                                                    ->whereDoesntHave('smsOptOut')
                                                     ->get()
                                                     ->mapWithKeys(fn (StudentPhoneNumber $phoneNumber): array => [
                                                         $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
