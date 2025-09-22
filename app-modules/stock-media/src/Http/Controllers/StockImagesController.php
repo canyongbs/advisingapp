@@ -34,42 +34,53 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StockMedia\Providers;
+namespace AdvisingApp\StockMedia\Http\Controllers;
 
 use AdvisingApp\StockMedia\Enums\StockMediaProvider;
 use AdvisingApp\StockMedia\Settings\StockMediaSettings;
-use AdvisingApp\StockMedia\StockMediaPlugin;
-use Filament\Panel;
-use FilamentTiptapEditor\TiptapEditor;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Http;
 
-class StockMediaServiceProvider extends ServiceProvider
+class StockImagesController
 {
-    public function register()
+    public function __invoke(): JsonResponse
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new StockMediaPlugin()));
-    }
+        $settings = app(StockMediaSettings::class);
 
-    public function boot(): void
-    {
-        Relation::morphMap([]);
+        if (! $settings->is_active) {
+            abort(404);
+        }
 
-        TiptapEditor::configureUsing(fn (TiptapEditor $editor) => $editor->stockImagesUrl(function (StockMediaSettings $settings): ?string {
-            if (! $settings->is_active) {
-                return null;
-            }
+        if ($settings->provider !== StockMediaProvider::Pexels) {
+            abort(404);
+        }
 
-            if ($settings->provider !== StockMediaProvider::Pexels) {
-                return null;
-            }
+        if (blank($settings->pexels_api_key)) {
+            abort(404);
+        }
 
-            if (blank($settings->pexels_api_key)) {
-                return null;
-            }
+        $response = Http::withHeader('Authorization', $settings->pexels_api_key)
+            ->get('https://api.pexels.com/v1/search', query: [
+                'query' => request()->get('search'),
+                'per_page' => 15,
+                'page' => request()->get('page') ?? 1,
+            ]);
 
-            return URL::temporarySignedRoute('api.stock-images', now()->addHour());
-        }));
+        if (! $response->successful()) {
+            abort(500, 'Failed to fetch images from Pexels.');
+        }
+
+        $data = $response->json();
+
+        return response()->json([
+            'data' => array_map(fn (array $image): array => [
+                'url' => $image['src']['large2x'],
+                'preview_url' => $image['src']['tiny'],
+                'title' => $image['alt'],
+            ], $data['photos'] ?? []),
+            'current_page' => $data['page'] ?? 1,
+            'last_page' => (int) ceil(($data['total_results'] ?? 0) / 15),
+            'total' => $data['total_results'] ?? 0,
+        ]);
     }
 }
