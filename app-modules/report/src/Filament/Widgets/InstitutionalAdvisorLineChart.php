@@ -73,100 +73,96 @@ class InstitutionalAdvisorLineChart extends LineChartReportWidget
 
         $shouldBypassCache = filled($startDate) || filled($endDate);
 
+        $buildData = function (?Carbon $startDate = null, ?Carbon $endDate = null): array {
+            $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
+            $endDate = $endDate ?? Carbon::now()->endOfMonth();
+
+            $months = $this->getMonthRange($startDate, $endDate);
+
+            $exchangesData = AiAssistantUse::query()
+                ->whereRelation('assistant', 'is_default', true)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")
+                ->groupByRaw("date_trunc('month', created_at)")
+                ->get()
+                ->mapWithKeys(function (object $item): array {
+                    return [
+                        Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['monthly_total'],
+                    ];
+                });
+
+            $customPromptsData = PromptUse::query()
+                ->whereRelation('prompt', 'is_smart', false)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")
+                ->groupByRaw("date_trunc('month', created_at)")
+                ->get()
+                ->mapWithKeys(function (object $item): array {
+                    return [
+                        Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['monthly_total'],
+                    ];
+                });
+
+            $smartPromptsData = PromptUse::query()
+                ->whereRelation('prompt', 'is_smart', true)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")
+                ->groupByRaw("date_trunc('month', created_at)")
+                ->get()
+                ->mapWithKeys(function (object $item): array {
+                    return [
+                        Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['monthly_total'],
+                    ];
+                });
+
+            $exchanges = [];
+            $customPrompts = [];
+            $smartPrompts = [];
+
+            foreach ($months as $month) {
+                $key = $month->toDateString();
+                $label = $month->format('M Y');
+
+                $exchanges[$label] = $exchangesData[$key] ?? 0;
+                $customPrompts[$label] = $customPromptsData[$key] ?? 0;
+                $smartPrompts[$label] = $smartPromptsData[$key] ?? 0;
+            }
+
+            return [
+                'exchanges' => $exchanges,
+                'customPrompts' => $customPrompts,
+                'smartPrompts' => $smartPrompts,
+            ];
+        };
+
         $monthlyData = $shouldBypassCache
-            ? $this->getInstitutionalAdvisorData($startDate, $endDate)
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('institutional_advisor_line_chart_data', now()->addHours(24), function () {
-                return $this->getInstitutionalAdvisorData();
+            ? $buildData($startDate, $endDate)
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('institutional_advisor_line_chart_data', now()->addHours(24), function () use ($buildData) {
+                return $buildData();
             });
 
         return [
             'datasets' => [
                 [
-                    'label' => 'Exchanges by Month',
+                    'label' => 'Exchanges',
                     'data' => array_values($monthlyData['exchanges']),
                     'borderColor' => '#2C8BCA',
                     'pointBackgroundColor' => '#2C8BCA',
                 ],
                 [
-                    'label' => 'Custom Prompts by Month',
+                    'label' => 'Custom Prompts',
                     'data' => array_values($monthlyData['customPrompts']),
                     'borderColor' => '#F59E0B',
                     'pointBackgroundColor' => '#F59E0B',
                 ],
                 [
-                    'label' => 'Smart Prompts by Month',
+                    'label' => 'Smart Prompts',
                     'data' => array_values($monthlyData['smartPrompts']),
                     'borderColor' => '#10B981',
                     'pointBackgroundColor' => '#10B981',
                 ],
             ],
             'labels' => array_keys($monthlyData['exchanges']),
-        ];
-    }
-
-    /**
-     * @return array<string, array<string, int>>
-     */
-    protected function getInstitutionalAdvisorData(?Carbon $startDate = null, ?Carbon $endDate = null): array
-    {
-        $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
-        $endDate = $endDate ?? Carbon::now()->endOfMonth();
-
-        $months = $this->getMonthRange($startDate, $endDate);
-
-        $exchangesData = AiAssistantUse::query()
-            ->whereRelation('assistant', 'is_default', true)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")
-            ->groupByRaw("date_trunc('month', created_at)")
-            ->get()
-            ->mapWithKeys(function (object $item): array {
-                return [
-                    Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['monthly_total'],
-                ];
-            });
-
-        $customPromptsData = PromptUse::query()
-            ->whereRelation('prompt', 'is_smart', false)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")
-            ->groupByRaw("date_trunc('month', created_at)")
-            ->get()
-            ->mapWithKeys(function (object $item): array {
-                return [
-                    Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['monthly_total'],
-                ];
-            });
-
-        $smartPromptsData = PromptUse::query()
-            ->whereRelation('prompt', 'is_smart', true)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")
-            ->groupByRaw("date_trunc('month', created_at)")
-            ->get()
-            ->mapWithKeys(function (object $item): array {
-                return [
-                    Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['monthly_total'],
-                ];
-            });
-
-        $exchanges = [];
-        $customPrompts = [];
-        $smartPrompts = [];
-
-        foreach ($months as $month) {
-            $key = $month->toDateString();
-            $label = $month->format('M Y');
-
-            $exchanges[$label] = $exchangesData[$key] ?? 0;
-            $customPrompts[$label] = $customPromptsData[$key] ?? 0;
-            $smartPrompts[$label] = $smartPromptsData[$key] ?? 0;
-        }
-
-        return [
-            'exchanges' => $exchanges,
-            'customPrompts' => $customPrompts,
-            'smartPrompts' => $smartPrompts,
         ];
     }
 }
