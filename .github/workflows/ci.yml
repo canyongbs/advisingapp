@@ -52,7 +52,7 @@ jobs:
           key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
           restore-keys: ${{ runner.os }}-phpext-${{ env.php-version }}
 
-      - uses: shivammathur/setup-php@ec406be512d7077f68eed36e63f4d91bc006edc4 #2.35.4
+      - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f #2.35.5
         with:
           php-version: ${{ env.php-version }}
           coverage: none
@@ -77,7 +77,7 @@ jobs:
       - run: npm install
 
       - name: Set up Ruby
-        uses: ruby/setup-ruby@44511735964dcb71245e7e55f72539531f7bc0eb #1.257.0
+        uses: ruby/setup-ruby@cf7216d52fba1017929b4d7162fabe2b30af5b49 #1.262.0
 
       - name: Run Ruby Script
         run: ruby ./copyright.rb
@@ -179,7 +179,7 @@ jobs:
           key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
           restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
 
-      - uses: shivammathur/setup-php@ec406be512d7077f68eed36e63f4d91bc006edc4 #2.35.4
+      - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f #2.35.5
         with:
           php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
           coverage: none
@@ -295,7 +295,7 @@ jobs:
           key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
           restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
 
-      - uses: shivammathur/setup-php@ec406be512d7077f68eed36e63f4d91bc006edc4 #2.35.4
+      - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f #2.35.5
         with:
           php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
           coverage: none
