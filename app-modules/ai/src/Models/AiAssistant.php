@@ -197,4 +197,12 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
             ->using(AiAssistantConfidentialTeam::class)
             ->withTimestamps();
     }
+
+    /**
+     * @return HasMany<AiAssistantUse, $this>
+     */
+    public function uses(): HasMany
+    {
+        return $this->hasMany(AiAssistantUse::class, 'assistant_id');
+    }
 }
