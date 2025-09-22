@@ -36,7 +36,10 @@
 
 use AdvisingApp\Report\Filament\Widgets\MostRecentStudentsTable;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
+use Filament\Tables\Actions\ExportAction;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 it('displays only students added within the selected date range', function () {
@@ -69,4 +72,27 @@ it('displays only students added within the selected date range', function () {
             $studentWithinRange2,
         ]))
         ->assertCanNotSeeTableRecords(collect([$studentOutsideRange]));
+});
+
+it('has table an export action', function () {
+    livewire(MostRecentStudentsTable::class, [
+        'cacheTag' => 'report-students',
+        'filters' => [],
+    ])->assertTableActionExists(ExportAction::class);
+});
+
+it('can start an export, sending a notification', function () {
+    $count = random_int(1, 5);
+
+    $user = User::factory()->create();
+    actingAs($user);
+
+    $students = Student::factory()->count($count)->create();
+
+    livewire(MostRecentStudentsTable::class, [
+        'cacheTag' => 'report-students',
+        'filters' => [],
+    ])
+        ->callTableAction(ExportAction::class)
+        ->assertNotified();
 });
