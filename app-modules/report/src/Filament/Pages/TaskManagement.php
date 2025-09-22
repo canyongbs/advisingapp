@@ -55,7 +55,7 @@ class TaskManagement extends EngagementReport
 
     protected static string $routePath = 'tasks';
 
-    protected static ?int $navigationSort = 70;
+    protected static ?int $navigationSort = 200;
 
     protected $cacheTag = 'report-tasks';
 

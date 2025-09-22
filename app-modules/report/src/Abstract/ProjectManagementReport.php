@@ -34,42 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+namespace AdvisingApp\Report\Abstract;
 
-use AdvisingApp\Report\Abstract\UserReport;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\Report\Filament\Widgets\UsersLoginCountTable;
-use AdvisingApp\Report\Filament\Widgets\UsersStats;
-use AdvisingApp\Report\Filament\Widgets\UserUniqueLoginCountLineChart;
+use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
+use App\Models\User;
+use Filament\Pages\Dashboard;
 
-class UserLoginActivity extends UserReport
+abstract class ProjectManagementReport extends Dashboard
 {
-    protected static ?string $navigationLabel = 'Login Activity';
+    use HasFiltersForm;
 
-    protected static ?string $title = 'Login Activity';
+    protected static string $view = 'filament.pages.coming-soon';
 
-    protected static string $routePath = 'Users';
-
-    protected static ?int $navigationSort = 190;
-
-    protected $cacheTag = 'report-user-login-activity';
-
-    public function getWidgets(): array
+    public static function canAccess(): bool
     {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            UsersStats::make(['cacheTag' => $this->cacheTag]),
-            UserUniqueLoginCountLineChart::make(['cacheTag' => $this->cacheTag]),
-            UsersLoginCountTable::make(['cacheTag' => $this->cacheTag]),
-        ];
-    }
+        /** @var User $user */
+        $user = auth()->user();
 
-    public function getColumns(): int | string | array
-    {
-        return [
-            'sm' => 2,
-            'md' => 4,
-            'lg' => 4,
-        ];
+        return $user->can('report-library.view-any');
     }
 }

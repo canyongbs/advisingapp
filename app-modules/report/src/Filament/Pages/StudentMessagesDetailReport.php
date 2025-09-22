@@ -55,7 +55,7 @@ class StudentMessagesDetailReport extends StudentReport
 
     protected string $cacheTag = 'report-student-messages-detail';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 50;
 
     public static function canAccess(): bool
     {

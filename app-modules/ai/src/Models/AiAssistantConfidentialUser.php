@@ -43,6 +43,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
+/**
+ * @mixin IdeHelperAiAssistantConfidentialUser
+ */
 class AiAssistantConfidentialUser extends Pivot
 {
     /** @use HasFactory<AiAssistantConfidentialUserFactory> */
