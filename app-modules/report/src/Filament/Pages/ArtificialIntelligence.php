@@ -57,7 +57,7 @@ class ArtificialIntelligence extends AiReport
 
     protected static string $routePath = 'artificial-intelligence-utilization';
 
-    protected static ?int $navigationSort = 14;
+    protected static ?int $navigationSort = 140;
 
     protected $cacheTag = 'report-artificial-intelligence';
 

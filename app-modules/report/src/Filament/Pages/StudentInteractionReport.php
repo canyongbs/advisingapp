@@ -57,7 +57,7 @@ class StudentInteractionReport extends StudentReport
 
     protected string $cacheTag = 'report-student-interaction';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 30;
 
     public function getColumns(): int | string | array
     {

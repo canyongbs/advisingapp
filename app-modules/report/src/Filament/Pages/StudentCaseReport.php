@@ -54,7 +54,7 @@ class StudentCaseReport extends StudentReport
 
     protected string $cacheTag = 'report-student-case';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 70;
 
     public function getColumns(): int | string | array
     {

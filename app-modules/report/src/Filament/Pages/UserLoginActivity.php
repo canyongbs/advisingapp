@@ -50,7 +50,7 @@ class UserLoginActivity extends UserReport
 
     protected static string $routePath = 'Users';
 
-    protected static ?int $navigationSort = 19;
+    protected static ?int $navigationSort = 190;
 
     protected $cacheTag = 'report-user-login-activity';
 

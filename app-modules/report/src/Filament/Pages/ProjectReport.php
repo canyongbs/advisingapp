@@ -49,7 +49,7 @@ class ProjectReport extends ProjectManagementReport
 
     protected static ?string $title = 'Projects';
 
-    protected static ?int $navigationSort = 21;
+    protected static ?int $navigationSort = 210;
 
     protected static string $routePath = 'project-report';
 }

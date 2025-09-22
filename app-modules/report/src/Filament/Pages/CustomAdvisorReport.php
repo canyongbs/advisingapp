@@ -49,7 +49,7 @@ class CustomAdvisorReport extends AiReport
 
     protected static string $routePath = 'custom-advisor-report';
 
-    protected static ?int $navigationSort = 16;
+    protected static ?int $navigationSort = 160;
 
     protected string $cacheTag = 'custom-advisor-report';
 

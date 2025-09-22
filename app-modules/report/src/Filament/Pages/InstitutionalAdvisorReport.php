@@ -49,7 +49,7 @@ class InstitutionalAdvisorReport extends AiReport
 
     protected static string $routePath = 'institutional-advisor-report';
 
-    protected static ?int $navigationSort = 15;
+    protected static ?int $navigationSort = 150;
 
     protected string $cacheTag = 'institutional-advisor-report';
 

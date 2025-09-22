@@ -55,7 +55,7 @@ class StudentDeliverabilityReport extends StudentReport
 
     protected $cacheTag = 'report-student-deliverability';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 60;
 
     public function getColumns(): int | string | array
     {
