@@ -74,7 +74,7 @@ class EditEmailTemplate extends EditRecord
                         'recipient email',
                         'recipient preferred name',
                     ])
-                    ->profile('email')
+                    ->tools(['bold', 'italic', 'small', 'link', 'color', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', 'media', 'stock-image', '|', 'clear-formatting'])
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->required(),
