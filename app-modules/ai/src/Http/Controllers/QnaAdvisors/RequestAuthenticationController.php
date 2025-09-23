@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\Concerns\CanGenerateAndDispatchQ
 use AdvisingApp\Ai\Http\Requests\QnaAdvisors\RequestAuthenticationRequest;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\StudentDataModel\Actions\ResolveEducatableFromEmail;
+use App\Features\QnaAdvisorGenerateProspectsFeature;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
@@ -55,7 +56,7 @@ class RequestAuthenticationController
         $educatable = $resolveEducatableFromEmail($email);
 
         if (! $educatable) {
-            if (! $advisor->is_generate_prospects_enabled) {
+            if (! QnaAdvisorGenerateProspectsFeature::active() || ! $advisor->is_generate_prospects_enabled) {
                 throw ValidationException::withMessages([
                     'email' => 'A student or prospect with that email address could not be found. Please contact your system administrator.',
                 ]);
