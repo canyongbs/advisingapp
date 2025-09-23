@@ -36,8 +36,11 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Report\Filament\Exports\StudentReportTableExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Tables\Actions\ExportAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -111,6 +114,13 @@ class MostRecentStudentsTable extends BaseWidget
                     ->label('Other ID'),
                 TextColumn::make('created_at_source')
                     ->label('Created'),
+            ])
+            ->headerActions([
+                ExportAction::make()
+                    ->exporter(StudentReportTableExporter::class)
+                    ->formats([
+                        ExportFormat::Csv,
+                    ]),
             ])
             ->paginated([10]);
     }
