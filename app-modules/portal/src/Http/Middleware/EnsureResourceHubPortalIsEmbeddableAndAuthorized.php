@@ -45,23 +45,23 @@ class EnsureResourceHubPortalIsEmbeddableAndAuthorized
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $referer = $request->headers->get('referer');
+        $origin = $request->headers->get('origin');
 
         if (parse_url($request->url())['host'] === parse_url(config('app.url'))['host']) {
             return $next($request);
         }
 
-        if (! $referer) {
-            return response()->json(['error' => 'Missing referer header.'], 400);
+        if (! $origin) {
+            return response()->json(['error' => 'Missing origin header.'], 400);
         }
 
-        $referer = parse_url($referer)['host'];
+        $origin = parse_url($origin)['host'];
 
         $settings = resolve(PortalSettings::class);
 
-        if ($referer != parse_url(config('app.url'))['host']) {
-            if (parse_url($settings->resource_hub_portal_authorized_domain)['host'] !== $referer) {
-                return response()->json(['error' => 'Referer not allowed. Domain must be added to allowed domains list'], 403);
+        if ($origin != parse_url(config('app.url'))['host']) {
+            if (parse_url($settings->resource_hub_portal_authorized_domain)['host'] !== $origin) {
+                return response()->json(['error' => 'Origin not allowed. Domain must be added to allowed domains list'], 403);
             }
         }
 
