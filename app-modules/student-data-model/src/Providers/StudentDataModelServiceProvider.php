@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Providers;
 
 use AdvisingApp\StudentDataModel\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -65,6 +66,7 @@ class StudentDataModelServiceProvider extends ServiceProvider
             'student_address' => StudentAddress::class,
             'student_email_address' => StudentEmailAddress::class,
             'sms_opt_out_phone_number' => SmsOptOutPhoneNumber::class,
+            'enrollment_semester' => EnrollmentSemester::class,
         ]);
     }
 }

@@ -188,6 +188,7 @@ $finder = Finder::create()
     ->ignoreVCS(true);
 
 return (new Config())
+    ->setUnsupportedPhpVersionAllowed(true)
     ->setIndent('    ')
     ->setLineEnding("\n")
     ->setCacheFile(__DIR__ . '/.php-cs-fixer.cache')
