@@ -41,6 +41,7 @@ use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
 use AdvisingApp\Report\Filament\Widgets\InstitutionalAdvisorLineChart;
 use AdvisingApp\Report\Filament\Widgets\InstitutionalAdvisorStats;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use App\Features\AiAssistantUseFeature;
 use App\Filament\Clusters\ReportLibrary;
 
 class InstitutionalAdvisorReport extends AiReport
@@ -58,6 +59,11 @@ class InstitutionalAdvisorReport extends AiReport
     protected static ?int $navigationSort = 150;
 
     protected string $cacheTag = 'institutional-advisor-report';
+
+    public static function canAccess(): bool
+    {
+        return AiAssistantUseFeature::active() && parent::canAccess();
+    }
 
     public function getWidgets(): array
     {
