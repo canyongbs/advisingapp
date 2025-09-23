@@ -66,11 +66,11 @@ class RequestAuthenticationController
 
             return response()->json([
                 'registration_allowed' => true,
-                // 'authentication_url' => URL::temporarySignedRoute(
-                //     name: 'ai.qna-advisors.register-prospect',
-                //     expiration: now()->addMinutes(30),
-                //     parameters: ['advisor' => $advisor],
-                // ),
+                'authentication_url' => URL::temporarySignedRoute(
+                    name: 'ai.qna-advisors.register-prospect',
+                    expiration: now()->addMinutes(30),
+                    parameters: ['advisor' => $advisor],
+                ),
             ], 404);
         }
 

@@ -258,6 +258,51 @@ async function authenticate(formData, node) {
         return;
     }
 
+    if (authentication.value.registrationAllowed) {
+        axios
+            .post(authentication.value.requestUrl, {
+                email: formData.email,
+                first_name: formData.first_name,
+                last_name: formData.last_name,
+                preferred: formData.preferred,
+                mobile: formData.mobile,
+                birthdate: formData.birthdate,
+                address: formData.address,
+                address_2: formData.address_2,
+                city: formData.city,
+                state: formData.state,
+                postal: formData.postal,
+            })
+            .then((response) => {
+                if (!response.data.authentication_url) {
+                    node.setErrors([response.data.message]);
+
+                    return;
+                }
+
+                authentication.value.isRequested = true;
+                authentication.value.requestedMessage = response.data.message;
+                authentication.value.confirmationUrl = response.data.authentication_url;
+            })
+            .catch((error) => {
+                if (error.response.status === 404 && error.response.data.registration_allowed) {
+                    let data = error.response.data
+
+                    authentication.value.registrationAllowed = data.registration_allowed;
+                    authentication.value.isRequested = false;
+                    authentication.value.url = data.authentication_url;
+                    
+                    return;
+                }
+
+                const data = error.response.data;
+
+                node.setErrors([], data.errors);
+            });
+        
+        return;
+    }
+
     axios
         .post(authentication.value.requestUrl, {
             email: formData.email,
