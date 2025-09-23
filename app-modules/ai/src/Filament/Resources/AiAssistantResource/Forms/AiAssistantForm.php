@@ -124,6 +124,10 @@ class AiAssistantForm
                 Textarea::make('description')
                     ->columnSpanFull()
                     ->required(),
+                Select::make('created_by_id')
+                    ->label('Created By')
+                    ->relationship('createdBy', 'name')
+                    ->visible(fn (): bool => auth()->user()->isSuperAdmin()),
                 Section::make('Configure AI Advisor')
                     ->description('Design the capability of your advisor by including detailed instructions below.')
                     ->schema([

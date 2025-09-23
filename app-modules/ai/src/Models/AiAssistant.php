@@ -45,8 +45,10 @@ use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
 use App\Models\User;
+use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -64,6 +66,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class AiAssistant extends BaseModel implements HasMedia, Auditable
 {
     use CanAddAssistantLicenseGlobalScope;
+    use HasUserSaveTracking;
     use InteractsWithMedia;
     use SoftDeletes;
     use AuditableTrait;
@@ -79,6 +82,8 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
         'instructions',
         'knowledge',
         'is_confidential',
+        'created_by_id',
+        'last_updated_by_id',
     ];
 
     protected $casts = [
@@ -204,5 +209,13 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
     public function uses(): HasMany
     {
         return $this->hasMany(AiAssistantUse::class, 'assistant_id');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by_id');
     }
 }

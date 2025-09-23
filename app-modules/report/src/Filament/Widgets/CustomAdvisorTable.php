@@ -82,12 +82,13 @@ class CustomAdvisorTable extends BaseWidget
             ->columns([
                 TextColumn::make('name')
                     ->label('Name')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
                 TextColumn::make('uses_count')
                     ->label('Exchanges')
                     ->numeric()
                     ->sortable(),
+                TextColumn::make('createdBy.name')
+                    ->label('Created By'),
                 TextColumn::make('created_at')
                     ->label('Created')
                     ->dateTime()

@@ -56,8 +56,6 @@ test('AiAssistant model with fetch data for team user', function () {
 
     $teamUser->team()->associate($team)->save();
 
-    actingAs($teamUser);
-
     $ownedConfidentialAiAssistants = AiAssistant::factory()
         ->hasAttached($team, [], 'confidentialAccessTeams')
         ->count(10)
@@ -72,6 +70,8 @@ test('AiAssistant model with fetch data for team user', function () {
     $publicAiAssistants = AiAssistant::factory()->count(10)->create([
         'is_confidential' => false,
     ]);
+
+    actingAs($teamUser);
 
     $aiAssistants = AiAssistant::query()->get();
 
@@ -90,8 +90,6 @@ test('AiAssistant model with fetch data for team user', function () {
 test('AiAssistant model with fetch data for assigned user', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    actingAs($user);
-
     $ownedConfidentialAiAssistants = AiAssistant::factory()->hasAttached($user, [], 'confidentialAccessUsers')->count(10)->create([
         'is_confidential' => true,
     ]);
@@ -103,6 +101,39 @@ test('AiAssistant model with fetch data for assigned user', function () {
     $publicAiAssistants = AiAssistant::factory()->count(10)->create([
         'is_confidential' => false,
     ]);
+
+    actingAs($user);
+
+    $aiAssistants = AiAssistant::query()->get();
+
+    expect($aiAssistants)->toHaveCount(20);
+
+    expect($aiAssistants->pluck('id'))
+        ->toContain(...$publicAiAssistants->pluck('id'))
+        ->toContain(...$ownedConfidentialAiAssistants->pluck('id'));
+
+    expect($aiAssistants->pluck('id'))->not->toContain(...$privateAiAssistants->pluck('id'));
+
+    expect($aiAssistants->where('is_confidential', true)->pluck('id'))
+        ->not->toContain(...$privateAiAssistants->pluck('id'));
+});
+
+test('AiAssistant model with fetch data for creator user', function () {
+    $creatorUser = User::factory()->licensed(LicenseType::cases())->create();
+
+    $ownedConfidentialAiAssistants = AiAssistant::factory()->for($creatorUser, 'createdBy')->count(10)->create([
+        'is_confidential' => true,
+    ]);
+
+    $privateAiAssistants = AiAssistant::factory()->count(10)->create([
+        'is_confidential' => true,
+    ]);
+
+    $publicAiAssistants = AiAssistant::factory()->count(10)->create([
+        'is_confidential' => false,
+    ]);
+
+    actingAs($creatorUser);
 
     $aiAssistants = AiAssistant::query()->get();
 
@@ -119,8 +150,6 @@ test('AiAssistant model with fetch data for assigned user', function () {
 });
 
 test('AiAssistant model with fetch data for superadmin user', function () {
-    asSuperAdmin();
-
     $privateAiAssistants = AiAssistant::factory()->count(10)->create([
         'is_confidential' => true,
     ]);
@@ -128,6 +157,8 @@ test('AiAssistant model with fetch data for superadmin user', function () {
     $publicAiAssistants = AiAssistant::factory()->count(10)->create([
         'is_confidential' => false,
     ]);
+
+    asSuperAdmin();
 
     $aiAssistants = AiAssistant::query()->get();
 

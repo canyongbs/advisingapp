@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,40 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models\Scopes;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Scope;
-use Illuminate\Support\Facades\Auth;
-
-class AiAssistantConfidentialScope implements Scope
-{
-    /**
-     * Apply the scope to a given Eloquent query builder.
-     */
-    public function apply(Builder $builder, Model $model): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (! Auth::check() || Auth::user()?->isAdmin) {
-            return;
-        }
-
-        $builder->where(function (Builder $query) {
-            $query->where('is_confidential', false)
-                ->orWhere(function (Builder $query) {
-                    $query->where('is_confidential', true)
-                        ->where(function (Builder $query) {
-                            $query->whereBelongsTo(Auth::user(), 'createdBy')
-                                ->orWhereHas('confidentialAccessTeams', function (Builder $query) {
-                                    $query->whereHas('users', function (Builder $query) {
-                                        $query->where('users.id', Auth::id());
-                                    });
-                                })
-                                ->orWhereHas('confidentialAccessUsers', function (Builder $query) {
-                                    $query->where('users.id', Auth::id());
-                                });
-                        });
-                });
+        Schema::table('ai_assistants', function (Blueprint $table) {
+            $table->foreignUuid('created_by_id')->nullable()->constrained('users');
+            $table->foreignUuid('last_updated_by_id')->nullable()->constrained('users');
         });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('ai_assistants', function (Blueprint $table) {
+            $table->dropColumn(['created_by_id', 'last_updated_by_id']);
+        });
+    }
+};
