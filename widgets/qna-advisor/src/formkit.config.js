@@ -35,6 +35,7 @@ import { genesisIcons } from '@formkit/icons';
 import { generateClasses } from '@formkit/themes';
 import inputs from './FormKit/Inputs/index';
 import theme from './FormKit/theme';
+import asteriskPlugin from '../../form/src/FormKit/asterisk.js';
 
 export default {
     icons: {
@@ -44,4 +45,5 @@ export default {
     config: {
         classes: generateClasses(theme),
     },
+    plugins: [asteriskPlugin],
 };
