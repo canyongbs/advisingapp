@@ -55,7 +55,8 @@ class ProspectReportTableExportExporter extends Exporter
             ExportColumn::make('status.name'),
             ExportColumn::make('createdBy.name')
                 ->label('Created By'),
-            ExportColumn::make('created_at'),
+            ExportColumn::make('created_at')
+                ->label('Created Date'),
         ];
     }
 
