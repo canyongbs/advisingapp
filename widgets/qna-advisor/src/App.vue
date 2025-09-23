@@ -289,7 +289,7 @@ async function authenticate(formData, node) {
 
                 node.setErrors([], data.errors);
             });
-        
+
         return;
     }
 
@@ -317,7 +317,7 @@ async function authenticate(formData, node) {
                 authentication.value.isRequested = false;
                 authentication.value.requestedMessage = data.message;
                 authentication.value.requestUrl = data.authentication_url;
-                
+
                 return;
             }
 
