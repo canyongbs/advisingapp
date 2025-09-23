@@ -285,16 +285,6 @@ async function authenticate(formData, node) {
                 authentication.value.confirmationUrl = response.data.authentication_url;
             })
             .catch((error) => {
-                if (error.response.status === 404 && error.response.data.registration_allowed) {
-                    let data = error.response.data
-
-                    authentication.value.registrationAllowed = data.registration_allowed;
-                    authentication.value.isRequested = false;
-                    authentication.value.url = data.authentication_url;
-                    
-                    return;
-                }
-
                 const data = error.response.data;
 
                 node.setErrors([], data.errors);
@@ -319,16 +309,17 @@ async function authenticate(formData, node) {
             authentication.value.confirmationUrl = response.data.authentication_url;
         })
         .catch((error) => {
-            if (error.response.status === 404 && error.response.data.registration_allowed) {
+            let status = error.response.status;
+            let data = error.response.data;
+
+            if (status === 404 && data.registration_allowed) {
                 authentication.value.registrationAllowed = true;
                 authentication.value.isRequested = false;
-                authentication.value.requestedMessage = json.message;
-                authentication.value.url = json.authentication_url;
+                authentication.value.requestedMessage = data.message;
+                authentication.value.requestUrl = data.authentication_url;
                 
                 return;
             }
-
-            const data = error.response.data;
 
             node.setErrors([], data.errors);
         });
