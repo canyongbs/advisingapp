@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -37,13 +37,12 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Ai\Models\AiAssistantUse;
-use AdvisingApp\Ai\Models\PromptUse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
-class InstitutionalAdvisorLineChart extends LineChartReportWidget
+class CustomAdvisorLineChart extends LineChartReportWidget
 {
-    protected static ?string $heading = 'Usage by month';
+    protected static ?string $heading = 'Exchanges by month';
 
     protected int | string | array $columnSpan = 'full';
 
@@ -61,31 +60,7 @@ class InstitutionalAdvisorLineChart extends LineChartReportWidget
             $months = $this->getMonthRange($startDate, $endDate);
 
             $exchangesData = AiAssistantUse::query()
-                ->whereRelation('assistant', 'is_default', true)
-                ->whereBetween('created_at', [$startDate, $endDate])
-                ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")
-                ->groupByRaw("date_trunc('month', created_at)")
-                ->get()
-                ->mapWithKeys(function (object $item): array {
-                    return [
-                        Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['monthly_total'],
-                    ];
-                });
-
-            $customPromptsData = PromptUse::query()
-                ->whereRelation('prompt', 'is_smart', false)
-                ->whereBetween('created_at', [$startDate, $endDate])
-                ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")
-                ->groupByRaw("date_trunc('month', created_at)")
-                ->get()
-                ->mapWithKeys(function (object $item): array {
-                    return [
-                        Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['monthly_total'],
-                    ];
-                });
-
-            $smartPromptsData = PromptUse::query()
-                ->whereRelation('prompt', 'is_smart', true)
+                ->whereRelation('assistant', 'is_default', false)
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")
                 ->groupByRaw("date_trunc('month', created_at)")
@@ -97,28 +72,22 @@ class InstitutionalAdvisorLineChart extends LineChartReportWidget
                 });
 
             $exchanges = [];
-            $customPrompts = [];
-            $smartPrompts = [];
 
             foreach ($months as $month) {
                 $key = $month->toDateString();
                 $label = $month->format('M Y');
 
                 $exchanges[$label] = $exchangesData[$key] ?? 0;
-                $customPrompts[$label] = $customPromptsData[$key] ?? 0;
-                $smartPrompts[$label] = $smartPromptsData[$key] ?? 0;
             }
 
             return [
                 'exchanges' => $exchanges,
-                'customPrompts' => $customPrompts,
-                'smartPrompts' => $smartPrompts,
             ];
         };
 
         $monthlyData = $shouldBypassCache
             ? $buildData($startDate, $endDate)
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('institutional_advisor_line_chart_data', now()->addHours(24), function () use ($buildData) {
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('custom_advisor_line_chart_data', now()->addHours(24), function () use ($buildData) {
                 return $buildData();
             });
 
@@ -127,20 +96,8 @@ class InstitutionalAdvisorLineChart extends LineChartReportWidget
                 [
                     'label' => 'Exchanges',
                     'data' => array_values($monthlyData['exchanges']),
-                    'borderColor' => '#2C8BCA',
-                    'pointBackgroundColor' => '#2C8BCA',
-                ],
-                [
-                    'label' => 'Custom Prompts',
-                    'data' => array_values($monthlyData['customPrompts']),
-                    'borderColor' => '#F59E0B',
-                    'pointBackgroundColor' => '#F59E0B',
-                ],
-                [
-                    'label' => 'Smart Prompts',
-                    'data' => array_values($monthlyData['smartPrompts']),
-                    'borderColor' => '#10B981',
-                    'pointBackgroundColor' => '#10B981',
+                    'borderColor' => '#7C3AED',
+                    'pointBackgroundColor' => '#7C3AED',
                 ],
             ],
             'labels' => array_keys($monthlyData['exchanges']),

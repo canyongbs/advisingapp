@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Ai\Database\Factories\AiAssistantUseFactory;
 use App\Models\BaseModel;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -46,6 +48,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class AiAssistantUse extends BaseModel
 {
+    /** @use HasFactory<AiAssistantUseFactory> */
+    use HasFactory;
+
     use SoftDeletes;
 
     protected $fillable = [

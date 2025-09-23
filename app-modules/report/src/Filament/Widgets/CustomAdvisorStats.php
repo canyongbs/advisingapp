@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiAssistantUse;
-use AdvisingApp\Ai\Models\PromptUse;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
 
-class InstitutionalAdvisorStats extends StatsOverviewReportWidget
+class CustomAdvisorStats extends StatsOverviewReportWidget
 {
     protected int | string | array $columnSpan = 'full';
 
@@ -54,65 +54,67 @@ class InstitutionalAdvisorStats extends StatsOverviewReportWidget
 
         $shouldBypassCache = filled($startDate) || filled($endDate);
 
+        $customAdvisorsCount = $shouldBypassCache
+            ? AiAssistant::query()
+                ->where('is_default', false)
+                ->when(
+                    $startDate && $endDate,
+                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                )
+                ->count()
+            : Cache::tags(["{{$this->cacheTag}}"])->remember(
+                'custom-advisor-advisors-count',
+                now()->addHours(24),
+                fn (): int => AiAssistant::query()
+                    ->where('is_default', false)
+                    ->count(),
+            );
+
         $exchangesCount = $shouldBypassCache
             ? AiAssistantUse::query()
-                ->whereRelation('assistant', 'is_default', true)
+                ->whereRelation('assistant', 'is_default', false)
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'institutional-advisor-exchanges-count',
+                'custom-advisor-exchanges-count',
                 now()->addHours(24),
                 fn (): int => AiAssistantUse::query()
-                    ->whereRelation('assistant', 'is_default', true)
+                    ->whereRelation('assistant', 'is_default', false)
                     ->count(),
             );
 
-        $customPromptsCount = $shouldBypassCache
-            ? PromptUse::query()
-                ->whereRelation('prompt', 'is_smart', false)
+        $uniqueUsersCount = $shouldBypassCache
+            ? AiAssistantUse::query()
+                ->whereRelation('assistant', 'is_default', false)
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
-                ->count()
+                ->distinct('user_id')
+                ->count('user_id')
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'institutional-advisor-custom-prompts-count',
+                'custom-advisor-unique-users-count',
                 now()->addHours(24),
-                fn (): int => PromptUse::query()
-                    ->whereRelation('prompt', 'is_smart', false)
-                    ->count(),
-            );
-
-        $smartPromptsCount = $shouldBypassCache
-            ? PromptUse::query()
-                ->whereRelation('prompt', 'is_smart', true)
-                ->when(
-                    $startDate && $endDate,
-                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
-                )
-                ->count()
-            : Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'institutional-advisor-smart-prompts-count',
-                now()->addHours(24),
-                fn (): int => PromptUse::query()
-                    ->whereRelation('prompt', 'is_smart', true)
-                    ->count(),
+                fn (): int => AiAssistantUse::query()
+                    ->whereRelation('assistant', 'is_default', false)
+                    ->distinct('user_id')
+                    ->count('user_id'),
             );
 
         return [
+            Stat::make('Custom Advisors', Number::abbreviate(
+                $customAdvisorsCount,
+                maxPrecision: 2,
+            )),
             Stat::make('Exchanges', Number::abbreviate(
                 $exchangesCount,
                 maxPrecision: 2,
             )),
-            Stat::make('Custom Prompts', Number::abbreviate(
-                $customPromptsCount,
-                maxPrecision: 2,
-            )),
-            Stat::make('Smart Prompts', Number::abbreviate(
-                $smartPromptsCount,
+            Stat::make('Unique Users', Number::abbreviate(
+                $uniqueUsersCount,
                 maxPrecision: 2,
             )),
         ];
