@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Form\Rules\IsDomain;
+use App\Features\QnaAdvisorGenerateProspectsFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Forms\Components\Actions;
@@ -67,8 +68,9 @@ class QnaAdvisorEmbed extends EditRecord
 
     public static function canAccess(array $parameters = []): bool
     {
-        /** @var User $user */
-        $user = auth()->user();
+        $user = auth()->guard('web')->user();
+
+        assert($user instanceof User);
 
         return $user->can('qna_advisor_embed.view-any') && $user->can('qna_advisor_embed.*.view') && parent::canAccess($parameters);
     }
@@ -96,7 +98,12 @@ class QnaAdvisorEmbed extends EditRecord
                             ),
                         Toggle::make('is_requires_authentication_enabled')
                             ->label('Requires Authentication')
+                            ->live()
                             ->hidden(fn (Get $get) => ! $get('is_embed_enabled')),
+                        Toggle::make('is_generate_prospects_enabled')
+                            ->label('Generate Prospects')
+                            ->helperText('If enabled, the QnA Advisor will allow for the registration of an unrecognized prospect.')
+                            ->hidden(fn (Get $get) => ! QnaAdvisorGenerateProspectsFeature::active() || ! $get('is_embed_enabled') || ! $get('is_requires_authentication_enabled')),
                         Actions::make([
                             Action::make('embed_snippet')
                                 ->label('Embed Snippet')
