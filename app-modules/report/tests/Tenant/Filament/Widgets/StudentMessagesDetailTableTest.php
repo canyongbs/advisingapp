@@ -46,8 +46,12 @@ use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Filament\Tables\Actions\ExportAction;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 it('displays properly with no filters', function () {
@@ -474,4 +478,63 @@ it('filters by type properly', function () {
         ->filterTable('type', 'sms')
         ->assertCanSeeTableRecords(collect([$holisticEngagementSms, $holisticResponseSms]))
         ->assertCanNotSeeTableRecords(collect([$holisticEngagementEmail, $holisticResponseEmail]));
+});
+
+it('has export action with correct exporter class', function () {
+    $student = Student::factory()->create();
+
+    $engagement = Engagement::factory()->create([
+        'recipient_id' => $student->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $holisticEngagement = HolisticEngagement::where('record_id', $engagement->id)
+        ->where('record_type', new Engagement()
+            ->getMorphClass())
+        ->first();
+
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages-detail',
+        'filters' => [],
+    ])
+        ->assertCanSeeTableRecords(collect([$holisticEngagement]))
+        ->assertTableActionExists(ExportAction::class);
+});
+
+it('can start an export, sending a notification', function () {
+    $count = random_int(1, 5);
+    Storage::fake('s3');
+
+    $user = User::factory()->create();
+    actingAs($user);
+
+    Event::fake();
+
+    $students = Student::factory()->count($count)->create();
+
+    $students->each(function (Student $student) use ($user) {
+        Engagement::factory()
+            ->count(2)
+            ->email()
+            ->for($user)
+            ->create([
+                'recipient_id' => $student->sisid,
+                'recipient_type' => (new Student())->getMorphClass(),
+            ]);
+
+        EngagementResponse::factory()
+            ->count(1)
+            ->create([
+                'sender_id' => $student->sisid,
+                'sender_type' => (new Student())->getMorphClass(),
+                'type' => EngagementResponseType::Email,
+            ]);
+    });
+
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages-detail',
+        'filters' => [],
+    ])
+        ->callTableAction(ExportAction::class)
+        ->assertNotified();
 });
