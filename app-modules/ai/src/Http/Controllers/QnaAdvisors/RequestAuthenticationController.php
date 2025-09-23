@@ -57,9 +57,22 @@ class RequestAuthenticationController
 
         $educatable = $resolveEducatableFromEmail($email);
 
-        throw_if(! $educatable, ValidationException::withMessages([
-            'email' => 'A student or prospect with that email address could not be found. Please contact your system administrator.',
-        ]));
+        if (! $educatable) {
+            if (! $advisor->is_generate_prospects_enabled) {
+                throw ValidationException::withMessages([
+                    'email' => 'A student or prospect with that email address could not be found. Please contact your system administrator.',
+                ]);
+            }
+
+            return response()->json([
+                'registration_allowed' => true,
+                'authentication_url' => URL::temporarySignedRoute(
+                    name: 'ai.qna-advisors.register-prospect',
+                    expiration: now()->addMinutes(30),
+                    parameters: ['advisor' => $advisor],
+                ),
+            ], 404);
+        }
 
         $authenticationUrl = $this->createPortalAuthentication($educatable, $advisor);
 

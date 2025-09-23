@@ -62,6 +62,8 @@ Route::middleware([
             ->middleware(['signed'])
             ->name('authentication.request');
 
+        // TODO: Add register Prospect route here later
+
         Route::post('/authenticate/confirm/{authentication}', AuthenticationConfirmController::class)
             ->middleware(['signed'])
             ->name('authentication.confirm');
