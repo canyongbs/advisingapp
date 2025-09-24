@@ -52,16 +52,20 @@ class AiAssistantConfidentialScope implements Scope
             return;
         }
 
-        $builder->where('is_confidential', false)->orWhere(function (Builder $query) {
-            $query->where('is_confidential', true)
-                ->where(function (Builder $query) {
-                    $query->whereHas('confidentialAccessTeams', function (Builder $query) {
-                        $query->whereHas('users', function (Builder $query) {
-                            $query->where('users.id', Auth::id());
-                        });
-                    })
-                        ->orWhereHas('confidentialAccessUsers', function (Builder $query) {
-                            $query->where('users.id', Auth::id());
+        $builder->where(function (Builder $query) {
+            $query->where('is_confidential', false)
+                ->orWhere(function (Builder $query) {
+                    $query->where('is_confidential', true)
+                        ->where(function (Builder $query) {
+                            $query->whereBelongsTo(Auth::user(), 'createdBy')
+                                ->orWhereHas('confidentialAccessTeams', function (Builder $query) {
+                                    $query->whereHas('users', function (Builder $query) {
+                                        $query->where('users.id', Auth::id());
+                                    });
+                                })
+                                ->orWhereHas('confidentialAccessUsers', function (Builder $query) {
+                                    $query->where('users.id', Auth::id());
+                                });
                         });
                 });
         });

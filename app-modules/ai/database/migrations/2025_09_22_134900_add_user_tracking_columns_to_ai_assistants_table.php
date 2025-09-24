@@ -34,52 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Report\Abstract\AiReport;
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use AdvisingApp\Report\Filament\Widgets\CustomAdvisorLineChart;
-use AdvisingApp\Report\Filament\Widgets\CustomAdvisorStats;
-use AdvisingApp\Report\Filament\Widgets\CustomAdvisorTable;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use App\Features\AiAssistantUseFeature;
-use App\Filament\Clusters\ReportLibrary;
-
-class CustomAdvisorReport extends AiReport
-{
-    use HasFiltersForm;
-
-    protected static ?string $cluster = ReportLibrary::class;
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?string $title = 'Custom Advisor';
-
-    protected static string $routePath = 'custom-advisor-report';
-
-    protected static ?int $navigationSort = 160;
-
-    protected string $cacheTag = 'custom-advisor-report';
-
-    public static function canAccess(): bool
+return new class () extends Migration {
+    public function up(): void
     {
-        return AiAssistantUseFeature::active() && parent::canAccess();
+        Schema::table('ai_assistants', function (Blueprint $table) {
+            $table->foreignUuid('created_by_id')->nullable()->constrained('users');
+            $table->foreignUuid('last_updated_by_id')->nullable()->constrained('users');
+        });
     }
 
-    public function getWidgets(): array
+    public function down(): void
     {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            CustomAdvisorStats::make(['cacheTag' => $this->cacheTag]),
-            CustomAdvisorLineChart::make(['cacheTag' => $this->cacheTag]),
-            CustomAdvisorTable::make(['cacheTag' => $this->cacheTag]),
-        ];
+        Schema::table('ai_assistants', function (Blueprint $table) {
+            $table->dropColumn(['created_by_id', 'last_updated_by_id']);
+        });
     }
-
-    public function getWidgetData(): array
-    {
-        return [
-            'filters' => $this->filters,
-        ];
-    }
-}
+};

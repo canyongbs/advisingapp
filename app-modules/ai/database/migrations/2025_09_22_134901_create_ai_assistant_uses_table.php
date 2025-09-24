@@ -34,52 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
-
-use AdvisingApp\Report\Abstract\AiReport;
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use AdvisingApp\Report\Filament\Widgets\CustomAdvisorLineChart;
-use AdvisingApp\Report\Filament\Widgets\CustomAdvisorStats;
-use AdvisingApp\Report\Filament\Widgets\CustomAdvisorTable;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Features\AiAssistantUseFeature;
-use App\Filament\Clusters\ReportLibrary;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-class CustomAdvisorReport extends AiReport
-{
-    use HasFiltersForm;
-
-    protected static ?string $cluster = ReportLibrary::class;
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?string $title = 'Custom Advisor';
-
-    protected static string $routePath = 'custom-advisor-report';
-
-    protected static ?int $navigationSort = 160;
-
-    protected string $cacheTag = 'custom-advisor-report';
-
-    public static function canAccess(): bool
+return new class () extends Migration {
+    public function up(): void
     {
-        return AiAssistantUseFeature::active() && parent::canAccess();
+        DB::transaction(function () {
+            Schema::create('ai_assistant_uses', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->foreignUuid('assistant_id')->constrained('ai_assistants');
+                $table->foreignUuid('user_id')->constrained();
+                $table->timestamps();
+            });
+
+            DB::statement(<<<'SQL'
+                insert into ai_assistant_uses (id, assistant_id, user_id, created_at, updated_at)
+                select distinct
+                    ai_messages.id,
+                    ai_threads.assistant_id,
+                    ai_messages.user_id,
+                    ai_messages.created_at,
+                    ai_messages.updated_at
+                from ai_messages
+                join ai_threads on ai_messages.thread_id = ai_threads.id
+                where ai_messages.user_id is not null
+                SQL);
+
+            AiAssistantUseFeature::activate();
+        });
     }
 
-    public function getWidgets(): array
+    public function down(): void
     {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            CustomAdvisorStats::make(['cacheTag' => $this->cacheTag]),
-            CustomAdvisorLineChart::make(['cacheTag' => $this->cacheTag]),
-            CustomAdvisorTable::make(['cacheTag' => $this->cacheTag]),
-        ];
-    }
+        DB::transaction(function () {
+            AiAssistantUseFeature::deactivate();
 
-    public function getWidgetData(): array
-    {
-        return [
-            'filters' => $this->filters,
-        ];
+            Schema::dropIfExists('ai_assistant_uses');
+        });
     }
-}
+};

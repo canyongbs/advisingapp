@@ -45,6 +45,7 @@ use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
 use App\Models\User;
+use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -64,6 +65,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class AiAssistant extends BaseModel implements HasMedia, Auditable
 {
     use CanAddAssistantLicenseGlobalScope;
+    use HasUserSaveTracking;
     use InteractsWithMedia;
     use SoftDeletes;
     use AuditableTrait;
@@ -79,6 +81,8 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
         'instructions',
         'knowledge',
         'is_confidential',
+        'created_by_id',
+        'last_updated_by_id',
     ];
 
     protected $casts = [
@@ -196,5 +200,13 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
         return $this->belongsToMany(Team::class, 'ai_assistant_confidential_teams')
             ->using(AiAssistantConfidentialTeam::class)
             ->withTimestamps();
+    }
+
+    /**
+     * @return HasMany<AiAssistantUse, $this>
+     */
+    public function uses(): HasMany
+    {
+        return $this->hasMany(AiAssistantUse::class, 'assistant_id');
     }
 }

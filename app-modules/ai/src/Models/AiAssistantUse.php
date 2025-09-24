@@ -34,52 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Report\Abstract\AiReport;
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use AdvisingApp\Report\Filament\Widgets\CustomAdvisorLineChart;
-use AdvisingApp\Report\Filament\Widgets\CustomAdvisorStats;
-use AdvisingApp\Report\Filament\Widgets\CustomAdvisorTable;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use App\Features\AiAssistantUseFeature;
-use App\Filament\Clusters\ReportLibrary;
+use AdvisingApp\Ai\Database\Factories\AiAssistantUseFactory;
+use App\Models\BaseModel;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CustomAdvisorReport extends AiReport
+/**
+ * @mixin IdeHelperAiAssistantUse
+ */
+class AiAssistantUse extends BaseModel
 {
-    use HasFiltersForm;
+    /** @use HasFactory<AiAssistantUseFactory> */
+    use HasFactory;
 
-    protected static ?string $cluster = ReportLibrary::class;
+    protected $fillable = [
+        'user_id',
+    ];
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?string $title = 'Custom Advisor';
-
-    protected static string $routePath = 'custom-advisor-report';
-
-    protected static ?int $navigationSort = 160;
-
-    protected string $cacheTag = 'custom-advisor-report';
-
-    public static function canAccess(): bool
+    /**
+     * @return BelongsTo<AiAssistant, $this>
+     */
+    public function assistant(): BelongsTo
     {
-        return AiAssistantUseFeature::active() && parent::canAccess();
+        return $this->belongsTo(AiAssistant::class, 'assistant_id');
     }
 
-    public function getWidgets(): array
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
     {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            CustomAdvisorStats::make(['cacheTag' => $this->cacheTag]),
-            CustomAdvisorLineChart::make(['cacheTag' => $this->cacheTag]),
-            CustomAdvisorTable::make(['cacheTag' => $this->cacheTag]),
-        ];
-    }
-
-    public function getWidgetData(): array
-    {
-        return [
-            'filters' => $this->filters,
-        ];
+        return $this->belongsTo(User::class);
     }
 }

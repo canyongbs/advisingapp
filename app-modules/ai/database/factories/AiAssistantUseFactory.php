@@ -34,52 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+namespace AdvisingApp\Ai\Database\Factories;
 
-use AdvisingApp\Report\Abstract\AiReport;
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use AdvisingApp\Report\Filament\Widgets\CustomAdvisorLineChart;
-use AdvisingApp\Report\Filament\Widgets\CustomAdvisorStats;
-use AdvisingApp\Report\Filament\Widgets\CustomAdvisorTable;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use App\Features\AiAssistantUseFeature;
-use App\Filament\Clusters\ReportLibrary;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiAssistantUse;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CustomAdvisorReport extends AiReport
+/**
+ * @extends Factory<AiAssistantUse>
+ */
+class AiAssistantUseFactory extends Factory
 {
-    use HasFiltersForm;
-
-    protected static ?string $cluster = ReportLibrary::class;
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?string $title = 'Custom Advisor';
-
-    protected static string $routePath = 'custom-advisor-report';
-
-    protected static ?int $navigationSort = 160;
-
-    protected string $cacheTag = 'custom-advisor-report';
-
-    public static function canAccess(): bool
-    {
-        return AiAssistantUseFeature::active() && parent::canAccess();
-    }
-
-    public function getWidgets(): array
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
         return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            CustomAdvisorStats::make(['cacheTag' => $this->cacheTag]),
-            CustomAdvisorLineChart::make(['cacheTag' => $this->cacheTag]),
-            CustomAdvisorTable::make(['cacheTag' => $this->cacheTag]),
-        ];
-    }
-
-    public function getWidgetData(): array
-    {
-        return [
-            'filters' => $this->filters,
+            'assistant_id' => AiAssistant::factory(),
+            'user_id' => User::factory(),
         ];
     }
 }
