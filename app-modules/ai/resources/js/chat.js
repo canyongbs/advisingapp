@@ -47,14 +47,14 @@ const addImageDownloadButtons = (htmlContent) => {
         if (!image.getAttribute('data-id')) return;
 
         const wrapper = document.createElement('div');
-        wrapper.className = 'relative group my-8 not-prose';
+        wrapper.className = 'relative my-8 not-prose';
 
         const newImage = image.cloneNode(true);
         newImage.className = 'max-w-full h-auto rounded-lg';
 
         const downloadLink = document.createElement('a');
         downloadLink.className =
-            'image-download-btn absolute top-2 right-2 bg-black text-white rounded-md p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black inline-flex items-center justify-center';
+            'image-download-btn absolute top-2 right-2 bg-black text-white rounded-md p-2 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black inline-flex items-center justify-center';
         downloadLink.href = '#';
         downloadLink.title = 'Download image';
         downloadLink.setAttribute('aria-label', 'Download image');
