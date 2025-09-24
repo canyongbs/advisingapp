@@ -41,24 +41,10 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
-use Illuminate\Database\Eloquent\Builder;
 
 class StudentCaseExporter extends Exporter
 {
     protected static ?string $model = CaseModel::class;
-
-    /**
-     * @param Builder<CaseModel> $query
-     *
-     * @return Builder<CaseModel>
-     */
-    public static function modifyQuery(Builder $query): Builder
-    {
-        return $query->with([
-            'respondent',
-            'assignedTo.user',
-        ]);
-    }
 
     public static function getColumns(): array
     {
