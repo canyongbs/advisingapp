@@ -65,7 +65,22 @@ it('completes the last response', function () {
         ->for($assistant, 'assistant')
         ->for(auth()->user())
         ->has(
-            AiMessage::factory()->for(auth()->user())->state(['created_at' => now()->subMinutes(2)]),
+            AiMessage::factory()
+                ->for(auth()->user())
+                ->state(['created_at' => now()->subMinutes(5)]),
+            relationship: 'messages',
+        )
+        ->has(
+            AiMessage::factory()->state([
+                'created_at' => now()->subMinutes(4),
+                'user_id' => null,
+            ]),
+            relationship: 'messages',
+        )
+        ->has(
+            AiMessage::factory()
+                ->for(auth()->user())
+                ->state(['created_at' => now()->subMinutes(3)]),
             relationship: 'messages',
         )
         ->has(
@@ -76,18 +91,9 @@ it('completes the last response', function () {
             relationship: 'messages',
         )
         ->has(
-            AiMessage::factory()->for(auth()->user())->state(['created_at' => now()->subMinute()]),
-            relationship: 'messages',
-        )
-        ->has(
-            AiMessage::factory()->state([
-                'created_at' => now()->subMinute(),
-                'user_id' => null,
-            ]),
-            relationship: 'messages',
-        )
-        ->has(
-            AiMessage::factory()->for(auth()->user()),
+            AiMessage::factory()
+                ->for(auth()->user())
+                ->state(['created_at' => now()->subMinute()]),
             relationship: 'messages',
         )
         ->has(
@@ -109,7 +115,7 @@ it('completes the last response', function () {
 
     dispatch(new CompleteAdvisorResponse($thread));
 
-    $messages = AiMessage::all();
+    $messages = AiMessage::query()->oldest()->get();
 
     expect($messages->count())
         ->toBe(6);
@@ -142,7 +148,9 @@ it('strips the appended ... when completing the last response', function () {
         ->for($assistant, 'assistant')
         ->for(auth()->user())
         ->has(
-            AiMessage::factory()->for(auth()->user()),
+            AiMessage::factory()
+                ->for(auth()->user())
+                ->state(['created_at' => now()->subMinute()]),
             relationship: 'messages',
         )
         ->has(
@@ -159,7 +167,7 @@ it('strips the appended ... when completing the last response', function () {
 
     dispatch(new CompleteAdvisorResponse($thread));
 
-    $messages = AiMessage::all();
+    $messages = AiMessage::query()->oldest()->get();
 
     expect($messages->count())
         ->toBe(2);
