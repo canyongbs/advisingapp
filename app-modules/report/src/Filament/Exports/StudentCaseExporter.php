@@ -39,12 +39,12 @@ class StudentCaseExporter extends Exporter
 
                     return $respondent->{Student::displayNameKey()};
                 }),
-            // ExportColumn::make('respondent.sisid')
-            //     ->label('SISID'),
-            // ExportColumn::make('respondent.otherid')
-            //     ->label('Other ID'),
-            // ExportColumn::make('assignedTo.user.name')
-            //     ->label('Assigned To'),
+            ExportColumn::make('respondent.sisid')
+                ->label('SISID'),
+            ExportColumn::make('respondent.otherid')
+                ->label('Other ID'),
+            ExportColumn::make('assignedTo.user.name')
+                ->label('Assigned To'),
             ExportColumn::make('response')
                 ->label('Response')
                 ->getStateUsing(function (CaseModel $record) {
