@@ -38,6 +38,7 @@ use AdvisingApp\Ai\Http\Controllers\Advisors\CompleteResponseController;
 use AdvisingApp\Ai\Http\Controllers\Advisors\RetryMessageController;
 use AdvisingApp\Ai\Http\Controllers\Advisors\SendMessageController;
 use AdvisingApp\Ai\Http\Controllers\Advisors\ShowThreadController;
+use AdvisingApp\Ai\Http\Controllers\DownloadImageController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\PreviewAdvisorEmbedController;
 use Illuminate\Support\Facades\Route;
 
@@ -55,6 +56,10 @@ Route::middleware(['web', 'auth'])
 
         Route::post('ai/advisors/threads/{thread}/messages/complete-response', CompleteResponseController::class)
             ->name('advisors.threads.messages.complete-response');
+
+        Route::post('ai/advisors/threads/{thread}/download-image', DownloadImageController::class)
+            ->middleware('signed')
+            ->name('advisors.threads.download-image');
 
         Route::get('ai/qna-advisors/{advisor}/preview-embed', PreviewAdvisorEmbedController::class)
             ->name('qna-advisors.preview-embed');

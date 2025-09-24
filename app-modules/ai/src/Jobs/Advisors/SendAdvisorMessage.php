@@ -157,7 +157,7 @@ class SendAdvisorMessage implements ShouldQueue
                     ->usingFileName(Str::random() . '.' . $chunk->format)
                     ->toMediaCollection('generated_images', diskName: 's3-public');
 
-                $chunk = new Text("![Generated image]({$media->getUrl()})");
+                $chunk = new Text('<img src="' . $media->getUrl() . '" alt="Generated image" data-id="' . $media->uuid . '" />');
             }
 
             if ($chunk instanceof Text) {
