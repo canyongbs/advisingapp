@@ -35,10 +35,10 @@
 */
 
 use AdvisingApp\Ai\Http\Controllers\Advisors\CompleteResponseController;
+use AdvisingApp\Ai\Http\Controllers\Advisors\DownloadImageController;
 use AdvisingApp\Ai\Http\Controllers\Advisors\RetryMessageController;
 use AdvisingApp\Ai\Http\Controllers\Advisors\SendMessageController;
 use AdvisingApp\Ai\Http\Controllers\Advisors\ShowThreadController;
-use AdvisingApp\Ai\Http\Controllers\DownloadImageController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\PreviewAdvisorEmbedController;
 use Illuminate\Support\Facades\Route;
 

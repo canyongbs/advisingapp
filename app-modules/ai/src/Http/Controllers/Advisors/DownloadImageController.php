@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers;
+namespace AdvisingApp\Ai\Http\Controllers\Advisors;
 
 use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Http\Request;
