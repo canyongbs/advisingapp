@@ -68,10 +68,9 @@ class ShowThreadController
                                 $message->user,
                                 fn (Stringable $string): Stringable => $string
                                     ->pipe(nl2br(...))
-                                    ->stripTags(allowedTags: ['br']),
-                                fn (Stringable $string): Stringable => $string->markdown(),
-                            )
-                            ->sanitizeHtml(),
+                                    ->stripTags(allowedTags: ['br'])
+                                    ->sanitizeHtml(),
+                            ),
                     ];
                 })
                 ->all(),

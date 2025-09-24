@@ -33,6 +33,7 @@
 --}}
 @php
     use Filament\Support\Enums\ActionSize;
+    use Illuminate\Support\Facades\URL;
     use Illuminate\Support\Facades\Vite;
 @endphp
 
@@ -487,6 +488,7 @@
                     sendMessageUrl: @js(route('ai.advisors.threads.messages.send', ['thread' => $this->thread])),
                     completeResponseUrl: @js(route('ai.advisors.threads.messages.complete-response', ['thread' => $this->thread])),
                     showThreadUrl: @js(route('ai.advisors.threads.show', ['thread' => $this->thread])),
+                    downloadImageUrl: @js(URL::signedRoute('ai.advisors.threads.download-image', ['thread' => $this->thread], now()->addHours(24))),
                     userId: @js(auth()->user()->id),
                     threadId: @js($this->thread->id)
                 })"
