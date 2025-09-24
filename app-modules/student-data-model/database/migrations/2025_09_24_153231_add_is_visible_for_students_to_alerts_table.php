@@ -36,6 +36,7 @@
 
 use App\Features\AlertVisibleToStudentsFeature;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
@@ -44,7 +45,8 @@ return new class () extends Migration {
     {
         DB::transaction(function () {
             Schema::table('alerts', function (Blueprint $table) {
-                $table->boolean('is_visible_for_students');
+                $table->boolean('is_visible_for_students')
+                    ->default(false);
             });
 
             AlertVisibleToStudentsFeature::activate();
