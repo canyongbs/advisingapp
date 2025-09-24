@@ -208,4 +208,4 @@ it('can start an export and sending a notification', function () {
     ])
         ->callTableAction(ExportAction::class)
         ->assertNotified();
-})->only();
+});
