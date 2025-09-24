@@ -79,10 +79,12 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
         'severity',
         'suggested_intervention',
         'status_id',
+        'is_visible_for_students',
     ];
 
     protected $casts = [
         'severity' => AlertSeverity::class,
+        'is_visible_for_students' => 'boolean',
     ];
 
     public function processCustomHistories(string $event, Collection $old, Collection $new, Collection $pending): void

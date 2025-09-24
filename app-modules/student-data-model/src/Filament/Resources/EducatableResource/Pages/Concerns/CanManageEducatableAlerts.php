@@ -38,9 +38,11 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pag
 
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use App\Features\AlertVisibleToStudentsFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -101,6 +103,9 @@ trait CanManageEducatableAlerts
                     ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
                     ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
                     ->required(),
+                Toggle::make('is_visible_for_students')
+                    ->label('Make visible to students')
+                    ->visible(AlertVisibleToStudentsFeature::active()),
             ]);
     }
 
