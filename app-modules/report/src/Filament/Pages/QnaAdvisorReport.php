@@ -37,6 +37,10 @@
 namespace AdvisingApp\Report\Filament\Pages;
 
 use AdvisingApp\Report\Abstract\AiReport;
+use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportLineChart;
+use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
+use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTableChart;
+use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Filament\Clusters\ReportLibrary;
 
 class QnaAdvisorReport extends AiReport
@@ -53,5 +57,29 @@ class QnaAdvisorReport extends AiReport
 
     protected string $cacheTag = 'qna-advisor-report';
 
-    protected static string $view = 'filament.pages.coming-soon';
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            QnaAdvisorReportStats::make(['cacheTag' => $this->cacheTag]),
+            QnaAdvisorReportLineChart::make(['cacheTag' => $this->cacheTag]),
+            QnaAdvisorReportTableChart::make(['cacheTag' => $this->cacheTag]),
+        ];
+    }
+
+    public function getColumns(): int | string | array
+    {
+        return [
+            'sm' => 2,
+            'md' => 4,
+            'lg' => 4,
+        ];
+    }
+
+    public function getWidgetData(): array
+    {
+        return [
+            'filters' => $this->filters,
+        ];
+    }
 }
