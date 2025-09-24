@@ -42,18 +42,19 @@ const addImageDownloadButtons = (htmlContent) => {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = htmlContent;
     const images = tempDiv.querySelectorAll('img[data-id]');
-    
-    images.forEach(image => {
+
+    images.forEach((image) => {
         if (!image.getAttribute('data-id')) return;
-        
+
         const wrapper = document.createElement('div');
         wrapper.className = 'relative group my-8 not-prose';
-        
+
         const newImage = image.cloneNode(true);
         newImage.className = 'max-w-full h-auto rounded-lg';
-        
+
         const downloadLink = document.createElement('a');
-        downloadLink.className = 'image-download-btn absolute top-2 right-2 bg-black text-white rounded-md p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black inline-flex items-center justify-center';
+        downloadLink.className =
+            'image-download-btn absolute top-2 right-2 bg-black text-white rounded-md p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black inline-flex items-center justify-center';
         downloadLink.href = '#';
         downloadLink.title = 'Download image';
         downloadLink.setAttribute('aria-label', 'Download image');
@@ -64,19 +65,28 @@ const addImageDownloadButtons = (htmlContent) => {
                 <path d="M3.5 9.75a.75.75 0 0 0-1.5 0v1.5A2.75 2.75 0 0 0 4.75 14h6.5A2.75 2.75 0 0 0 14 11.25v-1.5a.75.75 0 0 0-1.5 0v1.5c0 .69-.56 1.25-1.25 1.25h-6.5c-.69 0-1.25-.56-1.25-1.25v-1.5Z" />
             </svg>
         `;
-        
+
         wrapper.appendChild(newImage);
         wrapper.appendChild(downloadLink);
         image.parentElement.replaceChild(wrapper, image);
     });
-    
+
     return tempDiv.innerHTML;
-}
+};
 
 document.addEventListener('alpine:init', () => {
     Alpine.data(
         'chat',
-        ({ csrfToken, retryMessageUrl, sendMessageUrl, completeResponseUrl, showThreadUrl, downloadImageUrl, userId, threadId }) => ({
+        ({
+            csrfToken,
+            retryMessageUrl,
+            sendMessageUrl,
+            completeResponseUrl,
+            showThreadUrl,
+            downloadImageUrl,
+            userId,
+            threadId,
+        }) => ({
             error: null,
             isIncomplete: false,
             isLoading: true,
@@ -107,7 +117,7 @@ document.addEventListener('alpine:init', () => {
                     event.preventDefault();
                     const mediaUuid = downloadBtn.getAttribute('data-media-uuid');
                     if (!mediaUuid) return;
-                    
+
                     try {
                         const response = await fetch(this.downloadImageUrl, {
                             method: 'POST',
@@ -116,15 +126,15 @@ document.addEventListener('alpine:init', () => {
                                 'X-CSRF-TOKEN': this.csrfToken,
                             },
                             body: JSON.stringify({
-                                media_uuid: mediaUuid
-                            })
+                                media_uuid: mediaUuid,
+                            }),
                         });
-                        
+
                         if (!response.ok) {
                             const errorData = await response.json();
                             throw new Error(errorData.error || 'Download failed');
                         }
-                        
+
                         const contentDisposition = response.headers.get('content-disposition');
                         let filename = 'image.png';
                         if (contentDisposition) {
@@ -133,10 +143,10 @@ document.addEventListener('alpine:init', () => {
                                 filename = matches[1].replace(/['"]/g, '');
                             }
                         }
-                        
+
                         const blob = await response.blob();
                         const url = window.URL.createObjectURL(blob);
-                        
+
                         const tempLink = document.createElement('a');
                         tempLink.href = url;
                         tempLink.download = filename;
@@ -147,7 +157,7 @@ document.addEventListener('alpine:init', () => {
                         window.URL.revokeObjectURL(url);
                     } catch (error) {}
                 };
-                
+
                 document.addEventListener('click', this.clickHandler);
 
                 this.render();
@@ -186,8 +196,17 @@ document.addEventListener('alpine:init', () => {
                                 htmlWithDownloadButtons,
                                 {
                                     ADD_TAGS: ['a'],
-                                    ADD_ATTR: ['href', 'aria-label', 'title', 'data-media-uuid', 'data-id', 'class', 'src', 'alt']
-                                }
+                                    ADD_ATTR: [
+                                        'href',
+                                        'aria-label',
+                                        'title',
+                                        'data-media-uuid',
+                                        'data-id',
+                                        'class',
+                                        'src',
+                                        'alt',
+                                    ],
+                                },
                             );
                         }
                     }
@@ -205,17 +224,23 @@ document.addEventListener('alpine:init', () => {
                     if (message.content && !message.user_id) {
                         const parsedMarkdown = marked.parse(message.content);
                         const htmlWithDownloadButtons = addImageDownloadButtons(parsedMarkdown);
-                        message.content = DOMPurify.sanitize(
-                            htmlWithDownloadButtons,
-                            {
-                                ADD_TAGS: ['a'],
-                                ADD_ATTR: ['href', 'aria-label', 'title', 'data-media-uuid', 'data-id', 'class', 'src', 'alt']
-                            }
-                        );
+                        message.content = DOMPurify.sanitize(htmlWithDownloadButtons, {
+                            ADD_TAGS: ['a'],
+                            ADD_ATTR: [
+                                'href',
+                                'aria-label',
+                                'title',
+                                'data-media-uuid',
+                                'data-id',
+                                'class',
+                                'src',
+                                'alt',
+                            ],
+                        });
                     }
 
                     return message;
-                })
+                });
                 this.users = thread.users;
 
                 Echo.private(`advisor-thread-${threadId}`)
@@ -262,8 +287,17 @@ document.addEventListener('alpine:init', () => {
                                     htmlWithDownloadButtons,
                                     {
                                         ADD_TAGS: ['a'],
-                                        ADD_ATTR: ['href', 'aria-label', 'title', 'data-media-uuid', 'data-id', 'class', 'src', 'alt']
-                                    }
+                                        ADD_ATTR: [
+                                            'href',
+                                            'aria-label',
+                                            'title',
+                                            'data-media-uuid',
+                                            'data-id',
+                                            'class',
+                                            'src',
+                                            'alt',
+                                        ],
+                                    },
                                 );
                             }
                         }
@@ -523,7 +557,7 @@ document.addEventListener('alpine:init', () => {
                     document.removeEventListener('click', this.clickHandler);
                     this.clickHandler = null;
                 }
-                
+
                 this.clearResponseTimeout();
             },
         }),
