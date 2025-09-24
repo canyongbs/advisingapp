@@ -59,9 +59,9 @@ class RegisterProspectController
                 ->make([
                     'first_name' => $data['first_name'],
                     'last_name' => $data['last_name'],
-                    'preferred' => $data['preferred'],
+                    'preferred' => $data['preferred'] ?? null,
                     'full_name' => "{$data['first_name']} {$data['last_name']}",
-                    'birthdate' => $data['birthdate'],
+                    'birthdate' => $data['birthdate'] ?? null,
                 ]);
 
             $status = ProspectStatus::query()
@@ -94,15 +94,17 @@ class RegisterProspectController
             ]);
             $prospect->primaryPhoneNumber()->associate($phoneNumber);
 
-            $address = $prospect->addresses()->create([
-                'line_1' => $data['address'],
-                'line_2' => $data['address_2'],
-                'city' => $data['city'],
-                'state' => $data['state'],
-                'postal' => $data['postal'],
-                'type' => 'Home',
-            ]);
-            $prospect->primaryAddress()->associate($address);
+            if (isset($data['address'])) {
+                $address = $prospect->addresses()->create([
+                    'line_1' => $data['address'],
+                    'line_2' => $data['address_2'] ?? null,
+                    'city' => $data['city'],
+                    'state' => $data['state'],
+                    'postal' => $data['postal'],
+                    'type' => 'Home',
+                ]);
+                $prospect->primaryAddress()->associate($address);
+            }
 
             $prospect->save();
 

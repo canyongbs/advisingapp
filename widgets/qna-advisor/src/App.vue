@@ -487,7 +487,7 @@ async function authorizedPost(url, data) {
                                     type="text"
                                     label="Preferred Name"
                                     name="preferred"
-                                    validation="required|alpha|length:0,255"
+                                    validation="alpha|length:0,255"
                                     validation-visibility="submit"
                                 />
                             </div>
@@ -496,7 +496,7 @@ async function authorizedPost(url, data) {
                                     type="date"
                                     label="Birth Date"
                                     name="birthdate"
-                                    validation="required"
+                                    validation="date"
                                     validation-visibility="submit"
                                 />
                             </div>
@@ -517,7 +517,7 @@ async function authorizedPost(url, data) {
                                     type="text"
                                     label="Address"
                                     name="address"
-                                    validation="required|length:0,255"
+                                    validation="length:0,255"
                                     validation-visibility="submit"
                                 />
                             </div>
@@ -528,7 +528,7 @@ async function authorizedPost(url, data) {
                                     type="text"
                                     label="Apartment/Unit Number"
                                     name="address_2"
-                                    validation="required|length:0,255"
+                                    validation="length:0,255"
                                     validation-visibility="submit"
                                 />
                             </div>
@@ -537,7 +537,7 @@ async function authorizedPost(url, data) {
                                     type="text"
                                     label="City"
                                     name="city"
-                                    validation="required|length:0,255"
+                                    validation="length:0,255"
                                     validation-visibility="submit"
                                 />
                             </div>
@@ -548,7 +548,7 @@ async function authorizedPost(url, data) {
                                     type="text"
                                     label="State"
                                     name="state"
-                                    validation="required|length:0,255"
+                                    validation="length:0,255"
                                     validation-visibility="submit"
                                 />
                             </div>
@@ -557,7 +557,7 @@ async function authorizedPost(url, data) {
                                     type="text"
                                     label="Postal"
                                     name="postal"
-                                    validation="required|length:0,255"
+                                    validation="length:0,255"
                                     validation-visibility="submit"
                                 />
                             </div>
