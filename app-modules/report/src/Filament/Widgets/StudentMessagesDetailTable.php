@@ -45,11 +45,14 @@ use AdvisingApp\Engagement\Models\HolisticEngagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Report\Filament\Exports\StudentMessagesDetailTableExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Exception;
+use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Tables\Actions\ExportAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -250,6 +253,13 @@ class StudentMessagesDetailTable extends BaseWidget
                     ->options([
                         'email' => 'Email',
                         'sms' => 'SMS',
+                    ]),
+            ])
+            ->headerActions([
+                ExportAction::make()
+                    ->exporter(StudentMessagesDetailTableExporter::class)
+                    ->formats([
+                        ExportFormat::Csv,
                     ]),
             ]);
     }
