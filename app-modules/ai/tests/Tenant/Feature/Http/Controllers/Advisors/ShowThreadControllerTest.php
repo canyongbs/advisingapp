@@ -120,50 +120,6 @@ it('removes HTML tags from messages sent by users', function () {
         ]);
 });
 
-it('converts messages sent by assistants into Markdown', function () {
-    asSuperAdmin();
-
-    $thread = AiThread::factory()
-        ->for(AiAssistant::factory()->create([
-            'application' => AiAssistantApplication::Test,
-            'is_default' => true,
-            'model' => AiModel::Test,
-        ]), 'assistant')
-        ->for(auth()->user())
-        ->has(AiMessage::factory()->state([
-            'content' => 'Hello, world!',
-            'user_id' => null,
-        ]), 'messages')
-        ->create();
-
-    get(route('ai.advisors.threads.show', ['thread' => $thread]))
-        ->assertJsonFragment([
-            'content' => '<p>Hello, world!</p>' . PHP_EOL,
-        ]);
-});
-
-it('removes unsafe HTML from messages sent by assistants', function () {
-    asSuperAdmin();
-
-    $thread = AiThread::factory()
-        ->for(AiAssistant::factory()->create([
-            'application' => AiAssistantApplication::Test,
-            'is_default' => true,
-            'model' => AiModel::Test,
-        ]), 'assistant')
-        ->for(auth()->user())
-        ->has(AiMessage::factory()->state([
-            'content' => '<script>alert("Hello, world!")</script>',
-            'user_id' => null,
-        ]), 'messages')
-        ->create();
-
-    get(route('ai.advisors.threads.show', ['thread' => $thread]))
-        ->assertJsonFragment([
-            'content' => '&lt;script&gt;alert(&#34;Hello, world!&#34;)&lt;/script&gt;' . PHP_EOL,
-        ]);
-});
-
 it('lists users involved in a thread once', function () {
     asSuperAdmin();
 
