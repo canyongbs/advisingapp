@@ -41,7 +41,10 @@ use AdvisingApp\Report\Filament\Widgets\StudentCaseTable;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
+use Filament\Tables\Actions\ExportAction;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 it('returns all cases information created for students in given time range', function () {
@@ -186,3 +189,23 @@ it('returns all cases information created for students based on segment filters'
             $otherCases,
         ]));
 });
+
+it('has table an export action', function () {
+    livewire(StudentCaseTable::class, [
+        'cacheTag' => 'report-student-case',
+        'filters' => [],
+    ])->assertTableActionExists(ExportAction::class);
+});
+
+it('can start an export, sending a notification', function () {
+    Storage::fake('s3');
+
+    actingAs(User::factory()->create());
+
+    livewire(StudentCaseTable::class, [
+        'cacheTag' => 'report-student-case',
+        'filters' => [],
+    ])
+        ->callTableAction(ExportAction::class)
+        ->assertNotified();
+})->only();
