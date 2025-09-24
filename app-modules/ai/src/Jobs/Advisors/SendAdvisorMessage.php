@@ -46,11 +46,13 @@ use AdvisingApp\Ai\Support\StreamingChunks\Finish;
 use AdvisingApp\Ai\Support\StreamingChunks\Image;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
+use App\Features\AiAssistantUseFeature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -197,8 +199,19 @@ class SendAdvisorMessage implements ShouldQueue
             rateLimitResetsAt: $finishChunk->rateLimitResetsAt,
         ));
 
-        $response->save();
-        $this->thread->touch();
+        DB::transaction(function () use ($message, $response) {
+            $response->save();
+            $this->thread->touch();
+
+            if (AiAssistantUseFeature::active()) {
+                $this->thread->assistant->uses()->create([
+                    'id' => $message->getKey(),
+                    'user_id' => $this->thread->user_id,
+                    'created_at' => $message->created_at,
+                    'updated_at' => $message->created_at,
+                ]);
+            }
+        });
     }
 
     public function tries(): int

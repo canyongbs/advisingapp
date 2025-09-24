@@ -36,30 +36,41 @@
 
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\Concerns\CanGenerateAndDispatchQnaAdvisorWidgetAuthentications;
 use AdvisingApp\Ai\Http\Requests\QnaAdvisors\RequestAuthenticationRequest;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Portal\Enums\PortalType;
-use AdvisingApp\Portal\Models\PortalAuthentication;
-use AdvisingApp\Portal\Notifications\AuthenticatePortalNotification;
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Actions\ResolveEducatableFromEmail;
-use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\QnaAdvisorGenerateProspectsFeature;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
 
 class RequestAuthenticationController
 {
+    use CanGenerateAndDispatchQnaAdvisorWidgetAuthentications;
+
     public function __invoke(RequestAuthenticationRequest $request, QnaAdvisor $advisor, ResolveEducatableFromEmail $resolveEducatableFromEmail): JsonResponse
     {
         $email = $request->safe()['email'];
 
         $educatable = $resolveEducatableFromEmail($email);
 
-        throw_if(! $educatable, ValidationException::withMessages([
-            'email' => 'A student or prospect with that email address could not be found. Please contact your system administrator.',
-        ]));
+        if (! $educatable) {
+            if (! QnaAdvisorGenerateProspectsFeature::active() || ! $advisor->is_generate_prospects_enabled) {
+                throw ValidationException::withMessages([
+                    'email' => 'A student or prospect with that email address could not be found. Please contact your system administrator.',
+                ]);
+            }
+
+            return response()->json([
+                'registration_allowed' => true,
+                'authentication_url' => URL::temporarySignedRoute(
+                    name: 'ai.qna-advisors.register-prospect',
+                    expiration: now()->addMinutes(30),
+                    parameters: ['advisor' => $advisor],
+                ),
+            ], 404);
+        }
 
         $authenticationUrl = $this->createPortalAuthentication($educatable, $advisor);
 
@@ -67,28 +78,5 @@ class RequestAuthenticationController
             'message' => "We've sent an authentication code to {$email}.",
             'authentication_url' => $authenticationUrl,
         ]);
-    }
-
-    protected function createPortalAuthentication(Prospect|Student $educatable, QnaAdvisor $advisor): string
-    {
-        $code = random_int(100000, 999999);
-
-        $authentication = new PortalAuthentication();
-        $authentication->portal_type = PortalType::QnaAdvisorWidget;
-        $authentication->code = Hash::make((string) $code);
-
-        $authentication->educatable()->associate($educatable);
-
-        $authentication->save();
-
-        $educatable->notify(new AuthenticatePortalNotification($authentication, $code));
-
-        return URL::signedRoute(
-            name: 'ai.qna-advisors.authentication.confirm',
-            parameters: [
-                'advisor' => $advisor,
-                'authentication' => $authentication,
-            ],
-        );
     }
 }

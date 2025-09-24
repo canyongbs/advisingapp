@@ -53,6 +53,7 @@ const authentication = ref({
     isRequested: false,
     requestedMessage: null,
     confirmationUrl: null,
+    registrationAllowed: false,
 });
 const loadingError = ref(null);
 const sendMessageUrl = ref(null);
@@ -257,6 +258,41 @@ async function authenticate(formData, node) {
         return;
     }
 
+    if (authentication.value.registrationAllowed) {
+        axios
+            .post(authentication.value.requestUrl, {
+                email: formData.email,
+                first_name: formData.first_name,
+                last_name: formData.last_name,
+                preferred: formData.preferred,
+                mobile: formData.mobile,
+                birthdate: formData.birthdate,
+                address: formData.address,
+                address_2: formData.address_2,
+                city: formData.city,
+                state: formData.state,
+                postal: formData.postal,
+            })
+            .then((response) => {
+                if (!response.data.authentication_url) {
+                    node.setErrors([response.data.message]);
+
+                    return;
+                }
+
+                authentication.value.isRequested = true;
+                authentication.value.requestedMessage = response.data.message;
+                authentication.value.confirmationUrl = response.data.authentication_url;
+            })
+            .catch((error) => {
+                const data = error.response.data;
+
+                node.setErrors([], data.errors);
+            });
+
+        return;
+    }
+
     axios
         .post(authentication.value.requestUrl, {
             email: formData.email,
@@ -273,7 +309,17 @@ async function authenticate(formData, node) {
             authentication.value.confirmationUrl = response.data.authentication_url;
         })
         .catch((error) => {
-            const data = error.response.data;
+            let status = error.response.status;
+            let data = error.response.data;
+
+            if (status === 404 && data.registration_allowed) {
+                authentication.value.registrationAllowed = true;
+                authentication.value.isRequested = false;
+                authentication.value.requestedMessage = data.message;
+                authentication.value.requestUrl = data.authentication_url;
+
+                return;
+            }
 
             node.setErrors([], data.errors);
         });
@@ -410,6 +456,113 @@ async function authorizedPost(url, data) {
                         validation-visibility="submit"
                         :disabled="authentication.isRequested"
                     />
+
+                    <div v-if="authentication.registrationAllowed">
+                        <p class="text-gray-700 font-medium text-xs my-3">
+                            You are not registered yet. Please fill in the form below to register.
+                        </p>
+                        <div class="flex flex-wrap -mx-3 mb-6">
+                            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                                <FormKit
+                                    type="text"
+                                    label="First Name"
+                                    name="first_name"
+                                    validation="required|alpha|length:0,255"
+                                    validation-visibility="submit"
+                                />
+                            </div>
+                            <div class="w-full md:w-1/2 px-3">
+                                <FormKit
+                                    type="text"
+                                    label="Last Name"
+                                    name="last_name"
+                                    validation="required|alpha|length:0,255"
+                                    validation-visibility="submit"
+                                />
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap -mx-3 mb-6">
+                            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                                <FormKit
+                                    type="text"
+                                    label="Preferred Name"
+                                    name="preferred"
+                                    validation="alpha|length:0,255"
+                                    validation-visibility="submit"
+                                />
+                            </div>
+                            <div class="w-full md:w-1/2 px-3">
+                                <FormKit
+                                    type="date"
+                                    label="Birth Date"
+                                    name="birthdate"
+                                    validation="date"
+                                    validation-visibility="submit"
+                                />
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap -mx-3 mb-6">
+                            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                                <FormKit
+                                    type="tel"
+                                    label="Mobile"
+                                    name="mobile"
+                                    placeholder="xxx-xxx-xxxx"
+                                    validation="required|length:0,255"
+                                    validation-visibility="submit"
+                                />
+                            </div>
+                            <div class="w-full md:w-1/2 px-3">
+                                <FormKit
+                                    type="text"
+                                    label="Address"
+                                    name="address"
+                                    validation="length:0,255"
+                                    validation-visibility="submit"
+                                />
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap -mx-3 mb-6">
+                            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                                <FormKit
+                                    type="text"
+                                    label="Apartment/Unit Number"
+                                    name="address_2"
+                                    validation="length:0,255"
+                                    validation-visibility="submit"
+                                />
+                            </div>
+                            <div class="w-full md:w-1/2 px-3">
+                                <FormKit
+                                    type="text"
+                                    label="City"
+                                    name="city"
+                                    validation="length:0,255"
+                                    validation-visibility="submit"
+                                />
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap -mx-3 mb-6">
+                            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                                <FormKit
+                                    type="text"
+                                    label="State"
+                                    name="state"
+                                    validation="length:0,255"
+                                    validation-visibility="submit"
+                                />
+                            </div>
+                            <div class="w-full md:w-1/2 px-3">
+                                <FormKit
+                                    type="text"
+                                    label="Postal"
+                                    name="postal"
+                                    validation="length:0,255"
+                                    validation-visibility="submit"
+                                />
+                            </div>
+                        </div>
+                    </div>
 
                     <p v-if="authentication.requestedMessage" class="text-sm">
                         {{ authentication.requestedMessage }}

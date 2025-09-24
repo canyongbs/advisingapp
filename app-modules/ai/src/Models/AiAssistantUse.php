@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,19 +33,40 @@
 
 </COPYRIGHT>
 */
-import { genesisIcons } from '@formkit/icons';
-import { generateClasses } from '@formkit/themes';
-import asteriskPlugin from '../../form/src/FormKit/asterisk.js';
-import inputs from './FormKit/Inputs/index';
-import theme from './FormKit/theme';
 
-export default {
-    icons: {
-        ...genesisIcons,
-    },
-    inputs,
-    config: {
-        classes: generateClasses(theme),
-    },
-    plugins: [asteriskPlugin],
-};
+namespace AdvisingApp\Ai\Models;
+
+use AdvisingApp\Ai\Database\Factories\AiAssistantUseFactory;
+use App\Models\BaseModel;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+/**
+ * @mixin IdeHelperAiAssistantUse
+ */
+class AiAssistantUse extends BaseModel
+{
+    /** @use HasFactory<AiAssistantUseFactory> */
+    use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+    ];
+
+    /**
+     * @return BelongsTo<AiAssistant, $this>
+     */
+    public function assistant(): BelongsTo
+    {
+        return $this->belongsTo(AiAssistant::class, 'assistant_id');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}

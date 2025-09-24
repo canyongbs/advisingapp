@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,19 +33,29 @@
 
 </COPYRIGHT>
 */
-import { genesisIcons } from '@formkit/icons';
-import { generateClasses } from '@formkit/themes';
-import asteriskPlugin from '../../form/src/FormKit/asterisk.js';
-import inputs from './FormKit/Inputs/index';
-import theme from './FormKit/theme';
 
-export default {
-    icons: {
-        ...genesisIcons,
-    },
-    inputs,
-    config: {
-        classes: generateClasses(theme),
-    },
-    plugins: [asteriskPlugin],
-};
+namespace AdvisingApp\Ai\Database\Factories;
+
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiAssistantUse;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<AiAssistantUse>
+ */
+class AiAssistantUseFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'assistant_id' => AiAssistant::factory(),
+            'user_id' => User::factory(),
+        ];
+    }
+}

@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,19 +33,24 @@
 
 </COPYRIGHT>
 */
-import { genesisIcons } from '@formkit/icons';
-import { generateClasses } from '@formkit/themes';
-import asteriskPlugin from '../../form/src/FormKit/asterisk.js';
-import inputs from './FormKit/Inputs/index';
-import theme from './FormKit/theme';
 
-export default {
-    icons: {
-        ...genesisIcons,
-    },
-    inputs,
-    config: {
-        classes: generateClasses(theme),
-    },
-    plugins: [asteriskPlugin],
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('ai_assistants', function (Blueprint $table) {
+            $table->foreignUuid('created_by_id')->nullable()->constrained('users');
+            $table->foreignUuid('last_updated_by_id')->nullable()->constrained('users');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('ai_assistants', function (Blueprint $table) {
+            $table->dropColumn(['created_by_id', 'last_updated_by_id']);
+        });
+    }
 };

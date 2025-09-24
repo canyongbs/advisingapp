@@ -37,10 +37,18 @@
 namespace AdvisingApp\Report\Filament\Pages;
 
 use AdvisingApp\Report\Abstract\AiReport;
+use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
+use AdvisingApp\Report\Filament\Widgets\CustomAdvisorLineChart;
+use AdvisingApp\Report\Filament\Widgets\CustomAdvisorStats;
+use AdvisingApp\Report\Filament\Widgets\CustomAdvisorTable;
+use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use App\Features\AiAssistantUseFeature;
 use App\Filament\Clusters\ReportLibrary;
 
 class CustomAdvisorReport extends AiReport
 {
+    use HasFiltersForm;
+
     protected static ?string $cluster = ReportLibrary::class;
 
     protected static ?string $navigationGroup = 'Artificial Intelligence';
@@ -53,5 +61,25 @@ class CustomAdvisorReport extends AiReport
 
     protected string $cacheTag = 'custom-advisor-report';
 
-    protected static string $view = 'filament.pages.coming-soon';
+    public static function canAccess(): bool
+    {
+        return AiAssistantUseFeature::active() && parent::canAccess();
+    }
+
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            CustomAdvisorStats::make(['cacheTag' => $this->cacheTag]),
+            CustomAdvisorLineChart::make(['cacheTag' => $this->cacheTag]),
+            CustomAdvisorTable::make(['cacheTag' => $this->cacheTag]),
+        ];
+    }
+
+    public function getWidgetData(): array
+    {
+        return [
+            'filters' => $this->filters,
+        ];
+    }
 }

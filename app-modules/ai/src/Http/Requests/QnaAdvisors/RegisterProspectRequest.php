@@ -34,39 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Providers;
+namespace AdvisingApp\Ai\Http\Requests\QnaAdvisors;
 
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
-use AdvisingApp\StudentDataModel\Models\Program;
-use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\StudentAddress;
-use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
-use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class StudentDataModelServiceProvider extends ServiceProvider
+class RegisterProspectRequest extends FormRequest
 {
-    public function register(): void
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new StudentDataModelPlugin()));
+        return [
+            'email' => ['email', 'string', 'required', Rule::unique('prospect_email_addresses', 'address')],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'preferred' => ['string', 'max:255'],
+            'mobile' => ['required', 'max:255'],
+            'birthdate' => ['date'],
+            'address' => ['string', 'max:255'],
+            'address_2' => ['string', 'max:255'],
+            'city' => ['required_unless:address,null', 'string', 'max:255'],
+            'state' => ['required_unless:address,null', 'string', 'max:255'],
+            'postal' => ['required_unless:address,null', 'max:255'],
+        ];
     }
 
-    public function boot(): void
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
     {
-        Relation::morphMap([
-            'student' => Student::class,
-            'enrollment' => Enrollment::class,
-            'program' => Program::class,
-            'student_phone_number' => StudentPhoneNumber::class,
-            'student_address' => StudentAddress::class,
-            'student_email_address' => StudentEmailAddress::class,
-            'sms_opt_out_phone_number' => SmsOptOutPhoneNumber::class,
-            'enrollment_semester' => EnrollmentSemester::class,
-        ]);
+        return [
+            'city.required_unless' => 'The city field is required unless address is empty.',
+            'state.required_unless' => 'The state field is required unless address is empty.',
+            'postal.required_unless' => 'The postal field is required unless address is empty.',
+        ];
     }
 }

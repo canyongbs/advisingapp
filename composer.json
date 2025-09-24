@@ -59,7 +59,7 @@
         "canyon-gbs/segment": "*",
         "canyon-gbs/stock-media": "*",
         "canyon-gbs/workflow": "*",
-        "canyongbs/common": "^1.7.0",
+        "canyongbs/common": "^1.8.1",
         "canyongbs/filament-tiptap-editor": "^1.3.0",
         "canyongbs/model-state-machine": "^2.0",
         "cknow/laravel-money": "^8.1",
@@ -179,10 +179,10 @@
             "@php artisan tenants:artisan \"db:seed --database=tenant\""
         ],
         "php-cs-format": [
-            "export PHP_CS_FIXER_IGNORE_ENV=1 ; ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v --config=./php-cs-fixer.php"
+            "./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v --config=./php-cs-fixer.php"
         ],
         "php-cs-format-dryrun": [
-            "export PHP_CS_FIXER_IGNORE_ENV=1 ; @php-cs-format --dry-run --stop-on-violation"
+            "@php-cs-format --dry-run --stop-on-violation"
         ],
         "php-cs-clear-cache": [
             "rm -f ./.php-cs-fixer.cache"
