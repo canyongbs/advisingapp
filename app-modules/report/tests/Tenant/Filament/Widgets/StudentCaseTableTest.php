@@ -197,7 +197,7 @@ it('has table an export action', function () {
     ])->assertTableActionExists(ExportAction::class);
 });
 
-it('can start an export, sending a notification', function () {
+it('can start an export and sending a notification', function () {
     Storage::fake('s3');
 
     actingAs(User::factory()->create());
