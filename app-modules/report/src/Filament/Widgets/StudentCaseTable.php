@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Report\Filament\Exports\StudentCaseExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Support\Enums\MaxWidth;
@@ -132,7 +133,8 @@ class StudentCaseTable extends BaseWidget
                     ->url(fn (CaseModel $record) => CaseResource::getUrl('view', ['record' => $record, 'referrer' => 'respondentReport'])),
             ])
             ->headerActions([
-                ExportAction::make(),
+                ExportAction::make()
+                    ->exporter(StudentCaseExporter::class),
             ])
             ->paginated([5])
             ->filtersFormWidth(MaxWidth::Small);
