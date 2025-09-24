@@ -46,10 +46,9 @@ return new class () extends Migration {
         DB::transaction(function () {
             Schema::create('ai_assistant_uses', function (Blueprint $table) {
                 $table->uuid('id')->primary();
-                $table->foreignUuid('assistant_id')->constrained('ai_assistants')->cascadeOnDelete();
-                $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+                $table->foreignUuid('assistant_id')->constrained('ai_assistants');
+                $table->foreignUuid('user_id')->constrained();
                 $table->timestamps();
-                $table->softDeletes();
             });
 
             DB::statement(<<<'SQL'
