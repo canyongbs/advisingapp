@@ -41,6 +41,7 @@ use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Tables\Actions\ExportAction;
+use Illuminate\Support\Facades\Storage;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
@@ -163,6 +164,7 @@ it('has table an export action', function () {
 
 it('can start an export, sending a notification', function () {
     asSuperAdmin();
+    Storage::fake('s3');
     $count = random_int(1, 5);
     $student1 = Student::factory()->create();
     $student2 = Student::factory()->create();
