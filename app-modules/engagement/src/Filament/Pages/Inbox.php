@@ -92,6 +92,9 @@ class Inbox extends Page implements HasTable
                     ->badge(),
                 TextColumn::make('status')
                     ->badge(),
+                TextColumn::make('sender_type')
+                    ->label('Relation')
+                    ->formatStateUsing(fn(EngagementResponse $record) => ucwords($record->sender_type)),
                 TextColumn::make('from')
                     ->state(function (EngagementResponse $record): ?string {
                         return (($record->sender instanceof Student) || ($record->sender instanceof Prospect))
