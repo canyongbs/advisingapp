@@ -96,7 +96,7 @@ class SentItems extends Page implements HasTable
                     ->state(fn (Engagement $record) => EngagementDisplayStatus::getStatus($record)),
                 TextColumn::make('recipient_type')
                     ->label('Relation')
-                    ->formatStateUsing(fn(Engagement $record) => ucwords($record->recipient_type)),
+                    ->formatStateUsing(fn (Engagement $record) => ucwords($record->recipient_type)),
                 TextColumn::make('user.name')
                     ->label('From'),
                 TextColumn::make('recipient.full_name')
