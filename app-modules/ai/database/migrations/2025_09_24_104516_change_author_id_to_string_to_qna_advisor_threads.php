@@ -34,52 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Report\Abstract\AiReport;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportLineChart;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTableChart;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use App\Filament\Clusters\ReportLibrary;
-
-class QnaAdvisorReport extends AiReport
-{
-    protected static ?string $cluster = ReportLibrary::class;
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?string $title = 'QnA Advisor';
-
-    protected static string $routePath = 'qna-advisor-report';
-
-    protected static ?int $navigationSort = 180;
-
-    protected string $cacheTag = 'qna-advisor-report';
-
-    public function getWidgets(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportStats::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportLineChart::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportTableChart::make(['cacheTag' => $this->cacheTag]),
-        ];
+        Schema::table('qna_advisor_threads', function (Blueprint $table) {
+            $table->string('author_id')->nullable(true)->change();
+        });
     }
 
-    public function getColumns(): int | string | array
+    public function down(): void
     {
-        return [
-            'sm' => 2,
-            'md' => 4,
-            'lg' => 4,
-        ];
+        Schema::table('qna_advisor_threads', function (Blueprint $table) {
+            $table->uuid('author_id')->nullable(true)->change();
+        });
     }
-
-    public function getWidgetData(): array
-    {
-        return [
-            'filters' => $this->filters,
-        ];
-    }
-}
+};

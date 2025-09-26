@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,54 +30,26 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
 
-namespace AdvisingApp\Report\Filament\Pages;
+@use('AdvisingApp\Ai\Enums\QnaAdvisorReportTableTab')
+<x-filament-widgets::widget class="fi-wi-table">
+    <x-filament::tabs
+        class="mb-2 w-fit"
+        label="Content tabs"
+    >
+        @foreach (QnaAdvisorReportTableTab::cases() as $tab)
+            <x-filament::tabs.item
+                wire:click="$set('activeTab', '{{ $tab->value }}')"
+                :active="$activeTab === $tab->value"
+            >
+                {{ $tab->getLabel() }}
+            </x-filament::tabs.item>
+        @endforeach
+    </x-filament::tabs>
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Widgets\View\WidgetsRenderHook::TABLE_WIDGET_START, scopes: static::class) }}
 
-use AdvisingApp\Report\Abstract\AiReport;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportLineChart;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTableChart;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use App\Filament\Clusters\ReportLibrary;
+    {{ $this->table }}
 
-class QnaAdvisorReport extends AiReport
-{
-    protected static ?string $cluster = ReportLibrary::class;
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?string $title = 'QnA Advisor';
-
-    protected static string $routePath = 'qna-advisor-report';
-
-    protected static ?int $navigationSort = 180;
-
-    protected string $cacheTag = 'qna-advisor-report';
-
-    public function getWidgets(): array
-    {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportStats::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportLineChart::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportTableChart::make(['cacheTag' => $this->cacheTag]),
-        ];
-    }
-
-    public function getColumns(): int | string | array
-    {
-        return [
-            'sm' => 2,
-            'md' => 4,
-            'lg' => 4,
-        ];
-    }
-
-    public function getWidgetData(): array
-    {
-        return [
-            'filters' => $this->filters,
-        ];
-    }
-}
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Widgets\View\WidgetsRenderHook::TABLE_WIDGET_END, scopes: static::class) }}
+</x-filament-widgets::widget>
