@@ -154,7 +154,7 @@ class CreateReport extends CreateRecord implements HasTable
         $model = $this->form->getRawState()['model'] ?? null;
         $models = $this->getReportModels();
 
-        if (filled($model) && in_array(ReportModel::tryFromCaseOrValue($model), $models)) {
+        if (filled($model) && in_array(ReportModel::parse($model), $models)) {
             return $model;
         }
 

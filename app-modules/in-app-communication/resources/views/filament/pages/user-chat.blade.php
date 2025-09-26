@@ -208,7 +208,7 @@
                     >
                         <div
                             class="flex max-h-[calc(100vh-24rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
-                            <div class="divide-y dark:divide-gray-700">
+                            <div class="divide-y divide-gray-200 dark:divide-gray-700">
                                 <template
                                     x-for="message in messages"
                                     :key="message.message.index"
@@ -543,7 +543,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
+                                <div class="flex items-center justify-between border-t border-gray-200 px-3 py-2 dark:border-gray-600">
                                     <div class="flex items-center gap-3">
                                         <x-filament::button type="submit">
                                             Send

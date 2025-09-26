@@ -77,6 +77,6 @@ class EducatableTasksWidget extends Widget
     */
     protected function getTasksUrl(array $filters = []): string
     {
-        return $this->resource::getUrl('tasks', ['record' => $this->educatable, 'tableFilters' => $filters]);
+        return $this->resource::getUrl('tasks', ['record' => $this->educatable, 'filters' => $filters]);
     }
 }

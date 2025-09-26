@@ -112,14 +112,14 @@ class CreateSegment extends CreateRecord implements HasTable
             Step::make('Create Population Segment')
                 ->schema([
                     View::make('filament.forms.components.table')
-                        ->visible(fn (Get $get): bool => SegmentType::tryFromCaseOrValue($get('type')) === SegmentType::Dynamic),
+                        ->visible(fn (Get $get): bool => $get('type') === SegmentType::Dynamic),
                     FileUpload::make('file')
                         ->acceptedFileTypes(['text/csv', 'text/plain'])
                         ->storeFiles(false)
                         ->visibility('private')
                         ->required()
                         ->hiddenLabel()
-                        ->visible(fn (Get $get): bool => SegmentType::tryFromCaseOrValue($get('type')) === SegmentType::Static)
+                        ->visible(fn (Get $get): bool => $get('type') === SegmentType::Static)
                         ->helperText(fn (): string => match ($this->getSegmentModel()) {
                             SegmentModel::Student => 'Upload a file of Student IDs or Other IDs, with each on a new line.',
                             SegmentModel::Prospect => 'Upload a file of prospect email addresses, with each on a new line.',
@@ -162,7 +162,7 @@ class CreateSegment extends CreateRecord implements HasTable
     {
         $data = $this->form->getRawState();
 
-        if (SegmentType::tryFromCaseOrValue($data['type']) === SegmentType::Dynamic) {
+        if (SegmentType::parse($data['type']) === SegmentType::Dynamic) {
             return;
         }
 
@@ -292,7 +292,7 @@ class CreateSegment extends CreateRecord implements HasTable
         $canAccessProspects = auth()->user()->hasLicense(Prospect::getLicenseType());
 
         return match (true) {
-            $canAccessStudents && $canAccessProspects => SegmentModel::tryFromCaseOrValue($this->form->getRawState()['model']) ?? throw new Exception('Neither students nor prospects were selected.'),
+            $canAccessStudents && $canAccessProspects => SegmentModel::parse($this->form->getRawState()['model']) ?? throw new Exception('Neither students nor prospects were selected.'),
             $canAccessStudents => SegmentModel::Student,
             $canAccessProspects => SegmentModel::Prospect,
             default => throw new Exception('User cannot access students or prospects.'),
@@ -303,7 +303,7 @@ class CreateSegment extends CreateRecord implements HasTable
     {
         $data['model'] = $this->getSegmentModel();
 
-        if (SegmentType::tryFromCaseOrValue($data['type']) === SegmentType::Dynamic) {
+        if (SegmentType::parse($data['type']) === SegmentType::Dynamic) {
             $data['filters'] = $this->tableFilters ?? [];
         } else {
             $data['filters'] = [];

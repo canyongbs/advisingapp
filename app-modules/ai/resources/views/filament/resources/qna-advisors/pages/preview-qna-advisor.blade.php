@@ -45,7 +45,7 @@
         <div
             class="flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
             <div
-                class="divide-y dark:divide-gray-800"
+                class="divide-y divide-gray-200 dark:divide-gray-800"
                 x-cloak
             >
                 <template x-for="(message, messageIndex) in messages">
@@ -111,7 +111,7 @@
                     </textarea>
                 </div>
                 <div
-                    class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
+                    class="flex flex-col items-center border-t px-3 border-gray-200 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
                     <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
                         <x-filament::button
                             class="w-full sm:w-auto"

@@ -77,7 +77,7 @@ class ManageStockMediaSettings extends SettingsPage
                     ->live(),
                 TextInput::make('pexels_api_key')
                     ->label('API Key')
-                    ->visible(fn (Get $get) => $get('is_active') && ($get('provider') === StockMediaProvider::Pexels || $get('provider') === StockMediaProvider::Pexels->value))
+                    ->visible(fn (Get $get) => $get('is_active') && ($get('provider') === StockMediaProvider::Pexels))
                     ->password()
                     ->autocomplete(false),
             ]);

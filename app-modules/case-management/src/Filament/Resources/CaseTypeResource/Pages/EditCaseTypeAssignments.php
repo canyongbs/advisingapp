@@ -109,7 +109,7 @@ class EditCaseTypeAssignments extends EditRecord
                             ->preload()
                             ->required()
                             ->rules(fn (CaseType $record) => [new CaseTypeAssignmentsIndividualUserMustBeAManager($record)])
-                            ->visible(fn (Get $get) => $get('assignment_type') === CaseTypeAssignmentTypes::Individual->value),
+                            ->visible(fn (Get $get) => $get('assignment_type') === CaseTypeAssignmentTypes::Individual),
                     ]),
             ]);
     }

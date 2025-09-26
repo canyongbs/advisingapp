@@ -112,7 +112,7 @@ enum ReportModel: string implements HasLabel
         };
     }
 
-    public static function tryFromCaseOrValue(ReportModel | string $value): ?static
+    public static function parse(ReportModel | string $value): ?static
     {
         if ($value instanceof static) {
             return $value;

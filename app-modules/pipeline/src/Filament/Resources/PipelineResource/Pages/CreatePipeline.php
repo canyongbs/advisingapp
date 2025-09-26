@@ -90,7 +90,7 @@ class CreatePipeline extends CreateRecord
                     ])
                     ->orderColumn('order')
                     ->reorderable()
-                    ->columnSpan('full')
+                    ->columnSpanFull()
                     ->label('Pipeline Stages')
                     ->minItems(1)
                     ->maxItems(5),

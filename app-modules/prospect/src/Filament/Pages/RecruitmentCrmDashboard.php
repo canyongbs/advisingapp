@@ -86,7 +86,7 @@ class RecruitmentCrmDashboard extends RecruitmentCrmDashboardReport
         abort_unless($user->hasLicense(Prospect::getLicenseType()), Response::HTTP_FORBIDDEN);
 
         if (! ActionCenterTab::tryFrom($this->activeTab)) {
-            $this->redirect(static::getUrl(['activeTab' => ActionCenterTab::Subscribed->value]), navigate: true);
+            $this->redirect(static::getUrl(['tab' => ActionCenterTab::Subscribed->value]), navigate: true);
         }
     }
 

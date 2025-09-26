@@ -69,11 +69,11 @@ class ListConsentAgreements extends ListRecords
                     ->schema([
                         Textarea::make('description')
                             ->required()
-                            ->columnSpan('full'),
+                            ->columnSpanFull(),
                         Textarea::make('body')
                             ->required()
                             ->rows(5)
-                            ->columnSpan('full'),
+                            ->columnSpanFull(),
                     ]),
             ]);
     }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f0e4b3854d981d32b8b86fda9afea161",
+    "content-hash": "2134d2f462e9aaf3d25124dc6d0b9e3c",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -13758,16 +13758,16 @@
         },
         {
             "name": "spatie/laravel-multitenancy",
-            "version": "4.0.5",
+            "version": "4.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-multitenancy.git",
-                "reference": "7b43b33a4e4194157949470a04effc64b8bac2a3"
+                "reference": "ac1a74127f864e80d7af3031beb4b5b26e3f40bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-multitenancy/zipball/7b43b33a4e4194157949470a04effc64b8bac2a3",
-                "reference": "7b43b33a4e4194157949470a04effc64b8bac2a3",
+                "url": "https://api.github.com/repos/spatie/laravel-multitenancy/zipball/ac1a74127f864e80d7af3031beb4b5b26e3f40bb",
+                "reference": "ac1a74127f864e80d7af3031beb4b5b26e3f40bb",
                 "shasum": ""
             },
             "require": {
@@ -13821,7 +13821,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-multitenancy/issues",
-                "source": "https://github.com/spatie/laravel-multitenancy/tree/4.0.5"
+                "source": "https://github.com/spatie/laravel-multitenancy/tree/4.0.6"
             },
             "funding": [
                 {
@@ -13833,7 +13833,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-05-12T09:56:03+00:00"
+            "time": "2025-09-26T14:45:11+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
@@ -24464,9 +24464,12 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": {
-        "saade/filament-fullcalendar": 20
+        "canyongbs/common": 20,
+        "canyongbs/filament-tiptap-editor": 20,
+        "saade/filament-fullcalendar": 20,
+        "shuvroroy/filament-spatie-laravel-health": 10
     },
     "prefer-stable": true,
     "prefer-lowest": false,

@@ -96,7 +96,7 @@ class CaseUpdateResource extends Resource
                 Textarea::make('update')
                     ->label('Update')
                     ->rows(3)
-                    ->columnSpan('full')
+                    ->columnSpanFull()
                     ->required()
                     ->string(),
                 Select::make('direction')

@@ -601,7 +601,7 @@
                     </div>
 
                     <div
-                        class="divide-y dark:divide-gray-800"
+                        class="divide-y divide-gray-200 dark:divide-gray-800"
                         x-cloak
                     >
                         <template x-for="(message, messageIndex) in messages">
@@ -784,7 +784,7 @@
                                 </textarea>
                             </div>
                             <div
-                                class="flex flex-col items-center border-t px-3 py-2 sm:flex-row sm:justify-between dark:border-gray-600">
+                                class="flex flex-col items-center border-t border-gray-200 px-3 py-2 sm:flex-row sm:justify-between dark:border-gray-600">
                                 <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
                                     @if ($this->isProcessingFiles)
                                         <x-filament::button

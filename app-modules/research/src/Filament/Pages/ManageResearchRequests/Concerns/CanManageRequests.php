@@ -246,15 +246,15 @@ trait CanManageRequests
                     ->afterStateUpdated(fn (Set $set) => $set('targetIds', [])),
                 Select::make('targetIds')
                     ->label(fn (Get $get): string => match ($get('targetType')) {
-                        ResearchRequestShareTarget::Team->value => 'Select Teams',
-                        ResearchRequestShareTarget::User->value => 'Select Users',
+                        ResearchRequestShareTarget::Team => 'Select Teams',
+                        ResearchRequestShareTarget::User => 'Select Users',
                         default => '',
                     })
                     ->visible(fn (Get $get): bool => filled($get('targetType')))
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
-                            ResearchRequestShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
-                            ResearchRequestShareTarget::User->value => User::tap(new WithoutSuperAdmin())->orderBy('name')->pluck('name', 'id'),
+                            ResearchRequestShareTarget::Team => Team::orderBy('name')->pluck('name', 'id'),
+                            ResearchRequestShareTarget::User => User::tap(new WithoutSuperAdmin())->orderBy('name')->pluck('name', 'id'),
                             default => '',
                         };
                     })
@@ -263,8 +263,8 @@ trait CanManageRequests
                     ->required()
                     ->rules([
                         fn (Get $get) => match ($get('targetType')) {
-                            ResearchRequestShareTarget::User->value => new RestrictSuperAdmin('email'),
-                            ResearchRequestShareTarget::Team->value => null,
+                            ResearchRequestShareTarget::User => new RestrictSuperAdmin('email'),
+                            ResearchRequestShareTarget::Team => null,
                             default => '',
                         },
                     ]),

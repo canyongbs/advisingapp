@@ -147,7 +147,7 @@ class EditSegment extends EditRecord implements HasTable
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        if (SegmentType::tryFromCaseOrValue($this->data['type']) === SegmentType::Dynamic) {
+        if (SegmentType::parse($this->data['type']) === SegmentType::Dynamic) {
             $data['filters'] = $this->tableFilters ?? [];
         } else {
             $data['filters'] = [];

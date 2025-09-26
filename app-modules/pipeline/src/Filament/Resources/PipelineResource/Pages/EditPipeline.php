@@ -113,7 +113,7 @@ class EditPipeline extends EditRecord
                     )
                     ->orderColumn('order')
                     ->reorderable()
-                    ->columnSpan('full')
+                    ->columnSpanFull()
                     ->label('Pipeline Stages')
                     ->minItems(1)
                     ->maxItems(5),

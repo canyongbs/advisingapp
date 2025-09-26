@@ -337,15 +337,15 @@ trait CanManageThreads
                     ->afterStateUpdated(fn (Set $set) => $set('targetIds', [])),
                 Select::make('targetIds')
                     ->label(fn (Get $get): string => match ($get('targetType')) {
-                        AiThreadShareTarget::Team->value => 'Select Teams',
-                        AiThreadShareTarget::User->value => 'Select Users',
+                        AiThreadShareTarget::Team => 'Select Teams',
+                        AiThreadShareTarget::User => 'Select Users',
                         default => throw new Exception('Target type is not valid.')
                     })
                     ->visible(fn (Get $get): bool => filled($get('targetType')))
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
-                            AiThreadShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
-                            AiThreadShareTarget::User->value => User::tap(new WithoutSuperAdmin())->whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::Team => Team::orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::User => User::tap(new WithoutSuperAdmin())->whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
                             default => throw new Exception('Target type is not valid.')
                         };
                     })
@@ -354,8 +354,8 @@ trait CanManageThreads
                     ->required()
                     ->rules([
                         fn (Get $get) => match ($get('targetType')) {
-                            AiThreadShareTarget::User->value => new RestrictSuperAdmin('clone'),
-                            AiThreadShareTarget::Team->value => null,
+                            AiThreadShareTarget::User => new RestrictSuperAdmin('clone'),
+                            AiThreadShareTarget::Team => null,
                             default => throw new Exception('Target type not valid.')
                         },
                     ]),
@@ -396,15 +396,15 @@ trait CanManageThreads
                     ->afterStateUpdated(fn (Set $set) => $set('targetIds', [])),
                 Select::make('targetIds')
                     ->label(fn (Get $get): string => match ($get('targetType')) {
-                        AiThreadShareTarget::Team->value => 'Select Teams',
-                        AiThreadShareTarget::User->value => 'Select Users',
+                        AiThreadShareTarget::Team => 'Select Teams',
+                        AiThreadShareTarget::User => 'Select Users',
                         default => throw new Exception('Target type is not valid.')
                     })
                     ->visible(fn (Get $get): bool => filled($get('targetType')))
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
-                            AiThreadShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
-                            AiThreadShareTarget::User->value => User::tap(new WithoutSuperAdmin())->orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::Team => Team::orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::User => User::tap(new WithoutSuperAdmin())->orderBy('name')->pluck('name', 'id'),
                             default => throw new Exception('Target type is not valid.')
                         };
                     })
@@ -413,8 +413,8 @@ trait CanManageThreads
                     ->required()
                     ->rules([
                         fn (Get $get) => match ($get('targetType')) {
-                            AiThreadShareTarget::User->value => new RestrictSuperAdmin('email'),
-                            AiThreadShareTarget::Team->value => null,
+                            AiThreadShareTarget::User => new RestrictSuperAdmin('email'),
+                            AiThreadShareTarget::Team => null,
                             default => throw new Exception('Target type is not valid.')
                         },
                     ]),

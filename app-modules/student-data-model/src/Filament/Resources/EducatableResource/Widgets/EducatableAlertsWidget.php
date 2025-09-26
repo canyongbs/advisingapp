@@ -84,6 +84,6 @@ class EducatableAlertsWidget extends Widget
     */
     protected function getAlertsUrl(array $filters = []): string
     {
-        return $this->resource::getUrl('alerts', ['record' => $this->educatable, 'tableFilters' => $filters]);
+        return $this->resource::getUrl('alerts', ['record' => $this->educatable, 'filters' => $filters]);
     }
 }
