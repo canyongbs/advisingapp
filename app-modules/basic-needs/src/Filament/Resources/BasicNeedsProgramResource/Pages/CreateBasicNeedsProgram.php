@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
@@ -48,10 +48,10 @@ class CreateBasicNeedsProgram extends CreateRecord
 {
     protected static string $resource = BasicNeedsProgramResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Program Name')
                     ->required()

@@ -33,7 +33,7 @@
 
 </COPYRIGHT>
 */
-
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\EditProspectSource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
@@ -59,7 +59,7 @@ test('A successful action on the EditProspectSource page', function () {
 
     $editRequest = EditProspectSourceRequestFactory::new()->create();
 
-    livewire(ProspectSourceResource\Pages\EditProspectSource::class, [
+    livewire(EditProspectSource::class, [
         'record' => $prospectSource->getRouteKey(),
     ])
         ->assertFormSet([
@@ -77,7 +77,7 @@ test('EditProspectSource requires valid data', function ($data, $errors) {
 
     $prospectSource = ProspectSource::factory()->create();
 
-    livewire(ProspectSourceResource\Pages\EditProspectSource::class, [
+    livewire(EditProspectSource::class, [
         'record' => $prospectSource->getRouteKey(),
     ])
         ->assertFormSet([
@@ -109,7 +109,7 @@ test('EditProspectSource is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    livewire(ProspectSourceResource\Pages\EditProspectSource::class, [
+    livewire(EditProspectSource::class, [
         'record' => $prospectSource->getRouteKey(),
     ])
         ->assertForbidden();
@@ -126,7 +126,7 @@ test('EditProspectSource is gated with proper access control', function () {
 
     $request = collect(EditProspectSourceRequestFactory::new()->create());
 
-    livewire(ProspectSourceResource\Pages\EditProspectSource::class, [
+    livewire(EditProspectSource::class, [
         'record' => $prospectSource->getRouteKey(),
     ])
         ->fillForm($request->toArray())

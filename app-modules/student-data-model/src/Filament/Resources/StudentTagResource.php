@@ -57,7 +57,7 @@ class StudentTagResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static ?string $navigationGroup = 'Students';
+    protected static string | \UnitEnum | null $navigationGroup = 'Students';
 
     public static function canAccess(): bool
     {

@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -83,7 +83,7 @@ class ListCampaigns extends ListRecords
                     ->searchable()
                     ->sortable(),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make()
                     ->hidden(fn (Campaign $record) => $record->hasBeenExecuted() === true),

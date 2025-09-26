@@ -36,23 +36,23 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateCaseStatus extends CreateRecord
 {
     protected static string $resource = CaseStatusResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make()
                     ->columns()
                     ->schema([

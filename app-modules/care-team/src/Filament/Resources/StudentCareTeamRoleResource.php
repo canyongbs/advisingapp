@@ -56,7 +56,7 @@ class StudentCareTeamRoleResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static ?string $navigationGroup = 'Students';
+    protected static string | \UnitEnum | null $navigationGroup = 'Students';
 
     protected static ?string $breadcrumb = 'Student Care Team Roles';
 

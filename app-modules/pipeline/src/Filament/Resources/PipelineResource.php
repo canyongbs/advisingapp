@@ -49,7 +49,7 @@ class PipelineResource extends Resource
 {
     protected static ?string $model = Pipeline::class;
 
-    protected static ?string $navigationGroup = 'CRM';
+    protected static string | \UnitEnum | null $navigationGroup = 'CRM';
 
     protected static ?int $navigationSort = 30;
 

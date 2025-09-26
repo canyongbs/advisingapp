@@ -36,6 +36,7 @@
 
 namespace App\Filament\Resources\PronounsResource\Pages;
 
+use Filament\Actions\CreateAction;
 use App\Filament\Resources\PronounsResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
@@ -49,7 +50,7 @@ class ManagePronouns extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
+            CreateAction::make()
                 ->modalWidth('md'),
         ];
     }

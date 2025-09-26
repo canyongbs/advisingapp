@@ -46,7 +46,7 @@ class ReportResource extends Resource
 {
     protected static ?string $model = Report::class;
 
-    protected static ?string $navigationGroup = 'Data and Analytics';
+    protected static string | \UnitEnum | null $navigationGroup = 'Data and Analytics';
 
     protected static ?int $navigationSort = 40;
 

@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages;
 
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource;
 use AdvisingApp\CaseManagement\Models\CaseForm;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -59,7 +59,7 @@ class ListCaseForms extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('name'),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('Respond')
                     ->url(fn (CaseForm $form) => route('case-forms.show', ['caseForm' => $form]))
                     ->icon('heroicon-m-arrow-top-right-on-square')
@@ -67,7 +67,7 @@ class ListCaseForms extends ListRecords
                     ->color('gray'),
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

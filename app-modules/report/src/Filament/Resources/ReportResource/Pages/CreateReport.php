@@ -36,6 +36,10 @@
 
 namespace AdvisingApp\Report\Filament\Resources\ReportResource\Pages;
 
+use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\View;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\ReportModel;
 use AdvisingApp\Report\Filament\Resources\ReportResource;
@@ -47,9 +51,6 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\View;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -60,7 +61,7 @@ use Illuminate\Support\Arr;
 class CreateReport extends CreateRecord implements HasTable
 {
     use InteractsWithTable;
-    use CreateRecord\Concerns\HasWizard;
+    use HasWizard;
 
     protected static string $resource = ReportResource::class;
 

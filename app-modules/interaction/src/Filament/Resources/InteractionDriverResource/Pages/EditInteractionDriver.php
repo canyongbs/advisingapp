@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages;
 
+use Filament\Actions\DeleteAction;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions;
@@ -50,7 +51,7 @@ class EditInteractionDriver extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

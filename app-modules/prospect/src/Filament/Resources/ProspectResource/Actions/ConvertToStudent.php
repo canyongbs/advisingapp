@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions;
 
+use Filament\Support\Enums\Width;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -45,7 +46,6 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Support\Enums\MaxWidth;
 
 class ConvertToStudent extends Action
 {
@@ -55,9 +55,9 @@ class ConvertToStudent extends Action
 
         $this
             ->modalHeading('Convert Prospect to Student')
-            ->modalWidth(MaxWidth::ExtraLarge)
+            ->modalWidth(Width::ExtraLarge)
             ->modalSubmitActionLabel('Convert')
-            ->form([
+            ->schema([
                 Select::make('student_id')
                     ->relationship('student', 'full_name')
                     ->required()

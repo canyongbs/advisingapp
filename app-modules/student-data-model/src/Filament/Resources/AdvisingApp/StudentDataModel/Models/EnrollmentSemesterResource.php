@@ -36,20 +36,19 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\AdvisingApp\StudentDataModel\Models;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\AdvisingApp\StudentDataModel\Models\EnrollmentSemesterResource\Pages\ManageEnrollmentSemesters;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use App\Filament\Clusters\ConstituentManagement;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -59,16 +58,16 @@ class EnrollmentSemesterResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static ?string $navigationGroup = 'Students';
+    protected static string | \UnitEnum | null $navigationGroup = 'Students';
 
     protected static ?string $navigationLabel = 'Semester Order';
 
     protected static ?int $navigationSort = 70;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255)
@@ -82,10 +81,10 @@ class EnrollmentSemesterResource extends Resource
             ]);
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 TextEntry::make('name'),
             ]);
     }
@@ -98,12 +97,12 @@ class EnrollmentSemesterResource extends Resource
             ])
             ->defaultSort('order')
             ->reorderable('order', condition: auth()->user()->can('settings.*.update'))
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

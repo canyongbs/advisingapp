@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\SlaResource\RelationManagers;
 
+use Filament\Actions\AssociateAction;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Actions\DissociateAction;
+use Filament\Actions\DissociateBulkAction;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Get;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\AssociateAction;
-use Filament\Tables\Actions\DissociateAction;
-use Filament\Tables\Actions\DissociateBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -96,7 +96,7 @@ class CasePrioritiesRelationManager extends RelationManager
                             ->visible(fn (Get $get): bool => filled($get('type_id'))),
                     ]),
             ])
-            ->actions([
+            ->recordActions([
                 DissociateAction::make(),
             ])
             ->groupedBulkActions([

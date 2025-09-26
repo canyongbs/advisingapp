@@ -49,7 +49,7 @@ class SurveyResource extends Resource
 {
     protected static ?string $model = Survey::class;
 
-    protected static ?string $navigationGroup = 'Premium Features';
+    protected static string | \UnitEnum | null $navigationGroup = 'Premium Features';
 
     protected static ?int $navigationSort = 70;
 

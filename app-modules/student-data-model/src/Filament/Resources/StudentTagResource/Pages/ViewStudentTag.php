@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewStudentTag extends ViewRecord
 {
     protected static string $resource = StudentTagResource::class;
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
         return $infolist
             ->schema([

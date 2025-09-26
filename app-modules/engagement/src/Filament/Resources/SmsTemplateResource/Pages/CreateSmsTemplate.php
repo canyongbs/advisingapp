@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Actions;
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Resource;
 use FilamentTiptapEditor\TiptapEditor;
@@ -51,11 +51,11 @@ class CreateSmsTemplate extends CreateRecord
 {
     protected static string $resource = SmsTemplateResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->columns(1)
-            ->schema([
+            ->components([
                 TextInput::make('name')
                     ->string()
                     ->required()

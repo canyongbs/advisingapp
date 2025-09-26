@@ -36,26 +36,26 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Component;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
-use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 /**
- * @property Form $form
+ * @property \Filament\Schemas\Schema $form
  */
 class ProfileInformation extends ProfilePage
 {
@@ -65,14 +65,14 @@ class ProfileInformation extends ProfilePage
 
     protected static ?int $navigationSort = 10;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         /** @var User $user */
         $user = auth()->user();
         $hasCrmLicense = $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Public Profile')
                     ->visible($hasCrmLicense)
                     ->schema([
@@ -90,7 +90,7 @@ class ProfileInformation extends ProfilePage
                             //The id doesn't matter because we're just using it to generate a piece of a url
                             ->prefix(str(route('users.profile.view.public', ['user' => -1]))->beforeLast('/')->append('/'))
                             ->suffixAction(
-                                FormAction::make('viewPublicProfile')
+                                Action::make('viewPublicProfile')
                                     ->url(fn () => route('users.profile.view.public', ['user' => $user->public_profile_slug]))
                                     ->icon('heroicon-m-arrow-top-right-on-square')
                                     ->openUrlInNewTab()
@@ -212,14 +212,14 @@ class ProfileInformation extends ProfilePage
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int|string, string|\Filament\Schemas\Schema>
      */
     protected function getForms(): array
     {
         return [
             'form' => $this->form(
                 $this->makeForm()
-                    ->schema([
+                    ->components([
                         $this->getNameFormComponent(),
                         $this->getEmailFormComponent(),
                         $this->getPasswordFormComponent(),

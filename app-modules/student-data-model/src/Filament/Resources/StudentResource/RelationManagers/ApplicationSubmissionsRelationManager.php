@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
+use Filament\Actions\ViewAction;
+use Filament\Schemas\Components\Section;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use App\Enums\Feature;
 use App\Filament\Tables\Columns\IdColumn;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -90,10 +90,10 @@ class ApplicationSubmissionsRelationManager extends RelationManager
                     ->dateTime()
                     ->sortable(),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->modalHeading(fn (ApplicationSubmission $record) => "Submission Details: {$record->created_at}")
-                    ->infolist(fn (ApplicationSubmission $record): array => [
+                    ->schema(fn (ApplicationSubmission $record): array => [
                         TextEntry::make('state')
                             ->label('State')
                             ->badge()
@@ -121,7 +121,7 @@ class ApplicationSubmissionsRelationManager extends RelationManager
                     ),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

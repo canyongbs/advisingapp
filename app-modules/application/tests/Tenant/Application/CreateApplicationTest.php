@@ -33,7 +33,7 @@
 
 </COPYRIGHT>
 */
-
+use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\CreateApplication;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
@@ -57,7 +57,7 @@ test('CreateApplication is gated with proper access control', function () {
             ApplicationResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(ApplicationResource\Pages\CreateApplication::class)
+    livewire(CreateApplication::class)
         ->assertForbidden();
 
     $user->givePermissionTo('application.view-any');
@@ -88,7 +88,7 @@ test('CreateApplication is gated with proper feature access control', function (
     $user->givePermissionTo('application.view-any');
     $user->givePermissionTo('application.create');
 
-    livewire(ApplicationResource\Pages\CreateApplication::class)
+    livewire(CreateApplication::class)
         ->assertForbidden();
 
     $settings->data->addons->onlineAdmissions = true;

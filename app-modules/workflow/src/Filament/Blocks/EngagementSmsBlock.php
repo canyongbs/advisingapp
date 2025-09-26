@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Section;
 use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftEngagementBlockWithAi;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 
 class EngagementSmsBlock extends WorkflowActionBlock
@@ -57,7 +57,7 @@ class EngagementSmsBlock extends WorkflowActionBlock
     }
 
     /**
-     * @return array<int, Field|Section|Actions>
+     * @return array<int, Field|\Filament\Schemas\Components\Section|\Filament\Schemas\Components\Actions>
      */
     public function generateFields(string $fieldPrefix = ''): array
     {

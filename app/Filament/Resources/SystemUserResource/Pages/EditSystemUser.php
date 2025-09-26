@@ -36,13 +36,13 @@
 
 namespace App\Filament\Resources\SystemUserResource\Pages;
 
+use Filament\Schemas\Schema;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Filament\Resources\SystemUserResource;
 use App\Models\SystemUser;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 
 class EditSystemUser extends EditRecord
@@ -53,9 +53,9 @@ class EditSystemUser extends EditRecord
 
     protected ?string $heading = 'Edit Programmatic (API) User';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             TextInput::make('name')
                 ->required()
                 ->string(),

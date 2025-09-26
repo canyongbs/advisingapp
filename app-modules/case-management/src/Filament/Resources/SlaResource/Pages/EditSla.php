@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages;
 
+use Filament\Actions\DeleteAction;
 use AdvisingApp\CaseManagement\Filament\Resources\SlaResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions;
@@ -50,7 +51,7 @@ class EditSla extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

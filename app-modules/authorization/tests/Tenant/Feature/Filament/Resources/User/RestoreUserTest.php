@@ -33,12 +33,11 @@
 
 </COPYRIGHT>
 */
-
+use Filament\Actions\RestoreAction;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Models\User;
-use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\TrashedFilter;
 

@@ -33,7 +33,7 @@
 
 </COPYRIGHT>
 */
-
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\CreateProspectStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
@@ -57,7 +57,7 @@ test('A successful action on the CreateProspectStatus page', function () {
 
     $request = CreateProspectStatusRequestFactory::new()->create();
 
-    livewire(ProspectStatusResource\Pages\CreateProspectStatus::class)
+    livewire(CreateProspectStatus::class)
         ->fillForm($request)
         ->call('create')
         ->assertHasNoFormErrors();
@@ -70,7 +70,7 @@ test('A successful action on the CreateProspectStatus page', function () {
 test('CreateProspectStatus requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    livewire(ProspectStatusResource\Pages\CreateProspectStatus::class)
+    livewire(CreateProspectStatus::class)
         ->fillForm(CreateProspectStatusRequestFactory::new($data)->create())
         ->call('create')
         ->assertHasFormErrors($errors);
@@ -95,7 +95,7 @@ test('CreateProspectStatus is gated with proper access control', function () {
             ProspectStatusResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(ProspectStatusResource\Pages\CreateProspectStatus::class)
+    livewire(CreateProspectStatus::class)
         ->assertForbidden();
 
     $user->givePermissionTo('settings.view-any');
@@ -108,7 +108,7 @@ test('CreateProspectStatus is gated with proper access control', function () {
 
     $request = collect(CreateProspectStatusRequestFactory::new()->create());
 
-    livewire(ProspectStatusResource\Pages\CreateProspectStatus::class)
+    livewire(CreateProspectStatus::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();

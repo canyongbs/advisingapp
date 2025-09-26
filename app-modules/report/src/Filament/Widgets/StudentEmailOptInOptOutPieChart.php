@@ -44,7 +44,7 @@ use Illuminate\Support\Facades\Cache;
 
 class StudentEmailOptInOptOutPieChart extends PieChartReportWidget
 {
-    protected static ?string $heading = 'Student Email Addresses';
+    protected ?string $heading = 'Student Email Addresses';
 
     protected int | string | array $columnSpan = [
         'sm' => 12,
@@ -52,7 +52,7 @@ class StudentEmailOptInOptOutPieChart extends PieChartReportWidget
         'lg' => 6,
     ];
 
-    protected static ?string $maxHeight = '240px';
+    protected ?string $maxHeight = '240px';
 
     public function render(): View
     {

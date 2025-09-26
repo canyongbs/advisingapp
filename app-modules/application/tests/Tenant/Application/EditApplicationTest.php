@@ -33,7 +33,7 @@
 
 </COPYRIGHT>
 */
-
+use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\EditApplication;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
@@ -66,7 +66,7 @@ test('EditApplication is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    livewire(ApplicationResource\Pages\EditApplication::class, [
+    livewire(EditApplication::class, [
         'record' => $application->getRouteKey(),
     ])
         ->assertForbidden();
@@ -107,7 +107,7 @@ test('EditApplication is gated with proper feature access control', function () 
             ])
         )->assertForbidden();
 
-    livewire(ApplicationResource\Pages\EditApplication::class, [
+    livewire(EditApplication::class, [
         'record' => $application->getRouteKey(),
     ])
         ->assertForbidden();

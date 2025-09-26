@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages;
 
+use Filament\Actions\DeleteAction;
 use AdvisingApp\CaseManagement\Filament\Concerns\CaseUpdateBreadcrumbs;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -56,7 +57,7 @@ class EditCaseUpdate extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

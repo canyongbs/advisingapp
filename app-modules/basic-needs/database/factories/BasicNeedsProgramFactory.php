@@ -36,11 +36,12 @@
 
 namespace AdvisingApp\BasicNeeds\Database\Factories;
 
+use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\BasicNeeds\Models\BasicNeedsProgram>
+ * @extends Factory<BasicNeedsProgram>
  */
 class BasicNeedsProgramFactory extends Factory
 {

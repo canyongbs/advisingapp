@@ -56,5 +56,5 @@ class ManageProspectTasks extends BaseTaskRelationManager
     // TODO: Automatically set from Filament based on relationship name
     protected static ?string $breadcrumb = 'Tasks';
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-check';
 }

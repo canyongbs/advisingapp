@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use AdvisingApp\Authorization\Models\Role;
@@ -46,8 +48,6 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Validation\Rules\Unique;
 
@@ -57,10 +57,10 @@ class EditRole extends EditRecord
 
     protected static string $resource = RoleResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->required()
                     ->maxLength(125)

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
 use App\Filament\Forms\Components\IconSelect;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -43,7 +44,6 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 
 class EditResourceHubCategory extends EditRecord
@@ -52,10 +52,10 @@ class EditResourceHubCategory extends EditRecord
 
     protected static string $resource = ResourceHubCategoryResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Name')
                     ->required()

@@ -36,6 +36,9 @@
 
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Section;
 use AdvisingApp\CaseManagement\Enums\CaseTypeAssignmentTypes;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
@@ -48,12 +51,9 @@ use App\Models\User;
 use Closure;
 use Exception;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Model;
 
 class CaseBlock extends WorkflowActionBlock
@@ -70,7 +70,7 @@ class CaseBlock extends WorkflowActionBlock
     }
 
     /**
-     * @return array<int, covariant Field | Section>
+     * @return array<int, covariant Field|\Filament\Schemas\Components\Section>
      */
     public function generateFields(): array
     {
@@ -218,7 +218,7 @@ class CaseBlock extends WorkflowActionBlock
     }
 
     /**
-     * @return array<int, covariant Field | Section>
+     * @return array<int, covariant Field|\Filament\Schemas\Components\Section>
      */
     public function editFields(): array
     {

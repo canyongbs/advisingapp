@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 
 class EditProjectMilestoneStatus extends EditRecord
@@ -51,10 +51,10 @@ class EditProjectMilestoneStatus extends EditRecord
 
     protected static string $resource = ProjectMilestoneStatusResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Name')
                     ->maxLength(255)

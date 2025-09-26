@@ -36,6 +36,12 @@
 
 namespace AdvisingApp\Engagement\Filament\Pages;
 
+use Filament\Panel;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Section;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -45,20 +51,15 @@ use AdvisingApp\Notification\Models\SmsMessageEvent;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Infolists\Components\EngagementBody;
 use App\Models\User;
-use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Locked;
 
 class ViewEngagement extends Page
 {
-    protected static string $view = 'engagement::filament.pages.view-engagement';
+    protected string $view = 'engagement::filament.pages.view-engagement';
 
     protected static ?string $cluster = UnifiedInbox::class;
 
@@ -95,7 +96,7 @@ class ViewEngagement extends Page
         ]);
     }
 
-    public static function getRoutePath(): string
+    public static function getRoutePath(Panel $panel): string
     {
         return 'sent-items/{record}';
     }
@@ -105,10 +106,10 @@ class ViewEngagement extends Page
         return strip_tags($this->record->getSubjectMarkdown()) ?: 'Sent Items';
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make()
                     ->columnSpanFull()
                     ->tabs([

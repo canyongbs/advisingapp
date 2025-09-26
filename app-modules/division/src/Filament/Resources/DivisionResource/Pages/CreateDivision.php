@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
 use AdvisingApp\Division\Models\Division;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateDivision extends CreateRecord
@@ -50,10 +50,10 @@ class CreateDivision extends CreateRecord
 
     protected ?bool $hasDatabaseTransactions = true;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->required()
                     ->string()

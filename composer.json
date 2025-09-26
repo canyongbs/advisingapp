@@ -59,8 +59,8 @@
         "canyon-gbs/segment": "*",
         "canyon-gbs/stock-media": "*",
         "canyon-gbs/workflow": "*",
-        "canyongbs/common": "^1.8.1",
-        "canyongbs/filament-tiptap-editor": "^1.3.0",
+        "canyongbs/common": "*",
+        "canyongbs/filament-tiptap-editor": "*",
         "canyongbs/model-state-machine": "^2.0",
         "cknow/laravel-money": "^8.1",
         "composer/composer": "^2.7",
@@ -68,9 +68,9 @@
         "defectivecode/laravel-sqs-extended": "^1.1.0",
         "ezimuel/guzzlestreams": "^4.0",
         "fakerphp/faker": "^1.23",
-        "filament/filament": "^3.3.26",
-        "filament/spatie-laravel-media-library-plugin": "^3.3.26",
-        "filament/spatie-laravel-settings-plugin": "^3.3.26",
+        "filament/filament": "^4.0",
+        "filament/spatie-laravel-media-library-plugin": "^4.0",
+        "filament/spatie-laravel-settings-plugin": "^4.0",
         "giggsey/libphonenumber-for-php-lite": "^9.0",
         "google/apiclient": "^2.17",
         "guzzlehttp/guzzle": "^7.2",
@@ -93,9 +93,9 @@
         "orrison/meliorstan": "^0.2.2",
         "owen-it/laravel-auditing": "^14.0",
         "php-mime-mail-parser/php-mime-mail-parser": "^9.0",
-        "saade/filament-fullcalendar": "^3.2",
+        "saade/filament-fullcalendar": "dev-filament-4-support",
         "sentry/sentry-laravel": "^4.7",
-        "shuvroroy/filament-spatie-laravel-health": "^2.1.0",
+        "shuvroroy/filament-spatie-laravel-health": "^3.0",
         "socialiteproviders/google": "^4.1",
         "socialiteproviders/microsoft-azure": "^5.2",
         "spatie/laravel-cookie-consent": "^3.3",
@@ -112,18 +112,19 @@
         "sqids/sqids": "^0.5.0",
         "squirephp/countries-en": "^3.9",
         "staudenmeir/eloquent-has-many-deep": "^1.19",
-        "stechstudio/filament-impersonate": "^3.5",
+        "stechstudio/filament-impersonate": "^4.0",
         "talkroute/message-segment-calculator": "^1.0",
         "tapp/filament-timezone-field": "^3.0",
         "telnyx/telnyx-php": "^3.0",
         "tpetry/laravel-postgresql-enhanced": "^3.0",
         "twilio/sdk": "^8.5.0",
-        "ysfkaya/filament-phone-input": "^3.2.4"
+        "ysfkaya/filament-phone-input": "^4.0"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.5",
         "brianium/paratest": "^7.2",
         "doctrine/dbal": "^4.2.3",
+        "filament/upgrade": "^4.0",
         "friendsofphp/php-cs-fixer": "^3.60",
         "larastan/larastan": "^3.0",
         "mockery/mockery": "^1.4.4",
@@ -252,7 +253,7 @@
         }
     },
     "prefer-stable": true,
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "repositories": [
         {
             "type": "path",
@@ -260,6 +261,24 @@
             "options": {
                 "symlink": true
             }
+        },
+        {
+            "type": "path",
+            "url": "../common",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "../filament-tiptap-editor",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/MarioGattolla/filament-fullcalendar"
         }
     ]
 }

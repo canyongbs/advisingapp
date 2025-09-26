@@ -43,7 +43,7 @@ use Illuminate\Support\Facades\Cache;
 
 class SpecialActionsDoughnutChart extends ChartReportWidget
 {
-    protected static ?string $heading = 'Special Actions';
+    protected ?string $heading = 'Special Actions';
 
     protected int | string | array $columnSpan = [
         'sm' => 12,
@@ -51,7 +51,7 @@ class SpecialActionsDoughnutChart extends ChartReportWidget
         'lg' => 6,
     ];
 
-    protected static ?string $maxHeight = '240px';
+    protected ?string $maxHeight = '240px';
 
     public function render(): View
     {

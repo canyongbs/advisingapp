@@ -45,13 +45,13 @@ class PreviewQnaAdvisor extends ViewRecord
 {
     protected static string $resource = QnaAdvisorResource::class;
 
-    protected static ?string $navigationGroup = 'Configuration';
+    protected static string | \UnitEnum | null $navigationGroup = 'Configuration';
 
     protected static ?string $title = 'Preview';
 
     protected static ?string $breadcrumb = 'Preview';
 
-    protected static string $view = 'ai::filament.resources.qna-advisors.pages.preview-qna-advisor';
+    protected string $view = 'ai::filament.resources.qna-advisors.pages.preview-qna-advisor';
 
     public static function canAccess(array $parameters = []): bool
     {

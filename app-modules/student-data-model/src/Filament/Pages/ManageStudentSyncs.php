@@ -47,9 +47,9 @@ class ManageStudentSyncs extends Page
 
     protected static ?int $navigationSort = 20;
 
-    protected static ?string $navigationGroup = 'Data and Analytics';
+    protected static string | \UnitEnum | null $navigationGroup = 'Data and Analytics';
 
-    protected static string $view = 'student-data-model::filament.pages.manage-student-syncs';
+    protected string $view = 'student-data-model::filament.pages.manage-student-syncs';
 
     public static function canAccess(): bool
     {

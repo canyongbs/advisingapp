@@ -44,7 +44,7 @@ use Spatie\Health\ResultStores\ResultStore;
 
 class ProductHealth extends HealthCheckResults
 {
-    protected static ?string $navigationIcon = null;
+    protected static string | \BackedEnum | null $navigationIcon = null;
 
     public static function getNavigationLabel(): string
     {

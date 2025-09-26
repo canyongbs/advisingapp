@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages;
 
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -57,7 +57,7 @@ class ListProspectTags extends ListRecords
                 TextColumn::make('created_at')
                     ->label('Created At'),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
             ]);

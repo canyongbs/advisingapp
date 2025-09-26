@@ -36,23 +36,22 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use App\Features\InteractionMetadataFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -60,7 +59,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * @property ComponentContainer $form
+ * @property \Filament\Schemas\Schema $form
  */
 class ListInteractionInitiatives extends ListRecords
 {
@@ -71,7 +70,7 @@ class ListInteractionInitiatives extends ListRecords
     /** @var array<string, mixed> */
     public ?array $data = [];
 
-    protected static string $view = 'interaction::filament.pages.list-interaction-initiatives';
+    protected string $view = 'interaction::filament.pages.list-interaction-initiatives';
 
     private ?InteractionManagementSettings $settings = null;
 
@@ -94,14 +93,14 @@ class ListInteractionInitiatives extends ListRecords
         $this->form->fill($data);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         if (! InteractionMetadataFeature::active()) {
-            return $form->schema([]);
+            return $schema->components([]);
         }
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Initiative Settings')
                     ->schema([
                         Grid::make(2)
@@ -165,10 +164,10 @@ class ListInteractionInitiatives extends ListRecords
                     ->label('Default')
                     ->query(fn (Builder $query) => $query->where('is_default', true)),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -44,7 +45,6 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Illuminate\Validation\Rule;
 
@@ -73,10 +73,10 @@ class ManageAiIntegratedAssistantSettings extends SettingsPage
         return $user->isSuperAdmin();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('default_model')
                     ->options(fn (AiModel|string|null $state) => array_unique([
                         ...AiModelApplicabilityFeature::IntegratedAdvisor->getModelsAsSelectOptions(),

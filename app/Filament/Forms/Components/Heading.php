@@ -36,8 +36,8 @@
 
 namespace App\Filament\Forms\Components;
 
+use Filament\Schemas\Components\Component;
 use Closure;
-use Filament\Forms\Components\Component;
 
 class Heading extends Component
 {

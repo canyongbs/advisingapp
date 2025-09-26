@@ -36,6 +36,9 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\CaseManagement\Models\CaseModel;
@@ -45,10 +48,7 @@ use App\Models\Scopes\HasLicense;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Query\Expression;
@@ -59,10 +59,10 @@ class AssignedToRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('user.full')
                     ->required()
                     ->maxLength(255),
@@ -88,7 +88,7 @@ class AssignedToRelationManager extends RelationManager
                         'assigned_at' => now(),
                         'status' => CaseAssignmentStatus::Active,
                     ]))
-                    ->form([
+                    ->schema([
                         Select::make('userId')
                             ->label('Reassign Case To')
                             ->searchable()
@@ -102,7 +102,7 @@ class AssignedToRelationManager extends RelationManager
                             ->required(),
                     ]),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->url(fn (CaseAssignment $assignment) => UserResource::getUrl('view', ['record' => $assignment->user])),
             ]);

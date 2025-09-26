@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Alert\Filament\Actions;
 
+use Filament\Schemas\Components\Section;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\KeyValueEntry;
-use Filament\Infolists\Components\Section;
 
 class AlertHistoryUpdatedViewAction extends ViewAction
 {
@@ -47,7 +47,7 @@ class AlertHistoryUpdatedViewAction extends ViewAction
     {
         parent::setUp();
 
-        $this->infolist([
+        $this->schema([
             Section::make()
                 ->schema([
                     KeyValueEntry::make('Changes')

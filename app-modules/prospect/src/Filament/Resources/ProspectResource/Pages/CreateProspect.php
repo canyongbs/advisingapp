@@ -36,25 +36,24 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Actions\Action;
+use Filament\Support\Enums\Size;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -64,7 +63,7 @@ class CreateProspect extends CreateRecord
 {
     protected static string $resource = ProspectResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         $generateFullName = function (Get $get, Set $set) {
             $firstName = trim($get('first_name'));
@@ -86,7 +85,7 @@ class CreateProspect extends CreateRecord
             ->tooltip('Make primary')
             ->icon('heroicon-m-star')
             ->iconButton()
-            ->size(ActionSize::Small)
+            ->size(Size::Small)
             ->color('primary')
             ->action(function (array $arguments, Repeater $component): void {
                 $items = $component->getState();
@@ -100,8 +99,8 @@ class CreateProspect extends CreateRecord
             })
             ->visible(fn (array $arguments, Repeater $component): bool => array_key_first($component->getState()) !== $arguments['item']);
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Demographics')
                     ->schema([
                         TextInput::make('first_name')
@@ -163,7 +162,7 @@ class CreateProspect extends CreateRecord
                                     ]),
                             ])
                             ->orderColumn('order')
-                            ->itemLabel(fn (Repeater $component, ComponentContainer $container): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $container->getStatePath()) ? 'Primary email address' : 'Additional email address')
+                            ->itemLabel(fn (Repeater $component, Schema $schema): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary email address' : 'Additional email address')
                             ->extraItemActions([
                                 $makeRepeaterItemPrimaryAction(),
                             ])
@@ -202,7 +201,7 @@ class CreateProspect extends CreateRecord
                                     ->default(true),
                             ])
                             ->orderColumn('order')
-                            ->itemLabel(fn (Repeater $component, ComponentContainer $container): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $container->getStatePath()) ? 'Primary phone number' : 'Additional phone number')
+                            ->itemLabel(fn (Repeater $component, Schema $schema): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary phone number' : 'Additional phone number')
                             ->extraItemActions([
                                 $makeRepeaterItemPrimaryAction(),
                             ])
@@ -246,7 +245,7 @@ class CreateProspect extends CreateRecord
                                     ]),
                             ])
                             ->orderColumn('order')
-                            ->itemLabel(fn (Repeater $component, ComponentContainer $container): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $container->getStatePath()) ? 'Primary address' : 'Additional address')
+                            ->itemLabel(fn (Repeater $component, Schema $schema): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary address' : 'Additional address')
                             ->extraItemActions([
                                 $makeRepeaterItemPrimaryAction(),
                             ])

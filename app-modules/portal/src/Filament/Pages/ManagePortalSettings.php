@@ -36,6 +36,11 @@
 
 namespace AdvisingApp\Portal\Filament\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Actions;
+use Filament\Actions\Action;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Portal\Actions\GeneratePortalEmbedCode;
 use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
@@ -44,16 +49,11 @@ use AdvisingApp\Portal\Settings\PortalSettings;
 use App\Enums\Feature;
 use App\Filament\Forms\Components\ColorSelect;
 use App\Models\User;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Pages\SettingsPage;
 use FilamentTiptapEditor\TiptapEditor;
@@ -69,7 +69,7 @@ class ManagePortalSettings extends SettingsPage
 
     protected static ?string $title = 'Portals';
 
-    protected static ?string $navigationGroup = 'Global Administration';
+    protected static string | \UnitEnum | null $navigationGroup = 'Global Administration';
 
     public static function canAccess(): bool
     {
@@ -79,10 +79,10 @@ class ManagePortalSettings extends SettingsPage
         return $user->isSuperAdmin();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Branding')
                     ->schema([
                         SpatieMediaLibraryFileUpload::make('logo')
@@ -193,7 +193,7 @@ class ManagePortalSettings extends SettingsPage
                             Action::make('embed_snippet')
                                 ->label('Embed Snippet')
                                 ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
-                                ->infolist(
+                                ->schema(
                                     [
                                         TextEntry::make('snippet')
                                             ->label('Click to Copy')

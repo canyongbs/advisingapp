@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Fieldset;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
@@ -53,13 +55,11 @@ use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -71,10 +71,10 @@ class EditInteraction extends EditRecord
 
     private ?InteractionManagementSettings $settings = null;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 MorphToSelect::make('interactable')
                     ->label('Related To')
                     ->searchable()

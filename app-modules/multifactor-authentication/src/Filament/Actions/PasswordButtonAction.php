@@ -49,7 +49,7 @@ class PasswordButtonAction extends Action
             $this->requiresConfirmation()
                 ->modalHeading('Confirm password')
                 ->modalDescription('Please confirm your password to complete this action.')
-                ->form([
+                ->schema([
                     TextInput::make('current_password')
                         ->label('Current password')
                         ->required()

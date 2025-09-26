@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\StockMedia\Filament\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\StockMedia\Enums\StockMediaProvider;
 use AdvisingApp\StockMedia\Settings\StockMediaSettings;
 use App\Features\StockMediaFeature;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Pages\SettingsPage;
 
 class ManageStockMediaSettings extends SettingsPage
 {
-    protected static ?string $navigationGroup = 'Global Administration';
+    protected static string | \UnitEnum | null $navigationGroup = 'Global Administration';
 
     protected static ?int $navigationSort = 80;
 
@@ -61,10 +61,10 @@ class ManageStockMediaSettings extends SettingsPage
         return StockMediaFeature::active() && auth()->user()->isSuperAdmin();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Toggle::make('is_active')
                     ->label('Active')
                     ->inline(false)

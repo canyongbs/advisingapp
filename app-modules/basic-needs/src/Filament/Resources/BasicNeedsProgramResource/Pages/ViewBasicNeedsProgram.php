@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewBasicNeedsProgram extends ViewRecord
@@ -49,7 +49,7 @@ class ViewBasicNeedsProgram extends ViewRecord
 
     protected static ?string $navigationLabel = 'View';
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
         return $infolist
             ->schema([

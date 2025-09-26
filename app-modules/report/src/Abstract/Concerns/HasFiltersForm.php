@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Report\Abstract\Concerns;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Report\Abstract\Contracts\HasSegmentModel;
 use AdvisingApp\Report\Filament\Pages\ProspectCaseReport;
 use AdvisingApp\Report\Filament\Pages\StudentCaseReport;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm as ConcernsHasFiltersForm;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -53,14 +53,14 @@ trait HasFiltersForm
 {
     use ConcernsHasFiltersForm;
 
-    public function filtersForm(Form $form): Form
+    public function filtersForm(Schema $schema): Schema
     {
         $heading = ($this instanceof StudentCaseReport || $this instanceof ProspectCaseReport) ? 'Date Created' : null;
 
         $segmentModel = $this instanceof HasSegmentModel ? $this->segmentModel() : null;
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make()
                     ->schema([
                         DatePicker::make('startDate')

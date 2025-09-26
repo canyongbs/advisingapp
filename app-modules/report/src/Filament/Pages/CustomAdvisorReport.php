@@ -51,7 +51,7 @@ class CustomAdvisorReport extends AiReport
 
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    protected static string | \UnitEnum | null $navigationGroup = 'Artificial Intelligence';
 
     protected static ?string $title = 'Custom Advisor';
 

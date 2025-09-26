@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns\HandlesFileUploads;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
 use Exception;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -52,9 +52,9 @@ class CreateAiAssistant extends CreateRecord
 
     protected static string $resource = AiAssistantResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return resolve(AiAssistantForm::class)->form($form);
+        return resolve(AiAssistantForm::class)->form($schema);
     }
 
     protected function handleRecordCreation(array $data): Model

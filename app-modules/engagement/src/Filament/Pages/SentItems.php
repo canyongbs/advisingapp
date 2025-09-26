@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Engagement\Filament\Pages;
 
+use Filament\Actions\ViewAction;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
@@ -44,7 +45,6 @@ use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -57,7 +57,7 @@ class SentItems extends Page implements HasTable
 
     protected static ?string $navigationLabel = 'Sent Items';
 
-    protected static string $view = 'engagement::filament.pages.sent-items';
+    protected string $view = 'engagement::filament.pages.sent-items';
 
     protected static ?string $cluster = UnifiedInbox::class;
 
@@ -111,7 +111,7 @@ class SentItems extends Page implements HasTable
                     ->dateTime()
                     ->sortable(),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->url(fn (Engagement $record): string => ViewEngagement::getUrl(['record' => $record])),
             ])

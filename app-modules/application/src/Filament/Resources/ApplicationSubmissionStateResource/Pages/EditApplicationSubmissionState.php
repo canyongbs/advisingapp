@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
@@ -45,7 +46,6 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 
 class EditApplicationSubmissionState extends EditRecord
@@ -54,10 +54,10 @@ class EditApplicationSubmissionState extends EditRecord
 
     protected static string $resource = ApplicationSubmissionStateResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Name')
                     ->required()

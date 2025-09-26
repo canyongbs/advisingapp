@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Actions;
 
+use Filament\Actions\Action;
+use Filament\Support\Enums\Width;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use AdvisingApp\Ai\Actions\CompletePrompt;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Settings\LicenseSettings;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
-use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Vite;
 
 class DraftResourceHubArticleWithAiAction extends Action
@@ -66,7 +66,7 @@ class DraftResourceHubArticleWithAiAction extends Action
                 'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
                     ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
             ]))
-            ->modalWidth(MaxWidth::ExtraLarge)
+            ->modalWidth(Width::ExtraLarge)
             ->modalSubmitActionLabel('Draft')
             ->form([
                 Textarea::make('instructions')

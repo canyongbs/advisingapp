@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewApplicationSubmissionState extends ViewRecord
 {
     protected static string $resource = ApplicationSubmissionStateResource::class;
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
         return $infolist
             ->schema([

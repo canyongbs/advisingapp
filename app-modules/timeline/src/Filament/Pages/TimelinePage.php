@@ -49,9 +49,9 @@ abstract class TimelinePage extends Page
     use HasTimelineRecords;
     use CanLoadTimelineRecords;
 
-    protected static ?string $navigationIcon = 'heroicon-o-queue-list';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-queue-list';
 
-    protected static string $view = 'timeline::page';
+    protected string $view = 'timeline::page';
 
     public string $emptyStateMessage = 'There are no records to show on this timeline.';
 

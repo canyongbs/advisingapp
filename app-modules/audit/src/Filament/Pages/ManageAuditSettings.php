@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Audit\Filament\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Audit\Actions\Finders\AuditableModels;
 use AdvisingApp\Audit\Settings\AuditSettings;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 
 class ManageAuditSettings extends SettingsPage
@@ -54,7 +54,7 @@ class ManageAuditSettings extends SettingsPage
 
     protected static ?string $title = 'Auditing';
 
-    protected static ?string $navigationGroup = 'Global Administration';
+    protected static string | \UnitEnum | null $navigationGroup = 'Global Administration';
 
     public static function canAccess(): bool
     {
@@ -64,10 +64,10 @@ class ManageAuditSettings extends SettingsPage
         return $user->isSuperAdmin();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('audited_models_exclude')
                     ->options(AuditableModels::all())
                     ->multiple()

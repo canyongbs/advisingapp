@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages;
 
+use Filament\Actions\ViewAction;
 use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -58,10 +58,10 @@ class ListInboundWebhooks extends ListRecords
                 TextColumn::make('url'),
                 TextColumn::make('payload'),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
             ]);
     }
 }

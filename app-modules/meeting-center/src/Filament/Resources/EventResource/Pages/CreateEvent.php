@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateEvent extends CreateRecord
@@ -47,8 +47,8 @@ class CreateEvent extends CreateRecord
 
     protected static string $resource = EventResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema($this->fields());
+        return $schema->components($this->fields());
     }
 }

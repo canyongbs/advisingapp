@@ -36,14 +36,17 @@
 
 namespace AdvisingApp\MeetingCenter\Livewire;
 
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Concerns\InteractsWithActions;
 use AdvisingApp\MeetingCenter\Models\Event;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class RenderEventRegistrationForm extends Component implements HasForms
+class RenderEventRegistrationForm extends Component implements HasForms, HasActions
 {
+    use InteractsWithActions;
     use InteractsWithForms;
 
     public bool $show = true;

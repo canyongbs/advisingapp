@@ -36,10 +36,11 @@
 
 namespace AdvisingApp\CaseManagement\Database\Factories;
 
+use AdvisingApp\CaseManagement\Models\CaseHistory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\CaseManagement\Models\CaseHistory>
+ * @extends Factory<CaseHistory>
  */
 class CaseHistoryFactory extends Factory
 {

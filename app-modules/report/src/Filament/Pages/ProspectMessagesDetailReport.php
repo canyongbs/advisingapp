@@ -51,7 +51,7 @@ class ProspectMessagesDetailReport extends ProspectReport
 
     protected static string $routePath = 'prospect-messages-detail-report';
 
-    protected static ?string $navigationGroup = 'Prospects';
+    protected static string | \UnitEnum | null $navigationGroup = 'Prospects';
 
     protected string $cacheTag = 'report-prospect-messages-detail';
 
@@ -62,7 +62,7 @@ class ProspectMessagesDetailReport extends ProspectReport
         return HolisticEngagementFeature::active() && parent::canAccess();
     }
 
-    public function getColumns(): int | string | array
+    public function getColumns(): int|array
     {
         return [
             'sm' => 2,

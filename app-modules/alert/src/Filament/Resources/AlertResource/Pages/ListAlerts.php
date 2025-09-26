@@ -36,6 +36,11 @@
 
 namespace AdvisingApp\Alert\Filament\Resources\AlertResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\ViewAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Schemas\Components\Group;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Filament\Resources\AlertResource;
@@ -50,15 +55,10 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Forms\Components\EducatableSelect;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -71,10 +71,10 @@ class ListAlerts extends ListRecords
     protected static string $resource = AlertResource::class;
 
     // TODO: Change this to a link to the students page when tableAction link triggering becomes available in Filament 3.1
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 TextEntry::make('concern.display_name')
                     ->label('Related To')
                     ->getStateUsing(fn (Alert $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
@@ -158,10 +158,10 @@ class ListAlerts extends ListRecords
                     ->preload()
                     ->default(! is_null(SystemAlertStatusClassification::default()) ? [SystemAlertStatusClassification::default()] : []),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
@@ -173,7 +173,7 @@ class ListAlerts extends ListRecords
     {
         return [
             CreateAction::make()
-                ->form([
+                ->schema([
                     EducatableSelect::make('concern')
                         ->label('Related To')
                         ->required(),

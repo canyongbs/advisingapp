@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Enums\CareTeamRoleType;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateStudentCareTeamRole extends CreateRecord
@@ -54,10 +54,10 @@ class CreateStudentCareTeamRole extends CreateRecord
 
     public CareTeamRoleType $type;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->required()
                     ->string(),

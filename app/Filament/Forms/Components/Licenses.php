@@ -36,12 +36,12 @@
 
 namespace App\Filament\Forms\Components;
 
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Fieldset;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
 use App\Models\User;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;

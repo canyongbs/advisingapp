@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -47,8 +49,6 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Pages\SettingsPage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -77,10 +77,10 @@ class ManageAiCustomAdvisorSettings extends SettingsPage
         return $user->isSuperAdmin();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Toggle::make('allow_selection_of_model')
                     ->label('Allow selection of model?')
                     ->helperText('If enabled, users can select a model when creating or editing custom advisors.')

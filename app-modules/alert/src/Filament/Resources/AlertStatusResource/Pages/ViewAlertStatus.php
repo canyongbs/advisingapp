@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewAlertStatus extends ViewRecord
 {
     protected static string $resource = AlertStatusResource::class;
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
         return $infolist
             ->schema([

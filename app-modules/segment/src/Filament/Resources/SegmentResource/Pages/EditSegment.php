@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Grid;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Enums\SegmentType;
@@ -43,11 +45,9 @@ use AdvisingApp\Segment\Filament\Resources\SegmentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -63,12 +63,12 @@ class EditSegment extends EditRecord implements HasTable
 
     protected static string $resource = SegmentResource::class;
 
-    protected static string $view = 'segment::filament.resources.segments.pages.edit-segment';
+    protected string $view = 'segment::filament.resources.segments.pages.edit-segment';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->autocomplete(false)
                     ->string()

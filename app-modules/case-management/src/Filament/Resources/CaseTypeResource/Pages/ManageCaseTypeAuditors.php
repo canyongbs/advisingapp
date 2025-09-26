@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages;
 
+use Filament\Actions\AttachAction;
+use Filament\Actions\DetachAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DetachBulkAction;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DetachAction;
-use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -68,10 +68,10 @@ class ManageCaseTypeAuditors extends ManageRelatedRecords
             ->headerActions([
                 AttachAction::make(),
             ])
-            ->actions([
+            ->recordActions([
                 DetachAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make(),
                 ]),

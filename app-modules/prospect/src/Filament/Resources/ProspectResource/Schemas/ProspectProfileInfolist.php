@@ -36,26 +36,26 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Schemas;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Actions\Action;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectAddress;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use App\Infolists\Components\Subsection;
-use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 
 class ProspectProfileInfolist
 {
-    public static function configure(Infolist $infolist): Infolist
+    public static function configure(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Profile Information')
                     ->schema([
                         Subsection::make([
@@ -127,8 +127,8 @@ class ProspectProfileInfolist
                     ->extraAttributes(['class' => 'fi-section-has-subsections'])
                     ->headerActions([
                         Action::make('edit')
-                            ->url(fn (): string => ProspectResource::getUrl('edit', ['record' => $infolist->getRecord()]))
-                            ->visible(auth()->user()->can('update', $infolist->getRecord())),
+                            ->url(fn (): string => ProspectResource::getUrl('edit', ['record' => $schema->getRecord()]))
+                            ->visible(auth()->user()->can('update', $schema->getRecord())),
                     ]),
             ]);
     }

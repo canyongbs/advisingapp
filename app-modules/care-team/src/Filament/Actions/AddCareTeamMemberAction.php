@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\CareTeam\Filament\Actions;
 
+use Filament\Actions\BulkAction;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -46,7 +47,6 @@ use App\Models\Scopes\HasLicense;
 use App\Models\User;
 use Exception;
 use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;

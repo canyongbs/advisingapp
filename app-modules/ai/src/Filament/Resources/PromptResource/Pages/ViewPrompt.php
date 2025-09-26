@@ -36,21 +36,21 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\PromptResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use AdvisingApp\Ai\Filament\Resources\PromptResource;
 use AdvisingApp\Ai\Filament\Resources\PromptTypeResource;
 use AdvisingApp\Ai\Models\Prompt;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewPrompt extends ViewRecord
 {
     protected static string $resource = PromptResource::class;
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
         return $infolist
             ->schema([

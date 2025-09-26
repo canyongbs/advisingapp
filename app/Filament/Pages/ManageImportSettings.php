@@ -36,11 +36,11 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Schemas\Schema;
 use App\Filament\Clusters\ProductIntegrations;
 use App\Models\User;
 use App\Settings\ImportSettings;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Squire\Models\Country;
 
@@ -62,10 +62,10 @@ class ManageImportSettings extends SettingsPage
         return $user->isSuperAdmin();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('default_country')
                     ->label('Default country code')
                     ->options(fn (): array => Country::query()

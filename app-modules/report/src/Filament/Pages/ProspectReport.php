@@ -45,7 +45,7 @@ use App\Filament\Clusters\ReportLibrary;
 
 class ProspectReport extends AbstractProspectReport
 {
-    protected static ?string $navigationGroup = 'Prospects';
+    protected static string | \UnitEnum | null $navigationGroup = 'Prospects';
 
     protected static string $routePath = 'prospect-report';
 
@@ -67,7 +67,7 @@ class ProspectReport extends AbstractProspectReport
         ];
     }
 
-    public function getColumns(): int | string | array
+    public function getColumns(): int|array
     {
         return [
             'sm' => 2,

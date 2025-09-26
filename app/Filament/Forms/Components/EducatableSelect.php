@@ -36,13 +36,13 @@
 
 namespace App\Filament\Forms\Components;
 
+use Filament\Schemas\Components\Component;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Authenticatable;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Closure;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Concerns\HasName;
+use Filament\Schemas\Components\Concerns\HasName;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\MorphToSelect\Type;
@@ -57,7 +57,7 @@ class EducatableSelect extends Component
 
     protected bool | Closure $isRequired = false;
 
-    protected string $view = 'filament-forms::components.group';
+    protected string $view = 'filament-schemas::components.grid';
 
     protected bool $isExcludingConvertedProspects = false;
 
@@ -114,7 +114,7 @@ class EducatableSelect extends Component
         return $prospectType;
     }
 
-    public function getChildComponents(): array
+    public function getChildComponents(?string $key = null): array
     {
         /** @var Authenticatable $user */
         $user = auth()->user();

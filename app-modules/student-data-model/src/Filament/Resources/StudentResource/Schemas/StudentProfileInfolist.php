@@ -36,6 +36,9 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Actions\Action;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentAddress;
@@ -43,19 +46,16 @@ use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use App\Features\AthleticFieldsFeature;
 use App\Infolists\Components\Subsection;
-use Filament\Infolists\Components\Actions\Action;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 
 class StudentProfileInfolist
 {
-    public static function configure(Infolist $infolist): Infolist
+    public static function configure(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Profile Information')
                     ->schema([
                         Subsection::make([
@@ -143,8 +143,8 @@ class StudentProfileInfolist
                     ->extraAttributes(['class' => 'fi-section-has-subsections'])
                     ->headerActions([
                         Action::make('edit')
-                            ->url(fn (): string => StudentResource::getUrl('edit', ['record' => $infolist->getRecord()]))
-                            ->visible(auth()->user()->can('update', $infolist->getRecord())),
+                            ->url(fn (): string => StudentResource::getUrl('edit', ['record' => $schema->getRecord()]))
+                            ->visible(auth()->user()->can('update', $schema->getRecord())),
                     ]),
             ]);
     }

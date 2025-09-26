@@ -45,7 +45,7 @@ class EngagementResponseResource extends Resource
 {
     protected static ?string $model = EngagementResponse::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
 
     protected static bool $shouldRegisterNavigation = false;
 

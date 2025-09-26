@@ -36,6 +36,9 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiMaxTokens;
 use AdvisingApp\Ai\Enums\AiModel;
@@ -48,11 +51,8 @@ use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\Slider;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Pages\SettingsPage;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
@@ -92,10 +92,10 @@ class ManageAiSettings extends SettingsPage
             ->first();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Institutional Assistant')
                     ->statePath('defaultAssistant')
                     ->columns()

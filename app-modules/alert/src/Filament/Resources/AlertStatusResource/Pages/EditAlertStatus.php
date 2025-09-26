@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
 use AdvisingApp\Alert\Models\AlertStatus;
@@ -45,7 +46,6 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 
 class EditAlertStatus extends EditRecord
@@ -56,10 +56,10 @@ class EditAlertStatus extends EditRecord
 
     protected ?bool $hasDatabaseTransactions = true;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Name')
                     ->required()

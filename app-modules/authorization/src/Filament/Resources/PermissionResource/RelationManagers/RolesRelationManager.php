@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\PermissionResource\RelationManagers;
 
+use Filament\Schemas\Schema;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -49,10 +49,10 @@ class RolesRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -68,9 +68,9 @@ class RolesRelationManager extends RelationManager
             ])
             ->headerActions([
             ])
-            ->actions([
+            ->recordActions([
             ])
-            ->bulkActions([
+            ->toolbarActions([
             ]);
     }
 }

@@ -49,7 +49,7 @@ class ArtificialIntelligence extends AiReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    protected static string | \UnitEnum | null $navigationGroup = 'Artificial Intelligence';
 
     protected static ?string $navigationLabel = 'Utilization';
 
@@ -73,7 +73,7 @@ class ArtificialIntelligence extends AiReport
         ];
     }
 
-    public function getColumns(): int | string | array
+    public function getColumns(): int|array
     {
         return [
             'sm' => 12,

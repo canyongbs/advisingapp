@@ -36,16 +36,16 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 
 /**
- * @property Form $form
+ * @property \Filament\Schemas\Schema $form
  */
 class WorkingHours extends ProfilePage
 {
@@ -55,14 +55,14 @@ class WorkingHours extends ProfilePage
 
     protected static ?int $navigationSort = 70;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         /** @var User $user */
         $user = auth()->user();
         $hasCrmLicense = $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Working Hours')
                     ->visible($hasCrmLicense)
                     ->schema([

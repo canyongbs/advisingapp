@@ -5,8 +5,8 @@
     "version": "1.0",
     "license": "proprietary",
     "require": {
-        "filament/filament": "^3.0",
-        "filament/spatie-laravel-settings-plugin": "^3.0",
+        "filament/filament": "^4.0",
+        "filament/spatie-laravel-settings-plugin": "^4.0",
         "spatie/laravel-settings": "^3.2",
         "owen-it/laravel-auditing": "^14.0"
     },

@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Str;
 
@@ -50,7 +50,7 @@ class ViewPipeline extends ViewRecord
 {
     protected static string $resource = PipelineResource::class;
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
         return $infolist->schema([
             Section::make()->schema([

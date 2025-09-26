@@ -36,10 +36,11 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
+use AdvisingApp\Ai\Models\AiAssistantFile;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Ai\Models\AiAssistantFile>
+ * @extends Factory<AiAssistantFile>
  */
 class AiAssistantFileFactory extends Factory
 {

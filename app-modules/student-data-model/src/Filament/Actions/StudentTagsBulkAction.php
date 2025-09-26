@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Actions;
 
+use Filament\Actions\BulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\TagType;
 use App\Models\Tag;
@@ -43,7 +44,6 @@ use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
-use Filament\Tables\Actions\BulkAction;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 

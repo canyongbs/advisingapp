@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
 
+use Filament\Actions\AssociateAction;
+use Filament\Actions\DissociateAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DissociateBulkAction;
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use AdvisingApp\Task\Models\Task;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Tables\Actions\AssociateAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DissociateAction;
-use Filament\Tables\Actions\DissociateBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -75,11 +75,11 @@ class ManageTasks extends ManageRelatedRecords
                     ->preloadRecordSelect()
                     ->authorize(fn () => auth()->user()->can('update', $this->getOwnerRecord())),
             ])
-            ->actions([
+            ->recordActions([
                 DissociateAction::make()
                     ->authorize(fn () => auth()->user()->can('update', $this->getOwnerRecord())),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DissociateBulkAction::make()
                         ->authorize(fn () => auth()->user()->can('update', $this->getOwnerRecord())),

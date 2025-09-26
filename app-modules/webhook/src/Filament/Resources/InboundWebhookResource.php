@@ -47,7 +47,7 @@ class InboundWebhookResource extends Resource
 
     protected static ?int $navigationSort = 30;
 
-    protected static ?string $navigationGroup = 'Global Administration';
+    protected static string | \UnitEnum | null $navigationGroup = 'Global Administration';
 
     public static function getPages(): array
     {

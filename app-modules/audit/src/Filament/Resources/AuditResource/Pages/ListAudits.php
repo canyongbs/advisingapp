@@ -36,6 +36,9 @@
 
 namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
+use Filament\Actions\ViewAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\ExportBulkAction;
 use AdvisingApp\Audit\Actions\Finders\AuditableModels;
 use AdvisingApp\Audit\Filament\Exports\AuditExporter;
 use AdvisingApp\Audit\Filament\Resources\AuditResource;
@@ -46,9 +49,6 @@ use Filament\Actions\ExportAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\ExportBulkAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
@@ -90,7 +90,7 @@ class ListAudits extends ListRecords
                     ->query(
                         fn (Builder $query, array $data): Builder => $query->when($data['isActive'], fn (Builder $query) => $query->whereHas('user'))
                     )
-                    ->form([
+                    ->schema([
                         Checkbox::make('isActive')
                             ->label('Exclude System User')
                             ->default(true),
@@ -105,7 +105,7 @@ class ListAudits extends ListRecords
                     ->options(AuditableModels::all())
                     ->query(fn (Builder $query, array $data) => $data['value'] ? $query->where('auditable_type', $data['value']) : null),
                 Filter::make('created_at')
-                    ->form([
+                    ->schema([
                         DatePicker::make('created_from')
                             ->label('Start Date'),
                         DatePicker::make('created_until')
@@ -138,10 +138,10 @@ class ListAudits extends ListRecords
                             );
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     ExportBulkAction::make()
                         ->exporter(AuditExporter::class),

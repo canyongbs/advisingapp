@@ -36,20 +36,20 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Actions;
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Component;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use App\Models\User;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action as FormAction;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Collection;
 
 /**
- * @property Form $form
+ * @property \Filament\Schemas\Schema $form
  */
 class ConnectedAccounts extends ProfilePage
 {
@@ -64,10 +64,10 @@ class ConnectedAccounts extends ProfilePage
         return self::getConnectedAccounts()->count() > 0 && parent::canAccess();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Connected Accounts')
                     ->description('Disconnect your external accounts.')
                     ->schema(self::getConnectedAccounts()->toArray())
@@ -76,7 +76,7 @@ class ConnectedAccounts extends ProfilePage
     }
 
     /**
-     * @return Collection<int, Grid>
+     * @return Collection<int, \Filament\Schemas\Components\Grid>
      */
     private static function getConnectedAccounts(): Collection
     {
@@ -97,7 +97,7 @@ class ConnectedAccounts extends ProfilePage
                             return $user->calendar?->name;
                         }),
                     Actions::make([
-                        FormAction::make('Disconnect')
+                        Action::make('Disconnect')
                             ->icon('heroicon-m-trash')
                             ->color('danger')
                             ->requiresConfirmation()

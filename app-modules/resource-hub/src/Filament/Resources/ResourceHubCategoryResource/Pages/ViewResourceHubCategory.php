@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewResourceHubCategory extends ViewRecord
 {
     protected static string $resource = ResourceHubCategoryResource::class;
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
         return $infolist
             ->schema([

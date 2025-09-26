@@ -36,6 +36,12 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Role;
@@ -53,12 +59,6 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\RestoreAction;
-use Filament\Tables\Actions\RestoreBulkAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -138,13 +138,13 @@ class ListUsers extends ListRecords
                     ->getStateUsing(fn (User $record): string => $record->trashed() ? 'Archived' : 'Active')
                     ->visible(fn ($livewire) => isset($livewire->getTableFilterState('trashed')['value']) ? true : false),
             ])
-            ->actions([
+            ->recordActions([
                 Impersonate::make(),
                 ViewAction::make(),
                 EditAction::make(),
                 RestoreAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     RestoreBulkAction::make(),
@@ -245,7 +245,7 @@ class ListUsers extends ListRecords
                     ->preload(),
 
                 Filter::make('created_after')
-                    ->form([
+                    ->schema([
                         DateTimePicker::make('created_at')
                             ->label('Created After')
                             ->format('m/d/Y H:i:s')

@@ -36,22 +36,22 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
 use App\Models\User;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateCalendarEvent extends CreateRecord
 {
     protected static string $resource = CalendarEventResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             TextInput::make('title')
                 ->string()
                 ->required(),

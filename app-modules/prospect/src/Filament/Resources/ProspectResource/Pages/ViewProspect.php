@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Schemas\ProspectProfileInfolist;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewProspect extends ViewRecord
@@ -53,10 +53,10 @@ class ViewProspect extends ViewRecord
     // TODO: Automatically set from Filament
     protected static ?string $navigationLabel = 'View';
 
-    protected static string $view = 'prospect::filament.resources.prospect-resource.view-prospect';
+    protected string $view = 'prospect::filament.resources.prospect-resource.view-prospect';
 
-    public function profile(Infolist $infolist): Infolist
+    public function profile(Schema $schema): Schema
     {
-        return ProspectProfileInfolist::configure($infolist);
+        return ProspectProfileInfolist::configure($schema);
     }
 }

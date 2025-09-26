@@ -36,6 +36,8 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use AdvisingApp\Authorization\Models\License;
 use App\Filament\Forms\Components\Licenses;
 use App\Filament\Resources\UserResource;
@@ -43,11 +45,9 @@ use App\Models\User;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
@@ -58,11 +58,11 @@ class ViewUser extends ViewRecord
 {
     protected static string $resource = UserResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->disabled(false)
-            ->schema([
+            ->components([
                 Section::make()
                     ->columns()
                     ->schema([

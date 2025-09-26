@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\CreateResourceHubArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\EditResourceHubArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\ListResourceHubArticles;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\ViewResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -56,7 +56,7 @@ class ResourceHubArticleResource extends Resource
 
     protected static ?string $breadcrumb = 'Resource Hub';
 
-    protected static ?string $navigationGroup = 'Knowledge Management';
+    protected static string | \UnitEnum | null $navigationGroup = 'Knowledge Management';
 
     protected static ?int $navigationSort = 10;
 
@@ -88,9 +88,9 @@ class ResourceHubArticleResource extends Resource
         return static::getUrl('view', ['record' => $record]);
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return resolve(CreateResourceHubArticle::class)->form($form);
+        return resolve(CreateResourceHubArticle::class)->form($schema);
     }
 
     public static function getPages(): array

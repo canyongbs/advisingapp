@@ -33,7 +33,9 @@
 
 </COPYRIGHT>
 */
-
+use Filament\Actions\AssociateAction;
+use Filament\Actions\DissociateAction;
+use Filament\Actions\DissociateBulkAction;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageTasks;
 use AdvisingApp\Project\Models\Project;
@@ -41,9 +43,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use App\Models\User;
 use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\AssociateAction;
-use Filament\Tables\Actions\DissociateAction;
-use Filament\Tables\Actions\DissociateBulkAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;

@@ -36,18 +36,18 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -61,12 +61,12 @@ class ManageQnaQuestions extends ManageRelatedRecords
 
     protected static ?string $title = 'Questions';
 
-    protected static ?string $navigationGroup = 'Configuration';
+    protected static string | \UnitEnum | null $navigationGroup = 'Configuration';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('category_id')
                     ->label('Category')
                     ->relationship('category', 'name', modifyQueryUsing: function ($query) {
@@ -145,11 +145,11 @@ class ManageQnaQuestions extends ManageRelatedRecords
                 CreateAction::make()
                     ->modalHeading('Create QnA Advisor Question'),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

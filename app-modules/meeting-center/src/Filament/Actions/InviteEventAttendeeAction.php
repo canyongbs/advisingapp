@@ -53,7 +53,7 @@ class InviteEventAttendeeAction extends Action
 
         $this->label('Invite')
             ->icon('heroicon-o-envelope')
-            ->form([
+            ->schema([
                 Select::make('event')
                     ->options(function (Component $livewire, ?Educatable $record) {
                         $record ??= $livewire->getRecord();

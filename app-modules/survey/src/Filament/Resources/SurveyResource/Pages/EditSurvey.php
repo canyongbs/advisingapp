@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Survey\Filament\Resources\SurveyResource;
 use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\Concerns\HasSharedFormConfiguration;
@@ -43,7 +44,6 @@ use AdvisingApp\Survey\Models\Survey;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Form;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\EditRecord;
 
@@ -56,10 +56,10 @@ class EditSurvey extends EditRecord
 
     protected static ?string $navigationLabel = 'Edit';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema($this->fields());
+        return $schema
+            ->components($this->fields());
     }
 
     protected function getHeaderActions(): array
@@ -71,7 +71,7 @@ class EditSurvey extends EditRecord
                 ->openUrlInNewTab(),
             Action::make('embed_snippet')
                 ->label('Embed Snippet')
-                ->infolist(
+                ->schema(
                     [
                         TextEntry::make('snippet')
                             ->label('Click to Copy')

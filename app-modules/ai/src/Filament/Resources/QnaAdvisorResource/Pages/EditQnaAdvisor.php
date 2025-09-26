@@ -36,6 +36,9 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
@@ -43,13 +46,10 @@ use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Str;
@@ -63,7 +63,7 @@ class EditQnaAdvisor extends EditRecord
 
     protected static ?string $navigationLabel = 'Edit';
 
-    protected static ?string $navigationGroup = 'QnA Advisor';
+    protected static string | \UnitEnum | null $navigationGroup = 'QnA Advisor';
 
     /**
      * @return array<int|string, string|null>
@@ -88,10 +88,10 @@ class EditQnaAdvisor extends EditRecord
         return $breadcrumbs;
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make()->schema([
                     SpatieMediaLibraryFileUpload::make('avatar')
                         ->label('Avatar')

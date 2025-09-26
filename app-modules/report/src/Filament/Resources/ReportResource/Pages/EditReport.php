@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Report\Filament\Resources\ReportResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Grid;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\ReportModel;
 use AdvisingApp\Report\Filament\Resources\ReportResource;
@@ -47,11 +49,9 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -67,12 +67,12 @@ class EditReport extends EditRecord implements HasTable
 
     protected static string $resource = ReportResource::class;
 
-    protected static string $view = 'report::filament.resources.reports.pages.edit-report';
+    protected string $view = 'report::filament.resources.reports.pages.edit-report';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->autocomplete(false)
                     ->string()

@@ -36,11 +36,13 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 
 class EditProspectSource extends EditRecord
@@ -49,10 +51,10 @@ class EditProspectSource extends EditRecord
 
     protected static string $resource = ProspectSourceResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
@@ -63,8 +65,8 @@ class EditProspectSource extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            ViewAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

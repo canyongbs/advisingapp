@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateProjectMilestoneStatus extends CreateRecord
 {
     protected static string $resource = ProjectMilestoneStatusResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Name')
                     ->maxLength(255)

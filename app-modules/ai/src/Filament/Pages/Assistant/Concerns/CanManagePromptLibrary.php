@@ -36,17 +36,16 @@
 
 namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Support\Enums\Width;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
 use App\Models\User;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Actions\Action as FormComponentAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 
@@ -74,7 +73,7 @@ trait CanManagePromptLibrary
             ->label('Prompt library')
             ->disabled(fn (): bool => $this->thread?->messages()->exists() ?? false)
             ->color('gray')
-            ->form([
+            ->schema([
                 ToggleButtons::make('isSmart')
                     ->label('Would you like to use a pre-built smart prompt or a custom prompt created by your organization?')
                     ->options([
@@ -193,14 +192,14 @@ trait CanManagePromptLibrary
                             ));
                     })
                     ->live()
-                    ->suffixAction(function (?string $state): ?FormComponentAction {
+                    ->suffixAction(function (?string $state): ?Action {
                         if (blank($state)) {
                             return null;
                         }
 
                         $prompt = Prompt::find($state);
 
-                        return FormComponentAction::make('upvote')
+                        return Action::make('upvote')
                             ->label(fn (): string => ($prompt->isUpvoted() ? 'Upvoted ' : 'Upvote ') . "({$prompt->upvotes()->count()})")
                             ->color(fn (): string => $prompt->isUpvoted() ? 'success' : 'gray')
                             ->link()
@@ -210,7 +209,7 @@ trait CanManagePromptLibrary
                     ->required()
                     ->hidden(fn (Get $get): bool => blank($get('isSmart'))),
             ])
-            ->modalWidth(MaxWidth::ExtraLarge)
+            ->modalWidth(Width::ExtraLarge)
             ->action(function (array $data) {
                 $prompt = Prompt::find($data['promptId']);
 

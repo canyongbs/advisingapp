@@ -36,6 +36,13 @@
 
 namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
 
+use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
+use Filament\Schemas\Components\Section;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\BulkAction;
+use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\Form\Enums\FormSubmissionStatus;
 use AdvisingApp\Form\Exports\FormSubmissionExport;
 use AdvisingApp\Form\Filament\Resources\FormResource;
@@ -44,15 +51,8 @@ use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use App\Filament\Tables\Columns\IdColumn;
 use Carbon\CarbonInterface;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -112,10 +112,10 @@ class ManageFormSubmissions extends ManageRelatedRecords
                         return Excel::download(new FormSubmissionExport($this->getOwnerRecord()->submissions), $filename);
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->modalHeading(fn (FormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
-                    ->infolist(fn (FormSubmission $record): ?array => ($record->author && $record->submissible->is_authenticated) ? [
+                    ->schema(fn (FormSubmission $record): ?array => ($record->author && $record->submissible->is_authenticated) ? [
                         Section::make('Authenticated author')
                             ->schema([
                                 TextEntry::make('author.' . $record->author::displayNameKey())
@@ -129,7 +129,7 @@ class ManageFormSubmissions extends ManageRelatedRecords
                     ->visible(fn (FormSubmission $record) => $record->submitted_at),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     BulkAction::make('Export')
                         ->icon('heroicon-o-arrow-down-tray')

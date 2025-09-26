@@ -36,6 +36,10 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns;
 
+use Filament\Actions\AttachAction;
+use Filament\Actions\DetachAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DetachBulkAction;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Resources\UserResource;
@@ -43,10 +47,6 @@ use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
 use App\Models\User;
 use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DetachAction;
-use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -100,7 +100,7 @@ trait CanManageEducatableSubscriptions
                         return "{$record->name} was subscribed to {$student->display_name}";
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 DetachAction::make()
                     ->label('Unsubscribe')
                     ->modalHeading(function (User $record) {
@@ -117,7 +117,7 @@ trait CanManageEducatableSubscriptions
                         return "{$record->name} was unsubscribed from {$student->display_name}";
                     }),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make()
                         ->label('Unsubscribe selected')

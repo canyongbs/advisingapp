@@ -36,6 +36,9 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
 use AdvisingApp\Authorization\Models\Role;
 use App\Filament\Tables\Columns\IdColumn;
@@ -43,10 +46,7 @@ use App\Models\Authenticatable;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -103,7 +103,7 @@ class ListRoles extends ListRecords
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('duplicateRole')
                     ->label('Duplicate')
                     ->icon('heroicon-o-document-duplicate')
@@ -112,7 +112,7 @@ class ListRoles extends ListRecords
                     ->modalHeading('Duplicate Role')
                     ->modalSubmitActionLabel('Duplicate')
                     ->visible(fn (Role $record): bool => ! in_array($record->name, [Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE]))
-                    ->form([
+                    ->schema([
                         TextInput::make('name')
                             ->label('New Role Name')
                             ->required(),

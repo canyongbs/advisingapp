@@ -36,9 +36,10 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Tables;
 
+use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint;
+use Filament\Actions\ViewAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\QueryBuilder;
@@ -100,7 +101,7 @@ class ProspectsTable
                         TextConstraint::make('preferred')
                             ->label('Preferred Name')
                             ->icon('heroicon-m-user'),
-                        QueryBuilder\Constraints\DateConstraint::make('created_at')
+                        DateConstraint::make('created_at')
                             ->icon('heroicon-m-calendar'),
                         TextConstraint::make('email')
                             ->label('Primary Email')
@@ -183,7 +184,7 @@ class ProspectsTable
                     ])
                     ->constraintPickerWidth('7xl'),
             ], layout: FiltersLayout::AboveContent)
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->authorize('view')
                     ->url(fn (Prospect $record) => ProspectResource::getUrl('view', ['record' => $record])),

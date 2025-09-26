@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class InteractionsRelationManager extends RelationManager
@@ -47,8 +47,8 @@ class InteractionsRelationManager extends RelationManager
 
     protected static string $relationship = 'interactions';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return (resolve(CreateInteraction::class))->form($form);
+        return (resolve(CreateInteraction::class))->form($schema);
     }
 }

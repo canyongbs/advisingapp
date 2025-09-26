@@ -137,7 +137,7 @@ trait CanUploadFiles
             ->disabled(count($this->files) >= 1)
             ->badge(count($this->files))
             ->modalSubmitActionLabel('Upload')
-            ->form([
+            ->schema([
                 FileUpload::make('attachment')
                     ->acceptedFileTypes(config('ai.supported_file_types'))
                     ->storeFiles(false)

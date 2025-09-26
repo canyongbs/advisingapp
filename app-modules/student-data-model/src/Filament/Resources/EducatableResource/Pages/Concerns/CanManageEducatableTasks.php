@@ -36,6 +36,14 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DissociateAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DissociateBulkAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
@@ -48,16 +56,8 @@ use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DissociateAction;
-use Filament\Tables\Actions\DissociateBulkAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -77,10 +77,10 @@ trait CanManageEducatableTasks
         return parent::canAccess($parameters);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Fieldset::make('Confidentiality')
                     ->schema([
                         Checkbox::make('is_confidential')
@@ -212,14 +212,14 @@ trait CanManageEducatableTasks
                         return $task;
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 TaskViewAction::make(),
                 EditAction::make(),
                 DissociateAction::make()
                     ->using(fn (Task $task) => $task->concern()->dissociate()->save()),
             ])
             ->recordUrl(null)
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DissociateBulkAction::make()
                         ->using(function (Collection $selectedRecords) {

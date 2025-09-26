@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -57,7 +57,7 @@ class ManageCategories extends ManageRelatedRecords
 
     protected static string $relationship = 'categories';
 
-    protected static ?string $navigationGroup = 'Configuration';
+    protected static string | \UnitEnum | null $navigationGroup = 'Configuration';
 
     /**
      * @return array<int|string, string|null>
@@ -82,10 +82,10 @@ class ManageCategories extends ManageRelatedRecords
         return $breadcrumbs;
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->required()
                     ->string()
@@ -124,7 +124,7 @@ class ManageCategories extends ManageRelatedRecords
                 CreateAction::make()
                     ->modalHeading('Create QnA Advisor Category'),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
             ])
             ->emptyStateHeading('No QnA Advisor Categories Found')

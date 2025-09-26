@@ -36,20 +36,19 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Facades\Filament\Schemas\Schema;
+use Filament\Facades\Filament\Schemas\Components\Grid;
 use App\Filament\Clusters\ProfileSettings;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action as FormAction;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Split;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
@@ -60,13 +59,13 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 abstract class ProfilePage extends Page
 {
     use InteractsWithFormActions;
 
-    protected static string $view = 'filament.pages.profile-save';
+    protected string $view = 'filament.pages.profile-save';
 
     protected static ?string $cluster = ProfileSettings::class;
 
@@ -226,7 +225,7 @@ abstract class ProfilePage extends Page
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int|string, string|Schema>
      */
     protected function getForms(): array
     {
@@ -259,12 +258,12 @@ abstract class ProfilePage extends Page
             'friday',
             'saturday',
         ])->map(
-            fn ($day) => Split::make([
+            fn ($day) => Flex::make([
                 Toggle::make("{$key}.{$day}.enabled")
                     ->label(str($day)->ucfirst())
                     ->inline(false)
                     ->live(),
-                Split::make([
+                Flex::make([
                     TimePicker::make("{$key}.{$day}.starts_at")
                         ->required()
                         ->visible(fn (Get $get) => $get("{$key}.{$day}.enabled")),
@@ -274,7 +273,7 @@ abstract class ProfilePage extends Page
                 ]),
 
                 Actions::make([
-                    FormAction::make("copy_time_from_{$day}_{$key}")
+                    Action::make("copy_time_from_{$day}_{$key}")
                         ->label('Copy to All')
                         ->visible(fn (Get $get) => $get("{$key}.{$day}.enabled"))
                         ->link()

@@ -47,7 +47,7 @@ class Students extends StudentReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?string $navigationGroup = 'Students';
+    protected static string | \UnitEnum | null $navigationGroup = 'Students';
 
     protected static ?string $navigationLabel = 'Overview';
 
@@ -69,7 +69,7 @@ class Students extends StudentReport
         ];
     }
 
-    public function getColumns(): int | string | array
+    public function getColumns(): int|array
     {
         return [
             'sm' => 2,

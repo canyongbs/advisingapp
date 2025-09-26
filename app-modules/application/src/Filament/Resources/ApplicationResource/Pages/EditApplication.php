@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\Application\Models\Application;
@@ -43,7 +44,6 @@ use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Form as FilamentForm;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\EditRecord;
 
@@ -56,10 +56,10 @@ class EditApplication extends EditRecord
 
     protected static ?string $navigationLabel = 'Edit';
 
-    public function form(FilamentForm $form): FilamentForm
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema($this->fields());
+        return $schema
+            ->components($this->fields());
     }
 
     protected function getHeaderActions(): array
@@ -76,7 +76,7 @@ class EditApplication extends EditRecord
                 ->openUrlInNewTab(),
             Action::make('embed_snippet')
                 ->label('Embed Snippet')
-                ->infolist(
+                ->schema(
                     [
                         TextEntry::make('snippet')
                             ->label('Click to Copy')

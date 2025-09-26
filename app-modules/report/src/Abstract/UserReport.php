@@ -43,7 +43,7 @@ abstract class UserReport extends Dashboard
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?string $navigationGroup = 'Users';
+    protected static string | \UnitEnum | null $navigationGroup = 'Users';
 
     public static function canAccess(): bool
     {

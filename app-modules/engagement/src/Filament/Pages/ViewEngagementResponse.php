@@ -36,6 +36,13 @@
 
 namespace AdvisingApp\Engagement\Filament\Pages;
 
+use Filament\Panel;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Fieldset;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Actions\CreateEngagement;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
@@ -54,17 +61,10 @@ use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
-use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use FilamentTiptapEditor\TiptapEditor;
@@ -73,11 +73,11 @@ use Livewire\Attributes\Locked;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 /**
- * @property-read Form $replyForm
+ * @property-read \Filament\Schemas\Schema $replyForm
  */
 class ViewEngagementResponse extends Page
 {
-    protected static string $view = 'engagement::filament.pages.view-engagement-response';
+    protected string $view = 'engagement::filament.pages.view-engagement-response';
 
     protected static ?string $cluster = UnifiedInbox::class;
 
@@ -133,7 +133,7 @@ class ViewEngagementResponse extends Page
         ]);
     }
 
-    public static function getRoutePath(): string
+    public static function getRoutePath(Panel $panel): string
     {
         return 'inbox/{record}';
     }
@@ -143,11 +143,11 @@ class ViewEngagementResponse extends Page
         return $this->record->subject ?: 'Inbox';
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
-                Split::make([
+        return $schema
+            ->components([
+                Flex::make([
                     Section::make([
                         TextEntry::make('subject')
                             ->columnSpanFull(),
@@ -165,12 +165,12 @@ class ViewEngagementResponse extends Page
             ->record($this->record);
     }
 
-    public function replyForm(Form $form): Form
+    public function replyForm(Schema $schema): Schema
     {
         assert($this->record->sender instanceof Student || $this->record->sender instanceof Prospect);
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('recipient_route_id')
                     ->label(fn (): string => match ($this->record->type) {
                         EngagementResponseType::Email => 'Email address',
@@ -231,7 +231,7 @@ class ViewEngagementResponse extends Page
                     ->hidden($this->record->type === EngagementResponseType::Sms)
                     ->helperText('You can insert recipient or your information by typing {{ and choosing a merge value to insert.')
                     ->columnSpanFull(),
-                EngagementSmsBodyInput::make(context: 'create', form: $form, withTemplateAction: false)
+                EngagementSmsBodyInput::make(context: 'create', form: $schema, withTemplateAction: false)
                     ->hidden($this->record->type === EngagementResponseType::Email),
                 Actions::make([
                     DraftWithAiAction::make()

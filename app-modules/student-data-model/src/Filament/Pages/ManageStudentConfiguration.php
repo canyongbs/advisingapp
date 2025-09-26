@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Features\SettingsPermissions;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Models\User;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 
 class ManageStudentConfiguration extends SettingsPage
@@ -51,7 +51,7 @@ class ManageStudentConfiguration extends SettingsPage
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static ?string $navigationGroup = 'Students';
+    protected static string | \UnitEnum | null $navigationGroup = 'Students';
 
     protected static ?string $navigationLabel = 'Configuration';
 
@@ -67,10 +67,10 @@ class ManageStudentConfiguration extends SettingsPage
         return SettingsPermissions::active() ? $user->can(['settings.view-any']) : $user->can(['product_admin.view-any']);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Toggle::make('is_enabled')
                     ->label('Enable')
                     ->default(false),

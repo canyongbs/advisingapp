@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 
 class EditProject extends EditRecord
@@ -53,10 +53,10 @@ class EditProject extends EditRecord
 
     protected static ?string $navigationLabel = 'Edit';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->required()
                     ->string()

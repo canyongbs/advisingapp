@@ -47,7 +47,7 @@ class ProspectMessagesOverviewReport extends ProspectReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?string $navigationGroup = 'Prospects';
+    protected static string | \UnitEnum | null $navigationGroup = 'Prospects';
 
     protected static ?string $title = 'Messages Overview';
 
@@ -57,7 +57,7 @@ class ProspectMessagesOverviewReport extends ProspectReport
 
     protected static ?int $navigationSort = 110;
 
-    public function getColumns(): int | string | array
+    public function getColumns(): int|array
     {
         return [
             'sm' => 2,

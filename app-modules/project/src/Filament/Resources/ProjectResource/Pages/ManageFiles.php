@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\CreateAction;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use AdvisingApp\Project\Models\ProjectFile;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -71,10 +71,10 @@ class ManageFiles extends ManageRelatedRecords
         return 'Files';
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('description')
                     ->required()
                     ->maxLength(255),
@@ -177,7 +177,7 @@ class ManageFiles extends ManageRelatedRecords
                 CreateAction::make()
                     ->authorize('create', $this->getOwnerRecord()),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('download')
                     ->icon('heroicon-o-arrow-down-on-square')
                     ->action(
@@ -192,7 +192,7 @@ class ManageFiles extends ManageRelatedRecords
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

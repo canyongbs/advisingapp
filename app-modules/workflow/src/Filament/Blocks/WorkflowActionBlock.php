@@ -36,11 +36,10 @@
 
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Components\Section;
 
 abstract class WorkflowActionBlock extends Block
 {
@@ -55,7 +54,7 @@ abstract class WorkflowActionBlock extends Block
     }
 
     /**
-     * @return array<int, covariant Field | Section>
+     * @return array<int, covariant Field|\Filament\Schemas\Components\Section>
      */
     public function createFields(): array
     {
@@ -63,7 +62,7 @@ abstract class WorkflowActionBlock extends Block
     }
 
     /**
-     * @return array<int, covariant Field | Section>
+     * @return array<int, covariant Field|\Filament\Schemas\Components\Section>
      */
     public function editFields(): array
     {
@@ -71,13 +70,13 @@ abstract class WorkflowActionBlock extends Block
     }
 
     /**
-     * @return array<int, covariant Field | Section>
+     * @return array<int, covariant Field|\Filament\Schemas\Components\Section>
      */
     abstract public function generateFields(): array;
 
     abstract public static function type(): string;
 
-    public function afterCreated(WorkflowDetails $action, ComponentContainer $componentContainer): void {}
+    public function afterCreated(WorkflowDetails $action, Schema $schema): void {}
 
     /**
      * @param array<string, mixed> $data

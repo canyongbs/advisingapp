@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
 use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewProspectCareTeamRole extends ViewRecord
 {
     protected static string $resource = ProspectCareTeamRoleResource::class;
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
         return $infolist
             ->schema([

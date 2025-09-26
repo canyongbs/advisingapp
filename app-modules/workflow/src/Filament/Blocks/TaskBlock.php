@@ -36,11 +36,10 @@
 
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
+use Filament\Schemas\Components\Section;
 use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -58,7 +57,7 @@ class TaskBlock extends WorkflowActionBlock
     }
 
     /**
-     * @return array<int, Section|Fieldset|Checkbox|Select|Textarea|TextInput|DateTimePicker>
+     * @return array<int, \Filament\Schemas\Components\Section|\Filament\Schemas\Components\Fieldset|Checkbox|Select|Textarea|TextInput|DateTimePicker>
      */
     public function generateFields(string $fieldPrefix = ''): array
     {

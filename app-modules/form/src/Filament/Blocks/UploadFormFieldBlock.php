@@ -36,11 +36,10 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
+use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Form\Models\SubmissibleField;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
 use Illuminate\Support\Facades\Storage;
 
 class UploadFormFieldBlock extends FormFieldBlock
@@ -55,7 +54,7 @@ class UploadFormFieldBlock extends FormFieldBlock
     }
 
     /**
-     * @return array<Component>
+     * @return array<\Filament\Schemas\Components\Component>
      */
     public function fields(): array
     {

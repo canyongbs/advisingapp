@@ -36,14 +36,17 @@
 
 namespace AdvisingApp\Application\Livewire;
 
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Concerns\InteractsWithActions;
 use AdvisingApp\Application\Models\Application;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class RenderApplication extends Component implements HasForms
+class RenderApplication extends Component implements HasForms, HasActions
 {
+    use InteractsWithActions;
     use InteractsWithForms;
 
     public bool $show = true;

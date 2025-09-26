@@ -40,7 +40,7 @@ use Filament\Clusters\Cluster;
 
 class ProductIntegrations extends Cluster
 {
-    protected static ?string $navigationGroup = 'Global Administration';
+    protected static string | \UnitEnum | null $navigationGroup = 'Global Administration';
 
     protected static ?int $navigationSort = 70;
 }

@@ -33,14 +33,13 @@
 
 </COPYRIGHT>
 */
-
+use Filament\Actions\AttachAction;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ManageCaseTypeManagers;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
-use Filament\Tables\Actions\AttachAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;

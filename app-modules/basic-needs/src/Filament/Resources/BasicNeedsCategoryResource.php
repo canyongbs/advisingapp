@@ -56,7 +56,7 @@ class BasicNeedsCategoryResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static ?string $navigationGroup = 'Basic Needs';
+    protected static string | \UnitEnum | null $navigationGroup = 'Basic Needs';
 
     public static function getPages(): array
     {

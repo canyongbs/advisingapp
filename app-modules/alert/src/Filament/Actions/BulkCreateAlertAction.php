@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Alert\Filament\Actions;
 
+use Filament\Actions\BulkAction;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Models\AlertStatus;
@@ -45,7 +46,6 @@ use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
-use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 

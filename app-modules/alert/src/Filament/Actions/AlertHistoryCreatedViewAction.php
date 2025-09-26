@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Alert\Filament\Actions;
 
+use Filament\Schemas\Components\Section;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use Filament\Actions\ViewAction;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 
 class AlertHistoryCreatedViewAction extends ViewAction
@@ -47,7 +47,7 @@ class AlertHistoryCreatedViewAction extends ViewAction
     {
         parent::setUp();
 
-        $this->infolist([
+        $this->schema([
             Section::make()
                 ->schema([
                     TextEntry::make('description')

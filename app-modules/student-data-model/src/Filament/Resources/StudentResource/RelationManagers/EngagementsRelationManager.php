@@ -36,6 +36,14 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Flex;
+use Filament\Actions\ViewAction;
+use Filament\Actions\Action;
 use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
@@ -48,18 +56,10 @@ use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\Timeline\Models\Timeline;
 use App\Infolists\Components\EngagementBody;
-use Filament\Infolists\Components\Fieldset as InfolistFieldset;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\Split;
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -79,9 +79,9 @@ class EngagementsRelationManager extends RelationManager
     #[On('engagement-sent')]
     public function refresh(): void {}
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist->schema(fn (Timeline $record) => match ($record->timelineable::class) {
+        return $schema->components(fn (Timeline $record) => match ($record->timelineable::class) {
             Engagement::class => [
                 Tabs::make()
                     ->columnSpanFull()
@@ -91,7 +91,7 @@ class EngagementsRelationManager extends RelationManager
                                 TextEntry::make('user.name')
                                     ->label('Created By')
                                     ->getStateUsing(fn (Timeline $record): string => $record->timelineable->user->name ?? 'N/A'),
-                                InfolistFieldset::make('Content')
+                                Fieldset::make('Content')
                                     ->schema([
                                         TextEntry::make('subject')
                                             ->getStateUsing(function (Timeline $record): ?string {
@@ -140,7 +140,7 @@ class EngagementsRelationManager extends RelationManager
                     ]),
             ],
             EngagementResponse::class => [
-                Split::make([
+                Flex::make([
                     Section::make([
                         TextEntry::make('subject')
                             ->getStateUsing(fn (Timeline $record): ?string => $record->timelineable->subject)
@@ -246,7 +246,7 @@ class EngagementsRelationManager extends RelationManager
             ->headerActions([
                 RelationManagerSendEngagementAction::make(),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->modalHeading(function (Timeline $record): Htmlable {
                         $status = match ($record->timelineable::class) {

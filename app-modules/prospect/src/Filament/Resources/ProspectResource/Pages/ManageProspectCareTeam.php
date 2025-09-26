@@ -36,6 +36,11 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use Filament\Actions\AttachAction;
+use Filament\Schemas\Schema;
+use Filament\Actions\DetachAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DetachBulkAction;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
@@ -47,13 +52,8 @@ use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
 use App\Models\User;
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DetachAction;
-use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -73,7 +73,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
     // TODO: Automatically set from Filament based on relationship name
     protected static ?string $breadcrumb = 'Care Team';
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
 
     //TODO: manually override check canAccess for policy
 
@@ -105,7 +105,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                     ->modalSubmitActionLabel('Add')
                     ->attachAnother(false)
                     ->color('primary')
-                    ->mountUsing(fn (ComponentContainer $form) => $form->fill([
+                    ->mountUsing(fn (Schema $schema) => $schema->fill([
                         'care_team_role_id' => CareTeamRoleType::prospectDefault()?->getKey(),
                     ]))
                     ->form([
@@ -138,7 +138,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                         return "{$record->name} was added to {$prospect->display_name}'s Care Team";
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 DetachAction::make()
                     ->label('Remove')
                     ->modalHeading(function (User $record) {
@@ -155,7 +155,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                         return "{$record->name} was removed from {$prospect->display_name}'s Care Team";
                     }),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make()
                         ->label('Remove selected')

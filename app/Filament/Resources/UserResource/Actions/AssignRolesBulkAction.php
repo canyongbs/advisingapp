@@ -36,14 +36,14 @@
 
 namespace App\Filament\Resources\UserResource\Actions;
 
+use Filament\Actions\BulkAction;
+use Filament\Support\Enums\Width;
 use AdvisingApp\Authorization\Models\Role;
 use App\Models\User;
 use Exception;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\MaxWidth;
-use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
 
 class AssignRolesBulkAction extends BulkAction
@@ -53,7 +53,7 @@ class AssignRolesBulkAction extends BulkAction
         parent::setUp();
 
         $this->icon('heroicon-s-wrench-screwdriver')
-            ->modalWidth(MaxWidth::Small)
+            ->modalWidth(Width::Small)
             ->fillForm(fn (Collection $records): array => [
                 'records' => $records,
             ])

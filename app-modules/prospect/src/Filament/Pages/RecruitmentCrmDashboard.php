@@ -51,7 +51,7 @@ class RecruitmentCrmDashboard extends RecruitmentCrmDashboardReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?string $navigationGroup = 'Prospects';
+    protected static string | \UnitEnum | null $navigationGroup = 'Prospects';
 
     protected static ?int $navigationSort = 10;
 
@@ -61,12 +61,12 @@ class RecruitmentCrmDashboard extends RecruitmentCrmDashboardReport
 
     protected static string $routePath = 'recruitment-crm-dashboard';
 
-    protected static ?string $navigationIcon = '';
+    protected static string | \BackedEnum | null $navigationIcon = '';
 
     #[Url]
     public string $activeTab = ActionCenterTab::Subscribed->value;
 
-    protected static string $view = 'student-data-model::filament.pages.dashboard';
+    protected string $view = 'student-data-model::filament.pages.dashboard';
 
     public static function shouldRegisterNavigation(): bool
     {

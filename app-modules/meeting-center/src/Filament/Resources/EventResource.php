@@ -50,7 +50,7 @@ class EventResource extends Resource
 {
     protected static ?string $model = Event::class;
 
-    protected static ?string $navigationGroup = 'Event Management';
+    protected static string | \UnitEnum | null $navigationGroup = 'Event Management';
 
     protected static ?int $navigationSort = 10;
 

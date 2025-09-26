@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Widgets;
 
+use Filament\Actions\ViewAction;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
@@ -43,7 +44,6 @@ use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -169,7 +169,7 @@ class StudentsActionCenterWidget extends TableWidget
                         });
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->label('Go to Student')
                     ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record]), shouldOpenInNewTab: true)

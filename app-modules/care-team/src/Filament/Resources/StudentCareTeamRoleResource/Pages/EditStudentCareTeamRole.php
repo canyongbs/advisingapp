@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Enums\CareTeamRoleType;
@@ -43,7 +44,6 @@ use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 
 class EditStudentCareTeamRole extends EditRecord
@@ -52,10 +52,10 @@ class EditStudentCareTeamRole extends EditRecord
 
     protected static string $resource = StudentCareTeamRoleResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->required()
                     ->string()

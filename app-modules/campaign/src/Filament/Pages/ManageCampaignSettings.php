@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Campaign\Filament\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use App\Models\User;
 use App\Settings\DisplaySettings;
-use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
 class ManageCampaignSettings extends SettingsPage
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
     protected static ?string $navigationLabel = 'Campaign Settings';
 
@@ -65,10 +65,10 @@ class ManageCampaignSettings extends SettingsPage
         return $user->can(['product_admin.view-any', 'product_admin.*.view', 'product_admin.*.update']);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TimezoneSelect::make('action_execution_timezone')
                     ->label('Journey step execution timezone')
                     ->placeholder(fn (TimezoneSelect $component): string => $component->getOptions()[app(DisplaySettings::class)->timezone ?? config('app.timezone')]),

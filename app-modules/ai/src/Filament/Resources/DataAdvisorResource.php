@@ -36,31 +36,31 @@
 
 namespace AdvisingApp\Ai\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\Ai\Filament\Resources\DataAdvisorResource\Pages\CreateDataAdvisor;
 use AdvisingApp\Ai\Filament\Resources\DataAdvisorResource\Pages\EditDataAdvisor;
 use AdvisingApp\Ai\Filament\Resources\DataAdvisorResource\Pages\ListDataAdvisors;
 use AdvisingApp\Ai\Models\DataAdvisor;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Table;
 
 class DataAdvisorResource extends Resource
 {
     protected static ?string $model = DataAdvisor::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    protected static string | \UnitEnum | null $navigationGroup = 'Artificial Intelligence';
 
     protected static ?int $navigationSort = 40;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
             ]);
     }
 
@@ -71,10 +71,10 @@ class DataAdvisorResource extends Resource
             ])
             ->filters([
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

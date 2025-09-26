@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use App\Exceptions\SoftDeleteContraintViolationException;
@@ -44,7 +45,6 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 
@@ -54,10 +54,10 @@ class EditBasicNeedsCategory extends EditRecord
 
     protected static string $resource = BasicNeedsCategoryResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Category Name')
                     ->required()

@@ -36,6 +36,9 @@
 
 namespace AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns;
 
+use Filament\Support\Enums\Size;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
 use AdvisingApp\Research\Enums\ResearchRequestShareTarget;
 use AdvisingApp\Research\Jobs\PrepareResearchRequestEmailing;
@@ -44,14 +47,10 @@ use AdvisingApp\Team\Models\Team;
 use App\Models\Scopes\WithoutSuperAdmin;
 use App\Models\User;
 use Filament\Actions\Action;
-use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -164,7 +163,7 @@ trait CanManageRequests
     public function deleteRequestAction(): Action
     {
         return Action::make('deleteRequest')
-            ->size(ActionSize::ExtraSmall)
+            ->size(Size::ExtraSmall)
             ->requiresConfirmation()
             ->action(function (array $arguments) {
                 $request = auth()->user()->researchRequests()
@@ -192,13 +191,13 @@ trait CanManageRequests
         return Action::make('editRequest')
             ->modalSubmitActionLabel('Save')
             ->modalWidth('md')
-            ->size(ActionSize::ExtraSmall)
+            ->size(Size::ExtraSmall)
             ->fillForm(fn (array $arguments) => [
                 'title' => auth()->user()->researchRequests()
                     ->find($arguments['request'])
                     ?->title,
             ])
-            ->form([
+            ->schema([
                 TextInput::make('title')
                     ->label('Title')
                     ->autocomplete(false)
@@ -221,7 +220,7 @@ trait CanManageRequests
             })
             ->icon('heroicon-m-pencil')
             ->color('warning')
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
+            ->modalSubmitAction(fn (Action $action) => $action->color('primary'))
             ->iconButton()
             ->extraAttributes([
                 'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
@@ -236,7 +235,7 @@ trait CanManageRequests
             ->modalSubmitActionLabel('Continue')
             ->modalFooterActionsAlignment(Alignment::Center)
             ->modalWidth('md')
-            ->form([
+            ->schema([
                 Radio::make('targetType')
                     ->label('To')
                     ->options(ResearchRequestShareTarget::class)
@@ -287,6 +286,6 @@ trait CanManageRequests
             ->link()
             ->icon('heroicon-m-envelope')
             ->color('warning')
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
+            ->modalSubmitAction(fn (Action $action) => $action->color('primary'));
     }
 }

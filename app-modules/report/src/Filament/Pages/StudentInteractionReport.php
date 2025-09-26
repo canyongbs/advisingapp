@@ -53,13 +53,13 @@ class StudentInteractionReport extends StudentReport
 
     protected static string $routePath = 'student-interaction-report';
 
-    protected static ?string $navigationGroup = 'Students';
+    protected static string | \UnitEnum | null $navigationGroup = 'Students';
 
     protected string $cacheTag = 'report-student-interaction';
 
     protected static ?int $navigationSort = 30;
 
-    public function getColumns(): int | string | array
+    public function getColumns(): int|array
     {
         return [
             'sm' => 12,

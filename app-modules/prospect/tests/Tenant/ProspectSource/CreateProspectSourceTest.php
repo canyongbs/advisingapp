@@ -33,7 +33,7 @@
 
 </COPYRIGHT>
 */
-
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\CreateProspectSource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
@@ -56,7 +56,7 @@ test('A successful action on the CreateProspectSource page', function () {
 
     $request = CreateProspectSourceRequestFactory::new()->create();
 
-    livewire(ProspectSourceResource\Pages\CreateProspectSource::class)
+    livewire(CreateProspectSource::class)
         ->fillForm($request)
         ->call('create')
         ->assertHasNoFormErrors();
@@ -69,7 +69,7 @@ test('A successful action on the CreateProspectSource page', function () {
 test('CreateProspectSource requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    livewire(ProspectSourceResource\Pages\CreateProspectSource::class)
+    livewire(CreateProspectSource::class)
         ->fillForm(CreateProspectSourceRequestFactory::new($data)->create())
         ->call('create')
         ->assertHasFormErrors($errors);
@@ -92,7 +92,7 @@ test('CreateProspectSource is gated with proper access control', function () {
             ProspectSourceResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(ProspectSourceResource\Pages\CreateProspectSource::class)
+    livewire(CreateProspectSource::class)
         ->assertForbidden();
 
     $user->givePermissionTo('settings.view-any');
@@ -105,7 +105,7 @@ test('CreateProspectSource is gated with proper access control', function () {
 
     $request = collect(CreateProspectSourceRequestFactory::new()->create());
 
-    livewire(ProspectSourceResource\Pages\CreateProspectSource::class)
+    livewire(CreateProspectSource::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();

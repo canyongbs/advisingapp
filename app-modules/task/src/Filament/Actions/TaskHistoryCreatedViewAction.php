@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Task\Filament\Actions;
 
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Fieldset;
 use AdvisingApp\Task\Histories\TaskHistory;
 use Filament\Actions\ViewAction;
-use Filament\Infolists\Components\Fieldset;
-use Filament\Infolists\Components\Grid;
-use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
 
 class TaskHistoryCreatedViewAction extends ViewAction
@@ -49,8 +49,8 @@ class TaskHistoryCreatedViewAction extends ViewAction
     {
         parent::setUp();
 
-        $this->infolist([
-            Split::make([
+        $this->schema([
+            Flex::make([
                 Grid::make()
                     ->schema([
                         TextEntry::make('title')

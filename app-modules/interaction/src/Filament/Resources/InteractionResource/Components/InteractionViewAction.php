@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Components;
 
+use Filament\Schemas\Components\Fieldset;
 use AdvisingApp\Interaction\Models\Interaction;
 use Filament\Actions\ViewAction;
-use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 
 class InteractionViewAction extends ViewAction
@@ -47,7 +47,7 @@ class InteractionViewAction extends ViewAction
     {
         parent::setUp();
 
-        $this->infolist(
+        $this->schema(
             [
                 TextEntry::make('user.name')
                     ->label('Created By'),

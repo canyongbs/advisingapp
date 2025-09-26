@@ -36,6 +36,10 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\CreateAction;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
 use AdvisingApp\CaseManagement\Actions\CreateCaseAction;
 use AdvisingApp\CaseManagement\DataTransferObjects\CaseDataObject;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
@@ -44,12 +48,7 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ViewCase;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use App\Filament\Tables\Columns\IdColumn;
-use Filament\Forms\Form;
-use Filament\Infolists\Infolist;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -59,14 +58,14 @@ class CasesRelationManager extends RelationManager
 {
     protected static string $relationship = 'cases';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return (resolve(CreateCase::class))->form($form);
+        return (resolve(CreateCase::class))->form($schema);
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return (resolve(ViewCase::class))->infolist($infolist);
+        return (resolve(ViewCase::class))->infolist($schema);
     }
 
     public function table(Table $table): Table
@@ -111,7 +110,7 @@ class CasesRelationManager extends RelationManager
                         return app(CreateCaseAction::class)->execute($caseDataObject);
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->url(fn (CaseModel $record) => CaseResource::getUrl('view', ['record' => $record, 'referrer' => 'respondentProfile'])),
                 EditAction::make()

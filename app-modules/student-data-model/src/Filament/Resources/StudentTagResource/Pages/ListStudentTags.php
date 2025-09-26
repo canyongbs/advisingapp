@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages;
 
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -57,7 +57,7 @@ class ListStudentTags extends ListRecords
                 TextColumn::make('created_at')
                     ->label('Created At'),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
             ]);

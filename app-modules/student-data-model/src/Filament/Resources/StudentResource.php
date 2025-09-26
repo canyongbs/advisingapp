@@ -59,7 +59,7 @@ class StudentResource extends Resource
 
     protected static ?int $navigationSort = 30;
 
-    protected static ?string $navigationGroup = 'CRM';
+    protected static string | \UnitEnum | null $navigationGroup = 'CRM';
 
     protected static ?string $recordTitleAttribute = 'full_name';
 

@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Ai\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ExportBulkAction;
 use AdvisingApp\Ai\Filament\Exports\LegacyAiMessageExporter;
 use AdvisingApp\Ai\Filament\Resources\LegacyAiMessageLogResource\Pages\ManageLegacyAiMessageLogs;
 use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 use App\Filament\Clusters\UsageAuditing;
 use App\Filament\Infolists\Components\CodeEntry;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\ExportBulkAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -67,10 +67,10 @@ class LegacyAiMessageLogResource extends Resource
 
     protected static ?string $slug = 'assistant-utilization';
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 TextEntry::make('user.name'),
                 TextEntry::make('sent_at')
                     ->label('Sent')
@@ -109,11 +109,11 @@ class LegacyAiMessageLogResource extends Resource
                     ->relationship('user', 'name')
                     ->searchable(),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     ExportBulkAction::make()

@@ -47,7 +47,7 @@ class CalendarEventResource extends Resource
 {
     protected static ?string $model = CalendarEvent::class;
 
-    protected static ?string $navigationGroup = 'CRM';
+    protected static string | \UnitEnum | null $navigationGroup = 'CRM';
 
     protected static ?int $navigationSort = 60;
 

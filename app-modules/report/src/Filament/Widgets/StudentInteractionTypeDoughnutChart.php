@@ -46,7 +46,7 @@ use Illuminate\Support\Facades\Cache;
 
 class StudentInteractionTypeDoughnutChart extends ChartReportWidget
 {
-    protected static ?string $heading = 'Type';
+    protected ?string $heading = 'Type';
 
     protected int | string | array $columnSpan = [
         'sm' => 12,
@@ -54,7 +54,7 @@ class StudentInteractionTypeDoughnutChart extends ChartReportWidget
         'lg' => 6,
     ];
 
-    protected static ?string $maxHeight = '240px';
+    protected ?string $maxHeight = '240px';
 
     public function render(): View
     {

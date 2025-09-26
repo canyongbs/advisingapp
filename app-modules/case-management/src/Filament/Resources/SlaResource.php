@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\CreateSla;
 use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\EditSla;
 use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\ListSlas;
@@ -45,7 +46,6 @@ use App\Filament\Clusters\CaseManagementAdministration;
 use App\Filament\Forms\Components\SecondsDurationInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 
 class SlaResource extends Resource
@@ -60,10 +60,10 @@ class SlaResource extends Resource
 
     protected static ?string $cluster = CaseManagementAdministration::class;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255)

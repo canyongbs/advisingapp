@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use Filament\Support\Enums\Width;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use App\Models\User;
 use Carbon\Carbon;
-use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -296,6 +296,6 @@ class ProspectInteractionUsersTable extends BaseWidget
                     ->preload(),
             ])
             ->paginated([5])
-            ->filtersFormWidth(MaxWidth::Small);
+            ->filtersFormWidth(Width::Small);
     }
 }

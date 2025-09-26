@@ -36,6 +36,10 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks\Actions;
 
+use Filament\Actions\Action;
+use Filament\Support\Enums\Width;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use AdvisingApp\Ai\Actions\CompletePrompt;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -45,12 +49,8 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Settings\LicenseSettings;
 use Closure;
 use Exception;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 
@@ -75,7 +75,7 @@ class DraftEngagementBlockWithAi extends Action
                 'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
                     ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
             ]))
-            ->modalWidth(MaxWidth::ExtraLarge)
+            ->modalWidth(Width::ExtraLarge)
             ->modalSubmitActionLabel('Draft')
             ->form([
                 Textarea::make('instructions')

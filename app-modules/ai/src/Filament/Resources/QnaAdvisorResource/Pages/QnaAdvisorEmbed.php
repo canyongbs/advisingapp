@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Actions;
+use Filament\Actions\Action;
 use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Form\Rules\IsDomain;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\HtmlString;
@@ -59,7 +59,7 @@ class QnaAdvisorEmbed extends EditRecord
 
     protected static string $resource = QnaAdvisorResource::class;
 
-    protected static ?string $navigationGroup = 'Configuration';
+    protected static string | \UnitEnum | null $navigationGroup = 'Configuration';
 
     protected static ?string $title = 'Embed';
 
@@ -74,10 +74,10 @@ class QnaAdvisorEmbed extends EditRecord
         return $user->can('qna_advisor_embed.view-any') && $user->can('qna_advisor_embed.*.view') && parent::canAccess($parameters);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Embed Advisor')
                     ->schema([
                         Toggle::make('is_embed_enabled')
@@ -106,7 +106,7 @@ class QnaAdvisorEmbed extends EditRecord
                         Actions::make([
                             Action::make('embed_snippet')
                                 ->label('Embed Snippet')
-                                ->infolist(
+                                ->schema(
                                     [
                                         TextEntry::make('snippet')
                                             ->label('Click to Copy')

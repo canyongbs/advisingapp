@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Timeline\Timelines;
 
+use Filament\Schemas\Components\Fieldset;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Timeline\Models\CustomTimeline;
 use App\Infolists\Components\EngagementBody;
 use Exception;
 use Filament\Actions\ViewAction;
-use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 use Illuminate\Support\HtmlString;
 
@@ -80,7 +80,7 @@ class EngagementTimeline extends CustomTimeline
     public function modalViewAction(): ViewAction
     {
         return ViewAction::make()
-            ->infolist([
+            ->schema([
                 TextEntry::make('user.name')
                     ->label('Created By'),
                 Fieldset::make('Content')

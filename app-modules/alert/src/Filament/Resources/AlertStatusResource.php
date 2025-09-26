@@ -52,7 +52,7 @@ class AlertStatusResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static ?string $navigationGroup = 'Alert';
+    protected static string | \UnitEnum | null $navigationGroup = 'Alert';
 
     protected static ?int $navigationSort = 30;
 

@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages;
 
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions;
@@ -50,8 +52,8 @@ class EditEngagementFile extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            ViewAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

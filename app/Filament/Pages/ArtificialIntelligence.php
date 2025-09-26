@@ -36,13 +36,13 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 
 /**
- * @property Form $form
+ * @property \Filament\Schemas\Schema $form
  */
 class ArtificialIntelligence extends ProfilePage
 {
@@ -52,10 +52,10 @@ class ArtificialIntelligence extends ProfilePage
 
     protected static ?int $navigationSort = 40;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Artificial Intelligence')
                     ->description('Select options for how you work with AI.')
                     ->schema([

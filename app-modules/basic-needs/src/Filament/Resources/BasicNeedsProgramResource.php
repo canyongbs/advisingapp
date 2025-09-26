@@ -54,7 +54,7 @@ class BasicNeedsProgramResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
-    protected static ?string $navigationGroup = 'Knowledge Management';
+    protected static string | \UnitEnum | null $navigationGroup = 'Knowledge Management';
 
     public static function getPages(): array
     {

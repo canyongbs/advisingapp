@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
@@ -44,7 +45,6 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 
 class EditProspectStatus extends EditRecord
@@ -53,10 +53,10 @@ class EditProspectStatus extends EditRecord
 
     protected static string $resource = ProspectStatusResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Name')
                     ->required()

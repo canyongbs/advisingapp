@@ -36,15 +36,15 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use App\DataTransferObjects\LicenseManagement\LicenseData;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Pages\SettingsPage;
 
 class ManageLicenseSettings extends SettingsPage
@@ -55,7 +55,7 @@ class ManageLicenseSettings extends SettingsPage
 
     protected static string $settings = LicenseSettings::class;
 
-    protected static ?string $navigationGroup = 'Global Administration';
+    protected static string | \UnitEnum | null $navigationGroup = 'Global Administration';
 
     public static function canAccess(): bool
     {
@@ -65,10 +65,10 @@ class ManageLicenseSettings extends SettingsPage
         return $user->isSuperAdmin();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('license_key')
                     ->label('License Key')
                     ->required(),

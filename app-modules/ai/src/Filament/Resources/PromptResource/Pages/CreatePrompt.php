@@ -36,27 +36,27 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\PromptResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Ai\Filament\Resources\PromptResource;
 use App\Models\Authenticatable;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreatePrompt extends CreateRecord
 {
     protected static string $resource = PromptResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make()
                     ->columns()
                     ->schema([

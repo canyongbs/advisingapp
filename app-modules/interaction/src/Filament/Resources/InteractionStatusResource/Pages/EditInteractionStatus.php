@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource\Pages;
 
+use Filament\Actions\DeleteAction;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions;
@@ -50,7 +51,7 @@ class EditInteractionStatus extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

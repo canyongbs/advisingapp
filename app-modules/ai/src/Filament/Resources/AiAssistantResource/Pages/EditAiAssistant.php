@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns\HandlesFileUploads;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
@@ -45,7 +46,6 @@ use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Settings\LicenseSettings;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -57,9 +57,9 @@ class EditAiAssistant extends EditRecord
 
     protected static string $resource = AiAssistantResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return resolve(AiAssistantForm::class)->form($form);
+        return resolve(AiAssistantForm::class)->form($schema);
     }
 
     /** @var AiAssistant $assistant */

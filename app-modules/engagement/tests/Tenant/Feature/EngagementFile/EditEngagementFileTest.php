@@ -33,7 +33,7 @@
 
 </COPYRIGHT>
 */
-
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\EditEngagementFile;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
 use AdvisingApp\Engagement\Models\EngagementFile;
@@ -61,7 +61,7 @@ test('EditEngagementFile is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    livewire(EngagementFileResource\Pages\EditEngagementFile::class, [
+    livewire(EditEngagementFile::class, [
         'record' => $engagementFile->getRouteKey(),
     ])
         ->assertForbidden();

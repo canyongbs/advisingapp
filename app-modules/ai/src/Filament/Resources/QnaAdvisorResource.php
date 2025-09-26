@@ -54,7 +54,7 @@ class QnaAdvisorResource extends Resource
 {
     protected static ?string $model = QnaAdvisor::class;
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    protected static string | \UnitEnum | null $navigationGroup = 'Artificial Intelligence';
 
     protected static ?string $modelLabel = 'QnA Advisor';
 

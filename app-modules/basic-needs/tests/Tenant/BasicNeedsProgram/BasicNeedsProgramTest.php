@@ -33,7 +33,7 @@
 
 </COPYRIGHT>
 */
-
+use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\CreateBasicNeedsProgram;
@@ -44,7 +44,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;

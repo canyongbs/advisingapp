@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages;
 
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Actions\ReplicateAction;
+use Filament\Schemas\Schema;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\Application\Actions\DuplicateApplication;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -73,7 +73,7 @@ class ListApplications extends ListRecords
                     ->date()
                     ->sortable(),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('Respond')
                     ->url(fn (Application $application) => route('applications.show', ['application' => $application]))
                     ->icon('heroicon-m-arrow-top-right-on-square')
@@ -89,8 +89,8 @@ class ListApplications extends ListRecords
 
                         return $data;
                     })
-                    ->form(function (Form $form): Form {
-                        return $form->schema([
+                    ->schema(function (Schema $schema): Schema {
+                        return $schema->components([
                             TextInput::make('name')
                                 ->label('Name')
                                 ->required(),
@@ -103,7 +103,7 @@ class ListApplications extends ListRecords
                         resolve(DuplicateApplication::class, ['original' => $record, 'replica' => $replica])();
                     }),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

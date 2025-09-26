@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 
 class EditEvent extends EditRecord
@@ -54,9 +54,9 @@ class EditEvent extends EditRecord
     // TODO: Automatically set from Filament
     protected static ?string $navigationLabel = 'Edit';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema($this->fields());
+        return $schema->components($this->fields());
     }
 
     protected function getHeaderActions(): array

@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Pages;
 
+use Filament\Actions\ViewAction;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -54,10 +54,10 @@ class ListEngagementResponses extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('content'),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
             ]);
     }
 }

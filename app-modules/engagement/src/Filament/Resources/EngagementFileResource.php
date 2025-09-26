@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\CreateEngagementFile;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\EditEngagementFile;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\ListEngagementFiles;
@@ -44,16 +45,15 @@ use AdvisingApp\Engagement\Models\EngagementFile;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 
 class EngagementFileResource extends Resource
 {
     protected static ?string $model = EngagementFile::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-duplicate';
 
-    protected static ?string $navigationGroup = 'CRM';
+    protected static string | \UnitEnum | null $navigationGroup = 'CRM';
 
     protected static ?int $navigationSort = 7;
 
@@ -68,10 +68,10 @@ class EngagementFileResource extends Resource
     // TODO: Look into whether or not we should just delete this resource
     protected static bool $shouldRegisterNavigation = false;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('description')
                     ->required()
                     ->maxLength(255),

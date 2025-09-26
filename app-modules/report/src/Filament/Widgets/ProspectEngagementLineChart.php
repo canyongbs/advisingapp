@@ -45,7 +45,7 @@ use Illuminate\Support\Facades\Cache;
 
 class ProspectEngagementLineChart extends LineChartReportWidget
 {
-    protected static ?string $heading = 'Prospects (Engagement)';
+    protected ?string $heading = 'Prospects (Engagement)';
 
     protected int | string | array $columnSpan = 'full';
 

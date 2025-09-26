@@ -36,6 +36,11 @@
 
 namespace AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages;
 
+use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Components\View;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Actions\Action;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Enums\SegmentType;
@@ -50,10 +55,6 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\View;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Get;
-use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -70,7 +71,7 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 class CreateSegment extends CreateRecord implements HasTable
 {
     use InteractsWithTable;
-    use CreateRecord\Concerns\HasWizard;
+    use HasWizard;
 
     protected static string $resource = SegmentResource::class;
 
@@ -270,7 +271,7 @@ class CreateSegment extends CreateRecord implements HasTable
                     ->when(
                         $failedRowsCount,
                         fn (Notification $notification) => $notification->actions([
-                            NotificationAction::make('downloadFailedRowsCsv')
+                            Action::make('downloadFailedRowsCsv')
                                 ->label('Download information about the failed ' . Str::plural('row', $failedRowsCount))
                                 ->color('danger')
                                 ->url(route('filament.imports.failed-rows.download', ['import' => $import])),

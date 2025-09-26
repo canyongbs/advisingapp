@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers;
 
+use Filament\Actions\ViewAction;
+use Filament\Schemas\Components\Section;
 use AdvisingApp\CaseManagement\Models\CaseFormSubmission;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -66,10 +66,10 @@ class CaseFormSubmissionRelationManager extends RelationManager
                     ->formatStateUsing(fn (?string $state): ?string => filled($state) ? ucfirst($state) : null)
                     ->color('success'),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->modalHeading(fn (CaseFormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
-                    ->infolist(fn (CaseFormSubmission $record): ?array => ($record->author && $record->submissible->is_authenticated) ? [
+                    ->schema(fn (CaseFormSubmission $record): ?array => ($record->author && $record->submissible->is_authenticated) ? [
                         Section::make('Submitted By')
                             ->schema([
                                 TextEntry::make('author.' . $record->author::displayNameKey())

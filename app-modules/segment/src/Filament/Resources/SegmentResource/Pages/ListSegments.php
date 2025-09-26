@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages;
 
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Filament\Resources\SegmentResource;
 use AdvisingApp\Segment\Models\Segment;
@@ -43,8 +45,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
@@ -76,7 +76,7 @@ class ListSegments extends ListRecords
                         return $table->getFilter('my_segments')->getState()['isActive'] ?? false;
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make()
                     ->authorize(function () {

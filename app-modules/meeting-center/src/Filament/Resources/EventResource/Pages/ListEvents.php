@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ReplicateAction;
+use Filament\Schemas\Schema;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\MeetingCenter\Actions\DuplicateEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 use AdvisingApp\MeetingCenter\Models\Event;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ReplicateAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
@@ -63,7 +63,7 @@ class ListEvents extends ListRecords
 
     protected static string $resource = EventResource::class;
 
-    protected static string $view = 'meeting-center::filament.pages.list-events';
+    protected string $view = 'meeting-center::filament.pages.list-events';
 
     #[Url(as: 'view')]
     public string $viewType = 'table';
@@ -91,7 +91,7 @@ class ListEvents extends ListRecords
                     ->query(fn (Builder $query): Builder => $query->where('starts_at', '>=', now()->startOfDay()))
                     ->default(),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
@@ -104,8 +104,8 @@ class ListEvents extends ListRecords
 
                         return $data;
                     })
-                    ->form(function (Form $form): Form {
-                        return $form->schema([
+                    ->schema(function (Schema $schema): Schema {
+                        return $schema->components([
                             TextInput::make('title')
                                 ->label('Title')
                                 ->required(),
@@ -118,7 +118,7 @@ class ListEvents extends ListRecords
                         resolve(DuplicateEvent::class, ['original' => $record, 'replica' => $replica])();
                     }),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

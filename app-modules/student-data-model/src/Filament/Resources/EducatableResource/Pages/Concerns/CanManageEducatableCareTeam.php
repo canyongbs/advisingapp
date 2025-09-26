@@ -36,6 +36,11 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns;
 
+use Filament\Actions\AttachAction;
+use Filament\Schemas\Schema;
+use Filament\Actions\DetachAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DetachBulkAction;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -44,12 +49,7 @@ use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
 use App\Models\User;
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DetachAction;
-use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -93,7 +93,7 @@ trait CanManageEducatableCareTeam
                     ->modalSubmitActionLabel('Add')
                     ->attachAnother(false)
                     ->color('primary')
-                    ->mountUsing(fn (ComponentContainer $form) => $form->fill([
+                    ->mountUsing(fn (Schema $schema) => $schema->fill([
                         'care_team_role_id' => CareTeamRoleType::studentDefault()?->id,
                     ]))
                     ->form([
@@ -128,7 +128,7 @@ trait CanManageEducatableCareTeam
                         return "{$record->name} was added to {$student->display_name}'s Care Team";
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 DetachAction::make()
                     ->label('Remove')
                     ->modalHeading(function (User $record) {
@@ -145,7 +145,7 @@ trait CanManageEducatableCareTeam
                         return "{$record->name} was removed from {$student->display_name}'s Care Team";
                     }),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make()
                         ->label('Remove selected')

@@ -36,6 +36,10 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
+use Filament\Actions\ViewAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\Alert\Filament\Actions\BulkCreateAlertAction;
 use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
 use AdvisingApp\CaseManagement\Filament\Actions\BulkCreateCaseAction;
@@ -60,10 +64,6 @@ use Filament\Actions\CreateAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -153,7 +153,7 @@ class ListStudents extends ListRecords
                 TernaryFilter::make('ferpa')
                     ->label('FERPA'),
                 Filter::make('holds')
-                    ->form([
+                    ->schema([
                         TextInput::make('hold'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
@@ -185,7 +185,7 @@ class ListStudents extends ListRecords
                 TernaryFilter::make('firstgen')
                     ->label('First Generation'),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->visible(function (Student $record) {
                         /** @var User $user */
@@ -195,7 +195,7 @@ class ListStudents extends ListRecords
                     }),
                 SubscribeTableAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     ActionGroup::make([
                         SubscribeBulkAction::make(context: 'student')->authorize(fn (): bool => auth()->user()->can('student.*.update')),

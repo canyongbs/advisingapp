@@ -36,20 +36,20 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource;
 use App\Enums\TagType;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateStudentTag extends CreateRecord
 {
     protected static string $resource = StudentTagResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Name')
                     ->required()

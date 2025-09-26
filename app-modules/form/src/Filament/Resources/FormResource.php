@@ -52,7 +52,7 @@ class FormResource extends Resource
 {
     protected static ?string $model = Form::class;
 
-    protected static ?string $navigationGroup = 'Digital Forms';
+    protected static string | \UnitEnum | null $navigationGroup = 'Digital Forms';
 
     protected static ?int $navigationSort = 10;
 

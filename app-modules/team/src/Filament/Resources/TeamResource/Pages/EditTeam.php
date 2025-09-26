@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Team\Filament\Resources\TeamResource\Pages;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Team\Filament\Resources\TeamResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -43,7 +44,6 @@ use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -53,10 +53,10 @@ class EditTeam extends EditRecord
 
     protected static string $resource = TeamResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->required()
                     ->string()

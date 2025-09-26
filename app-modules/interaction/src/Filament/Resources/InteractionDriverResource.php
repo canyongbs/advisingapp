@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources;
 
+use Filament\Schemas\Schema;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages\CreateInteractionDriver;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages\EditInteractionDriver;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages\ListInteractionDrivers;
@@ -43,7 +44,6 @@ use AdvisingApp\Interaction\Models\InteractionDriver;
 use App\Filament\Clusters\InteractionManagement;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 
 class InteractionDriverResource extends Resource
@@ -56,10 +56,10 @@ class InteractionDriverResource extends Resource
 
     protected static ?string $cluster = InteractionManagement::class;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->autofocus()
                     ->required()
