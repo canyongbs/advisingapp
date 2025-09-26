@@ -39,22 +39,18 @@ use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        DB::transaction(function () {
-            Schema::table('qna_advisors', function (Blueprint $table) {
-                $table->boolean('is_generate_prospects_enabled')->default(false);
-            });
-        });
-    }
+return new class() extends Migration {
+  public function up(): void
+  {
+    Schema::table('qna_advisors', function (Blueprint $table) {
+      $table->boolean('is_generate_prospects_enabled')->default(false);
+    });
+  }
 
-    public function down(): void
-    {
-        DB::transaction(function () {
-            Schema::table('qna_advisors', function (Blueprint $table) {
-                $table->dropColumn('is_generate_prospects_enabled');
-            });
-        });
-    }
+  public function down(): void
+  {
+    Schema::table('qna_advisors', function (Blueprint $table) {
+      $table->dropColumn('is_generate_prospects_enabled');
+    });
+  }
 };
