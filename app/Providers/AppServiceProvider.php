@@ -58,6 +58,9 @@ use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Auth\Notifications\ResetPassword;
 use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Tables\Table;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -182,9 +185,19 @@ class AppServiceProvider extends ServiceProvider
 
         Table::configureUsing(function (Table $table): void {
             $table
+                ->deferFilters(false)
                 ->paginationPageOptions([5, 10, 20])
                 ->defaultPaginationPageOption(5);
         });
+
+        Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset
+            ->columnSpanFull());
+
+        Grid::configureUsing(fn (Grid $grid) => $grid
+            ->columnSpanFull());
+
+        Section::configureUsing(fn (Section $section) => $section
+            ->columnSpanFull());
 
         Textarea::configureUsing(function (Textarea $textarea): void {
             $textarea->disableGrammarly();
