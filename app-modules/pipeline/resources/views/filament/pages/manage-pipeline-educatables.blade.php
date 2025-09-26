@@ -91,16 +91,6 @@
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::RESOURCE_PAGES_MANAGE_RELATED_RECORDS_TABLE_AFTER, scopes: $this->getRenderHookScopes()) }}
             </div>
         @endif
-
-        @if (count($relationManagers = $this->getRelationManagers()))
-            <x-filament-panels::resources.relation-managers
-                :active-locale="isset($activeLocale) ? $activeLocale : null"
-                :active-manager="$this->activeRelationManager ?? array_key_first($relationManagers)"
-                :managers="$relationManagers"
-                :owner-record="$record"
-                :page-class="static::class"
-            />
-        @endif
     @elseif($viewType === 'kanban')
         @livewire('prospect-pipeline-kanban', [
             'pipeline' => $this->getOwnerRecord(),

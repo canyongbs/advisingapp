@@ -32,12 +32,12 @@
 </COPYRIGHT>
 --}}
 <x-filament-panels::page.simple>
-    <x-filament-panels::form wire:submit="save">
+    <form class="grid gap-y-6" wire:submit="save">
         {{ $this->form }}
 
-        <x-filament-panels::form.actions
+        <x-filament::actions
             :actions="$this->getCachedFormActions()"
             :full-width="$this->hasFullWidthFormActions()"
         />
-    </x-filament-panels::form>
+    </form>
 </x-filament-panels::page.simple>

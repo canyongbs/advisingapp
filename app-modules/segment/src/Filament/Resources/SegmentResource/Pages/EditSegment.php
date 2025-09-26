@@ -47,6 +47,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -62,8 +63,6 @@ class EditSegment extends EditRecord implements HasTable
     use EditPageRedirection;
 
     protected static string $resource = SegmentResource::class;
-
-    protected string $view = 'segment::filament.resources.segments.pages.edit-segment';
 
     public function form(Schema $schema): Schema
     {
@@ -116,6 +115,16 @@ class EditSegment extends EditRecord implements HasTable
         }
 
         $this->baseBootedInteractsWithTable();
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getFormContentComponent(),
+                $this->getRelationManagersContentComponent(),
+                EmbeddedTable::make(),
+            ]);
     }
 
     protected function mutateFormDataBeforeFill(array $data): array
