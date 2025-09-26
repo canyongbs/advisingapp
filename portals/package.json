@@ -3,15 +3,11 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "npm run build:vite && npm run build:widgets && npm run build:portals",
-        "build:portals": "(cd portals && npm i && npm run build)",
-        "build:vite": "vite build",
-        "build:widgets": "(cd widgets && npm i && npm run build)",
-        "dev": "vite"
+        "build": "npm run build:resource-hub",
+        "build:resource-hub": "(cd resource-hub && vite build)"
     },
     "dependencies": {
         "@tailwindcss/forms": "^0.5.4",
-        "@tailwindcss/postcss": "^4.0.0",
         "@tailwindcss/typography": "^0.5.9",
         "autoprefixer": "^10.4.14",
         "env-cmd": "^10.1.0",
@@ -19,16 +15,19 @@
         "filepond-plugin-file-validate-size": "^2.2.8",
         "filepond-plugin-file-validate-type": "^1.2.9",
         "filepond-plugin-image-preview": "^4.6.12",
-        "flowbite": "^3.0.0",
+        "flowbite": "^2.3.0",
         "laravel-echo": "^1.14.0",
         "laravel-vite-plugin": "^1.0.1",
         "resolve-url-loader": "^5.0.0",
-        "tailwindcss": "^4.0.0",
+        "tailwindcss": "^3.3.3",
         "tippy.js": "^6.3.7",
         "vite": "^6.3.6",
         "vue-filepond": "^7.0.4"
     },
     "devDependencies": {
+        "@formkit/icons": "^1.2.2",
+        "@formkit/themes": "^1.2.2",
+        "@formkit/vue": "^1.2.2",
         "@headlessui/vue": "^1.7.16",
         "@heroicons/vue": "^2.1.1",
         "@ryangjchandler/alpine-clipboard": "^2.3.0",
