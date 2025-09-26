@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2134d2f462e9aaf3d25124dc6d0b9e3c",
+    "content-hash": "cb8493958547555513144705086d1ea1",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -2174,11 +2174,17 @@
         },
         {
             "name": "canyongbs/common",
-            "version": "2.x-dev",
-            "dist": {
-                "type": "path",
-                "url": "../common",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/canyongbs/common.git",
                 "reference": "d6232c2dca6645a0ba35b53ef45476be1f59d1fa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/canyongbs/common/zipball/d6232c2dca6645a0ba35b53ef45476be1f59d1fa",
+                "reference": "d6232c2dca6645a0ba35b53ef45476be1f59d1fa",
+                "shasum": ""
             },
             "require": {
                 "filament/filament": "^4.0",
@@ -2208,44 +2214,7 @@
                     "CanyonGBS\\Common\\Tests\\": "tests"
                 }
             },
-            "scripts": {
-                "php-cs-format": [
-                    "export PHP_CS_FIXER_IGNORE_ENV=1 ; ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v --config=./php-cs-fixer.php"
-                ],
-                "php-cs-format-dryrun": [
-                    "@php-cs-format --dry-run --stop-on-violation"
-                ],
-                "php-cs-clear-cache": [
-                    "rm -f ./.php-cs-fixer.cache"
-                ],
-                "prettier": [
-                    "./node_modules/.bin/prettier \"resources/**/*{.css,.blade.php,.js}\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
-                ],
-                "prettier-format": [
-                    "@prettier --write"
-                ],
-                "prettier-format-dryrun": [
-                    "@prettier --check"
-                ],
-                "clear-prettier-cache": [
-                    "rm -f ./node_modules/.cache/prettier/.prettier-cache"
-                ],
-                "format-dryrun": [
-                    "@php-cs-format-dryrun",
-                    "@prettier-format-dryrun"
-                ],
-                "format": [
-                    "@php-cs-format",
-                    "@prettier-format"
-                ],
-                "lint": [
-                    "./vendor/bin/phpstan analyse --memory-limit=2G"
-                ],
-                "checks": [
-                    "@format-dryrun",
-                    "@lint"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "Elastic-2.0"
             ],
@@ -2254,10 +2223,11 @@
                     "name": "Canyon GBS"
                 }
             ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/canyongbs/common/issues",
+                "source": "https://github.com/canyongbs/common/tree/2.0.0"
+            },
+            "time": "2025-09-26T10:49:08+00:00"
         },
         {
             "name": "canyongbs/filament-tiptap-editor",
@@ -13758,16 +13728,16 @@
         },
         {
             "name": "spatie/laravel-multitenancy",
-            "version": "4.0.6",
+            "version": "4.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-multitenancy.git",
-                "reference": "ac1a74127f864e80d7af3031beb4b5b26e3f40bb"
+                "reference": "6bf5a69aa94584682690446067cb4ac1dde65b20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-multitenancy/zipball/ac1a74127f864e80d7af3031beb4b5b26e3f40bb",
-                "reference": "ac1a74127f864e80d7af3031beb4b5b26e3f40bb",
+                "url": "https://api.github.com/repos/spatie/laravel-multitenancy/zipball/6bf5a69aa94584682690446067cb4ac1dde65b20",
+                "reference": "6bf5a69aa94584682690446067cb4ac1dde65b20",
                 "shasum": ""
             },
             "require": {
@@ -13821,7 +13791,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-multitenancy/issues",
-                "source": "https://github.com/spatie/laravel-multitenancy/tree/4.0.6"
+                "source": "https://github.com/spatie/laravel-multitenancy/tree/4.0.7"
             },
             "funding": [
                 {
@@ -13833,7 +13803,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-26T14:45:11+00:00"
+            "time": "2025-09-26T16:05:56+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
@@ -24466,7 +24436,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "canyongbs/common": 20,
         "canyongbs/filament-tiptap-editor": 20,
         "saade/filament-fullcalendar": 20,
         "shuvroroy/filament-spatie-laravel-health": 10

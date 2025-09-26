@@ -76,7 +76,7 @@
 
                             @if (count($conversations))
                                 <ul
-                                    class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
+                                    class="border-gray-950/5 flex flex-col gap-y-1 rounded-xl border bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
                                     @foreach ($conversations as $conversationItem)
                                         @php
                                             /** @var TwilioConversation $conversationItem */
@@ -177,7 +177,7 @@
                         x-show="loading"
                         x-transition.delay.800ms
                     >
-                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500" />
+                        <x-filament::loading-indicator class="text-primary-500 h-12 w-12" />
                         <p
                             class="text-center"
                             x-text="loadingMessage"
@@ -186,7 +186,7 @@
                     <template x-if="!loading && error">
                         <div class="flex flex-col items-center self-center">
                             <x-filament::icon
-                                class="h-12 w-12 text-primary-500"
+                                class="text-primary-500 h-12 w-12"
                                 icon="heroicon-m-exclamation-triangle"
                             />
                             <p class="text-center">Something went wrong...</p>
@@ -207,7 +207,7 @@
                         x-transition.delay.850ms
                     >
                         <div
-                            class="flex max-h-[calc(100vh-24rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
+                            class="border-gray-950/5 flex max-h-[calc(100vh-24rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
                             <div class="divide-y divide-gray-200 dark:divide-gray-700">
                                 <template
                                     x-for="message in messages"
@@ -265,12 +265,12 @@
                             </div>
                             <template x-if="messagePaginator?.hasPrevPage">
                                 <div
-                                    class="mb-auto flex cursor-pointer justify-center bg-white p-3 text-center text-primary-500 dark:bg-gray-700"
+                                    class="text-primary-500 mb-auto flex cursor-pointer justify-center bg-white p-3 text-center dark:bg-gray-700"
                                     x-on:click="loadPreviousMessages"
                                 >
                                     <p>Load previous messages...</p>
                                     <x-filament::loading-indicator
-                                        class="ml-2 h-4 w-4 text-primary-500"
+                                        class="text-primary-500 ml-2 h-4 w-4"
                                         x-show="loadingPreviousMessages"
                                     />
                                 </div>
@@ -279,7 +279,7 @@
 
                         <form @submit.prevent="submit">
                             <div
-                                class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
+                                class="border-gray-950/5 w-full overflow-hidden rounded-xl border bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
                                 <div class="bg-white dark:bg-gray-800">
                                     <div
                                         x-data="chatEditor({ currentUser: @js(auth()->id()), users: @js($users) })"
@@ -329,7 +329,7 @@
                                                     </button>
 
                                                     <form
-                                                        class="absolute z-10 w-screen max-w-sm space-y-3 divide-y divide-gray-100 rounded-lg bg-white px-4 py-3 shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10"
+                                                        class="ring-gray-950/5 absolute z-10 w-screen max-w-sm space-y-3 divide-y divide-gray-100 rounded-lg bg-white px-4 py-3 shadow-lg ring-1 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10"
                                                         x-on:submit.prevent="saveLink"
                                                         x-cloak
                                                         x-float.offset.placement.bottom-start="{ offset: 8 }"
@@ -389,7 +389,7 @@
                                                     </button>
 
                                                     <div
-                                                        class="absolute z-10 max-w-xs divide-y divide-gray-100 rounded-lg bg-white px-4 py-3 shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10"
+                                                        class="ring-gray-950/5 absolute z-10 max-w-xs divide-y divide-gray-100 rounded-lg bg-white px-4 py-3 shadow-lg ring-1 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10"
                                                         x-cloak
                                                         x-float.offset.placement.top-start="{ offset: 8 }"
                                                         x-ref="colorPicker"
@@ -513,7 +513,7 @@
                                                     </button>
 
                                                     <div
-                                                        class="absolute z-10 max-w-xs divide-y divide-gray-100 rounded-lg bg-white px-4 py-3 shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10"
+                                                        class="ring-gray-950/5 absolute z-10 max-w-xs divide-y divide-gray-100 rounded-lg bg-white px-4 py-3 shadow-lg ring-1 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10"
                                                         x-cloak
                                                         x-float.offset.placement.top-start="{ offset: 8 }"
                                                         x-ref="emojiPicker"
@@ -543,7 +543,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="flex items-center justify-between border-t border-gray-200 px-3 py-2 dark:border-gray-600">
+                                <div
+                                    class="flex items-center justify-between border-t border-gray-200 px-3 py-2 dark:border-gray-600">
                                     <div class="flex items-center gap-3">
                                         <x-filament::button type="submit">
                                             Send
@@ -561,13 +562,13 @@
                                                 />
                                             </template>
                                             <span
-                                                class="h-2 w-2 animate-bounce rounded-full bg-primary-500 text-primary-500 animation-delay-100"
+                                                class="bg-primary-500 text-primary-500 h-2 w-2 animate-bounce rounded-full animation-delay-100"
                                             ></span>
                                             <span
-                                                class="h-2 w-2 animate-bounce rounded-full bg-primary-500 text-primary-500 animation-delay-200"
+                                                class="bg-primary-500 text-primary-500 h-2 w-2 animate-bounce rounded-full animation-delay-200"
                                             ></span>
                                             <span
-                                                class="h-2 w-2 animate-bounce rounded-full bg-primary-500 text-primary-500 animation-delay-300"
+                                                class="bg-primary-500 text-primary-500 h-2 w-2 animate-bounce rounded-full animation-delay-300"
                                             ></span>
                                         </div>
                                     </div>
