@@ -31,13 +31,11 @@
 
 </COPYRIGHT>
 */
-import preset from './vendor/filament/support/tailwind.config.preset';
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
 import plugin from 'tailwindcss/plugin';
 
 export default {
-    presets: [preset],
     safelist: [
         'text-black',
         'text-gray-900',
