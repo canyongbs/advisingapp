@@ -35,23 +35,22 @@
 */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-return new class() extends Migration {
-  public function up(): void
-  {
-    Schema::table('alerts', function (Blueprint $table) {
-      $table->boolean('is_visible_for_students')
-        ->default(false);
-    });
-  }
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('alerts', function (Blueprint $table) {
+            $table->boolean('is_visible_for_students')
+                ->default(false);
+        });
+    }
 
-  public function down(): void
-  {
-    Schema::table('alerts', function (Blueprint $table) {
-      $table->dropColumn('is_visible_for_students');
-    });
-  }
+    public function down(): void
+    {
+        Schema::table('alerts', function (Blueprint $table) {
+            $table->dropColumn('is_visible_for_students');
+        });
+    }
 };
