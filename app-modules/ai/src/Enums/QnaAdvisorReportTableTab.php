@@ -40,11 +40,11 @@ use Filament\Support\Contracts\HasLabel;
 
 enum QnaAdvisorReportTableTab: string implements HasLabel
 {
-    case student = 'all';
+    case student = 'student';
 
-    case prospect = 'subscribed';
+    case prospect = 'prospect';
 
-    case unauthenticated = 'care_team';
+    case unauthenticated = 'unauthenticated';
 
     public function getLabel(): string
     {

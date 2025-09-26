@@ -57,7 +57,7 @@ class QnaAdvisorReportTableChart extends TableWidget
 
     protected int | string | array $columnSpan = 'full';
 
-    protected static ?string $heading = 'Most Recent Prospects Added';
+    protected static ?string $heading = 'Most Recent Qna Advisors Added';
 
     #[Url]
     public string $activeTab = QnaAdvisorReportTableTab::student->value;
@@ -84,7 +84,18 @@ class QnaAdvisorReportTableChart extends TableWidget
                     $startDate = $this->getStartDate();
                     $endDate = $this->getEndDate();
 
-                    return QnaAdvisorThread::query()
+                    $tab = QnaAdvisorReportTableTab::tryFrom($this->activeTab) ?? QnaAdvisorReportTableTab::student;
+
+                    $qnaAdvisorThreadQuery = fn (Builder $query): Builder => match ($tab) {
+                        QnaAdvisorReportTableTab::student => QnaAdvisorThread::query()
+                            ->whereMorphedTo('author', Student::class),
+                        QnaAdvisorReportTableTab::prospect => QnaAdvisorThread::query()
+                            ->whereMorphedTo('author', Prospect::class),
+                        QnaAdvisorReportTableTab::unauthenticated => QnaAdvisorThread::query()
+                            ->whereNull('author_id'),
+                    };
+
+                    return $qnaAdvisorThreadQuery(QnaAdvisorThread::query())
                         ->whereNotNull('created_at')
                         ->whereNull('deleted_at')
                         ->when(
@@ -107,18 +118,29 @@ class QnaAdvisorReportTableChart extends TableWidget
                         Prospect::class, Student::class => $record->author?->full_name,
                         default => 'N/A',
                     } ?? 'N/A'),
-                TextColumn::make('messages')
-                    ->label('Messages')
-                    ->getStateUsing(fn (QnaAdvisorThread $record) => $record->messages()->count()),
                 TextColumn::make('exchanges')
-                    ->label('Exchanges')
-                    ->getStateUsing(fn (QnaAdvisorThread $record) => $record->messages()->count()),
-                TextColumn::make('interaction_logged')
-                    ->label('Interaction Logged')
-                    ->getStateUsing(fn (QnaAdvisorThread $record) => $record->interaction_logged_at),
-                TextColumn::make('subscribed_updated')
+                    ->getStateUsing(fn (QnaAdvisorThread $record) => $record->messages()->where('is_advisor', false)->count()),
+                TextColumn::make('finished_at')
+                    ->badge()
+                    ->color(
+                        fn (QnaAdvisorThread $record): string => filled($record->finished_at)
+                        && in_array($record->author?->getMorphClass(), ['prospect', 'student'])
+                            ? 'info'
+                            : 'warning'
+                    )
+                    ->getStateUsing(
+                        fn (QnaAdvisorThread $record) => filled($record->finished_at)
+                        && in_array($record->author?->getMorphClass(), ['prospect', 'student'])
+                            ? 'Yes'
+                            : 'No'
+                    )
+                    ->label('Interaction Logged'),
+
+                TextColumn::make('interaction_id')
                     ->label('Subscribed Updated')
-                    ->getStateUsing(fn (QnaAdvisorThread $record) => $record->subscribed_updated_at),
+                    ->badge()
+                    ->color(fn (QnaAdvisorThread $record): string => filled($record->interaction_id) ? 'info' : 'warning')
+                    ->getStateUsing(fn (QnaAdvisorThread $record) => filled($record->interaction_id) ? 'Yes' : 'No'),
             ])
             ->paginated([10]);
     }
