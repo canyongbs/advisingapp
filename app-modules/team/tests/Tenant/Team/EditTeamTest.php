@@ -171,7 +171,7 @@ test('Super Admin Users do not show up in UsersRelationManager for Teams search 
         'pageClass' => EditTeam::class,
     ])
         ->mountTableAction(AssociateAction::class)
-        ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) use ($superAdmin) {
+        ->assertFormFieldExists('recordId', checkFieldUsing: function (Select $select) use ($superAdmin) {
             $options = $select->getSearchResults($superAdmin->name);
 
             return empty($options) ? true : false;

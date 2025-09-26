@@ -145,7 +145,7 @@ it('does not list tasks already associated with a project in task search', funct
         'record' => $projectOne->getRouteKey(),
     ])
         ->mountTableAction(AssociateAction::class)
-        ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) use ($task) {
+        ->assertFormFieldExists('recordId', checkFieldUsing: function (Select $select) use ($task) {
             $options = $select->getSearchResults($task->title);
 
             return empty($options);
@@ -156,7 +156,7 @@ it('does not list tasks already associated with a project in task search', funct
         'record' => $projectTwo->getRouteKey(),
     ])
         ->mountTableAction(AssociateAction::class)
-        ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) use ($task) {
+        ->assertFormFieldExists('recordId', checkFieldUsing: function (Select $select) use ($task) {
             $options = $select->getSearchResults($task->title);
 
             return empty($options);

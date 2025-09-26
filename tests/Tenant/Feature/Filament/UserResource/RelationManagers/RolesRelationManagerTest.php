@@ -75,7 +75,6 @@ it('A non-super admin user cannot assign the super admin role.', function () {
         'ownerRecord' => $user,
         'pageClass' => EditUser::class,
     ])
-        ->mountTableAction(AttachAction::class)
         ->callTableAction(AttachAction::class, data: ['recordId' => $superAdminRole->getKey()])
         ->assertHasTableActionErrors(['recordId' => 'You are not allowed to select the Super Admin role.']);
 
@@ -103,7 +102,7 @@ it('allows user which has sass global admin role to assign sass global admin rol
         'pageClass' => EditUser::class,
     ])
         ->mountTableAction(AttachAction::class)
-        ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) {
+        ->assertFormFieldExists('recordId', checkFieldUsing: function (Select $select) {
             $options = $select->getSearchResults(Authenticatable::SUPER_ADMIN_ROLE);
 
             return ! empty($options) ? true : false;
@@ -145,7 +144,7 @@ it('does not display the Saas Global Admin role if the user is not itself a Saas
         'pageClass' => EditUser::class,
     ])
         ->mountTableAction(AttachAction::class)
-        ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) {
+        ->assertFormFieldExists('recordId', checkFieldUsing: function (Select $select) {
             $options = $select->getSearchResults(Authenticatable::SUPER_ADMIN_ROLE);
 
             return empty($options) ? true : false;
