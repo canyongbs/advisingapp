@@ -43,7 +43,7 @@ class StudentAddressObserver
 {
     public function creating(StudentAddress $studentAddress): void
     {
-        if ($studentAddress->order === null) {
+        if (blank($studentAddress->order)) {
             $studentAddress->order = DB::raw("(SELECT COALESCE(MAX(\"{$studentAddress->getTable()}\".order), 0) + 1 FROM \"{$studentAddress->getTable()}\" WHERE sisid = '{$studentAddress->sisid}')");
         }
     }

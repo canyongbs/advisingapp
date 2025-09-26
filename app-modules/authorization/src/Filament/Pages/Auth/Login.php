@@ -48,6 +48,7 @@ use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Schemas\Schema;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 
@@ -250,13 +251,16 @@ class Login extends \Filament\Auth\Pages\Login
         return $ssoActions;
     }
 
+    /**
+     * @return array<string, Schema>
+     */
     protected function getForms(): array
     {
         return [
             'form' => $this->form(
                 $this->makeSchema()
                     ->components([
-                        $this->getEmailFormComponent()
+                        $this->getEmailFormComponent() /** @phpstan-ignore method.notFound */
                             ->label('Email')
                             ->hidden(fn (Login $livewire) => $livewire->needsMFA)
                             ->dehydratedWhenHidden(),

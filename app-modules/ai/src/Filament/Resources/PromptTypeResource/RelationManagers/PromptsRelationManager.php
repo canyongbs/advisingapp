@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ListPrompts;
 use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ViewPrompt;
 use AdvisingApp\Ai\Models\Prompt;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -69,35 +70,15 @@ class PromptsRelationManager extends RelationManager
             ->recordTitleAttribute('title')
             ->inverseRelationship('type')
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->url(fn (): string => PromptResource::getUrl('create')),
+            ])
+            ->recordActions([
+                ViewAction::make()
+                    ->url(fn (Prompt $record): string => PromptResource::getUrl('view', ['record' => $record])),
+                EditAction::make()
+                    ->url(fn (Prompt $record): string => PromptResource::getUrl('edit', ['record' => $record])),
+                DeleteAction::make(),
             ]);
-    }
-
-    //If we want modals remove these configs or remove the pages
-    protected function configureViewAction(ViewAction $action): void
-    {
-        parent::configureViewAction($action);
-
-        if (PromptResource::hasPage('view')) {
-            $action->url(fn (Prompt $record): string => PromptResource::getUrl('view', ['record' => $record]));
-        }
-    }
-
-    protected function configureEditAction(EditAction $action): void
-    {
-        parent::configureEditAction($action);
-
-        if (PromptResource::hasPage('edit')) {
-            $action->url(fn (Prompt $record): string => PromptResource::getUrl('edit', ['record' => $record]));
-        }
-    }
-
-    protected function configureCreateAction(CreateAction $action): void
-    {
-        parent::configureCreateAction($action);
-
-        if (PromptResource::hasPage('create')) {
-            $action->url(fn (): string => PromptResource::getUrl('create'));
-        }
     }
 }

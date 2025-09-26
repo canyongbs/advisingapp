@@ -79,7 +79,7 @@ class CasePrioritiesRelationManager extends RelationManager
             ])
             ->headerActions([
                 AssociateAction::make()
-                    ->recordSelectOptionsQuery(fn (Builder $query, AssociateAction $action) => $query->where('type_id', Arr::last($this->mountedTableActionsData)['type_id'] ?? null)->orderBy('order'))
+                    ->recordSelectOptionsQuery(fn (Builder $query, AssociateAction $action) => $query->where('type_id', Arr::last($this->mountedActions)['data']['type_id'] ?? null)->orderBy('order'))
                     ->preloadRecordSelect()
                     ->form(fn (AssociateAction $action): array => [
                         Select::make('type_id')

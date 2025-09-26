@@ -72,7 +72,7 @@
 
                     @if ($this->customAssistants)
                         <div
-                            class="absolute right-0 z-10 mt-2 w-full rounded-lg bg-white p-2 shadow-lg ring-1 ring-gray-950/5 transition dark:bg-gray-900 dark:ring-white/10"
+                            class="ring-gray-950/5 absolute right-0 z-10 mt-2 w-full rounded-lg bg-white p-2 shadow-lg ring-1 transition dark:bg-gray-900 dark:ring-white/10"
                             x-show="isSearchingAssistants"
                             x-on:click.outside="isSearchingAssistants = false"
                             x-on:close-assistant-search.window="isSearchingAssistants = false"
@@ -84,7 +84,7 @@
 
                 <template x-if="$wire.threadsWithoutAFolder.length">
                     <ul
-                        class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
+                        class="border-gray-950/5 flex flex-col gap-y-1 rounded-xl border bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
                         id="folder-{{ null }}"
                         x-on:drop.prevent="drop('{{ null }}')"
                         x-on:dragenter.prevent
@@ -226,7 +226,7 @@
                 </template>
                 <template x-if="!$wire.threadsWithoutAFolder.length">
                     <div
-                        class="flex flex-col gap-y-1 rounded-xl border border-dashed border-gray-950/5 bg-white px-3 py-2 text-gray-500 shadow-sm dark:border-white/10 dark:bg-gray-900"
+                        class="border-gray-950/5 flex flex-col gap-y-1 rounded-xl border border-dashed bg-white px-3 py-2 text-gray-500 shadow-sm dark:border-white/10 dark:bg-gray-900"
                         x-show="dragging"
                         x-on:drop.prevent="drop('{{ null }}')"
                         x-on:dragenter.prevent
@@ -239,7 +239,7 @@
                 </template>
                 <template x-if="$wire.folders.length">
                     <div
-                        class="flex flex-col gap-y-3 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
+                        class="border-gray-950/5 flex flex-col gap-y-3 rounded-xl border bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
                         <template
                             x-for="folder in $wire.folders"
                             :key="folder.id"
@@ -544,9 +544,9 @@
                 @endphp
 
                 <div
-                    class="flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
+                    class="border-gray-950/5 flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
                     <div
-                        class="bg-danger-100 px-4 py-2 dark:bg-danger-900"
+                        class="bg-danger-100 dark:bg-danger-900 px-4 py-2"
                         x-cloak
                         x-show="error"
                     >
@@ -695,7 +695,7 @@
                 @if (!$this->thread->assistant->archived_at)
                     <form x-on:submit.prevent="sendMessage()">
                         <div
-                            class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
+                            class="border-gray-950/5 w-full overflow-hidden rounded-xl border bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
                             <div class="flex items-start justify-between gap-x-4 p-4">
                                 <div class="flex items-center justify-start gap-x-4 gap-y-3">
                                     {{ $this->uploadFilesAction }}
@@ -729,7 +729,7 @@
 
                                 @if ($this->thread->assistant->model->getService()->hasImageGeneration())
                                     <button
-                                        class="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-gray-800 shadow-sm ring-1 ring-gray-950/5 dark:text-gray-100 dark:ring-white/10"
+                                        class="ring-gray-950/5 flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-gray-800 shadow-sm ring-1 dark:text-gray-100 dark:ring-white/10"
                                         type="button"
                                         x-on:click="hasImageGeneration = ! hasImageGeneration"
                                         x-bind:class="{
@@ -784,7 +784,7 @@
                                 </textarea>
                             </div>
                             <div
-                                class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
+                                class="flex flex-col items-center border-t px-3 py-2 sm:flex-row sm:justify-between dark:border-gray-600">
                                 <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
                                     @if ($this->isProcessingFiles)
                                         <x-filament::button
@@ -819,7 +819,7 @@
                                         class="flex w-full justify-center py-2 sm:w-auto"
                                         x-show="isSendingMessage"
                                     >
-                                        <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
+                                        <x-filament::loading-indicator class="text-primary-500 h-5 w-5" />
                                     </div>
                                 </div>
 
@@ -834,7 +834,7 @@
                     </form>
                 @else
                     <div
-                        class="w-full rounded-xl border border-gray-950/5 bg-gray-50 p-4 text-sm shadow-sm dark:border-white/10 dark:bg-gray-900">
+                        class="border-gray-950/5 w-full rounded-xl border bg-gray-50 p-4 text-sm shadow-sm dark:border-white/10 dark:bg-gray-900">
                         This assistant has been archived by an administrator and can no longer be contacted.
                     </div>
                 @endif
@@ -846,7 +846,7 @@
 
             <div class="col-span-full mb-2 text-center text-xs md:hidden">
                 © 2016-{{ date('Y') }} <a
-                    class="text-blue-600 underline dark:text-blue-400"
+                    class="text-blue-600 dark:text-blue-400 underline"
                     href="https://canyongbs.com/"
                 >Canyon GBS LLC</a>.
             </div>

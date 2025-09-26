@@ -55,7 +55,7 @@
 
                 <template x-if="$wire.incompleteRequests.length">
                     <div
-                        class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
+                        class="border-gray-950/5 flex flex-col gap-y-1 rounded-xl border bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
                         <div class="px-2 text-sm text-gray-500 dark:text-gray-400">
                             In-progress requests
                         </div>
@@ -106,7 +106,7 @@
                 </template>
                 <template x-if="$wire.requestsWithoutAFolder.length">
                     <ul
-                        class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
+                        class="border-gray-950/5 flex flex-col gap-y-1 rounded-xl border bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
                         id="folder-{{ null }}"
                         x-on:drop.prevent="drop('{{ null }}')"
                         x-on:dragenter.prevent
@@ -236,7 +236,7 @@
                 </template>
                 <template x-if="!$wire.requestsWithoutAFolder.length">
                     <div
-                        class="flex flex-col gap-y-1 rounded-xl border border-dashed border-gray-950/5 bg-white px-3 py-2 text-gray-500 shadow-sm dark:border-white/10 dark:bg-gray-900"
+                        class="border-gray-950/5 flex flex-col gap-y-1 rounded-xl border border-dashed bg-white px-3 py-2 text-gray-500 shadow-sm dark:border-white/10 dark:bg-gray-900"
                         x-show="dragging"
                         x-on:drop.prevent="drop('{{ null }}')"
                         x-on:dragenter.prevent
@@ -249,7 +249,7 @@
                 </template>
                 <template x-if="$wire.folders.length">
                     <div
-                        class="flex flex-col gap-y-3 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
+                        class="border-gray-950/5 flex flex-col gap-y-3 rounded-xl border bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
                         <template
                             x-for="folder in $wire.folders"
                             :key="folder.id"
@@ -544,7 +544,7 @@
                             <summary class="cursor-pointer">Reasoning</summary>
 
                             <div
-                                class="flex h-20 items-start overflow-y-auto px-4 text-xs tracking-tight shadow-sm ring-1 ring-gray-950/5 dark:ring-white/10"
+                                class="ring-gray-950/5 flex h-20 items-start overflow-y-auto px-4 text-xs tracking-tight shadow-sm ring-1 dark:ring-white/10"
                                 x-bind:class="{
                                     'flex-col-reverse': !isFinished,
                                 }"
@@ -561,7 +561,7 @@
                         </details>
 
                         <div
-                            class="mx-1 mb-12 rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
+                            class="ring-gray-950/5 mx-1 mb-12 rounded-xl bg-white p-6 shadow-sm ring-1 dark:bg-gray-900 dark:ring-white/10"
                             x-show="resultsHtml.length > 0"
                         >
                             <h1
@@ -625,7 +625,7 @@
 
             <div class="col-span-full mb-2 text-center text-xs md:hidden">
                 © 2016-{{ date('Y') }} <a
-                    class="text-blue-600 underline dark:text-blue-400"
+                    class="text-blue-600 dark:text-blue-400 underline"
                     href="https://canyongbs.com/"
                 >Canyon GBS LLC</a>.
             </div>
