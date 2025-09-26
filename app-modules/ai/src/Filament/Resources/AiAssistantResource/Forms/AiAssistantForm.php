@@ -41,7 +41,6 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
-use App\Features\AiAssistantUseFeature;
 use App\Models\User;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -128,7 +127,7 @@ class AiAssistantForm
                 Select::make('created_by_id')
                     ->label('Created By')
                     ->relationship('createdBy', 'name')
-                    ->visible(AiAssistantUseFeature::active() && auth()->user()->isSuperAdmin()),
+                    ->visible(auth()->user()->isSuperAdmin()),
                 Section::make('Configure AI Advisor')
                     ->description('Design the capability of your advisor by including detailed instructions below.')
                     ->schema([

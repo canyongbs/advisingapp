@@ -46,7 +46,6 @@ use AdvisingApp\Ai\Support\StreamingChunks\Finish;
 use AdvisingApp\Ai\Support\StreamingChunks\Image;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
-use App\Features\AiAssistantUseFeature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -203,14 +202,12 @@ class SendAdvisorMessage implements ShouldQueue
             $response->save();
             $this->thread->touch();
 
-            if (AiAssistantUseFeature::active()) {
-                $this->thread->assistant->uses()->create([
-                    'id' => $message->getKey(),
-                    'user_id' => $this->thread->user_id,
-                    'created_at' => $message->created_at,
-                    'updated_at' => $message->created_at,
-                ]);
-            }
+            $this->thread->assistant->uses()->create([
+                'id' => $message->getKey(),
+                'user_id' => $this->thread->user_id,
+                'created_at' => $message->created_at,
+                'updated_at' => $message->created_at,
+            ]);
         });
     }
 
