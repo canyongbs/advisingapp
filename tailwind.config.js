@@ -58,10 +58,6 @@ export default {
         './app-modules/**/resources/views/**/*.php',
         './resources/views/**/*.blade.php',
         './resources/views/filament/**/*.blade.php',
-        './vendor/canyongbs/common/resources/**/*.blade.php',
-        './vendor/canyongbs/filament-tiptap-editor/resources/**/*.blade.php',
-        './vendor/filament/**/*.blade.php',
-        './node_modules/flowbite/**/*.js',
     ],
     theme: {
         extend: {
