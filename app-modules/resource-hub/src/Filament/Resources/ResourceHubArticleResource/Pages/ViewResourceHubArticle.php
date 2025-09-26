@@ -41,7 +41,6 @@ use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
@@ -115,7 +114,7 @@ class ViewResourceHubArticle extends ViewRecord
                             ]),
                     ])
                     ->activeTab(2)
-                    ->columnSpanFull()
+                    ->columnSpanFull(),
             ]);
     }
 
