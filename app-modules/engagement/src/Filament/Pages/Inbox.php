@@ -49,7 +49,10 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class Inbox extends Page implements HasTable
@@ -94,7 +97,8 @@ class Inbox extends Page implements HasTable
                     ->badge(),
                 TextColumn::make('sender_type')
                     ->label('Relation')
-                    ->formatStateUsing(fn (EngagementResponse $record) => ucwords($record->sender_type)),
+                    ->formatStateUsing(fn (EngagementResponse $record) => ucwords($record->sender_type))
+                    ->sortable(),
                 TextColumn::make('from')
                     ->state(function (EngagementResponse $record): ?string {
                         return (($record->sender instanceof Student) || ($record->sender instanceof Prospect))
@@ -116,6 +120,14 @@ class Inbox extends Page implements HasTable
             ->actions([
                 ViewAction::make()
                     ->url(fn (EngagementResponse $record): string => ViewEngagementResponse::getUrl(['record' => $record])),
+            ])
+            ->filters([
+                SelectFilter::make('sender_type')
+                    ->label('Relation')
+                    ->options([
+                        'student' => 'Student',
+                        'prospect' => 'Prospect',
+                    ]),
             ])
             ->recordUrl(fn (EngagementResponse $record): string => ViewEngagementResponse::getUrl(['record' => $record]))
             ->defaultSort('sent_at', 'desc')
