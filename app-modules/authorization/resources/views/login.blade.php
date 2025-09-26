@@ -34,7 +34,10 @@
 
 <div class="flex w-full flex-col items-center justify-center gap-8 lg:flex-row">
     <div class="w-full lg:w-1/2 lg:pr-8">
-        <form class="grid gap-y-6" wire:submit="authenticate">
+        <form
+            class="grid gap-y-6"
+            wire:submit="authenticate"
+        >
             @if ($this->needsMfaSetup)
                 <h3 class="flex items-center gap-2 text-lg font-medium">
                     @svg('heroicon-o-question-mark-circle', 'w-6')
@@ -63,7 +66,7 @@
                 :actions="$this->getSsoFormActions()"
                 :full-width="$this->hasFullWidthFormActions()"
             />
-            </form>
+        </form>
 
         @if ($this->needsMFA && !$this->needsMfaSetup)
             <x-filament::link
