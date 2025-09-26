@@ -36,10 +36,9 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages;
 
-use Filament\Actions\DeleteAction;
 use AdvisingApp\CaseManagement\Filament\Resources\SlaResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditSla extends EditRecord

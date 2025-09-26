@@ -36,19 +36,19 @@
 
 namespace App\Filament\Resources\UserResource\Actions;
 
-use Filament\Actions\BulkAction;
-use Filament\Support\Enums\Width;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
 use App\Models\User;
 use Closure;
 use Exception;
+use Filament\Actions\BulkAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Collection;
 
 class AssignLicensesBulkAction extends BulkAction

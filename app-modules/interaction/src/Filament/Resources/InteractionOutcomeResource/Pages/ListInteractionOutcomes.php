@@ -36,23 +36,22 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\CreateAction;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use App\Features\InteractionMetadataFeature;
 use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -60,7 +59,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * @property \Filament\Schemas\Schema $form
+ * @property Schema $form
  */
 class ListInteractionOutcomes extends ListRecords
 {

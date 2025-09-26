@@ -36,9 +36,6 @@
 
 namespace AdvisingApp\Report\Abstract\Concerns;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Report\Abstract\Contracts\HasSegmentModel;
 use AdvisingApp\Report\Filament\Pages\ProspectCaseReport;
 use AdvisingApp\Report\Filament\Pages\StudentCaseReport;
@@ -47,6 +44,9 @@ use AdvisingApp\Segment\Models\Segment;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm as ConcernsHasFiltersForm;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
 trait HasFiltersForm

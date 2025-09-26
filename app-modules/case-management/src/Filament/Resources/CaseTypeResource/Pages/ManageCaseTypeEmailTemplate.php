@@ -36,9 +36,6 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
 use AdvisingApp\CaseManagement\Enums\CaseEmailTemplateType;
 use AdvisingApp\CaseManagement\Enums\CaseTypeEmailTemplateRole;
 use AdvisingApp\CaseManagement\Filament\Blocks\CaseTypeEmailTemplateButtonBlock;
@@ -48,9 +45,13 @@ use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use FilamentTiptapEditor\TiptapEditor;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
+use UnitEnum;
 
 /** @property-read ?CaseTypeEmailTemplate $template */
 class ManageCaseTypeEmailTemplate extends EditRecord
@@ -62,7 +63,7 @@ class ManageCaseTypeEmailTemplate extends EditRecord
     #[Locked]
     public CaseEmailTemplateType $type;
 
-    public static string | \UnitEnum | null $navigationGroup = 'Email Templates';
+    public static string | UnitEnum | null $navigationGroup = 'Email Templates';
 
     public function getRelationManagers(): array
     {

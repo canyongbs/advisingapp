@@ -36,10 +36,6 @@
 
 namespace AdvisingApp\Interaction\Filament\Actions;
 
-use Filament\Actions\Action;
-use Filament\Support\Enums\Width;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use AdvisingApp\Ai\Actions\CompletePrompt;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -51,10 +47,14 @@ use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Settings\LicenseSettings;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Support\Enums\Width;
 use Illuminate\Support\Facades\Vite;
 
 class DraftInteractionWithAiAction extends Action

@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\Concerns\HasSharedFormConfiguration;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateApplication extends CreateRecord
 {

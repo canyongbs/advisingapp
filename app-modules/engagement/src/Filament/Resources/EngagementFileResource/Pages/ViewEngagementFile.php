@@ -36,15 +36,14 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
-use Filament\Actions;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class ViewEngagementFile extends ViewRecord
 {
@@ -52,7 +51,7 @@ class ViewEngagementFile extends ViewRecord
 
     public function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
                 Section::make()
                     ->schema([

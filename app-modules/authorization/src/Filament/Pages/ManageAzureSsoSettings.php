@@ -36,9 +36,6 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Authorization\Enums\AzureMatchingProperty;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use App\Filament\Clusters\Authentication;
@@ -47,6 +44,10 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use UnitEnum;
 
 class ManageAzureSsoSettings extends SettingsPage
 {
@@ -58,7 +59,7 @@ class ManageAzureSsoSettings extends SettingsPage
 
     protected static ?int $navigationSort = 20;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Single Sign-On (SSO)';
+    protected static string | UnitEnum | null $navigationGroup = 'Single Sign-On (SSO)';
 
     protected static ?string $cluster = Authentication::class;
 

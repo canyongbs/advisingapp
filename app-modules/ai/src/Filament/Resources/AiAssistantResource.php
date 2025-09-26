@@ -41,12 +41,13 @@ use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\EditAiAssistant;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\ListAiAssistants;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class AiAssistantResource extends Resource
 {
     protected static ?string $model = AiAssistant::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Artificial Intelligence';
+    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
 
     protected static ?string $navigationLabel = 'Custom Advisors';
 

@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 use AdvisingApp\CaseManagement\Filament\Concerns\CaseUpdateBreadcrumbs;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
@@ -46,6 +44,8 @@ use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class ViewCaseUpdate extends ViewRecord
 {
@@ -59,7 +59,7 @@ class ViewCaseUpdate extends ViewRecord
 
     public function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
                 Section::make()
                     ->schema([

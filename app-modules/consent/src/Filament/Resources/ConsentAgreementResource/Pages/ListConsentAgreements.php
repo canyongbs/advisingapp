@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Fieldset;
-use Filament\Actions\EditAction;
-use Filament\Actions\Action;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 

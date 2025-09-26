@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Enums\CareTeamRoleType;
@@ -45,6 +44,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class EditProspectCareTeamRole extends EditRecord
 {

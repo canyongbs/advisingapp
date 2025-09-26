@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Concerns\HandlesFileUploads;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Forms\AiAssistantForm;
@@ -44,6 +43,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
 use Exception;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 
 class CreateAiAssistant extends CreateRecord

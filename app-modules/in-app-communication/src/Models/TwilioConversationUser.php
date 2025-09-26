@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\InAppCommunication\Models;
 
-use Filament\Actions\Action;
 use AdvisingApp\InAppCommunication\Enums\ConversationNotificationPreference;
 use AdvisingApp\InAppCommunication\Filament\Pages\UserChat;
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;

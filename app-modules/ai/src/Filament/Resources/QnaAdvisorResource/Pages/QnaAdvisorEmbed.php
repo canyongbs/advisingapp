@@ -36,22 +36,23 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Actions;
-use Filament\Actions\Action;
 use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Form\Rules\IsDomain;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
+use UnitEnum;
 
 class QnaAdvisorEmbed extends EditRecord
 {
@@ -59,7 +60,7 @@ class QnaAdvisorEmbed extends EditRecord
 
     protected static string $resource = QnaAdvisorResource::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Configuration';
+    protected static string | UnitEnum | null $navigationGroup = 'Configuration';
 
     protected static ?string $title = 'Embed';
 

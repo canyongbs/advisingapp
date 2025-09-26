@@ -36,12 +36,6 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages;
 
-use Filament\Actions\ViewAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ReplicateAction;
-use Filament\Schemas\Components\Section;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
@@ -49,12 +43,18 @@ use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ReplicateAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;

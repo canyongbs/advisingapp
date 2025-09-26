@@ -33,8 +33,8 @@
 
 </COPYRIGHT>
 */
-use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\CreateApplication;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\CreateApplication;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;

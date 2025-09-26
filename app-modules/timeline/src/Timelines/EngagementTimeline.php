@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Timeline\Timelines;
 
-use Filament\Schemas\Components\Fieldset;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Timeline\Models\CustomTimeline;
@@ -44,6 +43,7 @@ use App\Infolists\Components\EngagementBody;
 use Exception;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Fieldset;
 use Illuminate\Support\HtmlString;
 
 // TODO Decide where these belong - might want to keep these in the context of the original module

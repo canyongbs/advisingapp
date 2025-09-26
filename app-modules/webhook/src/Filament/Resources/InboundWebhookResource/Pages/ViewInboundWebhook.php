@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class ViewInboundWebhook extends ViewRecord
 {
@@ -48,7 +48,7 @@ class ViewInboundWebhook extends ViewRecord
 
     public function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
                 Section::make()
                     ->schema([

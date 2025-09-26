@@ -36,21 +36,22 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\AdvisingApp\StudentDataModel\Models;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\ViewAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\AdvisingApp\StudentDataModel\Models\EnrollmentSemesterResource\Pages\ManageEnrollmentSemesters;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use App\Filament\Clusters\ConstituentManagement;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class EnrollmentSemesterResource extends Resource
 {
@@ -58,7 +59,7 @@ class EnrollmentSemesterResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Students';
+    protected static string | UnitEnum | null $navigationGroup = 'Students';
 
     protected static ?string $navigationLabel = 'Semester Order';
 

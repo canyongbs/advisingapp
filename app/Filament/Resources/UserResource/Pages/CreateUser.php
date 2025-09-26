@@ -36,8 +36,6 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use App\Filament\Resources\UserResource;
@@ -49,6 +47,8 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class CreateUser extends CreateRecord
 {

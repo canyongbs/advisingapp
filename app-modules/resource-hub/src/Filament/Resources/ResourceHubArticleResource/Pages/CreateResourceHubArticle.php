@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
@@ -48,6 +46,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class CreateResourceHubArticle extends CreateRecord
 {

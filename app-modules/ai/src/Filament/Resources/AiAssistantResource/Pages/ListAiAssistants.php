@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages;
 
-use Filament\Actions\EditAction;
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;

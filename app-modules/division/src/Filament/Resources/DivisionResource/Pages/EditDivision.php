@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
 use AdvisingApp\Division\Models\Division;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -47,6 +46,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class EditDivision extends EditRecord
 {

@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\Prospect\Filament\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Features\SettingsPermissions;
 use App\Filament\Clusters\ConstituentManagement;
@@ -48,6 +46,9 @@ use App\Settings\ProspectConversionSettings;
 use Cknow\Money\Money;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use UnitEnum;
 
 class ManageProspectConversionSettings extends SettingsPage
 {
@@ -59,7 +60,7 @@ class ManageProspectConversionSettings extends SettingsPage
 
     protected static ?int $navigationSort = 30;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
 
     protected static ?string $cluster = ConstituentManagement::class;
 

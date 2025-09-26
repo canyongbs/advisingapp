@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
 use AdvisingApp\Segment\Models\Segment;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -45,6 +44,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class EditCampaign extends EditRecord
 {

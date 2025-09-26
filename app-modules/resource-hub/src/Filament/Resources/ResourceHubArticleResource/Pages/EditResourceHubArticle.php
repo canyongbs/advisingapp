@@ -36,9 +36,6 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Actions;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\ResourceHub\Filament\Actions\DraftResourceHubArticleWithAiAction;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
@@ -48,6 +45,9 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Model;
 

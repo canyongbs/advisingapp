@@ -36,9 +36,6 @@
 
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Section;
 use AdvisingApp\CaseManagement\Enums\CaseTypeAssignmentTypes;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
@@ -54,11 +51,17 @@ use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Database\Eloquent\Model;
 
 class CaseBlock extends WorkflowActionBlock
 {
-    protected Model | string | Closure | null $model = CaseModel::class;
+    /**
+     * @var Model | array<string, mixed> | class-string<Model> | Closure | null
+     */
+    protected Model | array | string | Closure | null $model = CaseModel::class;
 
     protected function setUp(): void
     {

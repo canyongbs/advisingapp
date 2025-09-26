@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use AdvisingApp\Audit\Filament\Resources\AuditResource;
 use AdvisingApp\Audit\Models\Audit;
 use Carbon\Carbon;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 
 class ViewAudit extends ViewRecord
@@ -53,7 +53,7 @@ class ViewAudit extends ViewRecord
 
     public function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
                 Section::make()
                     ->schema([

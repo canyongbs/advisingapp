@@ -36,8 +36,6 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
@@ -57,7 +55,9 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use STS\FilamentImpersonate\Pages\Actions\Impersonate;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use STS\FilamentImpersonate\Actions\Impersonate;
 
 class EditUser extends EditRecord
 {

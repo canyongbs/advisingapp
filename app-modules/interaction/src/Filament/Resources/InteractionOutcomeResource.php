@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource\Pages\CreateInteractionOutcome;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource\Pages\EditInteractionOutcome;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource\Pages\ListInteractionOutcomes;
@@ -45,6 +44,7 @@ use App\Filament\Clusters\InteractionManagement;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 
 class InteractionOutcomeResource extends Resource
 {

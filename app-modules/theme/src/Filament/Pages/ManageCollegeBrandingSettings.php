@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\Theme\Filament\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Utilities\Get;
 use App\Features\SettingsPermissions;
 use App\Filament\Clusters\DisplaySettings;
 use App\Filament\Forms\Components\ColorSelect;
@@ -48,6 +46,8 @@ use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 
 class ManageCollegeBrandingSettings extends SettingsPage
 {

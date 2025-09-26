@@ -36,9 +36,6 @@
 
 namespace AdvisingApp\Task\Filament\Concerns;
 
-use Filament\Schemas\Components\Flex;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Fieldset;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
@@ -47,6 +44,9 @@ use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
 use App\Filament\Resources\UserResource;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Grid;
 
 trait TaskViewActionInfoList
 {

@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\CaseManagement\Enums\CaseTypeAssignmentTypes;
 use AdvisingApp\CaseManagement\Models\CaseModel;
@@ -51,11 +49,16 @@ use Closure;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Database\Eloquent\Model;
 
 class CaseBlock extends CampaignActionBlock
 {
-    protected Model | string | Closure | null $model = CaseModel::class;
+    /**
+     * @var Model | array<string, mixed> | class-string<Model> | Closure | null
+     */
+    protected Model | array | string | Closure | null $model = CaseModel::class;
 
     protected function setUp(): void
     {

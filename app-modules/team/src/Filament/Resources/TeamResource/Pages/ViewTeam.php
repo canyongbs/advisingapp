@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Team\Filament\Resources\TeamResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use AdvisingApp\Team\Filament\Resources\TeamResource;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class ViewTeam extends ViewRecord
 {
@@ -49,7 +49,7 @@ class ViewTeam extends ViewRecord
 
     public function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
                 Section::make()
                     ->schema([

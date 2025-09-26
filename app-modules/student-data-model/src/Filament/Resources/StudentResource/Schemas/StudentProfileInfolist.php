@@ -36,9 +36,6 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Actions\Action;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentAddress;
@@ -46,7 +43,10 @@ use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use App\Features\AthleticFieldsFeature;
 use App\Infolists\Components\Subsection;
+use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 

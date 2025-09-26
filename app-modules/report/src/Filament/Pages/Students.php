@@ -42,12 +42,13 @@ use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\StudentCumulativeCountLineChart;
 use AdvisingApp\Report\Filament\Widgets\StudentsStats;
 use App\Filament\Clusters\ReportLibrary;
+use UnitEnum;
 
 class Students extends StudentReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Students';
+    protected static string | UnitEnum | null $navigationGroup = 'Students';
 
     protected static ?string $navigationLabel = 'Overview';
 

@@ -36,24 +36,26 @@
 
 namespace AdvisingApp\Ai\Filament\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\Ai\Filament\Resources\DataAdvisorResource\Pages\CreateDataAdvisor;
 use AdvisingApp\Ai\Filament\Resources\DataAdvisorResource\Pages\EditDataAdvisor;
 use AdvisingApp\Ai\Filament\Resources\DataAdvisorResource\Pages\ListDataAdvisors;
 use AdvisingApp\Ai\Models\DataAdvisor;
+use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class DataAdvisorResource extends Resource
 {
     protected static ?string $model = DataAdvisor::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Artificial Intelligence';
+    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
 
     protected static ?int $navigationSort = 40;
 

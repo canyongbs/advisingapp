@@ -44,14 +44,16 @@ use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use App\Filament\Clusters\ReportLibrary;
 use App\Filament\Widgets\ProspectGrowthChart;
 use App\Models\User;
+use BackedEnum;
 use Livewire\Attributes\Url;
 use Symfony\Component\HttpFoundation\Response;
+use UnitEnum;
 
 class RecruitmentCrmDashboard extends RecruitmentCrmDashboardReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
 
     protected static ?int $navigationSort = 10;
 
@@ -61,7 +63,7 @@ class RecruitmentCrmDashboard extends RecruitmentCrmDashboardReport
 
     protected static string $routePath = 'recruitment-crm-dashboard';
 
-    protected static string | \BackedEnum | null $navigationIcon = '';
+    protected static string | BackedEnum | null $navigationIcon = '';
 
     #[Url]
     public string $activeTab = ActionCenterTab::Subscribed->value;

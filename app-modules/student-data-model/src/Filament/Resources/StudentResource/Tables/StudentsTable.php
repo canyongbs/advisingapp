@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Tables;
 
-use Filament\Actions\ViewAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\ExistingValuesSelectConstraint;
@@ -44,6 +43,7 @@ use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMaxOperatorWithEnrollmentSemester;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMinOperatorWithEnrollmentSemester;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsEmptyOperatorWithEnrollmentSemester;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\QueryBuilder;

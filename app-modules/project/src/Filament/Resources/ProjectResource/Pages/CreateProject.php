@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateProject extends CreateRecord
 {

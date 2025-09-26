@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
@@ -47,6 +46,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class EditApplicationSubmissionState extends EditRecord
 {

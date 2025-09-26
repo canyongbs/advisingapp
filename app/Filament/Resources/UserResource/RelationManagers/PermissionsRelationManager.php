@@ -36,10 +36,10 @@
 
 namespace App\Filament\Resources\UserResource\RelationManagers;
 
-use Filament\Schemas\Schema;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;

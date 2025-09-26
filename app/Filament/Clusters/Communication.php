@@ -37,10 +37,11 @@
 namespace App\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
+use UnitEnum;
 
 class Communication extends Cluster
 {
-    protected static string | \UnitEnum | null $navigationGroup = 'Settings';
+    protected static string | UnitEnum | null $navigationGroup = 'Settings';
 
     protected static ?string $navigationLabel = 'Communication Settings';
 

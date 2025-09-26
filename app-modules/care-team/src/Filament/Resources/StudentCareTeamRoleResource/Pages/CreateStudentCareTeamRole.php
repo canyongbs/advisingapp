@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Enums\CareTeamRoleType;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateStudentCareTeamRole extends CreateRecord
 {

@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class EditEvent extends EditRecord
 {

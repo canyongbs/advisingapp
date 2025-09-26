@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisorLink;
@@ -44,8 +43,10 @@ use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Str;
+use UnitEnum;
 
 class EditQnaAdvisorLinks extends EditRecord
 {
@@ -55,7 +56,7 @@ class EditQnaAdvisorLinks extends EditRecord
 
     protected static ?string $title = 'Websites';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Configuration';
+    protected static string | UnitEnum | null $navigationGroup = 'Configuration';
 
     /**
      * @return array<int|string, string|null>

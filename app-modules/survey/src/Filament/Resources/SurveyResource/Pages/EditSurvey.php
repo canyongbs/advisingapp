@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Survey\Filament\Resources\SurveyResource;
 use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\Concerns\HasSharedFormConfiguration;
@@ -46,6 +45,7 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class EditSurvey extends EditRecord
 {

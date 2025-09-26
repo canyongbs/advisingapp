@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Grid;
 use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class ViewStudentCareTeamRole extends ViewRecord
 {
@@ -51,7 +51,7 @@ class ViewStudentCareTeamRole extends ViewRecord
 
     public function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
                 Section::make()
                     ->schema([

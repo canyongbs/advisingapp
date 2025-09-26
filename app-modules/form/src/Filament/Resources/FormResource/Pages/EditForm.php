@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Form\Filament\Resources\FormResource\Pages\Concerns\HasSharedFormConfiguration;
@@ -46,6 +45,7 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class EditForm extends EditRecord
 {

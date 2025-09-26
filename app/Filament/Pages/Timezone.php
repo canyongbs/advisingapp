@@ -36,13 +36,13 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use App\Settings\DisplaySettings;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
 /**
- * @property \Filament\Schemas\Schema $form
+ * @property Schema $form
  */
 class Timezone extends ProfilePage
 {

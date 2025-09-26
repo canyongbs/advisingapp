@@ -36,7 +36,6 @@
 
 namespace App\Providers;
 
-use Filament\Auth\Notifications\ResetPassword;
 use AdvisingApp\Engagement\Jobs\CreateBatchedEngagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Pipeline\Models\Pipeline;
@@ -57,6 +56,7 @@ use Filament\Actions\Exports\Jobs\ExportCompletion;
 use Filament\Actions\Exports\Jobs\ExportCsv;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 use Filament\Actions\Imports\Jobs\ImportCsv;
+use Filament\Auth\Notifications\ResetPassword;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Table;
 use Illuminate\Cache\RateLimiting\Limit;

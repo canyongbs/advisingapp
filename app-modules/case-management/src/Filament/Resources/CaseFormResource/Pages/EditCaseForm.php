@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\CaseManagement\Models\CaseForm;
@@ -46,6 +45,7 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class EditCaseForm extends EditRecord
 {

@@ -47,12 +47,13 @@ use AdvisingApp\Form\Models\Form;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
 
 class FormResource extends Resource
 {
     protected static ?string $model = Form::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Digital Forms';
+    protected static string | UnitEnum | null $navigationGroup = 'Digital Forms';
 
     protected static ?int $navigationSort = 10;
 

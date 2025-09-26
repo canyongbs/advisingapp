@@ -36,8 +36,6 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use AdvisingApp\Authorization\Models\License;
 use App\Filament\Forms\Components\Licenses;
 use App\Filament\Resources\UserResource;
@@ -49,10 +47,12 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
-use STS\FilamentImpersonate\Pages\Actions\Impersonate;
+use STS\FilamentImpersonate\Actions\Impersonate;
 
 class ViewUser extends ViewRecord
 {

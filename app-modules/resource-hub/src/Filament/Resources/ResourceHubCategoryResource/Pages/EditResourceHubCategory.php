@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
 use App\Filament\Forms\Components\IconSelect;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -45,6 +44,7 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class EditResourceHubCategory extends EditRecord
 {

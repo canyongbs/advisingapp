@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Fieldset;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
@@ -61,6 +59,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
 class EditInteraction extends EditRecord

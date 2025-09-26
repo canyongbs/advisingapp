@@ -36,16 +36,17 @@
 
 namespace AdvisingApp\Campaign\Filament\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use App\Models\User;
 use App\Settings\DisplaySettings;
+use BackedEnum;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Schema;
 use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
 class ManageCampaignSettings extends SettingsPage
 {
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
     protected static ?string $navigationLabel = 'Campaign Settings';
 

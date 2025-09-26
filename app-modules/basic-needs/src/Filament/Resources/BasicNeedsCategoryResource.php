@@ -43,6 +43,7 @@ use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages\V
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use App\Filament\Clusters\ConstituentManagement;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class BasicNeedsCategoryResource extends Resource
 {
@@ -56,7 +57,7 @@ class BasicNeedsCategoryResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Basic Needs';
+    protected static string | UnitEnum | null $navigationGroup = 'Basic Needs';
 
     public static function getPages(): array
     {

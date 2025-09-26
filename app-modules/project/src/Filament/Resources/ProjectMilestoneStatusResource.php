@@ -42,13 +42,14 @@ use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages\
 use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages\ViewProjectMilestoneStatus;
 use AdvisingApp\Project\Models\ProjectMilestoneStatus;
 use App\Filament\Clusters\ProjectManagement;
+use BackedEnum;
 use Filament\Resources\Resource;
 
 class ProjectMilestoneStatusResource extends Resource
 {
     protected static ?string $model = ProjectMilestoneStatus::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationLabel = 'Statuses';
 

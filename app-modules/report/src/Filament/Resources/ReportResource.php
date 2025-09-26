@@ -41,12 +41,13 @@ use AdvisingApp\Report\Filament\Resources\ReportResource\Pages\EditReport;
 use AdvisingApp\Report\Filament\Resources\ReportResource\Pages\ListReports;
 use AdvisingApp\Report\Models\Report;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class ReportResource extends Resource
 {
     protected static ?string $model = Report::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Data and Analytics';
+    protected static string | UnitEnum | null $navigationGroup = 'Data and Analytics';
 
     protected static ?int $navigationSort = 40;
 

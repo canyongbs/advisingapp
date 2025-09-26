@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas\StudentProfileInfolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Schema;
 
 class ViewStudent extends ViewRecord
 {
@@ -54,6 +54,6 @@ class ViewStudent extends ViewRecord
 
     public function profile(Schema $schema): Schema
     {
-        return StudentProfileInfolist::configure($schema);
+        return StudentProfileInfolist::configure($schema->record($this->getRecord()));
     }
 }

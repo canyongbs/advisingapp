@@ -36,10 +36,6 @@
 
 namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
-use Filament\Schemas\Schema;
-use Filament\Support\Enums\Size;
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Ai\Actions\CreateThread;
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Jobs\Advisors\PrepareAiThreadCloning;
@@ -55,7 +51,11 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\Size;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;

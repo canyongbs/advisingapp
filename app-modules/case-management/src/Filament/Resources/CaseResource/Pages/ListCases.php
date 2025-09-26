@@ -36,10 +36,6 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
 
-use Filament\Actions\ViewAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\CaseManagement\Enums\SlaComplianceStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Models\CaseModel;
@@ -49,7 +45,11 @@ use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSort;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;

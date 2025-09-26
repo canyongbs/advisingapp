@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Authorization\Filament\Resources\RoleResource;
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use AdvisingApp\Authorization\Models\Role;
@@ -49,6 +47,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Illuminate\Validation\Rules\Unique;
 
 class EditRole extends EditRecord

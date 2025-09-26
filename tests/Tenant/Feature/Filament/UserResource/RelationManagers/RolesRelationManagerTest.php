@@ -33,7 +33,6 @@
 
 </COPYRIGHT>
 */
-
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\Role;
 use App\Filament\Resources\UserResource;
@@ -41,8 +40,8 @@ use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Models\Authenticatable;
 use App\Models\User;
+use Filament\Actions\AttachAction;
 use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\AttachAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;

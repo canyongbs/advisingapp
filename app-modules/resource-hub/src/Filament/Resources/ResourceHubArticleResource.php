@@ -36,15 +36,16 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\CreateResourceHubArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\EditResourceHubArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\ListResourceHubArticles;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\ViewResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use UnitEnum;
 
 class ResourceHubArticleResource extends Resource
 {
@@ -56,7 +57,7 @@ class ResourceHubArticleResource extends Resource
 
     protected static ?string $breadcrumb = 'Resource Hub';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Knowledge Management';
+    protected static string | UnitEnum | null $navigationGroup = 'Knowledge Management';
 
     protected static ?int $navigationSort = 10;
 

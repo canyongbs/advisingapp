@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
@@ -46,6 +45,7 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class EditCalendarEvent extends EditRecord
 {

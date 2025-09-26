@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Workflow\Filament\Resources;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Workflow\Filament\Resources\WorkflowResource\Pages\EditWorkflow;
 use AdvisingApp\Workflow\Filament\Resources\WorkflowResource\Pages\ListWorkflows;
 use AdvisingApp\Workflow\Filament\Resources\WorkflowResource\RelationManagers\WorkflowStepsRelationManager;
@@ -44,6 +43,7 @@ use AdvisingApp\Workflow\Models\Workflow;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 
 class WorkflowResource extends Resource
 {

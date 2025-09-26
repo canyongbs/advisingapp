@@ -36,14 +36,15 @@
 
 namespace AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Segment\Enums\SegmentModel;
+use BackedEnum;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Schemas\Schema;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -63,7 +64,7 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
 
     protected static string $relationship = 'educatablePipelineStages';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-adjustments-vertical';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-adjustments-vertical';
 
     protected string $view = 'pipeline::filament.pages.manage-pipeline-educatables';
 

@@ -36,10 +36,6 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\PromptResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Group;
-use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Ai\Filament\Resources\PromptResource;
 use AdvisingApp\Ai\Models\Prompt;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -52,6 +48,10 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 
 class EditPrompt extends EditRecord
 {

@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages;
 
-use Filament\Actions\EditAction;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
 use AdvisingApp\Workflow\Filament\Resources\WorkflowResource;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use Filament\Actions\Action;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;

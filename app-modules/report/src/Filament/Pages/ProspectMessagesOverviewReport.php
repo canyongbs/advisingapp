@@ -42,12 +42,13 @@ use AdvisingApp\Report\Filament\Widgets\ProspectEngagementLineChart;
 use AdvisingApp\Report\Filament\Widgets\ProspectEngagementState;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Filament\Clusters\ReportLibrary;
+use UnitEnum;
 
 class ProspectMessagesOverviewReport extends ProspectReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
 
     protected static ?string $title = 'Messages Overview';
 

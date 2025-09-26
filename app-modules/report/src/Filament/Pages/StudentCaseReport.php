@@ -41,6 +41,7 @@ use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\StudentCaseStats;
 use AdvisingApp\Report\Filament\Widgets\StudentCaseTable;
 use App\Filament\Clusters\ReportLibrary;
+use UnitEnum;
 
 class StudentCaseReport extends StudentReport
 {
@@ -50,7 +51,7 @@ class StudentCaseReport extends StudentReport
 
     protected static string $routePath = 'student-case-report';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Students';
+    protected static string | UnitEnum | null $navigationGroup = 'Students';
 
     protected string $cacheTag = 'report-student-case';
 

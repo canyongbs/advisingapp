@@ -66,7 +66,7 @@ class StudentInteractionTypeDoughnutChart extends ChartReportWidget
             return view('livewire.no-widget-data');
         }
 
-        return view(static::$view, $this->getViewData());
+        return view($this->view, $this->getViewData());
     }
 
     public function getData(): array

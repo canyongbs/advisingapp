@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class ViewProjectMilestoneStatus extends ViewRecord
 {
@@ -49,7 +49,7 @@ class ViewProjectMilestoneStatus extends ViewRecord
 
     public function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
                 Section::make()
                     ->schema([

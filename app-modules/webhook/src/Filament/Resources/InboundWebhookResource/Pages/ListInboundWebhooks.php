@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages;
 
-use Filament\Actions\ViewAction;
 use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;

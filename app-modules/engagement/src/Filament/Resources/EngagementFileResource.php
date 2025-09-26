@@ -36,24 +36,26 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\CreateEngagementFile;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\EditEngagementFile;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\ListEngagementFiles;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\ViewEngagementFile;
 use AdvisingApp\Engagement\Models\EngagementFile;
+use BackedEnum;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use UnitEnum;
 
 class EngagementFileResource extends Resource
 {
     protected static ?string $model = EngagementFile::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-duplicate';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-document-duplicate';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = 'CRM';
 
     protected static ?int $navigationSort = 7;
 

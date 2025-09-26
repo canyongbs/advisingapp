@@ -36,13 +36,6 @@
 
 namespace AdvisingApp\Engagement\Filament\Pages;
 
-use Filament\Panel;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Flex;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Fieldset;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Actions\CreateEngagement;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
@@ -67,13 +60,20 @@ use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Panel;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Support\Carbon;
 use Livewire\Attributes\Locked;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 /**
- * @property-read \Filament\Schemas\Schema $replyForm
+ * @property-read Schema $replyForm
  */
 class ViewEngagementResponse extends Page
 {

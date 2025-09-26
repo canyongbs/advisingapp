@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Task\Database\Factories;
 
-use AdvisingApp\Task\Models\ConfidentialTasksProjects;
 use AdvisingApp\Project\Models\Project;
+use AdvisingApp\Task\Models\ConfidentialTasksProjects;
 use AdvisingApp\Task\Models\Task;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

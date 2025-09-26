@@ -36,16 +36,16 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 
 /**
- * @property \Filament\Schemas\Schema $form
+ * @property Schema $form
  */
 class OfficeHours extends ProfilePage
 {

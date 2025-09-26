@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Ai\Jobs\Advisors;
 
-use Filament\Actions\Action;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Assistant\Filament\Pages\InstitutionalAdvisor;
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;

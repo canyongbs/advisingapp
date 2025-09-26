@@ -42,6 +42,7 @@ use AdvisingApp\Report\Filament\Widgets\ProspectMessagesDetailTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Features\HolisticEngagementFeature;
 use App\Filament\Clusters\ReportLibrary;
+use UnitEnum;
 
 class ProspectMessagesDetailReport extends ProspectReport
 {
@@ -51,7 +52,7 @@ class ProspectMessagesDetailReport extends ProspectReport
 
     protected static string $routePath = 'prospect-messages-detail-report';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
 
     protected string $cacheTag = 'report-prospect-messages-detail';
 

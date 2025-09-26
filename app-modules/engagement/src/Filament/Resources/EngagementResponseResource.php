@@ -39,13 +39,14 @@ namespace AdvisingApp\Engagement\Filament\Resources;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Pages\ListEngagementResponses;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Pages\ViewEngagementResponse;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use BackedEnum;
 use Filament\Resources\Resource;
 
 class EngagementResponseResource extends Resource
 {
     protected static ?string $model = EngagementResponse::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
 
     protected static bool $shouldRegisterNavigation = false;
 

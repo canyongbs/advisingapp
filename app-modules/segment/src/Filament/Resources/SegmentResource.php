@@ -41,12 +41,13 @@ use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\EditSegment;
 use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\ListSegments;
 use AdvisingApp\Segment\Models\Segment;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class SegmentResource extends Resource
 {
     protected static ?string $model = Segment::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = 'CRM';
 
     protected static ?int $navigationSort = 50;
 

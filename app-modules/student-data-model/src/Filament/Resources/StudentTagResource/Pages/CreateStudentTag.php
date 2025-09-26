@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource;
 use App\Enums\TagType;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateStudentTag extends CreateRecord
 {

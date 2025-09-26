@@ -36,10 +36,6 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\CaseManagement\Actions\CreateCaseAction;
 use AdvisingApp\CaseManagement\DataTransferObjects\CaseDataObject;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
@@ -54,6 +50,10 @@ use Filament\Forms\Components\Textarea;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;

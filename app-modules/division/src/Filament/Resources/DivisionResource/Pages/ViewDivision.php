@@ -36,9 +36,6 @@
 
 namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Grid;
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
 use AdvisingApp\Division\Models\Division;
 use App\Filament\Resources\NotificationSettingResource;
@@ -47,6 +44,9 @@ use Filament\Actions\EditAction;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class ViewDivision extends ViewRecord
 {
@@ -54,7 +54,7 @@ class ViewDivision extends ViewRecord
 
     public function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
                 Section::make()
                     ->schema([

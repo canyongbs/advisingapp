@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 
-use Filament\Actions\ViewAction;
-use Filament\Actions\EditAction;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;

@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class EditResourceHubStatus extends EditRecord
 {

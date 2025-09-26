@@ -36,10 +36,6 @@
 
 namespace AdvisingApp\Report\Filament\Resources\ReportResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
-use Filament\Schemas\Components\Wizard\Step;
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Schemas\Components\View;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\ReportModel;
 use AdvisingApp\Report\Filament\Resources\ReportResource;
@@ -52,6 +48,10 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\View;
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -95,9 +95,7 @@ class CreateReport extends CreateRecord implements HasTable
                                 ->values()
                                 ->all());
 
-                            $this->cacheForms();
-                            $this->bootedInteractsWithTable();
-                            $this->resetTableFiltersForm();
+                            $this->resetTable();
                         }),
                 ])
                 ->columns(2)

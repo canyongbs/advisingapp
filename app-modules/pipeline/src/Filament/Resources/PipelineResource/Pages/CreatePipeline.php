@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use AdvisingApp\Project\Models\Project;
@@ -46,6 +45,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Js;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;

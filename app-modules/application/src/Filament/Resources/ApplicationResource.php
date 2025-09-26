@@ -45,12 +45,13 @@ use AdvisingApp\Application\Models\Application;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
 
 class ApplicationResource extends Resource
 {
     protected static ?string $model = Application::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Online Admissions';
+    protected static string | UnitEnum | null $navigationGroup = 'Online Admissions';
 
     protected static ?int $navigationSort = 10;
 

@@ -36,10 +36,10 @@
 
 namespace App\Filament\Widgets;
 
-use Filament\Actions\ViewAction;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;

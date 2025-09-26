@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Features\SettingsPermissions;
@@ -44,6 +43,8 @@ use App\Filament\Clusters\ConstituentManagement;
 use App\Models\User;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Schema;
+use UnitEnum;
 
 class ManageStudentConfiguration extends SettingsPage
 {
@@ -51,7 +52,7 @@ class ManageStudentConfiguration extends SettingsPage
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Students';
+    protected static string | UnitEnum | null $navigationGroup = 'Students';
 
     protected static ?string $navigationLabel = 'Configuration';
 

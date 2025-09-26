@@ -33,13 +33,13 @@
 
 </COPYRIGHT>
 */
-use Filament\Actions\AssociateAction;
 use AdvisingApp\Team\Filament\Resources\TeamResource;
 use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\EditTeam;
 use AdvisingApp\Team\Filament\Resources\TeamResource\RelationManagers\UsersRelationManager;
 use AdvisingApp\Team\Models\Team;
 use App\Models\Authenticatable;
 use App\Models\User;
+use Filament\Actions\AssociateAction;
 use Filament\Forms\Components\Select;
 
 use function Pest\Laravel\actingAs;

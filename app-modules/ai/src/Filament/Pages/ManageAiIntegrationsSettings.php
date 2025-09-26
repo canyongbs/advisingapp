@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use App\Features\Gpt5AndMiniAndNanoFeature;
@@ -46,6 +44,8 @@ use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Illuminate\Validation\Rule;
 
 class ManageAiIntegrationsSettings extends SettingsPage

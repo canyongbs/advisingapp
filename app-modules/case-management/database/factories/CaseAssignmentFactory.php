@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\CaseManagement\Database\Factories;
 
-use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;

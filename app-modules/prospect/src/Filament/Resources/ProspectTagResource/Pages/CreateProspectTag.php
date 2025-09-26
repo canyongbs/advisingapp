@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource;
 use App\Enums\TagType;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateProspectTag extends CreateRecord
 {

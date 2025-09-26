@@ -45,12 +45,13 @@ use AdvisingApp\MeetingCenter\Models\Event;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
+use UnitEnum;
 
 class EventResource extends Resource
 {
     protected static ?string $model = Event::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Event Management';
+    protected static string | UnitEnum | null $navigationGroup = 'Event Management';
 
     protected static ?int $navigationSort = 10;
 

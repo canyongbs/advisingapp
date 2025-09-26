@@ -36,8 +36,6 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use App\Filament\Clusters\ProductIntegrations;
 use App\Models\Tenant;
 use App\Models\User;
@@ -51,11 +49,13 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 /**
- * @property \Filament\Schemas\Schema $form
+ * @property Schema $form
  */
 class AmazonS3 extends Page implements HasForms
 {

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\CreateCampaign;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Segment\Models\Segment;
@@ -45,6 +44,8 @@ use Carbon\CarbonImmutable;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Utilities\Get;
 
 class TagsBlock extends CampaignActionBlock
 {
@@ -61,7 +62,7 @@ class TagsBlock extends CampaignActionBlock
      *
      * @param string $fieldPrefix
      *
-     * @return array<\Filament\Schemas\Components\Component>
+     * @return array<Component>
      */
     public function generateFields(string $fieldPrefix = ''): array
     {

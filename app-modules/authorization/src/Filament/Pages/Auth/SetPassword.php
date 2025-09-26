@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Component;
 use AdvisingApp\Authorization\Http\Middleware\RedirectIfPasswordNotSet;
 use App\Models\User;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
@@ -51,12 +49,14 @@ use Filament\Pages\Concerns\HasRoutes;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
 use Filament\Panel;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules\Password;
 
 /**
- * @property-read \Filament\Schemas\Schema $form
+ * @property-read Schema $form
  */
 class SetPassword extends SimplePage
 {

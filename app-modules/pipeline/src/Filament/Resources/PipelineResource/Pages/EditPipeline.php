@@ -36,13 +36,12 @@
 
 namespace AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Actions\Action;
 use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Pipeline\Models\PipelineStage;
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -50,6 +49,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 
 class EditPipeline extends EditRecord

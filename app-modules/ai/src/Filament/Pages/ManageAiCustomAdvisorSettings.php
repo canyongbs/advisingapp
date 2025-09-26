@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -50,6 +48,8 @@ use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 

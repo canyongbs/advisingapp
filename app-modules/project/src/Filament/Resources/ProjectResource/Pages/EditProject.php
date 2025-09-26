@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
@@ -44,6 +43,7 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class EditProject extends EditRecord
 {

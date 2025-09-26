@@ -36,9 +36,8 @@
 
 namespace App\Filament\Resources\PronounsResource\Pages;
 
-use Filament\Actions\CreateAction;
 use App\Filament\Resources\PronounsResource;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManagePronouns extends ManageRecords

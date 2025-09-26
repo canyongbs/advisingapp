@@ -44,12 +44,13 @@ use AdvisingApp\Survey\Models\Survey;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
 
 class SurveyResource extends Resource
 {
     protected static ?string $model = Survey::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Premium Features';
+    protected static string | UnitEnum | null $navigationGroup = 'Premium Features';
 
     protected static ?int $navigationSort = 70;
 

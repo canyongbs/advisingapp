@@ -36,14 +36,14 @@
 
 namespace App\Filament\Resources\SystemUserResource\RelationManagers;
 
-use Filament\Schemas\Schema;
+use App\Filament\Tables\Columns\IdColumn;
+use App\Models\SystemUser;
 use Filament\Actions\AttachAction;
 use Filament\Actions\DetachAction;
 use Filament\Actions\DetachBulkAction;
-use App\Filament\Tables\Columns\IdColumn;
-use App\Models\SystemUser;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;

@@ -36,12 +36,13 @@
 
 namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
 
-use Filament\Actions\CreateAction;
-use Filament\Actions\ViewAction;
-use Filament\Actions\EditAction;
 use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
+use BackedEnum;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -54,7 +55,7 @@ class ManageProjectPipelines extends ManageRelatedRecords
 
     protected static string $relationship = 'pipelines';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $title = 'Pipelines';
 

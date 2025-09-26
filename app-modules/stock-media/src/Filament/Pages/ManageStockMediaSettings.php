@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\StockMedia\Filament\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\StockMedia\Enums\StockMediaProvider;
 use AdvisingApp\StockMedia\Settings\StockMediaSettings;
 use App\Features\StockMediaFeature;
@@ -45,10 +43,13 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use UnitEnum;
 
 class ManageStockMediaSettings extends SettingsPage
 {
-    protected static string | \UnitEnum | null $navigationGroup = 'Global Administration';
+    protected static string | UnitEnum | null $navigationGroup = 'Global Administration';
 
     protected static ?int $navigationSort = 80;
 

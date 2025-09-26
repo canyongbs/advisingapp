@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\CreateSla;
 use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\EditSla;
 use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\ListSlas;
@@ -47,6 +46,7 @@ use App\Filament\Forms\Components\SecondsDurationInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 
 class SlaResource extends Resource
 {

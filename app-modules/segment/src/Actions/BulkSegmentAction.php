@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Segment\Actions;
 
-use Filament\Actions\BulkAction;
-use Filament\Schemas\Schema;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Enums\SegmentType;
 use AdvisingApp\Segment\Models\Segment;
 use Exception;
+use Filament\Actions\BulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 

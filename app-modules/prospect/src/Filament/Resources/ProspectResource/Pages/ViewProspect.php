@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Schemas\ProspectProfileInfolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Schema;
 
 class ViewProspect extends ViewRecord
 {
@@ -57,6 +57,6 @@ class ViewProspect extends ViewRecord
 
     public function profile(Schema $schema): Schema
     {
-        return ProspectProfileInfolist::configure($schema);
+        return ProspectProfileInfolist::configure($schema->record($this->getRecord()));
     }
 }

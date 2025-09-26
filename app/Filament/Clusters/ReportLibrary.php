@@ -37,10 +37,11 @@
 namespace App\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
+use UnitEnum;
 
 class ReportLibrary extends Cluster
 {
-    protected static string | \UnitEnum | null $navigationGroup = 'Data and Analytics';
+    protected static string | UnitEnum | null $navigationGroup = 'Data and Analytics';
 
     protected static ?int $navigationSort = 10;
 }

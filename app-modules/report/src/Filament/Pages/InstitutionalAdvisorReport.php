@@ -43,6 +43,7 @@ use AdvisingApp\Report\Filament\Widgets\InstitutionalAdvisorStats;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Features\AiAssistantUseFeature;
 use App\Filament\Clusters\ReportLibrary;
+use UnitEnum;
 
 class InstitutionalAdvisorReport extends AiReport
 {
@@ -50,7 +51,7 @@ class InstitutionalAdvisorReport extends AiReport
 
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Artificial Intelligence';
+    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
 
     protected static ?string $title = 'Institutional Advisor';
 

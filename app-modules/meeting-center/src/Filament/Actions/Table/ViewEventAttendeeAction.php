@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Actions\Table;
 
-use Filament\Actions\ViewAction;
-use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Livewire;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Livewire;
 
 class ViewEventAttendeeAction extends ViewAction
 {

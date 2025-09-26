@@ -36,14 +36,6 @@
 
 namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages;
 
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Actions\Action;
-use Filament\Actions\ViewAction;
-use Filament\Schemas\Components\Section;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\BulkAction;
-use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Exports\ApplicationSubmissionExport;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
@@ -51,9 +43,17 @@ use AdvisingApp\Application\Filament\Resources\ApplicationResource\Actions\Appli
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\Scopes\ClassifiedAs;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;

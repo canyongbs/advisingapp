@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions;
 
-use Filament\Support\Enums\Width;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Enums\TagType;
 use App\Models\Tag;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\Width;
 
 class ProspectTagsAction extends Action
 {

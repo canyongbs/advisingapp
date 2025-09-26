@@ -36,12 +36,6 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Schemas\Components\Flex;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Facades\Filament\Schemas\Schema;
-use Filament\Facades\Filament\Schemas\Components\Grid;
 use App\Filament\Clusters\ProfileSettings;
 use Exception;
 use Filament\Actions\Action;
@@ -52,6 +46,12 @@ use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Exceptions\Halt;
@@ -224,6 +224,11 @@ abstract class ProfilePage extends Page
             ->keyBindings(['mod+s']);
     }
 
+    public function form(Schema $schema): Schema
+    {
+        return $schema;
+    }
+
     /**
      * @return array<int|string, string|Schema>
      */
@@ -231,7 +236,7 @@ abstract class ProfilePage extends Page
     {
         return [
             'form' => $this->form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->operation('edit')
                     ->model($this->getUser())
                     ->statePath('data'),

@@ -40,6 +40,7 @@ use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages\ListInbo
 use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages\ViewInboundWebhook;
 use AdvisingApp\Webhook\Models\InboundWebhook;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class InboundWebhookResource extends Resource
 {
@@ -47,7 +48,7 @@ class InboundWebhookResource extends Resource
 
     protected static ?int $navigationSort = 30;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Global Administration';
+    protected static string | UnitEnum | null $navigationGroup = 'Global Administration';
 
     public static function getPages(): array
     {

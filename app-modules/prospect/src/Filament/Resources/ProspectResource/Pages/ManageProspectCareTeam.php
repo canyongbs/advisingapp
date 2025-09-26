@@ -36,11 +36,6 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use Filament\Actions\AttachAction;
-use Filament\Schemas\Schema;
-use Filament\Actions\DetachAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DetachBulkAction;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
@@ -52,8 +47,14 @@ use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
 use App\Models\User;
+use BackedEnum;
+use Filament\Actions\AttachAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DetachAction;
+use Filament\Actions\DetachBulkAction;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -73,7 +74,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
     // TODO: Automatically set from Filament based on relationship name
     protected static ?string $breadcrumb = 'Care Team';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
 
     //TODO: manually override check canAccess for policy
 

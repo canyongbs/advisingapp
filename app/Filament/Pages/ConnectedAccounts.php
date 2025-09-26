@@ -36,20 +36,20 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Actions;
-use Filament\Actions\Action;
-use Filament\Schemas\Components\Component;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Placeholder;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Collection;
 
 /**
- * @property \Filament\Schemas\Schema $form
+ * @property Schema $form
  */
 class ConnectedAccounts extends ProfilePage
 {
@@ -76,7 +76,7 @@ class ConnectedAccounts extends ProfilePage
     }
 
     /**
-     * @return Collection<int, \Filament\Schemas\Components\Grid>
+     * @return Collection<int, Grid>
      */
     private static function getConnectedAccounts(): Collection
     {

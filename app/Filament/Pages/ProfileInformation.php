@@ -36,13 +36,9 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Actions\Action;
-use Filament\Schemas\Components\Component;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\RichEditor;
@@ -50,12 +46,16 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 /**
- * @property \Filament\Schemas\Schema $form
+ * @property Schema $form
  */
 class ProfileInformation extends ProfilePage
 {
@@ -212,13 +212,13 @@ class ProfileInformation extends ProfilePage
     }
 
     /**
-     * @return array<int|string, string|\Filament\Schemas\Schema>
+     * @return array<int|string, string|Schema>
      */
     protected function getForms(): array
     {
         return [
             'form' => $this->form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->components([
                         $this->getNameFormComponent(),
                         $this->getEmailFormComponent(),

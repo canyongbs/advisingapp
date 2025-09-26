@@ -44,10 +44,11 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
 use Filament\Clusters\Cluster;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class InteractionManagement extends Cluster
 {
-    protected static string | \UnitEnum | null $navigationGroup = 'Settings';
+    protected static string | UnitEnum | null $navigationGroup = 'Settings';
 
     protected static ?int $navigationSort = 90;
 

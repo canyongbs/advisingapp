@@ -43,12 +43,13 @@ use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\ViewTeam;
 use AdvisingApp\Team\Filament\Resources\TeamResource\RelationManagers\UsersRelationManager;
 use AdvisingApp\Team\Models\Team;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class TeamResource extends Resource
 {
     protected static ?string $model = Team::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'User Management';
+    protected static string | UnitEnum | null $navigationGroup = 'User Management';
 
     protected static ?int $navigationSort = 20;
 

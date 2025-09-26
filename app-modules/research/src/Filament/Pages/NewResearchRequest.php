@@ -36,9 +36,6 @@
 
 namespace AdvisingApp\Research\Filament\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Wizard;
-use Filament\Schemas\Components\Wizard\Step;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -54,6 +51,9 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Schema;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
@@ -61,7 +61,7 @@ use Livewire\Attributes\Url;
 use Livewire\Features\SupportRedirects\Redirector;
 
 /**
- * @property-read \Filament\Schemas\Schema $form
+ * @property-read Schema $form
  * @property-read ?ResearchRequest $researchRequest
  */
 class NewResearchRequest extends Page

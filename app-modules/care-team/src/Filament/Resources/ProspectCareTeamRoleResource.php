@@ -47,6 +47,7 @@ use App\Filament\Clusters\ConstituentManagement;
 use App\Models\User;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
 
 class ProspectCareTeamRoleResource extends Resource
 {
@@ -56,7 +57,7 @@ class ProspectCareTeamRoleResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
 
     protected static ?string $breadcrumb = 'Prospect Care Team Roles';
 

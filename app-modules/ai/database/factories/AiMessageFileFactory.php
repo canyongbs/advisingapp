@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
-use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiMessageFile;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

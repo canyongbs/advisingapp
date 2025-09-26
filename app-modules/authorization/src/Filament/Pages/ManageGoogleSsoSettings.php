@@ -36,15 +36,16 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use App\Filament\Clusters\Authentication;
 use App\Models\User;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use UnitEnum;
 
 class ManageGoogleSsoSettings extends SettingsPage
 {
@@ -56,7 +57,7 @@ class ManageGoogleSsoSettings extends SettingsPage
 
     protected static ?int $navigationSort = 30;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Single Sign-On (SSO)';
+    protected static string | UnitEnum | null $navigationGroup = 'Single Sign-On (SSO)';
 
     protected static ?string $cluster = Authentication::class;
 

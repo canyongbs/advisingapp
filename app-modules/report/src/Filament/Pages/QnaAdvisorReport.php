@@ -38,12 +38,13 @@ namespace AdvisingApp\Report\Filament\Pages;
 
 use AdvisingApp\Report\Abstract\AiReport;
 use App\Filament\Clusters\ReportLibrary;
+use UnitEnum;
 
 class QnaAdvisorReport extends AiReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Artificial Intelligence';
+    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
 
     protected static ?string $title = 'QnA Advisor';
 

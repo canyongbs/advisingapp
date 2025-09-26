@@ -42,6 +42,7 @@ use AdvisingApp\Report\Filament\Widgets\StudentDeliverableTable;
 use AdvisingApp\Report\Filament\Widgets\StudentEmailOptInOptOutPieChart;
 use AdvisingApp\Report\Filament\Widgets\StudentSmsOptInOptOutPieChart;
 use App\Filament\Clusters\ReportLibrary;
+use UnitEnum;
 
 class StudentDeliverabilityReport extends StudentReport
 {
@@ -51,7 +52,7 @@ class StudentDeliverabilityReport extends StudentReport
 
     protected static string $routePath = 'student-deliverability-report';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Students';
+    protected static string | UnitEnum | null $navigationGroup = 'Students';
 
     protected $cacheTag = 'report-student-deliverability';
 

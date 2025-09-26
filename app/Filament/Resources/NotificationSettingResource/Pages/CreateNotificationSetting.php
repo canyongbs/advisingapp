@@ -36,13 +36,13 @@
 
 namespace App\Filament\Resources\NotificationSettingResource\Pages;
 
-use Filament\Schemas\Schema;
 use App\Filament\Forms\Components\ColorSelect;
 use App\Filament\Resources\NotificationSettingResource;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateNotificationSetting extends CreateRecord
 {

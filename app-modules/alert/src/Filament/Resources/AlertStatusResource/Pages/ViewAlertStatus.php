@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class ViewAlertStatus extends ViewRecord
 {
@@ -50,7 +50,7 @@ class ViewAlertStatus extends ViewRecord
 
     public function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
                 Section::make()
                     ->schema([

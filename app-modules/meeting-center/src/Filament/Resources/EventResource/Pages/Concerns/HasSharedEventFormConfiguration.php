@@ -36,12 +36,6 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns;
 
-use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Section;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Rules\IsDomain;
@@ -57,6 +51,12 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 

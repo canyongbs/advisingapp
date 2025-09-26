@@ -36,11 +36,6 @@
 
 namespace AdvisingApp\Portal\Filament\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Actions;
-use Filament\Actions\Action;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Portal\Actions\GeneratePortalEmbedCode;
 use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
@@ -49,6 +44,7 @@ use AdvisingApp\Portal\Settings\PortalSettings;
 use App\Enums\Feature;
 use App\Filament\Forms\Components\ColorSelect;
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -56,8 +52,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Support\Facades\Gate;
+use UnitEnum;
 
 class ManagePortalSettings extends SettingsPage
 {
@@ -69,7 +70,7 @@ class ManagePortalSettings extends SettingsPage
 
     protected static ?string $title = 'Portals';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Global Administration';
+    protected static string | UnitEnum | null $navigationGroup = 'Global Administration';
 
     public static function canAccess(): bool
     {

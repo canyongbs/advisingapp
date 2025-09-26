@@ -36,10 +36,10 @@
 
 namespace App\Filament\Resources\SystemUserResource\Pages;
 
-use Filament\Schemas\Schema;
 use App\Filament\Resources\SystemUserResource;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateSystemUser extends CreateRecord
 {

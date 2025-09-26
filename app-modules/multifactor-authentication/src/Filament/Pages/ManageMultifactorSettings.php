@@ -36,12 +36,13 @@
 
 namespace AdvisingApp\MultifactorAuthentication\Filament\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
 use App\Filament\Clusters\Authentication;
 use App\Models\User;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Schema;
+use UnitEnum;
 
 class ManageMultifactorSettings extends SettingsPage
 {
@@ -51,7 +52,7 @@ class ManageMultifactorSettings extends SettingsPage
 
     protected static string $settings = MultifactorSettings::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Local Authentication';
+    protected static string | UnitEnum | null $navigationGroup = 'Local Authentication';
 
     protected static ?int $navigationSort = 10;
 

@@ -36,9 +36,6 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Grid;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
@@ -52,8 +49,12 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use UnitEnum;
 
 class EditQnaAdvisor extends EditRecord
 {
@@ -63,7 +64,7 @@ class EditQnaAdvisor extends EditRecord
 
     protected static ?string $navigationLabel = 'Edit';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'QnA Advisor';
+    protected static string | UnitEnum | null $navigationGroup = 'QnA Advisor';
 
     /**
      * @return array<int|string, string|null>

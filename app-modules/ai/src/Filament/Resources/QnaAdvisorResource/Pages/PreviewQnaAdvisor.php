@@ -40,12 +40,13 @@ use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use App\Models\User;
 use Filament\Resources\Pages\ViewRecord;
+use UnitEnum;
 
 class PreviewQnaAdvisor extends ViewRecord
 {
     protected static string $resource = QnaAdvisorResource::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Configuration';
+    protected static string | UnitEnum | null $navigationGroup = 'Configuration';
 
     protected static ?string $title = 'Preview';
 

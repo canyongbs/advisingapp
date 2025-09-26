@@ -36,10 +36,9 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource\Pages;
 
-use Filament\Actions\DeleteAction;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditInteractionType extends EditRecord

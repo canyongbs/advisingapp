@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
@@ -46,6 +44,8 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class ViewEngagementResponse extends ViewRecord
 {
@@ -53,7 +53,7 @@ class ViewEngagementResponse extends ViewRecord
 
     public function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
                 Section::make()
                     ->schema([

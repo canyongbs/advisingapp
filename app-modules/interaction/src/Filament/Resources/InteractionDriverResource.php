@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages\CreateInteractionDriver;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages\EditInteractionDriver;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages\ListInteractionDrivers;
@@ -45,6 +44,7 @@ use App\Filament\Clusters\InteractionManagement;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 
 class InteractionDriverResource extends Resource
 {

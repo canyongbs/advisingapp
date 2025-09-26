@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\IntegrationGoogleAnalytics\Filament\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Utilities\Get;
 use AdvisingApp\IntegrationGoogleAnalytics\Settings\GoogleAnalyticsSettings;
 use App\Filament\Clusters\ProductIntegrations;
 use App\Models\User;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 
 class ManageGoogleAnalyticsSettings extends SettingsPage
 {

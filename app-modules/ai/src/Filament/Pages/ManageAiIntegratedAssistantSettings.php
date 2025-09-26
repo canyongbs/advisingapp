@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Ai\Filament\Pages;
 
-use Filament\Schemas\Schema;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -46,6 +45,7 @@ use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Schema;
 use Illuminate\Validation\Rule;
 
 /**

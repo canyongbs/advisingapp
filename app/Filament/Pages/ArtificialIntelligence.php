@@ -36,13 +36,13 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 /**
- * @property \Filament\Schemas\Schema $form
+ * @property Schema $form
  */
 class ArtificialIntelligence extends ProfilePage
 {

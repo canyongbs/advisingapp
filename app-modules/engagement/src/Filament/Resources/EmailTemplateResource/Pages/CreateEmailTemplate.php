@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Actions;
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -45,6 +43,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Schema;
 use FilamentTiptapEditor\TiptapEditor;
 
 class CreateEmailTemplate extends CreateRecord

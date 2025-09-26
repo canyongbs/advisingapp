@@ -36,7 +36,6 @@
 
 namespace App\Filament\Resources\SystemUserResource\Pages;
 
-use Filament\Schemas\Schema;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Filament\Resources\SystemUserResource;
 use App\Models\SystemUser;
@@ -44,6 +43,7 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class EditSystemUser extends EditRecord
 {

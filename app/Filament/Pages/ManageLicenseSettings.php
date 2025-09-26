@@ -36,9 +36,6 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 use App\DataTransferObjects\LicenseManagement\LicenseData;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -46,6 +43,10 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use UnitEnum;
 
 class ManageLicenseSettings extends SettingsPage
 {
@@ -55,7 +56,7 @@ class ManageLicenseSettings extends SettingsPage
 
     protected static string $settings = LicenseSettings::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Global Administration';
+    protected static string | UnitEnum | null $navigationGroup = 'Global Administration';
 
     public static function canAccess(): bool
     {

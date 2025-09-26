@@ -79,6 +79,7 @@ use Livewire\Attributes\Url;
 use Twilio\Jwt\AccessToken;
 use Twilio\Jwt\Grants\ChatGrant;
 use Twilio\Rest\Client;
+use UnitEnum;
 
 /**
  * @property Collection $conversations
@@ -95,7 +96,7 @@ class UserChat extends Page implements HasForms, HasActions
 
     public array $conversationActiveUsers = [];
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Premium Features';
+    protected static string | UnitEnum | null $navigationGroup = 'Premium Features';
 
     protected static ?int $navigationSort = 10;
 

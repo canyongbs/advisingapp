@@ -36,11 +36,6 @@
 
 namespace AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages;
 
-use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
-use Filament\Schemas\Components\Wizard\Step;
-use Filament\Schemas\Components\View;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Actions\Action;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Enums\SegmentType;
@@ -50,6 +45,7 @@ use App\Models\Import;
 use App\Models\User;
 use App\Support\ChunkIterator;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -57,6 +53,10 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\View;
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -95,9 +95,7 @@ class CreateSegment extends CreateRecord implements HasTable
                         ->default(SegmentModel::default())
                         ->selectablePlaceholder(false)
                         ->afterStateUpdated(function () {
-                            $this->cacheForms();
-                            $this->bootedInteractsWithTable();
-                            $this->resetTableFiltersForm();
+                            $this->resetTable();
                         }),
                 ])
                 ->columns(2)

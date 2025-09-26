@@ -36,9 +36,6 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Group;
 use AdvisingApp\CaseManagement\Enums\SlaComplianceStatus;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\Concerns\HasCaseRecordHeader;
@@ -51,6 +48,9 @@ use Carbon\CarbonInterval;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class ViewCase extends ViewRecord
 {
@@ -64,7 +64,7 @@ class ViewCase extends ViewRecord
     {
         $formatSecondsAsInterval = fn (?int $state): ?string => $state ? CarbonInterval::seconds($state)->cascade()->forHumans(short: true) : null;
 
-        return $infolist
+        return $schema
             ->schema([
                 Section::make()
                     ->schema([

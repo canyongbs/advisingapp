@@ -39,9 +39,10 @@ namespace App\Filament\Pages;
 use App\Filament\Clusters\ProfileSettings;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 
 /**
- * @property \Filament\Schemas\Schema $form
+ * @property Schema $form
  */
 class MultifactorAuthentication extends Page
 {

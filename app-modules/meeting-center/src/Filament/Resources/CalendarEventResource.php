@@ -42,12 +42,13 @@ use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\Lis
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ViewCalendarEvent;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class CalendarEventResource extends Resource
 {
     protected static ?string $model = CalendarEvent::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = 'CRM';
 
     protected static ?int $navigationSort = 60;
 

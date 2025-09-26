@@ -36,11 +36,10 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages;
 
-use Filament\Actions\DeleteAction;
 use AdvisingApp\CaseManagement\Filament\Concerns\CaseUpdateBreadcrumbs;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditCaseUpdate extends EditRecord

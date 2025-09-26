@@ -44,13 +44,15 @@ use AdvisingApp\StudentDataModel\Filament\Widgets\StudentStats;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\ReportLibrary;
 use App\Models\User;
+use BackedEnum;
 use Symfony\Component\HttpFoundation\Response;
+use UnitEnum;
 
 class RetentionCrmDashboard extends RetentionCrmDashboardReport implements HasSegmentModel
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Students';
+    protected static string | UnitEnum | null $navigationGroup = 'Students';
 
     protected static ?int $navigationSort = 1;
 
@@ -60,7 +62,7 @@ class RetentionCrmDashboard extends RetentionCrmDashboardReport implements HasSe
 
     protected static string $routePath = 'retention-crm-dashboard';
 
-    protected static string | \BackedEnum | null $navigationIcon = '';
+    protected static string | BackedEnum | null $navigationIcon = '';
 
     protected string $view = 'student-data-model::filament.pages.dashboard';
 

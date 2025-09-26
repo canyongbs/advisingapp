@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages;
 
-use Filament\Actions\ViewAction;
-use Filament\Actions\EditAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource;
 use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;

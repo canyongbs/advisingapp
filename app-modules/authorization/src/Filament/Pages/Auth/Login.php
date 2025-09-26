@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
-use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
@@ -45,6 +44,7 @@ use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Models\User;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Actions\Action;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Models\Contracts\FilamentUser;
@@ -254,7 +254,7 @@ class Login extends \Filament\Auth\Pages\Login
     {
         return [
             'form' => $this->form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->components([
                         $this->getEmailFormComponent()
                             ->label('Email')

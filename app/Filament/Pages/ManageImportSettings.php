@@ -36,12 +36,12 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Schemas\Schema;
 use App\Filament\Clusters\ProductIntegrations;
 use App\Models\User;
 use App\Settings\ImportSettings;
 use Filament\Forms\Components\Select;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Schema;
 use Squire\Models\Country;
 
 class ManageImportSettings extends SettingsPage

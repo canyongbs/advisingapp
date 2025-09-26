@@ -43,6 +43,7 @@ use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\ViewAlertStat
 use AdvisingApp\Alert\Models\AlertStatus;
 use App\Filament\Clusters\ConstituentManagement;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class AlertStatusResource extends Resource
 {
@@ -52,7 +53,7 @@ class AlertStatusResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Alert';
+    protected static string | UnitEnum | null $navigationGroup = 'Alert';
 
     protected static ?int $navigationSort = 30;
 

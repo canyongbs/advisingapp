@@ -38,13 +38,15 @@ namespace AdvisingApp\Alert\Filament\Resources;
 
 use AdvisingApp\Alert\Filament\Resources\AlertResource\Pages\ListAlerts;
 use AdvisingApp\Alert\Models\Alert;
+use BackedEnum;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class AlertResource extends Resource
 {
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = 'CRM';
 
     protected static ?int $navigationSort = 5;
 

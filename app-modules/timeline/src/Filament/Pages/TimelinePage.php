@@ -40,6 +40,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Livewire\Concerns\CanLoadTimelineRecords;
 use AdvisingApp\Timeline\Livewire\Concerns\HasTimelineRecords;
+use BackedEnum;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
 
@@ -49,7 +50,7 @@ abstract class TimelinePage extends Page
     use HasTimelineRecords;
     use CanLoadTimelineRecords;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-queue-list';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-queue-list';
 
     protected string $view = 'timeline::page';
 

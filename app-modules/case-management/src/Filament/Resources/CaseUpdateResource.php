@@ -36,15 +36,6 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources;
 
-use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Filters\TernaryFilter;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Actions\ViewAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\CreateCaseUpdate;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\EditCaseUpdate;
@@ -53,12 +44,21 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\ViewC
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use App\Filament\Tables\Columns\IdColumn;
+use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -66,7 +66,7 @@ class CaseUpdateResource extends Resource
 {
     protected static ?string $model = CaseUpdate::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static bool $shouldRegisterNavigation = false;
 

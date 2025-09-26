@@ -42,12 +42,13 @@ use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ListPrompts;
 use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ViewPrompt;
 use AdvisingApp\Ai\Models\Prompt;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class PromptResource extends Resource
 {
     protected static ?string $model = Prompt::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Artificial Intelligence';
+    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
 
     protected static ?string $navigationLabel = 'Prompt Library';
 

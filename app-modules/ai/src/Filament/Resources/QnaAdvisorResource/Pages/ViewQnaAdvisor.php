@@ -36,10 +36,6 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
@@ -48,8 +44,13 @@ use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use UnitEnum;
 
 class ViewQnaAdvisor extends ViewRecord
 {
@@ -57,11 +58,11 @@ class ViewQnaAdvisor extends ViewRecord
 
     protected static ?string $navigationLabel = 'View';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'QnA Advisor';
+    protected static string | UnitEnum | null $navigationGroup = 'QnA Advisor';
 
     public function infolist(Schema $schema): Schema
     {
-        return $infolist->schema([
+        return $schema->schema([
             Section::make()->schema([
                 SpatieMediaLibraryImageEntry::make('avatar')
                     ->visibility('private')

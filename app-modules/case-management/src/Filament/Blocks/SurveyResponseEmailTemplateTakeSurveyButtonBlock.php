@@ -38,6 +38,7 @@ namespace AdvisingApp\CaseManagement\Filament\Blocks;
 
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Component;
 use FilamentTiptapEditor\TiptapBlock;
 
 class SurveyResponseEmailTemplateTakeSurveyButtonBlock extends TiptapBlock
@@ -53,7 +54,7 @@ class SurveyResponseEmailTemplateTakeSurveyButtonBlock extends TiptapBlock
     public string $width = 'md';
 
     /**
-     * @return array<int, \Filament\Schemas\Components\Component>
+     * @return array<int, Component>
      */
     public function getFormSchema(): array
     {
