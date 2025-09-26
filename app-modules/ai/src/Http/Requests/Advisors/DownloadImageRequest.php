@@ -34,21 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers\Advisors;
+namespace AdvisingApp\Ai\Http\Requests\Advisors;
 
-use AdvisingApp\Ai\Http\Requests\Advisors\DownloadImageRequest;
-use AdvisingApp\Ai\Models\AiThread;
-use Illuminate\Routing\Controller;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
 
-class DownloadImageController extends Controller
+class DownloadImageRequest extends FormRequest
 {
-    public function __invoke(DownloadImageRequest $request, AiThread $thread): Media
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
     {
-        return Media::query()
-            ->whereMorphedTo('model', $thread)
-            ->where('collection_name', 'generated_images')
-            ->where('uuid', $request->input('media_uuid'))
-            ->firstOrFail();
+        return $this->thread->user()->is(auth()->user());
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'media_uuid' => ['required', 'string', 'uuid'],
+        ];
     }
 }

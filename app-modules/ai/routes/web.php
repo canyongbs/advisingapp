@@ -58,7 +58,6 @@ Route::middleware(['web', 'auth'])
             ->name('advisors.threads.messages.complete-response');
 
         Route::post('ai/advisors/threads/{thread}/download-image', DownloadImageController::class)
-            ->middleware('signed')
             ->name('advisors.threads.download-image');
 
         Route::get('ai/qna-advisors/{advisor}/preview-embed', PreviewAdvisorEmbedController::class)
