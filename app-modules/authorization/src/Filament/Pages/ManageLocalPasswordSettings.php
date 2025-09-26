@@ -40,14 +40,15 @@ use AdvisingApp\Authorization\Settings\LocalPasswordSettings;
 use App\Filament\Clusters\Authentication;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Schema;
+use UnitEnum;
 
 class ManageLocalPasswordSettings extends SettingsPage
 {
     protected static ?string $navigationLabel = 'Local Passwords';
 
-    protected static ?string $navigationGroup = 'Local Authentication';
+    protected static string | UnitEnum | null $navigationGroup = 'Local Authentication';
 
     protected static ?string $cluster = Authentication::class;
 
@@ -63,10 +64,10 @@ class ManageLocalPasswordSettings extends SettingsPage
         return $user->isSuperAdmin();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('minPasswordLength')
                     ->label('Minimum Password Length')
                     ->numeric()

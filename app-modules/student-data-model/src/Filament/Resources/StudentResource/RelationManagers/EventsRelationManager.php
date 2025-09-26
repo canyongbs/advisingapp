@@ -75,7 +75,7 @@ class EventsRelationManager extends RelationManager
                 TextColumn::make('status')
                     ->badge(),
             ])
-            ->actions([
+            ->recordActions([
                 ViewEventAttendeeAction::make(),
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('status', [

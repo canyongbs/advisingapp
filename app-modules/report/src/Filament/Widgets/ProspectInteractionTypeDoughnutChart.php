@@ -46,7 +46,7 @@ use Illuminate\Support\Facades\Cache;
 
 class ProspectInteractionTypeDoughnutChart extends ChartReportWidget
 {
-    protected static ?string $heading = 'Type';
+    protected ?string $heading = 'Type';
 
     protected int | string | array $columnSpan = [
         'sm' => 12,
@@ -54,7 +54,7 @@ class ProspectInteractionTypeDoughnutChart extends ChartReportWidget
         'lg' => 6,
     ];
 
-    protected static ?string $maxHeight = '240px';
+    protected ?string $maxHeight = '240px';
 
     public function render(): View
     {
@@ -66,7 +66,7 @@ class ProspectInteractionTypeDoughnutChart extends ChartReportWidget
             return view('livewire.no-widget-data');
         }
 
-        return view(static::$view, $this->getViewData());
+        return view($this->view, $this->getViewData());
     }
 
     public function getData(): array

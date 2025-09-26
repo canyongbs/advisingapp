@@ -39,17 +39,17 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages;
 use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource;
 use App\Enums\TagType;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateProspectTag extends CreateRecord
 {
     protected static string $resource = ProspectTagResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Name')
                     ->required()

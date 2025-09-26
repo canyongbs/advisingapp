@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Cache;
 
 class PromptsCreatedLineChart extends LineChartReportWidget
 {
-    protected static ?string $heading = 'Prompts Created';
+    protected ?string $heading = 'Prompts Created';
 
     protected int | string | array $columnSpan = 'full';
 

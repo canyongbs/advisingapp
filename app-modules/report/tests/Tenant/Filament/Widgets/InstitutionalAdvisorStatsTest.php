@@ -113,7 +113,7 @@ it('returns correct total institutional advisor stats within the given date rang
 
     $widget = new InstitutionalAdvisorStats();
     $widget->cacheTag = 'report-institutional-advisor';
-    $widget->filters = [
+    $widget->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];
@@ -164,7 +164,7 @@ it('returns correct total institutional advisor stats without date filters', fun
 
     $widget = new InstitutionalAdvisorStats();
     $widget->cacheTag = 'report-institutional-advisor';
-    $widget->filters = [];
+    $widget->pageFilters = [];
 
     $stats = $widget->getStats();
 
@@ -192,7 +192,7 @@ it('returns zero stats when no institutional advisor usage exists', function () 
 
     $widget = new InstitutionalAdvisorStats();
     $widget->cacheTag = 'report-institutional-advisor';
-    $widget->filters = [];
+    $widget->pageFilters = [];
 
     $stats = $widget->getStats();
 
@@ -239,7 +239,7 @@ it('correctly separates smart and custom prompt stats', function () {
 
     $widget = new InstitutionalAdvisorStats();
     $widget->cacheTag = 'report-institutional-advisor';
-    $widget->filters = [
+    $widget->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];
@@ -272,7 +272,7 @@ it('handles null dates correctly for caching', function () {
     // Test with null filters (should use cache)
     $widget = new InstitutionalAdvisorStats();
     $widget->cacheTag = 'report-institutional-advisor';
-    $widget->filters = [];
+    $widget->pageFilters = [];
 
     $stats = $widget->getStats();
 

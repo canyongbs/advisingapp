@@ -40,8 +40,8 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
-use Filament\Support\Enums\MaxWidth;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Actions\ViewAction;
+use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -103,7 +103,7 @@ class ProspectCaseTable extends BaseWidget
                     ->label('Case Number'),
                 TextColumn::make('respondent')
                     ->label('Related To')
-                    ->getStateUsing(function (CaseModel $record): string {
+                    ->state(function (CaseModel $record): string {
                         $respondent = $record->respondent;
                         assert($respondent instanceof Prospect);
 
@@ -113,20 +113,20 @@ class ProspectCaseTable extends BaseWidget
                     ->label('Assigned To'),
                 TextColumn::make('sla_response_seconds')
                     ->label('Response')
-                    ->getStateUsing(function (CaseModel $record) {
+                    ->state(function (CaseModel $record) {
                         return $record->getSlaResponseSeconds();
                     }),
                 TextColumn::make('sla_resolution_seconds')
                     ->label('Resolution')
-                    ->getStateUsing(function (CaseModel $record) {
+                    ->state(function (CaseModel $record) {
                         return $record->getSlaResolutionSeconds();
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->url(fn (CaseModel $record) => CaseResource::getUrl('view', ['record' => $record, 'referrer' => 'respondentReport'])),
             ])
             ->paginated([5])
-            ->filtersFormWidth(MaxWidth::Small);
+            ->filtersFormWidth(Width::Small);
     }
 }

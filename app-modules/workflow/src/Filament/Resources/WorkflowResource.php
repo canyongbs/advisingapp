@@ -42,8 +42,8 @@ use AdvisingApp\Workflow\Filament\Resources\WorkflowResource\RelationManagers\Wo
 use AdvisingApp\Workflow\Models\Workflow;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 
 class WorkflowResource extends Resource
 {
@@ -51,10 +51,10 @@ class WorkflowResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),

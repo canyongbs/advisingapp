@@ -47,10 +47,11 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\View;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\View;
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -60,7 +61,7 @@ use Illuminate\Support\Arr;
 class CreateReport extends CreateRecord implements HasTable
 {
     use InteractsWithTable;
-    use CreateRecord\Concerns\HasWizard;
+    use HasWizard;
 
     protected static string $resource = ReportResource::class;
 
@@ -94,9 +95,7 @@ class CreateReport extends CreateRecord implements HasTable
                                 ->values()
                                 ->all());
 
-                            $this->cacheForms();
-                            $this->bootedInteractsWithTable();
-                            $this->resetTableFiltersForm();
+                            $this->resetTable();
                         }),
                 ])
                 ->columns(2)
@@ -155,7 +154,7 @@ class CreateReport extends CreateRecord implements HasTable
         $model = $this->form->getRawState()['model'] ?? null;
         $models = $this->getReportModels();
 
-        if (filled($model) && in_array(ReportModel::tryFromCaseOrValue($model), $models)) {
+        if (filled($model) && in_array(ReportModel::parse($model), $models)) {
             return $model;
         }
 

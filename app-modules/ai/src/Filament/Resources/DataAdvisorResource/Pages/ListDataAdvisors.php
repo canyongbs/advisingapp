@@ -44,7 +44,7 @@ class ListDataAdvisors extends ListRecords
 {
     protected static string $resource = DataAdvisorResource::class;
 
-    protected static string $view = 'filament.pages.coming-soon';
+    protected string $view = 'filament.pages.coming-soon';
 
     protected function getHeaderActions(): array
     {

@@ -42,8 +42,9 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\ListPro
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\ViewProspectStatus;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Filament\Clusters\ConstituentManagement;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use UnitEnum;
 
 class ProspectStatusResource extends Resource
 {
@@ -55,12 +56,12 @@ class ProspectStatusResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static ?string $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
             ]);
     }
 

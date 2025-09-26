@@ -39,11 +39,11 @@ namespace AdvisingApp\Workflow\Filament\Blocks;
 use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Section;
 use Illuminate\Support\Facades\Auth;
 
 class TaskBlock extends WorkflowActionBlock

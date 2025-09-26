@@ -47,12 +47,13 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\EmbeddedTable;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -67,12 +68,10 @@ class EditReport extends EditRecord implements HasTable
 
     protected static string $resource = ReportResource::class;
 
-    protected static string $view = 'report::filament.resources.reports.pages.edit-report';
-
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->autocomplete(false)
                     ->string()
@@ -131,6 +130,16 @@ class EditReport extends EditRecord implements HasTable
         }
 
         $this->baseBootedInteractsWithTable();
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getFormContentComponent(),
+                $this->getRelationManagersContentComponent(),
+                EmbeddedTable::make(),
+            ]);
     }
 
     protected function mutateFormDataBeforeFill(array $data): array

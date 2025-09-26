@@ -44,14 +44,16 @@ use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use App\Filament\Clusters\ReportLibrary;
 use App\Filament\Widgets\ProspectGrowthChart;
 use App\Models\User;
+use BackedEnum;
 use Livewire\Attributes\Url;
 use Symfony\Component\HttpFoundation\Response;
+use UnitEnum;
 
 class RecruitmentCrmDashboard extends RecruitmentCrmDashboardReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?string $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
 
     protected static ?int $navigationSort = 10;
 
@@ -61,12 +63,12 @@ class RecruitmentCrmDashboard extends RecruitmentCrmDashboardReport
 
     protected static string $routePath = 'recruitment-crm-dashboard';
 
-    protected static ?string $navigationIcon = '';
+    protected static string | BackedEnum | null $navigationIcon = '';
 
     #[Url]
     public string $activeTab = ActionCenterTab::Subscribed->value;
 
-    protected static string $view = 'student-data-model::filament.pages.dashboard';
+    protected string $view = 'student-data-model::filament.pages.dashboard';
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -84,7 +86,7 @@ class RecruitmentCrmDashboard extends RecruitmentCrmDashboardReport
         abort_unless($user->hasLicense(Prospect::getLicenseType()), Response::HTTP_FORBIDDEN);
 
         if (! ActionCenterTab::tryFrom($this->activeTab)) {
-            $this->redirect(static::getUrl(['activeTab' => ActionCenterTab::Subscribed->value]), navigate: true);
+            $this->redirect(static::getUrl(['tab' => ActionCenterTab::Subscribed->value]), navigate: true);
         }
     }
 

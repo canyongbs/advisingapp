@@ -41,22 +41,21 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 /**
- * @property ComponentContainer $form
+ * @property Schema $form
  */
 class AmazonS3 extends Page implements HasForms
 {
@@ -68,7 +67,7 @@ class AmazonS3 extends Page implements HasForms
 
     protected static ?string $navigationLabel = 'Amazon S3';
 
-    protected static string $view = 'filament.pages.amazon-s3';
+    protected string $view = 'filament.pages.amazon-s3';
 
     protected static ?string $cluster = ProductIntegrations::class;
 
@@ -108,10 +107,10 @@ class AmazonS3 extends Page implements HasForms
         $this->callHook('afterFill');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('S3 Filesystem Settings')
                     ->columns(2)
                     ->schema([

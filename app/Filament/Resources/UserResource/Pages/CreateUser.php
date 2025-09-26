@@ -44,24 +44,24 @@ use App\Notifications\SetPasswordNotification;
 use App\Rules\EmailNotInUseOrSoftDeleted;
 use Carbon\Carbon;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class CreateUser extends CreateRecord
 {
     protected static string $resource = UserResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         $azureSsoSettings = app(AzureSsoSettings::class)->is_enabled;
         $googleSsoSettings = app(GoogleSsoSettings::class)->is_enabled;
 
-        return $form
+        return $schema
             ->disabled(false)
-            ->schema([
+            ->components([
                 Section::make()
                     ->columns()
                     ->schema([

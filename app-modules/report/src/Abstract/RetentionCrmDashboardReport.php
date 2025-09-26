@@ -45,7 +45,7 @@ abstract class RetentionCrmDashboardReport extends Dashboard
 {
     use HasFiltersForm;
 
-    protected static string $view = 'report::filament.pages.report';
+    protected string $view = 'report::filament.pages.report';
 
     public static function canAccess(): bool
     {

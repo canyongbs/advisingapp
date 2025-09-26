@@ -44,7 +44,7 @@ use Illuminate\Support\Facades\Cache;
 
 class StudentCumulativeCountLineChart extends LineChartReportWidget
 {
-    protected static ?string $heading = 'Students (Cumulative)';
+    protected ?string $heading = 'Students (Cumulative)';
 
     protected int | string | array $columnSpan = [
         'sm' => 1,

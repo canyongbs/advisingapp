@@ -39,7 +39,7 @@ namespace AdvisingApp\Task\Filament\Actions;
 use AdvisingApp\Task\Histories\TaskHistory;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\KeyValueEntry;
-use Filament\Infolists\Components\Section;
+use Filament\Schemas\Components\Section;
 
 class TaskHistoryUpdatedViewAction extends ViewAction
 {
@@ -47,11 +47,11 @@ class TaskHistoryUpdatedViewAction extends ViewAction
     {
         parent::setUp();
 
-        $this->infolist([
+        $this->schema([
             Section::make()
                 ->schema([
                     KeyValueEntry::make('Changes')
-                        ->getStateUsing(fn (TaskHistory $record) => $record->formatted)
+                        ->state(fn (TaskHistory $record) => $record->formatted)
                         ->view('filament.infolists.components.update-entry'),
                 ]),
         ]);

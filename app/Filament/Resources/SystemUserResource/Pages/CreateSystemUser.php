@@ -38,8 +38,8 @@ namespace App\Filament\Resources\SystemUserResource\Pages;
 
 use App\Filament\Resources\SystemUserResource;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateSystemUser extends CreateRecord
 {
@@ -47,9 +47,9 @@ class CreateSystemUser extends CreateRecord
 
     protected ?string $heading = 'Create Programmatic (API) User';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             TextInput::make('name')
                 ->required()
                 ->string(),

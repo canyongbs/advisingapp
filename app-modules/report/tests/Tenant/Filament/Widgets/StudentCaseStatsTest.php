@@ -74,7 +74,7 @@ it('returns correct total cases, recent cases, open cases and closed cases of st
 
     $widget = new StudentCaseStats();
     $widget->cacheTag = 'report-student-case';
-    $widget->filters = [
+    $widget->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];
@@ -169,7 +169,7 @@ it('returns correct total cases, recent cases, open cases and closed cases of st
     // case with filter
     $widget = new StudentCaseStats();
     $widget->cacheTag = 'report-student-case';
-    $widget->filters = [
+    $widget->pageFilters = [
         'populationSegment' => $segment->getKey(),
     ];
 
@@ -184,7 +184,7 @@ it('returns correct total cases, recent cases, open cases and closed cases of st
     // case with without filter
     $widget = new StudentCaseStats();
     $widget->cacheTag = 'report-student-case';
-    $widget->filters = [];
+    $widget->pageFilters = [];
 
     $stats = $widget->getStats();
 

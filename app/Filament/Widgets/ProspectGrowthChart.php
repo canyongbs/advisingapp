@@ -50,9 +50,9 @@ class ProspectGrowthChart extends ChartWidget
     #[Reactive]
     public string $activeTab;
 
-    protected static ?string $heading = 'Prospects (Cumulative)';
+    protected ?string $heading = 'Prospects (Cumulative)';
 
-    protected static ?string $maxHeight = '200px';
+    protected ?string $maxHeight = '200px';
 
     protected int | string | array $columnSpan = 'full';
 

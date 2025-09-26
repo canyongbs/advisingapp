@@ -82,7 +82,7 @@ it('returns correct counts of emails and SMS sent/received with no filters', fun
 
     $widget = new StudentMessagesDetailStats();
     $widget->cacheTag = 'report-student-messages';
-    $widget->filters = [];
+    $widget->pageFilters = [];
 
     $stats = $widget->getStats();
 
@@ -138,7 +138,7 @@ it('returns correct counts of emails and SMS sent/received within the given date
 
     $widget = new StudentMessagesDetailStats();
     $widget->cacheTag = 'report-student-messages';
-    $widget->filters = [
+    $widget->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];
@@ -243,7 +243,7 @@ it('returns correct counts of emails and SMS sent/received based on segment filt
 
     $widget = new StudentMessagesDetailStats();
     $widget->cacheTag = 'report-student-messages';
-    $widget->filters = [
+    $widget->pageFilters = [
         'populationSegment' => $segment->getKey(),
     ];
 
@@ -257,7 +257,7 @@ it('returns correct counts of emails and SMS sent/received based on segment filt
     // Without filter
     $widget = new StudentMessagesDetailStats();
     $widget->cacheTag = 'report-student-messages';
-    $widget->filters = [];
+    $widget->pageFilters = [];
 
     $stats = $widget->getStats();
 

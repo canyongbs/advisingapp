@@ -38,12 +38,13 @@ namespace AdvisingApp\Report\Filament\Pages;
 
 use AdvisingApp\Report\Abstract\ProjectManagementReport;
 use App\Filament\Clusters\ReportLibrary;
+use UnitEnum;
 
 class ProjectReport extends ProjectManagementReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?string $navigationGroup = 'Project Management';
+    protected static string | UnitEnum | null $navigationGroup = 'Project Management';
 
     protected static ?string $navigationLabel = 'Projects';
 

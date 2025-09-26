@@ -50,10 +50,10 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Wizard;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Schema;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
@@ -61,14 +61,14 @@ use Livewire\Attributes\Url;
 use Livewire\Features\SupportRedirects\Redirector;
 
 /**
- * @property-read Form $form
+ * @property-read Schema $form
  * @property-read ?ResearchRequest $researchRequest
  */
 class NewResearchRequest extends Page
 {
     protected static bool $shouldRegisterNavigation = false;
 
-    protected static string $view = 'research::filament.pages.new-research-request';
+    protected string $view = 'research::filament.pages.new-research-request';
 
     #[Url]
     public ?string $researchRequestId = null;
@@ -118,10 +118,10 @@ class NewResearchRequest extends Page
         ];
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Wizard::make()
                     ->steps([
                         Step::make('Topic')

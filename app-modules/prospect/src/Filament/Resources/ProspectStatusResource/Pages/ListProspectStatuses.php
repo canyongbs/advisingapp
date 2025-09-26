@@ -39,13 +39,13 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -80,11 +80,11 @@ class ListProspectStatuses extends ListRecords
             ])
             ->defaultSort('sort')
             ->reorderable('sort')
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
                         ->action(function (DeleteBulkAction $component): void {

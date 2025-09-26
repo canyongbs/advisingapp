@@ -49,12 +49,13 @@ use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages\ViewQnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class QnaAdvisorResource extends Resource
 {
     protected static ?string $model = QnaAdvisor::class;
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
 
     protected static ?string $modelLabel = 'QnA Advisor';
 

@@ -41,10 +41,10 @@ use AdvisingApp\Campaign\Models\Campaign;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -70,7 +70,7 @@ class ListCampaigns extends ListRecords
                     ->color(fn (bool $state): string => $state ? 'blue' : 'orange'),
                 TextColumn::make('execution_status')
                     ->label('Completed')
-                    ->getStateUsing(fn (Campaign $record) => $record->hasBeenExecuted())
+                    ->state(fn (Campaign $record) => $record->hasBeenExecuted())
                     ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No')
                     ->badge()
                     ->color(fn (bool $state): string => $state ? 'blue' : 'orange'),
@@ -83,7 +83,7 @@ class ListCampaigns extends ListRecords
                     ->searchable()
                     ->sortable(),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make()
                     ->hidden(fn (Campaign $record) => $record->hasBeenExecuted() === true),

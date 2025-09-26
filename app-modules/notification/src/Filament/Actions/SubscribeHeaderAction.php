@@ -63,9 +63,6 @@ class SubscribeHeaderAction extends Action
 
         $this->action(function (Subscribable $record) {
             resolve(SubscriptionToggle::class)->handle(auth()->user(), $record);
-
-            $this->cachedHeaderActions = [];
-            $this->cacheHeaderActions();
         });
     }
 

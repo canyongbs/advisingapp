@@ -86,7 +86,7 @@ it('returns correct task statistics for total tasks, staff, students, and prospe
 
     $widget = new TaskStats();
     $widget->cacheTag = 'report-tasks';
-    $widget->filters = [
+    $widget->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];

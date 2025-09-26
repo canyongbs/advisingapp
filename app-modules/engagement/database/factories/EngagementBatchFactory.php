@@ -36,12 +36,13 @@
 
 namespace AdvisingApp\Engagement\Database\Factories;
 
+use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Engagement\Models\EngagementBatch>
+ * @extends Factory<EngagementBatch>
  */
 class EngagementBatchFactory extends Factory
 {

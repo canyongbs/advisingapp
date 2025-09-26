@@ -43,18 +43,18 @@ use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
-use Filament\Forms\Components\Section;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ReplicateAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ReplicateAction;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -121,12 +121,12 @@ class ListResourceHubArticles extends ListRecords
                     ->preload(),
                 TernaryFilter::make('public'),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
                 ReplicateAction::make()
                     ->label('Replicate')
-                    ->form([
+                    ->schema([
                         Section::make()
                             ->schema([
                                 TextInput::make('title')
@@ -191,7 +191,7 @@ class ListResourceHubArticles extends ListRecords
                     ->excludeAttributes(['views_count', 'upvotes_count', 'my_upvotes_count'])
                     ->successNotificationTitle('Article replicated successfully!'),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

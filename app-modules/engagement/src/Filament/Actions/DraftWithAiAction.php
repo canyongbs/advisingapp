@@ -47,13 +47,13 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Settings\LicenseSettings;
 use Closure;
 use Exception;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Support\Enums\Width;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
@@ -92,7 +92,7 @@ class DraftWithAiAction extends Action
                         ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
                 ]);
             })
-            ->modalWidth(MaxWidth::ExtraLarge)
+            ->modalWidth(Width::ExtraLarge)
             ->modalSubmitActionLabel('Draft')
             ->form([
                 Textarea::make('instructions')

@@ -40,7 +40,7 @@ use Filament\Widgets\Widget;
 
 class WelcomeWidget extends Widget
 {
-    protected static string $view = 'filament.widgets.welcome-widget';
+    protected string $view = 'filament.widgets.welcome-widget';
 
     protected static bool $isLazy = false;
 

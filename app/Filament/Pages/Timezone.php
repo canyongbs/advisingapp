@@ -37,12 +37,12 @@
 namespace App\Filament\Pages;
 
 use App\Settings\DisplaySettings;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 class Timezone extends ProfilePage
 {
@@ -52,10 +52,10 @@ class Timezone extends ProfilePage
 
     protected static ?int $navigationSort = 20;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Timezone')
                     ->description('Update your timezone.')
                     ->schema([

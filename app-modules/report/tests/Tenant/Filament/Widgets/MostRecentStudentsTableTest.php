@@ -33,11 +33,10 @@
 
 </COPYRIGHT>
 */
-
 use AdvisingApp\Report\Filament\Widgets\MostRecentStudentsTable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-use Filament\Tables\Actions\ExportAction;
+use Filament\Actions\ExportAction;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;

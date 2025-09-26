@@ -42,7 +42,7 @@ use Filament\Widgets\Widget;
 
 class UnlicensedNotice extends Widget
 {
-    protected static string $view = 'authorization::filament.widgets.unlicensed-notice';
+    protected string $view = 'authorization::filament.widgets.unlicensed-notice';
 
     protected static bool $isLazy = false;
 

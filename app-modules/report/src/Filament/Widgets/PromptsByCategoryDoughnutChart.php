@@ -43,7 +43,7 @@ use Illuminate\Support\Facades\Cache;
 
 class PromptsByCategoryDoughnutChart extends ChartReportWidget
 {
-    protected static ?string $heading = 'Prompts (By Category)';
+    protected ?string $heading = 'Prompts (By Category)';
 
     protected int | string | array $columnSpan = [
         'sm' => 12,
@@ -51,7 +51,7 @@ class PromptsByCategoryDoughnutChart extends ChartReportWidget
         'lg' => 6,
     ];
 
-    protected static ?string $maxHeight = '240px';
+    protected ?string $maxHeight = '240px';
 
     public function render(): View
     {
@@ -63,7 +63,7 @@ class PromptsByCategoryDoughnutChart extends ChartReportWidget
             return view('livewire.no-widget-data');
         }
 
-        return view(static::$view, $this->getViewData());
+        return view($this->view, $this->getViewData());
     }
 
     protected function getOptions(): array

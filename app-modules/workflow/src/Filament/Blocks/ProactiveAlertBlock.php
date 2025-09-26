@@ -39,10 +39,10 @@ namespace AdvisingApp\Workflow\Filament\Blocks;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Models\AlertStatus;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 
 class ProactiveAlertBlock extends WorkflowActionBlock
 {

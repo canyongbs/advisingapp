@@ -53,7 +53,7 @@ class ManageResearchRequests extends Page
     use CanManageFolders;
     use CanManageRequests;
 
-    protected static string $view = 'research::filament.pages.manage-research-requests';
+    protected string $view = 'research::filament.pages.manage-research-requests';
 
     protected static ?string $title = 'Research Advisor';
 

@@ -36,12 +36,13 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
+use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Ai\Models\AiMessage>
+ * @extends Factory<AiMessage>
  */
 class AiMessageFactory extends Factory
 {

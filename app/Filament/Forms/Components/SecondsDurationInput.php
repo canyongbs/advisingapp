@@ -44,7 +44,7 @@ class SecondsDurationInput extends Field
     /**
      * @var view-string
      */
-    protected string $view = 'filament-forms::components.fieldset';
+    protected string $view = 'filament-schemas::components.fieldset';
 
     protected function setUp(): void
     {

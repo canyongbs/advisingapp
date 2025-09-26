@@ -43,7 +43,7 @@ use Illuminate\Support\Facades\Cache;
 
 class ProspectReportLineChart extends ChartReportWidget
 {
-    protected static ?string $heading = 'Prospects (Cumulative)';
+    protected ?string $heading = 'Prospects (Cumulative)';
 
     protected int | string | array $columnSpan = [
         'sm' => 1,

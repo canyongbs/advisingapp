@@ -39,12 +39,12 @@ namespace AdvisingApp\CaseManagement\Filament\Resources\SlaResource\RelationMana
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\AssociateAction;
+use Filament\Actions\DissociateAction;
+use Filament\Actions\DissociateBulkAction;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Get;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\AssociateAction;
-use Filament\Tables\Actions\DissociateAction;
-use Filament\Tables\Actions\DissociateBulkAction;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -79,7 +79,7 @@ class CasePrioritiesRelationManager extends RelationManager
             ])
             ->headerActions([
                 AssociateAction::make()
-                    ->recordSelectOptionsQuery(fn (Builder $query, AssociateAction $action) => $query->where('type_id', Arr::last($this->mountedTableActionsData)['type_id'] ?? null)->orderBy('order'))
+                    ->recordSelectOptionsQuery(fn (Builder $query, AssociateAction $action) => $query->where('type_id', Arr::last($this->mountedActions)['data']['type_id'] ?? null)->orderBy('order'))
                     ->preloadRecordSelect()
                     ->form(fn (AssociateAction $action): array => [
                         Select::make('type_id')
@@ -96,7 +96,7 @@ class CasePrioritiesRelationManager extends RelationManager
                             ->visible(fn (Get $get): bool => filled($get('type_id'))),
                     ]),
             ])
-            ->actions([
+            ->recordActions([
                 DissociateAction::make(),
             ])
             ->groupedBulkActions([

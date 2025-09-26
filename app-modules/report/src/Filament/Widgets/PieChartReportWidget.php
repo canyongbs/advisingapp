@@ -48,9 +48,9 @@ abstract class PieChartReportWidget extends ChartWidget
     #[Locked]
     public string $cacheTag;
 
-    protected static ?string $pollingInterval = null;
+    protected ?string $pollingInterval = null;
 
-    protected static ?string $maxHeight = '200px';
+    protected ?string $maxHeight = '200px';
 
     protected static bool $isLazy = false;
 

@@ -43,7 +43,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\Task\Enums\TaskStatus;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -173,7 +173,7 @@ class ProspectsActionCenterWidget extends TableWidget
                         });
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->label('Go to Prospect')
                     ->url(fn (Prospect $record): string => ProspectResource::getUrl('view', ['record' => $record]), shouldOpenInNewTab: true)

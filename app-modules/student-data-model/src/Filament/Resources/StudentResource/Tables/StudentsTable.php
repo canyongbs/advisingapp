@@ -43,7 +43,7 @@ use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMaxOperatorWithEnrollmentSemester;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMinOperatorWithEnrollmentSemester;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsEmptyOperatorWithEnrollmentSemester;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\QueryBuilder;
@@ -239,7 +239,7 @@ class StudentsTable
                     ])
                     ->constraintPickerWidth('7xl'),
             ], layout: FiltersLayout::AboveContent)
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->authorize('view')
                     ->url(fn (Student $record) => StudentResource::getUrl('view', ['record' => $record])),

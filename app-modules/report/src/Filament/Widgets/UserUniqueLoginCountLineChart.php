@@ -43,7 +43,7 @@ use Illuminate\Support\Facades\Cache;
 
 class UserUniqueLoginCountLineChart extends LineChartReportWidget
 {
-    protected static ?string $heading = 'Unique Logins By Month';
+    protected ?string $heading = 'Unique Logins By Month';
 
     protected int | string | array $columnSpan = [
         'sm' => 1,

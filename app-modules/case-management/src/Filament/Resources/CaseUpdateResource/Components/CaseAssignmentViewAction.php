@@ -47,6 +47,6 @@ class CaseAssignmentViewAction extends ViewAction
     {
         parent::setUp();
 
-        $this->infolist($this->caseAssignmentInfolist());
+        $this->schema($this->caseAssignmentInfolist());
     }
 }

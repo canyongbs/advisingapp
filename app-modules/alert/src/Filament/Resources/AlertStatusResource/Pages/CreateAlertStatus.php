@@ -42,8 +42,8 @@ use AdvisingApp\Alert\Models\AlertStatus;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateAlertStatus extends CreateRecord
 {
@@ -51,10 +51,10 @@ class CreateAlertStatus extends CreateRecord
 
     protected ?bool $hasDatabaseTransactions = true;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Name')
                     ->required()

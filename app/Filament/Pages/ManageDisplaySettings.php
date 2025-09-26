@@ -42,8 +42,8 @@ use App\Models\User;
 use App\Settings\DisplaySettings;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Schema;
 use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
 class ManageDisplaySettings extends SettingsPage
@@ -64,10 +64,10 @@ class ManageDisplaySettings extends SettingsPage
         return SettingsPermissions::active() ? $user->can(['settings.view-any']) : $user->can(['product_admin.view-any']);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TimezoneSelect::make('timezone')
                     ->helperText('Default: ' . config('app.timezone')),
             ])

@@ -45,7 +45,7 @@ use Illuminate\Support\Facades\Cache;
 
 class StudentEngagementLineChart extends LineChartReportWidget
 {
-    protected static ?string $heading = 'Students (Engagement)';
+    protected ?string $heading = 'Students (Engagement)';
 
     protected int | string | array $columnSpan = 'full';
 

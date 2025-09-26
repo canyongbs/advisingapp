@@ -38,7 +38,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use App\Models\User;
 use Filament\Forms\Components\DatePicker;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -86,7 +86,7 @@ class UsersLoginCountTable extends BaseWidget
                     ->searchable(),
                 TextColumn::make('email'),
                 TextColumn::make('has_logged_in')
-                    ->getStateUsing(function ($record) {
+                    ->state(function ($record) {
                         return $record->first_login_at ? 'Yes' : 'No';
                     })
                     ->badge()
@@ -119,7 +119,7 @@ class UsersLoginCountTable extends BaseWidget
                         }
                     }),
                 Filter::make('first_login_at')
-                    ->form([
+                    ->schema([
                         DatePicker::make('first_logged_in_from'),
                         DatePicker::make('first_logged_in_until'),
                     ])
@@ -135,7 +135,7 @@ class UsersLoginCountTable extends BaseWidget
                             );
                     }),
                 Filter::make('last_logged_in_at')
-                    ->form([
+                    ->schema([
                         DatePicker::make('last_logged_in_from'),
                         DatePicker::make('last_logged_in_until'),
                     ])
@@ -151,7 +151,7 @@ class UsersLoginCountTable extends BaseWidget
                             );
                     }),
             ])
-            ->filtersFormWidth(MaxWidth::Small)
+            ->filtersFormWidth(Width::Small)
             ->defaultSort('last_logged_in_at', 'desc');
     }
 }

@@ -45,6 +45,7 @@ use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanUploadFiles;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Filament\Pages\Page;
+use UnitEnum;
 
 class InstitutionalAdvisor extends Page
 {
@@ -58,9 +59,9 @@ class InstitutionalAdvisor extends Page
 
     public mixed $isSmartPromptsTypePreselected = null;
 
-    protected static string $view = 'assistant::filament.pages.personal-assistant';
+    protected string $view = 'assistant::filament.pages.personal-assistant';
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
 
     protected static ?string $navigationLabel = 'Institutional Advisor';
 

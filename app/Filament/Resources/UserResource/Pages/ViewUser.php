@@ -43,26 +43,26 @@ use App\Models\User;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
-use STS\FilamentImpersonate\Pages\Actions\Impersonate;
+use STS\FilamentImpersonate\Actions\Impersonate;
 
 class ViewUser extends ViewRecord
 {
     protected static string $resource = UserResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->disabled(false)
-            ->schema([
+            ->components([
                 Section::make()
                     ->columns()
                     ->schema([

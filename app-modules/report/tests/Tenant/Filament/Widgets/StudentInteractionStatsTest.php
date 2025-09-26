@@ -142,7 +142,7 @@ it('returns correct total and unique student interaction counts within the given
 
     $widget = new StudentInteractionStats();
     $widget->cacheTag = 'report-student';
-    $widget->filters = [
+    $widget->pageFilters = [
         'startDate' => $interactionStartDate->toDateString(),
         'endDate' => $interactionEndDate->toDateString(),
     ];
@@ -201,7 +201,7 @@ it('returns correct total and unique student interaction counts based on segment
 
     $widget = new StudentInteractionStats();
     $widget->cacheTag = 'report-student';
-    $widget->filters = [
+    $widget->pageFilters = [
         'populationSegment' => $segment->getKey(),
     ];
 
@@ -220,7 +220,7 @@ it('returns correct total and unique student interaction counts based on segment
     // without segment filter
     $widget = new StudentInteractionStats();
     $widget->cacheTag = 'report-student';
-    $widget->filters = [];
+    $widget->pageFilters = [];
 
     $stats = $widget->getStats();
 

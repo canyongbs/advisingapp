@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Cache;
 
 class CustomAdvisorLineChart extends LineChartReportWidget
 {
-    protected static ?string $heading = 'Exchanges by month';
+    protected ?string $heading = 'Exchanges by month';
 
     protected int | string | array $columnSpan = 'full';
 

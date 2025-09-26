@@ -42,6 +42,7 @@ use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\StudentEngagementLineChart;
 use AdvisingApp\Report\Filament\Widgets\StudentEngagementStats;
 use App\Filament\Clusters\ReportLibrary;
+use UnitEnum;
 
 class StudentMessagesOverviewReport extends StudentReport
 {
@@ -51,13 +52,13 @@ class StudentMessagesOverviewReport extends StudentReport
 
     protected static string $routePath = 'student-messages-overview-report';
 
-    protected static ?string $navigationGroup = 'Students';
+    protected static string | UnitEnum | null $navigationGroup = 'Students';
 
     protected string $cacheTag = 'report-student-messages-overview';
 
     protected static ?int $navigationSort = 40;
 
-    public function getColumns(): int | string | array
+    public function getColumns(): int|array
     {
         return [
             'sm' => 2,

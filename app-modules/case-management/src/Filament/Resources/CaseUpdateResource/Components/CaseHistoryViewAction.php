@@ -47,6 +47,6 @@ class CaseHistoryViewAction extends ViewAction
     {
         parent::setUp();
 
-        $this->infolist($this->caseHistoryInfolist());
+        $this->schema($this->caseHistoryInfolist());
     }
 }

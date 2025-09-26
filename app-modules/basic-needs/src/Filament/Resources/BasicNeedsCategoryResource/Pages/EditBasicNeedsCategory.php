@@ -44,9 +44,9 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class EditBasicNeedsCategory extends EditRecord
 {
@@ -54,10 +54,10 @@ class EditBasicNeedsCategory extends EditRecord
 
     protected static string $resource = BasicNeedsCategoryResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Category Name')
                     ->required()

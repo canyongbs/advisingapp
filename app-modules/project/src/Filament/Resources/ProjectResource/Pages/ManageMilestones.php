@@ -39,15 +39,15 @@ namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use AdvisingApp\Project\Models\ProjectMilestone;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -69,10 +69,10 @@ class ManageMilestones extends ManageRelatedRecords
         return $user->can('viewAny', [ProjectMilestone::class, $arguments['record']]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('title')
                     ->required()
                     ->maxLength(255),
@@ -110,7 +110,7 @@ class ManageMilestones extends ManageRelatedRecords
                 CreateAction::make()
                     ->authorize('create', $this->getOwnerRecord()),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()
                     ->authorize('update', $this->getOwnerRecord()),
                 DeleteAction::make()

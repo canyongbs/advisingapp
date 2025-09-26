@@ -38,11 +38,11 @@ namespace App\Filament\Resources\SystemUserResource\Pages;
 
 use App\Filament\Resources\SystemUserResource;
 use App\Models\SystemUser;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -61,10 +61,10 @@ class ListSystemUsers extends ListRecords
                     ->state(fn (?SystemUser $record) => $record?->tokens()->where('name', 'api')->first()?->last_used_at)
                     ->dateTime(),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

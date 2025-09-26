@@ -42,13 +42,14 @@ use App\Features\StockMediaFeature;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use UnitEnum;
 
 class ManageStockMediaSettings extends SettingsPage
 {
-    protected static ?string $navigationGroup = 'Global Administration';
+    protected static string | UnitEnum | null $navigationGroup = 'Global Administration';
 
     protected static ?int $navigationSort = 80;
 
@@ -61,10 +62,10 @@ class ManageStockMediaSettings extends SettingsPage
         return StockMediaFeature::active() && auth()->user()->isSuperAdmin();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Toggle::make('is_active')
                     ->label('Active')
                     ->inline(false)
@@ -76,7 +77,7 @@ class ManageStockMediaSettings extends SettingsPage
                     ->live(),
                 TextInput::make('pexels_api_key')
                     ->label('API Key')
-                    ->visible(fn (Get $get) => $get('is_active') && ($get('provider') === StockMediaProvider::Pexels || $get('provider') === StockMediaProvider::Pexels->value))
+                    ->visible(fn (Get $get) => $get('is_active') && ($get('provider') === StockMediaProvider::Pexels))
                     ->password()
                     ->autocomplete(false),
             ]);

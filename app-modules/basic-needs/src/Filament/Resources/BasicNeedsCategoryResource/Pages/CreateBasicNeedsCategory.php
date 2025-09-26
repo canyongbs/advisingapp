@@ -39,17 +39,17 @@ namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\P
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateBasicNeedsCategory extends CreateRecord
 {
     protected static string $resource = BasicNeedsCategoryResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Category Name')
                     ->required()

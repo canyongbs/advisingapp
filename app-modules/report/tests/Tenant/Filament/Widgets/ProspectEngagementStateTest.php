@@ -72,7 +72,7 @@ it('returns correct counts of prospects, emails, texts, and staff based on the g
 
     $widget = new ProspectEngagementState();
     $widget->cacheTag = 'report-prospect-engagement';
-    $widget->filters = [
+    $widget->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];
@@ -156,7 +156,7 @@ it('returns correct counts of prospects, emails, texts, and staff engagements ba
 
     $widget = new ProspectEngagementState();
     $widget->cacheTag = 'report-prospect-engagement';
-    $widget->filters = [
+    $widget->pageFilters = [
         'populationSegment' => $segment->getKey(),
     ];
 
@@ -170,7 +170,7 @@ it('returns correct counts of prospects, emails, texts, and staff engagements ba
     // without filter
     $widget = new ProspectEngagementState();
     $widget->cacheTag = 'report-prospect-engagement';
-    $widget->filters = [];
+    $widget->pageFilters = [];
 
     $stats = $widget->getStats();
 

@@ -46,7 +46,7 @@ use Livewire\Attributes\Locked;
 
 class EducatableAlertsWidget extends Widget
 {
-    protected static string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-alerts-widget';
+    protected string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-alerts-widget';
 
     #[Locked]
     public Educatable&Model $educatable;
@@ -84,6 +84,6 @@ class EducatableAlertsWidget extends Widget
     */
     protected function getAlertsUrl(array $filters = []): string
     {
-        return $this->resource::getUrl('alerts', ['record' => $this->educatable, 'tableFilters' => $filters]);
+        return $this->resource::getUrl('alerts', ['record' => $this->educatable, 'filters' => $filters]);
     }
 }

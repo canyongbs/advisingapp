@@ -37,10 +37,10 @@
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers;
 
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -54,10 +54,10 @@ class EngagementResponsesRelationManager extends RelationManager
         return 'Inbound';
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 TextEntry::make('content'),
                 TextEntry::make('sent_at')
                     ->dateTime('Y-m-d H:i:s'),
@@ -77,10 +77,10 @@ class EngagementResponsesRelationManager extends RelationManager
             ])
             ->headerActions([
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
             ]);
     }
 }

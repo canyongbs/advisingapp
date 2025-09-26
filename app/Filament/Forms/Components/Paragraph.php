@@ -37,7 +37,7 @@
 namespace App\Filament\Forms\Components;
 
 use Closure;
-use Filament\Forms\Components\Component;
+use Filament\Schemas\Components\Component;
 
 class Paragraph extends Component
 {

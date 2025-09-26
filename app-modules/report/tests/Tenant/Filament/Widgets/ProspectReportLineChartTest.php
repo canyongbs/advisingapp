@@ -51,7 +51,7 @@ it('returns correct cumulative prospect counts grouped by month within the given
 
     $widgetInstance = new ProspectReportLineChart();
     $widgetInstance->cacheTag = 'prospect-report-cache';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];

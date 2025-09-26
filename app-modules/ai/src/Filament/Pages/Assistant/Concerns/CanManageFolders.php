@@ -41,10 +41,9 @@ use AdvisingApp\Ai\Models\AiThreadFolder;
 use App\Models\User;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Size;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rules\Unique;
@@ -85,7 +84,7 @@ trait CanManageFolders
             ->label('New Folder')
             ->modalSubmitActionLabel('Create')
             ->modalWidth('md')
-            ->form([
+            ->schema([
                 TextInput::make('name')
                     ->autocomplete(false)
                     ->required()
@@ -106,7 +105,7 @@ trait CanManageFolders
             })
             ->icon('heroicon-m-folder-plus')
             ->color('primary')
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
+            ->modalSubmitAction(fn (Action $action) => $action->color('primary'));
     }
 
     public function renameFolderAction(): Action
@@ -114,14 +113,14 @@ trait CanManageFolders
         return Action::make('renameFolder')
             ->modalSubmitActionLabel('Rename')
             ->modalWidth('md')
-            ->size(ActionSize::ExtraSmall)
+            ->size(Size::ExtraSmall)
             ->fillForm(fn (array $arguments) => [
                 'name' => auth()->user()->aiThreadFolders()
                     ->where('application', static::APPLICATION)
                     ->find($arguments['folder'])
                     ?->name,
             ])
-            ->form([
+            ->schema([
                 TextInput::make('name')
                     ->label('Name')
                     ->autocomplete(false)
@@ -143,7 +142,7 @@ trait CanManageFolders
             })
             ->icon('heroicon-m-pencil')
             ->color('warning')
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
+            ->modalSubmitAction(fn (Action $action) => $action->color('primary'))
             ->iconButton()
             ->extraAttributes([
                 'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
@@ -153,7 +152,7 @@ trait CanManageFolders
     public function deleteFolderAction(): Action
     {
         return Action::make('deleteFolder')
-            ->size(ActionSize::ExtraSmall)
+            ->size(Size::ExtraSmall)
             ->requiresConfirmation()
             ->modalDescription('Are you sure you wish to delete this folder? Any chats stored within this folder will also be deleted and this action is not reversible.')
             ->action(function (array $arguments) {
@@ -178,8 +177,8 @@ trait CanManageFolders
             ->label('Move chat to a different folder')
             ->modalSubmitActionLabel('Move')
             ->modalWidth('md')
-            ->size(ActionSize::ExtraSmall)
-            ->form([
+            ->size(Size::ExtraSmall)
+            ->schema([
                 $this->folderSelect(),
             ])
             ->action(function (array $arguments, array $data) {
@@ -199,7 +198,7 @@ trait CanManageFolders
             })
             ->icon('heroicon-m-arrow-down-on-square')
             ->color('warning')
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
+            ->modalSubmitAction(fn (Action $action) => $action->color('primary'))
             ->iconButton()
             ->extraAttributes([
                 'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',

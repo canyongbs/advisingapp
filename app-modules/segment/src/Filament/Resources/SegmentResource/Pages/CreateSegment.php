@@ -45,17 +45,18 @@ use App\Models\Import;
 use App\Models\User;
 use App\Support\ChunkIterator;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\View;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Get;
-use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\View;
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -70,7 +71,7 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 class CreateSegment extends CreateRecord implements HasTable
 {
     use InteractsWithTable;
-    use CreateRecord\Concerns\HasWizard;
+    use HasWizard;
 
     protected static string $resource = SegmentResource::class;
 
@@ -94,9 +95,7 @@ class CreateSegment extends CreateRecord implements HasTable
                         ->default(SegmentModel::default())
                         ->selectablePlaceholder(false)
                         ->afterStateUpdated(function () {
-                            $this->cacheForms();
-                            $this->bootedInteractsWithTable();
-                            $this->resetTableFiltersForm();
+                            $this->resetTable();
                         }),
                 ])
                 ->columns(2)
@@ -113,14 +112,14 @@ class CreateSegment extends CreateRecord implements HasTable
             Step::make('Create Population Segment')
                 ->schema([
                     View::make('filament.forms.components.table')
-                        ->visible(fn (Get $get): bool => SegmentType::tryFromCaseOrValue($get('type')) === SegmentType::Dynamic),
+                        ->visible(fn (Get $get): bool => $get('type') === SegmentType::Dynamic),
                     FileUpload::make('file')
                         ->acceptedFileTypes(['text/csv', 'text/plain'])
                         ->storeFiles(false)
                         ->visibility('private')
                         ->required()
                         ->hiddenLabel()
-                        ->visible(fn (Get $get): bool => SegmentType::tryFromCaseOrValue($get('type')) === SegmentType::Static)
+                        ->visible(fn (Get $get): bool => $get('type') === SegmentType::Static)
                         ->helperText(fn (): string => match ($this->getSegmentModel()) {
                             SegmentModel::Student => 'Upload a file of Student IDs or Other IDs, with each on a new line.',
                             SegmentModel::Prospect => 'Upload a file of prospect email addresses, with each on a new line.',
@@ -163,7 +162,7 @@ class CreateSegment extends CreateRecord implements HasTable
     {
         $data = $this->form->getRawState();
 
-        if (SegmentType::tryFromCaseOrValue($data['type']) === SegmentType::Dynamic) {
+        if (SegmentType::parse($data['type']) === SegmentType::Dynamic) {
             return;
         }
 
@@ -270,7 +269,7 @@ class CreateSegment extends CreateRecord implements HasTable
                     ->when(
                         $failedRowsCount,
                         fn (Notification $notification) => $notification->actions([
-                            NotificationAction::make('downloadFailedRowsCsv')
+                            Action::make('downloadFailedRowsCsv')
                                 ->label('Download information about the failed ' . Str::plural('row', $failedRowsCount))
                                 ->color('danger')
                                 ->url(route('filament.imports.failed-rows.download', ['import' => $import])),
@@ -293,7 +292,7 @@ class CreateSegment extends CreateRecord implements HasTable
         $canAccessProspects = auth()->user()->hasLicense(Prospect::getLicenseType());
 
         return match (true) {
-            $canAccessStudents && $canAccessProspects => SegmentModel::tryFromCaseOrValue($this->form->getRawState()['model']) ?? throw new Exception('Neither students nor prospects were selected.'),
+            $canAccessStudents && $canAccessProspects => SegmentModel::parse($this->form->getRawState()['model']) ?? throw new Exception('Neither students nor prospects were selected.'),
             $canAccessStudents => SegmentModel::Student,
             $canAccessProspects => SegmentModel::Prospect,
             default => throw new Exception('User cannot access students or prospects.'),
@@ -304,7 +303,7 @@ class CreateSegment extends CreateRecord implements HasTable
     {
         $data['model'] = $this->getSegmentModel();
 
-        if (SegmentType::tryFromCaseOrValue($data['type']) === SegmentType::Dynamic) {
+        if (SegmentType::parse($data['type']) === SegmentType::Dynamic) {
             $data['filters'] = $this->tableFilters ?? [];
         } else {
             $data['filters'] = [];

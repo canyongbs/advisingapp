@@ -38,15 +38,15 @@ namespace App\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use FilamentTiptapEditor\TiptapEditor;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 class EmailSignature extends ProfilePage
 {
@@ -56,14 +56,14 @@ class EmailSignature extends ProfilePage
 
     protected static ?int $navigationSort = 30;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         /** @var User $user */
         $user = auth()->user();
         $hasCrmLicense = $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Email Signature')
                     ->visible($hasCrmLicense)
                     ->schema([

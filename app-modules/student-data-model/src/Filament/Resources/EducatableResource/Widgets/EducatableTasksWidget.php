@@ -45,7 +45,7 @@ use Livewire\Attributes\Locked;
 
 class EducatableTasksWidget extends Widget
 {
-    protected static string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-tasks-widget';
+    protected string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-tasks-widget';
 
     #[Locked]
     public Educatable&Model $educatable;
@@ -77,6 +77,6 @@ class EducatableTasksWidget extends Widget
     */
     protected function getTasksUrl(array $filters = []): string
     {
-        return $this->resource::getUrl('tasks', ['record' => $this->educatable, 'tableFilters' => $filters]);
+        return $this->resource::getUrl('tasks', ['record' => $this->educatable, 'filters' => $filters]);
     }
 }

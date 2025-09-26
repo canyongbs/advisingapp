@@ -41,17 +41,17 @@ use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
@@ -63,10 +63,10 @@ class CampaignActionsRelationManager extends RelationManager
 
     protected static ?string $title = 'Journey Steps';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('type')
                     ->required()
                     ->maxLength(255)
@@ -99,7 +99,7 @@ class CampaignActionsRelationManager extends RelationManager
                 Action::make('create')
                     ->label('New')
                     ->modalHeading('Create Journey Steps')
-                    ->form([
+                    ->schema([
                         Builder::make('data')
                             ->hiddenLabel()
                             ->addActionLabel('Add a new Journey Step')
@@ -128,7 +128,7 @@ class CampaignActionsRelationManager extends RelationManager
                     ->action(fn () => null)
                     ->hidden(fn () => $campaign->hasBeenExecuted() === true),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('cancel')
                     ->requiresConfirmation()
                     ->color('danger')
@@ -157,7 +157,7 @@ class CampaignActionsRelationManager extends RelationManager
                     ->modalHeading(fn (CampaignAction $action) => 'Delete ' . $action->type->getLabel())
                     ->hidden(fn (CampaignAction $record) => $campaign->hasBeenExecuted() === true || $record->cancelled_at !== null),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ])

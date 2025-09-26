@@ -40,11 +40,11 @@ use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\WithoutSuperAdmin;
 use App\Models\User;
 use Closure;
+use Filament\Actions\AssociateAction;
+use Filament\Actions\DissociateAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\AssociateAction;
-use Filament\Tables\Actions\DissociateAction;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -55,10 +55,10 @@ class UsersRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -96,10 +96,10 @@ class UsersRelationManager extends RelationManager
                             ]),
                     ]),
             ])
-            ->actions([
+            ->recordActions([
                 DissociateAction::make()
                     ->label('Remove from this team'),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 }

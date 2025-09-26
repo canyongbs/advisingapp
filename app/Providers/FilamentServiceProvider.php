@@ -50,7 +50,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
+use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentView;
@@ -188,8 +188,8 @@ class FilamentServiceProvider extends ServiceProvider
             ],
         ]);
 
-        Table::$defaultDateTimeDisplayFormat = 'M j, Y g:ia';
-        Infolist::$defaultDateTimeDisplayFormat = 'M j, Y g:ia';
+        Table::configureUsing(fn (Table $table) => $table->defaultDateTimeDisplayFormat('M j, Y g:ia'));
+        Schema::configureUsing(fn (Schema $infolist) => $infolist->defaultDateTimeDisplayFormat('M j, Y g:ia'));
 
         FilamentView::registerRenderHook(
             'panels::footer',

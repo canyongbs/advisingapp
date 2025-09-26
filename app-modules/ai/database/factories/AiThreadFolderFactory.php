@@ -36,10 +36,11 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
+use AdvisingApp\Ai\Models\AiThreadFolder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Ai\Models\AiThreadFolder>
+ * @extends Factory<AiThreadFolder>
  */
 class AiThreadFolderFactory extends Factory
 {

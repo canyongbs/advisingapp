@@ -47,7 +47,7 @@ abstract class RecruitmentCrmDashboardReport extends Dashboard implements HasSeg
 {
     use HasFiltersForm;
 
-    protected static string $view = 'report::filament.pages.report';
+    protected string $view = 'report::filament.pages.report';
 
     public static function canAccess(): bool
     {

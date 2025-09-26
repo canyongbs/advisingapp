@@ -66,7 +66,7 @@ class ManageEventAttendees extends ManageRelatedRecords
             ])
             ->headerActions([
             ])
-            ->actions([
+            ->recordActions([
                 ViewEventAttendeeAction::make(),
             ]);
     }

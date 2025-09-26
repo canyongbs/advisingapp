@@ -38,12 +38,12 @@ namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
 
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -77,11 +77,11 @@ class ListDivisions extends ListRecords
                 TextColumn::make('notificationSetting.setting.name')
                     ->label('Notification Setting'),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

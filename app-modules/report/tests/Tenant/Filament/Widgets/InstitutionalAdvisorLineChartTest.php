@@ -106,7 +106,7 @@ it('returns correct monthly institutional advisor usage data within the given da
 
     $widgetInstance = new InstitutionalAdvisorLineChart();
     $widgetInstance->cacheTag = 'report-institutional-advisor';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];
@@ -165,7 +165,7 @@ it('returns correct monthly institutional advisor usage data without date filter
 
     $widgetInstance = new InstitutionalAdvisorLineChart();
     $widgetInstance->cacheTag = 'report-institutional-advisor';
-    $widgetInstance->filters = [];
+    $widgetInstance->pageFilters = [];
 
     $data = $widgetInstance->getData();
 
@@ -196,7 +196,7 @@ it('returns empty data when no institutional advisor usage exists', function () 
 
     $widgetInstance = new InstitutionalAdvisorLineChart();
     $widgetInstance->cacheTag = 'report-institutional-advisor';
-    $widgetInstance->filters = [];
+    $widgetInstance->pageFilters = [];
 
     $data = $widgetInstance->getData();
 
@@ -243,7 +243,7 @@ it('separates smart and custom prompt usage correctly', function () {
 
     $widgetInstance = new InstitutionalAdvisorLineChart();
     $widgetInstance->cacheTag = 'report-institutional-advisor';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => now()->toDateString(),
     ];

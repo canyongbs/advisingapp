@@ -48,7 +48,7 @@ use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 
-use STS\FilamentImpersonate\Tables\Actions\Impersonate;
+use STS\FilamentImpersonate\Actions\Impersonate;
 
 use function Tests\asSuperAdmin;
 

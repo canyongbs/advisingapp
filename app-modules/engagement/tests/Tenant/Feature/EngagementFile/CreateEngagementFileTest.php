@@ -33,9 +33,9 @@
 
 </COPYRIGHT>
 */
-
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\CreateEngagementFile;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -56,7 +56,7 @@ test('CreateEngagementFile is gated with proper access control', function () {
             EngagementFileResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(EngagementFileResource\Pages\CreateEngagementFile::class)
+    livewire(CreateEngagementFile::class)
         ->assertForbidden();
 
     $user->givePermissionTo('engagement_file.view-any');

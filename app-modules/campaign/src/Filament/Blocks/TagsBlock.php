@@ -41,11 +41,11 @@ use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Segment\Models\Segment;
 use App\Models\Tag;
 use Carbon\CarbonImmutable;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Utilities\Get;
 
 class TagsBlock extends CampaignActionBlock
 {

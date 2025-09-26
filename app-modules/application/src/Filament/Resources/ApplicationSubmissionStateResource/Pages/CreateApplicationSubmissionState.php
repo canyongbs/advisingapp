@@ -42,17 +42,17 @@ use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResourc
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateApplicationSubmissionState extends CreateRecord
 {
     protected static string $resource = ApplicationSubmissionStateResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Name')
                     ->required()

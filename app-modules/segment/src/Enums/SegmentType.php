@@ -57,7 +57,7 @@ enum SegmentType: string implements HasLabel
         return static::Dynamic;
     }
 
-    public static function tryFromCaseOrValue(SegmentType | string $value): ?static
+    public static function parse(SegmentType | string $value): ?static
     {
         if ($value instanceof static) {
             return $value;

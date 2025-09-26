@@ -46,17 +46,19 @@ use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageProjectPi
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageTasks;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ViewProject;
 use AdvisingApp\Project\Models\Project;
+use BackedEnum;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class ProjectResource extends Resource
 {
     protected static ?string $model = Project::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Project Management';
+    protected static string | UnitEnum | null $navigationGroup = 'Project Management';
 
     protected static ?int $navigationSort = 10;
 

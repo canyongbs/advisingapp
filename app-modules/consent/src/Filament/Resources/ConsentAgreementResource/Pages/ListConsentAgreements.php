@@ -39,13 +39,13 @@ namespace AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource;
 use App\Filament\Tables\Columns\IdColumn;
-use Filament\Forms\Components\Fieldset;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\EditAction;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -55,10 +55,10 @@ class ListConsentAgreements extends ListRecords
 
     protected static ?string $title = 'User Agreement';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('type')
                     ->formatStateUsing(fn ($state) => ConsentAgreementType::from($state)->getLabel())
                     ->disabled()
@@ -69,11 +69,11 @@ class ListConsentAgreements extends ListRecords
                     ->schema([
                         Textarea::make('description')
                             ->required()
-                            ->columnSpan('full'),
+                            ->columnSpanFull(),
                         Textarea::make('body')
                             ->required()
                             ->rows(5)
-                            ->columnSpan('full'),
+                            ->columnSpanFull(),
                     ]),
             ]);
     }
@@ -87,7 +87,7 @@ class ListConsentAgreements extends ListRecords
                     ->formatStateUsing(fn (ConsentAgreementType $state) => $state->getLabel()),
                 TextColumn::make('title'),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make('edit')
                     ->modalSubmitAction(false)
                     ->extraModalFooterActions(
@@ -107,7 +107,7 @@ class ListConsentAgreements extends ListRecords
                         ]
                     ),
             ])
-            ->bulkActions([]);
+            ->toolbarActions([]);
     }
 
     protected function getHeaderActions(): array

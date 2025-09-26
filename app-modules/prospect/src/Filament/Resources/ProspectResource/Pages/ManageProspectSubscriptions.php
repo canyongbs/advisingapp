@@ -43,12 +43,13 @@ use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
 use App\Models\User;
+use BackedEnum;
+use Filament\Actions\AttachAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DetachAction;
+use Filament\Actions\DetachBulkAction;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DetachAction;
-use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -67,7 +68,7 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
     // TODO: Automatically set from Filament based on relationship name
     protected static ?string $breadcrumb = 'Subscriptions';
 
-    protected static ?string $navigationIcon = 'heroicon-o-user';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-user';
 
     //TODO: manually override check canAccess for policy
 
@@ -109,7 +110,7 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                         return "{$record->name} was subscribed to {$prospect->display_name}";
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 DetachAction::make()
                     ->label('Unsubscribe')
                     ->modalHeading(function (User $record) {
@@ -126,7 +127,7 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                         return "{$record->name} was unsubscribed from {$prospect->display_name}";
                     }),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make()
                         ->label('Unsubscribe selected')

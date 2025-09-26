@@ -33,7 +33,6 @@
 
 </COPYRIGHT>
 */
-
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
@@ -46,7 +45,7 @@ use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-use Filament\Tables\Actions\ExportAction;
+use Filament\Actions\ExportAction;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;

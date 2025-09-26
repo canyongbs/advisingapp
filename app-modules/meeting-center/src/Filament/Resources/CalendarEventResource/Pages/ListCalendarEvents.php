@@ -42,15 +42,15 @@ use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
@@ -63,7 +63,7 @@ class ListCalendarEvents extends ListRecords
 
     protected ?string $heading = 'Schedule & Appointments';
 
-    protected static string $view = 'meeting-center::filament.pages.list-calendar-events';
+    protected string $view = 'meeting-center::filament.pages.list-calendar-events';
 
     #[Url(as: 'view')]
     public string $viewType = 'table';
@@ -86,7 +86,7 @@ class ListCalendarEvents extends ListRecords
     {
         return Action::make('selectCalendarAction')
             ->modalHeading('Select a Calendar')
-            ->form([
+            ->schema([
                 Select::make('provider_id')
                     ->hiddenLabel()
                     ->options(function () {
@@ -154,12 +154,12 @@ class ListCalendarEvents extends ListRecords
                     ->query(fn (Builder $query): Builder => $query->where('starts_at', '>=', now()->startOfDay()))
                     ->default(),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

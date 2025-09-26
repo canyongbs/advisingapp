@@ -39,10 +39,10 @@ namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationMan
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -52,10 +52,10 @@ class CreatedByRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('full')
                     ->required()
                     ->maxLength(255),
@@ -71,7 +71,7 @@ class CreatedByRelationManager extends RelationManager
                     ->label('Name'),
             ])
             ->paginated(false)
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->url(fn (User $user) => UserResource::getUrl('view', ['record' => $user])),
             ]);

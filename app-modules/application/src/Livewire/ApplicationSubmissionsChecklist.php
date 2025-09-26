@@ -38,19 +38,22 @@ namespace AdvisingApp\Application\Livewire;
 
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionsChecklistItem;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
 /**
- * @property-read Form $form
+ * @property-read Schema $form
  */
-class ApplicationSubmissionsChecklist extends Component implements HasForms
+class ApplicationSubmissionsChecklist extends Component implements HasForms, HasActions
 {
+    use InteractsWithActions;
     use InteractsWithForms;
 
     /**
@@ -60,9 +63,9 @@ class ApplicationSubmissionsChecklist extends Component implements HasForms
 
     public ApplicationSubmission $applicationSubmission;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             TextInput::make('title')
                 ->label('')
                 ->placeholder('Add checklist item')

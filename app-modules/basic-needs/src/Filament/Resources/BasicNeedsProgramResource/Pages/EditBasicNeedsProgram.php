@@ -43,8 +43,8 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class EditBasicNeedsProgram extends EditRecord
@@ -55,10 +55,10 @@ class EditBasicNeedsProgram extends EditRecord
 
     protected static ?string $navigationLabel = 'Edit';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Program Name')
                     ->required()

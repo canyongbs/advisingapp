@@ -116,7 +116,7 @@ it('returns correct interaction counts by status for prospects within the select
 
     $widgetInstance = new ProspectInteractionStatusPolarAreaChart();
     $widgetInstance->cacheTag = 'report-prospect-interaction';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'startDate' => $interactionStartDate->toDateString(),
         'endDate' => $interactionEndDate->toDateString(),
     ];
@@ -182,7 +182,7 @@ it('returns correct interaction counts by status for prospects based on segment 
 
     $widgetInstance = new ProspectInteractionStatusPolarAreaChart();
     $widgetInstance->cacheTag = 'report-prospect-interaction';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'populationSegment' => $segment->getKey(),
     ];
 
@@ -193,7 +193,7 @@ it('returns correct interaction counts by status for prospects based on segment 
 
     $widgetInstance = new ProspectInteractionStatusPolarAreaChart();
     $widgetInstance->cacheTag = 'report-prospect-interaction';
-    $widgetInstance->filters = [];
+    $widgetInstance->pageFilters = [];
 
     $stats = $widgetInstance->getData()['datasets'][0]['data'];
 

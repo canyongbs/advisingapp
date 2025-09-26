@@ -43,12 +43,13 @@ use AdvisingApp\Segment\Filament\Resources\SegmentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\EmbeddedTable;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Schema;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -63,12 +64,10 @@ class EditSegment extends EditRecord implements HasTable
 
     protected static string $resource = SegmentResource::class;
 
-    protected static string $view = 'segment::filament.resources.segments.pages.edit-segment';
-
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->autocomplete(false)
                     ->string()
@@ -118,6 +117,16 @@ class EditSegment extends EditRecord implements HasTable
         $this->baseBootedInteractsWithTable();
     }
 
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getFormContentComponent(),
+                $this->getRelationManagersContentComponent(),
+                EmbeddedTable::make(),
+            ]);
+    }
+
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $segment = $this->getRecord();
@@ -138,7 +147,7 @@ class EditSegment extends EditRecord implements HasTable
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        if (SegmentType::tryFromCaseOrValue($this->data['type']) === SegmentType::Dynamic) {
+        if (SegmentType::parse($this->data['type']) === SegmentType::Dynamic) {
             $data['filters'] = $this->tableFilters ?? [];
         } else {
             $data['filters'] = [];

@@ -44,13 +44,14 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use FilamentTiptapEditor\TiptapEditor;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
+use UnitEnum;
 
 /** @property-read ?CaseTypeEmailTemplate $template */
 class ManageCaseTypeEmailTemplate extends EditRecord
@@ -62,7 +63,7 @@ class ManageCaseTypeEmailTemplate extends EditRecord
     #[Locked]
     public CaseEmailTemplateType $type;
 
-    public static ?string $navigationGroup = 'Email Templates';
+    public static string | UnitEnum | null $navigationGroup = 'Email Templates';
 
     public function getRelationManagers(): array
     {
@@ -70,7 +71,7 @@ class ManageCaseTypeEmailTemplate extends EditRecord
         return [];
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         $roles = CaseTypeEmailTemplateRole::cases();
 
@@ -78,8 +79,8 @@ class ManageCaseTypeEmailTemplate extends EditRecord
             $roles = [CaseTypeEmailTemplateRole::Customer];
         }
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make('Email template roles')
                     ->persistTab()
                     ->id('email-template-role-tabs')

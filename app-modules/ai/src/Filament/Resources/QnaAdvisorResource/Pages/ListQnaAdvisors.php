@@ -38,9 +38,9 @@ namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -66,7 +66,7 @@ class ListQnaAdvisors extends ListRecords
                 IconColumn::make('archived_at')
                     ->label('Archived')
                     ->boolean()
-                    ->getStateUsing(fn ($record) => $record->archived_at !== null ? true : false)
+                    ->state(fn ($record) => $record->archived_at !== null ? true : false)
                     ->hidden(function (Table $table) {
                         return $table->getFilter('withoutArchived')->getState()['isActive'] ?? false;
                     }),
@@ -76,7 +76,7 @@ class ListQnaAdvisors extends ListRecords
                     ->query(fn (Builder $query) => $query->whereNull('archived_at'))
                     ->default(),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
             ]);

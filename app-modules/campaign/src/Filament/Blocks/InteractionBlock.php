@@ -50,15 +50,18 @@ use App\Features\InteractionMetadataFeature;
 use Carbon\CarbonImmutable;
 use Closure;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Fieldset;
 use Illuminate\Database\Eloquent\Model;
 
 class InteractionBlock extends CampaignActionBlock
 {
-    protected Model | string | Closure | null $model = Interaction::class;
+    /**
+     * @var Model | array<string, mixed> | class-string<Model> | Closure | null
+     */
+    protected Model | array | string | Closure | null $model = Interaction::class;
 
     protected function setUp(): void
     {

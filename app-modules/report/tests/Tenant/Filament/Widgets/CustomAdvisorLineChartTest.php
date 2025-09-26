@@ -74,7 +74,7 @@ it('returns correct monthly custom advisor exchanges data within the given date 
 
     $widgetInstance = new CustomAdvisorLineChart();
     $widgetInstance->cacheTag = 'report-custom-advisor';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];
@@ -118,7 +118,7 @@ it('returns correct monthly custom advisor exchanges data without date filters',
 
     $widgetInstance = new CustomAdvisorLineChart();
     $widgetInstance->cacheTag = 'report-custom-advisor';
-    $widgetInstance->filters = [];
+    $widgetInstance->pageFilters = [];
 
     $data = $widgetInstance->getData();
 
@@ -142,7 +142,7 @@ it('returns empty data when no custom advisor exchanges exist', function () {
 
     $widgetInstance = new CustomAdvisorLineChart();
     $widgetInstance->cacheTag = 'report-custom-advisor';
-    $widgetInstance->filters = [];
+    $widgetInstance->pageFilters = [];
 
     $data = $widgetInstance->getData();
 

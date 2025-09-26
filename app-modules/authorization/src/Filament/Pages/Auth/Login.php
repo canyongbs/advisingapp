@@ -44,17 +44,17 @@ use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Models\User;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Actions\Action;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
-use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Models\Contracts\FilamentUser;
-use Filament\Pages\Auth\Login as FilamentLogin;
+use Filament\Schemas\Schema;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 
-class Login extends FilamentLogin
+class Login extends \Filament\Auth\Pages\Login
 {
-    protected static string $view = 'authorization::login';
+    protected string $view = 'authorization::login';
 
     public ?array $data;
 
@@ -110,7 +110,7 @@ class Login extends FilamentLogin
 
         if (
             ($user instanceof FilamentUser) &&
-            (! $user->canAccessPanel(Filament::getCurrentPanel()))
+            (! $user->canAccessPanel(Filament::getCurrentOrDefaultPanel()))
         ) {
             Filament::auth()->logout();
 
@@ -251,13 +251,16 @@ class Login extends FilamentLogin
         return $ssoActions;
     }
 
+    /**
+     * @return array<string, Schema>
+     */
     protected function getForms(): array
     {
         return [
             'form' => $this->form(
-                $this->makeForm()
-                    ->schema([
-                        $this->getEmailFormComponent()
+                $this->makeSchema()
+                    ->components([
+                        $this->getEmailFormComponent() /** @phpstan-ignore method.notFound */
                             ->label('Email')
                             ->hidden(fn (Login $livewire) => $livewire->needsMFA)
                             ->dehydratedWhenHidden(),

@@ -591,7 +591,7 @@ async function authorizedPost(url, data) {
                 <div
                     class="flex flex-1 flex-col-reverse overflow-y-auto rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
                 >
-                    <div class="divide-y dark:divide-gray-800" v-if="messages.length > 0">
+                    <div class="divide-y divide-gray-200 dark:divide-gray-800" v-if="messages.length > 0">
                         <div
                             class="mx-auto flex gap-4 text-base w-full items-start bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 px-10 py-3"
                             v-for="(message, index) in messages"
@@ -638,7 +638,7 @@ async function authorizedPost(url, data) {
                         ></textarea>
                     </div>
                     <div
-                        class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between"
+                        class="flex flex-col items-center border-t border-gray-200 px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between"
                     >
                         <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
                             <button

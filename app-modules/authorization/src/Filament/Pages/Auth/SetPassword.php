@@ -43,20 +43,20 @@ use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\HasRoutes;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
 use Filament\Panel;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules\Password;
 
 /**
- * @property-read Form $form
+ * @property-read Schema $form
  */
 class SetPassword extends SimplePage
 {
@@ -64,7 +64,7 @@ class SetPassword extends SimplePage
     use InteractsWithFormActions;
     use WithRateLimiting;
 
-    protected static string $view = 'authorization::set-password';
+    protected string $view = 'authorization::set-password';
 
     public ?array $data = [];
 
@@ -79,10 +79,10 @@ class SetPassword extends SimplePage
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 $this->getPasswordFormComponent(),
                 $this->getPasswordConfirmationFormComponent(),
             ])

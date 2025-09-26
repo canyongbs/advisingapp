@@ -39,8 +39,8 @@ namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
 use AdvisingApp\Form\Filament\Resources\FormResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Form as FilamentForm;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class SubmissionOnScreenResponse extends EditRecord
 {
@@ -50,10 +50,10 @@ class SubmissionOnScreenResponse extends EditRecord
 
     protected static ?string $navigationLabel = 'On-Screen Response';
 
-    public function form(FilamentForm $form): FilamentForm
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema(
+        return $schema
+            ->components(
                 [
                     MarkdownEditor::make('on_screen_response')
                         ->disableToolbarButtons(['attachFiles'])

@@ -37,14 +37,14 @@
 namespace App\Filament\Pages;
 
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 class OutOfOffice extends ProfilePage
 {
@@ -54,10 +54,10 @@ class OutOfOffice extends ProfilePage
 
     protected static ?int $navigationSort = 90;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Out of Office')
                     ->schema([
                         Grid::make()

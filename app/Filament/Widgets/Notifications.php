@@ -50,7 +50,7 @@ class Notifications extends Widget
 {
     use WithPagination;
 
-    protected static string $view = 'filament.widgets.notifications';
+    protected string $view = 'filament.widgets.notifications';
 
     protected int | string | array $columnSpan = 'full';
 

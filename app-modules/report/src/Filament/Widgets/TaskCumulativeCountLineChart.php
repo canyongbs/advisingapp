@@ -44,7 +44,7 @@ use Illuminate\Support\Facades\Cache;
 
 class TaskCumulativeCountLineChart extends LineChartReportWidget
 {
-    protected static ?string $heading = 'Tasks by Affiliation';
+    protected ?string $heading = 'Tasks by Affiliation';
 
     protected int | string | array $columnSpan = 'full';
 

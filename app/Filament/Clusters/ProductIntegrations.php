@@ -37,10 +37,11 @@
 namespace App\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
+use UnitEnum;
 
 class ProductIntegrations extends Cluster
 {
-    protected static ?string $navigationGroup = 'Global Administration';
+    protected static string | UnitEnum | null $navigationGroup = 'Global Administration';
 
     protected static ?int $navigationSort = 70;
 }

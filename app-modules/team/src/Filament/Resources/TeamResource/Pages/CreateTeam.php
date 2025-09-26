@@ -41,18 +41,18 @@ use AdvisingApp\Team\Filament\Resources\TeamResource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
 class CreateTeam extends CreateRecord
 {
     protected static string $resource = TeamResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->required()
                     ->string()

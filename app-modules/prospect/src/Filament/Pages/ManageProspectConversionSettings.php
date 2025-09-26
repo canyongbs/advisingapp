@@ -44,10 +44,11 @@ use App\Filament\Forms\Components\Paragraph;
 use App\Models\User;
 use App\Settings\ProspectConversionSettings;
 use Cknow\Money\Money;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use UnitEnum;
 
 class ManageProspectConversionSettings extends SettingsPage
 {
@@ -59,7 +60,7 @@ class ManageProspectConversionSettings extends SettingsPage
 
     protected static ?int $navigationSort = 30;
 
-    protected static ?string $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
 
     protected static ?string $cluster = ConstituentManagement::class;
 
@@ -75,10 +76,10 @@ class ManageProspectConversionSettings extends SettingsPage
         return SettingsPermissions::active() ? $user->can(['settings.view-any']) : $user->can('product_admin.view-any');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make()
                     ->columns()
                     ->schema([

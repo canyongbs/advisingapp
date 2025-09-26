@@ -42,7 +42,7 @@ use App\Models\Tag;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 
 class ProspectTagsAction extends Action
 {
@@ -52,9 +52,9 @@ class ProspectTagsAction extends Action
 
         $this
             ->modalHeading('Prospect Tags')
-            ->modalWidth(MaxWidth::ExtraLarge)
+            ->modalWidth(Width::ExtraLarge)
             ->modalSubmitActionLabel('Save')
-            ->form([
+            ->schema([
                 Select::make('tag_ids')
                     ->options(
                         fn (): array => Tag::where('type', TagType::Prospect)

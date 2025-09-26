@@ -40,6 +40,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\CasesRelationManager;
 use App\Enums\Feature;
 use App\Filament\Concerns\FiltersManagersFromGroups;
+use BackedEnum;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -59,7 +60,7 @@ class StudentCaseManagement extends ManageRelatedRecords
     // TODO: Automatically set from Filament based on relationship name
     protected static ?string $breadcrumb = 'Case Management';
 
-    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-briefcase';
 
     public function getTitle(): string | Htmlable
     {

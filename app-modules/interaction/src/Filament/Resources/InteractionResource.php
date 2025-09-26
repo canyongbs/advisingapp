@@ -40,15 +40,17 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateI
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\EditInteraction;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\ListInteractions;
 use AdvisingApp\Interaction\Models\Interaction;
+use BackedEnum;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class InteractionResource extends Resource
 {
     protected static ?string $model = Interaction::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
 
-    protected static ?string $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = 'CRM';
 
     protected static ?int $navigationSort = 6;
 

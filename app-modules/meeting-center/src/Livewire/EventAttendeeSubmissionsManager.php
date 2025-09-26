@@ -38,11 +38,13 @@ namespace AdvisingApp\MeetingCenter\Livewire;
 
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -50,8 +52,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Livewire\Component;
 
-class EventAttendeeSubmissionsManager extends Component implements HasForms, HasTable
+class EventAttendeeSubmissionsManager extends Component implements HasForms, HasTable, HasActions
 {
+    use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
 
@@ -77,10 +80,10 @@ class EventAttendeeSubmissionsManager extends Component implements HasForms, Has
                     ->badge(),
             ])
             ->defaultSort('submitted_at', 'desc')
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->modalHeading(fn (EventRegistrationFormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
-                    ->infolist(fn (EventRegistrationFormSubmission $record): array => [
+                    ->schema(fn (EventRegistrationFormSubmission $record): array => [
                         Section::make('Metadata')
                             ->schema([
                                 TextEntry::make('author.email')

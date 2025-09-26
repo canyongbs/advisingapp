@@ -44,8 +44,8 @@ use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Illuminate\Validation\Rule;
 
 class ManageAiQnaAdvisorSettings extends ManageAiCustomAdvisorSettings
@@ -66,10 +66,10 @@ class ManageAiQnaAdvisorSettings extends ManageAiCustomAdvisorSettings
         return $user->isSuperAdmin();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Toggle::make('allow_selection_of_model')
                     ->label('Allow selection of model?')
                     ->helperText('If enabled, admin can select a model when creating or editing QnA advisors.')

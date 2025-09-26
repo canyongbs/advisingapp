@@ -81,7 +81,7 @@ it('returns correct total prospect stats of prospects, alerts, cases and tasks w
 
     $widget = new ProspectReportStats();
     $widget->cacheTag = 'prospect-report-cache';
-    $widget->filters = [
+    $widget->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];
@@ -182,7 +182,7 @@ it('returns correct total prospect stats of prospects, alerts, cases and tasks b
 
     $widget = new ProspectReportStats();
     $widget->cacheTag = 'prospect-report-cache';
-    $widget->filters = [
+    $widget->pageFilters = [
         'populationSegment' => $segment->getKey(),
     ];
 

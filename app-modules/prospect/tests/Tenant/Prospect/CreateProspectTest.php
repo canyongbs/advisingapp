@@ -33,8 +33,8 @@
 
 </COPYRIGHT>
 */
-
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\CreateProspect;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectAddress;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
@@ -64,7 +64,7 @@ test('CreateProspect is gated with proper access control', function () {
             ProspectResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(ProspectResource\Pages\CreateProspect::class)
+    livewire(CreateProspect::class)
         ->assertForbidden();
 
     $user->givePermissionTo('prospect.view-any');
@@ -81,7 +81,7 @@ test('CreateProspect is gated with proper access control', function () {
 
     $undoRepeaterFake = Repeater::fake();
 
-    livewire(ProspectResource\Pages\CreateProspect::class)
+    livewire(CreateProspect::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();

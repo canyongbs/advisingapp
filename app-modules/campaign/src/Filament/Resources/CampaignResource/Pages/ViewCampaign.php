@@ -40,18 +40,18 @@ use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class ViewCampaign extends ViewRecord
 {
     protected static string $resource = CampaignResource::class;
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
                 Section::make()
                     ->schema([
@@ -62,7 +62,7 @@ class ViewCampaign extends ViewRecord
                             ->boolean(),
                         IconEntry::make('execution_status')
                             ->label('Has Been Executed?')
-                            ->getStateUsing(fn (Campaign $record) => $record->hasBeenExecuted())
+                            ->state(fn (Campaign $record) => $record->hasBeenExecuted())
                             ->boolean(),
                         TextEntry::make('createdBy.name')
                             ->label('Created By'),

@@ -37,10 +37,11 @@
 namespace App\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
+use UnitEnum;
 
 class OnlineAdmissions extends Cluster
 {
-    protected static ?string $navigationGroup = 'Settings';
+    protected static string | UnitEnum | null $navigationGroup = 'Settings';
 
     protected static ?int $navigationSort = 100;
 }

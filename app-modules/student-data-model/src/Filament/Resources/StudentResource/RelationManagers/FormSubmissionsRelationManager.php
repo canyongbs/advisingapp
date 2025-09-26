@@ -44,11 +44,11 @@ use AdvisingApp\Form\Models\FormSubmission;
 use App\Enums\Feature;
 use App\Filament\Tables\Columns\IdColumn;
 use Carbon\CarbonInterface;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -76,14 +76,14 @@ class FormSubmissionsRelationManager extends RelationManager
                     ->url(fn (FormSubmission $record): string => FormResource::getUrl('edit', ['record' => $record->submissible])),
                 TextColumn::make('status')
                     ->badge()
-                    ->getStateUsing(fn (FormSubmission $record): FormSubmissionStatus => $record->getStatus()),
+                    ->state(fn (FormSubmission $record): FormSubmissionStatus => $record->getStatus()),
                 TextColumn::make('submitted_at')
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('requester.name'),
                 TextColumn::make('requested_at')
                     ->dateTime()
-                    ->getStateUsing(fn (FormSubmission $record): ?CarbonInterface => $record->requester ? $record->created_at : null),
+                    ->state(fn (FormSubmission $record): ?CarbonInterface => $record->requester ? $record->created_at : null),
             ])
             ->filters([
                 FormSubmissionStatusFilter::make(),
@@ -91,14 +91,14 @@ class FormSubmissionsRelationManager extends RelationManager
             ->headerActions([
                 RequestFormSubmission::make(),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->modalHeading(fn (FormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
                     ->modalContent(fn (FormSubmission $record) => view('form::submission', ['submission' => $record]))
                     ->visible(fn (FormSubmission $record) => $record->submitted_at),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

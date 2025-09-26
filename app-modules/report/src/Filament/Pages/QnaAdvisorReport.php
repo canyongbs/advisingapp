@@ -38,12 +38,13 @@ namespace AdvisingApp\Report\Filament\Pages;
 
 use AdvisingApp\Report\Abstract\AiReport;
 use App\Filament\Clusters\ReportLibrary;
+use UnitEnum;
 
 class QnaAdvisorReport extends AiReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
 
     protected static ?string $title = 'QnA Advisor';
 
@@ -53,5 +54,5 @@ class QnaAdvisorReport extends AiReport
 
     protected string $cacheTag = 'qna-advisor-report';
 
-    protected static string $view = 'filament.pages.coming-soon';
+    protected string $view = 'filament.pages.coming-soon';
 }

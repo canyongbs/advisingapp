@@ -41,9 +41,9 @@ use App\Filament\Clusters\ProductIntegrations;
 use App\Models\User;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 
 class ManageMicrosoftClaritySettings extends SettingsPage
 {
@@ -65,11 +65,11 @@ class ManageMicrosoftClaritySettings extends SettingsPage
         return $user->isSuperAdmin();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->columns(1)
-            ->schema([
+            ->components([
                 Toggle::make('is_enabled')
                     ->label('Enabled')
                     ->live(),

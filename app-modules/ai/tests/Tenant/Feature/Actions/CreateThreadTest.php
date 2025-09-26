@@ -216,7 +216,7 @@ it('uses the default assistant if none is provided', function () {
 
     $thread = app(CreateThread::class)(AiAssistantApplication::Test);
 
-    expect($thread)
+    expect($thread) /** @phpstan-ignore method.nonObject */
         ->assistant->getKey()->toBe($assistant->getKey())
         ->user->toBe(auth()->user())
         ->wasRecentlyCreated->toBeTrue();

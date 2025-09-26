@@ -38,17 +38,17 @@ namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\P
 
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateResourceHubStatus extends CreateRecord
 {
     protected static string $resource = ResourceHubStatusResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Name')
                     ->required()

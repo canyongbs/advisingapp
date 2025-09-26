@@ -62,9 +62,7 @@
                 class="cursor-pointer"
                 wire:click="$dispatch('send-prompt', @js((object) ['prompt' => ['id' => $prompt->getKey(), 'title' => $prompt->title]]))"
             >
-                <x-filament::card
-                    class="overflow-hidden rounded-xl border bg-white p-4 shadow-sm dark:border-white/10 dark:bg-gray-800"
-                >
+                <x-filament::card>
                     <div class="h-18 flex flex-col justify-start">
                         <h3 class="text-base font-semibold text-gray-900 dark:text-white">
                             {{ $prompt->type->title }}

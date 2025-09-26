@@ -37,7 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Actions;
 
 use AdvisingApp\StudentDataModel\Models\StudentDataImport;
-use Filament\Notifications\Actions\Action as NotificationAction;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\DB;
@@ -150,7 +150,7 @@ class CompleteStudentDataImport
 
             if ($studentsImportFailedRowsCount) {
                 $body .= ' ' . number_format($studentsImportFailedRowsCount) . ' ' . Str::plural('student', $studentsImportFailedRowsCount) . ' failed to import.';
-                $actions[] = NotificationAction::make('downloadFailedRowsCsv')
+                $actions[] = Action::make('downloadFailedRowsCsv')
                     ->label('Download failed student data')
                     ->color('danger')
                     ->url(route('filament.imports.failed-rows.download', ['import' => $import->studentsImport], absolute: false), shouldOpenInNewTab: true)
@@ -159,7 +159,7 @@ class CompleteStudentDataImport
 
             if ($emailAddressesImportFailedRowsCount) {
                 $body .= ' ' . number_format($emailAddressesImportFailedRowsCount) . ' ' . Str::plural('email address', $emailAddressesImportFailedRowsCount) . ' failed to import.';
-                $actions[] = NotificationAction::make('downloadFailedEmailAddressesRowsCsv')
+                $actions[] = Action::make('downloadFailedEmailAddressesRowsCsv')
                     ->label('Download failed email address data')
                     ->color('danger')
                     ->url(route('filament.imports.failed-rows.download', ['import' => $import->emailAddressesImport], absolute: false), shouldOpenInNewTab: true)
@@ -168,7 +168,7 @@ class CompleteStudentDataImport
 
             if ($phoneNumbersImportFailedRowsCount) {
                 $body .= ' ' . number_format($phoneNumbersImportFailedRowsCount) . ' ' . Str::plural('phone number', $phoneNumbersImportFailedRowsCount) . ' failed to import.';
-                $actions[] = NotificationAction::make('downloadFailedPhoneNumbersRowsCsv')
+                $actions[] = Action::make('downloadFailedPhoneNumbersRowsCsv')
                     ->label('Download failed phone number data')
                     ->color('danger')
                     ->url(route('filament.imports.failed-rows.download', ['import' => $import->phoneNumbersImport], absolute: false), shouldOpenInNewTab: true)
@@ -177,7 +177,7 @@ class CompleteStudentDataImport
 
             if ($addressesImportFailedRowsCount) {
                 $body .= ' ' . number_format($addressesImportFailedRowsCount) . ' ' . Str::plural('address', $addressesImportFailedRowsCount) . ' failed to import.';
-                $actions[] = NotificationAction::make('downloadFailedAddressesRowsCsv')
+                $actions[] = Action::make('downloadFailedAddressesRowsCsv')
                     ->label('Download failed address data')
                     ->color('danger')
                     ->url(route('filament.imports.failed-rows.download', ['import' => $import->addressesImport], absolute: false), shouldOpenInNewTab: true)
@@ -186,7 +186,7 @@ class CompleteStudentDataImport
 
             if ($programsImportFailedRowsCount) {
                 $body .= ' ' . number_format($programsImportFailedRowsCount) . ' ' . Str::plural('program', $programsImportFailedRowsCount) . ' failed to import.';
-                $actions[] = NotificationAction::make('downloadFailedProgramsRowsCsv')
+                $actions[] = Action::make('downloadFailedProgramsRowsCsv')
                     ->label('Download failed program data')
                     ->color('danger')
                     ->url(route('filament.imports.failed-rows.download', ['import' => $import->programsImport], absolute: false), shouldOpenInNewTab: true)
@@ -195,7 +195,7 @@ class CompleteStudentDataImport
 
             if ($enrollmentsImportFailedRowsCount) {
                 $body .= ' ' . number_format($enrollmentsImportFailedRowsCount) . ' ' . Str::plural('enrollment', $enrollmentsImportFailedRowsCount) . ' failed to import.';
-                $actions = NotificationAction::make('downloadFailedEnrollmentsRowsCsv')
+                $actions = Action::make('downloadFailedEnrollmentsRowsCsv')
                     ->label('Download failed enrollment data')
                     ->color('danger')
                     ->url(route('filament.imports.failed-rows.download', ['import' => $import->enrollmentsImport], absolute: false), shouldOpenInNewTab: true)

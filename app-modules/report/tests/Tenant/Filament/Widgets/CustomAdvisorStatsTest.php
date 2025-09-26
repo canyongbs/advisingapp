@@ -110,7 +110,7 @@ it('returns correct total custom advisor stats within the given date range', fun
 
     $widget = new CustomAdvisorStats();
     $widget->cacheTag = 'report-custom-advisor';
-    $widget->filters = [
+    $widget->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];
@@ -161,7 +161,7 @@ it('returns correct total custom advisor stats without date filters', function (
 
     $widget = new CustomAdvisorStats();
     $widget->cacheTag = 'report-custom-advisor';
-    $widget->filters = [];
+    $widget->pageFilters = [];
 
     $stats = $widget->getStats();
 
@@ -186,7 +186,7 @@ it('returns zero stats when no custom advisors exist', function () {
 
     $widget = new CustomAdvisorStats();
     $widget->cacheTag = 'report-custom-advisor';
-    $widget->filters = [];
+    $widget->pageFilters = [];
 
     $stats = $widget->getStats();
 

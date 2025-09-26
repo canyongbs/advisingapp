@@ -39,18 +39,18 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pag
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class ViewCalendarEvent extends ViewRecord
 {
     protected static string $resource = CalendarEventResource::class;
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
                 Section::make()
                     ->schema([

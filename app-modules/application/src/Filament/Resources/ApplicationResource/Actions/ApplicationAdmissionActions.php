@@ -40,7 +40,7 @@ use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Application\Models\Scopes\ClassifiedAs;
-use Filament\Tables\Actions\Action;
+use Filament\Actions\Action;
 
 // TODO We either need to introduce support for choosing the state that abides by the allowed classification transitions
 // Or we need to restrict creation of these states so that our `first()` logic to grab the desired state is always correct

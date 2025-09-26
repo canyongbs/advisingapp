@@ -87,7 +87,7 @@ it('sends a message', function () {
 
     $response = $messages->last();
 
-    expect($response)
+    expect($response) /** @phpstan-ignore method.nonObject */
         ->thread->getKey()->toBe($thread->getKey())
         ->user->toBeNull();
 

@@ -311,7 +311,7 @@ test('assignment type individual manager will auto assign to new cases', functio
 
     $case = CaseModel::first();
 
-    expect($case->assignments()->first())->user->getKey()->toBe($user->getKey());
+    expect($case->assignments()->first())->user->getKey()->toBe($user->getKey()); /** @phpstan-ignore method.nonObject */
 });
 
 test('assignment type round robin will auto-assign to new cases', function () {

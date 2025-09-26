@@ -37,20 +37,20 @@
 namespace AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\PromptTypeResource;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class CreatePromptType extends CreateRecord
 {
     protected static string $resource = PromptTypeResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make()
                     ->columns()
                     ->schema([

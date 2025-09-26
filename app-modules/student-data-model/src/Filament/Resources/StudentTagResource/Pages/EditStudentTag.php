@@ -40,8 +40,8 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class EditStudentTag extends EditRecord
 {
@@ -49,10 +49,10 @@ class EditStudentTag extends EditRecord
 
     protected static string $resource = StudentTagResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Name')
                     ->required()

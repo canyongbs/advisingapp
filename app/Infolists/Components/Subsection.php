@@ -36,7 +36,7 @@
 
 namespace App\Infolists\Components;
 
-use Filament\Infolists\Components\Group;
+use Filament\Schemas\Components\Group;
 
 class Subsection extends Group
 {

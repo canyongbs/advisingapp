@@ -31,13 +31,11 @@
 
 </COPYRIGHT>
 */
-import preset from './vendor/filament/support/tailwind.config.preset';
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
 import plugin from 'tailwindcss/plugin';
 
 export default {
-    presets: [preset],
     safelist: [
         'text-black',
         'text-gray-900',
@@ -60,7 +58,6 @@ export default {
         './resources/views/filament/**/*.blade.php',
         './vendor/canyongbs/common/resources/**/*.blade.php',
         './vendor/canyongbs/filament-tiptap-editor/resources/**/*.blade.php',
-        './vendor/filament/**/*.blade.php',
         './node_modules/flowbite/**/*.js',
     ],
     theme: {
@@ -88,6 +85,7 @@ export default {
                 950: '#24252d',
             },
             black: {
+                DEFAULT: '#000000',
                 50: '#f6f6f6',
                 100: '#e7e7e7',
                 200: '#d1d1d1',
@@ -101,6 +99,7 @@ export default {
                 950: '#000000',
             },
             white: {
+                DEFAULT: '#ffffff',
                 50: '#ffffff',
                 100: '#efefef',
                 200: '#dcdcdc',
