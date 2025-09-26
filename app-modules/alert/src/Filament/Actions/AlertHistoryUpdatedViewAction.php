@@ -51,7 +51,7 @@ class AlertHistoryUpdatedViewAction extends ViewAction
             Section::make()
                 ->schema([
                     KeyValueEntry::make('Changes')
-                        ->getStateUsing(fn (AlertHistory $record) => $record->formatted)
+                        ->state(fn (AlertHistory $record) => $record->formatted)
                         ->view('filament.infolists.components.update-entry'),
                 ]),
         ]);

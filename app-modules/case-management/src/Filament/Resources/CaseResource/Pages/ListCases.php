@@ -83,7 +83,7 @@ class ListCases extends ListRecords
                     ->sortable(),
                 TextColumn::make('respondent.display_name')
                     ->label('Related To')
-                    ->getStateUsing(function (CaseModel $record) {
+                    ->state(function (CaseModel $record) {
                         /** @var Student|Prospect|null $respondent */
                         $respondent = $record->respondent;
 

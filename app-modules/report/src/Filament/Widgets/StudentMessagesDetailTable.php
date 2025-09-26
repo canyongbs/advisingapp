@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use Filament\Actions\ExportAction;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
 use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
@@ -52,6 +51,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Exception;
+use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -119,7 +119,7 @@ class StudentMessagesDetailTable extends BaseWidget
                     })
                     ->sortable(),
                 TextColumn::make('status')
-                    ->getStateUsing(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
+                    ->state(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
                         EngagementResponse::class => $record->record->status,
                         Engagement::class => EngagementDisplayStatus::getStatus($record->record),
                         default => throw new Exception('Invalid record type'),
@@ -141,7 +141,7 @@ class StudentMessagesDetailTable extends BaseWidget
                             END {$direction}
                         ", [$studentModel->getMorphClass(), $prospectModel->getMorphClass(), $userModel->getMorphClass()]);
                     })
-                    ->getStateUsing(fn (HolisticEngagement $record): ?string => match ($record->sentBy::class) {
+                    ->state(fn (HolisticEngagement $record): ?string => match ($record->sentBy::class) {
                         Student::class, Prospect::class => $record->sentBy->{$record->sentBy->displayNameKey()},
                         User::class => $record->sentBy->name,
                         null => 'System',
@@ -167,7 +167,7 @@ class StudentMessagesDetailTable extends BaseWidget
                             END {$direction}
                         ", [$studentModel->getMorphClass(), $prospectModel->getMorphClass()]);
                     })
-                    ->getStateUsing(fn (HolisticEngagement $record): ?string => $record->sentTo ? match ($record->sentTo::class) {
+                    ->state(fn (HolisticEngagement $record): ?string => $record->sentTo ? match ($record->sentTo::class) {
                         Student::class, Prospect::class => $record->sentTo->{$record->sentTo->displayNameKey()},
                         default => 'N/A',
                     } : 'N/A')
@@ -191,7 +191,7 @@ class StudentMessagesDetailTable extends BaseWidget
                         default => throw new Exception('Invalid type'),
                     }),
                 TextColumn::make('details')
-                    ->getStateUsing(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
+                    ->state(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
                         Engagement::class => Str::limit(match ($record->record->channel) {
                             NotificationChannel::Email => $record->record->getSubjectMarkdown(),
                             NotificationChannel::Sms => $record->record->getBodyMarkdown(),
@@ -227,7 +227,7 @@ class StudentMessagesDetailTable extends BaseWidget
                             END {$direction}
                         ", [$engagementModel->getMorphClass()]);
                     })
-                    ->getStateUsing(
+                    ->state(
                         fn (HolisticEngagement $record) => $record->record instanceof Engagement
                             ? $record->record->campaignAction?->campaign->name ?? 'N/A'
                             : 'N/A'

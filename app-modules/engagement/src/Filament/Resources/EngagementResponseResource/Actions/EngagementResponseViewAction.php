@@ -52,10 +52,10 @@ class EngagementResponseViewAction
                 Flex::make([
                     Section::make([
                         TextEntry::make('subject')
-                            ->getStateUsing(fn (EngagementResponse $record): ?string => $record->subject)
+                            ->state(fn (EngagementResponse $record): ?string => $record->subject)
                             ->hidden(fn ($state): bool => blank($state)),
                         TextEntry::make('content')
-                            ->getStateUsing(fn (EngagementResponse $record): HtmlString => $record->getBody()),
+                            ->state(fn (EngagementResponse $record): HtmlString => $record->getBody()),
                     ]),
                     Section::make([
                         TextEntry::make('sent_at')

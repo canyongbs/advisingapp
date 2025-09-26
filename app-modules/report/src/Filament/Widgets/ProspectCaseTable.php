@@ -103,7 +103,7 @@ class ProspectCaseTable extends BaseWidget
                     ->label('Case Number'),
                 TextColumn::make('respondent')
                     ->label('Related To')
-                    ->getStateUsing(function (CaseModel $record): string {
+                    ->state(function (CaseModel $record): string {
                         $respondent = $record->respondent;
                         assert($respondent instanceof Prospect);
 
@@ -113,12 +113,12 @@ class ProspectCaseTable extends BaseWidget
                     ->label('Assigned To'),
                 TextColumn::make('sla_response_seconds')
                     ->label('Response')
-                    ->getStateUsing(function (CaseModel $record) {
+                    ->state(function (CaseModel $record) {
                         return $record->getSlaResponseSeconds();
                     }),
                 TextColumn::make('sla_resolution_seconds')
                     ->label('Resolution')
-                    ->getStateUsing(function (CaseModel $record) {
+                    ->state(function (CaseModel $record) {
                         return $record->getSlaResolutionSeconds();
                     }),
             ])

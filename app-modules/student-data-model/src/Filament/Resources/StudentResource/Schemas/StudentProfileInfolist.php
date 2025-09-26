@@ -63,7 +63,7 @@ class StudentProfileInfolist
                                 ->label('Tags')
                                 ->badge()
                                 ->placeholder('-')
-                                ->getStateUsing(
+                                ->state(
                                     fn ($record) => $record->tags->sortBy('name')->pluck('name')->all()
                                 ),
                             TextEntry::make('preferred')

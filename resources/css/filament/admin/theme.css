@@ -142,19 +142,19 @@
 }
 
 .fi-sidebar-group-label {
-    @apply text-gray-700 dark:text-gray-200 !important;
+    @apply text-gray-700! dark:text-gray-200!;
 }
 
 .fi-sidebar-item-label {
-    @apply text-gray-500 dark:text-gray-400 !important;
+    @apply text-gray-500! dark:text-gray-400!;
 }
 
 .fi-sidebar-item.fi-active .fi-sidebar-item-label {
-    @apply text-gray-700 dark:text-gray-200 !important;
+    @apply text-gray-700! dark:text-gray-200!;
 }
 
 .dark_button_border {
-    @apply dark:border dark:border-white dark:hover:border-white !important;
+    @apply dark:border! dark:border-white! dark:hover:border-white!;
 }
 
 .fi-section.fi-section-has-subsections > .fi-section-content-ctn > .fi-section-content {
@@ -171,17 +171,17 @@
 }
 
 .fi-fo-slider-input {
-    @apply bg-white dark:bg-white/5 shadow-sm ring-1 ring-gray-950/10 dark:ring-white/20;
+    @apply bg-white dark:bg-white/5 shadow-xs ring-1 ring-gray-950/10 dark:ring-white/20;
     -webkit-appearance: none;
     height: 5px;
     border-radius: 50px;
-    background-image: linear-gradient(theme('colors.gray.200'), theme('colors.gray.200'));
+    background-image: linear-gradient(var(--color-gray-200), var(--color-gray-200));
     background-size: 50% 100%;
     background-repeat: no-repeat;
 }
 
 .dark .fi-fo-slider-input {
-    background-image: linear-gradient(theme('colors.gray.700'), theme('colors.gray.700'));
+    background-image: linear-gradient(var(--color-gray-700), var(--color-gray-700));
 }
 
 .fi-fo-slider-input::-webkit-slider-thumb {
@@ -218,7 +218,7 @@
 }
 
 .fi-sidebar {
-    @apply !bg-white dark:!bg-gray-900;
+    @apply bg-white! dark:bg-gray-900!;
 }
 
 .fi-sidebar-nav > ul > li .fi-active > a {
@@ -226,7 +226,7 @@
 }
 
 .fi-sidebar-nav > ul > li a {
-    @apply dark:hover:!bg-white/20;
+    @apply dark:hover:bg-white/20!;
 }
 
 .fi-wi-stats-overview-stat-primary {
@@ -246,7 +246,7 @@
 }
 
 .research-request-reasoning {
-    @apply mx-1 mb-6 p-6 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+    @apply mx-1 mb-6 p-6 rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
 }
 
 .fi-section.fi-section-no-content-padding .fi-section-content {

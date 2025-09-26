@@ -66,7 +66,7 @@ class ListQnaAdvisors extends ListRecords
                 IconColumn::make('archived_at')
                     ->label('Archived')
                     ->boolean()
-                    ->getStateUsing(fn ($record) => $record->archived_at !== null ? true : false)
+                    ->state(fn ($record) => $record->archived_at !== null ? true : false)
                     ->hidden(function (Table $table) {
                         return $table->getFilter('withoutArchived')->getState()['isActive'] ?? false;
                     }),

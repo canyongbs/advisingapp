@@ -57,7 +57,7 @@ class InteractionViewAction extends ViewAction
                             ->hidden(fn ($state): bool => blank($state))
                             ->columnSpanFull(),
                         TextEntry::make('description')
-                            ->getStateUsing(fn (Interaction $interaction): string => $interaction->description ?? 'N/A')
+                            ->state(fn (Interaction $interaction): string => $interaction->description ?? 'N/A')
                             ->markdown()
                             ->columnSpanFull(),
                     ]),

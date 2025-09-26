@@ -116,7 +116,7 @@ class ProspectMessagesDetailTable extends BaseWidget
                     })
                     ->sortable(),
                 TextColumn::make('status')
-                    ->getStateUsing(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
+                    ->state(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
                         EngagementResponse::class => $record->record->status,
                         Engagement::class => EngagementDisplayStatus::getStatus($record->record),
                         default => throw new Exception('Invalid record type'),
@@ -138,7 +138,7 @@ class ProspectMessagesDetailTable extends BaseWidget
                             END {$direction}
                         ", [$studentModel->getMorphClass(), $prospectModel->getMorphClass(), $userModel->getMorphClass()]);
                     })
-                    ->getStateUsing(fn (HolisticEngagement $record): ?string => match ($record->sentBy::class) {
+                    ->state(fn (HolisticEngagement $record): ?string => match ($record->sentBy::class) {
                         Student::class, Prospect::class => $record->sentBy->{$record->sentBy->displayNameKey()},
                         User::class => $record->sentBy->name,
                         null => 'System',
@@ -164,7 +164,7 @@ class ProspectMessagesDetailTable extends BaseWidget
                             END {$direction}
                         ", [$studentModel->getMorphClass(), $prospectModel->getMorphClass()]);
                     })
-                    ->getStateUsing(fn (HolisticEngagement $record): ?string => $record->sentTo ? match ($record->sentTo::class) {
+                    ->state(fn (HolisticEngagement $record): ?string => $record->sentTo ? match ($record->sentTo::class) {
                         Student::class, Prospect::class => $record->sentTo->{$record->sentTo->displayNameKey()},
                         default => 'N/A',
                     } : 'N/A')
@@ -188,7 +188,7 @@ class ProspectMessagesDetailTable extends BaseWidget
                         default => throw new Exception('Invalid type'),
                     }),
                 TextColumn::make('details')
-                    ->getStateUsing(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
+                    ->state(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
                         Engagement::class => Str::limit(match ($record->record->channel) {
                             NotificationChannel::Email => $record->record->getSubjectMarkdown(),
                             NotificationChannel::Sms => $record->record->getBodyMarkdown(),
@@ -224,7 +224,7 @@ class ProspectMessagesDetailTable extends BaseWidget
                             END {$direction}
                         ", [$engagementModel->getMorphClass()]);
                     })
-                    ->getStateUsing(
+                    ->state(
                         fn (HolisticEngagement $record) => $record->record instanceof Engagement
                             ? $record->record->campaignAction?->campaign->name ?? 'N/A'
                             : 'N/A'

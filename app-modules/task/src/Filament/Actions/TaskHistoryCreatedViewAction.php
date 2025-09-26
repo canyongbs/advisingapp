@@ -55,15 +55,15 @@ class TaskHistoryCreatedViewAction extends ViewAction
                     ->schema([
                         TextEntry::make('title')
                             ->label(fn (TaskHistory $record): ?string => $record->formatted['title']['key'])
-                            ->getStateUsing(fn (TaskHistory $record): ?string => $record->formatted['title']['new'])
+                            ->state(fn (TaskHistory $record): ?string => $record->formatted['title']['new'])
                             ->columnSpanFull(),
                         TextEntry::make('description')
                             ->label(fn (TaskHistory $record): ?string => $record->formatted['description']['key'])
-                            ->getStateUsing(fn (TaskHistory $record): ?string => $record->formatted['description']['new'])
+                            ->state(fn (TaskHistory $record): ?string => $record->formatted['description']['new'])
                             ->columnSpanFull(),
                         TextEntry::make('assigned_to')
                             ->label(fn (TaskHistory $record): ?string => $record->formatted['assigned_to']['key'])
-                            ->getStateUsing(fn (TaskHistory $record): ?string => $record->formatted['assigned_to']['new'])
+                            ->state(fn (TaskHistory $record): ?string => $record->formatted['assigned_to']['new'])
                             ->url(fn (TaskHistory $record): ?string => $record->formatted['assigned_to']['extra']['new']['link'])
                             ->default('Unassigned'),
                     ]),
@@ -72,15 +72,15 @@ class TaskHistoryCreatedViewAction extends ViewAction
                     ->schema([
                         TextEntry::make('status')
                             ->label(fn (TaskHistory $record): ?string => $record->formatted['status']['key'])
-                            ->getStateUsing(fn (TaskHistory $record): ?string => $record->formatted['status']['new'])
+                            ->state(fn (TaskHistory $record): ?string => $record->formatted['status']['new'])
                             ->badge(),
                         TextEntry::make('due')
                             ->label(fn (TaskHistory $record): ?string => $record->formatted['due']['key'])
-                            ->getStateUsing(fn (TaskHistory $record): ?string => $record->formatted['due']['new'])
+                            ->state(fn (TaskHistory $record): ?string => $record->formatted['due']['new'])
                             ->default('N/A'),
                         TextEntry::make('created_by')
                             ->label(fn (TaskHistory $record): ?string => $record->formatted['created_by']['key'])
-                            ->getStateUsing(fn (TaskHistory $record): ?string => $record->formatted['created_by']['new'])
+                            ->state(fn (TaskHistory $record): ?string => $record->formatted['created_by']['new'])
                             ->url(fn (TaskHistory $record): ?string => $record->formatted['created_by']['extra']['new']['link'])
                             ->default('N/A'),
                     ]),

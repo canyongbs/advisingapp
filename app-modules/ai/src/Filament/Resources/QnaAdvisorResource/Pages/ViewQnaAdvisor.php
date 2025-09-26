@@ -79,7 +79,7 @@ class ViewQnaAdvisor extends ViewRecord
                                     ->columnSpanFull()
                                     ->html()
                                     ->extraAttributes(['class' => 'overflow-auto'])
-                                    ->getStateUsing(fn (QnaAdvisor $record): string => new HtmlString(
+                                    ->state(fn (QnaAdvisor $record): string => new HtmlString(
                                         '<pre>' . app(GetQnaAdvisorInstructions::class)->execute($record) . '</pre>'
                                     )),
                             ]),
@@ -91,7 +91,7 @@ class ViewQnaAdvisor extends ViewRecord
                                     ->hiddenLabel()
                                     ->columnSpanFull()
                                     ->markdown()
-                                    ->getStateUsing(fn (QnaAdvisor $record): string => app(GetQnaAdvisorInstructions::class)->execute($record)),
+                                    ->state(fn (QnaAdvisor $record): string => app(GetQnaAdvisorInstructions::class)->execute($record)),
                             ]),
                     ])->visible(fn () => auth()->guard('web')->user()?->isSuperAdmin()),
             ]),

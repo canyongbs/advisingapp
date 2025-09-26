@@ -76,14 +76,14 @@ class FormSubmissionsRelationManager extends RelationManager
                     ->url(fn (FormSubmission $record): string => FormResource::getUrl('edit', ['record' => $record->submissible])),
                 TextColumn::make('status')
                     ->badge()
-                    ->getStateUsing(fn (FormSubmission $record): FormSubmissionStatus => $record->getStatus()),
+                    ->state(fn (FormSubmission $record): FormSubmissionStatus => $record->getStatus()),
                 TextColumn::make('submitted_at')
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('requester.name'),
                 TextColumn::make('requested_at')
                     ->dateTime()
-                    ->getStateUsing(fn (FormSubmission $record): ?CarbonInterface => $record->requester ? $record->created_at : null),
+                    ->state(fn (FormSubmission $record): ?CarbonInterface => $record->requester ? $record->created_at : null),
             ])
             ->filters([
                 FormSubmissionStatusFilter::make(),

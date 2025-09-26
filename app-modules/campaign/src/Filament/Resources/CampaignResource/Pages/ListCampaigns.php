@@ -70,7 +70,7 @@ class ListCampaigns extends ListRecords
                     ->color(fn (bool $state): string => $state ? 'blue' : 'orange'),
                 TextColumn::make('execution_status')
                     ->label('Completed')
-                    ->getStateUsing(fn (Campaign $record) => $record->hasBeenExecuted())
+                    ->state(fn (Campaign $record) => $record->hasBeenExecuted())
                     ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No')
                     ->badge()
                     ->color(fn (bool $state): string => $state ? 'blue' : 'orange'),

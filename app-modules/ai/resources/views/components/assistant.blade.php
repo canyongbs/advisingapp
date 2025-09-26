@@ -32,7 +32,7 @@
 </COPYRIGHT>
 --}}
 @php
-    use Filament\Support\Enums\ActionSize;
+    use Filament\Support\Enums\Size;
     use Illuminate\Support\Facades\Vite;
 @endphp
 
@@ -172,7 +172,7 @@
                                             x-on:click="moveThread(thread.id)"
                                             label="Move chat to a different folder"
                                             color="warning"
-                                            size="{{ ActionSize::ExtraSmall }}"
+                                            size="{{ Size::ExtraSmall }}"
                                         />
                                     </template>
                                     <template
@@ -190,7 +190,7 @@
                                             x-on:click="editThread(thread.id)"
                                             label="Edit name of the chat"
                                             color="warning"
-                                            size="{{ ActionSize::ExtraSmall }}"
+                                            size="{{ Size::ExtraSmall }}"
                                         />
                                     </template>
                                     <template
@@ -209,7 +209,7 @@
                                             x-on:click="deleteThread(thread.id)"
                                             label="Delete the chat"
                                             color="danger"
-                                            size="{{ ActionSize::ExtraSmall }}"
+                                            size="{{ Size::ExtraSmall }}"
                                         />
                                     </template>
                                     <template
@@ -292,7 +292,7 @@
                                                     x-on:click="renameFolder(folder.id)"
                                                     label="Rename Folder"
                                                     color="warning"
-                                                    size="{{ ActionSize::ExtraSmall }}"
+                                                    size="{{ Size::ExtraSmall }}"
                                                 />
                                             </template>
                                             <template
@@ -312,7 +312,7 @@
                                                     x-on:click="deleteFolder(folder.id)"
                                                     label="Delete Folder"
                                                     color="danger"
-                                                    size="{{ ActionSize::ExtraSmall }}"
+                                                    size="{{ Size::ExtraSmall }}"
                                                 />
                                             </template>
                                             <template
@@ -411,7 +411,7 @@
                                                     x-on:click="moveThread(thread.id)"
                                                     label="Move chat to a different folder"
                                                     color="warning"
-                                                    size="{{ ActionSize::ExtraSmall }}"
+                                                    size="{{ Size::ExtraSmall }}"
                                                 />
                                             </template>
                                             <template
@@ -431,7 +431,7 @@
                                                     x-on:click="editThread(thread.id)"
                                                     label="Edit name of the chat"
                                                     color="warning"
-                                                    size="{{ ActionSize::ExtraSmall }}"
+                                                    size="{{ Size::ExtraSmall }}"
                                                 />
                                             </template>
                                             <template
@@ -451,7 +451,7 @@
                                                     x-on:click="deleteThread(thread.id)"
                                                     label="Delete the chat"
                                                     color="danger"
-                                                    size="{{ ActionSize::ExtraSmall }}"
+                                                    size="{{ Size::ExtraSmall }}"
                                                 />
                                             </template>
                                             <template
@@ -517,7 +517,7 @@
                         </div>
 
                         @if ($this->customAssistants)
-                            <x-filament::badge :size="ActionSize::Large">
+                            <x-filament::badge :size="Size::Large">
                                 <h1 class="text-xxs uppercase leading-3">
                                     {{ $this->thread->assistant->name }}
                                 </h1>

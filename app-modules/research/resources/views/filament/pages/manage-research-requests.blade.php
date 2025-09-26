@@ -33,7 +33,7 @@
 --}}
 @php
     use AdvisingApp\Research\Filament\Pages\NewResearchRequest;
-    use Filament\Support\Enums\ActionSize;
+    use Filament\Support\Enums\Size;
     use Illuminate\Support\Str;
 @endphp
 
@@ -179,7 +179,7 @@
                                             x-on:click="moveRequest(request.id)"
                                             label="Move request to a different folder"
                                             color="warning"
-                                            size="{{ ActionSize::ExtraSmall }}"
+                                            size="{{ Size::ExtraSmall }}"
                                         />
                                     </template>
                                     <template
@@ -199,7 +199,7 @@
                                             x-on:click="editRequest(request.id)"
                                             label="Edit name of the request"
                                             color="warning"
-                                            size="{{ ActionSize::ExtraSmall }}"
+                                            size="{{ Size::ExtraSmall }}"
                                         />
                                     </template>
                                     <template
@@ -219,7 +219,7 @@
                                             x-on:click="deleteRequest(request.id)"
                                             label="Delete the request"
                                             color="danger"
-                                            size="{{ ActionSize::ExtraSmall }}"
+                                            size="{{ Size::ExtraSmall }}"
                                         />
                                     </template>
                                     <template
@@ -303,7 +303,7 @@
                                                     x-on:click="renameFolder(folder.id)"
                                                     label="Rename Folder"
                                                     color="warning"
-                                                    size="{{ ActionSize::ExtraSmall }}"
+                                                    size="{{ Size::ExtraSmall }}"
                                                 />
                                             </template>
                                             <template
@@ -323,7 +323,7 @@
                                                     x-on:click="deleteFolder(folder.id)"
                                                     label="Delete Folder"
                                                     color="danger"
-                                                    size="{{ ActionSize::ExtraSmall }}"
+                                                    size="{{ Size::ExtraSmall }}"
                                                 />
                                             </template>
                                             <template
@@ -404,7 +404,7 @@
                                                     x-on:click="moveRequest(request.id)"
                                                     label="Move request to a different folder"
                                                     color="warning"
-                                                    size="{{ ActionSize::ExtraSmall }}"
+                                                    size="{{ Size::ExtraSmall }}"
                                                 />
                                             </template>
                                             <template
@@ -424,7 +424,7 @@
                                                     x-on:click="editRequest(request.id)"
                                                     label="Edit title of the request"
                                                     color="warning"
-                                                    size="{{ ActionSize::ExtraSmall }}"
+                                                    size="{{ Size::ExtraSmall }}"
                                                 />
                                             </template>
                                             <template
@@ -444,7 +444,7 @@
                                                     x-on:click="deleteRequest(request.id)"
                                                     label="Delete the request"
                                                     color="danger"
-                                                    size="{{ ActionSize::ExtraSmall }}"
+                                                    size="{{ Size::ExtraSmall }}"
                                                 />
                                             </template>
                                             <template
@@ -481,7 +481,7 @@
                 >
                     <div class="mb-6 flex items-center justify-between gap-3">
                         <div>
-                            <x-filament::badge :size="ActionSize::Large">
+                            <x-filament::badge :size="Size::Large">
                                 <h1 class="text-xxs uppercase leading-3">
                                     Research Advisor
                                 </h1>

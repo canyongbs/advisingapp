@@ -36,12 +36,6 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use Filament\Actions\ViewAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\RestoreAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Role;
@@ -55,8 +49,14 @@ use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
 use App\Settings\DisplaySettings;
 use Carbon\Carbon;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Actions\ImportAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\IconColumn;
@@ -135,7 +135,7 @@ class ListUsers extends ListRecords
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('deleted_at')
                     ->label('Status')
-                    ->getStateUsing(fn (User $record): string => $record->trashed() ? 'Archived' : 'Active')
+                    ->state(fn (User $record): string => $record->trashed() ? 'Archived' : 'Active')
                     ->visible(fn ($livewire) => isset($livewire->getTableFilterState('trashed')['value']) ? true : false),
             ])
             ->recordActions([

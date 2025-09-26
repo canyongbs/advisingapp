@@ -87,10 +87,10 @@ class EngagementTimeline extends CustomTimeline
                     ->schema([
                         TextEntry::make('subject')
                             ->visible(fn (Engagement $engagement): bool => $engagement->channel === NotificationChannel::Email)
-                            ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getSubject())
+                            ->state(fn (Engagement $engagement): HtmlString => $engagement->getSubject())
                             ->columnSpanFull(),
                         EngagementBody::make('body')
-                            ->getStateUsing(fn (Engagement $engagement): HtmlString => $engagement->getBody())
+                            ->state(fn (Engagement $engagement): HtmlString => $engagement->getBody())
                             ->columnSpanFull(),
                     ]),
                 Fieldset::make('delivery')

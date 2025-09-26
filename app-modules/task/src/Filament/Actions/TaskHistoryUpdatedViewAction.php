@@ -51,7 +51,7 @@ class TaskHistoryUpdatedViewAction extends ViewAction
             Section::make()
                 ->schema([
                     KeyValueEntry::make('Changes')
-                        ->getStateUsing(fn (TaskHistory $record) => $record->formatted)
+                        ->state(fn (TaskHistory $record) => $record->formatted)
                         ->view('filament.infolists.components.update-entry'),
                 ]),
         ]);

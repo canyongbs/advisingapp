@@ -74,7 +74,7 @@ class ManageSurveySubmissions extends ManageRelatedRecords
                 IdColumn::make(),
                 TextColumn::make('status')
                     ->badge()
-                    ->getStateUsing(fn (SurveySubmission $record): FormSubmissionStatus => $record->getStatus()),
+                    ->state(fn (SurveySubmission $record): FormSubmissionStatus => $record->getStatus()),
                 TextColumn::make('submitted_at')
                     ->dateTime()
                     ->sortable(),
@@ -88,7 +88,7 @@ class ManageSurveySubmissions extends ManageRelatedRecords
                 // TextColumn::make('requester.name'),
                 // TextColumn::make('requested_at')
                 //     ->dateTime()
-                //     ->getStateUsing(fn (SurveySubmission $record): ?CarbonInterface => $record->requester ? $record->created_at : null),
+                //     ->state(fn (SurveySubmission $record): ?CarbonInterface => $record->requester ? $record->created_at : null),
             ])
             ->filters([
                 FormSubmissionStatusFilter::make(),

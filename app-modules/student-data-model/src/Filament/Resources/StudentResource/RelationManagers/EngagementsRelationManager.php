@@ -90,11 +90,11 @@ class EngagementsRelationManager extends RelationManager
                             ->schema([
                                 TextEntry::make('user.name')
                                     ->label('Created By')
-                                    ->getStateUsing(fn (Timeline $record): string => $record->timelineable->user->name ?? 'N/A'),
+                                    ->state(fn (Timeline $record): string => $record->timelineable->user->name ?? 'N/A'),
                                 Fieldset::make('Content')
                                     ->schema([
                                         TextEntry::make('subject')
-                                            ->getStateUsing(function (Timeline $record): ?string {
+                                            ->state(function (Timeline $record): ?string {
                                                 $model = $record->timelineable;
 
                                                 if ($model instanceof Engagement && $model->channel === NotificationChannel::Email) {
@@ -106,7 +106,7 @@ class EngagementsRelationManager extends RelationManager
                                             ->visible(fn (Timeline $record): bool => $record->timelineable instanceof Engagement && $record->timelineable->channel === NotificationChannel::Email)
                                             ->columnSpanFull(),
                                         EngagementBody::make('body')
-                                            ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
+                                            ->state(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
                                             ->columnSpanFull(),
                                     ]),
                             ]),
@@ -128,10 +128,10 @@ class EngagementsRelationManager extends RelationManager
                                         Section::make()
                                             ->schema([
                                                 TextEntry::make('type')
-                                                    ->getStateUsing(fn (EmailMessageEvent|SmsMessageEvent $record): string => $record->type?->getLabel()),
+                                                    ->state(fn (EmailMessageEvent|SmsMessageEvent $record): string => $record->type?->getLabel()),
                                                 TextEntry::make('occured_at')
                                                     ->dateTime()
-                                                    ->getStateUsing(fn (EmailMessageEvent|SmsMessageEvent $record): string => $record->occurred_at->format('Y-m-d H:i:s')),
+                                                    ->state(fn (EmailMessageEvent|SmsMessageEvent $record): string => $record->occurred_at->format('Y-m-d H:i:s')),
                                             ])
                                             ->columns(),
                                     ])
@@ -143,17 +143,17 @@ class EngagementsRelationManager extends RelationManager
                 Flex::make([
                     Section::make([
                         TextEntry::make('subject')
-                            ->getStateUsing(fn (Timeline $record): ?string => $record->timelineable->subject)
+                            ->state(fn (Timeline $record): ?string => $record->timelineable->subject)
                             ->hidden(fn ($state): bool => blank($state))
                             ->columnSpanFull(),
                         EngagementBody::make('body')
-                            ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
+                            ->state(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
                             ->columnSpanFull(),
                     ]),
                     Section::make([
                         TextEntry::make('sent_at')
                             ->dateTime()
-                            ->getStateUsing(fn (Timeline $record): string => $record->timelineable->sent_at),
+                            ->state(fn (Timeline $record): string => $record->timelineable->sent_at),
                     ])->grow(false),
                 ])
                     ->from('md')
@@ -188,7 +188,7 @@ class EngagementsRelationManager extends RelationManager
             )
             ->columns([
                 TextColumn::make('direction')
-                    ->getStateUsing(fn (Timeline $record) => match ($record->timelineable::class) {
+                    ->state(fn (Timeline $record) => match ($record->timelineable::class) {
                         Engagement::class => 'Outbound',
                         EngagementResponse::class => 'Inbound',
                         default => '',
@@ -198,7 +198,7 @@ class EngagementsRelationManager extends RelationManager
                         'Inbound' => 'heroicon-o-arrow-down-tray',
                     }),
                 TextColumn::make('status')
-                    ->getStateUsing(fn (Timeline $record) => match ($record->timelineable::class) {
+                    ->state(fn (Timeline $record) => match ($record->timelineable::class) {
                         EngagementResponse::class => $record->timelineable->status,
                         Engagement::class => EngagementDisplayStatus::getStatus($record->timelineable),
                     })
@@ -221,7 +221,7 @@ class EngagementsRelationManager extends RelationManager
                             return null;
                         }
                     )
-                    ->getStateUsing(fn (Timeline $record) => match ($record->timelineable::class) {
+                    ->state(fn (Timeline $record) => match ($record->timelineable::class) {
                         Engagement::class => $record->timelineable->channel === NotificationChannel::Sms
                                 ? Str::limit(strip_tags($record->timelineable->getBodyMarkdown()), 50)
                                 : Str::limit(strip_tags($record->timelineable->getSubject()), 50),
@@ -232,7 +232,7 @@ class EngagementsRelationManager extends RelationManager
                         default => '',
                     }),
                 TextColumn::make('type')
-                    ->getStateUsing(function (Timeline $record) {
+                    ->state(function (Timeline $record) {
                         /** @var HasDeliveryMethod $timelineable */
                         $timelineable = $record->timelineable;
 

@@ -77,7 +77,7 @@ class ManageFormSubmissions extends ManageRelatedRecords
                 IdColumn::make(),
                 TextColumn::make('status')
                     ->badge()
-                    ->getStateUsing(fn (FormSubmission $record): FormSubmissionStatus => $record->getStatus()),
+                    ->state(fn (FormSubmission $record): FormSubmissionStatus => $record->getStatus()),
                 TextColumn::make('submitted_at')
                     ->dateTime()
                     ->sortable(),
@@ -90,7 +90,7 @@ class ManageFormSubmissions extends ManageRelatedRecords
                 TextColumn::make('requester.name'),
                 TextColumn::make('requested_at')
                     ->dateTime()
-                    ->getStateUsing(fn (FormSubmission $record): ?CarbonInterface => $record->requester ? $record->created_at : null),
+                    ->state(fn (FormSubmission $record): ?CarbonInterface => $record->requester ? $record->created_at : null),
             ])
             ->filters([
                 FormSubmissionStatusFilter::make(),

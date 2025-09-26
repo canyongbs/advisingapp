@@ -91,7 +91,7 @@ class WorkflowStepsRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('type')
                     ->label('Step Type')
-                    ->getStateUsing(function (WorkflowStep $record) {
+                    ->state(function (WorkflowStep $record) {
                         assert($record->currentDetails instanceof WorkflowDetails);
 
                         return $record->currentDetails->getLabel();

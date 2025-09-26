@@ -77,7 +77,7 @@ class ListAlerts extends ListRecords
             ->components([
                 TextEntry::make('concern.display_name')
                     ->label('Related To')
-                    ->getStateUsing(fn (Alert $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
+                    ->state(fn (Alert $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
                     ->url(fn (Alert $record) => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ManageProspectAlerts::getUrl(['record' => $record->concern]),
@@ -97,7 +97,7 @@ class ListAlerts extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('concern.display_name')
                     ->label('Related To')
-                    ->getStateUsing(fn (Alert $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
+                    ->state(fn (Alert $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
                     ->url(fn (Alert $record) => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ManageProspectAlerts::getUrl(['record' => $record->concern]),

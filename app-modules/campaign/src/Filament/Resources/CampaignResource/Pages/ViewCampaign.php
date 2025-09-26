@@ -62,7 +62,7 @@ class ViewCampaign extends ViewRecord
                             ->boolean(),
                         IconEntry::make('execution_status')
                             ->label('Has Been Executed?')
-                            ->getStateUsing(fn (Campaign $record) => $record->hasBeenExecuted())
+                            ->state(fn (Campaign $record) => $record->hasBeenExecuted())
                             ->boolean(),
                         TextEntry::make('createdBy.name')
                             ->label('Created By'),

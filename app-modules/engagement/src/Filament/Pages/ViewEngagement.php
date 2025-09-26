@@ -126,7 +126,7 @@ class ViewEngagement extends Page
                                             ->visible(fn (Engagement $record): bool => $record->channel === NotificationChannel::Email)
                                             ->columnSpanFull(),
                                         EngagementBody::make('body')
-                                            ->getStateUsing(fn (Engagement $record): HtmlString => $record->getBody())
+                                            ->state(fn (Engagement $record): HtmlString => $record->getBody())
                                             ->columnSpanFull(),
                                     ]),
                             ]),
@@ -144,10 +144,10 @@ class ViewEngagement extends Page
                                         Section::make()
                                             ->schema([
                                                 TextEntry::make('type')
-                                                    ->getStateUsing(fn (EmailMessageEvent | SmsMessageEvent $record): string => $record->type->getLabel()),
+                                                    ->state(fn (EmailMessageEvent | SmsMessageEvent $record): string => $record->type->getLabel()),
                                                 TextEntry::make('occured_at')
                                                     ->dateTime()
-                                                    ->getStateUsing(fn (EmailMessageEvent| SmsMessageEvent $record): string => $record->occurred_at->format('Y-m-d H:i:s')),
+                                                    ->state(fn (EmailMessageEvent| SmsMessageEvent $record): string => $record->occurred_at->format('Y-m-d H:i:s')),
                                             ])
                                             ->columns(),
                                     ])

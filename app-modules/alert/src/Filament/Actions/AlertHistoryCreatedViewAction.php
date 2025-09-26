@@ -52,16 +52,16 @@ class AlertHistoryCreatedViewAction extends ViewAction
                 ->schema([
                     TextEntry::make('description')
                         ->label(fn (AlertHistory $record): ?string => $record->formatted['description']['key'])
-                        ->getStateUsing(fn (AlertHistory $record): ?string => $record->formatted['description']['new']),
+                        ->state(fn (AlertHistory $record): ?string => $record->formatted['description']['new']),
                     TextEntry::make('severity')
                         ->label(fn (AlertHistory $record): ?string => $record->formatted['severity']['key'])
-                        ->getStateUsing(fn (AlertHistory $record): ?string => $record->formatted['severity']['new']),
+                        ->state(fn (AlertHistory $record): ?string => $record->formatted['severity']['new']),
                     TextEntry::make('suggested_intervention')
                         ->label(fn (AlertHistory $record): ?string => $record->formatted['suggested_intervention']['key'])
-                        ->getStateUsing(fn (AlertHistory $record): ?string => $record->formatted['suggested_intervention']['new']),
+                        ->state(fn (AlertHistory $record): ?string => $record->formatted['suggested_intervention']['new']),
                     TextEntry::make('status')
                         ->label(fn (AlertHistory $record): ?string => $record->formatted['status_id']['key'])
-                        ->getStateUsing(fn (AlertHistory $record): ?string => $record->formatted['status_id']['new']),
+                        ->state(fn (AlertHistory $record): ?string => $record->formatted['status_id']['new']),
                 ])
                 ->columns(),
         ]);
