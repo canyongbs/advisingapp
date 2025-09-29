@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\QnaAdvisorThreadInteractionRelationshipFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
@@ -47,16 +46,12 @@ return new class () extends Migration {
             Schema::table('qna_advisor_threads', function (Blueprint $table) {
                 $table->foreignUuid('interaction_id')->nullable()->constrained();
             });
-
-            QnaAdvisorThreadInteractionRelationshipFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            QnaAdvisorThreadInteractionRelationshipFeature::deactivate();
-
             Schema::table('qna_advisor_threads', function (Blueprint $table) {
                 $table->dropColumn('interaction_id');
             });
