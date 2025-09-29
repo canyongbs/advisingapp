@@ -38,7 +38,6 @@ namespace AdvisingApp\Consent\Policies;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -55,30 +54,16 @@ class ConsentAgreementPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.view-any'],
-                denyResponse: 'You do not have permission to view consent agreements.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ['product_admin.view-any'],
+            abilities: ['settings.view-any'],
             denyResponse: 'You do not have permission to view consent agreements.'
         );
     }
 
     public function view(Authenticatable $authenticatable, ConsentAgreement $agreement): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.view'],
-                denyResponse: 'You do not have permission to view this consent agreement.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$agreement->getKey()}.view"],
+            abilities: ['settings.*.view'],
             denyResponse: 'You do not have permission to view this consent agreement.'
         );
     }
@@ -90,15 +75,8 @@ class ConsentAgreementPolicy
 
     public function update(Authenticatable $authenticatable, ConsentAgreement $agreement): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.update'],
-                denyResponse: 'You do not have permission to update this consent agreement.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$agreement->getKey()}.update"],
+            abilities: ['settings.*.update'],
             denyResponse: 'You do not have permission to update this consent agreement.'
         );
     }

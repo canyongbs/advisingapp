@@ -39,7 +39,6 @@ namespace AdvisingApp\Interaction\Policies;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -56,105 +55,56 @@ class InteractionStatusPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.view-any',
-                denyResponse: 'You do not have permission to view interaction statuses.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.view-any',
+            abilities: 'settings.view-any',
             denyResponse: 'You do not have permission to view interaction statuses.'
         );
     }
 
     public function view(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.view',
-                denyResponse: 'You do not have permission to view this interaction status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$status->getKey()}.view"],
+            abilities: 'settings.*.view',
             denyResponse: 'You do not have permission to view this interaction status.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.create',
-                denyResponse: 'You do not have permission to create interaction statuses.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: 'settings.create',
             denyResponse: 'You do not have permission to create interaction statuses.'
         );
     }
 
     public function update(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.update',
-                denyResponse: 'You do not have permission to update this interaction status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$status->getKey()}.update"],
+            abilities: 'settings.*.update',
             denyResponse: 'You do not have permission to update this interaction status.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.delete',
-                denyResponse: 'You do not have permission to delete this interaction status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$status->getKey()}.delete"],
+            abilities: 'settings.*.delete',
             denyResponse: 'You do not have permission to delete this interaction status.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.restore',
-                denyResponse: 'You do not have permission to restore this interaction status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$status->getKey()}.restore"],
+            abilities: 'settings.*.restore',
             denyResponse: 'You do not have permission to restore this interaction status.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.force-delete',
-                denyResponse: 'You do not have permission to permanently delete this interaction status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$status->getKey()}.force-delete"],
+            abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this interaction status.'
         );
     }

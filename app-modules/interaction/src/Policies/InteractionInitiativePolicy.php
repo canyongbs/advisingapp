@@ -39,7 +39,6 @@ namespace AdvisingApp\Interaction\Policies;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -56,105 +55,56 @@ class InteractionInitiativePolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.view-any',
-                denyResponse: 'You do not have permission to view interaction initiatives.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.view-any',
+            abilities: 'settings.view-any',
             denyResponse: 'You do not have permission to view interaction initiatives.'
         );
     }
 
     public function view(Authenticatable $authenticatable, InteractionInitiative $initiative): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.view',
-                denyResponse: 'You do not have permission to view this interaction initiative.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$initiative->getKey()}.view"],
+            abilities: 'settings.*.view',
             denyResponse: 'You do not have permission to view this interaction initiative.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.create',
-                denyResponse: 'You do not have permission to create interaction initiatives.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: 'settings.create',
             denyResponse: 'You do not have permission to create interaction initiatives.'
         );
     }
 
     public function update(Authenticatable $authenticatable, InteractionInitiative $initiative): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.update',
-                denyResponse: 'You do not have permission to update this interaction initiative.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$initiative->getKey()}.update"],
+            abilities: 'settings.*.update',
             denyResponse: 'You do not have permission to update this interaction initiative.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, InteractionInitiative $initiative): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.delete',
-                denyResponse: 'You do not have permission to delete this interaction initiative.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$initiative->getKey()}.delete"],
+            abilities: 'settings.*.delete',
             denyResponse: 'You do not have permission to delete this interaction initiative.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, InteractionInitiative $initiative): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.restore',
-                denyResponse: 'You do not have permission to restore this interaction initiative.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$initiative->getKey()}.restore"],
+            abilities: 'settings.*.restore',
             denyResponse: 'You do not have permission to restore this interaction initiative.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, InteractionInitiative $initiative): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.force-delete',
-                denyResponse: 'You do not have permission to permanently delete this interaction initiative.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$initiative->getKey()}.force-delete"],
+            abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this interaction initiative.'
         );
     }

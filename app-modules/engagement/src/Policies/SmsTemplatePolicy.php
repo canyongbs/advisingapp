@@ -39,7 +39,6 @@ namespace AdvisingApp\Engagement\Policies;
 use AdvisingApp\Engagement\Models\SmsTemplate;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -56,105 +55,56 @@ class SmsTemplatePolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.view-any',
-                denyResponse: 'You do not have permission to view sms templates.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.view-any',
+            abilities: 'settings.view-any',
             denyResponse: 'You do not have permission to view sms templates.'
         );
     }
 
     public function view(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.view',
-                denyResponse: 'You do not have permission to view this sms template.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$smsTemplate->getKey()}.view"],
+            abilities: 'settings.*.view',
             denyResponse: 'You do not have permission to view this sms template.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.create',
-                denyResponse: 'You do not have permission to create sms templates.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: 'settings.create',
             denyResponse: 'You do not have permission to create sms templates.'
         );
     }
 
     public function update(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.update',
-                denyResponse: 'You do not have permission to update this sms template.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$smsTemplate->getKey()}.update"],
+            abilities: 'settings.*.update',
             denyResponse: 'You do not have permission to update this sms template.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.delete',
-                denyResponse: 'You do not have permission to delete this sms template.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$smsTemplate->getKey()}.delete"],
+            abilities: 'settings.*.delete',
             denyResponse: 'You do not have permission to delete this sms template.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.restore',
-                denyResponse: 'You do not have permission to restore this sms template.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$smsTemplate->getKey()}.restore"],
+            abilities: 'settings.*.restore',
             denyResponse: 'You do not have permission to restore this sms template.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.force-delete',
-                denyResponse: 'You do not have permission to permanently delete this sms template.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$smsTemplate->getKey()}.force-delete"],
+            abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this sms template.'
         );
     }

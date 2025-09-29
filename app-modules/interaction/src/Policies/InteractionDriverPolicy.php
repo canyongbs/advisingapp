@@ -39,7 +39,6 @@ namespace AdvisingApp\Interaction\Policies;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -56,105 +55,56 @@ class InteractionDriverPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.view-any',
-                denyResponse: 'You do not have permission to view interaction drivers.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.view-any',
+            abilities: 'settings.view-any',
             denyResponse: 'You do not have permission to view interaction drivers.'
         );
     }
 
     public function view(Authenticatable $authenticatable, InteractionDriver $driver): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.view',
-                denyResponse: 'You do not have permission to view this interaction driver.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$driver->getKey()}.view"],
+            abilities: 'settings.*.view',
             denyResponse: 'You do not have permission to view this interaction driver.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.create',
-                denyResponse: 'You do not have permission to create interaction drivers.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: 'settings.create',
             denyResponse: 'You do not have permission to create interaction drivers.'
         );
     }
 
     public function update(Authenticatable $authenticatable, InteractionDriver $driver): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.update',
-                denyResponse: 'You do not have permission to update this interaction driver.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$driver->getKey()}.update"],
+            abilities: 'settings.*.update',
             denyResponse: 'You do not have permission to update this interaction driver.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, InteractionDriver $driver): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.delete',
-                denyResponse: 'You do not have permission to delete this interaction driver.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$driver->getKey()}.delete"],
+            abilities: 'settings.*.delete',
             denyResponse: 'You do not have permission to delete this interaction driver.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, InteractionDriver $driver): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.restore',
-                denyResponse: 'You do not have permission to restore this interaction driver.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$driver->getKey()}.restore"],
+            abilities: 'settings.*.restore',
             denyResponse: 'You do not have permission to restore this interaction driver.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, InteractionDriver $driver): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.force-delete',
-                denyResponse: 'You do not have permission to permanently delete this interaction driver.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$driver->getKey()}.force-delete"],
+            abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this interaction driver.'
         );
     }

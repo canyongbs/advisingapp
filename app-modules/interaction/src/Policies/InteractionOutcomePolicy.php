@@ -39,7 +39,6 @@ namespace AdvisingApp\Interaction\Policies;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -56,105 +55,56 @@ class InteractionOutcomePolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.view-any',
-                denyResponse: 'You do not have permission to view interaction outcomes.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.view-any',
+            abilities: 'settings.view-any',
             denyResponse: 'You do not have permission to view interaction outcomes.'
         );
     }
 
     public function view(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.view',
-                denyResponse: 'You do not have permission to view this interaction outcome.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$outcome->getKey()}.view"],
+            abilities: 'settings.*.view',
             denyResponse: 'You do not have permission to view this interaction outcome.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.create',
-                denyResponse: 'You do not have permission to create interaction outcomes.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: 'settings.create',
             denyResponse: 'You do not have permission to create interaction outcomes.'
         );
     }
 
     public function update(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.update',
-                denyResponse: 'You do not have permission to update this interaction outcome.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$outcome->getKey()}.update"],
+            abilities: 'settings.*.update',
             denyResponse: 'You do not have permission to update this interaction outcome.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.delete',
-                denyResponse: 'You do not have permission to delete this interaction outcome.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$outcome->getKey()}.delete"],
+            abilities: 'settings.*.delete',
             denyResponse: 'You do not have permission to delete this interaction outcome.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.restore',
-                denyResponse: 'You do not have permission to restore this interaction outcome.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$outcome->getKey()}.restore"],
+            abilities: 'settings.*.restore',
             denyResponse: 'You do not have permission to restore this interaction outcome.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.force-delete',
-                denyResponse: 'You do not have permission to permanently delete this interaction outcome.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$outcome->getKey()}.force-delete"],
+            abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this interaction outcome.'
         );
     }

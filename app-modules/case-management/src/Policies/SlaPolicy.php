@@ -40,7 +40,6 @@ use AdvisingApp\CaseManagement\Models\Sla;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\Feature;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use App\Support\FeatureAccessResponse;
 use Illuminate\Auth\Access\Response;
@@ -65,105 +64,56 @@ class SlaPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.view-any',
-                denyResponse: 'You do not have permission to view SLAs.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.view-any',
+            abilities: 'settings.view-any',
             denyResponse: 'You do not have permission to view SLAs.'
         );
     }
 
     public function view(Authenticatable $authenticatable, Sla $sla): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.view',
-                denyResponse: 'You do not have permission to view this SLA.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$sla->getKey()}.view"],
+            abilities: 'settings.*.view',
             denyResponse: 'You do not have permission to view this SLA.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.create',
-                denyResponse: 'You do not have permission to create SLAs.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: 'settings.create',
             denyResponse: 'You do not have permission to create SLAs.'
         );
     }
 
     public function update(Authenticatable $authenticatable, Sla $sla): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.update'],
-                denyResponse: 'You do not have permission to update this SLA.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$sla->getKey()}.update"],
+            abilities: ['settings.*.update'],
             denyResponse: 'You do not have permission to update this SLA.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, Sla $sla): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.delete'],
-                denyResponse: 'You do not have permission to delete this SLA.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$sla->getKey()}.delete"],
+            abilities: ['settings.*.delete'],
             denyResponse: 'You do not have permission to delete this SLA.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, Sla $sla): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.restore'],
-                denyResponse: 'You do not have permission to restore this SLA.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$sla->getKey()}.restore"],
+            abilities: ['settings.*.restore'],
             denyResponse: 'You do not have permission to restore this SLA.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, Sla $sla): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.force-delete'],
-                denyResponse: 'You do not have permission to permanently delete this SLA.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$sla->getKey()}.force-delete"],
+            abilities: ['settings.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this SLA.'
         );
     }
