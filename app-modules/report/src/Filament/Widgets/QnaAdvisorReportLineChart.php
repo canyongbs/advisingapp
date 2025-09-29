@@ -51,6 +51,33 @@ class QnaAdvisorReportLineChart extends ChartReportWidget
     ];
 
     /**
+     * @return array<string, mixed>
+     */
+    public function getData(): array
+    {
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
+
+        $shouldBypassCache = filled($startDate) || filled($endDate);
+
+        $runningTotalPerMonth = $shouldBypassCache
+            ? $this->getQnaAdvisorRunningTotalData($startDate, $endDate)
+            : Cache::tags(["{{$this->cacheTag}}"])
+                ->remember('total-qna-advisor-line-chart', now()->addHours(24), function (): array {
+                    return $this->getQnaAdvisorRunningTotalData();
+                });
+
+        return [
+            'datasets' => [
+                [
+                    'data' => array_values($runningTotalPerMonth),
+                ],
+            ],
+            'labels' => array_keys($runningTotalPerMonth),
+        ];
+    }
+
+    /**
      * @return array<string, array<string, array<string, bool|int>>>
      */
     protected function getOptions(): array
@@ -75,36 +102,41 @@ class QnaAdvisorReportLineChart extends ChartReportWidget
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<string, int>
      */
-    protected function getData(): array
+    protected function getQnaAdvisorRunningTotalData(?Carbon $startDate = null, ?Carbon $endDate = null): array
     {
-        $runningTotalPerMonth = Cache::tags(["{{$this->cacheTag}}"])->remember('user-unique-login-count-line-chart', now()->addHours(24), function (): array {
-            $totalCreatedPerMonth = QnaAdvisorMessage::query()
-                ->where('is_advisor', false)
-                ->selectRaw('date_trunc(\'month\', created_at) as month')
-                ->selectRaw('count(*) as total')
-                ->groupBy('month')
-                ->orderBy('month')
-                ->pluck('total', 'month');
+        Carbon::setTestNow('2025-09-01 00:00:00');
+        $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
+        $endDate = $endDate ?? Carbon::now()->endOfMonth();
 
-            $runningTotalPerMonth = [];
+        $months = $this->getMonthRange($startDate, $endDate);
 
-            foreach (range(11, 0) as $month) {
-                $month = Carbon::now()->subMonths($month);
-                $runningTotalPerMonth[$month->format('M Y')] = $totalCreatedPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
-            }
+        $monthlyData = QnaAdvisorMessage::query()
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->where('is_advisor', false)
+            ->selectRaw('date_trunc(\'month\', created_at) as month')
+            ->selectRaw('count(*) as total')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->mapWithKeys(function (object $item): array {
+                return [
+                    Carbon::parse($item['month'])->startOfMonth()->toDateString() => (int) $item['total'],
+                ];
+            });
 
-            return $runningTotalPerMonth;
-        });
+        $runningTotal = [];
+        $total = 0;
 
-        return [
-            'datasets' => [
-                [
-                    'data' => array_values($runningTotalPerMonth),
-                ],
-            ],
-            'labels' => array_keys($runningTotalPerMonth),
-        ];
+        foreach ($months as $month) {
+            $key = $month->toDateString();
+            $label = $month->format('M Y');
+            $count = $monthlyData[$key] ?? 0;
+            $total += $count;
+            $runningTotal[$label] = $total;
+        }
+
+        return $runningTotal;
     }
 }
