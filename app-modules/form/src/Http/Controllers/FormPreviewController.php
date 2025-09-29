@@ -34,20 +34,19 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Form\Http\Controllers\FormPreviewController;
-use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
-use App\Livewire\RenderForm;
+namespace AdvisingApp\Form\Http\Controllers;
 
-Route::prefix('forms')
-    ->name('forms.')
-    ->middleware([
-        'web',
-        EnsureFormsFeatureIsActive::class,
-    ])
-    ->group(function () {
-        Route::get('/{form}/respond', RenderForm::class)
-            ->name('show');
+use AdvisingApp\Form\Models\Form;
+use App\Http\Controllers\Controller;
+use Illuminate\View\View;
 
-        Route::get('/{form}/preview', FormPreviewController::class)
-            ->name('preview');
-    });
+class FormPreviewController extends Controller
+{
+    public function __invoke(Form $form): View
+    {
+        return view('form::preview', [
+            'form' => $form,
+            'preview' => true,
+        ]);
+    }
+}

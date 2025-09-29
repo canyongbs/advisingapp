@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,22 +30,23 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
+@endphp
 
-use AdvisingApp\Form\Http\Controllers\FormPreviewController;
-use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
-use App\Livewire\RenderForm;
+<x-layouts.app title="Form Preview">
+    <div class="flex items-center justify-center px-4 py-16">
+        <div class="w-full max-w-4xl">
+            <script
+                src="{{ asset('js/widgets/form/advising-app-form-widget.js') }}"
+                type="module"
+            ></script>
 
-Route::prefix('forms')
-    ->name('forms.')
-    ->middleware([
-        'web',
-        EnsureFormsFeatureIsActive::class,
-    ])
-    ->group(function () {
-        Route::get('/{form}/respond', RenderForm::class)
-            ->name('show');
-
-        Route::get('/{form}/preview', FormPreviewController::class)
-            ->name('preview');
-    });
+            <form-embed
+                url="{{ route('forms.api.preview', $form) }}"
+                preview="true"
+            ></form-embed>
+        </div>
+    </div>
+</x-layouts.app>
