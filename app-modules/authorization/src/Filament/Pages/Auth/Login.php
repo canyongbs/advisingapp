@@ -209,48 +209,6 @@ class Login extends \Filament\Auth\Pages\Login
         $this->usingRecoveryCode = ! $this->usingRecoveryCode;
     }
 
-    protected function isValidCode(User $user, string $code): bool
-    {
-        if ($this->usingRecoveryCode) {
-            return collect($user->multifactor_recovery_codes)->contains(function (string $recoveryCode) use ($code) {
-                return hash_equals($recoveryCode, $code);
-            });
-        }
-
-        return app(MultifactorService::class)->verify(code: $code, user: $user);
-    }
-
-    protected function getSsoFormActions(): array
-    {
-        $ssoActions = [];
-
-        $azureSsoSettings = app(AzureSsoSettings::class);
-
-        if ($azureSsoSettings->is_enabled && ! empty($azureSsoSettings->client_id)) {
-            $ssoActions[] = Action::make('azure_sso')
-                ->label(__('Microsoft'))
-                ->url(route('socialite.redirect', ['provider' => 'azure']))
-                ->color('gray')
-                ->icon('icon-microsoft')
-                ->size('sm')
-                ->extraAttributes(['class' => 'dark_button_border']);
-        }
-
-        $googleSsoSettings = app(GoogleSsoSettings::class);
-
-        if ($googleSsoSettings->is_enabled && ! empty($googleSsoSettings->client_id)) {
-            $ssoActions[] = Action::make('google_sso')
-                ->label(__('Google'))
-                ->url(route('socialite.redirect', ['provider' => 'google']))
-                ->icon('icon-google')
-                ->color('gray')
-                ->size('sm')
-                ->extraAttributes(['class' => 'dark_button_border']);
-        }
-
-        return $ssoActions;
-    }
-
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -298,6 +256,48 @@ class Login extends \Filament\Auth\Pages\Login
                     ->dehydratedWhenHidden(),
             ])
             ->statePath('data');
+    }
+
+    protected function isValidCode(User $user, string $code): bool
+    {
+        if ($this->usingRecoveryCode) {
+            return collect($user->multifactor_recovery_codes)->contains(function (string $recoveryCode) use ($code) {
+                return hash_equals($recoveryCode, $code);
+            });
+        }
+
+        return app(MultifactorService::class)->verify(code: $code, user: $user);
+    }
+
+    protected function getSsoFormActions(): array
+    {
+        $ssoActions = [];
+
+        $azureSsoSettings = app(AzureSsoSettings::class);
+
+        if ($azureSsoSettings->is_enabled && ! empty($azureSsoSettings->client_id)) {
+            $ssoActions[] = Action::make('azure_sso')
+                ->label(__('Microsoft'))
+                ->url(route('socialite.redirect', ['provider' => 'azure']))
+                ->color('gray')
+                ->icon('icon-microsoft')
+                ->size('sm')
+                ->extraAttributes(['class' => 'dark_button_border']);
+        }
+
+        $googleSsoSettings = app(GoogleSsoSettings::class);
+
+        if ($googleSsoSettings->is_enabled && ! empty($googleSsoSettings->client_id)) {
+            $ssoActions[] = Action::make('google_sso')
+                ->label(__('Google'))
+                ->url(route('socialite.redirect', ['provider' => 'google']))
+                ->icon('icon-google')
+                ->color('gray')
+                ->size('sm')
+                ->extraAttributes(['class' => 'dark_button_border']);
+        }
+
+        return $ssoActions;
     }
 
     protected function getFormActions(): array

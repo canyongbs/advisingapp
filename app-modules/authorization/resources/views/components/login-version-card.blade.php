@@ -31,13 +31,21 @@
 
 </COPYRIGHT>
 --}}
-<div class="bg-turkish-500 text-white rounded-xl p-6 mb-6">
-    <div class="flex md:flex-row flex-col justify-center items-center gap-6">
+<div class="mb-6 rounded-xl bg-turkish-500 p-6 text-white">
+    <div class="flex flex-col items-center justify-center gap-6 md:flex-row">
         <div>
-            <p class="text-white text-sm font-semibold">Version {{ app('current-version') }} is now available!</p>
-            <p class="text-white-500 text-sm my-4">Your instance of Advising App&#174; was automatically updated with our latest available features.</p>
-            <a href="{{ $themeChangelogUrl }}" target="_blank" class="border-2 border-white px-4 py-2 text-white rounded-xl text-sm font-semibold inline-block">Learn More</a>
+            <p class="text-sm font-semibold text-white">Version {{ app('current-version') }} is now available!</p>
+            <p class="my-4 text-sm text-white-500">Your instance of Advising App&#174; was automatically updated with our
+                latest available features.</p>
+            <a
+                class="inline-block rounded-xl border-2 border-white px-4 py-2 text-sm font-semibold text-white"
+                href="{{ $themeChangelogUrl }}"
+                target="_blank"
+            >Learn More</a>
         </div>
-        <img src="{{ Vite::asset('resources/images/version_image.svg') }}" class="block max-h-32" />
+        <img
+            class="block max-h-32"
+            src="{{ Vite::asset('resources/images/version_image.svg') }}"
+        />
     </div>
 </div>

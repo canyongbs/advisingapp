@@ -31,13 +31,21 @@
 
 </COPYRIGHT>
 --}}
-<div class="bg-turkish-300 text-white rounded-xl p-6">
-    <div class="flex md:flex-row flex-col justify-center items-center gap-6">
+<div class="rounded-xl bg-turkish-300 p-6 text-white">
+    <div class="flex flex-col items-center justify-center gap-6 md:flex-row">
         <div>
-            <p class="text-gray-800 text-sm font-semibold">Resource Portal</p>
-            <p class="text-gray-700 text-sm my-4">Visit our resource portal for answers to frequently asked product and service questions.</p>
-            <a href="{{ $productResourcehubUrl }}"  target="_blank" class="border-2 border-gray-700 px-4 py-2 text-gray-700 rounded-xl text-sm font-semibold inline-block">Visit Resource Portal</a>
+            <p class="text-sm font-semibold text-gray-800">Resource Portal</p>
+            <p class="my-4 text-sm text-gray-700">Visit our resource portal for answers to frequently asked product and
+                service questions.</p>
+            <a
+                class="inline-block rounded-xl border-2 border-gray-700 px-4 py-2 text-sm font-semibold text-gray-700"
+                href="{{ $productResourcehubUrl }}"
+                target="_blank"
+            >Visit Resource Portal</a>
         </div>
-        <img src="{{ Vite::asset('resources/images/changelog_image.svg') }}" class="block max-h-32" />
+        <img
+            class="block max-h-32"
+            src="{{ Vite::asset('resources/images/changelog_image.svg') }}"
+        />
     </div>
 </div>

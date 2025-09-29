@@ -36,15 +36,14 @@
 
 namespace App\Filament\Forms\Components;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\License;
 use App\Models\User;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Text;
 use Filament\Notifications\Notification;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Fieldset;
-use Filament\Forms\Components\Placeholder;
-use AdvisingApp\Authorization\Models\License;
-use AdvisingApp\Authorization\Enums\LicenseType;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Text;
 
 class Licenses extends Section
 {
