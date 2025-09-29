@@ -236,10 +236,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->colors(fn (ThemeSettings $themeSettings): array => array_merge(config('default-colors'), $themeSettings->color_overrides))
             ->renderHook(
-                'panels::scripts.before',
-                fn () => view('filament.scripts.scroll-sidebar-to-active-menu-item'),
-            )
-            ->renderHook(
                 'panels::head.end',
                 fn (ThemeSettings $themeSettings) => ($themeSettings->url) ? view('filament.layout.theme', ['url' => $themeSettings->url]) : null,
             )
