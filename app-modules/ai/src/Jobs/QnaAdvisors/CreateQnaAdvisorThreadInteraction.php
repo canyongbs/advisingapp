@@ -42,7 +42,6 @@ use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\QnaAdvisorThreadInteractionRelationshipFeature;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
@@ -96,10 +95,8 @@ class CreateQnaAdvisorThreadInteraction implements ShouldQueue
                     EOD,
             ]);
 
-            if (QnaAdvisorThreadInteractionRelationshipFeature::active()) {
-                $this->thread->interaction()->associate($interaction);
-                $this->thread->save();
-            }
+            $this->thread->interaction()->associate($interaction);
+            $this->thread->save();
         });
     }
 }
