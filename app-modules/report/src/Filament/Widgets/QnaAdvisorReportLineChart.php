@@ -50,6 +50,9 @@ class QnaAdvisorReportLineChart extends ChartReportWidget
         'lg' => 4,
     ];
 
+    /**
+     * @return array<string, array<string, array<string, bool|int>>>
+     */
     protected function getOptions(): array
     {
         return [
@@ -72,7 +75,7 @@ class QnaAdvisorReportLineChart extends ChartReportWidget
     }
 
     /**
-     * @return array<string, int>
+     * @return array<string, mixed>
      */
     protected function getData(): array
     {
