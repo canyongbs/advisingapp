@@ -114,10 +114,15 @@ class QnaAdvisorReportTableChart extends TableWidget
                     ->label('Name'),
                 TextColumn::make('author')
                     ->label('With')
-                    ->getStateUsing(fn (QnaAdvisorThread $record) => match ($record->author()?->getMorphClass()) {
-                        Prospect::class, Student::class => $record->author?->full_name,
-                        default => 'N/A',
-                    } ?? 'N/A'),
+                    ->getStateUsing(function (QnaAdvisorThread $record): string {
+                        $author = $record->author;
+
+                        if ($author instanceof Prospect || $author instanceof Student) {
+                            return $author->full_name;
+                        }
+
+                        return 'N/A';
+                    }),
                 TextColumn::make('exchanges')
                     ->getStateUsing(fn (QnaAdvisorThread $record) => $record->messages()->where('is_advisor', false)->count()),
                 TextColumn::make('finished_at')
@@ -145,6 +150,9 @@ class QnaAdvisorReportTableChart extends TableWidget
             ->paginated([10]);
     }
 
+    /**
+     * @return array<string, Tab>
+     */
     public function getTabs(): array
     {
         return [
