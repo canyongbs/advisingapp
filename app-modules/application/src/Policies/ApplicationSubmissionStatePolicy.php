@@ -39,7 +39,6 @@ namespace AdvisingApp\Application\Policies;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use App\Concerns\PerformsFeatureChecks;
 use App\Enums\Feature;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 use App\Support\FeatureAccessResponse;
@@ -63,105 +62,56 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.view-any',
-                denyResponse: 'You do not have permission to view states.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ['product_admin.view-any'],
+            abilities: 'settings.view-any',
             denyResponse: 'You do not have permission to view states.'
         );
     }
 
     public function view(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.view',
-                denyResponse: 'You do not have permission to view this state.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$model->getKey()}.view"],
+            abilities: 'settings.*.view',
             denyResponse: 'You do not have permission to view this state.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.create',
-                denyResponse: 'You do not have permission to create states.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: 'settings.create',
             denyResponse: 'You do not have permission to create states.'
         );
     }
 
     public function update(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.update',
-                denyResponse: 'You do not have permission to update this state.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$model->getKey()}.update"],
+            abilities: 'settings.*.update',
             denyResponse: 'You do not have permission to update this state.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.delete',
-                denyResponse: 'You do not have permission to delete this state.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$model->getKey()}.delete"],
+            abilities: 'settings.*.delete',
             denyResponse: 'You do not have permission to delete this state.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.restore',
-                denyResponse: 'You do not have permission to restore this state.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$model->getKey()}.restore"],
+            abilities: 'settings.*.restore',
             denyResponse: 'You do not have permission to restore this state.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.force-delete',
-                denyResponse: 'You do not have permission to permanently delete this state.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$model->getKey()}.force-delete"],
+            abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this state.'
         );
     }

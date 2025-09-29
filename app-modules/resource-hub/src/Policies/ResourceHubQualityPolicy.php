@@ -41,7 +41,6 @@ use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use App\Concerns\PerformsFeatureChecks;
 use App\Concerns\PerformsLicenseChecks;
 use App\Enums\Feature;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 use Illuminate\Auth\Access\Response;
@@ -66,113 +65,64 @@ class ResourceHubQualityPolicy implements PerformsChecksBeforeAuthorization
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.view-any',
-                denyResponse: 'You do not have permission to view resource hub qualities.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.view-any',
+            abilities: 'settings.view-any',
             denyResponse: 'You do not have permission to view resource hub qualities.'
         );
     }
 
     public function view(Authenticatable $authenticatable, ResourceHubQuality $resourceHubQuality): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.view',
-                denyResponse: 'You do not have permission to view this resource hub quality.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$resourceHubQuality->getKey()}.view"],
+            abilities: 'settings.*.view',
             denyResponse: 'You do not have permission to view this resource hub quality.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.create',
-                denyResponse: 'You do not have permission to create resource hub qualities.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: 'settings.create',
             denyResponse: 'You do not have permission to create resource hub qualities.'
         );
     }
 
     public function update(Authenticatable $authenticatable, ResourceHubQuality $resourceHubQuality): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.update',
-                denyResponse: 'You do not have permission to update this resource hub quality.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$resourceHubQuality->getKey()}.update"],
+            abilities: 'settings.*.update',
             denyResponse: 'You do not have permission to update this resource hub quality.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, ResourceHubQuality $resourceHubQuality): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.delete',
-                denyResponse: 'You do not have permission to delete this resource hub quality.'
-            );
-        }
-
         if (count($resourceHubQuality->resourceHubArticles) !== 0) {
             return Response::deny('You do not have permissions to delete this resource hub quality.');
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$resourceHubQuality->getKey()}.delete"],
+            abilities: 'settings.*.delete',
             denyResponse: 'You do not have permission to delete this resource hub quality.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, ResourceHubQuality $resourceHubQuality): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.restore',
-                denyResponse: 'You do not have permission to restore this resource hub quality.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$resourceHubQuality->getKey()}.restore"],
+            abilities: 'settings.*.restore',
             denyResponse: 'You do not have permission to restore this resource hub quality.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, ResourceHubQuality $resourceHubQuality): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.force-delete',
-                denyResponse: 'You do not have permission to permanently delete this resource hub quality.'
-            );
-        }
-
         if (count($resourceHubQuality->resourceHubArticles) !== 0) {
             return Response::deny('You do not have permissions to delete this resource hub quality.');
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$resourceHubQuality->getKey()}.force-delete"],
+            abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this resource hub quality.'
         );
     }

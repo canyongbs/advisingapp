@@ -40,7 +40,6 @@ use AdvisingApp\Pipeline\Settings\ProspectPipelineSettings;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\SettingsPermissions;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -72,7 +71,7 @@ class PipelineSettings extends SettingsPage
             return false;
         }
 
-        return SettingsPermissions::active() ? $user->can(['settings.view-any']) : $user->can(['product_admin.view-any']);
+        return $user->can(['settings.view-any']);
     }
 
     public function form(Form $form): Form
@@ -83,16 +82,16 @@ class PipelineSettings extends SettingsPage
                 ->label('Is Enabled?')
                 ->columnSpanFull(),
         ])
-            ->disabled(SettingsPermissions::active() ? ! auth()->user()->can('settings.*.update') : ! auth()->user()->can('product_admin.*.update'));
+            ->disabled(! auth()->user()->can('settings.*.update'));
     }
 
     public function save(): void
     {
-        if (! SettingsPermissions::active() && ! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->can('product_admin.*.update')) {
             return;
         }
 
-        if (SettingsPermissions::active() && ! auth()->user()->can('settings.*.update')) {
+        if (! auth()->user()->can('settings.*.update')) {
             return;
         }
 
@@ -104,11 +103,11 @@ class PipelineSettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (! SettingsPermissions::active() && ! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->can('product_admin.*.update')) {
             return [];
         }
 
-        if (SettingsPermissions::active() && ! auth()->user()->can('settings.*.update')) {
+        if (! auth()->user()->can('settings.*.update')) {
             return [];
         }
 

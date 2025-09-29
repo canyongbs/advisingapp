@@ -40,7 +40,6 @@ use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\Feature;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use App\Support\FeatureAccessResponse;
 use Illuminate\Auth\Access\Response;
@@ -65,90 +64,48 @@ class CaseStatusPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.view-any'],
-                denyResponse: 'You do not have permissions to view case statuses.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.view-any',
+            abilities: ['settings.view-any'],
             denyResponse: 'You do not have permissions to view case statuses.'
         );
     }
 
     public function view(Authenticatable $authenticatable, CaseStatus $caseStatus): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.view'],
-                denyResponse: 'You do not have permissions to view this case status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseStatus->getKey()}.view"],
+            abilities: ['settings.*.view'],
             denyResponse: 'You do not have permissions to view this case status.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.create'],
-                denyResponse: 'You do not have permissions to create case statuses.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: ['settings.create'],
             denyResponse: 'You do not have permissions to create case statuses.'
         );
     }
 
     public function update(Authenticatable $authenticatable, CaseStatus $caseStatus): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.update'],
-                denyResponse: 'You do not have permissions to update this case status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseStatus->getKey()}.update"],
+            abilities: ['settings.*.update'],
             denyResponse: 'You do not have permissions to update this case status.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, CaseStatus $caseStatus): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.delete'],
-                denyResponse: 'You do not have permissions to delete this case status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseStatus->getKey()}.delete"],
+            abilities: ['settings.*.delete'],
             denyResponse: 'You do not have permissions to delete this case status.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, CaseStatus $caseStatus): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.restore'],
-                denyResponse: 'You do not have permissions to restore this case status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseStatus->getKey()}.restore"],
+            abilities: ['settings.*.restore'],
             denyResponse: 'You do not have permissions to restore this case status.'
         );
     }
@@ -159,15 +116,8 @@ class CaseStatusPolicy
             return Response::deny('You cannot force delete this case status because it has associated cases.');
         }
 
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.force-delete'],
-                denyResponse: 'You do not have permissions to force delete this case status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseStatus->getKey()}.force-delete"],
+            abilities: ['settings.*.force-delete'],
             denyResponse: 'You do not have permissions to force delete this case status.'
         );
     }

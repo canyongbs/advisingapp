@@ -40,7 +40,6 @@ use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\Feature;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use App\Support\FeatureAccessResponse;
 use Illuminate\Auth\Access\Response;
@@ -65,90 +64,48 @@ class CaseTypePolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.view-any',
-                denyResponse: 'You do not have permissions to view case types.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.view-any',
+            abilities: 'settings.view-any',
             denyResponse: 'You do not have permissions to view case types.'
         );
     }
 
     public function view(Authenticatable $authenticatable, CaseType $caseType): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.view',
-                denyResponse: 'You do not have permissions to view this case type.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseType->getKey()}.view"],
+            abilities: 'settings.*.view',
             denyResponse: 'You do not have permissions to view this case type.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.create',
-                denyResponse: 'You do not have permissions to create case types.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: 'settings.create',
             denyResponse: 'You do not have permissions to create case types.'
         );
     }
 
     public function update(Authenticatable $authenticatable, CaseType $caseType): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.update'],
-                denyResponse: 'You do not have permissions to update this case type.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseType->getKey()}.update"],
+            abilities: ['settings.*.update'],
             denyResponse: 'You do not have permissions to update this case type.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, CaseType $caseType): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.delete'],
-                denyResponse: 'You do not have permissions to delete this case type.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseType->getKey()}.delete"],
+            abilities: ['settings.*.delete'],
             denyResponse: 'You do not have permissions to delete this case type.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, CaseType $caseType): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.restore'],
-                denyResponse: 'You do not have permissions to restore this case type.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseType->getKey()}.restore"],
+            abilities: ['settings.*.restore'],
             denyResponse: 'You do not have permissions to restore this case type.'
         );
     }
@@ -159,16 +116,9 @@ class CaseTypePolicy
             return Response::deny('You cannot force delete this case type because it has associated cases.');
         }
 
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.force-delete'],
-                denyResponse: 'You do not have permissions to force-delete this case type.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$caseType->getKey()}.force-delete"],
-            denyResponse: 'You do not have permissions to force delete this case type.'
+            abilities: ['settings.*.force-delete'],
+            denyResponse: 'You do not have permissions to force-delete this case type.'
         );
     }
 

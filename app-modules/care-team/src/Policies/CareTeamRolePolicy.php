@@ -37,7 +37,6 @@
 namespace AdvisingApp\CareTeam\Policies;
 
 use AdvisingApp\CareTeam\Models\CareTeamRole;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -45,105 +44,56 @@ class CareTeamRolePolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.view-any',
-                denyResponse: 'You do not have permission to view care team roles.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.view-any',
+            abilities: 'settings.view-any',
             denyResponse: 'You do not have permission to view care team roles.'
         );
     }
 
     public function view(Authenticatable $authenticatable, CareTeamRole $careTeamRole): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.view',
-                denyResponse: 'You do not have permission to view this care team role.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ['product_admin.*.view'],
+            abilities: 'settings.*.view',
             denyResponse: 'You do not have permission to view this care team role.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.create',
-                denyResponse: 'You do not have permission to create care team roles.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: 'settings.create',
             denyResponse: 'You do not have permission to create care team roles.'
         );
     }
 
     public function update(Authenticatable $authenticatable, CareTeamRole $careTeamRole): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.update'],
-                denyResponse: 'You do not have permission to update this care team role.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ['product_admin.*.update'],
+            abilities: ['settings.*.update'],
             denyResponse: 'You do not have permission to update this care team role.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, CareTeamRole $careTeamRole): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.delete'],
-                denyResponse: 'You do not have permission to delete this care team role.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ['product_admin.*.delete'],
+            abilities: ['settings.*.delete'],
             denyResponse: 'You do not have permission to delete this care team role.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, CareTeamRole $careTeamRole): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.restore'],
-                denyResponse: 'You do not have permission to restore this care team role.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ['product_admin.*.restore'],
+            abilities: ['settings.*.restore'],
             denyResponse: 'You do not have permission to restore this care team role.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, CareTeamRole $careTeamRole): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.force-delete'],
-                denyResponse: 'You do not have permission to permanently delete this care team role.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ['product_admin.*.force-delete'],
+            abilities: ['settings.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this care team role.'
         );
     }

@@ -39,7 +39,6 @@ namespace AdvisingApp\Engagement\Policies;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -56,105 +55,56 @@ class EmailTemplatePolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.view-any',
-                denyResponse: 'You do not have permission to view email templates.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.view-any',
+            abilities: 'settings.view-any',
             denyResponse: 'You do not have permission to view email templates.'
         );
     }
 
     public function view(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.view',
-                denyResponse: 'You do not have permission to view this email template.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$emailTemplate->getKey()}.view"],
+            abilities: 'settings.*.view',
             denyResponse: 'You do not have permission to view this email template.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.create',
-                denyResponse: 'You do not have permission to create email templates.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: 'settings.create',
             denyResponse: 'You do not have permission to create email templates.'
         );
     }
 
     public function update(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.update',
-                denyResponse: 'You do not have permission to update this email template.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$emailTemplate->getKey()}.update"],
+            abilities: 'settings.*.update',
             denyResponse: 'You do not have permission to update this email template.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.delete',
-                denyResponse: 'You do not have permission to delete this email template.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$emailTemplate->getKey()}.delete"],
+            abilities: 'settings.*.delete',
             denyResponse: 'You do not have permission to delete this email template.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.restore',
-                denyResponse: 'You do not have permission to restore this email template.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$emailTemplate->getKey()}.restore"],
+            abilities: 'settings.*.restore',
             denyResponse: 'You do not have permission to restore this email template.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.force-delete',
-                denyResponse: 'You do not have permission to permanently delete this email template.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$emailTemplate->getKey()}.force-delete"],
+            abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this email template.'
         );
     }

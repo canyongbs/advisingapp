@@ -38,7 +38,6 @@ namespace AdvisingApp\Prospect\Policies;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -55,45 +54,24 @@ class ProspectStatusPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.view-any',
-                denyResponse: 'You do not have permission to view prospect statuses.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.view-any',
+            abilities: 'settings.view-any',
             denyResponse: 'You do not have permission to view prospect statuses.'
         );
     }
 
     public function view(Authenticatable $authenticatable, ProspectStatus $prospectStatus): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.view',
-                denyResponse: 'You do not have permission to view this prospect status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$prospectStatus->getKey()}.view"],
-            denyResponse: 'You do not have permission to view prospect status.'
+            abilities: 'settings.*.view',
+            denyResponse: 'You do not have permission to view this prospect status.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.create',
-                denyResponse: 'You do not have permission to create prospect statuses.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: 'settings.create',
             denyResponse: 'You do not have permission to create prospect statuses.'
         );
     }
@@ -104,15 +82,8 @@ class ProspectStatusPolicy
             return Response::deny('You cannot update this prospect status because it is system protected.');
         }
 
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.update'],
-                denyResponse: 'You do not have permission to update prospect status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$prospectStatus->getKey()}.update"],
+            abilities: ['settings.*.update'],
             denyResponse: 'You do not have permission to update prospect status.'
         );
     }
@@ -123,30 +94,16 @@ class ProspectStatusPolicy
             return Response::deny('You cannot delete this prospect status because it is system protected.');
         }
 
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.delete'],
-                denyResponse: 'You do not have permission to delete prospect status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$prospectStatus->getKey()}.delete"],
+            abilities: ['settings.*.delete'],
             denyResponse: 'You do not have permission to delete prospect status.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, ProspectStatus $prospectStatus): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.restore'],
-                denyResponse: 'You do not have permission to restore prospect status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$prospectStatus->getKey()}.restore"],
+            abilities: ['settings.*.restore'],
             denyResponse: 'You do not have permission to restore prospect status.'
         );
     }
@@ -157,15 +114,8 @@ class ProspectStatusPolicy
             return Response::deny('You cannot delete this prospect status because it is system protected.');
         }
 
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.force-delete'],
-                denyResponse: 'You do not have permission to force delete prospect status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$prospectStatus->getKey()}.force-delete"],
+            abilities: ['settings.*.force-delete'],
             denyResponse: 'You do not have permission to force delete prospect status.'
         );
     }

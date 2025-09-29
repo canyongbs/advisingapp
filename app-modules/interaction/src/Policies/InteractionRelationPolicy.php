@@ -39,7 +39,6 @@ namespace AdvisingApp\Interaction\Policies;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -56,105 +55,56 @@ class InteractionRelationPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.view-any',
-                denyResponse: 'You do not have permission to view interaction relations.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.view-any',
+            abilities: 'settings.view-any',
             denyResponse: 'You do not have permission to view interaction relations.'
         );
     }
 
     public function view(Authenticatable $authenticatable, InteractionRelation $relation): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.view',
-                denyResponse: 'You do not have permission to view this interaction relation.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$relation->getKey()}.view"],
+            abilities: 'settings.*.view',
             denyResponse: 'You do not have permission to view this interaction relation.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.create',
-                denyResponse: 'You do not have permission to create interaction relations.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: 'settings.create',
             denyResponse: 'You do not have permission to create interaction relations.'
         );
     }
 
     public function update(Authenticatable $authenticatable, InteractionRelation $relation): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.update',
-                denyResponse: 'You do not have permission to update this interaction relation.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$relation->getKey()}.update"],
+            abilities: 'settings.*.update',
             denyResponse: 'You do not have permission to update this interaction relation.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, InteractionRelation $relation): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.delete',
-                denyResponse: 'You do not have permission to delete this interaction relation.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$relation->getKey()}.delete"],
+            abilities: 'settings.*.delete',
             denyResponse: 'You do not have permission to delete this interaction relation.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, InteractionRelation $relation): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.restore',
-                denyResponse: 'You do not have permission to restore this interaction relation.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$relation->getKey()}.restore"],
+            abilities: 'settings.*.restore',
             denyResponse: 'You do not have permission to restore this interaction relation.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, InteractionRelation $relation): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.force-delete',
-                denyResponse: 'You do not have permission to permanently delete this interaction relation.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$relation->getKey()}.force-delete"],
+            abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this interaction relation.'
         );
     }
