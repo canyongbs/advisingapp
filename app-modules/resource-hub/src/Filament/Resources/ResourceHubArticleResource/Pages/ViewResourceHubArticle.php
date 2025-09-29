@@ -78,6 +78,13 @@ class ViewResourceHubArticle extends ViewRecord
             ->schema([
                 Tabs::make()
                     ->tabs([
+                        Tab::make('Content')
+                            ->schema([
+                                ViewEntry::make('article_details')
+                                    ->label('Article Details')
+                                    ->columnSpanFull()
+                                    ->view('filament.infolists.components.html'),
+                            ]),
                         Tab::make('Properties')
                             ->schema([
                                 TextEntry::make('title')
@@ -94,13 +101,6 @@ class ViewResourceHubArticle extends ViewRecord
                                     ->state(fn (ResourceHubArticle $record): int => $record->views()->count()),
                             ])
                             ->columns(2),
-                        Tab::make('Content')
-                            ->schema([
-                                ViewEntry::make('article_details')
-                                    ->label('Article Details')
-                                    ->columnSpanFull()
-                                    ->view('filament.infolists.components.html'),
-                            ]),
                         Tab::make('Metadata')
                             ->schema([
                                 TextEntry::make('status.name')
@@ -113,7 +113,6 @@ class ViewResourceHubArticle extends ViewRecord
                                     ->label('Division'),
                             ]),
                     ])
-                    ->activeTab(2)
                     ->columnSpanFull(),
             ]);
     }
