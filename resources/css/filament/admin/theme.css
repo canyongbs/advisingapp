@@ -157,12 +157,12 @@
     @apply dark:border! dark:border-white! dark:hover:border-white!;
 }
 
-.fi-section.fi-section-has-subsections > .fi-section-content-ctn > .fi-section-content {
+.fi-sc-section.fi-section-has-subsections > .fi-section > .fi-section-content-ctn > .fi-section-content {
     @apply p-0;
 }
 
-.fi-section.fi-section-has-subsections > .fi-section-content-ctn > .fi-section-content,
-.fi-section.fi-section-has-subsections > .fi-section-content-ctn > .fi-section-content > dl > .fi-fo-component-ctn {
+.fi-sc-section.fi-section-has-subsections > .fi-section > .fi-section-content-ctn > .fi-section-content,
+.fi-sc-section.fi-section-has-subsections > .fi-section > .fi-section-content-ctn > .fi-section-content > dl > .fi-fo-component-ctn {
     @apply gap-0 divide-y divide-gray-200 dark:divide-white/10;
 }
 
