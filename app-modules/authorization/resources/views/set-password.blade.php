@@ -39,7 +39,7 @@
         {{ $this->form }}
 
         <x-filament::actions
-            :actions="$this->getCachedFormActions()"
+            :actions="$this->getFormActions()"
             :full-width="$this->hasFullWidthFormActions()"
         />
     </form>

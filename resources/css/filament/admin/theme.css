@@ -43,17 +43,17 @@
 
 /* Bright Sun */
 .dark {
-    --primary-50: 255, 251, 235;
-    --primary-100: 255, 244, 198;
-    --primary-200: 254, 233, 137;
-    --primary-300: 254, 212, 63;
-    --primary-400: 254, 195, 33;
-    --primary-500: 248, 162, 8;
-    --primary-600: 219, 122, 4;
-    --primary-700: 182, 86, 7;
-    --primary-800: 148, 66, 12;
-    --primary-900: 121, 55, 14;
-    --primary-950: 70, 27, 2;
+    --primary-50: rgb(255, 251, 235);
+    --primary-100: rgb(255, 244, 198);
+    --primary-200: rgb(254, 233, 137);
+    --primary-300: rgb(254, 212, 63);
+    --primary-400: rgb(254, 195, 33);
+    --primary-500: rgb(248, 162, 8);
+    --primary-600: rgb(219, 122, 4);
+    --primary-700: rgb(182, 86, 7);
+    --primary-800: rgb(148, 66, 12);
+    --primary-900: rgb(121, 55, 14);
+    --primary-950: rgb(70, 27, 2);
 }
 
 /* Style Overrides */
@@ -251,4 +251,24 @@
 
 .fi-section.fi-section-no-content-padding .fi-section-content {
     @apply p-0;
+}
+
+.fi-body:has(.branding-bar) {
+    &.fi-body-has-sidebar-collapsible-on-desktop,
+    &.fi-body-has-sidebar-fully-collapsible-on-desktop {
+        & .fi-main-ctn {
+            @apply min-h-[calc(100dvh-6.5rem)]!;
+        }
+    }
+
+    &.fi-body-has-top-navigation,
+    &:not(.fi-body-has-navigation) {
+        & .fi-main-ctn {
+            @apply min-h-[calc(100dvh-6.5rem)]!;
+        }
+    }
+
+    &.fi-body-has-topbar .fi-sidebar {
+        @apply lg:top-[6.5rem]! lg:h-[calc(100dvh-6.5rem)]!;
+    }
 }

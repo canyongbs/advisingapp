@@ -36,41 +36,47 @@
 
 namespace App\Providers\Filament;
 
-use AdvisingApp\Authorization\Filament\Pages\Auth\Login;
-use AdvisingApp\Theme\Settings\ThemeSettings;
-use App\Filament\Clusters\ProfileSettings;
-use App\Filament\Pages\Dashboard;
-use App\Filament\Pages\ProductHealth;
+use Filament\Panel;
 use App\Models\Tenant;
-use App\Multitenancy\Http\Middleware\NeedsTenant;
+use Filament\PanelProvider;
+use Filament\Actions\Action;
+use Filament\Support\Assets\Js;
+use App\Filament\Pages\Dashboard;
+use Filament\Navigation\MenuItem;
+use Filament\Support\Enums\Width;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ImportAction;
-use Filament\Forms\Components\Field;
-use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Infolists\Components\Entry;
-use Filament\Navigation\MenuItem;
-use Filament\Navigation\NavigationGroup;
-use Filament\Panel;
-use Filament\PanelProvider;
 use Filament\Support\Assets\Asset;
-use Filament\Support\Assets\Js;
+use Illuminate\Support\HtmlString;
 use Filament\Tables\Columns\Column;
 use Filament\View\PanelsRenderHook;
+use Filament\Forms\Components\Field;
+use Illuminate\Support\Facades\Vite;
+use App\Filament\Pages\ProductHealth;
+use Illuminate\Support\Facades\Blade;
 use FilamentTiptapEditor\TiptapEditor;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Filament\Infolists\Components\Entry;
+use Filament\Navigation\NavigationGroup;
+use App\Settings\CollegeBrandingSettings;
+use App\Filament\Clusters\ProfileSettings;
+use Filament\Http\Middleware\Authenticate;
+use Illuminate\Contracts\Support\Htmlable;
+use AdvisingApp\Theme\Settings\ThemeSettings;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Foundation\ViteManifestNotFoundException;
+use App\Multitenancy\Http\Middleware\NeedsTenant;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\Facades\Vite;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use AdvisingApp\Authorization\Filament\Pages\Auth\Login;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Illuminate\Foundation\ViteManifestNotFoundException;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
-use ShuvroRoy\FilamentSpatieLaravelHealth\FilamentSpatieLaravelHealthPlugin;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession;
+use ShuvroRoy\FilamentSpatieLaravelHealth\FilamentSpatieLaravelHealthPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -199,9 +205,13 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Profile Settings')
                     ->url(fn () => ProfileSettings::getUrl())
                     ->icon('heroicon-s-cog-6-tooth'),
-                MenuItem::make()
+                Action::make('about')
                     ->label('About')
-                    ->url("javascript:window.dispatchEvent(new CustomEvent('open-modal', {detail:{id:'app-about'}}))")
+                    ->modalHeading('Advising App® by Canyon GBS')
+                    ->modalDescription('Version ' . config('sentry.release'))
+                    ->modalContent(fn () => view('components.about-modal'))
+                    ->modalFooterActions([])
+                    ->modalWidth(Width::Small)
                     ->icon('heroicon-s-information-circle'),
                 MenuItem::make()
                     ->label('Recent Updates')
@@ -241,8 +251,16 @@ class AdminPanelProvider extends PanelProvider
                 $panel->darkMode(app(ThemeSettings::class)->has_dark_mode);
             })
             ->renderHook(
-                PanelsRenderHook::BODY_END,
-                fn () => view('components.about-modal'),
+                PanelsRenderHook::TOPBAR_AFTER,
+                function (): ?Htmlable  {
+                    $collegeBrandingSettings = app(CollegeBrandingSettings::class);
+
+                    if (! $collegeBrandingSettings->is_enabled) {
+                        return null;
+                    }
+
+                    return new HtmlString(Blade::render('<livewire:branding-bar />'));
+                },
             );
     }
 

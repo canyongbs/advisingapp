@@ -171,7 +171,7 @@ class ProfileInformation extends ProfilePage
     protected function getNameFormComponent(): Component
     {
         return TextInput::make('name')
-            ->label(__('filament-panels::pages/auth/edit-profile.form.name.label'))
+            ->label(__('filament-panels::auth/pages/edit-profile.form.name.label'))
             ->required()
             ->maxLength(255)
             ->autofocus();
@@ -180,7 +180,7 @@ class ProfileInformation extends ProfilePage
     protected function getEmailFormComponent(): Component
     {
         return TextInput::make('email')
-            ->label(__('filament-panels::pages/auth/edit-profile.form.email.label'))
+            ->label(__('filament-panels::auth/pages/edit-profile.form.email.label'))
             ->email()
             ->required()
             ->maxLength(255)
@@ -191,7 +191,7 @@ class ProfileInformation extends ProfilePage
     protected function getPasswordFormComponent(): Component
     {
         return TextInput::make('password')
-            ->label(__('filament-panels::pages/auth/edit-profile.form.password.label'))
+            ->label(__('filament-panels::auth/pages/edit-profile.form.password.label'))
             ->password()
             ->rule(Password::default())
             ->autocomplete('new-password')
@@ -204,31 +204,10 @@ class ProfileInformation extends ProfilePage
     protected function getPasswordConfirmationFormComponent(): Component
     {
         return TextInput::make('passwordConfirmation')
-            ->label(__('filament-panels::pages/auth/edit-profile.form.password_confirmation.label'))
+            ->label(__('filament-panels::auth/pages/edit-profile.form.password_confirmation.label'))
             ->password()
             ->required()
             ->visible(fn (Get $get): bool => filled($get('password')))
             ->dehydrated(false);
-    }
-
-    /**
-     * @return array<int|string, string|Schema>
-     */
-    protected function getForms(): array
-    {
-        return [
-            'form' => $this->form(
-                $this->makeSchema()
-                    ->components([
-                        $this->getNameFormComponent(),
-                        $this->getEmailFormComponent(),
-                        $this->getPasswordFormComponent(),
-                        $this->getPasswordConfirmationFormComponent(),
-                    ])
-                    ->operation('edit')
-                    ->model($this->getUser())
-                    ->statePath('data'),
-            ),
-        ];
     }
 }

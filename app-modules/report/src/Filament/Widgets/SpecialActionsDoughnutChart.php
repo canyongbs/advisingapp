@@ -109,7 +109,7 @@ class SpecialActionsDoughnutChart extends ChartReportWidget
 
     protected function getRgbString($color): string
     {
-        return "rgb({$color})";
+        return Color::convertToRgb($color);
     }
 
     protected function getType(): string

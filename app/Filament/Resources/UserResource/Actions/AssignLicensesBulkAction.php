@@ -47,7 +47,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -114,7 +113,7 @@ class AssignLicensesBulkAction extends BulkAction
         return Toggle::make($licenseType->value)
             ->label($licenseType->getLabel())
             ->hint(fn (Get $get): string => $get("{$licenseType->value}_count") . ' / ' . $licenseType->getSeats())
-            ->hintColor(fn (Get $get): array => $get("{$licenseType->value}_count") > 0 ? Color::Green : Color::Red)
+            ->hintColor(fn (Get $get): string => $get("{$licenseType->value}_count") > 0 ? 'success' : 'danger')
             ->afterStateUpdated($this->getAfterStateUpdatedCallbackForLicenseType($licenseType))
             ->rules([
                 fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($licenseType, $get) {

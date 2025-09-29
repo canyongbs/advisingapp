@@ -36,32 +36,36 @@
 
 namespace App\Providers;
 
-use App\Models\Export;
-use App\Models\FailedImportRow;
-use App\Models\Import;
 use App\Models\User;
+use App\Models\Export;
+use App\Models\Import;
+use Illuminate\View\View;
+use Filament\Tables\Table;
+use Filament\Schemas\Schema;
+use App\Models\FailedImportRow;
 use App\Settings\DisplaySettings;
-use Filament\Actions\Exports\Models\Export as BaseExport;
-use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
-use Filament\Actions\Imports\Models\Import as BaseImport;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
+use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Schemas\Schema;
-use Filament\Support\Colors\Color;
-use Filament\Support\Facades\FilamentColor;
-use Filament\Support\Facades\FilamentView;
+use Filament\Schemas\Components\Grid;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Table;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\View\View;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\DatePicker;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Support\Facades\FilamentView;
+use Filament\Support\Facades\FilamentColor;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Forms\Components\DateTimePicker;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Ysfkaya\FilamentPhoneInput\Infolists\PhoneEntry;
 use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
+use Filament\Actions\Exports\Models\Export as BaseExport;
+use Filament\Actions\Imports\Models\Import as BaseImport;
+use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
 
 class FilamentServiceProvider extends ServiceProvider
 {
@@ -293,6 +297,26 @@ class FilamentServiceProvider extends ServiceProvider
 
         PhoneEntry::configureUsing(function (PhoneEntry $phoneEntry): void {
             $phoneEntry->displayFormat(PhoneInputNumberType::INTERNATIONAL);
+        });
+
+        Table::configureUsing(function (Table $table): void {
+            $table
+                ->deferFilters(false)
+                ->paginationPageOptions([5, 10, 20])
+                ->defaultPaginationPageOption(5);
+        });
+
+        Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset
+            ->columnSpanFull());
+
+        Grid::configureUsing(fn (Grid $grid) => $grid
+            ->columnSpanFull());
+
+        Section::configureUsing(fn (Section $section) => $section
+            ->columnSpanFull());
+
+        Textarea::configureUsing(function (Textarea $textarea): void {
+            $textarea->disableGrammarly();
         });
     }
 }

@@ -183,26 +183,6 @@ class AppServiceProvider extends ServiceProvider
 
         Feature::discover();
 
-        Table::configureUsing(function (Table $table): void {
-            $table
-                ->deferFilters(false)
-                ->paginationPageOptions([5, 10, 20])
-                ->defaultPaginationPageOption(5);
-        });
-
-        Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset
-            ->columnSpanFull());
-
-        Grid::configureUsing(fn (Grid $grid) => $grid
-            ->columnSpanFull());
-
-        Section::configureUsing(fn (Section $section) => $section
-            ->columnSpanFull());
-
-        Textarea::configureUsing(function (Textarea $textarea): void {
-            $textarea->disableGrammarly();
-        });
-
         configureScope(function (Scope $scope): void {
             $scope->setTags([
                 'service' => config('app.service'),

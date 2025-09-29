@@ -56,7 +56,7 @@
             {{ $this->form }}
 
             <x-filament::actions
-                :actions="$this->getCachedFormActions()"
+                :actions="$this->getFormActions()"
                 :full-width="$this->hasFullWidthFormActions()"
             />
             @if (count($this->getSsoFormActions()) > 0)
@@ -85,7 +85,7 @@
     </div>
 
     <div class="w-full lg:w-1/2">
-        <x-filament-panels::login-version-card :themeChangelogUrl="$themeChangelogUrl" />
-        <x-filament-panels::login-resource-portal-card :productResourcehubUrl="$productResourcehubUrl" />
+        <x-authorization::login-version-card :themeChangelogUrl="$themeChangelogUrl" />
+        <x-authorization::login-resource-portal-card :productResourcehubUrl="$productResourcehubUrl" />
     </div>
 </div>

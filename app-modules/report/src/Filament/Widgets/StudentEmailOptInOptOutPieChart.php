@@ -109,7 +109,7 @@ class StudentEmailOptInOptOutPieChart extends PieChartReportWidget
 
     protected function getRgbString($color): string
     {
-        return "rgb({$color})";
+        return Color::convertToRgb($color);
     }
 
     /**

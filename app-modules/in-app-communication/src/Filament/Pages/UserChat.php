@@ -422,7 +422,7 @@ class UserChat extends Page implements HasForms, HasActions
         $this->clearNotifications();
     }
 
-    public function joinChannelsAction()
+    public function joinChannelsAction(): Action
     {
         $channels = TwilioConversation::query()
             ->whereDoesntHave('participants', fn (Builder $query) => $query->whereKey(auth()->id()))

@@ -189,7 +189,7 @@ abstract class ProfilePage extends Page
 
     public function getSavedNotificationTitle(): ?string
     {
-        return __('filament-panels::pages/auth/edit-profile.notifications.saved.title');
+        return __('filament-panels::auth/pages/edit-profile.notifications.saved.title');
     }
 
     public function getRedirectUrl(): ?string
@@ -211,7 +211,7 @@ abstract class ProfilePage extends Page
     public function getCancelFormAction(): Action
     {
         return Action::make('cancel')
-            ->label(__('filament-panels::pages/auth/edit-profile.actions.cancel.label'))
+            ->label(__('filament-panels::auth/pages/edit-profile.actions.cancel.label'))
             ->url(filament()->getUrl())
             ->color('gray');
     }
@@ -229,19 +229,12 @@ abstract class ProfilePage extends Page
         return $schema;
     }
 
-    /**
-     * @return array<int|string, string|Schema>
-     */
-    protected function getForms(): array
+    public function defaultForm(Schema $schema): Schema
     {
-        return [
-            'form' => $this->form(
-                $this->makeSchema()
-                    ->operation('edit')
-                    ->model($this->getUser())
-                    ->statePath('data'),
-            ),
-        ];
+        return $schema
+            ->operation('edit')
+            ->model($this->getUser())
+            ->statePath('data');
     }
 
     protected function hasFullWidthFormActions(): bool

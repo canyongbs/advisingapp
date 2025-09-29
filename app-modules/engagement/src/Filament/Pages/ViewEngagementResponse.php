@@ -333,14 +333,4 @@ class ViewEngagementResponse extends Page
                 ->icon(null),
         ];
     }
-
-    /**
-     * @return array<string>
-     */
-    protected function getForms(): array
-    {
-        return [
-            'replyForm',
-        ];
-    }
 }
