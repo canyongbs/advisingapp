@@ -48,7 +48,6 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\InteractionMetadataFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Actions\DeleteAction;
@@ -102,15 +101,15 @@ class EditInteraction extends EditRecord
                             ->relationship('initiative', 'name')
                             ->preload()
                             ->label('Initiative')
-                            ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_initiative_required : true)
-                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_initiative_enabled : true)
+                            ->required(fn () => $this->getSettings()->is_initiative_required)
+                            ->visible(fn () => $this->getSettings()->is_initiative_enabled)
                             ->exists((new InteractionInitiative())->getTable(), 'id'),
                         Select::make('interaction_driver_id')
                             ->relationship('driver', 'name')
                             ->preload()
                             ->label('Driver')
-                            ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_driver_required : true)
-                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_driver_enabled : true)
+                            ->required(fn () => $this->getSettings()->is_driver_required)
+                            ->visible(fn () => $this->getSettings()->is_driver_enabled)
                             ->exists((new InteractionDriver())->getTable(), 'id'),
                         Select::make('division_id')
                             ->relationship('division', 'name')
@@ -122,29 +121,29 @@ class EditInteraction extends EditRecord
                             ->relationship('outcome', 'name')
                             ->preload()
                             ->label('Outcome')
-                            ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_outcome_required : true)
-                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_outcome_enabled : true)
+                            ->required(fn () => $this->getSettings()->is_outcome_required)
+                            ->visible(fn () => $this->getSettings()->is_outcome_enabled)
                             ->exists((new InteractionOutcome())->getTable(), 'id'),
                         Select::make('interaction_relation_id')
                             ->relationship('relation', 'name')
                             ->preload()
                             ->label('Relation')
-                            ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_relation_required : true)
-                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_relation_enabled : true)
+                            ->required(fn () => $this->getSettings()->is_relation_required)
+                            ->visible(fn () => $this->getSettings()->is_relation_enabled)
                             ->exists((new InteractionRelation())->getTable(), 'id'),
                         Select::make('interaction_status_id')
                             ->relationship('status', 'name')
                             ->preload()
                             ->label('Status')
-                            ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_status_required : true)
-                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_status_enabled : true)
+                            ->required(fn () => $this->getSettings()->is_status_required)
+                            ->visible(fn () => $this->getSettings()->is_status_enabled)
                             ->exists((new InteractionStatus())->getTable(), 'id'),
                         Select::make('interaction_type_id')
                             ->relationship('type', 'name')
                             ->preload()
                             ->label('Type')
-                            ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_type_required : true)
-                            ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_type_enabled : true)
+                            ->required(fn () => $this->getSettings()->is_type_required)
+                            ->visible(fn () => $this->getSettings()->is_type_enabled)
                             ->exists((new InteractionType())->getTable(), 'id'),
                     ]),
                 Fieldset::make('Time')

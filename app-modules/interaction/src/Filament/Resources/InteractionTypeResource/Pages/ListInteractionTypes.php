@@ -38,7 +38,6 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource\Pag
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
-use App\Features\InteractionMetadataFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions;
 use Filament\Forms\ComponentContainer;
@@ -77,9 +76,7 @@ class ListInteractionTypes extends ListRecords
 
     public function mount(): void
     {
-        if (InteractionMetadataFeature::active()) {
-            $this->fillForm();
-        }
+        $this->fillForm();
     }
 
     public function fillForm(): void
@@ -96,10 +93,6 @@ class ListInteractionTypes extends ListRecords
 
     public function form(Form $form): Form
     {
-        if (! InteractionMetadataFeature::active()) {
-            return $form->schema([]);
-        }
-
         return $form
             ->schema([
                 Section::make('Type Settings')

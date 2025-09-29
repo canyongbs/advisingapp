@@ -42,7 +42,6 @@
     use AdvisingApp\Interaction\Models\InteractionRelation;
     use AdvisingApp\Interaction\Models\InteractionInitiative;
     use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
-    use App\Features\InteractionMetadataFeature;
 
     $settings = app(InteractionManagementSettings::class);
 @endphp
@@ -53,14 +52,15 @@
     </x-slot>
 
     <dl class="max-w-md divide-y divide-gray-200 text-gray-900 dark:divide-gray-700 dark:text-white">
-        @if (!InteractionMetadataFeature::active() || $settings->is_initiative_enabled)
+        @if ($settings->is_initiative_enabled)
             <div class="flex flex-col pb-3">
                 <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Initiative</dt>
                 <dd class="text-sm font-semibold">
-                    {{ InteractionInitiative::find($action['interaction_initiative_id'])?->name }}</dd>
+                    {{ InteractionInitiative::find($action['interaction_initiative_id'])?->name }}
+                </dd>
             </div>
         @endif
-        @if (!InteractionMetadataFeature::active() || $settings->is_driver_enabled)
+        @if ($settings->is_driver_enabled)
             <div class="flex flex-col pt-3">
                 <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Driver</dt>
                 <dd class="text-sm font-semibold">{{ InteractionDriver::find($action['interaction_driver_id'])?->name }}
@@ -71,7 +71,7 @@
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Division</dt>
             <dd class="text-sm font-semibold">{{ Division::find($action['division_id'])?->name }}</dd>
         </div>
-        @if (!InteractionMetadataFeature::active() || $settings->is_outcome_enabled)
+        @if ($settings->is_outcome_enabled)
             <div class="flex flex-col pt-3">
                 <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Outcome</dt>
                 <dd class="text-sm font-semibold">
@@ -79,7 +79,7 @@
                 </dd>
             </div>
         @endif
-        @if (!InteractionMetadataFeature::active() || $settings->is_relation_enabled)
+        @if ($settings->is_relation_enabled)
             <div class="flex flex-col pt-3">
                 <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Relation</dt>
                 <dd class="text-sm font-semibold">
@@ -87,14 +87,14 @@
                 </dd>
             </div>
         @endif
-        @if (!InteractionMetadataFeature::active() || $settings->is_status_enabled)
+        @if ($settings->is_status_enabled)
             <div class="flex flex-col pt-3">
                 <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Status</dt>
                 <dd class="text-sm font-semibold">{{ InteractionStatus::find($action['interaction_status_id'])?->name }}
                 </dd>
             </div>
         @endif
-        @if (!InteractionMetadataFeature::active() || $settings->is_type_enabled)
+        @if ($settings->is_type_enabled)
             <div class="flex flex-col pt-3">
                 <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Type</dt>
                 <dd class="text-sm font-semibold">{{ InteractionType::find($action['interaction_type_id'])?->name }}
@@ -121,7 +121,8 @@
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Execute At</dt>
             <dd class="text-sm font-semibold">{{ Carbon::parse($action['execute_at'])->format('M j, Y H:i:s') }}
-                {{ app(CampaignSettings::class)->getActionExecutionTimezoneLabel() }}</dd>
+                {{ app(CampaignSettings::class)->getActionExecutionTimezoneLabel() }}
+            </dd>
         </div>
     </dl>
 
