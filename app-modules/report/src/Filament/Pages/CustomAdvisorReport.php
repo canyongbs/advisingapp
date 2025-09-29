@@ -42,7 +42,6 @@ use AdvisingApp\Report\Filament\Widgets\CustomAdvisorLineChart;
 use AdvisingApp\Report\Filament\Widgets\CustomAdvisorStats;
 use AdvisingApp\Report\Filament\Widgets\CustomAdvisorTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use App\Features\AiAssistantUseFeature;
 use App\Filament\Clusters\ReportLibrary;
 use UnitEnum;
 
@@ -61,11 +60,6 @@ class CustomAdvisorReport extends AiReport
     protected static ?int $navigationSort = 160;
 
     protected string $cacheTag = 'custom-advisor-report';
-
-    public static function canAccess(): bool
-    {
-        return AiAssistantUseFeature::active() && parent::canAccess();
-    }
 
     public function getWidgets(): array
     {

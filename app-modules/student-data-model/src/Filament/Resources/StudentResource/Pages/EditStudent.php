@@ -40,7 +40,6 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\HasStudentHeader;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\AthleticFieldsFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -333,12 +332,10 @@ class EditStudent extends EditRecord
                             ->displayFormat('Y-m-d H:i:s'),
                         TextInput::make('athletics_status')
                             ->label('Athletics Status')
-                            ->maxLength(255)
-                            ->visible(AthleticFieldsFeature::active()),
+                            ->maxLength(255),
                         TextInput::make('athletic_details')
                             ->label('Athletic Details')
-                            ->maxLength(255)
-                            ->visible(AthleticFieldsFeature::active()),
+                            ->maxLength(255),
                     ])
                     ->columns(3),
             ]);

@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\AiAssistantUseFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
@@ -63,16 +62,12 @@ return new class () extends Migration {
                 join ai_threads on ai_messages.thread_id = ai_threads.id
                 where ai_messages.user_id is not null
                 SQL);
-
-            AiAssistantUseFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            AiAssistantUseFeature::deactivate();
-
             Schema::dropIfExists('ai_assistant_uses');
         });
     }
