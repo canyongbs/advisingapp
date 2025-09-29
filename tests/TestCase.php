@@ -48,7 +48,6 @@ use App\Multitenancy\DataTransferObjects\TenantConfig;
 use App\Multitenancy\DataTransferObjects\TenantDatabaseConfig;
 use App\Multitenancy\DataTransferObjects\TenantMailConfig;
 use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
-use Database\Seeders\NewTenantSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactionsManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -141,8 +140,6 @@ abstract class TestCase extends BaseTestCase
                     )
                 )
             ));
-
-            $this->seed(NewTenantSeeder::class);
         });
     }
 
