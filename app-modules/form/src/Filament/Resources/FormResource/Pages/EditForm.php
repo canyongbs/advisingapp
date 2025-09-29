@@ -65,6 +65,11 @@ class EditForm extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('preview')
+                ->label('Preview')
+                ->icon('heroicon-o-eye')
+                ->url(fn(Form $form) => route('forms.preview', $form))
+                ->openUrlInNewTab(),
             Action::make('view')
                 ->url(fn (Form $form) => route('forms.show', ['form' => $form]))
                 ->icon('heroicon-m-arrow-top-right-on-square')

@@ -97,6 +97,22 @@ class FormWidgetController extends Controller
         ]);
     }
 
+    public function preview(GenerateFormKitSchema $generateSchema, Form $form): JsonResponse
+    {
+        return response()->json(
+            [
+                'name' => $form->name,
+                'description' => $form->description,
+                'is_authenticated' => false,
+                'recaptcha_enabled' => false,
+                'schema' => $generateSchema($form),
+                'primary_color' => Color::all()[$form->primary_color ?? 'blue'],
+                'rounding' => $form->rounding,
+                'on_screen_response' => $form->on_screen_response,
+            ]
+        );
+    }
+
     public function requestAuthentication(Request $request, ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail, Form $form): JsonResponse
     {
         $data = $request->validate([
