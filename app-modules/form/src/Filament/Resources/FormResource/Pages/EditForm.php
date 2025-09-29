@@ -68,7 +68,7 @@ class EditForm extends EditRecord
             Action::make('preview')
                 ->label('Preview')
                 ->icon('heroicon-o-eye')
-                ->url(fn(Form $form) => route('forms.preview', $form))
+                ->url(fn (Form $form) => route('forms.preview', $form))
                 ->openUrlInNewTab(),
             Action::make('view')
                 ->url(fn (Form $form) => route('forms.show', ['form' => $form]))
