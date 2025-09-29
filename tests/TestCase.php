@@ -142,9 +142,7 @@ abstract class TestCase extends BaseTestCase
                 )
             ));
 
-            Artisan::call(NewTenantSeeder::class, [
-                '--force' => true,
-            ]);
+            $this->seed(NewTenantSeeder::class);
         });
     }
 
