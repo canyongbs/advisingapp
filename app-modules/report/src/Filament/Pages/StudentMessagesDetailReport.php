@@ -40,7 +40,6 @@ use AdvisingApp\Report\Abstract\StudentReport;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\StudentMessagesDetailStats;
 use AdvisingApp\Report\Filament\Widgets\StudentMessagesDetailTable;
-use App\Features\HolisticEngagementFeature;
 use App\Filament\Clusters\ReportLibrary;
 
 class StudentMessagesDetailReport extends StudentReport
@@ -56,11 +55,6 @@ class StudentMessagesDetailReport extends StudentReport
     protected string $cacheTag = 'report-student-messages-detail';
 
     protected static ?int $navigationSort = 50;
-
-    public static function canAccess(): bool
-    {
-        return HolisticEngagementFeature::active() && parent::canAccess();
-    }
 
     public function getColumns(): int | string | array
     {
