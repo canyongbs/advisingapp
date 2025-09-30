@@ -105,7 +105,7 @@ class Inbox extends Page implements HasTable
                             ? $record->sender->full_name
                             : null;
                     })
-                    ->url(function (EngagementResponse $record): ?string {
+                    ->url(function (EngagementResponse $record) {
                         if ($record->sender instanceof Student) {
                             return StudentResource::getUrl('view', [
                                 'record' => $record->sender,
