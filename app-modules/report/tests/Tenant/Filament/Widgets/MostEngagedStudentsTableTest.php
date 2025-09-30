@@ -40,8 +40,11 @@ use AdvisingApp\Report\Filament\Widgets\MostEngagedStudentsTable;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Tables\Actions\ExportAction;
+use Illuminate\Support\Facades\Storage;
 
 use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 it('returns top engaged students based on engagements within the given date range', function () {
     $startDate = now()->subDays(10);
@@ -147,6 +150,49 @@ it('returns top engaged students engagements based on segment filter', function 
         'filters' => [],
     ])
         ->assertCanSeeTableRecords(collect([
-            $student1, $student2,
+            $student1,
+            $student2,
         ]));
+});
+
+it('has an export action', function () {
+    livewire(MostEngagedStudentsTable::class, [
+        'cacheTag' => 'report-student-messages-overview',
+        'filters' => [],
+    ])->assertTableActionExists(ExportAction::class);
+});
+
+it('can start an export, sending a notification', function () {
+    asSuperAdmin();
+    Storage::fake('s3');
+    $count = random_int(1, 5);
+    $student1 = Student::factory()->create();
+    $student2 = Student::factory()->create();
+    $student3 = Student::factory()->create();
+
+    Engagement::factory()->count($count)->state([
+        'recipient_id' => $student1->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+    ])->create();
+
+    Engagement::factory()->count($count)->state([
+        'recipient_id' => $student2->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+    ])->create();
+
+    Engagement::factory()->count($count)->state([
+        'recipient_id' => $student3->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+    ])->create();
+
+    livewire(MostEngagedStudentsTable::class, [
+        'cacheTag' => 'report-student-engagement',
+        'filters' => [],
+    ])
+        ->callTableAction(ExportAction::class)
+        ->assertNotified()
+        ->assertHasNoTableActionErrors();
 });
