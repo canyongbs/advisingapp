@@ -319,22 +319,18 @@ class ViewEngagementResponse extends Page
         redirect(Inbox::getUrl());
     }
 
-    public function changeStatus(): void
+    public function getInvertedStatus(): EngagementResponseStatus
     {
-        $this->record->status = match ($this->record->status) {
+        return match ($this->record->status) {
             EngagementResponseStatus::New => EngagementResponseStatus::Actioned,
             EngagementResponseStatus::Actioned => EngagementResponseStatus::New,
         };
-
-        $this->record->save();
     }
 
-    public function getInvertedStatus(): string
+    public function changeStatus(): void
     {
-        return match ($this->record->status) {
-            EngagementResponseStatus::New => 'Actioned',
-            EngagementResponseStatus::Actioned => 'New',
-        };
+        $this->record->status = $this->getInvertedStatus();
+        $this->record->save();
     }
 
     protected function generateEmailReplyBody(string $content = '<p></p>'): string

@@ -66,7 +66,7 @@
                 </x-filament::button>
 
                 <x-filament::button wire:click="changeStatus()">
-                    Mark as {{ $this->getInvertedStatus() }}
+                    Mark as {{ $this->getInvertedStatus()->name }}
                 </x-filament::button>
             </div>
 
