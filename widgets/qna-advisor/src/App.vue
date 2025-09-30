@@ -89,7 +89,7 @@ onMounted(async () => {
             sendMessageUrl.value = json.send_message_url;
             advisor.value = json.advisor;
 
-            if (requiresAuthentication.value === true ) {
+            if (requiresAuthentication.value === true) {
                 if (json.access_token) {
                     authStore.$patch({ accessToken: json.access_token });
                     setupWebsockets(json.websockets_config);
