@@ -427,7 +427,7 @@ trait CanManageThreads
                 if (! $thread) {
                     return;
                 }
-                dispatch(new PrepareAiThreadEmailing($thread, $data['targetType'], $data['targetIds'], auth()->user()));
+                dispatch(new PrepareAiThreadEmailing($thread, $data['targetType']->value, $data['targetIds'], auth()->user()));
             })
             ->link()
             ->icon('heroicon-m-envelope')

@@ -34,32 +34,33 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
+use App\Models\User;
+use Livewire\Livewire;
+use Illuminate\Support\Str;
+use App\Models\Authenticatable;
+use function Tests\asSuperAdmin;
 use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Enums\AiThreadShareTarget;
-use AdvisingApp\Ai\Jobs\Advisors\PrepareAiThreadCloning;
-use AdvisingApp\Ai\Jobs\Advisors\PrepareAiThreadEmailing;
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Models\Prompt;
-use AdvisingApp\Ai\Models\PromptUpvote;
-use AdvisingApp\Assistant\Filament\Pages\InstitutionalAdvisor;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Consent\Enums\ConsentAgreementType;
-use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Team\Models\Team;
 use App\Filament\Pages\Dashboard;
-use App\Models\Authenticatable;
-use App\Models\User;
-use Filament\Forms\Components\Select;
+use AdvisingApp\Ai\Models\AiThread;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Str;
-use Livewire\Livewire;
+use AdvisingApp\Ai\Models\AiMessage;
+use Filament\Forms\Components\Select;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\PromptUpvote;
+use Filament\Actions\Testing\TestAction;
+use AdvisingApp\Ai\Models\AiThreadFolder;
+use AdvisingApp\Ai\Enums\AiThreadShareTarget;
+use AdvisingApp\Ai\Enums\AiAssistantApplication;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Consent\Models\ConsentAgreement;
+use AdvisingApp\Consent\Enums\ConsentAgreementType;
+use AdvisingApp\Ai\Jobs\Advisors\PrepareAiThreadCloning;
 
+use AdvisingApp\Ai\Jobs\Advisors\PrepareAiThreadEmailing;
+use AdvisingApp\Assistant\Filament\Pages\InstitutionalAdvisor;
 use function Pest\Laravel\{actingAs, assertDatabaseHas, assertDatabaseMissing, assertNotSoftDeleted, assertSoftDeleted};
-use function Tests\asSuperAdmin;
 
 $setUp = function (
     bool $hasUserConsented = true,
@@ -751,7 +752,7 @@ it('can upvote a prompt from the library while inserting it', function () use ($
             'isSmart' => 0,
             'promptId' => $prompt->getKey(),
         ])
-        ->callFormComponentAction('promptId', 'upvote');
+        ->callAction(TestAction::make('upvote')->schemaComponent('promptId'));
 
     assertDatabaseHas(PromptUpvote::class, [
         'prompt_id' => $prompt->getKey(),
@@ -776,7 +777,7 @@ it('can remove upvote from a prompt from the library while inserting it', functi
             'isSmart' => 0,
             'promptId' => $prompt->getKey(),
         ])
-        ->callFormComponentAction('promptId', 'upvote');
+        ->callAction(TestAction::make('upvote')->schemaComponent('promptId'));
 
     assertSoftDeleted(PromptUpvote::class, [
         'prompt_id' => $prompt->getKey(),
