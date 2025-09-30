@@ -39,7 +39,9 @@ namespace AdvisingApp\Engagement\Filament\Pages;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
@@ -52,6 +54,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportRedirects\Redirector;
 
 class Inbox extends Page implements HasTable
 {
@@ -102,6 +105,21 @@ class Inbox extends Page implements HasTable
                         return (($record->sender instanceof Student) || ($record->sender instanceof Prospect))
                             ? $record->sender->full_name
                             : null;
+                    })
+                    ->action(function (EngagementResponse $record): ?Redirector {
+                        if ($record->sender instanceof Student) {
+                            return redirect(StudentResource::getUrl('view', [
+                                'record' => $record->sender,
+                            ]));
+                        }
+
+                        if ($record->sender instanceof Prospect) {
+                            return redirect(ProspectResource::getUrl('view', [
+                                'record' => $record->sender,
+                            ]));
+                        }
+
+                        return null;
                     }),
                 TextColumn::make('subject')
                     ->description(
