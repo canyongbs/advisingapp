@@ -170,6 +170,7 @@ test('CreateCase is gated with proper access control', function () {
         'priority_id' => CasePriority::factory()->create([
             'type_id' => $caseTypesWithManager->getKey(),
         ])->getKey(),
+        'type_id' => $caseTypesWithManager->getKey(),
     ]));
 
     livewire(CreateCase::class)
@@ -248,6 +249,7 @@ test('CreateCase is gated with proper feature access control', function () {
         'priority_id' => CasePriority::factory()->create([
             'type_id' => $caseType->getKey(),
         ])->getKey(),
+        'type_id' => $caseType->getKey(),
     ]));
 
     livewire(CreateCase::class)
@@ -300,6 +302,7 @@ test('assignment type individual manager will auto assign to new cases', functio
         'priority_id' => CasePriority::factory()->create([
             'type_id' => $caseTypesWithManager->getKey(),
         ])->getKey(),
+        'type_id' => $caseTypesWithManager->getKey(),
     ]));
 
     livewire(CreateCase::class)
@@ -337,6 +340,7 @@ test('assignment type round robin will auto-assign to new cases', function () {
         'priority_id' => CasePriority::factory()->create([
             'type_id' => $caseTypeWithManager->getKey(),
         ])->getKey(),
+        'type_id' => $caseTypeWithManager->getKey(),
     ]));
 
     $users = $team->users()->orderBy('name')->orderBy('id')->get();
@@ -434,6 +438,7 @@ test('assignment type workload will auto-assign to new cases', function () {
         'priority_id' => CasePriority::factory()->create([
             'type_id' => $caseTypeWithManager->getKey(),
         ])->getKey(),
+        'type_id' => $caseTypeWithManager->getKey(),
     ]));
 
     travelTo(now()->subSeconds(3));
