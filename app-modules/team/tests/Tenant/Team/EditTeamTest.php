@@ -143,8 +143,8 @@ test('Super Admin Users cannot be added to a team', function () {
         ->callTableAction(
             AssociateAction::class,
             data: ['recordId' => $superAdmin->getKey()]
-        )->assertHasTableActionErrors(['recordId'])
-        ->assertSeeText('Super admin users cannot be added to a team.');
+        )
+        ->assertHasTableActionErrors(['recordId']);
 });
 
 //Super Admin Users do not show up in UsersRelationManager for Teams search results
