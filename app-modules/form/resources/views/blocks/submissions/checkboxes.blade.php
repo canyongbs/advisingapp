@@ -42,9 +42,9 @@
         @foreach ($response as $label => $value)
             <div class="flex items-center space-x-2">
                 @if ($value)
-                    <x-heroicon-o-check-circle class="h-6 w-6 text-success-500" />
+                    <x-heroicon-o-check-circle class="text-success-500 h-6 w-6" />
                 @else
-                    <x-heroicon-o-x-circle class="h-6 w-6 text-danger-500" />
+                    <x-heroicon-o-x-circle class="text-danger-500 h-6 w-6" />
                 @endif
                 <div>{{ $label }}</div>
             </div>

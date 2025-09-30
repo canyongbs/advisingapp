@@ -846,7 +846,7 @@
 
             <div class="col-span-full mb-2 text-center text-xs md:hidden">
                 © 2016-{{ date('Y') }} <a
-                    class="text-blue-600 dark:text-blue-400 underline"
+                    class="text-blue-600 underline dark:text-blue-400"
                     href="https://canyongbs.com/"
                 >Canyon GBS LLC</a>.
             </div>

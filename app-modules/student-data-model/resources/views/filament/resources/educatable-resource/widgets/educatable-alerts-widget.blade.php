@@ -58,7 +58,7 @@
                     @endphp
                     <a href="{{ $filteredUrl }}">
                         <div
-                            class="flex min-w-24 flex-col items-center rounded-lg bg-gray-950/5 p-3 transition hover:bg-gray-200 dark:bg-gray-950 dark:hover:bg-gray-800">
+                            class="bg-gray-950/5 flex min-w-24 flex-col items-center rounded-lg p-3 transition hover:bg-gray-200 dark:bg-gray-950 dark:hover:bg-gray-800">
                             <dd class="text-3xl font-semibold">
                                 {{ $count['alert_count'] }}
                             </dd>

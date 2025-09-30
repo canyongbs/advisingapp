@@ -35,13 +35,13 @@
     @if ($progress = $getState())
         <div class="grid gap-1">
             <div
-                class="flex h-6 w-56 items-center overflow-hidden rounded bg-gray-50 shadow-sm ring-1 ring-gray-950/10 dark:bg-gray-950 dark:ring-white/20">
+                class="ring-gray-950/10 flex h-6 w-56 items-center overflow-hidden rounded bg-gray-50 shadow-sm ring-1 dark:bg-gray-950 dark:ring-white/20">
                 <div
-                    class="h-full bg-success-400 dark:bg-success-600"
+                    class="bg-success-400 dark:bg-success-600 h-full"
                     style="width: {{ $progress->getSuccessfulPercentage() }}%"
                 ></div>
                 <div
-                    class="h-full bg-danger-400 dark:bg-danger-600"
+                    class="bg-danger-400 dark:bg-danger-600 h-full"
                     style="width: {{ $progress->getFailedPercentage() }}%"
                 >
                 </div>

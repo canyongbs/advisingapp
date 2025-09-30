@@ -72,7 +72,7 @@
 
     @if ($isOptedOut)
         <x-filament::icon
-            class="ml-1 h-6 w-6 text-danger-500"
+            class="text-danger-500 ml-1 h-6 w-6"
             icon="heroicon-s-x-circle"
             x-tooltip.raw="SMS Opt Out"
         />

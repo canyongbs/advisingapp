@@ -42,10 +42,10 @@
                     src="{{ Vite::asset('resources/svg/canyongbs-500.svg') }}"
                     alt="Internal Server Error"
                 >
-                <h1 class="mb-3 text-5xl font-extrabold text-primary-600 dark:text-primary-500">
+                <h1 class="text-primary-600 dark:text-primary-500 mb-3 text-5xl font-extrabold">
                     Not all who wander are lost...
                 </h1>
-                <p class="mb-5 font-bold tracking-tight text-gray-900 dark:text-gray-400 md:text-xl">
+                <p class="mb-5 font-bold tracking-tight text-gray-900 md:text-xl dark:text-gray-400">
                     But you might be. We can't find the page you're looking for.
                 </p>
             </div>

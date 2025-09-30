@@ -34,7 +34,7 @@
 <div>
     @if ($paginator->hasPages())
         <nav
-            class="flex flex-col items-center border-t border-gray-200 bg-white px-4 py-3 dark:border-gray-700 dark:bg-gray-800 sm:px-6"
+            class="flex flex-col items-center border-t border-gray-200 bg-white px-4 py-3 sm:px-6 dark:border-gray-700 dark:bg-gray-800"
             role="navigation"
             aria-label="Pagination Navigation"
         >
