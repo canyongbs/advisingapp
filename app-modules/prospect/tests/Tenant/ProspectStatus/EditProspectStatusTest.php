@@ -65,9 +65,9 @@ test('A successful action on the EditProspectStatus page', function () {
         'record' => $prospectStatus->getRouteKey(),
     ])
         ->assertFormSet([
-            'classification' => $prospectStatus->classification->value,
+            'classification' => $prospectStatus->classification,
             'name' => $prospectStatus->name,
-            'color' => $prospectStatus->color->value,
+            'color' => $prospectStatus->color,
         ])
         ->fillForm($editRequest)
         ->call('save')
@@ -87,9 +87,9 @@ test('EditProspectStatus requires valid data', function ($data, $errors) {
         'record' => $prospectStatus->getRouteKey(),
     ])
         ->assertFormSet([
-            'classification' => $prospectStatus->classification->value,
+            'classification' => $prospectStatus->classification,
             'name' => $prospectStatus->name,
-            'color' => $prospectStatus->color->value,
+            'color' => $prospectStatus->color,
         ])
         ->fillForm(EditProspectStatusRequestFactory::new($data)->create())
         ->call('save')

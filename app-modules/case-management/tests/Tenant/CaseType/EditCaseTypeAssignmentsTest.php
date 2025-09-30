@@ -68,7 +68,7 @@ test('A successful action on the EditCaseTypeAssignments page', function () {
         'record' => $caseType->getRouteKey(),
     ])
         ->assertFormSet([
-            'assignment_type' => CaseTypeAssignmentTypes::None->value,
+            'assignment_type' => CaseTypeAssignmentTypes::None,
         ])
         ->fillForm($editRequest)
         ->call('save')
