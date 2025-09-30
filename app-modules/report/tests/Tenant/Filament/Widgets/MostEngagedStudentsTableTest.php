@@ -155,7 +155,7 @@ it('returns top engaged students engagements based on segment filter', function 
         ]));
 });
 
-it('has table an export action', function () {
+it('has an export action', function () {
     livewire(MostEngagedStudentsTable::class, [
         'cacheTag' => 'report-student-messages-overview',
         'filters' => [],
@@ -193,5 +193,6 @@ it('can start an export, sending a notification', function () {
         'filters' => [],
     ])
         ->callTableAction(ExportAction::class)
-        ->assertNotified();
+        ->assertNotified()
+        ->assertHasNoTableActionErrors();
 });
