@@ -40,7 +40,7 @@ use AdvisingApp\Report\Filament\Widgets\MostEngagedStudentsTable;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Tables\Actions\ExportAction;
+use Filament\Actions\ExportAction;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Livewire\livewire;
