@@ -115,7 +115,7 @@ it('displays engagements and responses within the given date range', function ()
 
     livewire(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $holisticEngagementInRangeOutbound,
@@ -172,7 +172,7 @@ it('displays engagements and responses based on segment filters', function () {
 
     livewire(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $holisticEngagementJohnOutbound,

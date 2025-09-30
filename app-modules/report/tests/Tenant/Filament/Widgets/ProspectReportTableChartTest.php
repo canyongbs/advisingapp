@@ -65,7 +65,7 @@ it('displays only prospects added within the selected date range', function () {
 
     livewire(ProspectReportTableChart::class, [
         'cacheTag' => 'prospect-report-cache',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $prospectWithinRange1,

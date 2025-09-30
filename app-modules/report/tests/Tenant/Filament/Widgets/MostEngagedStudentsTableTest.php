@@ -79,7 +79,7 @@ it('returns top engaged students based on engagements within the given date rang
 
     livewire(MostEngagedStudentsTable::class, [
         'cacheTag' => 'report-student-engagement',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $student1,
@@ -134,7 +134,7 @@ it('returns top engaged students engagements based on segment filter', function 
 
     livewire(MostEngagedStudentsTable::class, [
         'cacheTag' => 'report-student-engagement',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $student1,

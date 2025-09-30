@@ -90,7 +90,7 @@ it('returns all cases information created for students in given time range', fun
 
     livewire(StudentCaseTable::class, [
         'cacheTag' => 'report-student-case',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $openCases,
@@ -167,7 +167,7 @@ it('returns all cases information created for students based on segment filters'
     // with segment filter
     livewire(StudentCaseTable::class, [
         'cacheTag' => 'report-student-case',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $openCases,

@@ -65,7 +65,7 @@ it('displays only students added within the selected date range', function () {
 
     livewire(MostRecentStudentsTable::class, [
         'cacheTag' => 'report-students',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $studentWithinRange1,
