@@ -40,7 +40,6 @@ use AdvisingApp\Report\Abstract\ProspectReport;
 use AdvisingApp\Report\Filament\Widgets\ProspectMessagesDetailStats;
 use AdvisingApp\Report\Filament\Widgets\ProspectMessagesDetailTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use App\Features\HolisticEngagementFeature;
 use App\Filament\Clusters\ReportLibrary;
 use UnitEnum;
 
@@ -57,11 +56,6 @@ class ProspectMessagesDetailReport extends ProspectReport
     protected string $cacheTag = 'report-prospect-messages-detail';
 
     protected static ?int $navigationSort = 120;
-
-    public static function canAccess(): bool
-    {
-        return HolisticEngagementFeature::active() && parent::canAccess();
-    }
 
     public function getColumns(): int|array
     {
