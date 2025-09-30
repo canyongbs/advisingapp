@@ -89,10 +89,15 @@ onMounted(async () => {
             sendMessageUrl.value = json.send_message_url;
             advisor.value = json.advisor;
 
-            if (requiresAuthentication.value === true && authStore.accessToken === null) {
+            if (requiresAuthentication.value === true ) {
+                if (json.access_token) {
+                    authStore.$patch({ accessToken: json.access_token });
+                    setupWebsockets(json.websockets_config);
+                    return;
+                }
                 authentication.value.promptToAuthenticate = true;
             } else {
-                // If authentication is not required or we already have a token, ensure prompt is false and setup websockets
+                // If authentication is not required, ensure prompt is false and setup websockets
                 authentication.value.promptToAuthenticate = false;
                 setupWebsockets(json.websockets_config);
             }
