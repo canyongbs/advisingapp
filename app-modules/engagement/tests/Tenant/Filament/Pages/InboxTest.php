@@ -64,7 +64,7 @@ it('can properly filter sender type', function () {
         ->assertCanNotSeeTableRecords($studentEngagementResponses);
 });
 
-it('can properly filter engagement response type', function() {
+it('can properly filter engagement response type', function () {
     asSuperAdmin();
 
     $emailEngagementResponses = EngagementResponse::factory()->count(5)->create(['type' => EngagementResponseType::Email]);
