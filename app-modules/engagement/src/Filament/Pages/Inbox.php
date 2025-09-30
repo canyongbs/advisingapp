@@ -37,6 +37,7 @@
 namespace AdvisingApp\Engagement\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -103,6 +104,12 @@ class Inbox extends Page implements HasTable
                             ? $record->sender->full_name
                             : null;
                     }),
+                TextColumn::make('type')
+                    ->formatStateUsing(fn (EngagementResponse $record) => match ($record->type) {
+                        EngagementResponseType::Email => 'Email',
+                        EngagementResponseType::Sms => 'Text',
+                    })
+                    ->sortable(),
                 TextColumn::make('subject')
                     ->description(
                         fn (EngagementResponse $record): ?string => filled($body = $record->getBodyMarkdown())
@@ -125,6 +132,11 @@ class Inbox extends Page implements HasTable
                     ->options([
                         'student' => 'Student',
                         'prospect' => 'Prospect',
+                    ]),
+                SelectFilter::make('type')
+                    ->options([
+                        EngagementResponseType::Email->value => 'Email',
+                        EngagementResponseType::Sms->value => 'Text',
                     ]),
             ])
             ->recordUrl(fn (EngagementResponse $record): string => ViewEngagementResponse::getUrl(['record' => $record]))
