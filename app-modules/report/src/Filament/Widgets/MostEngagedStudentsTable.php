@@ -36,8 +36,11 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Report\Filament\Exports\MostEngagedStudentTableExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Tables\Actions\ExportAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -73,8 +76,8 @@ class MostEngagedStudentsTable extends BaseWidget
         $segmentId = $this->getSelectedSegment();
 
         return $table
-            ->query(
-                Student::with('primaryEmailAddress:id,address')
+            ->query(function () use ($startDate, $endDate, $segmentId) {
+                return Student::with('primaryEmailAddress:id,address')
                     ->select('sisid', 'full_name', 'primary_email_id')
                     ->withCount([
                         'engagements as engagements_count' => function (Builder $query) use ($startDate, $endDate): Builder {
@@ -101,8 +104,8 @@ class MostEngagedStudentsTable extends BaseWidget
                         fn (Builder $query) => $this->segmentFilter($query, $segmentId)
                     )
                     ->orderBy('engagements_count', 'desc')
-                    ->limit(10)
-            )
+                    ->limit(10);
+            })
             ->paginated(false)
             ->columns([
                 TextColumn::make('full_name')
@@ -111,6 +114,13 @@ class MostEngagedStudentsTable extends BaseWidget
                     ->label('Email'),
                 TextColumn::make('engagements_count')
                     ->label('Engagements'),
+            ])
+            ->headerActions([
+                ExportAction::make()
+                    ->exporter(MostEngagedStudentTableExporter::class)
+                    ->formats([
+                        ExportFormat::Csv,
+                    ]),
             ]);
     }
 }

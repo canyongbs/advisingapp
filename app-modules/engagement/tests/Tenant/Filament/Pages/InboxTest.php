@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Filament\Pages\Inbox;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -61,4 +62,21 @@ it('can properly filter sender type', function () {
         ->filterTable('sender_type', 'prospect')
         ->assertCanSeeTableRecords($prospectEngagementResponses)
         ->assertCanNotSeeTableRecords($studentEngagementResponses);
+});
+
+it('can properly filter engagement response type', function () {
+    asSuperAdmin();
+
+    $emailEngagementResponses = EngagementResponse::factory()->count(5)->create(['type' => EngagementResponseType::Email]);
+    $smsEngagementResponses = EngagementResponse::factory()->count(5)->create(['type' => EngagementResponseType::Sms]);
+
+    livewire(Inbox::class)
+        ->set('tableRecordsPerPage', 10)
+        ->assertCanSeeTableRecords($emailEngagementResponses->merge($smsEngagementResponses))
+        ->filterTable('type', EngagementResponseType::Sms->value)
+        ->assertCanSeeTableRecords($smsEngagementResponses)
+        ->assertCanNotSeeTableRecords($emailEngagementResponses)
+        ->filterTable('type', EngagementResponseType::Email->value)
+        ->assertCanSeeTableRecords($emailEngagementResponses)
+        ->assertCanNotSeeTableRecords($smsEngagementResponses);
 });
