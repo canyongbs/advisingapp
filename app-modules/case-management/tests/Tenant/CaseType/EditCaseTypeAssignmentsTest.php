@@ -43,7 +43,6 @@ use AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories\EditCaseTypeAssignm
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
 use App\Settings\LicenseSettings;
-use Illuminate\Validation\Rules\Enum;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
