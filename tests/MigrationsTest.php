@@ -19,3 +19,7 @@
 
 </COPYRIGHT>
 */
+
+it('does nothing', function () {
+    expect(true)->toBeTrue();
+});
