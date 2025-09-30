@@ -35,16 +35,14 @@
 */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::createView(
-                'holistic_engagements',
-                <<<SQL
+        Schema::createView(
+            'holistic_engagements',
+            <<<SQL
                     SELECT
                         'engagement' AS record_type,
                         id AS record_id,
@@ -81,14 +79,11 @@ return new class () extends Migration {
                         deleted_at
                     FROM engagement_responses;
                 SQL,
-            );
-        });
+        );
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::dropView('holistic_engagements');
-        });
+        Schema::dropView('holistic_engagements');
     }
 };
