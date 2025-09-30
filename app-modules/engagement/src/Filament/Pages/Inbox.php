@@ -105,17 +105,17 @@ class Inbox extends Page implements HasTable
                             ? $record->sender->full_name
                             : null;
                     })
-                    ->action(function (EngagementResponse $record) {
+                    ->url(function (EngagementResponse $record) {
                         if ($record->sender instanceof Student) {
-                            return redirect(StudentResource::getUrl('view', [
+                            return StudentResource::getUrl('view', [
                                 'record' => $record->sender,
-                            ]));
+                            ]);
                         }
 
                         if ($record->sender instanceof Prospect) {
-                            return redirect(ProspectResource::getUrl('view', [
+                            return ProspectResource::getUrl('view', [
                                 'record' => $record->sender,
-                            ]));
+                            ]);
                         }
 
                         return null;
