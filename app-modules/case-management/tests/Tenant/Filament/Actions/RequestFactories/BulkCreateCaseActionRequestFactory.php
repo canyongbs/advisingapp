@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\CaseManagement\Tests\Tenant\Filament\Actions\RequestFactories;
 
-use App\Models\User;
-use AdvisingApp\Team\Models\Team;
-use AdvisingApp\Division\Models\Division;
-use Worksome\RequestFactories\RequestFactory;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Models\CasePriority;
+use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Team\Models\Team;
+use App\Models\User;
+use Worksome\RequestFactories\RequestFactory;
 
 class BulkCreateCaseActionRequestFactory extends RequestFactory
 {

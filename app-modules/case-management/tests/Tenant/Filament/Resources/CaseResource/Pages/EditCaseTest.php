@@ -41,7 +41,6 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\EditCase;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
-use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Notifications\SendClosedCaseFeedbackNotification;
 use AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories\EditCaseRequestFactory;
 use App\Models\User;
