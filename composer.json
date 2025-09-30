@@ -60,7 +60,7 @@
         "canyon-gbs/stock-media": "*",
         "canyon-gbs/workflow": "*",
         "canyongbs/common": "^2.0",
-        "canyongbs/filament-tiptap-editor": "*@dev",
+        "canyongbs/filament-tiptap-editor": "^2.0",
         "canyongbs/model-state-machine": "^2.0",
         "cknow/laravel-money": "^8.1",
         "composer/composer": "^2.7",
@@ -258,13 +258,6 @@
         {
             "type": "path",
             "url": "app-modules/*",
-            "options": {
-                "symlink": true
-            }
-        },
-        {
-            "type": "path",
-            "url": "../filament-tiptap-editor",
             "options": {
                 "symlink": true
             }
