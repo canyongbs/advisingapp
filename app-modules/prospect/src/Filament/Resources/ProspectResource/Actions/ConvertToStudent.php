@@ -97,7 +97,7 @@ class ConvertToStudent extends Action
                     ->send();
 
                 if ($livewire::getResourcePageName() === 'edit') {
-                    $this->redirect(ProspectResource::getUrl('view', ['record' => $this->record]));
+                    $this->redirect(ProspectResource::getUrl('view', ['record' => $record]));
                 }
             });
     }
