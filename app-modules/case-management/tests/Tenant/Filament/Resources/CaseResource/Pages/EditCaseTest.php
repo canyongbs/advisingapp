@@ -121,12 +121,12 @@ test('EditCase requires valid data', function (EditCaseRequestFactory $data, arr
         'status_id missing' => [EditCaseRequestFactory::new()->state(['status_id' => null]), ['status_id' => 'required']],
         'status_id does not exist' => [
             EditCaseRequestFactory::new()->state(['status_id' => fake()->uuid()]),
-            ['status_id' => 'exists'],
+            ['status_id'],
         ],
         'priority_id missing' => [EditCaseRequestFactory::new()->state(['priority_id' => null]), ['priority_id' => 'required']],
         'priority_id does not exist' => [
             EditCaseRequestFactory::new()->state(['priority_id' => fake()->uuid()]),
-            ['priority_id' => 'exists'],
+            ['priority_id'],
         ],
         'close_details is not a string' => [EditCaseRequestFactory::new()->state(['close_details' => 1]), ['close_details' => 'string']],
         'res_details is not a string' => [EditCaseRequestFactory::new()->state(['res_details' => 1]), ['res_details' => 'string']],

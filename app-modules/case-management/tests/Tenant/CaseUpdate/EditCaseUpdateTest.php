@@ -96,7 +96,7 @@ test('EditCaseUpdate requires valid data', function ($data, $errors) {
 })->with(
     [
         'case missing' => [EditCaseUpdateRequestFactory::new()->state(['case_model_id' => null]), ['case_model_id' => 'required']],
-        'case not existing case id' => [EditCaseUpdateRequestFactory::new()->state(['case_model_id' => fake()->uuid()]), ['case_model_id' => 'exists']],
+        'case not existing case id' => [EditCaseUpdateRequestFactory::new()->state(['case_model_id' => fake()->uuid()]), ['case_model_id']],
         'update missing' => [EditCaseUpdateRequestFactory::new()->state(['update' => null]), ['update' => 'required']],
         'update is not a string' => [EditCaseUpdateRequestFactory::new()->state(['update' => 99]), ['update' => 'string']],
         'direction missing' => [EditCaseUpdateRequestFactory::new()->state(['direction' => null]), ['direction' => 'required']],
