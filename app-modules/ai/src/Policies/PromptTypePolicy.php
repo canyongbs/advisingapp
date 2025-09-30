@@ -39,7 +39,6 @@ namespace AdvisingApp\Ai\Policies;
 use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Concerns\PerformsLicenseChecks;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 use Illuminate\Auth\Access\Response;
@@ -59,45 +58,24 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.view-any',
-                denyResponse: 'You do not have permission to view prompt types.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.view-any',
+            abilities: 'settings.view-any',
             denyResponse: 'You do not have permission to view prompt types.'
         );
     }
 
     public function view(Authenticatable $authenticatable, PromptType $promptType): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.view'],
-                denyResponse: 'You do not have permission to view this prompt type.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$promptType->getKey()}.view"],
+            abilities: ['settings.*.view'],
             denyResponse: 'You do not have permission to view this prompt type.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.create',
-                denyResponse: 'You do not have permission to create prompt types.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: 'settings.create',
             denyResponse: 'You do not have permission to create prompt types.'
         );
     }
@@ -108,15 +86,8 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
             return Response::deny('The prompt type cannot be updated because it has a smart prompt.');
         }
 
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.update'],
-                denyResponse: 'You do not have permission to update this prompt type.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$promptType->getKey()}.update"],
+            abilities: ['settings.*.update'],
             denyResponse: 'You do not have permission to update this prompt type.'
         );
     }
@@ -127,30 +98,16 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
             return Response::deny('The prompt type cannot be deleted because it is associated with a prompt.');
         }
 
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.delete'],
-                denyResponse: 'You do not have permission to delete this prompt type.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$promptType->getKey()}.delete"],
+            abilities: ['settings.*.delete'],
             denyResponse: 'You do not have permission to delete this prompt type.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, PromptType $promptType): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.restore'],
-                denyResponse: 'You do not have permission to restore this prompt type.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$promptType->getKey()}.restore"],
+            abilities: ['settings.*.restore'],
             denyResponse: 'You do not have permission to restore this prompt type.'
         );
     }
@@ -161,15 +118,8 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
             return Response::deny('The prompt type cannot be deleted because it is associated with a prompt.');
         }
 
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.force-delete'],
-                denyResponse: 'You do not have permission to permanently delete this prompt type.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$promptType->getKey()}.force-delete"],
+            abilities: ['settings.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this prompt type.'
         );
     }

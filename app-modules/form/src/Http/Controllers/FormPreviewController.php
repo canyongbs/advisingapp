@@ -34,14 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\Form\Http\Controllers;
 
-use App\Support\AbstractFeatureFlag;
+use AdvisingApp\Form\Models\Form;
+use App\Http\Controllers\Controller;
+use Illuminate\View\View;
 
-class SettingsPermissions extends AbstractFeatureFlag
+class FormPreviewController extends Controller
 {
-    public function resolve(mixed $scope): mixed
+    public function __invoke(Form $form): View
     {
-        return false;
+        return view('form::preview', [
+            'form' => $form,
+            'preview' => true,
+        ]);
     }
 }

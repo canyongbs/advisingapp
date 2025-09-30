@@ -50,7 +50,6 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\InteractionMetadataFeature;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
@@ -131,8 +130,8 @@ class CreateInteraction extends CreateRecord
                         ->relationship('initiative', 'name')
                         ->preload()
                         ->label('Initiative')
-                        ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_initiative_required : true)
-                        ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_initiative_enabled : true)
+                        ->required(fn () => $this->getSettings()->is_initiative_required)
+                        ->visible(fn () => $this->getSettings()->is_initiative_enabled)
                         ->default(
                             fn () => InteractionInitiative::query()
                                 ->where('is_default', true)
@@ -144,8 +143,8 @@ class CreateInteraction extends CreateRecord
                         ->relationship('driver', 'name')
                         ->preload()
                         ->label('Driver')
-                        ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_driver_required : true)
-                        ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_driver_enabled : true)
+                        ->required(fn () => $this->getSettings()->is_driver_required)
+                        ->visible(fn () => $this->getSettings()->is_driver_enabled)
                         ->default(
                             fn () => InteractionDriver::query()
                                 ->where('is_default', true)
@@ -168,8 +167,8 @@ class CreateInteraction extends CreateRecord
                             ?->getKey())
                         ->preload()
                         ->label('Outcome')
-                        ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_outcome_required : true)
-                        ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_outcome_enabled : true)
+                        ->required(fn () => $this->getSettings()->is_outcome_required)
+                        ->visible(fn () => $this->getSettings()->is_outcome_enabled)
                         ->exists((new InteractionOutcome())->getTable(), 'id'),
                     Select::make('interaction_relation_id')
                         ->relationship('relation', 'name')
@@ -179,8 +178,8 @@ class CreateInteraction extends CreateRecord
                             ?->getKey())
                         ->preload()
                         ->label('Relation')
-                        ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_relation_required : true)
-                        ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_relation_enabled : true)
+                        ->required(fn () => $this->getSettings()->is_relation_required)
+                        ->visible(fn () => $this->getSettings()->is_relation_enabled)
                         ->exists((new InteractionRelation())->getTable(), 'id'),
                     Select::make('interaction_status_id')
                         ->relationship('status', 'name')
@@ -190,8 +189,8 @@ class CreateInteraction extends CreateRecord
                             ?->getKey())
                         ->preload()
                         ->label('Status')
-                        ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_status_required : true)
-                        ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_status_enabled : true)
+                        ->required(fn () => $this->getSettings()->is_status_required)
+                        ->visible(fn () => $this->getSettings()->is_status_enabled)
                         ->exists((new InteractionStatus())->getTable(), 'id'),
                     Select::make('interaction_type_id')
                         ->relationship('type', 'name')
@@ -203,8 +202,8 @@ class CreateInteraction extends CreateRecord
                                 ?->getKey()
                         )
                         ->label('Type')
-                        ->required(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_type_required : true)
-                        ->visible(fn () => InteractionMetadataFeature::active() ? $this->getSettings()->is_type_enabled : true)
+                        ->required(fn () => $this->getSettings()->is_type_required)
+                        ->visible(fn () => $this->getSettings()->is_type_enabled)
                         ->exists((new InteractionType())->getTable(), 'id'),
                 ])
                 ->columns(2),

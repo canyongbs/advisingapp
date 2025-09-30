@@ -38,7 +38,6 @@ namespace AdvisingApp\StockMedia\Filament\Pages;
 
 use AdvisingApp\StockMedia\Enums\StockMediaProvider;
 use AdvisingApp\StockMedia\Settings\StockMediaSettings;
-use App\Features\StockMediaFeature;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -59,7 +58,7 @@ class ManageStockMediaSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
-        return StockMediaFeature::active() && auth()->user()->isSuperAdmin();
+        return auth()->user()->isSuperAdmin();
     }
 
     public function form(Schema $schema): Schema

@@ -39,7 +39,6 @@ namespace AdvisingApp\Alert\Policies;
 use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -56,60 +55,32 @@ class AlertStatusPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.view-any',
-                denyResponse: 'You do not have permission to view alert statuses.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.view-any',
+            abilities: 'settings.view-any',
             denyResponse: 'You do not have permission to view alert statuses.'
         );
     }
 
     public function view(Authenticatable $authenticatable, AlertStatus $alertStatus): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.view',
-                denyResponse: 'You do not have permission to view this alert status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$alertStatus->getKey()}.view"],
+            abilities: 'settings.*.view',
             denyResponse: 'You do not have permission to view this alert status.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.create',
-                denyResponse: 'You do not have permission to create alert statuses.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: 'settings.create',
             denyResponse: 'You do not have permission to create alert statuses.'
         );
     }
 
     public function update(Authenticatable $authenticatable, AlertStatus $alertStatus): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.update'],
-                denyResponse: 'You do not have permission to update this alert status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$alertStatus->getKey()}.update"],
+            abilities: ['settings.*.update'],
             denyResponse: 'You do not have permission to update this alert status.'
         );
     }
@@ -120,30 +91,16 @@ class AlertStatusPolicy
             return Response::deny('You cannot delete this alert status because this status is associated with active alerts.');
         }
 
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.delete'],
-                denyResponse: 'You do not have permission to delete this alert status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$alertStatus->getKey()}.delete"],
+            abilities: ['settings.*.delete'],
             denyResponse: 'You do not have permission to delete this alert status.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, AlertStatus $alertStatus): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.restore'],
-                denyResponse: 'You do not have permission to restore this alert status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$alertStatus->getKey()}.restore"],
+            abilities: ['settings.*.restore'],
             denyResponse: 'You do not have permission to restore this alert status.'
         );
     }
@@ -154,15 +111,8 @@ class AlertStatusPolicy
             return Response::deny('You cannot delete this alert status because this status is associated with active alerts.');
         }
 
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.force-delete'],
-                denyResponse: 'You do not have permission to permanently delete this alert status.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$alertStatus->getKey()}.force-delete"],
+            abilities: ['settings.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this alert status.'
         );
     }

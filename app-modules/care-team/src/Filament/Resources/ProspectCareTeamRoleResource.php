@@ -42,7 +42,6 @@ use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource\Pages\L
 use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource\Pages\ViewProspectCareTeamRole;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Enums\CareTeamRoleType;
-use App\Features\SettingsPermissions;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Models\User;
 use Filament\Resources\Resource;
@@ -68,7 +67,7 @@ class ProspectCareTeamRoleResource extends Resource
         /** @var User $user */
         $user = auth()->user();
 
-        return SettingsPermissions::active() ? $user->can(['settings.view-any']) : $user->can(['product_admin.view-any']);
+        return $user->can(['settings.view-any']);
     }
 
     /**

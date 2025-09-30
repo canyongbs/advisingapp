@@ -39,7 +39,6 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource\P
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
-use App\Features\InteractionMetadataFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -77,9 +76,7 @@ class ListInteractionStatuses extends ListRecords
 
     public function mount(): void
     {
-        if (InteractionMetadataFeature::active()) {
-            $this->fillForm();
-        }
+        $this->fillForm();
     }
 
     public function fillForm(): void
@@ -96,10 +93,6 @@ class ListInteractionStatuses extends ListRecords
 
     public function form(Schema $schema): Schema
     {
-        if (! InteractionMetadataFeature::active()) {
-            return $schema->components([]);
-        }
-
         return $schema
             ->components([
                 Section::make('Status Settings')

@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Form\Http\Controllers\FormPreviewController;
 use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
 use App\Livewire\RenderForm;
 
@@ -46,4 +47,7 @@ Route::prefix('forms')
     ->group(function () {
         Route::get('/{form}/respond', RenderForm::class)
             ->name('show');
+
+        Route::get('/{form}/preview', FormPreviewController::class)
+            ->name('preview');
     });

@@ -38,7 +38,6 @@ namespace App\Policies;
 
 use AdvisingApp\Campaign\Models\CampaignAction;
 use App\Enums\TagType;
-use App\Features\SettingsPermissions;
 use App\Models\Authenticatable;
 use App\Models\Tag;
 use Illuminate\Auth\Access\Response;
@@ -47,60 +46,32 @@ class TagPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.view-any',
-                denyResponse: 'You do not have permission to view tags.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ['product_admin.view-any'],
+            abilities: 'settings.view-any',
             denyResponse: 'You do not have permission to view tags.'
         );
     }
 
     public function view(Authenticatable $authenticatable, Tag $tag): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.view',
-                denyResponse: 'You do not have permission to view this tag.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$tag->getKey()}.view"],
+            abilities: 'settings.*.view',
             denyResponse: 'You do not have permission to view this tag.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.create',
-                denyResponse: 'You do not have permission to create tags.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: 'product_admin.create',
+            abilities: 'settings.create',
             denyResponse: 'You do not have permission to create tags.'
         );
     }
 
     public function update(Authenticatable $authenticatable, Tag $tag): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: ['settings.*.update'],
-                denyResponse: 'You do not have permission to update this tag.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$tag->getKey()}.update"],
+            abilities: ['settings.*.update'],
             denyResponse: 'You do not have permission to update this tag.'
         );
     }
@@ -115,30 +86,16 @@ class TagPolicy
             return Response::deny('Delete access denided as tag is used in other records');
         }
 
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.delete',
-                denyResponse: 'You do not have permission to delete this tag.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$tag->getKey()}.delete"],
+            abilities: 'settings.*.delete',
             denyResponse: 'You do not have permission to delete this tag.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, Tag $tag): Response
     {
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.restore',
-                denyResponse: 'You do not have permission to restore this tag.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$tag->getKey()}.restore"],
+            abilities: 'settings.*.restore',
             denyResponse: 'You do not have permission to restore this tag.'
         );
     }
@@ -153,15 +110,8 @@ class TagPolicy
             return Response::deny('Delete access denided as tag is used in other records');
         }
 
-        if (SettingsPermissions::active()) {
-            return $authenticatable->canOrElse(
-                abilities: 'settings.*.force-delete',
-                denyResponse: 'You do not have permission to permanently delete this tag.'
-            );
-        }
-
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$tag->getKey()}.force-delete"],
+            abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this tag.'
         );
     }

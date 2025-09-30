@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,19 +30,23 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
+@endphp
 
-use App\Features\SettingsPermissions;
-use Illuminate\Database\Migrations\Migration;
+<x-layouts.app title="Form Preview">
+    <div class="flex items-center justify-center px-4 py-16">
+        <div class="w-full max-w-4xl">
+            <script
+                src="{{ asset('js/widgets/form/advising-app-form-widget.js') }}"
+                type="module"
+            ></script>
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        SettingsPermissions::activate();
-    }
-
-    public function down(): void
-    {
-        SettingsPermissions::deactivate();
-    }
-};
+            <form-embed
+                url="{{ route('forms.api.preview', $form) }}"
+                preview="true"
+            ></form-embed>
+        </div>
+    </div>
+</x-layouts.app>

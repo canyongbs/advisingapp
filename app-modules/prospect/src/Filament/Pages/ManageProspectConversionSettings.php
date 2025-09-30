@@ -37,7 +37,6 @@
 namespace AdvisingApp\Prospect\Filament\Pages;
 
 use AdvisingApp\Prospect\Models\Prospect;
-use App\Features\SettingsPermissions;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Filament\Forms\Components\Heading;
 use App\Filament\Forms\Components\Paragraph;
@@ -73,7 +72,7 @@ class ManageProspectConversionSettings extends SettingsPage
             return false;
         }
 
-        return SettingsPermissions::active() ? $user->can(['settings.view-any']) : $user->can('product_admin.view-any');
+        return $user->can(['settings.view-any']);
     }
 
     public function form(Schema $schema): Schema
@@ -104,11 +103,11 @@ class ManageProspectConversionSettings extends SettingsPage
 
     public function save(): void
     {
-        if (! SettingsPermissions::active() && ! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->can('product_admin.*.update')) {
             return;
         }
 
-        if (SettingsPermissions::active() && ! auth()->user()->can('settings.*.update')) {
+        if (! auth()->user()->can('settings.*.update')) {
             return;
         }
 
@@ -120,11 +119,11 @@ class ManageProspectConversionSettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (! SettingsPermissions::active() && ! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->can('product_admin.*.update')) {
             return [];
         }
 
-        if (SettingsPermissions::active() && ! auth()->user()->can('settings.*.update')) {
+        if (! auth()->user()->can('settings.*.update')) {
             return [];
         }
 
