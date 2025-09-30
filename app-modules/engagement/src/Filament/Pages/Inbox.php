@@ -53,7 +53,6 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
 
 class Inbox extends Page implements HasTable
@@ -106,7 +105,7 @@ class Inbox extends Page implements HasTable
                             ? $record->sender->full_name
                             : null;
                     })
-                    ->action(function (EngagementResponse $record): ?RedirectResponse {
+                    ->action(function (EngagementResponse $record) {
                         if ($record->sender instanceof Student) {
                             return redirect(StudentResource::getUrl('view', [
                                 'record' => $record->sender,
