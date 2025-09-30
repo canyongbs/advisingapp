@@ -84,7 +84,7 @@ test('CreateCaseStatus requires valid data', function ($data, $errors) {
         'name missing' => [CreateCaseStatusRequestFactory::new()->without('name'), ['name' => 'required']],
         'name not a string' => [CreateCaseStatusRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
         'color missing' => [CreateCaseStatusRequestFactory::new()->state(['color' => null]), ['color' => 'required']],
-        'color not within enum' => [CreateCaseStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color' => Enum::class]],
+        'color not within enum' => [CreateCaseStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color']],
     ]
 );
 

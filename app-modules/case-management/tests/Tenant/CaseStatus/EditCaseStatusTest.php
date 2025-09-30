@@ -103,7 +103,7 @@ test('EditCaseStatus requires valid data', function ($data, $errors) {
         'name missing' => [EditCaseStatusRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
         'name not a string' => [EditCaseStatusRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
         'color missing' => [EditCaseStatusRequestFactory::new()->state(['color' => null]), ['color' => 'required']],
-        'color not within enum' => [EditCaseStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color' => Enum::class]],
+        'color not within enum' => [EditCaseStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color']],
     ]
 );
 

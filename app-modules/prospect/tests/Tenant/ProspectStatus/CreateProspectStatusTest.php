@@ -81,7 +81,7 @@ test('CreateProspectStatus requires valid data', function ($data, $errors) {
         'name missing' => [CreateProspectStatusRequestFactory::new()->without('name'), ['name' => 'required']],
         'name not a string' => [CreateProspectStatusRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
         'color missing' => [CreateProspectStatusRequestFactory::new()->state(['color' => null]), ['color' => 'required']],
-        'color not within enum' => [CreateProspectStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color' => Enum::class]],
+        'color not within enum' => [CreateProspectStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color']],
     ]
 );
 

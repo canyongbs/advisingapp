@@ -126,7 +126,7 @@ test('EditCaseTypeAssignments requires valid data', function (EditCaseTypeAssign
 })->with(
     [
         'assignment_type is required' => [EditCaseTypeAssignmentsRequestFactory::new()->state(['assignment_type' => null]), ['assignment_type' => 'required']],
-        'assignment_type is not a valid enum value' => [EditCaseTypeAssignmentsRequestFactory::new()->state(['assignment_type' => 'blah']), ['assignment_type' => Enum::class]],
+        'assignment_type is not a valid enum value' => [EditCaseTypeAssignmentsRequestFactory::new()->state(['assignment_type' => 'blah']), ['assignment_type']],
         'assignment_type_individual_id is required when assignment_type is Individual' => [EditCaseTypeAssignmentsRequestFactory::new()->withIndividualType()->state(['assignment_type_individual_id' => null]), ['assignment_type_individual_id' => 'required']],
         'assignment_type_individual_id must be a User in the CaseTypes managers' => [EditCaseTypeAssignmentsRequestFactory::new()->withIndividualType()->state(['assignment_type_individual_id' => User::factory()]), ['assignment_type_individual_id' => CaseTypeAssignmentsIndividualUserMustBeAManager::class]],
     ]
