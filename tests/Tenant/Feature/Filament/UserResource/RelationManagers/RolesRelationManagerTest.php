@@ -107,7 +107,8 @@ it('allows user which has sass global admin role to assign sass global admin rol
 
             return ! empty($options) ? true : false;
         })
-        ->callTableAction(AttachAction::class, data: ['recordId' => $superAdminRole->getKey()]);
+        ->fillForm(['recordId' => $superAdminRole->getKey()])
+        ->callMountedAction();
 
     $secondUser->refresh();
 
