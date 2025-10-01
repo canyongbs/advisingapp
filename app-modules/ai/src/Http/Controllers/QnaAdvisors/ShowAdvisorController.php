@@ -36,15 +36,20 @@
 
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\Concerns\CanRefreshQnaAdvisorTokens;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\URL;
 
 class ShowAdvisorController
 {
-    public function __invoke(QnaAdvisor $advisor): JsonResponse
+    use CanRefreshQnaAdvisorTokens;
+
+    public function __invoke(Request $request, QnaAdvisor $advisor): JsonResponse
     {
-        return response()->json([
+        $data = [
             'requires_authentication' => $advisor->is_requires_authentication_enabled ?? false,
             'authentication_url' => URL::signedRoute(name: 'ai.qna-advisors.authentication.request', parameters: ['advisor' => $advisor]),
             'refresh_url' => URL::signedRoute(name: 'ai.qna-advisors.authentication.refresh', parameters: ['advisor' => $advisor]),
@@ -62,6 +67,28 @@ class ShowAdvisorController
                 'description' => $advisor->description,
                 'avatar_url' => $advisor->getFirstTemporaryUrl(now()->addHour(), 'avatar') ?: null,
             ],
-        ]);
+        ];
+
+        $response = new JsonResponse();
+
+        $tokens = $this->refreshFromRequest($request);
+
+        if ($tokens) {
+            $data['access_token'] = $tokens['access_token']->plainTextToken;
+
+            $response->withCookie(
+                Cookie::make(
+                    name: 'advising_app_qna_advisor_refresh_token',
+                    value: $tokens['refresh_token']->plainTextToken,
+                    minutes: 60 * 24 * 3, // 3 days
+                    secure: true,
+                    httpOnly: true,
+                )
+            );
+        }
+
+        $response->setData($data);
+
+        return $response;
     }
 }

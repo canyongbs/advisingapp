@@ -34,37 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\Concerns\CanRefreshQnaAdvisorTokens;
-use AdvisingApp\Ai\Models\QnaAdvisor;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cookie;
-
-class AuthenticationRefreshController
-{
-    use CanRefreshQnaAdvisorTokens;
-
-    public function __invoke(Request $request, QnaAdvisor $advisor): JsonResponse
+return new class () extends Migration {
+    public function up(): void
     {
-        $tokens = $this->refreshFromRequest($request);
-
-        if (! $tokens) {
-            abort(401, 'Unauthorized');
-        }
-
-        return response()->json([
-            'access_token' => $tokens['access_token']->plainTextToken,
-        ])
-            ->withCookie(
-                Cookie::make(
-                    name: 'advising_app_qna_advisor_refresh_token',
-                    value: $tokens['refresh_token']->plainTextToken,
-                    minutes: 60 * 24 * 3, // 3 days
-                    secure: true,
-                    httpOnly: true,
-                )
-            );
+        Schema::table('qna_advisor_messages', function (Blueprint $table) {
+            $table->string('author_id')->nullable(true)->change();
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('qna_advisor_messages', function (Blueprint $table) {
+            $table->uuid('author_id')->nullable(true)->change();
+        });
+    }
+};
