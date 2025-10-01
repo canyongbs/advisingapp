@@ -68,19 +68,12 @@ class QnaAdvisorReport extends AiReport
         ];
     }
 
-    public function getColumns(): int | string | array
+    public function getColumns(): int | array
     {
         return [
             'sm' => 2,
             'md' => 4,
             'lg' => 4,
-        ];
-    }
-
-    public function getWidgetData(): array
-    {
-        return [
-            'filters' => $this->filters,
         ];
     }
 }
