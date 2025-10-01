@@ -106,7 +106,6 @@ class QnaAdvisorReportLineChart extends ChartReportWidget
      */
     protected function getQnaAdvisorRunningTotalData(?Carbon $startDate = null, ?Carbon $endDate = null): array
     {
-        Carbon::setTestNow('2025-09-01 00:00:00');
         $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
         $endDate = $endDate ?? Carbon::now()->endOfMonth();
 

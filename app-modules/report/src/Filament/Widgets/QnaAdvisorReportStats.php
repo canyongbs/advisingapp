@@ -74,7 +74,7 @@ class QnaAdvisorReportStats extends StatsOverviewReportWidget
             );
 
         $studentsCount = $shouldBypassCache
-            ? QnaAdvisorThread::query()->whereHas('advisor')
+            ? QnaAdvisorThread::query()
                 ->whereMorphedTo('author', Student::class)
                 ->when(
                     $startDate && $endDate,
@@ -84,11 +84,11 @@ class QnaAdvisorReportStats extends StatsOverviewReportWidget
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'qna-advisor-students-count',
                 now()->addHours(24),
-                fn (): int => QnaAdvisorThread::query()->whereHas('advisor')->whereMorphedTo('author', Student::class)->count()
+                fn (): int => QnaAdvisorThread::query()->whereMorphedTo('author', Student::class)->count()
             );
 
         $prospectsCount = $shouldBypassCache
-            ? QnaAdvisorThread::query()->whereHas('advisor')
+            ? QnaAdvisorThread::query()
                 ->whereMorphedTo('author', Prospect::class)
                 ->when(
                     $startDate && $endDate,
@@ -98,7 +98,7 @@ class QnaAdvisorReportStats extends StatsOverviewReportWidget
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'qna-advisor-prospects-count',
                 now()->addHours(24),
-                fn (): int => QnaAdvisorThread::query()->whereHas('advisor')->whereMorphedTo('author', Prospect::class)->count()
+                fn (): int => QnaAdvisorThread::query()->whereMorphedTo('author', Prospect::class)->count()
             );
 
         $unauthenticatedCount = $shouldBypassCache
@@ -117,10 +117,7 @@ class QnaAdvisorReportStats extends StatsOverviewReportWidget
             );
 
         return [
-            Stat::make('QnA Advisors', ($qnaAdvisors > 9999999)
-                ? Number::abbreviate($qnaAdvisors, maxPrecision: 2)
-                : Number::format($qnaAdvisors, maxPrecision: 2)),
-
+            Stat::make('QnA Advisors', Number::abbreviate($qnaAdvisors, maxPrecision: 2)),
             Stat::make('Students', Number::abbreviate($studentsCount, maxPrecision: 2)),
             Stat::make('Prospects', Number::abbreviate($prospectsCount, maxPrecision: 2)),
             Stat::make('Unauthenticated', Number::abbreviate($unauthenticatedCount, maxPrecision: 2)),

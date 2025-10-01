@@ -55,6 +55,8 @@ use AdvisingApp\Ai\Models\QnaAdvisorCategory;
 use AdvisingApp\Ai\Models\QnaAdvisorFile;
 use AdvisingApp\Ai\Models\QnaAdvisorLink;
 use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
@@ -100,6 +102,8 @@ class AiServiceProvider extends ServiceProvider
             'qna_advisor_link' => QnaAdvisorLink::class,
             'qna_advisor_question' => QnaAdvisorQuestion::class,
             'data_advisor' => DataAdvisor::class,
+            'student' => Student::class,
+            'prospect' => Prospect::class,
         ]);
 
         $this->mergeConfigFrom(__DIR__ . '/../../config/ai.php', 'ai');

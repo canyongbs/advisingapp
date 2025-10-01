@@ -74,7 +74,7 @@ it('displays only QnaAdvisorThreads added within the selected date range based o
     $component = livewire(QnaAdvisorReportTableChart::class, [
         'cacheTag' => 'qna-advisor-thread-report-cache',
         'filters' => $filters,
-        'activeTab' => QnaAdvisorReportTableTab::student->value,
+        'activeTab' => QnaAdvisorReportTableTab::Student->value,
     ]);
 
     $component->assertCanSeeTableRecords(collect([
@@ -87,7 +87,7 @@ it('displays only QnaAdvisorThreads added within the selected date range based o
     $component = livewire(QnaAdvisorReportTableChart::class, [
         'cacheTag' => 'qna-advisor-thread-report-cache',
         'filters' => $filters,
-        'activeTab' => QnaAdvisorReportTableTab::prospect->value,
+        'activeTab' => QnaAdvisorReportTableTab::Prospect->value,
     ]);
 
     $component->assertCanSeeTableRecords(collect([
@@ -100,7 +100,7 @@ it('displays only QnaAdvisorThreads added within the selected date range based o
     $component = livewire(QnaAdvisorReportTableChart::class, [
         'cacheTag' => 'qna-advisor-thread-report-cache',
         'filters' => $filters,
-        'activeTab' => QnaAdvisorReportTableTab::unauthenticated->value,
+        'activeTab' => QnaAdvisorReportTableTab::Unauthenticated->value,
     ]);
 
     $component->assertCanSeeTableRecords(collect([

@@ -38,10 +38,11 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Ai\Enums\QnaAdvisorReportTableTab;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Resources\Components\Tab;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
@@ -57,10 +58,10 @@ class QnaAdvisorReportTableChart extends TableWidget
 
     protected int | string | array $columnSpan = 'full';
 
-    protected static ?string $heading = 'Most Recent Qna Advisors Added';
+    protected static ?string $heading = 'Most Recent QnA Advisor Chats';
 
     #[Url]
-    public string $activeTab = QnaAdvisorReportTableTab::student->value;
+    public string $activeTab = QnaAdvisorReportTableTab::Student->value;
 
     protected static string $view = 'ai::filament.resources.qna-advisors.pages.qna-advisor-table-report';
 
@@ -84,20 +85,18 @@ class QnaAdvisorReportTableChart extends TableWidget
                     $startDate = $this->getStartDate();
                     $endDate = $this->getEndDate();
 
-                    $tab = QnaAdvisorReportTableTab::tryFrom($this->activeTab) ?? QnaAdvisorReportTableTab::student;
+                    $tab = QnaAdvisorReportTableTab::tryFrom($this->activeTab) ?? QnaAdvisorReportTableTab::Student;
 
                     $qnaAdvisorThreadQuery = fn (Builder $query): Builder => match ($tab) {
-                        QnaAdvisorReportTableTab::student => QnaAdvisorThread::query()
+                        QnaAdvisorReportTableTab::Student => QnaAdvisorThread::query()
                             ->whereMorphedTo('author', Student::class),
-                        QnaAdvisorReportTableTab::prospect => QnaAdvisorThread::query()
+                        QnaAdvisorReportTableTab::Prospect => QnaAdvisorThread::query()
                             ->whereMorphedTo('author', Prospect::class),
-                        QnaAdvisorReportTableTab::unauthenticated => QnaAdvisorThread::query()
+                        QnaAdvisorReportTableTab::Unauthenticated => QnaAdvisorThread::query()
                             ->whereNull('author_id'),
                     };
 
                     return $qnaAdvisorThreadQuery(QnaAdvisorThread::query())
-                        ->whereNotNull('created_at')
-                        ->whereNull('deleted_at')
                         ->when(
                             $startDate && $endDate,
                             function (Builder $query) use ($startDate, $endDate): Builder {
@@ -114,6 +113,11 @@ class QnaAdvisorReportTableChart extends TableWidget
                     ->label('Name'),
                 TextColumn::make('author')
                     ->label('With')
+                    ->url(fn (QnaAdvisorThread $record): ?string => match (true) {
+                        $record->author instanceof Student => ViewStudent::getUrl(['record' => $record->author]),
+                        $record->author instanceof Prospect => ViewProspect::getUrl(['record' => $record->author]),
+                        default => null,
+                    }, shouldOpenInNewTab: true)
                     ->getStateUsing(function (QnaAdvisorThread $record): string {
                         $author = $record->author;
 
@@ -129,13 +133,13 @@ class QnaAdvisorReportTableChart extends TableWidget
                     ->badge()
                     ->color(
                         fn (QnaAdvisorThread $record): string => filled($record->finished_at)
-                        && in_array($record->author?->getMorphClass(), ['prospect', 'student'])
+                        && in_array($record->author?->getMorphClass(), ['prospect', 'student']) && filled($record->interaction_id)
                             ? 'info'
                             : 'warning'
                     )
                     ->getStateUsing(
                         fn (QnaAdvisorThread $record) => filled($record->finished_at)
-                        && in_array($record->author?->getMorphClass(), ['prospect', 'student'])
+                        && in_array($record->author?->getMorphClass(), ['prospect', 'student']) && filled($record->interaction_id)
                             ? 'Yes'
                             : 'No'
                     )
@@ -148,27 +152,5 @@ class QnaAdvisorReportTableChart extends TableWidget
                     ->getStateUsing(fn (QnaAdvisorThread $record) => filled($record->interaction_id) ? 'Yes' : 'No'),
             ])
             ->paginated([10]);
-    }
-
-    /**
-     * @return array<string, Tab>
-     */
-    public function getTabs(): array
-    {
-        return [
-            'all' => Tab::make('All'),
-
-            'with_author' => Tab::make('With Author')
-                ->modifyQueryUsing(
-                    fn (Builder $query) => $query->whereNotNull('author_id')
-                        ->whereNotNull('author_type')
-                ),
-
-            'without_author' => Tab::make('Without Author')
-                ->modifyQueryUsing(
-                    fn (Builder $query) => $query->whereNull('author_id')
-                        ->whereNull('author_type')
-                ),
-        ];
     }
 }
