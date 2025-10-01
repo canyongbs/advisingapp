@@ -102,8 +102,6 @@ class AiServiceProvider extends ServiceProvider
             'qna_advisor_link' => QnaAdvisorLink::class,
             'qna_advisor_question' => QnaAdvisorQuestion::class,
             'data_advisor' => DataAdvisor::class,
-            'student' => Student::class,
-            'prospect' => Prospect::class,
         ]);
 
         $this->mergeConfigFrom(__DIR__ . '/../../config/ai.php', 'ai');
