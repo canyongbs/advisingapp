@@ -43,6 +43,8 @@ use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\ProductHealth;
 use App\Models\Tenant;
 use App\Multitenancy\Http\Middleware\NeedsTenant;
+use App\Settings\CollegeBrandingSettings;
+use Filament\Actions\Action;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ImportAction;
 use Filament\Forms\Components\Field;
@@ -56,9 +58,11 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Js;
+use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\Column;
 use Filament\View\PanelsRenderHook;
 use FilamentTiptapEditor\TiptapEditor;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -66,7 +70,9 @@ use Illuminate\Foundation\ViteManifestNotFoundException;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 use ShuvroRoy\FilamentSpatieLaravelHealth\FilamentSpatieLaravelHealthPlugin;
@@ -199,9 +205,13 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Profile Settings')
                     ->url(fn () => ProfileSettings::getUrl())
                     ->icon('heroicon-s-cog-6-tooth'),
-                MenuItem::make()
+                Action::make('about')
                     ->label('About')
-                    ->url("javascript:window.dispatchEvent(new CustomEvent('open-modal', {detail:{id:'app-about'}}))")
+                    ->modalHeading('Advising App® by Canyon GBS')
+                    ->modalDescription('Version ' . config('sentry.release'))
+                    ->modalContent(fn () => view('components.about-modal'))
+                    ->modalFooterActions([])
+                    ->modalWidth(Width::Small)
                     ->icon('heroicon-s-information-circle'),
                 MenuItem::make()
                     ->label('Recent Updates')
@@ -226,10 +236,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->colors(fn (ThemeSettings $themeSettings): array => array_merge(config('default-colors'), $themeSettings->color_overrides))
             ->renderHook(
-                'panels::scripts.before',
-                fn () => view('filament.scripts.scroll-sidebar-to-active-menu-item'),
-            )
-            ->renderHook(
                 'panels::head.end',
                 fn (ThemeSettings $themeSettings) => ($themeSettings->url) ? view('filament.layout.theme', ['url' => $themeSettings->url]) : null,
             )
@@ -241,8 +247,16 @@ class AdminPanelProvider extends PanelProvider
                 $panel->darkMode(app(ThemeSettings::class)->has_dark_mode);
             })
             ->renderHook(
-                PanelsRenderHook::BODY_END,
-                fn () => view('components.about-modal'),
+                PanelsRenderHook::TOPBAR_AFTER,
+                function (): ?Htmlable {
+                    $collegeBrandingSettings = app(CollegeBrandingSettings::class);
+
+                    if (! $collegeBrandingSettings->is_enabled) {
+                        return null;
+                    }
+
+                    return new HtmlString(Blade::render('<livewire:branding-bar />'));
+                },
             );
     }
 

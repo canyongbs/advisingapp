@@ -45,14 +45,14 @@ use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Division\Models\Division;
 use App\Filament\Forms\Components\EducatableSelect;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions;
-use Filament\Forms\Components\Grid;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
@@ -65,13 +65,13 @@ class EditCase extends EditRecord
 
     protected static ?string $navigationLabel = 'Edit';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         $disabledStatuses = CaseStatus::onlyTrashed()->pluck('id');
         $disabledTypes = CaseType::onlyTrashed()->pluck('id');
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('division_id')
                     ->relationship('division', 'name')
                     ->model(CaseModel::class)
@@ -149,7 +149,7 @@ class EditCase extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 

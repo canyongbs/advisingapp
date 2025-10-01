@@ -33,11 +33,10 @@
 
 </COPYRIGHT>
 */
-
 use AdvisingApp\Report\Filament\Widgets\MostRecentStudentsTable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-use Filament\Tables\Actions\ExportAction;
+use Filament\Actions\ExportAction;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
@@ -66,7 +65,7 @@ it('displays only students added within the selected date range', function () {
 
     livewire(MostRecentStudentsTable::class, [
         'cacheTag' => 'report-students',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $studentWithinRange1,

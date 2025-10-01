@@ -40,13 +40,13 @@ use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use Carbon\CarbonInterface;
-use Filament\Infolists\Components\Fieldset;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -55,10 +55,10 @@ trait HasManyMorphedInteractionsTrait
 {
     private ?InteractionManagementSettings $settings = null;
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 TextEntry::make('is_confidential')
                     ->columnSpanFull()
                     ->label('')
@@ -101,7 +101,7 @@ trait HasManyMorphedInteractionsTrait
                             ->hidden(fn ($state): bool => blank($state))
                             ->columnSpanFull(),
                         TextEntry::make('description')
-                            ->getStateUsing(fn (Interaction $interaction): string => $interaction->description ?? 'N/A')
+                            ->state(fn (Interaction $interaction): string => $interaction->description ?? 'N/A')
                             ->markdown()
                             ->columnSpanFull(),
                     ]),
@@ -167,7 +167,7 @@ trait HasManyMorphedInteractionsTrait
                         return auth()->user()?->can('create', [Interaction::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->modalHeading('Interaction Details')
                     ->extraModalFooterActions([

@@ -37,7 +37,7 @@
     </span>
 </dt>
 <div class="mt-2 rounded p-4">
-    <div class="prose mt-2 max-w-full dark:prose-invert lg:prose-xl">
+    <div class="prose mt-2 max-w-full lg:prose-xl dark:prose-invert">
         {!! $getState()
             ? tiptap_converter()->record($getRecord(), attribute: $getName())->asHTML($getState())
             : null !!}

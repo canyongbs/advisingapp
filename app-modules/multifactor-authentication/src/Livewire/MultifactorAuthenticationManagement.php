@@ -70,7 +70,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
 
     public function mount()
     {
-        $this->user ??= Filament::getCurrentPanel()->auth()->user();
+        $this->user ??= Filament::getCurrentOrDefaultPanel()->auth()->user();
     }
 
     public function enableAction(): Action
@@ -109,7 +109,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
             ->color('success')
             ->label('Confirm & finish')
             ->modalWidth('sm')
-            ->form([
+            ->schema([
                 TextInput::make('code')
                     ->label('Code')
                     ->placeholder('###-###')

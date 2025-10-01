@@ -33,11 +33,10 @@
 
 </COPYRIGHT>
 */
-
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportTableChart;
 use App\Models\User;
-use Filament\Tables\Actions\ExportAction;
+use Filament\Actions\ExportAction;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
@@ -66,7 +65,7 @@ it('displays only prospects added within the selected date range', function () {
 
     livewire(ProspectReportTableChart::class, [
         'cacheTag' => 'prospect-report-cache',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $prospectWithinRange1,

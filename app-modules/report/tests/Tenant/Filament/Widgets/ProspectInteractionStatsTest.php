@@ -142,7 +142,7 @@ it('returns correct total and unique prospect interaction counts within the give
 
     $widget = new ProspectInteractionStats();
     $widget->cacheTag = 'report-prospect-interaction';
-    $widget->filters = [
+    $widget->pageFilters = [
         'startDate' => $interactionStartDate->toDateString(),
         'endDate' => $interactionEndDate->toDateString(),
     ];
@@ -200,7 +200,7 @@ it('returns correct total and unique prospect interaction counts based on segmen
 
     $widget = new ProspectInteractionStats();
     $widget->cacheTag = 'report-prospect-interaction';
-    $widget->filters = [
+    $widget->pageFilters = [
         'populationSegment' => $segment->getKey(),
     ];
 
@@ -219,7 +219,7 @@ it('returns correct total and unique prospect interaction counts based on segmen
     // without segment filter
     $widget = new ProspectInteractionStats();
     $widget->cacheTag = 'report-prospect-interaction';
-    $widget->filters = [];
+    $widget->pageFilters = [];
 
     $stats = $widget->getStats();
 

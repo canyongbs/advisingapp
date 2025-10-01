@@ -43,8 +43,8 @@ use AdvisingApp\Interaction\Models\InteractionOutcome;
 use App\Filament\Clusters\InteractionManagement;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 
 class InteractionOutcomeResource extends Resource
 {
@@ -56,10 +56,10 @@ class InteractionOutcomeResource extends Resource
 
     protected static ?string $cluster = InteractionManagement::class;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->autofocus()
                     ->required()

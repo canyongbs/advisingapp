@@ -31,13 +31,40 @@
 
 </COPYRIGHT>
 --}}
-<div class="bg-turkish-500 text-white rounded-xl p-6 mb-6">
-    <div class="flex md:flex-row flex-col justify-center items-center gap-6">
-        <div>
-            <p class="text-white text-sm font-semibold">Version {{ app('current-version') }} is now available!</p>
-            <p class="text-white-500 text-sm my-4">Your instance of Advising App&#174; was automatically updated with our latest available features.</p>
-            <a href="{{ $themeChangelogUrl }}" target="_blank" class="border-2 border-white px-4 py-2 text-white rounded-xl text-sm font-semibold inline-block">Learn More</a>
-        </div>
-        <img src="{{ Vite::asset('resources/images/version_image.svg') }}" class="block max-h-32" />
-    </div>
+
+@php
+    use Filament\Support\Colors\Color;
+@endphp
+
+<div
+    class="bg-custom-600 sticky top-16 z-10 flex h-10 items-center px-6 py-2 text-sm font-medium text-white"
+    style="display: none; --color-600: {{ Color::all()[$color][600] }}"
+    x-data="{ isVisible: @entangle('isVisible') }"
+    x-show="isVisible"
+    x-bind:class="{ 'branding-bar': isVisible }"
+    wire:loading.remove
+>
+    {{ $brandingBarText }}
+
+    <button
+        class="ml-auto hover:text-gray-400"
+        x-data="{ isDismissible: @entangle('dismissible') }"
+        x-show="isDismissible"
+        @click="$wire.dismiss()"
+    >
+        <svg
+            class="h-6 w-6"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+            />
+        </svg>
+    </button>
 </div>

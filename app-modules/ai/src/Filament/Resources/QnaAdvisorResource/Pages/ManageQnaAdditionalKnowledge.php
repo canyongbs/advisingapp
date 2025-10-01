@@ -42,19 +42,20 @@ use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisorFile;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use UnitEnum;
 
 class ManageQnaAdditionalKnowledge extends EditRecord
 {
@@ -64,7 +65,7 @@ class ManageQnaAdditionalKnowledge extends EditRecord
 
     protected static ?string $navigationLabel = 'Additional Knowledge';
 
-    protected static ?string $navigationGroup = 'Configuration';
+    protected static string | UnitEnum | null $navigationGroup = 'Configuration';
 
     protected static ?string $breadcrumb = 'Additional Knowledge';
 
@@ -91,14 +92,14 @@ class ManageQnaAdditionalKnowledge extends EditRecord
         return $breadcrumbs;
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         $user = auth()->guard('web')->user();
 
         assert($user instanceof User);
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Additional Knowledge')
                     ->description('Add additional knowledge to this QnA Advisor to improve its responses.')
                     ->reactive()

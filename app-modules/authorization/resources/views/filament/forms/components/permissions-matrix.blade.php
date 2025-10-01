@@ -116,18 +116,18 @@
     @endif
 
     <div
-        class="grid divide-y divide-gray-950/5 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-gray-900 dark:ring-white/10"
+        class="divide-gray-950/5 ring-gray-950/5 grid divide-y rounded-xl bg-white shadow-sm ring-1 dark:divide-white/10 dark:bg-gray-900 dark:ring-white/10"
         x-ref="table"
     >
-        <div class="divide-gray-950/5 dark:divide-white/10 xl:flex xl:divide-x xl:divide-y-0">
-            <div class="flex items-center px-3 py-2 font-medium text-gray-950 dark:text-white xl:flex-1">
+        <div class="divide-gray-950/5 xl:flex xl:divide-x xl:divide-y-0 dark:divide-white/10">
+            <div class="flex items-center px-3 py-2 font-medium text-gray-950 xl:flex-1 dark:text-white">
                 Permissions
             </div>
 
-            <div class="hidden divide-x divide-gray-950/5 text-xs dark:divide-white/10 xl:grid xl:grid-cols-7 xl:gap-0">
+            <div class="divide-gray-950/5 hidden divide-x text-xs xl:grid xl:grid-cols-7 xl:gap-0 dark:divide-white/10">
                 @foreach (['View', 'Create', 'Update', 'Delete', 'Import', 'Force Delete', 'Restore'] as $operationLabel)
                     <div
-                        class="flex flex-col items-center justify-center p-2 font-semibold text-gray-950 dark:text-white xl:w-24">
+                        class="flex flex-col items-center justify-center p-2 font-semibold text-gray-950 xl:w-24 dark:text-white">
                         <div>{{ $operationLabel }}</div>
                         {{-- prettier-ignore-start --}}
                         <div
@@ -170,7 +170,7 @@
             x-bind:key="group"
         >
             <div
-                class="flex flex-col divide-y divide-gray-950/5 dark:divide-white/10 xl:flex-row xl:divide-x xl:divide-y-0">
+                class="divide-gray-950/5 flex flex-col divide-y xl:flex-row xl:divide-x xl:divide-y-0 dark:divide-white/10">
                 <div class="group flex items-center justify-between gap-3 px-3 py-2 xl:flex-1">
                     <div
                         class="text-sm text-gray-950 dark:text-white"
@@ -191,7 +191,7 @@
                 </div>
 
                 <div
-                    class="grid grid-cols-2 gap-1 divide-gray-950/5 px-3 py-2 text-sm dark:divide-white/10 md:grid-cols-4 xl:grid-cols-7 xl:gap-0 xl:divide-x xl:px-0 xl:py-0">
+                    class="divide-gray-950/5 grid grid-cols-2 gap-1 px-3 py-2 text-sm md:grid-cols-4 xl:grid-cols-7 xl:gap-0 xl:divide-x xl:px-0 xl:py-0 dark:divide-white/10">
                     @foreach (['view-any' => 'View', 'create' => 'Create', 'update' => 'Update', 'delete' => 'Delete', 'import' => 'Import', 'force-delete' => 'Force Delete', 'restore' => 'Restore'] as $operation => $operationLabel)
                         <label
                             class="flex items-center gap-2 xl:flex xl:w-24 xl:justify-center xl:px-3 xl:py-2"

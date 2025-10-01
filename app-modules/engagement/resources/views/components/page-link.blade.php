@@ -35,7 +35,7 @@
     @if ($page == $currentPage)
         <span aria-current="page">
             <span
-                class="relative -ml-px inline-flex cursor-default items-center bg-transparent px-4 py-2 text-sm font-medium leading-5 text-primary-500 ring-1 ring-inset ring-gray-200 hover:bg-gray-50 dark:ring-gray-700 hover:dark:bg-gray-700"
+                class="text-primary-500 relative -ml-px inline-flex cursor-default items-center bg-transparent px-4 py-2 text-sm font-medium leading-5 ring-1 ring-inset ring-gray-200 hover:bg-gray-50 dark:ring-gray-700 hover:dark:bg-gray-700"
             >{{ $page }}</span>
         </span>
     @else

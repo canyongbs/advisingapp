@@ -116,7 +116,7 @@ it('returns correct interaction counts by type for students within the selected 
 
     $widgetInstance = new StudentInteractionTypeDoughnutChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'startDate' => $interactionStartDate->toDateString(),
         'endDate' => $interactionEndDate->toDateString(),
     ];
@@ -183,7 +183,7 @@ it('returns correct interaction counts by type for students based on segment fil
     //  with segment filter
     $widgetInstance = new StudentInteractionTypeDoughnutChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'populationSegment' => $segment->getKey(),
     ];
 
@@ -195,7 +195,7 @@ it('returns correct interaction counts by type for students based on segment fil
     //  with segment filter
     $widgetInstance = new StudentInteractionTypeDoughnutChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
-    $widgetInstance->filters = [];
+    $widgetInstance->pageFilters = [];
 
     $stats = $widgetInstance->getData()['datasets'][0]['data'];
 

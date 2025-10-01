@@ -85,7 +85,7 @@ class CaseWorkflowActionJob extends ExecuteWorkflowActionJob
                 'created_by_id' => $user->getKey(),
             ]);
 
-            if (isset($details->assigned_to_id) && $details->assigned_to_id !== null) {
+            if (isset($details->assigned_to_id) && filled($details->assigned_to_id)) {
                 $case->assignments()->create([
                     'user_id' => $details->assigned_to_id,
                     'assigned_by_id' => $user->getKey(),

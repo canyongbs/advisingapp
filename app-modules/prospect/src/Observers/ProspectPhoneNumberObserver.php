@@ -43,7 +43,7 @@ class ProspectPhoneNumberObserver
 {
     public function creating(ProspectPhoneNumber $prospectPhoneNumber): void
     {
-        if ($prospectPhoneNumber->order === null) {
+        if (blank($prospectPhoneNumber->order)) {
             $prospectPhoneNumber->order = DB::raw("(SELECT COALESCE(MAX(\"{$prospectPhoneNumber->getTable()}\".order), 0) + 1 FROM \"{$prospectPhoneNumber->getTable()}\" WHERE prospect_id = '{$prospectPhoneNumber->prospect_id}')");
         }
     }

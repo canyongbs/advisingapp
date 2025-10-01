@@ -58,7 +58,7 @@ enum ConversationNotificationPreference: string implements HasColor, HasDescript
         };
     }
 
-    public function getColor(): string | array | null
+    public function getColor(): string
     {
         return match ($this) {
             self::None => 'gray',

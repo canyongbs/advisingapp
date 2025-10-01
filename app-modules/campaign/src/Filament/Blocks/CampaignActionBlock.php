@@ -39,8 +39,8 @@ namespace AdvisingApp\Campaign\Filament\Blocks;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use Carbon\CarbonInterface;
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Builder\Block;
+use Filament\Schemas\Schema;
 
 abstract class CampaignActionBlock extends Block
 {
@@ -85,5 +85,5 @@ abstract class CampaignActionBlock extends Block
             ->setTimezone(auth()->user()->timezone)->format('M j, Y H:i:s') . ' in your timezone';
     }
 
-    public function afterCreated(CampaignAction $action, ComponentContainer $componentContainer): void {}
+    public function afterCreated(CampaignAction $action, Schema $schema): void {}
 }

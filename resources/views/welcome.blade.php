@@ -870,7 +870,7 @@
 
 <body class="antialiased">
     <div
-        class="bg-dots-darker dark:bg-dots-lighter relative min-h-screen bg-gray-100 bg-center selection:bg-red-500 selection:text-white dark:bg-gray-900 sm:flex sm:items-center sm:justify-center">
+        class="bg-dots-darker dark:bg-dots-lighter relative min-h-screen bg-gray-100 bg-center selection:bg-red-500 selection:text-white sm:flex sm:items-center sm:justify-center dark:bg-gray-900">
         @if (Route::has('login'))
             <div class="p-6 text-right sm:fixed sm:right-0 sm:top-0">
                 @auth
@@ -912,7 +912,7 @@
             <div class="mt-16">
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8">
                     <a
-                        class="duration-250 flex scale-100 rounded-lg bg-white from-gray-700/50 via-transparent p-6 shadow-2xl shadow-gray-500/20 transition-all focus:outline focus:outline-2 focus:outline-red-500 motion-safe:hover:scale-[1.01] dark:bg-gray-800/50 dark:bg-gradient-to-bl dark:shadow-none dark:ring-1 dark:ring-inset dark:ring-white/5"
+                        class="duration-250 from-gray-700/50 shadow-gray-500/20 dark:bg-gray-800/50 flex scale-100 rounded-lg bg-white via-transparent p-6 shadow-2xl transition-all focus:outline focus:outline-2 focus:outline-red-500 motion-safe:hover:scale-[1.01] dark:bg-gradient-to-bl dark:shadow-none dark:ring-1 dark:ring-inset dark:ring-white/5"
                         href="https://laravel.com/docs"
                     >
                         <div>
@@ -958,7 +958,7 @@
                     </a>
 
                     <a
-                        class="duration-250 flex scale-100 rounded-lg bg-white from-gray-700/50 via-transparent p-6 shadow-2xl shadow-gray-500/20 transition-all focus:outline focus:outline-2 focus:outline-red-500 motion-safe:hover:scale-[1.01] dark:bg-gray-800/50 dark:bg-gradient-to-bl dark:shadow-none dark:ring-1 dark:ring-inset dark:ring-white/5"
+                        class="duration-250 from-gray-700/50 shadow-gray-500/20 dark:bg-gray-800/50 flex scale-100 rounded-lg bg-white via-transparent p-6 shadow-2xl transition-all focus:outline focus:outline-2 focus:outline-red-500 motion-safe:hover:scale-[1.01] dark:bg-gradient-to-bl dark:shadow-none dark:ring-1 dark:ring-inset dark:ring-white/5"
                         href="https://laracasts.com"
                     >
                         <div>
@@ -1003,7 +1003,7 @@
                     </a>
 
                     <a
-                        class="duration-250 flex scale-100 rounded-lg bg-white from-gray-700/50 via-transparent p-6 shadow-2xl shadow-gray-500/20 transition-all focus:outline focus:outline-2 focus:outline-red-500 motion-safe:hover:scale-[1.01] dark:bg-gray-800/50 dark:bg-gradient-to-bl dark:shadow-none dark:ring-1 dark:ring-inset dark:ring-white/5"
+                        class="duration-250 from-gray-700/50 shadow-gray-500/20 dark:bg-gray-800/50 flex scale-100 rounded-lg bg-white via-transparent p-6 shadow-2xl transition-all focus:outline focus:outline-2 focus:outline-red-500 motion-safe:hover:scale-[1.01] dark:bg-gradient-to-bl dark:shadow-none dark:ring-1 dark:ring-inset dark:ring-white/5"
                         href="https://laravel-news.com"
                     >
                         <div>
@@ -1049,7 +1049,7 @@
                     </a>
 
                     <div
-                        class="duration-250 flex scale-100 rounded-lg bg-white from-gray-700/50 via-transparent p-6 shadow-2xl shadow-gray-500/20 transition-all focus:outline focus:outline-2 focus:outline-red-500 motion-safe:hover:scale-[1.01] dark:bg-gray-800/50 dark:bg-gradient-to-bl dark:shadow-none dark:ring-1 dark:ring-inset dark:ring-white/5">
+                        class="duration-250 from-gray-700/50 shadow-gray-500/20 dark:bg-gray-800/50 flex scale-100 rounded-lg bg-white via-transparent p-6 shadow-2xl transition-all focus:outline focus:outline-2 focus:outline-red-500 motion-safe:hover:scale-[1.01] dark:bg-gradient-to-bl dark:shadow-none dark:ring-1 dark:ring-inset dark:ring-white/5">
                         <div>
                             <div
                                 class="flex h-16 w-16 items-center justify-center rounded-full bg-red-50 dark:bg-red-800/20">
@@ -1110,7 +1110,7 @@
             </div>
 
             <div class="mt-16 flex justify-center px-0 sm:items-center sm:justify-between">
-                <div class="text-center text-sm text-gray-500 dark:text-gray-400 sm:text-left">
+                <div class="text-center text-sm text-gray-500 sm:text-left dark:text-gray-400">
                     <div class="flex items-center gap-4">
                         <a
                             class="group inline-flex items-center hover:text-gray-700 focus:rounded-sm focus:outline focus:outline-2 focus:outline-red-500 dark:hover:text-white"
@@ -1134,7 +1134,7 @@
                     </div>
                 </div>
 
-                <div class="ml-4 text-center text-sm text-gray-500 dark:text-gray-400 sm:ml-0 sm:text-right">
+                <div class="ml-4 text-center text-sm text-gray-500 sm:ml-0 sm:text-right dark:text-gray-400">
                     Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
                 </div>
             </div>

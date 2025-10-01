@@ -33,7 +33,6 @@
 
 </COPYRIGHT>
 */
-
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
@@ -42,7 +41,7 @@ use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-use Filament\Tables\Actions\ExportAction;
+use Filament\Actions\ExportAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -91,7 +90,7 @@ it('returns all cases information created for students in given time range', fun
 
     livewire(StudentCaseTable::class, [
         'cacheTag' => 'report-student-case',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $openCases,
@@ -168,7 +167,7 @@ it('returns all cases information created for students based on segment filters'
     // with segment filter
     livewire(StudentCaseTable::class, [
         'cacheTag' => 'report-student-case',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $openCases,

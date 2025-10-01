@@ -80,7 +80,7 @@ it('returns correct data for prospect interactions within the given date range',
 
     $widgetInstance = new ProspectInteractionLineChart();
     $widgetInstance->cacheTag = 'report-prospect-interaction';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'startDate' => $interactionStartDate->toDateString(),
         'endDate' => $interactionEndDate->toDateString(),
     ];
@@ -135,7 +135,7 @@ it('returns correct data for prospect interactions based on segment filter', fun
 
     $widgetInstance = new ProspectInteractionLineChart();
     $widgetInstance->cacheTag = 'report-prospect-interaction';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'populationSegment' => $segment->getKey(),
     ];
 

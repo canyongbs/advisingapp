@@ -46,6 +46,7 @@ use App\Filament\Clusters\ConstituentManagement;
 use App\Models\Tag;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
 
 class ProspectTagResource extends Resource
 {
@@ -57,7 +58,7 @@ class ProspectTagResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static ?string $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
 
     public static function canAccess(): bool
     {

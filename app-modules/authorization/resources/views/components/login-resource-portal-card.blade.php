@@ -31,13 +31,21 @@
 
 </COPYRIGHT>
 --}}
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-            const activeSidebarItem = document.querySelector('.fi-sidebar-item-active');
-            const sidebarWrapper = document.querySelector('.fi-sidebar-nav');
-
-            sidebarWrapper.scrollTo(0, activeSidebarItem.offsetTop - (window.innerHeight / 2));
-        }, 0);
-    })
-</script>
+<div class="rounded-xl bg-turkish-300 p-6 text-white">
+    <div class="flex flex-col items-center justify-center gap-6 md:flex-row">
+        <div>
+            <p class="text-sm font-semibold text-gray-800">Resource Portal</p>
+            <p class="my-4 text-sm text-gray-700">Visit our resource portal for answers to frequently asked product and
+                service questions.</p>
+            <a
+                class="inline-block rounded-xl border-2 border-gray-700 px-4 py-2 text-sm font-semibold text-gray-700"
+                href="{{ $productResourcehubUrl }}"
+                target="_blank"
+            >Visit Resource Portal</a>
+        </div>
+        <img
+            class="block max-h-32"
+            src="{{ Vite::asset('resources/images/changelog_image.svg') }}"
+        />
+    </div>
+</div>

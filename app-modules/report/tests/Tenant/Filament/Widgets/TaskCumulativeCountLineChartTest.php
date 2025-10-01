@@ -73,7 +73,7 @@ it('returns correct cumulative task counts grouped by month within the given dat
 
     $widgetInstance = new TaskCumulativeCountLineChart();
     $widgetInstance->cacheTag = 'report-tasks';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];

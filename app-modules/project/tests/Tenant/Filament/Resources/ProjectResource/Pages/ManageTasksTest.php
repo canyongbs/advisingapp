@@ -33,17 +33,16 @@
 
 </COPYRIGHT>
 */
-
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageTasks;
 use AdvisingApp\Project\Models\Project;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use App\Models\User;
+use Filament\Actions\AssociateAction;
+use Filament\Actions\DissociateAction;
+use Filament\Actions\DissociateBulkAction;
 use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\AssociateAction;
-use Filament\Tables\Actions\DissociateAction;
-use Filament\Tables\Actions\DissociateBulkAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -146,7 +145,7 @@ it('does not list tasks already associated with a project in task search', funct
         'record' => $projectOne->getRouteKey(),
     ])
         ->mountTableAction(AssociateAction::class)
-        ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) use ($task) {
+        ->assertFormFieldExists('recordId', checkFieldUsing: function (Select $select) use ($task) {
             $options = $select->getSearchResults($task->title);
 
             return empty($options);
@@ -157,7 +156,7 @@ it('does not list tasks already associated with a project in task search', funct
         'record' => $projectTwo->getRouteKey(),
     ])
         ->mountTableAction(AssociateAction::class)
-        ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) use ($task) {
+        ->assertFormFieldExists('recordId', checkFieldUsing: function (Select $select) use ($task) {
             $options = $select->getSearchResults($task->title);
 
             return empty($options);

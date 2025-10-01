@@ -70,7 +70,7 @@ it('shows the form and validation', function (BulkCreateCaseActionRequestFactory
     ],
     'status_id exists' => [
         BulkCreateCaseActionRequestFactory::new()->state(['status_id' => (string) Str::uuid()]),
-        ['status_id' => 'exists'],
+        ['status_id'],
     ],
     'priority_id missing' => [
         BulkCreateCaseActionRequestFactory::new()->without('priority_id'),
@@ -78,7 +78,7 @@ it('shows the form and validation', function (BulkCreateCaseActionRequestFactory
     ],
     'priority_id does not exist' => [
         BulkCreateCaseActionRequestFactory::new()->state(['priority_id' => (string) Str::uuid()]),
-        ['priority_id' => 'exists'],
+        ['priority_id'],
     ],
 ]);
 

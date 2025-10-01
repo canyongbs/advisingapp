@@ -63,7 +63,7 @@ class QnaAdvisorReportTable extends TableWidget
     #[Url]
     public string $activeTab = QnaAdvisorReportTableTab::Student->value;
 
-    protected static string $view = 'ai::filament.resources.qna-advisors.pages.qna-advisor-table-report';
+    protected string $view = 'ai::filament.resources.qna-advisors.pages.qna-advisor-table-report';
 
     protected static ?string $pollingInterval = null;
 

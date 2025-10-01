@@ -38,7 +38,7 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource\
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditInteractionOutcome extends EditRecord
@@ -50,7 +50,7 @@ class EditInteractionOutcome extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

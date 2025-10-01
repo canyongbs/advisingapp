@@ -56,9 +56,7 @@ use Filament\Actions\Exports\Jobs\ExportCompletion;
 use Filament\Actions\Exports\Jobs\ExportCsv;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 use Filament\Actions\Imports\Jobs\ImportCsv;
-use Filament\Forms\Components\Textarea;
-use Filament\Notifications\Auth\ResetPassword;
-use Filament\Tables\Table;
+use Filament\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\SendQueuedNotifications;
@@ -179,16 +177,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Feature::discover();
-
-        Table::configureUsing(function (Table $table): void {
-            $table
-                ->paginationPageOptions([5, 10, 20])
-                ->defaultPaginationPageOption(5);
-        });
-
-        Textarea::configureUsing(function (Textarea $textarea): void {
-            $textarea->disableGrammarly();
-        });
 
         configureScope(function (Scope $scope): void {
             $scope->setTags([

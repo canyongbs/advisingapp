@@ -39,19 +39,18 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource\Pag
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -59,7 +58,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * @property ComponentContainer $form
+ * @property Schema $form
  */
 class ListInteractionTypes extends ListRecords
 {
@@ -70,7 +69,7 @@ class ListInteractionTypes extends ListRecords
     /** @var array<string, mixed> */
     public ?array $data = [];
 
-    protected static string $view = 'interaction::filament.pages.list-interaction-types';
+    protected string $view = 'interaction::filament.pages.list-interaction-types';
 
     private ?InteractionManagementSettings $settings = null;
 
@@ -91,10 +90,10 @@ class ListInteractionTypes extends ListRecords
         $this->form->fill($data);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Type Settings')
                     ->schema([
                         Grid::make(2)
@@ -158,10 +157,10 @@ class ListInteractionTypes extends ListRecords
                     ->label('Default')
                     ->query(fn (Builder $query) => $query->where('is_default', true)),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
@@ -171,7 +170,7 @@ class ListInteractionTypes extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 

@@ -42,12 +42,13 @@ use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Filament\Clusters\ReportLibrary;
+use UnitEnum;
 
 class QnaAdvisorReport extends AiReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
 
     protected static ?string $title = 'QnA Advisor';
 
@@ -67,19 +68,12 @@ class QnaAdvisorReport extends AiReport
         ];
     }
 
-    public function getColumns(): int | string | array
+    public function getColumns(): int | array
     {
         return [
             'sm' => 2,
             'md' => 4,
             'lg' => 4,
-        ];
-    }
-
-    public function getWidgetData(): array
-    {
-        return [
-            'filters' => $this->filters,
         ];
     }
 }

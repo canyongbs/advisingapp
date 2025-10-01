@@ -79,7 +79,7 @@ it('returns top engaged prospects based on engagements within the given date ran
 
     livewire(MostEngagedProspectsTable::class, [
         'cacheTag' => 'report-prospect-engagement',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $prospect1,
@@ -134,7 +134,7 @@ it('returns top engaged prospects engagements based on segment filter', function
 
     livewire(MostEngagedProspectsTable::class, [
         'cacheTag' => 'report-prospect-engagement',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $prospect1,

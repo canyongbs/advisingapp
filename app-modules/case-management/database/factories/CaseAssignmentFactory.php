@@ -37,12 +37,13 @@
 namespace AdvisingApp\CaseManagement\Database\Factories;
 
 use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\CaseManagement\Models\CaseAssignment>
+ * @extends Factory<CaseAssignment>
  */
 class CaseAssignmentFactory extends Factory
 {

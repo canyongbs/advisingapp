@@ -84,7 +84,7 @@ it('it returns deliverability data only for students created within the given da
 
     livewire(StudentDeliverableTable::class, [
         'cacheTag' => 'report-student-deliverability',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords($optInStartDateStudents->merge($optInEndDateStudents))
         ->assertCanNotSeeTableRecords($optOutStartDateStudents->merge($optOutEndDateStudents));
@@ -148,7 +148,7 @@ it('it returns deliverability data only for students based on segment filters', 
 
     livewire(StudentDeliverableTable::class, [
         'cacheTag' => 'report-student-deliverability',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords($optInStudentWithJoeName)
         ->assertCanNotSeeTableRecords($optOutStudentWithJoeName->merge($optOutStudentWithDoeName)->merge($optInStudentWithDoeName));

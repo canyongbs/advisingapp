@@ -41,6 +41,7 @@ use AdvisingApp\Report\Filament\Widgets\ProspectCaseStats;
 use AdvisingApp\Report\Filament\Widgets\ProspectCaseTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Filament\Clusters\ReportLibrary;
+use UnitEnum;
 
 class ProspectCaseReport extends ProspectReport
 {
@@ -50,13 +51,13 @@ class ProspectCaseReport extends ProspectReport
 
     protected static string $routePath = 'prospect-case-report';
 
-    protected static ?string $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
 
     protected string $cacheTag = 'report-prospect-case';
 
     protected static ?int $navigationSort = 130;
 
-    public function getColumns(): int | string | array
+    public function getColumns(): int|array
     {
         return [
             'sm' => 12,

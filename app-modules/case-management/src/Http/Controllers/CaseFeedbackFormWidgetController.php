@@ -82,7 +82,10 @@ class CaseFeedbackFormWidgetController extends Controller
                 'has_enabled_csat' => $case->priority?->type?->has_enabled_csat,
                 'has_enabled_nps' => $case->priority?->type?->has_enabled_nps,
                 'footer_logo' => Vite::asset('resources/images/canyon-logo-light.svg'),
-                'primary_color' => Color::all()[$portalSettings->resource_hub_portal_primary_color ?? 'blue'],
+                'primary_color' => collect(Color::all()[$portalSettings->resource_hub_portal_primary_color ?? 'blue'])
+                    ->map(Color::convertToRgb(...))
+                    ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
+                    ->all(),
                 'rounding' => $portalSettings->resource_hub_portal_rounding,
                 'case_number' => $case->case_number,
             ],

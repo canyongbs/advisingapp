@@ -37,7 +37,7 @@
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages;
 
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListCaseUpdates extends ListRecords
@@ -52,7 +52,7 @@ class ListCaseUpdates extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

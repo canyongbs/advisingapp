@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Portal\Settings;
 
+use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
 use AdvisingApp\Portal\Settings\SettingsProperties\PortalSettingsProperty;
 use App\Settings\SettingsWithMedia;
@@ -87,7 +88,7 @@ class PortalSettings extends SettingsWithMedia
 
     public ?string $resource_hub_portal_primary_color = null;
 
-    public ?string $resource_hub_portal_rounding = null;
+    public ?Rounding $resource_hub_portal_rounding = null;
 
     public ?string $resource_hub_portal_authorized_domain = null;
 

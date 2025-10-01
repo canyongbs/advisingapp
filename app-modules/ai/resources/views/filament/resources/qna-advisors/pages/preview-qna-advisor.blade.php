@@ -43,9 +43,9 @@
         })"
     >
         <div
-            class="flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
+            class="border-gray-950/5 flex flex-1 flex-col-reverse overflow-y-scroll rounded-xl border text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
             <div
-                class="divide-y dark:divide-gray-800"
+                class="divide-y divide-gray-200 dark:divide-gray-800"
                 x-cloak
             >
                 <template x-for="(message, messageIndex) in messages">
@@ -82,7 +82,7 @@
 
         <form x-on:submit.prevent="sendMessage()">
             <div
-                class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
+                class="border-gray-950/5 w-full overflow-hidden rounded-xl border bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
                 <div class="bg-white dark:bg-gray-800">
                     <label
                         class="sr-only"
@@ -111,7 +111,7 @@
                     </textarea>
                 </div>
                 <div
-                    class="flex flex-col items-center border-t px-3 py-2 dark:border-gray-600 sm:flex-row sm:justify-between">
+                    class="flex flex-col items-center border-t border-gray-200 px-3 py-2 sm:flex-row sm:justify-between dark:border-gray-600">
                     <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
                         <x-filament::button
                             class="w-full sm:w-auto"
@@ -124,7 +124,7 @@
                             class="flex w-full justify-center py-2 sm:w-auto"
                             x-show="isSendingMessage"
                         >
-                            <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
+                            <x-filament::loading-indicator class="text-primary-500 h-5 w-5" />
                         </div>
                     </div>
                 </div>

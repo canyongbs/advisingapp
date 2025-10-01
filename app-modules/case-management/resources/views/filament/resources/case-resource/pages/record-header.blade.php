@@ -39,7 +39,7 @@
                 :breadcrumbs="$breadcrumbs"
             />
 
-            <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-3xl">
+            <h1 class="text-2xl font-bold tracking-tight text-gray-950 sm:text-3xl dark:text-white">
                 {{ $heading }}
             </h1>
         </div>

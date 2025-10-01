@@ -41,9 +41,9 @@ use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use Carbon\CarbonImmutable;
-use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Hidden;
+use Filament\Schemas\Components\Actions;
 
 class EngagementBatchSmsBlock extends CampaignActionBlock
 {

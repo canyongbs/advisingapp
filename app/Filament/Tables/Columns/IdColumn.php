@@ -51,7 +51,7 @@ class IdColumn extends TextColumn
         $this->toggleable(isToggledHiddenByDefault: true);
     }
 
-    public static function make(string $name = 'id'): static
+    public static function make(?string $name = 'id'): static
     {
         return parent::make($name);
     }

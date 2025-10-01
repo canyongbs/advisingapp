@@ -38,8 +38,8 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages;
 
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\Concerns\HasSharedFormConfiguration;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateApplication extends CreateRecord
 {
@@ -47,9 +47,9 @@ class CreateApplication extends CreateRecord
 
     protected static string $resource = ApplicationResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema($this->fields());
+        return $schema
+            ->components($this->fields());
     }
 }

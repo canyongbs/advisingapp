@@ -39,10 +39,10 @@ namespace App\Filament\Resources\UserResource\Actions;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
 use Exception;
+use Filament\Actions\BulkAction;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\MaxWidth;
-use Filament\Tables\Actions\BulkAction;
+use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Collection;
 
 class AssignTeamBulkAction extends BulkAction
@@ -52,7 +52,7 @@ class AssignTeamBulkAction extends BulkAction
         parent::setUp();
 
         $this->icon('heroicon-o-user-group')
-            ->modalWidth(MaxWidth::Small)
+            ->modalWidth(Width::Small)
             ->modalDescription(
                 fn (Collection $records): string => 'This bulk action will overwrite any prior team assignments for the selected ' . ((count($records) > 1) ? 'users' : 'user') . '.'
             )

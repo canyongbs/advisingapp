@@ -48,9 +48,13 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentView;
@@ -188,8 +192,8 @@ class FilamentServiceProvider extends ServiceProvider
             ],
         ]);
 
-        Table::$defaultDateTimeDisplayFormat = 'M j, Y g:ia';
-        Infolist::$defaultDateTimeDisplayFormat = 'M j, Y g:ia';
+        Table::configureUsing(fn (Table $table) => $table->defaultDateTimeDisplayFormat('M j, Y g:ia'));
+        Schema::configureUsing(fn (Schema $infolist) => $infolist->defaultDateTimeDisplayFormat('M j, Y g:ia'));
 
         FilamentView::registerRenderHook(
             'panels::footer',
@@ -293,6 +297,26 @@ class FilamentServiceProvider extends ServiceProvider
 
         PhoneEntry::configureUsing(function (PhoneEntry $phoneEntry): void {
             $phoneEntry->displayFormat(PhoneInputNumberType::INTERNATIONAL);
+        });
+
+        Table::configureUsing(function (Table $table): void {
+            $table
+                ->deferFilters(false)
+                ->paginationPageOptions([5, 10, 20])
+                ->defaultPaginationPageOption(5);
+        });
+
+        Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset
+            ->columnSpanFull());
+
+        Grid::configureUsing(fn (Grid $grid) => $grid
+            ->columnSpanFull());
+
+        Section::configureUsing(fn (Section $section) => $section
+            ->columnSpanFull());
+
+        Textarea::configureUsing(function (Textarea $textarea): void {
+            $textarea->disableGrammarly();
         });
     }
 }

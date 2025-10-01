@@ -75,7 +75,7 @@ class BrandingBar extends Component
 
     public function render(): View
     {
-        return view('vendor.filament-panels.components.branding-bar');
+        return view('filament.components.branding-bar');
     }
 
     public function mount(): void

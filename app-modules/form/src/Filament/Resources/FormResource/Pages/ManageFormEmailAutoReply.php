@@ -41,15 +41,15 @@ use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Form\Models\Form;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form as FilamentForm;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
@@ -78,10 +78,10 @@ class ManageFormEmailAutoReply extends EditRecord
         return $form->is_authenticated;
     }
 
-    public function form(FilamentForm $form): FilamentForm
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make()
                     ->relationship('emailAutoReply')
                     ->schema([
@@ -114,7 +114,7 @@ class ManageFormEmailAutoReply extends EditRecord
                             ->profile('email')
                             ->required(fn (Get $get) => $get('is_enabled'))
                             ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
-                                ->form([
+                                ->schema([
                                     Select::make('emailTemplate')
                                         ->searchable()
                                         ->options(function (Get $get): array {

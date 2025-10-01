@@ -38,8 +38,8 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Compone
 
 use AdvisingApp\Interaction\Models\Interaction;
 use Filament\Actions\ViewAction;
-use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Fieldset;
 
 class InteractionViewAction extends ViewAction
 {
@@ -47,7 +47,7 @@ class InteractionViewAction extends ViewAction
     {
         parent::setUp();
 
-        $this->infolist(
+        $this->schema(
             [
                 TextEntry::make('user.name')
                     ->label('Created By'),
@@ -57,7 +57,7 @@ class InteractionViewAction extends ViewAction
                             ->hidden(fn ($state): bool => blank($state))
                             ->columnSpanFull(),
                         TextEntry::make('description')
-                            ->getStateUsing(fn (Interaction $interaction): string => $interaction->description ?? 'N/A')
+                            ->state(fn (Interaction $interaction): string => $interaction->description ?? 'N/A')
                             ->markdown()
                             ->columnSpanFull(),
                     ]),

@@ -31,14 +31,21 @@
 
 </COPYRIGHT>
 --}}
-<div class="fi-resource-relation-manager flex flex-col gap-y-6">
-    <x-filament-panels::resources.tabs />
-
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::RESOURCE_RELATION_MANAGER_BEFORE, scopes: $this->getRenderHookScopes()) }}
-
-    {{ $this->table }}
-
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::RESOURCE_RELATION_MANAGER_AFTER, scopes: $this->getRenderHookScopes()) }}
-
-    <x-filament-panels::unsaved-action-changes-alert />
+<div class="mb-6 rounded-xl bg-turkish-500 p-6 text-white">
+    <div class="flex flex-col items-center justify-center gap-6 md:flex-row">
+        <div>
+            <p class="text-sm font-semibold text-white">Version {{ app('current-version') }} is now available!</p>
+            <p class="my-4 text-sm text-white-500">Your instance of Advising App&#174; was automatically updated with our
+                latest available features.</p>
+            <a
+                class="inline-block rounded-xl border-2 border-white px-4 py-2 text-sm font-semibold text-white"
+                href="{{ $themeChangelogUrl }}"
+                target="_blank"
+            >Learn More</a>
+        </div>
+        <img
+            class="block max-h-32"
+            src="{{ Vite::asset('resources/images/version_image.svg') }}"
+        />
+    </div>
 </div>

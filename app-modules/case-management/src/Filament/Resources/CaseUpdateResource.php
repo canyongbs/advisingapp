@@ -44,13 +44,21 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\ViewC
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use App\Filament\Tables\Columns\IdColumn;
+use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -58,7 +66,7 @@ class CaseUpdateResource extends Resource
 {
     protected static ?string $model = CaseUpdate::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static bool $shouldRegisterNavigation = false;
 
@@ -72,10 +80,10 @@ class CaseUpdateResource extends Resource
         return $page->generateNavigationItems($navigationItems);
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('case_model_id')
                     ->relationship('case', 'id')
                     ->preload()
@@ -88,7 +96,7 @@ class CaseUpdateResource extends Resource
                 Textarea::make('update')
                     ->label('Update')
                     ->rows(3)
-                    ->columnSpan('full')
+                    ->columnSpanFull()
                     ->required()
                     ->string(),
                 Select::make('direction')
@@ -108,7 +116,7 @@ class CaseUpdateResource extends Resource
         return $table
             ->columns([
                 IdColumn::make(),
-                Tables\Columns\TextColumn::make('case.respondent.full')
+                TextColumn::make('case.respondent.full')
                     ->label('Related To')
                     ->sortable(query: function (Builder $query, string $direction, $record): Builder {
                         // TODO: Update this to work with other respondent types
@@ -120,7 +128,7 @@ class CaseUpdateResource extends Resource
                             ->orderBy('full', $direction);
                     })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('case.respondent.sisid')
+                TextColumn::make('case.respondent.sisid')
                     ->label('SIS ID')
                     ->sortable(query: function (Builder $query, string $direction, $record): Builder {
                         // TODO: Update this to work with other respondent types
@@ -132,7 +140,7 @@ class CaseUpdateResource extends Resource
                             ->orderBy('sisid', $direction);
                     })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('case.respondent.otherid')
+                TextColumn::make('case.respondent.otherid')
                     ->label('Other ID')
                     ->sortable(query: function (Builder $query, string $direction, $record): Builder {
                         // TODO: Update this to work with other respondent types
@@ -144,32 +152,32 @@ class CaseUpdateResource extends Resource
                             ->orderBy('otherid', $direction);
                     })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('case.case_number')
+                TextColumn::make('case.case_number')
                     ->label('Case')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\IconColumn::make('internal')
+                IconColumn::make('internal')
                     ->boolean()
                     ->label('Internal'),
-                Tables\Columns\TextColumn::make('direction')
+                TextColumn::make('direction')
                     ->label('Direction')
                     ->formatStateUsing(fn (CaseUpdateDirection $state): string => $state->getLabel())
                     ->icon(fn (CaseUpdateDirection $state): string => $state->getIcon()),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('internal')
+                TernaryFilter::make('internal')
                     ->label('Internal'),
-                Tables\Filters\SelectFilter::make('direction')
+                SelectFilter::make('direction')
                     ->label('Direction')
                     ->options(CaseUpdateDirection::class),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

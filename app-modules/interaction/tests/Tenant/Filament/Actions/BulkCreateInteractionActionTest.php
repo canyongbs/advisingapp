@@ -68,7 +68,7 @@ it('shows the form and validation', function (BulkCreateInteractionActionRequest
     ],
     'interaction_initiative_id exists' => [
         BulkCreateInteractionActionRequestFactory::new()->state(['interaction_initiative_id' => (string) Str::uuid()]),
-        ['interaction_initiative_id' => 'exists'],
+        ['interaction_initiative_id'],
     ],
     'interaction_driver_id required' => [
         BulkCreateInteractionActionRequestFactory::new()->without('interaction_driver_id'),
@@ -76,7 +76,7 @@ it('shows the form and validation', function (BulkCreateInteractionActionRequest
     ],
     'interaction_driver_id exists' => [
         BulkCreateInteractionActionRequestFactory::new()->state(['interaction_driver_id' => (string) Str::uuid()]),
-        ['interaction_driver_id' => 'exists'],
+        ['interaction_driver_id'],
     ],
     'division_id required' => [
         BulkCreateInteractionActionRequestFactory::new()->without('division_id'),
@@ -84,7 +84,7 @@ it('shows the form and validation', function (BulkCreateInteractionActionRequest
     ],
     'division_id exists' => [
         BulkCreateInteractionActionRequestFactory::new()->state(['division_id' => (string) Str::uuid()]),
-        ['division_id' => 'exists'],
+        ['division_id'],
     ],
     'interaction_outcome_id required' => [
         BulkCreateInteractionActionRequestFactory::new()->without('interaction_outcome_id'),
@@ -92,7 +92,7 @@ it('shows the form and validation', function (BulkCreateInteractionActionRequest
     ],
     'interaction_outcome_id exists' => [
         BulkCreateInteractionActionRequestFactory::new()->state(['interaction_outcome_id' => (string) Str::uuid()]),
-        ['interaction_outcome_id' => 'exists'],
+        ['interaction_outcome_id'],
     ],
     'interaction_relation_id required' => [
         BulkCreateInteractionActionRequestFactory::new()->without('interaction_relation_id'),
@@ -100,7 +100,7 @@ it('shows the form and validation', function (BulkCreateInteractionActionRequest
     ],
     'interaction_relation_id exists' => [
         BulkCreateInteractionActionRequestFactory::new()->state(['interaction_relation_id' => (string) Str::uuid()]),
-        ['interaction_relation_id' => 'exists'],
+        ['interaction_relation_id'],
     ],
     'interaction_status_id required' => [
         BulkCreateInteractionActionRequestFactory::new()->without('interaction_status_id'),
@@ -108,7 +108,7 @@ it('shows the form and validation', function (BulkCreateInteractionActionRequest
     ],
     'interaction_status_id exists' => [
         BulkCreateInteractionActionRequestFactory::new()->state(['interaction_status_id' => (string) Str::uuid()]),
-        ['interaction_status_id' => 'exists'],
+        ['interaction_status_id'],
     ],
     'interaction_type_id required' => [
         BulkCreateInteractionActionRequestFactory::new()->without('interaction_type_id'),
@@ -116,7 +116,7 @@ it('shows the form and validation', function (BulkCreateInteractionActionRequest
     ],
     'interaction_type_id exists' => [
         BulkCreateInteractionActionRequestFactory::new()->state(['interaction_type_id' => (string) Str::uuid()]),
-        ['interaction_type_id' => 'exists'],
+        ['interaction_type_id'],
     ],
     'start_datetime required' => [
         BulkCreateInteractionActionRequestFactory::new()->without('start_datetime'),

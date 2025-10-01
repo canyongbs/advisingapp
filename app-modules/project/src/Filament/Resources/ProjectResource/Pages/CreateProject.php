@@ -39,17 +39,17 @@ namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateProject extends CreateRecord
 {
     protected static string $resource = ProjectResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->required()
                     ->unique()

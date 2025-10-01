@@ -53,7 +53,7 @@ it('returns correct cumulative student counts grouped by month within the given 
 
     $widgetInstance = new StudentCumulativeCountLineChart();
     $widgetInstance->cacheTag = 'report-student';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];
@@ -97,7 +97,7 @@ it('returns correct cumulative student counts grouped by month based on segment 
     // with filter
     $widgetInstance = new StudentCumulativeCountLineChart();
     $widgetInstance->cacheTag = 'report-student';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'populationSegment' => $segment->getKey(),
     ];
 
@@ -106,7 +106,7 @@ it('returns correct cumulative student counts grouped by month based on segment 
     // without filter
     $widgetInstance = new StudentCumulativeCountLineChart();
     $widgetInstance->cacheTag = 'report-student';
-    $widgetInstance->filters = [];
+    $widgetInstance->pageFilters = [];
 
     expect($widgetInstance->getData())->toMatchSnapshot();
 });

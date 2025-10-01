@@ -54,14 +54,14 @@
 
                 <div class="flex-1">
                     <div class="flex h-16 items-center">
-                        <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-3xl">
+                        <h1 class="text-2xl font-bold tracking-tight text-gray-950 sm:text-3xl dark:text-white">
                             {{ $educatableName }}
                         </h1>
                     </div>
 
                     <div class="flex flex-col gap-3">
                         <div
-                            class="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm font-medium text-gray-600 dark:text-gray-400 lg:gap-x-6 lg:gap-y-2">
+                            class="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm font-medium text-gray-600 lg:gap-x-6 lg:gap-y-2 dark:text-gray-400">
                             @foreach ($details as [$detail, $detailIcon])
                                 @if ($detail instanceof StudentPhoneNumber || $detail instanceof ProspectPhoneNumber)
                                     @include(

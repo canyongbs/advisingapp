@@ -80,7 +80,7 @@ it('returns correct data for student interactions within the given date range', 
 
     $widgetInstance = new StudentInteractionLineChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'startDate' => $interactionStartDate->toDateString(),
         'endDate' => $interactionEndDate->toDateString(),
     ];
@@ -135,7 +135,7 @@ it('returns correct data for student interactions based on segment filter', func
 
     $widgetInstance = new StudentInteractionLineChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'populationSegment' => $segment->getKey(),
     ];
 

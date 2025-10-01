@@ -39,22 +39,21 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Support\Enums\ActionSize;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\Size;
 use Illuminate\Support\Arr;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
@@ -62,7 +61,7 @@ class CreateStudent extends CreateRecord
 {
     protected static string $resource = StudentResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         $generateFullName = function (Get $get, Set $set) {
             $firstName = trim($get('first'));
@@ -84,7 +83,7 @@ class CreateStudent extends CreateRecord
             ->tooltip('Make primary')
             ->icon('heroicon-m-star')
             ->iconButton()
-            ->size(ActionSize::Small)
+            ->size(Size::Small)
             ->color('primary')
             ->action(function (array $arguments, Repeater $component): void {
                 $items = $component->getState();
@@ -98,8 +97,8 @@ class CreateStudent extends CreateRecord
             })
             ->visible(fn (array $arguments, Repeater $component): bool => array_key_first($component->getState()) !== $arguments['item']);
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Personal Information')
                     ->schema([
                         TextInput::make('sisid')
@@ -173,7 +172,7 @@ class CreateStudent extends CreateRecord
                                     ]),
                             ])
                             ->orderColumn('order')
-                            ->itemLabel(fn (Repeater $component, ComponentContainer $container): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $container->getStatePath()) ? 'Primary email address' : 'Additional email address')
+                            ->itemLabel(fn (Repeater $component, Schema $schema): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary email address' : 'Additional email address')
                             ->extraItemActions([
                                 $makeRepeaterItemPrimaryAction(),
                             ])
@@ -225,7 +224,7 @@ class CreateStudent extends CreateRecord
                                 return $data;
                             })
                             ->orderColumn('order')
-                            ->itemLabel(fn (Repeater $component, ComponentContainer $container): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $container->getStatePath()) ? 'Primary phone number' : 'Additional phone number')
+                            ->itemLabel(fn (Repeater $component, Schema $schema): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary phone number' : 'Additional phone number')
                             ->extraItemActions([
                                 $makeRepeaterItemPrimaryAction(),
                             ])
@@ -269,7 +268,7 @@ class CreateStudent extends CreateRecord
                                     ]),
                             ])
                             ->orderColumn('order')
-                            ->itemLabel(fn (Repeater $component, ComponentContainer $container): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $container->getStatePath()) ? 'Primary address' : 'Additional address')
+                            ->itemLabel(fn (Repeater $component, Schema $schema): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary address' : 'Additional address')
                             ->extraItemActions([
                                 $makeRepeaterItemPrimaryAction(),
                             ])

@@ -290,7 +290,7 @@ it('displays only users with student interactions within the selected date range
 
     livewire(StudentInteractionUsersTable::class, [
         'cacheTag' => 'report-student-interaction',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $userWithOldInteractions,
@@ -354,7 +354,7 @@ it('displays only users with student interactions based on segment filter', func
     // with segment filter
     livewire(StudentInteractionUsersTable::class, [
         'cacheTag' => 'report-student-interaction',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $userWithOldInteractions,

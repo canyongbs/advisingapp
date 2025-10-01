@@ -42,19 +42,19 @@ use AdvisingApp\StudentDataModel\Models\StudentAddress;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use App\Infolists\Components\Subsection;
-use Filament\Infolists\Components\Actions\Action;
-use Filament\Infolists\Components\Section;
+use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 
 class StudentProfileInfolist
 {
-    public static function configure(Infolist $infolist): Infolist
+    public static function configure(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Profile Information')
                     ->schema([
                         Subsection::make([
@@ -62,7 +62,7 @@ class StudentProfileInfolist
                                 ->label('Tags')
                                 ->badge()
                                 ->placeholder('-')
-                                ->getStateUsing(
+                                ->state(
                                     fn ($record) => $record->tags->sortBy('name')->pluck('name')->all()
                                 ),
                             TextEntry::make('preferred')
@@ -141,8 +141,8 @@ class StudentProfileInfolist
                     ->extraAttributes(['class' => 'fi-section-has-subsections'])
                     ->headerActions([
                         Action::make('edit')
-                            ->url(fn (): string => StudentResource::getUrl('edit', ['record' => $infolist->getRecord()]))
-                            ->visible(auth()->user()->can('update', $infolist->getRecord())),
+                            ->url(fn (): string => StudentResource::getUrl('edit', ['record' => $schema->getRecord()]))
+                            ->visible(auth()->user()->can('update', $schema->getRecord())),
                     ]),
             ]);
     }

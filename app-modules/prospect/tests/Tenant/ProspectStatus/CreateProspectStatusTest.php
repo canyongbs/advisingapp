@@ -33,13 +33,12 @@
 
 </COPYRIGHT>
 */
-
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\CreateProspectStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Tests\Tenant\ProspectStatus\RequestFactories\CreateProspectStatusRequestFactory;
 use App\Models\User;
-use Illuminate\Validation\Rules\Enum;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -57,7 +56,7 @@ test('A successful action on the CreateProspectStatus page', function () {
 
     $request = CreateProspectStatusRequestFactory::new()->create();
 
-    livewire(ProspectStatusResource\Pages\CreateProspectStatus::class)
+    livewire(CreateProspectStatus::class)
         ->fillForm($request)
         ->call('create')
         ->assertHasNoFormErrors();
@@ -70,7 +69,7 @@ test('A successful action on the CreateProspectStatus page', function () {
 test('CreateProspectStatus requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    livewire(ProspectStatusResource\Pages\CreateProspectStatus::class)
+    livewire(CreateProspectStatus::class)
         ->fillForm(CreateProspectStatusRequestFactory::new($data)->create())
         ->call('create')
         ->assertHasFormErrors($errors);
@@ -81,7 +80,7 @@ test('CreateProspectStatus requires valid data', function ($data, $errors) {
         'name missing' => [CreateProspectStatusRequestFactory::new()->without('name'), ['name' => 'required']],
         'name not a string' => [CreateProspectStatusRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
         'color missing' => [CreateProspectStatusRequestFactory::new()->state(['color' => null]), ['color' => 'required']],
-        'color not within enum' => [CreateProspectStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color' => Enum::class]],
+        'color not within enum' => [CreateProspectStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color']],
     ]
 );
 
@@ -95,7 +94,7 @@ test('CreateProspectStatus is gated with proper access control', function () {
             ProspectStatusResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(ProspectStatusResource\Pages\CreateProspectStatus::class)
+    livewire(CreateProspectStatus::class)
         ->assertForbidden();
 
     $user->givePermissionTo('settings.view-any');
@@ -108,7 +107,7 @@ test('CreateProspectStatus is gated with proper access control', function () {
 
     $request = collect(CreateProspectStatusRequestFactory::new()->create());
 
-    livewire(ProspectStatusResource\Pages\CreateProspectStatus::class)
+    livewire(CreateProspectStatus::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();

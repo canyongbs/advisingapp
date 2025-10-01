@@ -37,8 +37,8 @@
 namespace AdvisingApp\Authorization\Http\Responses\Auth;
 
 use AdvisingApp\Authorization\Enums\SocialiteProvider;
+use Filament\Auth\Http\Responses\LogoutResponse;
 use Filament\Facades\Filament;
-use Filament\Http\Responses\Auth\LogoutResponse;
 use Illuminate\Http\RedirectResponse;
 
 class SocialiteLogoutResponse extends LogoutResponse

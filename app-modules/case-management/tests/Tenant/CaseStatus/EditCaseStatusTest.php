@@ -42,7 +42,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use App\Settings\LicenseSettings;
-use Illuminate\Validation\Rules\Enum;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -67,9 +66,9 @@ test('A successful action on the EditCaseStatus page', function () {
         'record' => $caseStatus->getRouteKey(),
     ])
         ->assertFormSet([
-            'classification' => $caseStatus->classification->value,
+            'classification' => $caseStatus->classification,
             'name' => $caseStatus->name,
-            'color' => $caseStatus->color->value,
+            'color' => $caseStatus->color,
         ])
         ->fillForm($editRequest)
         ->call('save')
@@ -89,9 +88,9 @@ test('EditCaseStatus requires valid data', function ($data, $errors) {
         'record' => $caseStatus->getRouteKey(),
     ])
         ->assertFormSet([
-            'classification' => $caseStatus->classification->value,
+            'classification' => $caseStatus->classification,
             'name' => $caseStatus->name,
-            'color' => $caseStatus->color->value,
+            'color' => $caseStatus->color,
         ])
         ->fillForm(EditCaseStatusRequestFactory::new($data)->create())
         ->call('save')
@@ -103,7 +102,7 @@ test('EditCaseStatus requires valid data', function ($data, $errors) {
         'name missing' => [EditCaseStatusRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
         'name not a string' => [EditCaseStatusRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
         'color missing' => [EditCaseStatusRequestFactory::new()->state(['color' => null]), ['color' => 'required']],
-        'color not within enum' => [EditCaseStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color' => Enum::class]],
+        'color not within enum' => [EditCaseStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color']],
     ]
 );
 

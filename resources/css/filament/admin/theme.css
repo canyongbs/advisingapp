@@ -43,17 +43,17 @@
 
 /* Bright Sun */
 .dark {
-    --primary-50: 255, 251, 235;
-    --primary-100: 255, 244, 198;
-    --primary-200: 254, 233, 137;
-    --primary-300: 254, 212, 63;
-    --primary-400: 254, 195, 33;
-    --primary-500: 248, 162, 8;
-    --primary-600: 219, 122, 4;
-    --primary-700: 182, 86, 7;
-    --primary-800: 148, 66, 12;
-    --primary-900: 121, 55, 14;
-    --primary-950: 70, 27, 2;
+    --primary-50: rgb(255, 251, 235);
+    --primary-100: rgb(255, 244, 198);
+    --primary-200: rgb(254, 233, 137);
+    --primary-300: rgb(254, 212, 63);
+    --primary-400: rgb(254, 195, 33);
+    --primary-500: rgb(248, 162, 8);
+    --primary-600: rgb(219, 122, 4);
+    --primary-700: rgb(182, 86, 7);
+    --primary-800: rgb(148, 66, 12);
+    --primary-900: rgb(121, 55, 14);
+    --primary-950: rgb(70, 27, 2);
 }
 
 /* Style Overrides */
@@ -142,27 +142,32 @@
 }
 
 .fi-sidebar-group-label {
-    @apply text-gray-700 dark:text-gray-200 !important;
+    @apply text-gray-700! dark:text-gray-200!;
 }
 
 .fi-sidebar-item-label {
-    @apply text-gray-500 dark:text-gray-400 !important;
+    @apply text-gray-500! dark:text-gray-400!;
 }
 
 .fi-sidebar-item.fi-active .fi-sidebar-item-label {
-    @apply text-gray-700 dark:text-gray-200 !important;
+    @apply text-gray-700! dark:text-gray-200!;
 }
 
 .dark_button_border {
-    @apply dark:border dark:border-white dark:hover:border-white !important;
+    @apply dark:border! dark:border-white! dark:hover:border-white!;
 }
 
-.fi-section.fi-section-has-subsections > .fi-section-content-ctn > .fi-section-content {
+.fi-sc-section.fi-section-has-subsections > .fi-section > .fi-section-content-ctn > .fi-section-content {
     @apply p-0;
 }
 
-.fi-section.fi-section-has-subsections > .fi-section-content-ctn > .fi-section-content,
-.fi-section.fi-section-has-subsections > .fi-section-content-ctn > .fi-section-content > dl > .fi-fo-component-ctn {
+.fi-sc-section.fi-section-has-subsections > .fi-section > .fi-section-content-ctn > .fi-section-content,
+.fi-sc-section.fi-section-has-subsections
+    > .fi-section
+    > .fi-section-content-ctn
+    > .fi-section-content
+    > dl
+    > .fi-fo-component-ctn {
     @apply gap-0 divide-y divide-gray-200 dark:divide-white/10;
 }
 
@@ -171,17 +176,17 @@
 }
 
 .fi-fo-slider-input {
-    @apply bg-white dark:bg-white/5 shadow-sm ring-1 ring-gray-950/10 dark:ring-white/20;
+    @apply bg-white dark:bg-white/5 shadow-xs ring-1 ring-gray-950/10 dark:ring-white/20;
     -webkit-appearance: none;
     height: 5px;
     border-radius: 50px;
-    background-image: linear-gradient(theme('colors.gray.200'), theme('colors.gray.200'));
+    background-image: linear-gradient(var(--color-gray-200), var(--color-gray-200));
     background-size: 50% 100%;
     background-repeat: no-repeat;
 }
 
 .dark .fi-fo-slider-input {
-    background-image: linear-gradient(theme('colors.gray.700'), theme('colors.gray.700'));
+    background-image: linear-gradient(var(--color-gray-700), var(--color-gray-700));
 }
 
 .fi-fo-slider-input::-webkit-slider-thumb {
@@ -218,7 +223,7 @@
 }
 
 .fi-sidebar {
-    @apply !bg-white dark:!bg-gray-900;
+    @apply bg-white! dark:bg-gray-900!;
 }
 
 .fi-sidebar-nav > ul > li .fi-active > a {
@@ -226,7 +231,7 @@
 }
 
 .fi-sidebar-nav > ul > li a {
-    @apply dark:hover:!bg-white/20;
+    @apply dark:hover:bg-white/20!;
 }
 
 .fi-wi-stats-overview-stat-primary {
@@ -246,9 +251,29 @@
 }
 
 .research-request-reasoning {
-    @apply mx-1 mb-6 p-6 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+    @apply mx-1 mb-6 p-6 rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
 }
 
 .fi-section.fi-section-no-content-padding .fi-section-content {
     @apply p-0;
+}
+
+.fi-body:has(.branding-bar) {
+    &.fi-body-has-sidebar-collapsible-on-desktop,
+    &.fi-body-has-sidebar-fully-collapsible-on-desktop {
+        & .fi-main-ctn {
+            @apply min-h-[calc(100dvh-6.5rem)]!;
+        }
+    }
+
+    &.fi-body-has-top-navigation,
+    &:not(.fi-body-has-navigation) {
+        & .fi-main-ctn {
+            @apply min-h-[calc(100dvh-6.5rem)]!;
+        }
+    }
+
+    &.fi-body-has-topbar .fi-sidebar {
+        @apply lg:top-[6.5rem]! lg:h-[calc(100dvh-6.5rem)]!;
+    }
 }

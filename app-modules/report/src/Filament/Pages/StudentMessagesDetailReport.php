@@ -41,6 +41,7 @@ use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\StudentMessagesDetailStats;
 use AdvisingApp\Report\Filament\Widgets\StudentMessagesDetailTable;
 use App\Filament\Clusters\ReportLibrary;
+use UnitEnum;
 
 class StudentMessagesDetailReport extends StudentReport
 {
@@ -50,13 +51,13 @@ class StudentMessagesDetailReport extends StudentReport
 
     protected static string $routePath = 'student-messages-detail-report';
 
-    protected static ?string $navigationGroup = 'Students';
+    protected static string | UnitEnum | null $navigationGroup = 'Students';
 
     protected string $cacheTag = 'report-student-messages-detail';
 
     protected static ?int $navigationSort = 50;
 
-    public function getColumns(): int | string | array
+    public function getColumns(): int|array
     {
         return [
             'sm' => 2,

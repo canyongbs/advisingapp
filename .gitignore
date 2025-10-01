@@ -20,6 +20,7 @@ yarn-error.log
 /.idea
 /.vscode
 public/css/
+public/fonts/
 public/js/
 /.php-cs-fixer.cache
 /_ide_helper.php

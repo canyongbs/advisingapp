@@ -65,7 +65,7 @@ it('displays only tasks added within the selected date range', function () {
 
     livewire(MostRecentTasksTable::class, [
         'cacheTag' => 'report-tasks',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $taskWithinRange1,

@@ -41,8 +41,9 @@ use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Models\User;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Schema;
+use UnitEnum;
 
 class ManageStudentConfiguration extends SettingsPage
 {
@@ -50,7 +51,7 @@ class ManageStudentConfiguration extends SettingsPage
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static ?string $navigationGroup = 'Students';
+    protected static string | UnitEnum | null $navigationGroup = 'Students';
 
     protected static ?string $navigationLabel = 'Configuration';
 
@@ -66,10 +67,10 @@ class ManageStudentConfiguration extends SettingsPage
         return $user->can(['settings.view-any']);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Toggle::make('is_enabled')
                     ->label('Enable')
                     ->default(false),

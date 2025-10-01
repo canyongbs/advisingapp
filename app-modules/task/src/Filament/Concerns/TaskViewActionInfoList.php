@@ -43,17 +43,17 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
 use App\Filament\Resources\UserResource;
-use Filament\Infolists\Components\Fieldset;
-use Filament\Infolists\Components\Grid;
-use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Grid;
 
 trait TaskViewActionInfoList
 {
     public function taskInfoList(): array
     {
         return [
-            Split::make([
+            Flex::make([
                 Grid::make()
                     ->schema([
                         TextEntry::make('is_confidential')
@@ -72,7 +72,7 @@ trait TaskViewActionInfoList
                             ->default('Unassigned'),
                         TextEntry::make('concern.display_name')
                             ->label('Related To')
-                            ->getStateUsing(fn (Task $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
+                            ->state(fn (Task $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
                             ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
                                 Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                                 Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),

@@ -77,7 +77,7 @@ it('returns correct total cases, recent cases, open cases and closed cases of pr
 
     $widget = new ProspectCaseStats();
     $widget->cacheTag = 'report-prospect-case';
-    $widget->filters = [
+    $widget->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];
@@ -172,7 +172,7 @@ it('returns correct total cases, recent cases, open cases and closed cases of pr
     // case with filter
     $widget = new ProspectCaseStats();
     $widget->cacheTag = 'report-prospect-case';
-    $widget->filters = [
+    $widget->pageFilters = [
         'populationSegment' => $segment->getKey(),
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
@@ -189,7 +189,7 @@ it('returns correct total cases, recent cases, open cases and closed cases of pr
     // case with without filter
     $widget = new ProspectCaseStats();
     $widget->cacheTag = 'report-prospect-case';
-    $widget->filters = [];
+    $widget->pageFilters = [];
 
     $stats = $widget->getStats();
 

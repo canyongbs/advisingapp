@@ -36,12 +36,13 @@
 
 namespace AdvisingApp\Task\Database\Factories;
 
+use AdvisingApp\Task\Models\ConfidentialTasksTeams;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Task\Models\ConfidentialTasksTeams>
+ * @extends Factory<ConfidentialTasksTeams>
  */
 class ConfidentialTasksTeamsFactory extends Factory
 {

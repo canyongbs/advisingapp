@@ -48,15 +48,14 @@ use App\Models\Scopes\WithoutSuperAdmin;
 use App\Models\User;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Support\Enums\ActionSize;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\Size;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
@@ -127,10 +126,10 @@ trait CanManageThreads
             ->all();
     }
 
-    public function assistantSwitcherForm(Form $form, string $propertyName = 'assistantSwitcher'): Form
+    public function assistantSwitcherForm(Schema $schema, string $propertyName = 'assistantSwitcher'): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make($propertyName)
                     ->label('Choose an assistant')
                     ->placeholder('Search for an advisor')
@@ -175,9 +174,9 @@ trait CanManageThreads
             ]);
     }
 
-    public function assistantSwitcherMobileForm(Form $form): Form
+    public function assistantSwitcherMobileForm(Schema $schema): Schema
     {
-        return $this->assistantSwitcherForm($form, 'assistantSwitcherMobile');
+        return $this->assistantSwitcherForm($schema, 'assistantSwitcherMobile');
     }
 
     public function getCanManageThreadsForms(): array
@@ -248,7 +247,7 @@ trait CanManageThreads
     public function deleteThreadAction(): Action
     {
         return Action::make('deleteThread')
-            ->size(ActionSize::ExtraSmall)
+            ->size(Size::ExtraSmall)
             ->requiresConfirmation()
             ->action(function (array $arguments) {
                 $thread = auth()->user()->aiThreads()
@@ -281,14 +280,14 @@ trait CanManageThreads
         return Action::make('editThread')
             ->modalSubmitActionLabel('Save')
             ->modalWidth('md')
-            ->size(ActionSize::ExtraSmall)
+            ->size(Size::ExtraSmall)
             ->fillForm(fn (array $arguments) => [
                 'name' => auth()->user()->aiThreads()
                     ->whereRelation('assistant', 'application', static::APPLICATION)
                     ->find($arguments['thread'])
                     ?->name,
             ])
-            ->form([
+            ->schema([
                 TextInput::make('name')
                     ->label('Name')
                     ->autocomplete(false)
@@ -312,7 +311,7 @@ trait CanManageThreads
             })
             ->icon('heroicon-m-pencil')
             ->color('warning')
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
+            ->modalSubmitAction(fn (Action $action) => $action->color('primary'))
             ->iconButton()
             ->extraAttributes([
                 'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
@@ -327,7 +326,7 @@ trait CanManageThreads
             ->modalSubmitActionLabel('Continue')
             ->modalFooterActionsAlignment(Alignment::Center)
             ->modalWidth('md')
-            ->form([
+            ->schema([
                 Radio::make('targetType')
                     ->label('To')
                     ->options(AiThreadShareTarget::class)
@@ -338,15 +337,15 @@ trait CanManageThreads
                     ->afterStateUpdated(fn (Set $set) => $set('targetIds', [])),
                 Select::make('targetIds')
                     ->label(fn (Get $get): string => match ($get('targetType')) {
-                        AiThreadShareTarget::Team->value => 'Select Teams',
-                        AiThreadShareTarget::User->value => 'Select Users',
+                        AiThreadShareTarget::Team => 'Select Teams',
+                        AiThreadShareTarget::User => 'Select Users',
                         default => throw new Exception('Target type is not valid.')
                     })
                     ->visible(fn (Get $get): bool => filled($get('targetType')))
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
-                            AiThreadShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
-                            AiThreadShareTarget::User->value => User::tap(new WithoutSuperAdmin())->whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::Team => Team::orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::User => User::tap(new WithoutSuperAdmin())->whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
                             default => throw new Exception('Target type is not valid.')
                         };
                     })
@@ -355,8 +354,8 @@ trait CanManageThreads
                     ->required()
                     ->rules([
                         fn (Get $get) => match ($get('targetType')) {
-                            AiThreadShareTarget::User->value => new RestrictSuperAdmin('clone'),
-                            AiThreadShareTarget::Team->value => null,
+                            AiThreadShareTarget::User => new RestrictSuperAdmin('clone'),
+                            AiThreadShareTarget::Team => null,
                             default => throw new Exception('Target type not valid.')
                         },
                     ]),
@@ -375,7 +374,7 @@ trait CanManageThreads
             ->link()
             ->icon('heroicon-m-document-duplicate')
             ->color('warning')
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
+            ->modalSubmitAction(fn (Action $action) => $action->color('primary'));
     }
 
     public function emailThreadAction(): Action
@@ -386,7 +385,7 @@ trait CanManageThreads
             ->modalSubmitActionLabel('Continue')
             ->modalFooterActionsAlignment(Alignment::Center)
             ->modalWidth('md')
-            ->form([
+            ->schema([
                 Radio::make('targetType')
                     ->label('To')
                     ->options(AiThreadShareTarget::class)
@@ -397,15 +396,15 @@ trait CanManageThreads
                     ->afterStateUpdated(fn (Set $set) => $set('targetIds', [])),
                 Select::make('targetIds')
                     ->label(fn (Get $get): string => match ($get('targetType')) {
-                        AiThreadShareTarget::Team->value => 'Select Teams',
-                        AiThreadShareTarget::User->value => 'Select Users',
+                        AiThreadShareTarget::Team => 'Select Teams',
+                        AiThreadShareTarget::User => 'Select Users',
                         default => throw new Exception('Target type is not valid.')
                     })
                     ->visible(fn (Get $get): bool => filled($get('targetType')))
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
-                            AiThreadShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
-                            AiThreadShareTarget::User->value => User::tap(new WithoutSuperAdmin())->orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::Team => Team::orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::User => User::tap(new WithoutSuperAdmin())->orderBy('name')->pluck('name', 'id'),
                             default => throw new Exception('Target type is not valid.')
                         };
                     })
@@ -414,8 +413,8 @@ trait CanManageThreads
                     ->required()
                     ->rules([
                         fn (Get $get) => match ($get('targetType')) {
-                            AiThreadShareTarget::User->value => new RestrictSuperAdmin('email'),
-                            AiThreadShareTarget::Team->value => null,
+                            AiThreadShareTarget::User => new RestrictSuperAdmin('email'),
+                            AiThreadShareTarget::Team => null,
                             default => throw new Exception('Target type is not valid.')
                         },
                     ]),
@@ -428,12 +427,12 @@ trait CanManageThreads
                 if (! $thread) {
                     return;
                 }
-                dispatch(new PrepareAiThreadEmailing($thread, $data['targetType'], $data['targetIds'], auth()->user()));
+                dispatch(new PrepareAiThreadEmailing($thread, $data['targetType']->value, $data['targetIds'], auth()->user()));
             })
             ->link()
             ->icon('heroicon-m-envelope')
             ->color('warning')
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
+            ->modalSubmitAction(fn (Action $action) => $action->color('primary'));
     }
 
     #[Renderless]

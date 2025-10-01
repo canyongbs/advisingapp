@@ -55,7 +55,7 @@
                 <div class="flex items-center space-x-2">
 
                     <x-filament::input.checkbox
-                        class="h-5 w-5 rounded border-gray-300 bg-white text-primary-600 shadow-sm focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-800"
+                        class="text-primary-600 focus:ring-primary-500 h-5 w-5 rounded border-gray-300 bg-white shadow-sm dark:border-gray-600 dark:bg-gray-800"
                         :checked="$item->is_checked"
                         wire:click.stop="toggleItem('{{ $item->getKey() }}')"
                     />

@@ -38,17 +38,17 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages;
 
 use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateProspectSource extends CreateRecord
 {
     protected static string $resource = ProspectSourceResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->label('Name')
                     ->required()

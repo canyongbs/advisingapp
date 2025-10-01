@@ -91,7 +91,10 @@ class FormWidgetController extends Controller
                 'recaptcha_site_key' => app(GoogleRecaptchaSettings::class)->site_key,
             ] : []),
             'schema' => $generateSchema($form),
-            'primary_color' => Color::all()[$form->primary_color ?? 'blue'],
+            'primary_color' => collect(Color::all()[$form->primary_color ?? 'blue'])
+                ->map(Color::convertToRgb(...))
+                ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
+                ->all(),
             'rounding' => $form->rounding,
             'on_screen_response' => $form->on_screen_response,
         ]);
@@ -106,7 +109,10 @@ class FormWidgetController extends Controller
                 'is_authenticated' => false,
                 'recaptcha_enabled' => false,
                 'schema' => $generateSchema($form),
-                'primary_color' => Color::all()[$form->primary_color ?? 'blue'],
+                'primary_color' => collect(Color::all()[$form->primary_color ?? 'blue'])
+                    ->map(Color::convertToRgb(...))
+                    ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
+                    ->all(),
                 'rounding' => $form->rounding,
                 'on_screen_response' => $form->on_screen_response,
             ]

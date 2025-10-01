@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Cache;
 
 class QnaAdvisorReportLineChart extends ChartReportWidget
 {
-    protected static ?string $heading = 'Exchanges by Month';
+    protected ?string $heading = 'Exchanges by Month';
 
     protected int | string | array $columnSpan = [
         'sm' => 1,

@@ -79,6 +79,7 @@ use Livewire\Attributes\Url;
 use Twilio\Jwt\AccessToken;
 use Twilio\Jwt\Grants\ChatGrant;
 use Twilio\Rest\Client;
+use UnitEnum;
 
 /**
  * @property Collection $conversations
@@ -95,11 +96,11 @@ class UserChat extends Page implements HasForms, HasActions
 
     public array $conversationActiveUsers = [];
 
-    protected static ?string $navigationGroup = 'Premium Features';
+    protected static string | UnitEnum | null $navigationGroup = 'Premium Features';
 
     protected static ?int $navigationSort = 10;
 
-    protected static string $view = 'in-app-communication::filament.pages.user-chat';
+    protected string $view = 'in-app-communication::filament.pages.user-chat';
 
     protected static ?string $title = 'Realtime Chat';
 
@@ -190,7 +191,7 @@ class UserChat extends Page implements HasForms, HasActions
             ->label('New Direct Message')
             ->modalWidth('sm')
             ->modalSubmitActionLabel('Start chat')
-            ->form([
+            ->schema([
                 Select::make('user')
                     ->label('Pick a user to chat with')
                     ->options(
@@ -240,7 +241,7 @@ class UserChat extends Page implements HasForms, HasActions
             ->label('New Channel')
             ->modalWidth('sm')
             ->modalSubmitActionLabel('Create channel')
-            ->form([
+            ->schema([
                 TextInput::make('name')
                     ->label('Channel name')
                     ->required(),
@@ -304,7 +305,7 @@ class UserChat extends Page implements HasForms, HasActions
             ->link()
             ->icon('heroicon-m-pencil')
             ->modalWidth('sm')
-            ->form([
+            ->schema([
                 TextInput::make('name')
                     ->autocomplete(false)
                     ->formatStateUsing(fn () => $this->conversation?->channel_name)
@@ -421,7 +422,7 @@ class UserChat extends Page implements HasForms, HasActions
         $this->clearNotifications();
     }
 
-    public function joinChannelsAction()
+    public function joinChannelsAction(): Action
     {
         $channels = TwilioConversation::query()
             ->whereDoesntHave('participants', fn (Builder $query) => $query->whereKey(auth()->id()))
@@ -438,7 +439,7 @@ class UserChat extends Page implements HasForms, HasActions
             ->modalSubmitActionLabel('Join channels')
             ->modalDescription(empty($channels) ? 'There are no channels to join.' : null)
             ->when(empty($channels), fn (Action $action) => $action->modalSubmitAction(false))
-            ->form([
+            ->schema([
                 CheckboxList::make('channels')
                     ->hiddenLabel()
                     ->searchable()
@@ -542,7 +543,7 @@ class UserChat extends Page implements HasForms, HasActions
             ->fillForm(fn (): array => [
                 'preference' => $participation?->notification_preference,
             ])
-            ->form([
+            ->schema([
                 Radio::make('preference')
                     ->hiddenLabel()
                     ->options(ConversationNotificationPreference::class)
@@ -573,7 +574,7 @@ class UserChat extends Page implements HasForms, HasActions
             ->modalWidth('sm')
             ->modalDescription('They will have access to the entire conversation history.')
             ->modalSubmitActionLabel('Invite')
-            ->form([
+            ->schema([
                 Select::make('users')
                     ->label('Pick users to invite')
                     ->multiple()

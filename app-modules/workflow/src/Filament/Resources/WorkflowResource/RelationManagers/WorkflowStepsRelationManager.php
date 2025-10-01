@@ -46,15 +46,15 @@ use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
 use Carbon\CarbonInterval;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
@@ -67,10 +67,10 @@ class WorkflowStepsRelationManager extends RelationManager
 
     protected static ?string $title = 'Workflow Steps';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Group::make(function (WorkflowStep $record) {
                     assert($record->currentDetails instanceof WorkflowDetails);
 
@@ -91,7 +91,7 @@ class WorkflowStepsRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('type')
                     ->label('Step Type')
-                    ->getStateUsing(function (WorkflowStep $record) {
+                    ->state(function (WorkflowStep $record) {
                         assert($record->currentDetails instanceof WorkflowDetails);
 
                         return $record->currentDetails->getLabel();
@@ -104,7 +104,7 @@ class WorkflowStepsRelationManager extends RelationManager
                 Action::make('create')
                     ->label('New Step')
                     ->modalHeading('Create Workflow Steps')
-                    ->form([
+                    ->schema([
                         Builder::make('data')
                             ->hiddenLabel()
                             ->addActionLabel('Add a New Workflow Step')
@@ -157,7 +157,7 @@ class WorkflowStepsRelationManager extends RelationManager
                     ])
                     ->action(fn () => null),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()
                     ->modalHeading(function (WorkflowStep $workflowStep) {
                         assert($workflowStep->currentDetails instanceof WorkflowDetails);
@@ -205,7 +205,7 @@ class WorkflowStepsRelationManager extends RelationManager
                     })
                     ->databaseTransaction(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

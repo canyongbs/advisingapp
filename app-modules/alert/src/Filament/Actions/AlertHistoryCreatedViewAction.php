@@ -38,8 +38,8 @@ namespace AdvisingApp\Alert\Filament\Actions;
 
 use AdvisingApp\Alert\Histories\AlertHistory;
 use Filament\Actions\ViewAction;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
 
 class AlertHistoryCreatedViewAction extends ViewAction
 {
@@ -47,21 +47,21 @@ class AlertHistoryCreatedViewAction extends ViewAction
     {
         parent::setUp();
 
-        $this->infolist([
+        $this->schema([
             Section::make()
                 ->schema([
                     TextEntry::make('description')
                         ->label(fn (AlertHistory $record): ?string => $record->formatted['description']['key'])
-                        ->getStateUsing(fn (AlertHistory $record): ?string => $record->formatted['description']['new']),
+                        ->state(fn (AlertHistory $record): ?string => $record->formatted['description']['new']),
                     TextEntry::make('severity')
                         ->label(fn (AlertHistory $record): ?string => $record->formatted['severity']['key'])
-                        ->getStateUsing(fn (AlertHistory $record): ?string => $record->formatted['severity']['new']),
+                        ->state(fn (AlertHistory $record): ?string => $record->formatted['severity']['new']),
                     TextEntry::make('suggested_intervention')
                         ->label(fn (AlertHistory $record): ?string => $record->formatted['suggested_intervention']['key'])
-                        ->getStateUsing(fn (AlertHistory $record): ?string => $record->formatted['suggested_intervention']['new']),
+                        ->state(fn (AlertHistory $record): ?string => $record->formatted['suggested_intervention']['new']),
                     TextEntry::make('status')
                         ->label(fn (AlertHistory $record): ?string => $record->formatted['status_id']['key'])
-                        ->getStateUsing(fn (AlertHistory $record): ?string => $record->formatted['status_id']['new']),
+                        ->state(fn (AlertHistory $record): ?string => $record->formatted['status_id']['new']),
                 ])
                 ->columns(),
         ]);

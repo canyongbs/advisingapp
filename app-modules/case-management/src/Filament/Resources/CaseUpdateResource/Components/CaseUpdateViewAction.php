@@ -47,6 +47,6 @@ class CaseUpdateViewAction extends ViewAction
     {
         parent::setUp();
 
-        $this->infolist($this->caseUpdateInfolist());
+        $this->schema($this->caseUpdateInfolist());
     }
 }

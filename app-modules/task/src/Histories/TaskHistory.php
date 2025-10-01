@@ -129,13 +129,13 @@ class TaskHistory extends History implements ProvidesATimeline
                         ? sprintf(
                             '%s: %s',
                             str($this->old['concern_type'])->ucfirst(),
-                            Relation::getMorphedModel($this->old['concern_type'])::find($this->old['concern_id'])?->display_name
+                            Relation::getMorphedModel($this->old['concern_type'])::find($this->old['concern_id'])?->display_name /** @phpstan-ignore property.notFound */
                         ) : '(Not set)',
                     'new' => data_get($this->new, 'concern_id')
                         ? sprintf(
                             '%s: %s',
                             str($this->new['concern_type'])->ucfirst(),
-                            Relation::getMorphedModel($this->new['concern_type'])::find($this->new['concern_id'])?->display_name
+                            Relation::getMorphedModel($this->new['concern_type'])::find($this->new['concern_id'])?->display_name /** @phpstan-ignore property.notFound */
                         ) : '(Not set)',
                 ],
             ])

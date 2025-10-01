@@ -46,9 +46,9 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
+use Filament\Actions\ViewAction;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -60,7 +60,7 @@ class Inbox extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected static string $view = 'engagement::filament.pages.inbox';
+    protected string $view = 'engagement::filament.pages.inbox';
 
     protected static ?string $cluster = UnifiedInbox::class;
 
@@ -139,7 +139,7 @@ class Inbox extends Page implements HasTable
                     ->dateTime()
                     ->sortable(),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->url(fn (EngagementResponse $record): string => ViewEngagementResponse::getUrl(['record' => $record])),
             ])

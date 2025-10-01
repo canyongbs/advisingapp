@@ -40,13 +40,14 @@ use AdvisingApp\Authorization\Enums\AzureMatchingProperty;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use App\Filament\Clusters\Authentication;
 use App\Models\User;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use UnitEnum;
 
 class ManageAzureSsoSettings extends SettingsPage
 {
@@ -58,7 +59,7 @@ class ManageAzureSsoSettings extends SettingsPage
 
     protected static ?int $navigationSort = 20;
 
-    protected static ?string $navigationGroup = 'Single Sign-On (SSO)';
+    protected static string | UnitEnum | null $navigationGroup = 'Single Sign-On (SSO)';
 
     protected static ?string $cluster = Authentication::class;
 
@@ -70,11 +71,11 @@ class ManageAzureSsoSettings extends SettingsPage
         return $user->isSuperAdmin();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->columns(1)
-            ->schema([
+            ->components([
                 Toggle::make('is_enabled')
                     ->label('Enabled')
                     ->live(),

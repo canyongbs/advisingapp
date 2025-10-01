@@ -50,6 +50,7 @@ use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use UnitEnum;
 
 class ProspectResource extends Resource
 {
@@ -59,7 +60,7 @@ class ProspectResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
-    protected static ?string $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = 'CRM';
 
     protected static ?string $recordTitleAttribute = 'full_name';
 

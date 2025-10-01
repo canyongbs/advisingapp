@@ -39,13 +39,13 @@ namespace App\Filament\Resources;
 use App\Filament\Clusters\ProfileManagement;
 use App\Filament\Resources\PronounsResource\Pages\ManagePronouns;
 use App\Models\Pronouns;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -61,10 +61,10 @@ class PronounsResource extends Resource
 
     protected static ?string $cluster = ProfileManagement::class;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('label')
                     ->placeholder('She/Her')
                     ->required()
@@ -79,12 +79,12 @@ class PronounsResource extends Resource
             ->columns([
                 TextColumn::make('label'),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()
                     ->modalWidth('md'),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

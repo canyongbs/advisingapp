@@ -121,12 +121,12 @@ test('CreateCase requires valid data', function (CreateCaseRequestFactory $data,
         'status_id missing' => [CreateCaseRequestFactory::new()->without('status_id'), ['status_id' => 'required']],
         'status_id does not exist' => [
             CreateCaseRequestFactory::new()->state(['status_id' => fake()->uuid()]),
-            ['status_id' => 'exists'],
+            ['status_id'],
         ],
         'priority_id missing' => [CreateCaseRequestFactory::new()->without('priority_id'), ['priority_id' => 'required']],
         'priority_id does not exist' => [
             CreateCaseRequestFactory::new()->state(['priority_id' => fake()->uuid()]),
-            ['priority_id' => 'exists'],
+            ['priority_id'],
         ],
         'close_details is not a string' => [CreateCaseRequestFactory::new()->state(['close_details' => 1]), ['close_details' => 'string']],
         'res_details is not a string' => [CreateCaseRequestFactory::new()->state(['res_details' => 1]), ['res_details' => 'string']],
@@ -170,6 +170,7 @@ test('CreateCase is gated with proper access control', function () {
         'priority_id' => CasePriority::factory()->create([
             'type_id' => $caseTypesWithManager->getKey(),
         ])->getKey(),
+        'type_id' => $caseTypesWithManager->getKey(),
     ]));
 
     livewire(CreateCase::class)
@@ -248,6 +249,7 @@ test('CreateCase is gated with proper feature access control', function () {
         'priority_id' => CasePriority::factory()->create([
             'type_id' => $caseType->getKey(),
         ])->getKey(),
+        'type_id' => $caseType->getKey(),
     ]));
 
     livewire(CreateCase::class)
@@ -300,6 +302,7 @@ test('assignment type individual manager will auto assign to new cases', functio
         'priority_id' => CasePriority::factory()->create([
             'type_id' => $caseTypesWithManager->getKey(),
         ])->getKey(),
+        'type_id' => $caseTypesWithManager->getKey(),
     ]));
 
     livewire(CreateCase::class)
@@ -311,7 +314,7 @@ test('assignment type individual manager will auto assign to new cases', functio
 
     $case = CaseModel::first();
 
-    expect($case->assignments()->first())->user->getKey()->toBe($user->getKey());
+    expect($case->assignments()->first())->user->getKey()->toBe($user->getKey()); /** @phpstan-ignore method.nonObject */
 });
 
 test('assignment type round robin will auto-assign to new cases', function () {
@@ -337,6 +340,7 @@ test('assignment type round robin will auto-assign to new cases', function () {
         'priority_id' => CasePriority::factory()->create([
             'type_id' => $caseTypeWithManager->getKey(),
         ])->getKey(),
+        'type_id' => $caseTypeWithManager->getKey(),
     ]));
 
     $users = $team->users()->orderBy('name')->orderBy('id')->get();
@@ -434,6 +438,7 @@ test('assignment type workload will auto-assign to new cases', function () {
         'priority_id' => CasePriority::factory()->create([
             'type_id' => $caseTypeWithManager->getKey(),
         ])->getKey(),
+        'type_id' => $caseTypeWithManager->getKey(),
     ]));
 
     travelTo(now()->subSeconds(3));

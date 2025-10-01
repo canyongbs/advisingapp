@@ -33,7 +33,6 @@
 
 </COPYRIGHT>
 */
-
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\Role;
 use App\Filament\Resources\UserResource;
@@ -41,8 +40,8 @@ use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Models\Authenticatable;
 use App\Models\User;
+use Filament\Actions\AttachAction;
 use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\AttachAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -76,7 +75,6 @@ it('A non-super admin user cannot assign the super admin role.', function () {
         'ownerRecord' => $user,
         'pageClass' => EditUser::class,
     ])
-        ->mountTableAction(AttachAction::class)
         ->callTableAction(AttachAction::class, data: ['recordId' => $superAdminRole->getKey()])
         ->assertHasTableActionErrors(['recordId' => 'You are not allowed to select the Super Admin role.']);
 
@@ -104,12 +102,13 @@ it('allows user which has sass global admin role to assign sass global admin rol
         'pageClass' => EditUser::class,
     ])
         ->mountTableAction(AttachAction::class)
-        ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) {
+        ->assertFormFieldExists('recordId', checkFieldUsing: function (Select $select) {
             $options = $select->getSearchResults(Authenticatable::SUPER_ADMIN_ROLE);
 
             return ! empty($options) ? true : false;
         })
-        ->callTableAction(AttachAction::class, data: ['recordId' => $superAdminRole->getKey()]);
+        ->fillForm(['recordId' => $superAdminRole->getKey()])
+        ->callMountedAction();
 
     $secondUser->refresh();
 
@@ -146,7 +145,7 @@ it('does not display the Saas Global Admin role if the user is not itself a Saas
         'pageClass' => EditUser::class,
     ])
         ->mountTableAction(AttachAction::class)
-        ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) {
+        ->assertFormFieldExists('recordId', checkFieldUsing: function (Select $select) {
             $options = $select->getSearchResults(Authenticatable::SUPER_ADMIN_ROLE);
 
             return empty($options) ? true : false;

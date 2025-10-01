@@ -37,11 +37,11 @@
 namespace AdvisingApp\Division\Filament\Resources\DivisionResource\RelationManagers;
 
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\AssociateAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DissociateAction;
+use Filament\Actions\DissociateBulkAction;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\AssociateAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DissociateAction;
-use Filament\Tables\Actions\DissociateBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -61,10 +61,10 @@ class TeamsRelationManager extends RelationManager
             ->headerActions([
                 AssociateAction::make(),
             ])
-            ->actions([
+            ->recordActions([
                 DissociateAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DissociateBulkAction::make(),
                 ]),

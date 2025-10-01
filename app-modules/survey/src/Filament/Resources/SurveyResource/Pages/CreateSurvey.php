@@ -38,8 +38,8 @@ namespace AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages;
 
 use AdvisingApp\Survey\Filament\Resources\SurveyResource;
 use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\Concerns\HasSharedFormConfiguration;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
 class CreateSurvey extends CreateRecord
 {
@@ -47,9 +47,9 @@ class CreateSurvey extends CreateRecord
 
     protected static string $resource = SurveyResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema($this->fields());
+        return $schema
+            ->components($this->fields());
     }
 }

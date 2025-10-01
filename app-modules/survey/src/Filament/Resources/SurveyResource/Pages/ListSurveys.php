@@ -40,15 +40,15 @@ use AdvisingApp\Survey\Actions\DuplicateSurvey;
 use AdvisingApp\Survey\Filament\Resources\SurveyResource;
 use AdvisingApp\Survey\Models\Survey;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ReplicateAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ReplicateAction;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -66,7 +66,7 @@ class ListSurveys extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('name'),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('Respond')
                     ->url(fn (Survey $survey) => route('surveys.show', ['survey' => $survey]))
                     ->icon('heroicon-m-arrow-top-right-on-square')
@@ -82,8 +82,8 @@ class ListSurveys extends ListRecords
 
                         return $data;
                     })
-                    ->form(function (Form $form): Form {
-                        return $form->schema([
+                    ->schema(function (Schema $schema): Schema {
+                        return $schema->components([
                             TextInput::make('name')
                                 ->label('Name')
                                 ->required(),
@@ -96,7 +96,7 @@ class ListSurveys extends ListRecords
                         resolve(DuplicateSurvey::class, ['original' => $record, 'replica' => $replica])();
                     }),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

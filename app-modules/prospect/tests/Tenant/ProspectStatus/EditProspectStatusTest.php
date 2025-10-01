@@ -40,7 +40,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Tests\Tenant\ProspectStatus\RequestFactories\EditProspectStatusRequestFactory;
 use App\Models\User;
-use Illuminate\Validation\Rules\Enum;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -65,9 +64,9 @@ test('A successful action on the EditProspectStatus page', function () {
         'record' => $prospectStatus->getRouteKey(),
     ])
         ->assertFormSet([
-            'classification' => $prospectStatus->classification->value,
+            'classification' => $prospectStatus->classification,
             'name' => $prospectStatus->name,
-            'color' => $prospectStatus->color->value,
+            'color' => $prospectStatus->color,
         ])
         ->fillForm($editRequest)
         ->call('save')
@@ -87,9 +86,9 @@ test('EditProspectStatus requires valid data', function ($data, $errors) {
         'record' => $prospectStatus->getRouteKey(),
     ])
         ->assertFormSet([
-            'classification' => $prospectStatus->classification->value,
+            'classification' => $prospectStatus->classification,
             'name' => $prospectStatus->name,
-            'color' => $prospectStatus->color->value,
+            'color' => $prospectStatus->color,
         ])
         ->fillForm(EditProspectStatusRequestFactory::new($data)->create())
         ->call('save')
@@ -101,7 +100,7 @@ test('EditProspectStatus requires valid data', function ($data, $errors) {
         'name missing' => [EditProspectStatusRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
         'name not a string' => [EditProspectStatusRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
         'color missing' => [EditProspectStatusRequestFactory::new()->state(['color' => null]), ['color' => 'required']],
-        'color not within enum' => [EditProspectStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color' => Enum::class]],
+        'color not within enum' => [EditProspectStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color']],
     ]
 );
 

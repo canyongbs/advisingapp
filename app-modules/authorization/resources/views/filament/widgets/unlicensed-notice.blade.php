@@ -36,12 +36,12 @@
         <div class="flex gap-3">
             <div class="flex-shrink-0">
                 <x-heroicon-o-exclamation-triangle
-                    class="h-5 w-5 text-warning-400"
+                    class="text-warning-400 h-5 w-5"
                     aria-hidden="true"
                 />
             </div>
 
-            <h3 class="text-sm font-medium text-warning-800 dark:text-warning-200">
+            <h3 class="text-warning-800 dark:text-warning-200 text-sm font-medium">
                 Your account currently does not have a license to access features in Advising App.
             </h3>
         </div>

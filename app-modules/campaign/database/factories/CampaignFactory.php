@@ -36,12 +36,13 @@
 
 namespace AdvisingApp\Campaign\Database\Factories;
 
+use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Segment\Models\Segment;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Campaign\Models\Campaign>
+ * @extends Factory<Campaign>
  */
 class CampaignFactory extends Factory
 {

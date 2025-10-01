@@ -43,17 +43,17 @@ use AdvisingApp\Application\Filament\Resources\ApplicationResource\Actions\Appli
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\Scopes\ClassifiedAs;
 use App\Filament\Tables\Columns\IdColumn;
-use Filament\Infolists\Components\Section;
+use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
-use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -142,10 +142,10 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                         return Excel::download(new ApplicationSubmissionExport($this->getOwnerRecord()->submissions), $filename);
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->modalHeading(fn (ApplicationSubmission $record) => "Submission Details: {$record->created_at}")
-                    ->infolist(fn (ApplicationSubmission $record): array => [
+                    ->schema(fn (ApplicationSubmission $record): array => [
                         TextEntry::make('state')
                             ->label('State')
                             ->badge()
@@ -174,7 +174,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                     ->extraModalFooterActions(ApplicationAdmissionActions::get()),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     BulkAction::make('Export')
                         ->icon('heroicon-o-arrow-down-tray')
