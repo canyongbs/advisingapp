@@ -47,7 +47,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
-use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Tables\Actions\BulkAction;
@@ -164,13 +164,24 @@ class Inbox extends Page implements HasTable
             ->defaultSort('sent_at', 'desc')
             ->emptyStateHeading('No Engagements yet.')
             ->bulkActions([
-                BulkAction::make('markAs')->action(function (Collection $records): void {
-                    $records->each(function (EngagementResponse $record) {
-                        $record->status = EngagementResponseStatus::getInvertedStatus($record->status);
+                BulkAction::make('markAs')
+                    ->label('Mark as New/Actioned')
+                    ->form([
+                        Select::make('status')
+                            ->label('Choose an Option')
+                            ->options([
+                                EngagementResponseStatus::New->value => 'New',
+                                EngagementResponseStatus::Actioned->value => 'Actioned',
+                            ])
+                            ->required(),
+                    ])
+                    ->action(function (Collection $records, array $data): void {
+                        $records->each(function (EngagementResponse $record) use ($data) {
+                            $record->status = $data['status'];
 
-                        $record->save();
-                    });
-                })->label('Mark as New/Actioned'),
+                            $record->save();
+                        });
+                    }),
             ]);
     }
 
