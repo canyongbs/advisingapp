@@ -136,6 +136,7 @@ trait CanUploadFiles
             ->color('gray')
             ->disabled(count($this->files) >= 1)
             ->badge(count($this->files))
+            ->badgeColor('primary')
             ->modalSubmitActionLabel('Upload')
             ->schema([
                 FileUpload::make('attachment')
