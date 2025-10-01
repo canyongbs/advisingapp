@@ -37,7 +37,7 @@
 use AdvisingApp\Ai\Enums\QnaAdvisorReportTableTab;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTableChart;
+use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTable;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 use function Pest\Livewire\livewire;
@@ -71,7 +71,7 @@ it('displays only QnaAdvisorThreads added within the selected date range based o
     ];
 
     // for student tab
-    $component = livewire(QnaAdvisorReportTableChart::class, [
+    $component = livewire(QnaAdvisorReportTable::class, [
         'cacheTag' => 'qna-advisor-thread-report-cache',
         'filters' => $filters,
         'activeTab' => QnaAdvisorReportTableTab::Student->value,
@@ -84,7 +84,7 @@ it('displays only QnaAdvisorThreads added within the selected date range based o
         ->assertCanNotSeeTableRecords(collect([$qnaAdvisorThreadWithinRange1ForProspect, $qnaAdvisorThreadWithinRange2ForProspect, $qnaAdvisorThreadUnauthorized]));
 
     // for prospect tab
-    $component = livewire(QnaAdvisorReportTableChart::class, [
+    $component = livewire(QnaAdvisorReportTable::class, [
         'cacheTag' => 'qna-advisor-thread-report-cache',
         'filters' => $filters,
         'activeTab' => QnaAdvisorReportTableTab::Prospect->value,
@@ -97,7 +97,7 @@ it('displays only QnaAdvisorThreads added within the selected date range based o
         ->assertCanNotSeeTableRecords(collect([$qnaAdvisorThreadWithinRange1ForStudent, $qnaAdvisorThreadWithinRange2ForStudent, $qnaAdvisorThreadUnauthorized]));
 
     // for unauthorized tab
-    $component = livewire(QnaAdvisorReportTableChart::class, [
+    $component = livewire(QnaAdvisorReportTable::class, [
         'cacheTag' => 'qna-advisor-thread-report-cache',
         'filters' => $filters,
         'activeTab' => QnaAdvisorReportTableTab::Unauthenticated->value,

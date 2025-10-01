@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Cache;
 
 class QnaAdvisorReportLineChart extends ChartReportWidget
 {
-    protected static ?string $heading = 'Line Chart';
+    protected static ?string $heading = 'Exchanges by Month';
 
     protected int | string | array $columnSpan = [
         'sm' => 1,
@@ -60,20 +60,20 @@ class QnaAdvisorReportLineChart extends ChartReportWidget
 
         $shouldBypassCache = filled($startDate) || filled($endDate);
 
-        $runningTotalPerMonth = $shouldBypassCache
-            ? $this->getQnaAdvisorRunningTotalData($startDate, $endDate)
+        $totals = $shouldBypassCache
+            ? $this->getQnaAdvisorTotalData($startDate, $endDate)
             : Cache::tags(["{{$this->cacheTag}}"])
                 ->remember('total-qna-advisor-line-chart', now()->addHours(24), function (): array {
-                    return $this->getQnaAdvisorRunningTotalData();
+                    return $this->getQnaAdvisorTotalData();
                 });
 
         return [
             'datasets' => [
                 [
-                    'data' => array_values($runningTotalPerMonth),
+                    'data' => array_values($totals),
                 ],
             ],
-            'labels' => array_keys($runningTotalPerMonth),
+            'labels' => array_keys($totals),
         ];
     }
 
@@ -104,7 +104,7 @@ class QnaAdvisorReportLineChart extends ChartReportWidget
     /**
      * @return array<string, int>
      */
-    protected function getQnaAdvisorRunningTotalData(?Carbon $startDate = null, ?Carbon $endDate = null): array
+    protected function getQnaAdvisorTotalData(?Carbon $startDate = null, ?Carbon $endDate = null): array
     {
         $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
         $endDate = $endDate ?? Carbon::now()->endOfMonth();
@@ -125,17 +125,14 @@ class QnaAdvisorReportLineChart extends ChartReportWidget
                 ];
             });
 
-        $runningTotal = [];
-        $total = 0;
+        $totals = [];
 
         foreach ($months as $month) {
             $key = $month->toDateString();
             $label = $month->format('M Y');
-            $count = $monthlyData[$key] ?? 0;
-            $total += $count;
-            $runningTotal[$label] = $total;
+            $totals[$label] = $monthlyData[$key] ?? 0;
         }
 
-        return $runningTotal;
+        return $totals;
     }
 }

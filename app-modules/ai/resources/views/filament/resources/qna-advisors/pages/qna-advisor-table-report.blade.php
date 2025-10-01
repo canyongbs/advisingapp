@@ -33,23 +33,20 @@
 --}}
 
 @use('AdvisingApp\Ai\Enums\QnaAdvisorReportTableTab')
-<x-filament-widgets::widget class="fi-wi-table">
-    <x-filament::tabs
-        class="mb-2 w-fit"
-        label="Content tabs"
-    >
-        @foreach (QnaAdvisorReportTableTab::cases() as $tab)
-            <x-filament::tabs.item
-                wire:click="$set('activeTab', '{{ $tab->value }}')"
-                :active="$activeTab === $tab->value"
-            >
-                {{ $tab->getLabel() }}
-            </x-filament::tabs.item>
-        @endforeach
-    </x-filament::tabs>
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Widgets\View\WidgetsRenderHook::TABLE_WIDGET_START, scopes: static::class) }}
+
+<x-filament-widgets::widget class="fi-wi-table flex flex-col gap-y-6">
+    <div class="flex justify-center">
+        <x-filament::tabs>
+            @foreach (QnaAdvisorReportTableTab::cases() as $tab)
+                <x-filament::tabs.item
+                    wire:click="$set('activeTab', '{{ $tab->value }}')"
+                    :active="$activeTab === $tab->value"
+                >
+                    {{ $tab->getLabel() }}
+                </x-filament::tabs.item>
+            @endforeach
+        </x-filament::tabs>
+    </div>
 
     {{ $this->table }}
-
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Widgets\View\WidgetsRenderHook::TABLE_WIDGET_END, scopes: static::class) }}
 </x-filament-widgets::widget>

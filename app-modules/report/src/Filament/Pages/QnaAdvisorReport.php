@@ -39,7 +39,7 @@ namespace AdvisingApp\Report\Filament\Pages;
 use AdvisingApp\Report\Abstract\AiReport;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportLineChart;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTableChart;
+use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Filament\Clusters\ReportLibrary;
 
@@ -63,7 +63,7 @@ class QnaAdvisorReport extends AiReport
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
             QnaAdvisorReportStats::make(['cacheTag' => $this->cacheTag]),
             QnaAdvisorReportLineChart::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportTableChart::make(['cacheTag' => $this->cacheTag]),
+            QnaAdvisorReportTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 

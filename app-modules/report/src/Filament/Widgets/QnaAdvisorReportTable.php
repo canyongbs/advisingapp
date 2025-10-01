@@ -50,7 +50,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 
-class QnaAdvisorReportTableChart extends TableWidget
+class QnaAdvisorReportTable extends TableWidget
 {
     use InteractsWithPageFilters;
 
