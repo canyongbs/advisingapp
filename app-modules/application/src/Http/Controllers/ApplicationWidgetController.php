@@ -81,7 +81,10 @@ class ApplicationWidgetController extends Controller
                     absolute: false,
                 ),
                 'schema' => $generateSchema($application),
-                'primary_color' => Color::all()[$application->primary_color ?? 'blue'],
+                'primary_color' => collect(Color::all()[$application->primary_color ?? 'blue'])
+                    ->map(Color::convertToRgb(...))
+                    ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
+                    ->all(),
                 'rounding' => $application->rounding,
             ],
         );
@@ -95,7 +98,10 @@ class ApplicationWidgetController extends Controller
                 'description' => $application->description,
                 'authentication_url' => null,
                 'schema' => $generateSchema($application),
-                'primary_color' => Color::all()[$application->primary_color ?? 'blue'],
+                'primary_color' => collect(Color::all()[$application->primary_color ?? 'blue'])
+                    ->map(Color::convertToRgb(...))
+                    ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
+                    ->all(),
                 'rounding' => $application->rounding,
             ],
         );
