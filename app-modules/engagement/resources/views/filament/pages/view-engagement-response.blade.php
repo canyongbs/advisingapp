@@ -57,12 +57,16 @@
             class="grid gap-6"
             x-data="{ isReplying: false }"
         >
-            <div>
+            <div class="flex items-center gap-3">
                 <x-filament::button
                     icon="heroicon-s-arrow-uturn-left"
                     x-on:click="isReplying = !isReplying"
                 >
                     Reply
+                </x-filament::button>
+
+                <x-filament::button wire:click="changeStatus()">
+                    Mark as {{ $this->getInvertedStatus()->name }}
                 </x-filament::button>
             </div>
 

@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Filament\Pages;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Actions\CreateEngagement;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
+use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Filament\Actions\DraftWithAiAction;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
@@ -316,6 +317,20 @@ class ViewEngagementResponse extends Page
             ->send();
 
         redirect(Inbox::getUrl());
+    }
+
+    public function getInvertedStatus(): EngagementResponseStatus
+    {
+        return match ($this->record->status) {
+            EngagementResponseStatus::New => EngagementResponseStatus::Actioned,
+            EngagementResponseStatus::Actioned => EngagementResponseStatus::New,
+        };
+    }
+
+    public function changeStatus(): void
+    {
+        $this->record->status = $this->getInvertedStatus();
+        $this->record->save();
     }
 
     protected function generateEmailReplyBody(string $content = '<p></p>'): string
