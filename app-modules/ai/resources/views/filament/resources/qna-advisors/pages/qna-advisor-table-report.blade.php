@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,55 +30,23 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
 
-namespace AdvisingApp\Report\Filament\Pages;
+@use('AdvisingApp\Ai\Enums\QnaAdvisorReportTableTab')
 
-use AdvisingApp\Report\Abstract\AiReport;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportLineChart;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTable;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use App\Filament\Clusters\ReportLibrary;
-use UnitEnum;
+<x-filament-widgets::widget class="fi-wi-table flex flex-col gap-y-6">
+    <div class="flex justify-center">
+        <x-filament::tabs>
+            @foreach (QnaAdvisorReportTableTab::cases() as $tab)
+                <x-filament::tabs.item
+                    wire:click="$set('activeTab', '{{ $tab->value }}')"
+                    :active="$activeTab === $tab->value"
+                >
+                    {{ $tab->getLabel() }}
+                </x-filament::tabs.item>
+            @endforeach
+        </x-filament::tabs>
+    </div>
 
-class QnaAdvisorReport extends AiReport
-{
-    protected static ?string $cluster = ReportLibrary::class;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?string $title = 'QnA Advisor';
-
-    protected static string $routePath = 'qna-advisor-report';
-
-    protected static ?int $navigationSort = 180;
-
-    protected string $cacheTag = 'qna-advisor-report';
-
-    public function getWidgets(): array
-    {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportStats::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportLineChart::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportTable::make(['cacheTag' => $this->cacheTag]),
-        ];
-    }
-
-    public function getColumns(): int | string | array
-    {
-        return [
-            'sm' => 2,
-            'md' => 4,
-            'lg' => 4,
-        ];
-    }
-
-    public function getWidgetData(): array
-    {
-        return [
-            'filters' => $this->filters,
-        ];
-    }
-}
+    {{ $this->table }}
+</x-filament-widgets::widget>
