@@ -46,8 +46,6 @@ use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -55,239 +53,239 @@ use Filament\Forms\Components\TextInput;
 
 class InteractionBlock extends WorkflowActionBlock
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-  protected function setUp(): void
-  {
-    parent::setUp();
+        $this->label('Interaction');
 
-    $this->label('Interaction');
+        $this->schema($this->createFields());
+    }
 
-    $this->schema($this->createFields());
-  }
-  //TODO: implement
-  public function generateFields(string $fieldPrefix = ''): array
-  {
-    $settings = app(InteractionManagementSettings::class);
+    //TODO: implement
+    public function generateFields(string $fieldPrefix = ''): array
+    {
+        $settings = app(InteractionManagementSettings::class);
 
-    return [
-      Section::make('info')
-        ->schema([
-          Select::make($fieldPrefix . 'interaction_initiative_id')
-            ->relationship('initiative', 'name')
-            ->model(Interaction::class)
-            ->label('Initiative')
-            ->required(fn() => $settings->is_initiative_required)
-            ->visible(fn() => $settings->is_initiative_enabled)
-            ->exists((new InteractionInitiative())->getTable(), 'id'),
-          Select::make($fieldPrefix . 'interaction_driver_id')
-            ->relationship('driver', 'name')
-            ->model(Interaction::class)
-            ->preload()
-            ->label('Driver')
-            ->required(fn() => $settings->is_driver_required)
-            ->visible(fn() => $settings->is_driver_enabled)
-            ->exists((new InteractionDriver())->getTable(), 'id'),
-          Select::make($fieldPrefix . 'division_id')
-            ->relationship('division', 'name')
-            ->model(Interaction::class)
-            ->preload()
-            ->default(
-              fn() => auth()->user()->team?->division?->getKey()
-                ?? Division::query()
-                ->where('is_default', true)
-                ->first()
-                ?->getKey()
-            )
-            ->label('Division')
-            ->visible(function () {
-              return Division::query()->where('is_default', false)->exists();
-            })
-            ->dehydratedWhenHidden()
-            ->required()
-            ->exists((new Division())->getTable(), 'id'),
-          Select::make($fieldPrefix . 'interaction_outcome_id')
-            ->relationship('outcome', 'name')
-            ->model(Interaction::class)
-            ->preload()
-            ->label('Outcome')
-            ->required(fn() => $settings->is_outcome_required)
-            ->visible(fn() => $settings->is_outcome_enabled)
-            ->exists((new InteractionOutcome())->getTable(), 'id'),
-          Select::make($fieldPrefix . 'interaction_relation_id')
-            ->relationship('relation', 'name')
-            ->model(Interaction::class)
-            ->preload()
-            ->label('Relation')
-            ->required(fn() => $settings->is_relation_required)
-            ->visible(fn() => $settings->is_relation_enabled)
-            ->exists((new InteractionRelation())->getTable(), 'id'),
-          Select::make($fieldPrefix . 'interaction_status_id')
-            ->relationship('status', 'name')
-            ->model(Interaction::class)
-            ->preload()
-            ->label('Status')
-            ->required(fn() => $settings->is_status_required)
-            ->visible(fn() => $settings->is_status_enabled)
-            ->exists((new InteractionStatus())->getTable(), 'id'),
-          Select::make($fieldPrefix . 'interaction_type_id')
-            ->relationship('type', 'name')
-            ->model(Interaction::class)
-            ->preload()
-            ->label('Type')
-            ->required(fn() => $settings->is_type_required)
-            ->visible(fn() => $settings->is_type_enabled)
-            ->exists((new InteractionType())->getTable(), 'id'),
-        ])
-        ->columns(2),
-      Section::make('Time')
-        ->schema([
-          DateTimePicker::make($fieldPrefix . 'start_datetime')
-            ->seconds(false)
-            ->required(),
-          DateTimePicker::make($fieldPrefix . 'end_datetime')
-            ->seconds(false)
-            ->required(),
-        ])->columns(2),
-      Section::make('Notes')
-        ->schema([
-          TextInput::make($fieldPrefix . 'subject')
-            ->required(),
-          Textarea::make($fieldPrefix . 'description')
-            ->required(),
-        ])->columns(2),
-      Section::make('How long after the previous step should this occur?')
-        ->schema([
-          TextInput::make('days')
-            ->translateLabel()
-            ->numeric()
-            ->step(1)
-            ->minValue(0)
-            ->default(0)
-            ->inlineLabel(),
-          TextInput::make('hours')
-            ->translateLabel()
-            ->numeric()
-            ->step(1)
-            ->minValue(0)
-            ->default(0)
-            ->inlineLabel(),
-          TextInput::make('minutes')
-            ->translateLabel()
-            ->numeric()
-            ->step(1)
-            ->minValue(0)
-            ->default(0)
-            ->inlineLabel(),
-        ])
-        ->columns(3),
-    ];
+        return [
+            Section::make('info')
+                ->schema([
+                    Select::make($fieldPrefix . 'interaction_initiative_id')
+                        ->relationship('initiative', 'name')
+                        ->model(Interaction::class)
+                        ->label('Initiative')
+                        ->required(fn () => $settings->is_initiative_required)
+                        ->visible(fn () => $settings->is_initiative_enabled)
+                        ->exists((new InteractionInitiative())->getTable(), 'id'),
+                    Select::make($fieldPrefix . 'interaction_driver_id')
+                        ->relationship('driver', 'name')
+                        ->model(Interaction::class)
+                        ->preload()
+                        ->label('Driver')
+                        ->required(fn () => $settings->is_driver_required)
+                        ->visible(fn () => $settings->is_driver_enabled)
+                        ->exists((new InteractionDriver())->getTable(), 'id'),
+                    Select::make($fieldPrefix . 'division_id')
+                        ->relationship('division', 'name')
+                        ->model(Interaction::class)
+                        ->preload()
+                        ->default(
+                            fn () => auth()->user()->team?->division?->getKey()
+                            ?? Division::query()
+                                ->where('is_default', true)
+                                ->first()
+                                ?->getKey()
+                        )
+                        ->label('Division')
+                        ->visible(function () {
+                            return Division::query()->where('is_default', false)->exists();
+                        })
+                        ->dehydratedWhenHidden()
+                        ->required()
+                        ->exists((new Division())->getTable(), 'id'),
+                    Select::make($fieldPrefix . 'interaction_outcome_id')
+                        ->relationship('outcome', 'name')
+                        ->model(Interaction::class)
+                        ->preload()
+                        ->label('Outcome')
+                        ->required(fn () => $settings->is_outcome_required)
+                        ->visible(fn () => $settings->is_outcome_enabled)
+                        ->exists((new InteractionOutcome())->getTable(), 'id'),
+                    Select::make($fieldPrefix . 'interaction_relation_id')
+                        ->relationship('relation', 'name')
+                        ->model(Interaction::class)
+                        ->preload()
+                        ->label('Relation')
+                        ->required(fn () => $settings->is_relation_required)
+                        ->visible(fn () => $settings->is_relation_enabled)
+                        ->exists((new InteractionRelation())->getTable(), 'id'),
+                    Select::make($fieldPrefix . 'interaction_status_id')
+                        ->relationship('status', 'name')
+                        ->model(Interaction::class)
+                        ->preload()
+                        ->label('Status')
+                        ->required(fn () => $settings->is_status_required)
+                        ->visible(fn () => $settings->is_status_enabled)
+                        ->exists((new InteractionStatus())->getTable(), 'id'),
+                    Select::make($fieldPrefix . 'interaction_type_id')
+                        ->relationship('type', 'name')
+                        ->model(Interaction::class)
+                        ->preload()
+                        ->label('Type')
+                        ->required(fn () => $settings->is_type_required)
+                        ->visible(fn () => $settings->is_type_enabled)
+                        ->exists((new InteractionType())->getTable(), 'id'),
+                ])
+                ->columns(2),
+            Section::make('Time')
+                ->schema([
+                DateTimePicker::make($fieldPrefix . 'start_datetime')
+                        ->seconds(false)
+                        ->required(),
+                DateTimePicker::make($fieldPrefix . 'end_datetime')
+                        ->seconds(false)
+                        ->required(),
+            ])->columns(2),
+            Section::make('Notes')
+                ->schema([
+                TextInput::make($fieldPrefix . 'subject')
+                        ->required(),
+                Textarea::make($fieldPrefix . 'description')
+                        ->required(),
+            ])->columns(2),
+            Section::make('How long after the previous step should this occur?')
+                ->schema([
+                TextInput::make('days')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+                TextInput::make('hours')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+                TextInput::make('minutes')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+            ])
+                ->columns(3),
+        ];
 
-    // return [
-    //   Select::make($fieldPrefix . 'interaction_initiative_id')
-    //     ->relationship('initiative', 'name')
-    //     ->model(Interaction::class)
-    //     ->label('Initiative')
-    //     ->required(fn() => $settings->is_initiative_required)
-    //     ->visible(fn() => $settings->is_initiative_enabled)
-    //     ->exists((new InteractionInitiative())->getTable(), 'id'),
-    //   Select::make($fieldPrefix . 'interaction_driver_id')
-    //     ->relationship('driver', 'name')
-    //     ->model(Interaction::class)
-    //     ->preload()
-    //     ->label('Driver')
-    //     ->required(fn() => $settings->is_driver_required)
-    //     ->visible(fn() => $settings->is_driver_enabled)
-    //     ->exists((new InteractionDriver())->getTable(), 'id'),
-    //   Select::make($fieldPrefix . 'division_id')
-    //     ->relationship('division', 'name')
-    //     ->model(Interaction::class)
-    //     ->preload()
-    //     ->default(
-    //       fn() => auth()->user()->team?->division?->getKey()
-    //         ?? Division::query()
-    //         ->where('is_default', true)
-    //         ->first()
-    //         ?->getKey()
-    //     )
-    //     ->label('Division')
-    //     ->visible(function () {
-    //       return Division::query()->where('is_default', false)->exists();
-    //     })
-    //     ->dehydratedWhenHidden()
-    //     ->required()
-    //     ->exists((new Division())->getTable(), 'id'),
-    //   Select::make($fieldPrefix . 'interaction_outcome_id')
-    //     ->relationship('outcome', 'name')
-    //     ->model(Interaction::class)
-    //     ->preload()
-    //     ->label('Outcome')
-    //     ->required(fn() => $settings->is_outcome_required)
-    //     ->visible(fn() => $settings->is_outcome_enabled)
-    //     ->exists((new InteractionOutcome())->getTable(), 'id'),
-    //   Select::make($fieldPrefix . 'interaction_relation_id')
-    //     ->relationship('relation', 'name')
-    //     ->model(Interaction::class)
-    //     ->preload()
-    //     ->label('Relation')
-    //     ->required(fn() => $settings->is_relation_required)
-    //     ->visible(fn() => $settings->is_relation_enabled)
-    //     ->exists((new InteractionRelation())->getTable(), 'id'),
-    //   Select::make($fieldPrefix . 'interaction_status_id')
-    //     ->relationship('status', 'name')
-    //     ->model(Interaction::class)
-    //     ->preload()
-    //     ->label('Status')
-    //     ->required(fn() => $settings->is_status_required)
-    //     ->visible(fn() => $settings->is_status_enabled)
-    //     ->exists((new InteractionStatus())->getTable(), 'id'),
-    //   Select::make($fieldPrefix . 'interaction_type_id')
-    //     ->relationship('type', 'name')
-    //     ->model(Interaction::class)
-    //     ->preload()
-    //     ->label('Type')
-    //     ->required(fn() => $settings->is_type_required)
-    //     ->visible(fn() => $settings->is_type_enabled)
-    //     ->exists((new InteractionType())->getTable(), 'id'),
-    //   DateTimePicker::make($fieldPrefix . 'start_datetime')
-    //     ->seconds(false)
-    //     ->required(),
-    //   DateTimePicker::make($fieldPrefix . 'end_datetime')
-    //     ->seconds(false)
-    //     ->required(),
-    //   TextInput::make($fieldPrefix . 'subject')
-    //     ->required(),
-    //   Textarea::make($fieldPrefix . 'description')
-    //     ->required(),
-    //   Section::make('How long after the previous step should this occur?')
-    //     ->schema([
-    //       TextInput::make('days')
-    //         ->translateLabel()
-    //         ->numeric()
-    //         ->step(1)
-    //         ->minValue(0)
-    //         ->default(0)
-    //         ->inlineLabel(),
-    //       TextInput::make('hours')
-    //         ->translateLabel()
-    //         ->numeric()
-    //         ->step(1)
-    //         ->minValue(0)
-    //         ->default(0)
-    //         ->inlineLabel(),
-    //       TextInput::make('minutes')
-    //         ->translateLabel()
-    //         ->numeric()
-    //         ->step(1)
-    //         ->minValue(0)
-    //         ->default(0)
-    //         ->inlineLabel(),
-    //     ])
-    //     ->columns(3),
-    // ];
-  }
+        // return [
+        //   Select::make($fieldPrefix . 'interaction_initiative_id')
+        //     ->relationship('initiative', 'name')
+        //     ->model(Interaction::class)
+        //     ->label('Initiative')
+        //     ->required(fn() => $settings->is_initiative_required)
+        //     ->visible(fn() => $settings->is_initiative_enabled)
+        //     ->exists((new InteractionInitiative())->getTable(), 'id'),
+        //   Select::make($fieldPrefix . 'interaction_driver_id')
+        //     ->relationship('driver', 'name')
+        //     ->model(Interaction::class)
+        //     ->preload()
+        //     ->label('Driver')
+        //     ->required(fn() => $settings->is_driver_required)
+        //     ->visible(fn() => $settings->is_driver_enabled)
+        //     ->exists((new InteractionDriver())->getTable(), 'id'),
+        //   Select::make($fieldPrefix . 'division_id')
+        //     ->relationship('division', 'name')
+        //     ->model(Interaction::class)
+        //     ->preload()
+        //     ->default(
+        //       fn() => auth()->user()->team?->division?->getKey()
+        //         ?? Division::query()
+        //         ->where('is_default', true)
+        //         ->first()
+        //         ?->getKey()
+        //     )
+        //     ->label('Division')
+        //     ->visible(function () {
+        //       return Division::query()->where('is_default', false)->exists();
+        //     })
+        //     ->dehydratedWhenHidden()
+        //     ->required()
+        //     ->exists((new Division())->getTable(), 'id'),
+        //   Select::make($fieldPrefix . 'interaction_outcome_id')
+        //     ->relationship('outcome', 'name')
+        //     ->model(Interaction::class)
+        //     ->preload()
+        //     ->label('Outcome')
+        //     ->required(fn() => $settings->is_outcome_required)
+        //     ->visible(fn() => $settings->is_outcome_enabled)
+        //     ->exists((new InteractionOutcome())->getTable(), 'id'),
+        //   Select::make($fieldPrefix . 'interaction_relation_id')
+        //     ->relationship('relation', 'name')
+        //     ->model(Interaction::class)
+        //     ->preload()
+        //     ->label('Relation')
+        //     ->required(fn() => $settings->is_relation_required)
+        //     ->visible(fn() => $settings->is_relation_enabled)
+        //     ->exists((new InteractionRelation())->getTable(), 'id'),
+        //   Select::make($fieldPrefix . 'interaction_status_id')
+        //     ->relationship('status', 'name')
+        //     ->model(Interaction::class)
+        //     ->preload()
+        //     ->label('Status')
+        //     ->required(fn() => $settings->is_status_required)
+        //     ->visible(fn() => $settings->is_status_enabled)
+        //     ->exists((new InteractionStatus())->getTable(), 'id'),
+        //   Select::make($fieldPrefix . 'interaction_type_id')
+        //     ->relationship('type', 'name')
+        //     ->model(Interaction::class)
+        //     ->preload()
+        //     ->label('Type')
+        //     ->required(fn() => $settings->is_type_required)
+        //     ->visible(fn() => $settings->is_type_enabled)
+        //     ->exists((new InteractionType())->getTable(), 'id'),
+        //   DateTimePicker::make($fieldPrefix . 'start_datetime')
+        //     ->seconds(false)
+        //     ->required(),
+        //   DateTimePicker::make($fieldPrefix . 'end_datetime')
+        //     ->seconds(false)
+        //     ->required(),
+        //   TextInput::make($fieldPrefix . 'subject')
+        //     ->required(),
+        //   Textarea::make($fieldPrefix . 'description')
+        //     ->required(),
+        //   Section::make('How long after the previous step should this occur?')
+        //     ->schema([
+        //       TextInput::make('days')
+        //         ->translateLabel()
+        //         ->numeric()
+        //         ->step(1)
+        //         ->minValue(0)
+        //         ->default(0)
+        //         ->inlineLabel(),
+        //       TextInput::make('hours')
+        //         ->translateLabel()
+        //         ->numeric()
+        //         ->step(1)
+        //         ->minValue(0)
+        //         ->default(0)
+        //         ->inlineLabel(),
+        //       TextInput::make('minutes')
+        //         ->translateLabel()
+        //         ->numeric()
+        //         ->step(1)
+        //         ->minValue(0)
+        //         ->default(0)
+        //         ->inlineLabel(),
+        //     ])
+        //     ->columns(3),
+        // ];
+    }
 
-  public static function type(): string
-  {
-    return 'workflow_interaction_block';
-  }
+    public static function type(): string
+    {
+        return 'workflow_interaction_block';
+    }
 }
