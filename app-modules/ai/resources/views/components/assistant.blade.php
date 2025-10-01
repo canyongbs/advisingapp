@@ -592,7 +592,7 @@
                                     <div
                                         class="relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
                                         <div
-                                            class="h-[400px] w-full max-w-[600px] animate-pulse rounded-lg bg-gray-200 dark:bg-gray-700">
+                                            class="h-[400px] w-full max-w-[600px] animate-pulse rounded-lg bg-gray-300 dark:bg-gray-700">
                                         </div>
                                     </div>
                                 </div>
