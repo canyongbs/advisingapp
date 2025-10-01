@@ -34,52 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+namespace AdvisingApp\Ai\Enums;
 
-use AdvisingApp\Report\Abstract\AiReport;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportLineChart;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTable;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use App\Filament\Clusters\ReportLibrary;
+use Filament\Support\Contracts\HasLabel;
 
-class QnaAdvisorReport extends AiReport
+enum QnaAdvisorReportTableTab: string implements HasLabel
 {
-    protected static ?string $cluster = ReportLibrary::class;
+    case Student = 'student';
+    case Prospect = 'prospect';
+    case Unauthenticated = 'unauthenticated';
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?string $title = 'QnA Advisor';
-
-    protected static string $routePath = 'qna-advisor-report';
-
-    protected static ?int $navigationSort = 180;
-
-    protected string $cacheTag = 'qna-advisor-report';
-
-    public function getWidgets(): array
+    public function getLabel(): string
     {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportStats::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportLineChart::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportTable::make(['cacheTag' => $this->cacheTag]),
-        ];
-    }
-
-    public function getColumns(): int | string | array
-    {
-        return [
-            'sm' => 2,
-            'md' => 4,
-            'lg' => 4,
-        ];
-    }
-
-    public function getWidgetData(): array
-    {
-        return [
-            'filters' => $this->filters,
-        ];
+        return match ($this) {
+            self::Student => 'Students',
+            self::Prospect => 'Prospects',
+            self::Unauthenticated => 'Unauthenticated',
+        };
     }
 }

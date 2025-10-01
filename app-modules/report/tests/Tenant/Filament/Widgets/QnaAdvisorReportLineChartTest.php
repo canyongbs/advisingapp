@@ -34,52 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
-
-use AdvisingApp\Report\Abstract\AiReport;
+use AdvisingApp\Ai\Models\QnaAdvisorMessage;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportLineChart;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTable;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use App\Filament\Clusters\ReportLibrary;
 
-class QnaAdvisorReport extends AiReport
-{
-    protected static ?string $cluster = ReportLibrary::class;
+it('returns correct QnaAdvisorMessage counts grouped by month within the given date range', function () {
+    $startDate = now()->subDays(90);
+    $endDate = now()->subDays(5);
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    QnaAdvisorMessage::factory()->count(5)->state([
+        'created_at' => $startDate,
+        'is_advisor' => false,
+    ])->create();
 
-    protected static ?string $title = 'QnA Advisor';
+    QnaAdvisorMessage::factory()->count(5)->state([
+        'created_at' => $endDate,
+        'is_advisor' => false,
+    ])->create();
 
-    protected static string $routePath = 'qna-advisor-report';
+    $widgetInstance = new QnaAdvisorReportLineChart();
+    $widgetInstance->cacheTag = 'qna-advisor-report-cache';
+    $widgetInstance->filters = [
+        'startDate' => $startDate->toDateString(),
+        'endDate' => $endDate->toDateString(),
+    ];
 
-    protected static ?int $navigationSort = 180;
-
-    protected string $cacheTag = 'qna-advisor-report';
-
-    public function getWidgets(): array
-    {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportStats::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportLineChart::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportTable::make(['cacheTag' => $this->cacheTag]),
-        ];
-    }
-
-    public function getColumns(): int | string | array
-    {
-        return [
-            'sm' => 2,
-            'md' => 4,
-            'lg' => 4,
-        ];
-    }
-
-    public function getWidgetData(): array
-    {
-        return [
-            'filters' => $this->filters,
-        ];
-    }
-}
+    expect($widgetInstance->getData())->toMatchSnapshot();
+});

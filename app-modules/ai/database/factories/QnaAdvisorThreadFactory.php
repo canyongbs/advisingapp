@@ -34,52 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+namespace AdvisingApp\Ai\Database\Factories;
 
-use AdvisingApp\Report\Abstract\AiReport;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportLineChart;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTable;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use App\Filament\Clusters\ReportLibrary;
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class QnaAdvisorReport extends AiReport
+/**
+ * @extends Factory<QnaAdvisorThread>
+ */
+class QnaAdvisorThreadFactory extends Factory
 {
-    protected static ?string $cluster = ReportLibrary::class;
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?string $title = 'QnA Advisor';
-
-    protected static string $routePath = 'qna-advisor-report';
-
-    protected static ?int $navigationSort = 180;
-
-    protected string $cacheTag = 'qna-advisor-report';
-
-    public function getWidgets(): array
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
         return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportStats::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportLineChart::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportTable::make(['cacheTag' => $this->cacheTag]),
-        ];
-    }
-
-    public function getColumns(): int | string | array
-    {
-        return [
-            'sm' => 2,
-            'md' => 4,
-            'lg' => 4,
-        ];
-    }
-
-    public function getWidgetData(): array
-    {
-        return [
-            'filters' => $this->filters,
+            'advisor_id' => QnaAdvisor::factory(),
         ];
     }
 }
