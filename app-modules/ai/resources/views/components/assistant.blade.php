@@ -163,7 +163,7 @@
                                     </button>
                                 </div>
 
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center gap-3">
                                     <template
                                         x-if="loading.type !== 'moveThreadAction' || loading.identifier !== thread.id">
                                         <x-filament::icon-button
