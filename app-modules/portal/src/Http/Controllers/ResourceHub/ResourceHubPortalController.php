@@ -53,7 +53,7 @@ class ResourceHubPortalController extends Controller
                 ->map(Color::convertToRgb(...))
                 ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
                 ->all(),
-            'rounding' => $settings->resource_hub_portal_rounding,
+            'rounding' => $settings->resource_hub_portal_rounding?->value,
             'requires_authentication' => $settings->resource_hub_portal_requires_authentication,
             'authentication_url' => URL::to(
                 URL::signedRoute(

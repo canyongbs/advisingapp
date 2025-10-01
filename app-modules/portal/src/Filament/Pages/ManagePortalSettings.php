@@ -159,6 +159,7 @@ class ManagePortalSettings extends SettingsPage
                             ->columnSpan(1),
                         Select::make('resource_hub_portal_rounding')
                             ->label('Rounding')
+                            ->enum(Rounding::class)
                             ->options(Rounding::class)
                             ->visible(fn (Get $get) => $get('resource_hub_portal_enabled'))
                             ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
