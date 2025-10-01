@@ -120,22 +120,22 @@ it('properly filters students by segment', function () {
     $otherDate = now()->subDays(15);
 
     $segment = Segment::factory()->create([
-      'model' => SegmentModel::Student,
-      'filters' => [
-        'queryBuilder' => [
-          'rules' => [
-            'C0Cy' => [
-              'type' => 'last',
-              'data' => [
-                'operator' => 'contains',
-                'settings' => [
-                  'text' => 'John',
+        'model' => SegmentModel::Student,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
                 ],
-              ],
             ],
-          ],
         ],
-      ],
     ]);
 
     $segmentTasks = Task::factory()->concerningStudent(Student::factory()->create(['last' => 'John']))->state([
@@ -159,8 +159,8 @@ it('properly filters students by segment', function () {
     ])
         ->assertCanSeeTableRecords(collect([$segmentTasks]))
         ->assertCanNotSeeTableRecords(collect([$nonSegmentTasks]));
-    
-        livewire(MostRecentTasksTable::class, [
+
+    livewire(MostRecentTasksTable::class, [
         'cacheTag' => 'report-tasks',
         'educatableType' => Student::class,
         'filters' => [],
@@ -173,22 +173,22 @@ it('properly filters prospects by segment', function () {
     $otherDate = now()->subDays(15);
 
     $segment = Segment::factory()->create([
-      'model' => SegmentModel::Prospect,
-      'filters' => [
-        'queryBuilder' => [
-          'rules' => [
-            'C0Cy' => [
-              'type' => 'last_name',
-              'data' => [
-                'operator' => 'contains',
-                'settings' => [
-                  'text' => 'John',
+        'model' => SegmentModel::Prospect,
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'C0Cy' => [
+                        'type' => 'last_name',
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'John',
+                            ],
+                        ],
+                    ],
                 ],
-              ],
             ],
-          ],
         ],
-      ],
     ]);
 
     $segmentTasks = Task::factory()->concerningProspect(Prospect::factory()->create(['last_name' => 'John']))->state([
@@ -212,8 +212,8 @@ it('properly filters prospects by segment', function () {
     ])
         ->assertCanSeeTableRecords(collect([$segmentTasks]))
         ->assertCanNotSeeTableRecords(collect([$nonSegmentTasks]));
-    
-        livewire(MostRecentTasksTable::class, [
+
+    livewire(MostRecentTasksTable::class, [
         'cacheTag' => 'report-tasks',
         'educatableType' => Prospect::class,
         'filters' => [],
