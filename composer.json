@@ -95,7 +95,7 @@
         "php-mime-mail-parser/php-mime-mail-parser": "^9.0",
         "saade/filament-fullcalendar": "dev-filament-4-support",
         "sentry/sentry-laravel": "^4.7",
-        "shuvroroy/filament-spatie-laravel-health": "^3.0@beta",
+        "shuvroroy/filament-spatie-laravel-health": "^3.0",
         "socialiteproviders/google": "^4.1",
         "socialiteproviders/microsoft-azure": "^5.2",
         "spatie/laravel-cookie-consent": "^3.3",
