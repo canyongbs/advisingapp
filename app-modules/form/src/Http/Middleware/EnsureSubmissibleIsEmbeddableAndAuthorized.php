@@ -48,23 +48,23 @@ class EnsureSubmissibleIsEmbeddableAndAuthorized
         /** @var Submissible $submissible */
         $submissible = $request->route($binding);
 
-        $origin = $request->headers->get('origin');
+        $requestingUrlHeader = $request->headers->get('origin') ?? $request->headers->get('referer');
 
-        if (! $origin) {
-            return response()->json(['error' => 'Missing origin header.'], 400);
+        if (! $requestingUrlHeader) {
+            return response()->json(['error' => 'Missing origin/referer header.'], 400);
         }
 
-        $origin = parse_url($origin)['host'];
+        $requestingUrlHeader = parse_url($requestingUrlHeader)['host'];
 
-        if ($origin != parse_url(config('app.url'))['host']) {
+        if ($requestingUrlHeader != parse_url(config('app.url'))['host']) {
             if (! $submissible->embed_enabled) {
                 return response()->json(['error' => 'Embedding is not enabled for this form.'], 403);
             }
 
             $allowedDomains = collect($submissible->allowed_domains ?? []);
 
-            if (! $allowedDomains->contains($origin)) {
-                return response()->json(['error' => 'Origin not allowed. Domain must be added to allowed domains list'], 403);
+            if (! $allowedDomains->contains($requestingUrlHeader)) {
+                return response()->json(['error' => 'Origin/Referer not allowed. Domain must be added to allowed domains list'], 403);
             }
         }
 
