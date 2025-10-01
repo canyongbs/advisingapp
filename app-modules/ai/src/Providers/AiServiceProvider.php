@@ -55,8 +55,6 @@ use AdvisingApp\Ai\Models\QnaAdvisorCategory;
 use AdvisingApp\Ai\Models\QnaAdvisorFile;
 use AdvisingApp\Ai\Models\QnaAdvisorLink;
 use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
