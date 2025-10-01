@@ -36,18 +36,13 @@
 
 namespace AdvisingApp\Workflow\Database\Factories;
 
-use AdvisingApp\Division\Database\Factories\DivisionFactory;
 use AdvisingApp\Division\Models\Division;
-use AdvisingApp\Interaction\Database\Factories\InteractionDriverFactory;
-use AdvisingApp\Interaction\Database\Factories\InteractionInitiativeFactory;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowInteractionDetails;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
