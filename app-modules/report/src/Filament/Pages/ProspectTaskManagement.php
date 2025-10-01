@@ -56,7 +56,7 @@ class ProspectTaskManagement extends EngagementReport implements HasSegmentModel
 
     protected static string $routePath = 'prospect-tasks-report';
 
-    protected static ?int $navigationSort = 80;
+    protected static ?int $navigationSort = 140;
 
     protected string $cacheTag = 'report-tasks';
 
