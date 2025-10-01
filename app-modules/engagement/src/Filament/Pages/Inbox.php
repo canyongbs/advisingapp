@@ -168,7 +168,7 @@ class Inbox extends Page implements HasTable
                     ->label('Mark as New/Actioned')
                     ->form([
                         Select::make('status')
-                            ->label('Choose an Option')
+                            ->label('Choose a status')
                             ->options([
                                 EngagementResponseStatus::New->value => 'New',
                                 EngagementResponseStatus::Actioned->value => 'Actioned',
