@@ -34,26 +34,30 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\MostRecentTasksTable;
+use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 
 use function Pest\Livewire\livewire;
 
-it('displays only tasks added within the selected date range', function () {
+it('displays only tasks added within the selected date range for students', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
-    $taskWithinRange1 = Task::factory()->state([
+    $taskWithinRange1 = Task::factory()->concerningStudent()->state([
         'created_at' => $startDate,
         'is_confidential' => false,
     ])->create();
 
-    $taskWithinRange2 = Task::factory()->state([
+    $taskWithinRange2 = Task::factory()->concerningStudent()->state([
         'created_at' => $endDate,
         'is_confidential' => false,
     ])->create();
 
-    $taskOutsideRange = Task::factory()->state([
+    $taskOutsideRange = Task::factory()->concerningStudent()->state([
         'created_at' => now()->subDays(20),
         'is_confidential' => false,
     ])->create();
@@ -65,6 +69,7 @@ it('displays only tasks added within the selected date range', function () {
 
     livewire(MostRecentTasksTable::class, [
         'cacheTag' => 'report-tasks',
+        'educatableType' => Student::class,
         'filters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
@@ -72,4 +77,146 @@ it('displays only tasks added within the selected date range', function () {
             $taskWithinRange2,
         ]))
         ->assertCanNotSeeTableRecords(collect([$taskOutsideRange]));
+});
+
+it('displays only tasks added within the selected date range for prospects', function () {
+    $startDate = now()->subDays(10);
+    $endDate = now()->subDays(5);
+
+    $taskWithinRange1 = Task::factory()->concerningProspect()->state([
+        'created_at' => $startDate,
+        'is_confidential' => false,
+    ])->create();
+
+    $taskWithinRange2 = Task::factory()->concerningProspect()->state([
+        'created_at' => $endDate,
+        'is_confidential' => false,
+    ])->create();
+
+    $taskOutsideRange = Task::factory()->concerningProspect()->state([
+        'created_at' => now()->subDays(20),
+        'is_confidential' => false,
+    ])->create();
+
+    $filters = [
+        'startDate' => $startDate->toDateString(),
+        'endDate' => $endDate->toDateString(),
+    ];
+
+    livewire(MostRecentTasksTable::class, [
+        'cacheTag' => 'report-tasks',
+        'educatableType' => Prospect::class,
+        'filters' => $filters,
+    ])
+        ->assertCanSeeTableRecords(collect([
+            $taskWithinRange1,
+            $taskWithinRange2,
+        ]))
+        ->assertCanNotSeeTableRecords(collect([$taskOutsideRange]));
+});
+
+it('properly filters students by segment', function () {
+    $startDate = now()->subDays(10);
+    $otherDate = now()->subDays(15);
+
+    $segment = Segment::factory()->create([
+      'model' => SegmentModel::Student,
+      'filters' => [
+        'queryBuilder' => [
+          'rules' => [
+            'C0Cy' => [
+              'type' => 'last',
+              'data' => [
+                'operator' => 'contains',
+                'settings' => [
+                  'text' => 'John',
+                ],
+              ],
+            ],
+          ],
+        ],
+      ],
+    ]);
+
+    $segmentTasks = Task::factory()->concerningStudent(Student::factory()->create(['last' => 'John']))->state([
+        'created_at' => $startDate,
+        'is_confidential' => false,
+    ])->create();
+
+    $nonSegmentTasks = Task::factory()->concerningStudent(Student::factory()->create(['last' => 'Doe']))->state([
+        'created_at' => $otherDate,
+        'is_confidential' => false,
+    ])->create();
+
+    $filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    livewire(MostRecentTasksTable::class, [
+        'cacheTag' => 'report-tasks',
+        'educatableType' => Student::class,
+        'filters' => $filters,
+    ])
+        ->assertCanSeeTableRecords(collect([$segmentTasks]))
+        ->assertCanNotSeeTableRecords(collect([$nonSegmentTasks]));
+    
+        livewire(MostRecentTasksTable::class, [
+        'cacheTag' => 'report-tasks',
+        'educatableType' => Student::class,
+        'filters' => [],
+    ])
+        ->assertCanSeeTableRecords(collect([$segmentTasks, $nonSegmentTasks]));
+});
+
+it('properly filters prospects by segment', function () {
+    $startDate = now()->subDays(10);
+    $otherDate = now()->subDays(15);
+
+    $segment = Segment::factory()->create([
+      'model' => SegmentModel::Prospect,
+      'filters' => [
+        'queryBuilder' => [
+          'rules' => [
+            'C0Cy' => [
+              'type' => 'last_name',
+              'data' => [
+                'operator' => 'contains',
+                'settings' => [
+                  'text' => 'John',
+                ],
+              ],
+            ],
+          ],
+        ],
+      ],
+    ]);
+
+    $segmentTasks = Task::factory()->concerningProspect(Prospect::factory()->create(['last_name' => 'John']))->state([
+        'created_at' => $startDate,
+        'is_confidential' => false,
+    ])->create();
+
+    $nonSegmentTasks = Task::factory()->concerningProspect(Prospect::factory()->create(['last_name' => 'Doe']))->state([
+        'created_at' => $otherDate,
+        'is_confidential' => false,
+    ])->create();
+
+    $filters = [
+        'populationSegment' => $segment->getKey(),
+    ];
+
+    livewire(MostRecentTasksTable::class, [
+        'cacheTag' => 'report-tasks',
+        'educatableType' => Prospect::class,
+        'filters' => $filters,
+    ])
+        ->assertCanSeeTableRecords(collect([$segmentTasks]))
+        ->assertCanNotSeeTableRecords(collect([$nonSegmentTasks]));
+    
+        livewire(MostRecentTasksTable::class, [
+        'cacheTag' => 'report-tasks',
+        'educatableType' => Prospect::class,
+        'filters' => [],
+    ])
+        ->assertCanSeeTableRecords(collect([$segmentTasks, $nonSegmentTasks]));
 });

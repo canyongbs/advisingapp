@@ -36,36 +36,35 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Report\Abstract\Contracts\HasSegmentModel;
 use AdvisingApp\Report\Abstract\EngagementReport;
 use AdvisingApp\Report\Filament\Widgets\MostRecentTasksTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\Report\Filament\Widgets\TaskCumulativeCountLineChart;
-use AdvisingApp\Report\Filament\Widgets\TaskStats;
+use AdvisingApp\Segment\Enums\SegmentModel;
 use App\Filament\Clusters\ReportLibrary;
 
-class TaskManagement extends EngagementReport
+class ProspectTaskManagement extends EngagementReport implements HasSegmentModel
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?string $navigationGroup = 'Project Management';
+    protected static ?string $navigationGroup = 'Prospects';
 
     protected static ?string $navigationLabel = 'Tasks Management';
 
     protected static ?string $title = 'Tasks (Overview)';
 
-    protected static string $routePath = 'tasks';
+    protected static string $routePath = 'prospect-tasks-report';
 
-    protected static ?int $navigationSort = 200;
+    protected static ?int $navigationSort = 80;
 
-    protected $cacheTag = 'report-tasks';
+    protected string $cacheTag = 'report-tasks';
 
     public function getWidgets(): array
     {
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            TaskStats::make(['cacheTag' => $this->cacheTag]),
-            TaskCumulativeCountLineChart::make(['cacheTag' => $this->cacheTag]),
-            MostRecentTasksTable::make(['cacheTag' => $this->cacheTag]),
+            MostRecentTasksTable::make(['cacheTag' => $this->cacheTag, 'educatableType' => Prospect::class]),
         ];
     }
 
@@ -83,5 +82,10 @@ class TaskManagement extends EngagementReport
         return [
             'filters' => $this->filters,
         ];
+    }
+
+    public function segmentModel(): ?SegmentModel
+    {
+        return SegmentModel::Prospect;
     }
 }
