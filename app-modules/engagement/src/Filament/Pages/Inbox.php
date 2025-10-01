@@ -37,6 +37,7 @@
 namespace AdvisingApp\Engagement\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Models\EngagementResponse;
@@ -49,11 +50,14 @@ use App\Models\User;
 use Filament\Actions\ViewAction;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class Inbox extends Page implements HasTable
@@ -158,7 +162,16 @@ class Inbox extends Page implements HasTable
             ])
             ->recordUrl(fn (EngagementResponse $record): string => ViewEngagementResponse::getUrl(['record' => $record]))
             ->defaultSort('sent_at', 'desc')
-            ->emptyStateHeading('No Engagements yet.');
+            ->emptyStateHeading('No Engagements yet.')
+            ->bulkActions([
+                BulkAction::make('markAs')->action(function (Collection $records): void {
+                    $records->each(function (EngagementResponse $record) {
+                        $record->status = EngagementResponseStatus::getInvertedStatus($record->status);
+
+                        $record->save();
+                    });
+                })->label('Mark as New/Actioned'),
+            ]);
     }
 
     /**
