@@ -40,7 +40,7 @@
             Tasks
         </x-slot>
 
-        <x-slot name="headerActions">
+        <x-slot name="afterHeader">
             <x-filament::button
                 color="gray"
                 tag="a"
