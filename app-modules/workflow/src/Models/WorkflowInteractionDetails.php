@@ -50,42 +50,41 @@ use OwenIt\Auditing\Contracts\Auditable;
  */
 class WorkflowInteractionDetails extends WorkflowDetails implements Auditable
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
+  use SoftDeletes;
+  use AuditableTrait;
+  use HasUuids;
 
-    protected $fillable = [
-        'interaction_initiative_id',
-        'interaction_driver_id',
-        'division_id',
-        'interaction_outcome_id',
-        'interaction_relation_id',
-        'interaction_status_id',
-        'interaction_type_id',
-        'start_datetime',
-        'end_datetime',
-        'subject',
-        'description',
-        'workflow_step_id',
-    ];
+  protected $fillable = [
+    'interaction_initiative_id',
+    'interaction_driver_id',
+    'division_id',
+    'interaction_outcome_id',
+    'interaction_relation_id',
+    'interaction_status_id',
+    'interaction_type_id',
+    'start_datetime',
+    'end_datetime',
+    'subject',
+    'description',
+  ];
 
-    protected $casts = [
-        'start_datetime' => 'datetime',
-        'end_datetime' => 'datetime',
-    ];
+  protected $casts = [
+    'start_datetime' => 'datetime',
+    'end_datetime' => 'datetime',
+  ];
 
-    public function getLabel(): string
-    {
-        return 'Interaction';
-    }
+  public function getLabel(): string
+  {
+    return 'Interaction';
+  }
 
-    public function getBlock(): WorkflowActionBlock
-    {
-        return InteractionBlock::make();
-    }
+  public function getBlock(): WorkflowActionBlock
+  {
+    return InteractionBlock::make();
+  }
 
-    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
-    {
-        return new InteractionWorkflowActionJob($workflowRunStep);
-    }
+  public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
+  {
+    return new InteractionWorkflowActionJob($workflowRunStep);
+  }
 }

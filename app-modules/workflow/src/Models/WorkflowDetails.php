@@ -55,52 +55,52 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 abstract class WorkflowDetails extends BaseModel
 {
-    abstract public function getLabel(): string;
+  abstract public function getLabel(): string;
 
-    abstract public function getBlock(): WorkflowActionBlock;
+  abstract public function getBlock(): WorkflowActionBlock;
 
-    abstract public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob;
+  abstract public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob;
 
-    /**
-     * @return array<int, WorkflowActionBlock>
-     */
-    public static function blocks(): array
-    {
-        $blocks = [
-            //            CareTeamBlock::make(),
-            EngagementEmailBlock::make(),
-            EngagementSmsBlock::make(),
-            //            InteractionBlock::make(),
-            ProactiveAlertBlock::make(),
-            SubscriptionBlock::make(),
-            //            TagsBlock::make(),
-            TaskBlock::make(),
-        ];
+  /**
+   * @return array<int, WorkflowActionBlock>
+   */
+  public static function blocks(): array
+  {
+    $blocks = [
+      //            CareTeamBlock::make(),
+      EngagementEmailBlock::make(),
+      EngagementSmsBlock::make(),
+      InteractionBlock::make(),
+      ProactiveAlertBlock::make(),
+      SubscriptionBlock::make(),
+      //            TagsBlock::make(),
+      TaskBlock::make(),
+    ];
 
-        if (app(LicenseSettings::class)->data->addons->caseManagement) {
-            $blocks[] = CaseBlock::make();
-        }
-
-        //        if (app(LicenseSettings::class)->data->addons->eventManagement) {
-        //            $blocks[] = EventBlock::make();
-        //        }
-
-        return $blocks;
+    if (app(LicenseSettings::class)->data->addons->caseManagement) {
+      $blocks[] = CaseBlock::make();
     }
 
-    /**
-     * @return array<int, covariant Field>
-     */
-    public function getEditFields(): array
-    {
-        return $this->getBlock()->editFields();
-    }
+    //        if (app(LicenseSettings::class)->data->addons->eventManagement) {
+    //            $blocks[] = EventBlock::make();
+    //        }
 
-    /**
-     * @return BelongsTo<WorkflowStep, $this>
-     */
-    public function workflowStep(): BelongsTo
-    {
-        return $this->belongsTo(WorkflowStep::class, 'current_details_id');
-    }
+    return $blocks;
+  }
+
+  /**
+   * @return array<int, covariant Field>
+   */
+  public function getEditFields(): array
+  {
+    return $this->getBlock()->editFields();
+  }
+
+  /**
+   * @return BelongsTo<WorkflowStep, $this>
+   */
+  public function workflowStep(): BelongsTo
+  {
+    return $this->belongsTo(WorkflowStep::class, 'current_details_id');
+  }
 }
