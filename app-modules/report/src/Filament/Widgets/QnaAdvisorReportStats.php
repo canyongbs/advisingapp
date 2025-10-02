@@ -117,7 +117,7 @@ class QnaAdvisorReportStats extends StatsOverviewReportWidget
             );
 
         return [
-            Stat::make($this->getStartDate() ?? 'none', Number::abbreviate($qnaAdvisors, maxPrecision: 2)),
+            Stat::make('QnA Advisors', Number::abbreviate($qnaAdvisors, maxPrecision: 2)),
             Stat::make('Students', Number::abbreviate($studentsCount, maxPrecision: 2)),
             Stat::make('Prospects', Number::abbreviate($prospectsCount, maxPrecision: 2)),
             Stat::make('Unauthenticated', Number::abbreviate($unauthenticatedCount, maxPrecision: 2)),
