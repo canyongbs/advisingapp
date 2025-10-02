@@ -37,8 +37,8 @@
 namespace AdvisingApp\Engagement\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
+use AdvisingApp\Engagement\Filament\Actions\BulkChangeStatusAction;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
@@ -47,9 +47,8 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
-use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\ViewAction;
-use Filament\Forms\Components\Select;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
@@ -57,7 +56,6 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class Inbox extends Page implements HasTable
@@ -164,24 +162,9 @@ class Inbox extends Page implements HasTable
             ->defaultSort('sent_at', 'desc')
             ->emptyStateHeading('No Engagements yet.')
             ->toolbarActions([
-                BulkAction::make('markAs')
-                    ->label('Mark as New/Actioned')
-                    ->schema([
-                        Select::make('status')
-                            ->label('Choose an Option')
-                            ->options([
-                                EngagementResponseStatus::New->value => 'New',
-                                EngagementResponseStatus::Actioned->value => 'Actioned',
-                            ])
-                            ->required(),
-                    ])
-                    ->action(function (Collection $records, array $data): void {
-                        $records->each(function (EngagementResponse $record) use ($data) {
-                            $record->status = $data['status'];
-
-                            $record->save();
-                        });
-                    }),
+                BulkActionGroup::make([
+                    BulkChangeStatusAction::make('inbox'),
+                ]),
             ]);
     }
 
