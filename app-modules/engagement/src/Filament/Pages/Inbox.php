@@ -47,11 +47,11 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
+use Filament\Actions\BulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -163,10 +163,10 @@ class Inbox extends Page implements HasTable
             ->recordUrl(fn (EngagementResponse $record): string => ViewEngagementResponse::getUrl(['record' => $record]))
             ->defaultSort('sent_at', 'desc')
             ->emptyStateHeading('No Engagements yet.')
-            ->bulkActions([
+            ->toolbarActions([
                 BulkAction::make('markAs')
                     ->label('Mark as New/Actioned')
-                    ->form([
+                    ->schema([
                         Select::make('status')
                             ->label('Choose an Option')
                             ->options([
