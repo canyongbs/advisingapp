@@ -141,7 +141,6 @@ class ProspectMessagesDetailTable extends BaseWidget
                     ->state(fn (HolisticEngagement $record): ?string => $record->sentBy ? match ($record->sentBy::class) {
                         Student::class, Prospect::class => $record->sentBy->{$record->sentBy->displayNameKey()},
                         User::class => $record->sentBy->name,
-                        null => 'System',
                         default => throw new Exception('Invalid sender type'),
                     } : null)
                     ->url(fn (HolisticEngagement $record): ?string => $record->sentBy ? match ($record->sentBy::class) {
