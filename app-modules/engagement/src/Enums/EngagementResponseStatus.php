@@ -47,12 +47,4 @@ enum EngagementResponseStatus: string implements HasLabel
     {
         return $this->name;
     }
-
-    public static function getInvertedStatus(EngagementResponseStatus $status): EngagementResponseStatus
-    {
-        return match ($status) {
-            EngagementResponseStatus::New => EngagementResponseStatus::Actioned,
-            EngagementResponseStatus::Actioned => EngagementResponseStatus::New,
-        };
-    }
 }
