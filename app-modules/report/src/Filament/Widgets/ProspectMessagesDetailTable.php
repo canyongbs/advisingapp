@@ -138,17 +138,16 @@ class ProspectMessagesDetailTable extends BaseWidget
                             END {$direction}
                         ", [$studentModel->getMorphClass(), $prospectModel->getMorphClass(), $userModel->getMorphClass()]);
                     })
-                    ->state(fn (HolisticEngagement $record): ?string => match ($record->sentBy::class) {
+                    ->state(fn (HolisticEngagement $record): ?string => $record->sentBy ? match ($record->sentBy::class) {
                         Student::class, Prospect::class => $record->sentBy->{$record->sentBy->displayNameKey()},
                         User::class => $record->sentBy->name,
-                        null => 'System',
                         default => throw new Exception('Invalid sender type'),
-                    })
-                    ->url(fn (HolisticEngagement $record): ?string => match ($record->sentBy::class) {
+                    } : null)
+                    ->url(fn (HolisticEngagement $record): ?string => $record->sentBy ? match ($record->sentBy::class) {
                         Student::class => StudentResource::getUrl('view', ['record' => $record->sentBy->getKey()]),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->sentBy->getKey()]),
                         default => null,
-                    })
+                    } : null)
                     ->openUrlInNewTab(),
                 TextColumn::make('sent_to')
                     ->label('Sent To')
