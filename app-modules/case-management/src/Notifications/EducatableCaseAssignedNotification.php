@@ -88,8 +88,9 @@ class EducatableCaseAssignedNotification extends Notification implements ShouldQ
                 ->settings($this->resolveNotificationSetting($notifiable))
                 ->subject("Your case {$this->case->case_number} has been assigned to agent")
                 ->greeting("Hello {$name},")
-                ->line("We’ve assigned an agent to your case {$this->case->case_number}. They will review it and follow up shortly.")
-                ->action('View case', route('portal.case.show', $this->case));
+                ->line("We've assigned an agent to your case {$this->case->case_number}. They will review it and follow up shortly.");
+            // This can be restored if/when we add case management to the portal
+            // ->action('View case', route('portal.case.show', $this->case));
         }
 
         $subject = $this->getSubject($template->subject);

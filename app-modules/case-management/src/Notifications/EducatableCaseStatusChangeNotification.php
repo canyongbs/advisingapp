@@ -88,8 +88,9 @@ class EducatableCaseStatusChangeNotification extends Notification implements Sho
                 ->settings($this->resolveNotificationSetting($notifiable))
                 ->subject("Status update: Case {$this->case->case_number} is now {$this->case->status?->name}")
                 ->greeting("Hello {$name},")
-                ->line("The status of your case {$this->case->case_number} has been updated to: {$this->case->status?->name}.")
-                ->action('View Case', route('portal.case.show', $this->case));
+                ->line("The status of your case {$this->case->case_number} has been updated to: {$this->case->status?->name}.");
+            // This can be restored if/when we add case management to the portal
+            // ->action('View Case', route('portal.case.show', $this->case));
         }
 
         $subject = $this->getSubject($template->subject);

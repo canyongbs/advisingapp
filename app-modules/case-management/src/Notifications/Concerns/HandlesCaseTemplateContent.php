@@ -109,9 +109,13 @@ trait HandlesCaseTemplateContent
                 $block['type'] === 'tiptapBlock' &&
                 ($block['attrs']['type'] ?? null) === 'caseTypeEmailTemplateButtonBlock'
             ) {
-                $block['attrs']['data']['url'] = $urlType == CaseTypeEmailTemplateRole::Customer ? route('portal.case.show', $this->case) : CaseResource::getUrl('view', [
-                    'record' => $this->case,
-                ]);
+                $block['attrs']['data']['url'] = $urlType == CaseTypeEmailTemplateRole::Customer
+                    ? null
+                    // This can be restored if/when we add case management to the portal
+                    // ? route('portal.case.show', $this->case)
+                    : CaseResource::getUrl('view', [
+                        'record' => $this->case,
+                    ]);
             }
 
             if (
