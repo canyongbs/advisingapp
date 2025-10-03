@@ -163,7 +163,7 @@ class Inbox extends Page implements HasTable
             ->emptyStateHeading('No Engagements yet.')
             ->toolbarActions([
                 BulkActionGroup::make([
-                    BulkChangeStatusAction::make('inbox'),
+                    BulkChangeStatusAction::make(),
                 ]),
             ]);
     }
