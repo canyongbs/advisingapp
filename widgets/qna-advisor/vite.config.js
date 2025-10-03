@@ -59,12 +59,7 @@ export default defineConfig({
                         ? 'advising-app-qna-advisor-widget.js'
                         : 'advising-app-qna-advisor-widget-app-[hash].js';
                 },
-                assetFileNames: (assetInfo) => {
-                    if (assetInfo.names?.[0]?.endsWith('.css')) {
-                        return 'advising-app-qna-advisor-widget-[hash].css';
-                    }
-                    return 'assets/[name]-[hash][extname]';
-                },
+                assetFileNames: 'advising-app-qna-advisor-widget-[hash].css',
             },
         },
         outDir: resolve(__dirname, '../../public/js/widgets/qna-advisor'),
