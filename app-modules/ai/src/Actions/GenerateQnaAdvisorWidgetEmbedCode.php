@@ -37,18 +37,29 @@
 namespace AdvisingApp\Ai\Actions;
 
 use AdvisingApp\Ai\Models\QnaAdvisor;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\URL;
 
 class GenerateQnaAdvisorWidgetEmbedCode
 {
     public function handle(QnaAdvisor $qnaAdvisor): string
     {
-        $scriptUrl = url('js/widgets/qna-advisor/advising-app-qna-advisor-widget.js');
-        $formDefinitionUrl = URL::route(name: 'ai.qna-advisors.show', parameters: ['advisor' => $qnaAdvisor]);
+        // Read the Vite manifest for widget assets to get cache-busted URLs
+        $manifestPath = public_path('js/widgets/qna-advisor/.vite/manifest.json');
+        $manifest = json_decode(File::get($manifestPath), true);
+
+        $loaderScriptUrl = url("js/widgets/qna-advisor/{$manifest['src/loader.js']['file']}");
+        $resourcesUrl = route('ai.qna-advisors.resources');
+
+        $widgetDefinitionUrl = URL::route(name: 'ai.qna-advisors.show', parameters: ['advisor' => $qnaAdvisor]);
 
         return <<<EOD
-        <qna-advisor-embed url="{$formDefinitionUrl}"></qna-advisor-embed>
-        <script src="{$scriptUrl}"></script>
+        <qna-advisor-embed
+            url="{$widgetDefinitionUrl}"
+            resources-url="{$resourcesUrl}"
+        >
+        </qna-advisor-embed>
+        <script src="{$loaderScriptUrl}"></script>
         EOD;
     }
 }
