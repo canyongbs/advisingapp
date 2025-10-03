@@ -93,7 +93,7 @@
         "orrison/meliorstan": "^0.2.2",
         "owen-it/laravel-auditing": "^14.0",
         "php-mime-mail-parser/php-mime-mail-parser": "^9.0",
-        "saade/filament-fullcalendar": "dev-filament-4-support",
+        "saade/filament-fullcalendar": "^4.0@beta",
         "sentry/sentry-laravel": "^4.7",
         "shuvroroy/filament-spatie-laravel-health": "^3.0",
         "socialiteproviders/google": "^4.1",
@@ -124,7 +124,6 @@
         "barryvdh/laravel-ide-helper": "^3.5",
         "brianium/paratest": "^7.2",
         "doctrine/dbal": "^4.2.3",
-        "filament/upgrade": "^4.0",
         "friendsofphp/php-cs-fixer": "^3.60",
         "larastan/larastan": "^3.0",
         "mockery/mockery": "^1.4.4",
@@ -261,10 +260,6 @@
             "options": {
                 "symlink": true
             }
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/MarioGattolla/filament-fullcalendar"
         }
     ]
 }
