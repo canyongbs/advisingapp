@@ -53,8 +53,6 @@ class GenerateQnaAdvisorWidgetEmbedCode
 
         $widgetDefinitionUrl = URL::route(name: 'ai.qna-advisors.show', parameters: ['advisor' => $qnaAdvisor]);
 
-        // TODO: This requires that folks update their embed, can we avoid that by pulling in from the main URL?
-
         return <<<EOD
         <qna-advisor-embed
             url="{$widgetDefinitionUrl}"
