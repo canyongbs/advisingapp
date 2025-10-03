@@ -62,7 +62,6 @@ use Illuminate\Support\Facades\Bus;
 it('will execute appropriately on each educatable in the segment', function (array $priorSubscriptions, Educatable&Subscribable $educatable, bool $removePrior) {
     Bus::fake();
     $user = User::factory()->create();
-    $student = Student::factory()->create();
 
     $workflowTrigger = WorkflowTrigger::factory()->create([
         'created_by_type' => User::class,
@@ -109,7 +108,19 @@ it('will execute appropriately on each educatable in the segment', function (arr
     expect($workflowRunStep->succeeded_at)->not()->toBeNull()
         ->and($workflowRunStep->last_failed_at)->toBeNull();
 
-    expect($workflowRunStep->details)->toHaveCount($users->count());
+    $relatedModel = $workflowRunStep->workflowRun->related;
+    assert($relatedModel instanceof Subscribable);
+    expect($relatedModel->subscriptions())->toHaveCount($users->count());
+
+    $relatedModel->subscriptions()
+        // @phpstan-ignore argument.type
+        ->each(function (Subscription $subscription) use ($users) {
+            expect($subscription)->toBeInstanceOf(Subscription::class);
+
+            /** @var Subscription $subscription */
+            expect($subscription->user->getKey())->toBeIn($users->pluck('id'))
+                ->and($subscription->subscribable->is($subscription->subscribable))->toBeTrue();
+        });
 })->with(
     [
         'no prior subscriptions | prospect | remove prior false' => [
