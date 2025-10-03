@@ -45,7 +45,7 @@ use Illuminate\Support\Str;
 
 class BulkChangeStatusAction
 {
-    public static function make(string $context): BulkAction
+    public static function make(): BulkAction
     {
         return BulkAction::make('bulkChangeStatus')
             ->label('Update Status')
@@ -56,10 +56,7 @@ class BulkChangeStatusAction
                 Select::make('status')
                     ->label('Which status should be applied?')
                     ->required()
-                    ->options([
-                        EngagementResponseStatus::New->value => 'New',
-                        EngagementResponseStatus::Actioned->value => 'Actioned',
-                    ])
+                    ->options(EngagementResponseStatus::class)
                     ->required(),
             ])
             ->action(function (Collection $records, array $data): void {
