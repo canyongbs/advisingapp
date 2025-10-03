@@ -36,20 +36,72 @@
 
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
+use AdvisingApp\Campaign\Settings\CampaignSettings;
+use App\Models\User;
+use Carbon\CarbonImmutable;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
 
 class SubscriptionBlock extends WorkflowActionBlock
 {
-    //TODO: implement
-    public function generateFields(): array
-    {
-        return [
-            Select::make('temp'),
-        ];
-    }
+  protected function setUp(): void
+  {
+    parent::setUp();
 
-    public static function type(): string
-    {
-        return 'workflow_subscription_block';
-    }
+    $this->label('Subscription');
+
+    $this->schema($this->createFields());
+  }
+
+  public function generateFields(string $fieldPrefix = ''): array
+  {
+    return [
+      Select::make($fieldPrefix . 'user_ids')
+        ->label('Who should be subscribed?')
+        ->options(User::all()->pluck('name', 'id'))
+        ->multiple()
+        ->searchable()
+        ->default([auth()->id()])
+        ->required()
+        ->exists('users', 'id'),
+      Toggle::make($fieldPrefix . 'remove_prior')
+        ->label('Remove all prior subscriptions?')
+        ->default(false)
+        ->hintIconTooltip('If checked, all prior care subscriptions will be removed.'),
+      Section::make('How long after the previous step should this occur?')
+        ->schema([
+          TextInput::make('days')
+            ->translateLabel()
+            ->numeric()
+            ->step(1)
+            ->minValue(0)
+            ->default(0)
+            ->inlineLabel(),
+          TextInput::make('hours')
+            ->translateLabel()
+            ->numeric()
+            ->step(1)
+            ->minValue(0)
+            ->default(0)
+            ->inlineLabel(),
+          TextInput::make('minutes')
+            ->translateLabel()
+            ->numeric()
+            ->step(1)
+            ->minValue(0)
+            ->default(0)
+            ->inlineLabel(),
+        ])
+        ->columns(3),
+
+    ];
+  }
+
+  public static function type(): string
+  {
+    return 'workflow_subscription_block';
+  }
 }

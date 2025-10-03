@@ -34,56 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Database\Factories;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Database\Factories\WorkflowSubscriptionDetailsFactory;
-use AdvisingApp\Workflow\Filament\Blocks\SubscriptionBlock;
-use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
-use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
-use AdvisingApp\Workflow\Jobs\SubscriptionWorkflowActionJob;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Testing\Fluent\Concerns\Has;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperWorkflowSubscriptionDetails
+ * @extends Factory<WorkflowProactiveAlertDetails>
  */
-class WorkflowSubscriptionDetails extends WorkflowDetails implements Auditable
+class WorkflowSubscriptionDetailsFactory extends Factory
 {
-  use SoftDeletes;
-  use AuditableTrait;
-  use HasUuids;
-
-
-  /** @use HasFactory<WorkflowSubscriptionDetailsFactory> */
-  use HasFactory;
-
-  protected $fillable = [
-    'user_ids',
-    'remove_prior',
-    'workflow_step_id',
-  ];
-
-  protected $casts = [
-    'user_ids' => 'array',
-    'remove_prior' => 'boolean',
-  ];
-
-  public function getLabel(): string
-  {
-    return 'Subscription';
-  }
-
-  public function getBlock(): WorkflowActionBlock
-  {
-    return SubscriptionBlock::make();
-  }
-
-  public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
-  {
-    return new SubscriptionWorkflowActionJob($workflowRunStep);
-  }
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'user_ids' => User::inRandomOrder()->take(3)->pluck('id')->toArray(),
+            'remove_prior' => $this->faker->boolean,
+        ];
+    }
 }
