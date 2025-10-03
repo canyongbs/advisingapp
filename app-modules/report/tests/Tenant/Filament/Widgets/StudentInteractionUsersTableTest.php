@@ -42,7 +42,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
 use Carbon\Carbon;
-use Filament\Tables\Actions\ExportAction;
+use Filament\Actions\ExportAction;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Livewire\livewire;
