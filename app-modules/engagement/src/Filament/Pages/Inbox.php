@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
+use AdvisingApp\Engagement\Filament\Actions\BulkChangeStatusAction;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
@@ -46,6 +47,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\ViewAction;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
@@ -158,7 +160,12 @@ class Inbox extends Page implements HasTable
             ])
             ->recordUrl(fn (EngagementResponse $record): string => ViewEngagementResponse::getUrl(['record' => $record]))
             ->defaultSort('sent_at', 'desc')
-            ->emptyStateHeading('No Engagements yet.');
+            ->emptyStateHeading('No Engagements yet.')
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    BulkChangeStatusAction::make(),
+                ]),
+            ]);
     }
 
     /**
