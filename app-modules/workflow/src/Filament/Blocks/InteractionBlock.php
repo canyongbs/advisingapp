@@ -139,44 +139,44 @@ class InteractionBlock extends WorkflowActionBlock
                 ->columns(2),
             Section::make('Time')
                 ->schema([
-                DateTimePicker::make($fieldPrefix . 'start_datetime')
+                    DateTimePicker::make($fieldPrefix . 'start_datetime')
                         ->seconds(false)
                         ->required(),
-                DateTimePicker::make($fieldPrefix . 'end_datetime')
+                    DateTimePicker::make($fieldPrefix . 'end_datetime')
                         ->seconds(false)
                         ->required(),
-            ])->columns(2),
+                ])->columns(2),
             Section::make('Notes')
                 ->schema([
-                TextInput::make($fieldPrefix . 'subject')
+                    TextInput::make($fieldPrefix . 'subject')
                         ->required(),
-                Textarea::make($fieldPrefix . 'description')
+                    Textarea::make($fieldPrefix . 'description')
                         ->required(),
-            ])->columns(2),
+                ])->columns(2),
             Section::make('How long after the previous step should this occur?')
                 ->schema([
-                TextInput::make('days')
+                    TextInput::make('days')
                         ->translateLabel()
                         ->numeric()
                         ->step(1)
                         ->minValue(0)
                         ->default(0)
                         ->inlineLabel(),
-                TextInput::make('hours')
+                    TextInput::make('hours')
                         ->translateLabel()
                         ->numeric()
                         ->step(1)
                         ->minValue(0)
                         ->default(0)
                         ->inlineLabel(),
-                TextInput::make('minutes')
+                    TextInput::make('minutes')
                         ->translateLabel()
                         ->numeric()
                         ->step(1)
                         ->minValue(0)
                         ->default(0)
                         ->inlineLabel(),
-            ])
+                ])
                 ->columns(3),
         ];
 
