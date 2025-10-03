@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,45 +33,25 @@
 
 </COPYRIGHT>
 */
-import vue from '@vitejs/plugin-vue';
-import { resolve } from 'path';
-import { defineConfig } from 'vite';
 
-export default defineConfig({
-    plugins: [vue()],
-    base: '/js/widgets/qna-advisor/',
-    build: {
-        manifest: true,
-        rollupOptions: {
-            input: {
-                widget: resolve(__dirname, './src/widget.js'),
-                loader: resolve(__dirname, './src/loader.js'),
-            },
-            output: {
-                manualChunks: {
-                    // Vue ecosystem
-                    'vue-vendor': ['vue', 'vue-router', 'pinia'],
-                    // FormKit
-                    formkit: ['@formkit/vue', '@formkit/icons', '@formkit/themes'],
-                    // Axios and other utilities
-                    utils: ['axios'],
-                },
-                entryFileNames: (chunkInfo) => {
-                    return chunkInfo.name === 'loader'
-                        ? 'advising-app-qna-advisor-widget.js'
-                        : 'advising-app-qna-advisor-widget-app-[hash].js';
-                },
-                assetFileNames: 'advising-app-qna-advisor-widget-[hash].css',
-            },
-        },
-        outDir: resolve(__dirname, '../../public/js/widgets/qna-advisor'),
-        emptyOutDir: true,
-        sourcemap: true,
-    },
-    resolve: {
-        alias: {
-            '@': resolve(__dirname, 'src'),
-        },
-    },
-    define: { 'process.env.NODE_ENV': '"production"' },
-});
+namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
+
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\File;
+
+class QnaAdvisorResourcesController
+{
+    public function __invoke(): JsonResponse
+    {
+        // Read the Vite manifest for portal assets
+        $manifestPath = public_path('js/widgets/qna-advisor/.vite/manifest.json');
+        $manifest = json_decode(File::get($manifestPath), true);
+
+        $portalEntry = $manifest['src/portal.js'];
+
+        return response()->json([
+            'js' => url("js/widgets/qna-advisor/{$portalEntry['file']}"),
+            'css' => url("js/widgets/qna-advisor/{$portalEntry['css'][0]}"),
+        ]);
+    }
+}

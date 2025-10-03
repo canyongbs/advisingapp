@@ -37,6 +37,7 @@
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\AuthenticationConfirmController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\AuthenticationRefreshController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\FinishAdvisorThreadController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\QnaAdvisorResourcesController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\RegisterProspectController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\RequestAuthenticationController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendAdvisorMessageController as SendQnaAdvisorMessageController;
@@ -46,6 +47,7 @@ use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorRequestComingFromAuthorizedDo
 use AdvisingApp\Ai\Http\Middleware\QnaAdvisorAuthorization;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Support\Facades\Route;
+
 
 Route::middleware([
     'api',
@@ -58,6 +60,9 @@ Route::middleware([
     ->group(function () {
         Route::post('/', ShowAdvisorController::class)
             ->name('show');
+
+        Route::get('/resources', QnaAdvisorResourcesController::class)
+            ->name('resources');
 
         Route::post('/authenticate/request', RequestAuthenticationController::class)
             ->middleware(['signed'])
