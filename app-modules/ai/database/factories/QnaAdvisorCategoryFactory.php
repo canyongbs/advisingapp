@@ -53,7 +53,7 @@ class QnaAdvisorCategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word(),
+            'name' => $this->faker->unique()->sentence(),
             'description' => $this->faker->sentence(),
             'qna_advisor_id' => QnaAdvisor::factory(),
         ];
