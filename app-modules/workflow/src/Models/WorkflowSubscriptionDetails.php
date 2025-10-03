@@ -45,7 +45,6 @@ use AdvisingApp\Workflow\Jobs\SubscriptionWorkflowActionJob;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Testing\Fluent\Concerns\Has;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -53,37 +52,36 @@ use OwenIt\Auditing\Contracts\Auditable;
  */
 class WorkflowSubscriptionDetails extends WorkflowDetails implements Auditable
 {
-  use SoftDeletes;
-  use AuditableTrait;
-  use HasUuids;
+    use SoftDeletes;
+    use AuditableTrait;
+    use HasUuids;
 
+    /** @use HasFactory<WorkflowSubscriptionDetailsFactory> */
+    use HasFactory;
 
-  /** @use HasFactory<WorkflowSubscriptionDetailsFactory> */
-  use HasFactory;
+    protected $fillable = [
+        'user_ids',
+        'remove_prior',
+        'workflow_step_id',
+    ];
 
-  protected $fillable = [
-    'user_ids',
-    'remove_prior',
-    'workflow_step_id',
-  ];
+    protected $casts = [
+        'user_ids' => 'array',
+        'remove_prior' => 'boolean',
+    ];
 
-  protected $casts = [
-    'user_ids' => 'array',
-    'remove_prior' => 'boolean',
-  ];
+    public function getLabel(): string
+    {
+        return 'Subscription';
+    }
 
-  public function getLabel(): string
-  {
-    return 'Subscription';
-  }
+    public function getBlock(): WorkflowActionBlock
+    {
+        return SubscriptionBlock::make();
+    }
 
-  public function getBlock(): WorkflowActionBlock
-  {
-    return SubscriptionBlock::make();
-  }
-
-  public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
-  {
-    return new SubscriptionWorkflowActionJob($workflowRunStep);
-  }
+    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
+    {
+        return new SubscriptionWorkflowActionJob($workflowRunStep);
+    }
 }
