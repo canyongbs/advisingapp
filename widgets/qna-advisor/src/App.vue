@@ -41,7 +41,17 @@ import loadingSpinner from '../public/images/loading-spinner.svg?url';
 import userAvatar from '../public/images/user-default-avatar.svg?url';
 import { useAuthStore } from './stores/auth';
 
-const props = defineProps(['url']);
+const props = defineProps({
+    url: {
+        type: String,
+        required: true,
+    },
+    cssUrl: {
+        type: String,
+        required: true,
+        default: null,
+    },
+});
 const authStore = useAuthStore();
 const requiresAuthentication = ref(false);
 const authentication = ref({
@@ -71,11 +81,6 @@ const advisor = ref({
     avatar_url: null,
 });
 let websocketChannel = null;
-
-const scriptUrl = new URL(document.currentScript.getAttribute('src'));
-const protocol = scriptUrl.protocol;
-const scriptHostname = scriptUrl.hostname;
-const hostUrl = `${protocol}//${scriptHostname}`;
 
 onMounted(async () => {
     axios
@@ -591,7 +596,7 @@ async function authorizedPost(url, data) {
             v-show="!isSplashScreenVisible && sendMessageUrl !== null && !authentication.promptToAuthenticate"
             class="flex flex-col gap-y-3 w-11/12 mx-auto"
         >
-            <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/qna-advisor/style.css'" />
+            <link rel="stylesheet" v-bind:href="cssUrl" />
             <div class="flex h-[calc(100dvh-16rem)] flex-col gap-y-3">
                 <div
                     class="flex flex-1 flex-col-reverse overflow-y-auto rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
