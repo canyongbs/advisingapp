@@ -48,55 +48,58 @@ use Throwable;
 
 class SubscriptionWorkflowActionJob extends ExecuteWorkflowActionJob
 {
-    use SchedulesNextWorkflowStep;
+  use SchedulesNextWorkflowStep;
 
-    public function handle(): void
-    {
-        try {
-            DB::beginTransaction();
+  public function handle(): void
+  {
+    try {
 
-            $educatable = $this->workflowRunStep->workflowRun->related;
+      DB::beginTransaction();
 
-            assert($educatable instanceof Subscribable);
+      $educatable = $this->workflowRunStep->workflowRun->related;
 
-            $details = $this->workflowRunStep->details;
+      assert($educatable instanceof Subscribable);
 
-            assert($details instanceof WorkflowSubscriptionDetails);
+      $details = $this->workflowRunStep->details;
 
-            if ($details->remove_prior) {
-                $educatable->subscriptions()->delete();
-            }
+      assert($details instanceof WorkflowSubscriptionDetails);
 
-            /** @var array<Subscription> $subscriptions */
-            $subscriptions = [];
+      if ($details->remove_prior) {
 
-            foreach ($details->user_ids as $userId) {
-                $user = User::find($userId);
+        $educatable->subscriptions()->delete();
+      }
 
-                if (is_null($user) || ! is_null($user->deleted_at)) {
-                    continue;
-                }
+      /** @var array<Subscription> $subscriptions */
+      $subscriptions = [];
 
-                $subscriptions[] = resolve(SubscriptionCreate::class)
-                    ->handle($user, $educatable);
-            }
+      foreach ($details->user_ids as $userId) {
+        $user = User::find($userId);
 
-            foreach ($subscriptions as $subscription) {
-                $workflowRunStepRelated = new WorkflowRunStepRelated();
-
-                $workflowRunStepRelated->workflowRunStep()->associate($this->workflowRunStep);
-                $workflowRunStepRelated->related()->associate($subscription);
-
-                $workflowRunStepRelated->save();
-            }
-
-            $this->markStepCompletedAndScheduleNext();
-
-            DB::commit();
-        } catch (Throwable $throw) {
-            DB::rollBack();
-
-            throw $throw;
+        if (is_null($user) || ! is_null($user->deleted_at)) {
+          continue;
         }
+
+        $subscriptions[] = resolve(SubscriptionCreate::class)
+          ->handle($user, $educatable);
+      }
+
+      foreach ($subscriptions as $subscription) {
+        $workflowRunStepRelated = new WorkflowRunStepRelated();
+
+        $workflowRunStepRelated->workflowRunStep()->associate($this->workflowRunStep);
+        $workflowRunStepRelated->related()->associate($subscription);
+
+        $workflowRunStepRelated->save();
+      }
+
+
+      $this->markStepCompletedAndScheduleNext();
+
+      DB::commit();
+    } catch (Throwable $throw) {
+      DB::rollBack();
+
+      throw $throw;
     }
+  }
 }

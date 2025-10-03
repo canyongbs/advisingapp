@@ -44,6 +44,7 @@ use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
 use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
 use AdvisingApp\Workflow\Models\WorkflowStep;
+use AdvisingApp\Workflow\Models\WorkflowSubscriptionDetails;
 use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
 use Carbon\CarbonInterval;
 use Filament\Actions\Action;
@@ -98,7 +99,7 @@ class WorkflowStepsRelationManager extends RelationManager
                     }),
                 TextColumn::make('delay_minutes')
                     ->label('Delay from Previous Step')
-                    ->state(fn (WorkflowStep $record) => CarbonInterval::minutes($record->delay_minutes)->cascade()->forHumans()),
+                    ->state(fn(WorkflowStep $record) => CarbonInterval::minutes($record->delay_minutes)->cascade()->forHumans()),
             ])
             ->headerActions([
                 Action::make('create')
@@ -155,7 +156,7 @@ class WorkflowStepsRelationManager extends RelationManager
                                 }
                             }),
                     ])
-                    ->action(fn () => null),
+                    ->action(fn() => null),
             ])
             ->recordActions([
                 EditAction::make()
@@ -251,6 +252,10 @@ class WorkflowStepsRelationManager extends RelationManager
                 'description' => $transformedData['description'],
                 'due' => $transformedData['due'],
                 'assigned_to' => $transformedData['assigned_to'],
+            ]),
+            'workflow_subscription_block' => WorkflowSubscriptionDetails::create([
+                'user_ids' => $transformedData['user_ids'],
+                'remove_prior' => $transformedData['remove_prior'],
             ]),
             default => null,
         };
