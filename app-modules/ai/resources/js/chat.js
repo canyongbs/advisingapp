@@ -353,6 +353,8 @@ document.addEventListener('alpine:init', () => {
                                 });
                             });
                         }
+
+                        this.$wire.refreshThreads();
                     });
 
                 this.isLoading = false;
@@ -414,9 +416,6 @@ document.addEventListener('alpine:init', () => {
                 if (!this.isCompletingPreviousResponse) {
                     this.$wire.clearFiles();
                 }
-
-                this.$wire.refreshThreads();
-                this.$dispatch('refresh-threads', { threadId: threadId });
             },
 
             sendMessage: async function (prompt = null) {
