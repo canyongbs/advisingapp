@@ -51,21 +51,22 @@ use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Scopes\ExcludeConvertedProspects;
-use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Wizard\Step;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 
@@ -90,13 +91,13 @@ class CreateInteraction extends CreateRecord
                         ->searchable()
                         ->required()
                         ->types([
-                            ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [MorphToSelect\Type::make(Student::class)
+                            ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [Type::make(Student::class)
                                 ->titleAttribute(Student::displayNameKey())] : []),
-                            ...(auth()->user()->hasLicense(Prospect::getLicenseType()) ? [MorphToSelect\Type::make(Prospect::class)
+                            ...(auth()->user()->hasLicense(Prospect::getLicenseType()) ? [Type::make(Prospect::class)
                                 ->titleAttribute(Prospect::displayNameKey())
                                 ->modifyOptionsQueryUsing(fn (Builder $query) => $query->tap(new ExcludeConvertedProspects())),
                             ] : []),
-                            MorphToSelect\Type::make(CaseModel::class)
+                            Type::make(CaseModel::class)
                                 ->label('Case')
                                 ->titleAttribute('case_number'),
                         ])

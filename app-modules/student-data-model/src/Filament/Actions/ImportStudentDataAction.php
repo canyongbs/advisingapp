@@ -50,15 +50,16 @@ use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentDataImport;
 use App\Models\Import;
+use Filament\Actions\Action;
+use Filament\Actions\ImportAction;
 use Filament\Actions\Imports\Events\ImportStarted;
 use Filament\Actions\Imports\ImportColumn;
-use Filament\Forms;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ImportAction;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Foundation\Bus\PendingChain;
@@ -87,7 +88,7 @@ class ImportStudentDataAction
             ->placeholder('Upload a students CSV file')
             ->acceptedFileTypes(['text/csv', 'text/x-csv', 'application/csv', 'application/x-csv', 'text/comma-separated-values', 'text/x-comma-separated-values', 'text/plain', 'application/vnd.ms-excel'])
             ->rules($action->getFileValidationRules())
-            ->afterStateUpdated(function (FileUpload $component, Component $livewire, Forms\Set $set, ?TemporaryUploadedFile $state) use ($action, $columnMapStatePath, $importer) {
+            ->afterStateUpdated(function (FileUpload $component, Component $livewire, Set $set, ?TemporaryUploadedFile $state) use ($action, $columnMapStatePath, $importer) {
                 if (! $state instanceof TemporaryUploadedFile) {
                     return;
                 }
@@ -141,7 +142,7 @@ class ImportStudentDataAction
         $makeColumnMapper = fn (string $name = 'columnMap', ?string $fileStatePath = 'file', ?string $importer = null): Fieldset => Fieldset::make(__('filament-actions::import.modal.form.columns.label'))
             ->columns(1)
             ->inlineLabel()
-            ->schema(function (Forms\Get $get) use ($action, $fileStatePath, $importer): array {
+            ->schema(function (Get $get) use ($action, $fileStatePath, $importer): array {
                 $csvFile = Arr::first((array) ($get($fileStatePath) ?? []));
 
                 if (! $csvFile instanceof TemporaryUploadedFile) {
@@ -171,7 +172,7 @@ class ImportStudentDataAction
                 );
             })
             ->statePath($name)
-            ->visible(fn (Forms\Get $get): bool => Arr::first((array) ($get($fileStatePath) ?? [])) instanceof TemporaryUploadedFile);
+            ->visible(fn (Get $get): bool => Arr::first((array) ($get($fileStatePath) ?? [])) instanceof TemporaryUploadedFile);
 
         $makeDownloadAction = fn (string $name, ?string $importer): Action => Action::make($name)
             ->label(__('filament-actions::import.modal.actions.download_example.label'))
@@ -233,7 +234,7 @@ class ImportStudentDataAction
                 $action->getModalAction('downloadEnrollmentsExample')?->label('Enrollments')->toHtml(),
             ])->filter()->implode(' | ')))
             ->modalSubmitActionLabel('Sync Records')
-            ->form(fn (ImportAction $action): array => array_merge([
+            ->schema(fn (ImportAction $action): array => array_merge([
                 $makeFileUpload(),
                 $makeFileUpload(
                     name: 'emailAddressesFile',

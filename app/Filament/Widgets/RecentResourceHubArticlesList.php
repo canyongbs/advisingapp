@@ -39,7 +39,7 @@ namespace App\Filament\Widgets;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use App\Filament\Tables\Columns\IdColumn;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -84,7 +84,7 @@ class RecentResourceHubArticlesList extends BaseWidget
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->url(fn (ResourceHubArticle $record): string => ResourceHubArticleResource::getUrl(name: 'view', parameters: ['record' => $record])),
             ])

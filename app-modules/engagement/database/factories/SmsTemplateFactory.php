@@ -36,10 +36,11 @@
 
 namespace AdvisingApp\Engagement\Database\Factories;
 
+use AdvisingApp\Engagement\Models\SmsTemplate;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Engagement\Models\SmsTemplate>
+ * @extends Factory<SmsTemplate>
  */
 class SmsTemplateFactory extends Factory
 {

@@ -41,18 +41,17 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action as FormAction;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Split;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Exceptions\Halt;
@@ -60,13 +59,13 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 abstract class ProfilePage extends Page
 {
     use InteractsWithFormActions;
 
-    protected static string $view = 'filament.pages.profile-save';
+    protected string $view = 'filament.pages.profile-save';
 
     protected static ?string $cluster = ProfileSettings::class;
 
@@ -190,7 +189,7 @@ abstract class ProfilePage extends Page
 
     public function getSavedNotificationTitle(): ?string
     {
-        return __('filament-panels::pages/auth/edit-profile.notifications.saved.title');
+        return __('filament-panels::auth/pages/edit-profile.notifications.saved.title');
     }
 
     public function getRedirectUrl(): ?string
@@ -212,7 +211,7 @@ abstract class ProfilePage extends Page
     public function getCancelFormAction(): Action
     {
         return Action::make('cancel')
-            ->label(__('filament-panels::pages/auth/edit-profile.actions.cancel.label'))
+            ->label(__('filament-panels::auth/pages/edit-profile.actions.cancel.label'))
             ->url(filament()->getUrl())
             ->color('gray');
     }
@@ -225,19 +224,17 @@ abstract class ProfilePage extends Page
             ->keyBindings(['mod+s']);
     }
 
-    /**
-     * @return array<int | string, string | Form>
-     */
-    protected function getForms(): array
+    public function form(Schema $schema): Schema
     {
-        return [
-            'form' => $this->form(
-                $this->makeForm()
-                    ->operation('edit')
-                    ->model($this->getUser())
-                    ->statePath('data'),
-            ),
-        ];
+        return $schema;
+    }
+
+    public function defaultForm(Schema $schema): Schema
+    {
+        return $schema
+            ->operation('edit')
+            ->model($this->getUser())
+            ->statePath('data');
     }
 
     protected function hasFullWidthFormActions(): bool
@@ -259,12 +256,12 @@ abstract class ProfilePage extends Page
             'friday',
             'saturday',
         ])->map(
-            fn ($day) => Split::make([
+            fn ($day) => Flex::make([
                 Toggle::make("{$key}.{$day}.enabled")
                     ->label(str($day)->ucfirst())
                     ->inline(false)
                     ->live(),
-                Split::make([
+                Flex::make([
                     TimePicker::make("{$key}.{$day}.starts_at")
                         ->required()
                         ->visible(fn (Get $get) => $get("{$key}.{$day}.enabled")),
@@ -274,7 +271,7 @@ abstract class ProfilePage extends Page
                 ]),
 
                 Actions::make([
-                    FormAction::make("copy_time_from_{$day}_{$key}")
+                    Action::make("copy_time_from_{$day}_{$key}")
                         ->label('Copy to All')
                         ->visible(fn (Get $get) => $get("{$key}.{$day}.enabled"))
                         ->link()

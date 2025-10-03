@@ -39,6 +39,7 @@ namespace AdvisingApp\CaseManagement\Tests\Tenant\Filament\Actions\RequestFactor
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Team\Models\Team;
 use App\Models\User;
 use Worksome\RequestFactories\RequestFactory;
 
@@ -55,7 +56,7 @@ class BulkCreateCaseActionRequestFactory extends RequestFactory
             'priority_id' => $priority->getKey(),
             'close_details' => $this->faker->sentence,
             'res_details' => $this->faker->sentence,
-            'assigned_to_id' => User::factory(),
+            'assigned_to_id' => User::factory()->for(Team::factory()->hasAttached($priority->type, relationship: 'manageableCaseTypes')),
         ];
     }
 }

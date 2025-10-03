@@ -51,18 +51,17 @@ use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use App\Filament\Forms\Components\EducatableSelect;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Schema;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
@@ -97,17 +96,17 @@ class SendEngagementAction extends Action
 
                 return auth()->user()->can('create', [Engagement::class, $educatable instanceof Prospect ? $educatable : null]);
             })
-            ->mountUsing(function (array $arguments, Form $form, Page $livewire) {
+            ->mountUsing(function (array $arguments, Schema $schema, Page $livewire) {
                 $livewire->dispatch('engage-action-finished-loading');
 
                 if (filled($arguments['route'] ?? null)) {
-                    $form->fill([
+                    $schema->fill([
                         'channel' => $arguments['channel'] ?? 'email',
                         'recipient_route_id' => $arguments['route'],
                         'signature' => auth()->user()->signature,
                     ]);
                 } else {
-                    $form->fill();
+                    $schema->fill();
                 }
             })
             ->steps(fn (): array => [
@@ -301,8 +300,8 @@ class SendEngagementAction extends Action
                                 ])
                                 ->profile('email')
                                 ->required()
-                                ->hintAction(fn (TiptapEditor $component) => FormAction::make('loadEmailTemplate')
-                                    ->form([
+                                ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
+                                    ->schema([
                                         Select::make('emailTemplate')
                                             ->searchable()
                                             ->options(function (Get $get): array {
@@ -392,7 +391,7 @@ class SendEngagementAction extends Action
                             ->visible(fn (Get $get) => $get('send_later')),
                     ]),
             ])
-            ->action(function (array $data, Form $form, Page $livewire) {
+            ->action(function (array $data, Schema $schema, Page $livewire) {
                 /** @var Student | Prospect $recipient */
                 $recipient = $this->getEducatable() ?? match ($data['recipient_type']) {
                     'student' => Student::find($data['recipient_id']),
@@ -409,7 +408,7 @@ class SendEngagementAction extends Action
                     ...($data['signature']['content'] ?? []),
                 ];
 
-                $formFields = $form->getFlatFields();
+                $formFields = $schema->getFlatFields();
 
                 /** @var TiptapEditor $bodyField */
                 $bodyField = $formFields['body'] ?? null;
@@ -451,7 +450,7 @@ class SendEngagementAction extends Action
                     recipientRoute: $recipientRoute,
                 ));
 
-                $form->model($engagement)->saveRelationships();
+                $schema->model($engagement)->saveRelationships();
 
                 $livewire->dispatch('engagement-sent');
             })

@@ -45,7 +45,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 
 class ConvertToStudent extends Action
 {
@@ -55,9 +55,9 @@ class ConvertToStudent extends Action
 
         $this
             ->modalHeading('Convert Prospect to Student')
-            ->modalWidth(MaxWidth::ExtraLarge)
+            ->modalWidth(Width::ExtraLarge)
             ->modalSubmitActionLabel('Convert')
-            ->form([
+            ->schema([
                 Select::make('student_id')
                     ->relationship('student', 'full_name')
                     ->required()
@@ -97,7 +97,7 @@ class ConvertToStudent extends Action
                     ->send();
 
                 if ($livewire::getResourcePageName() === 'edit') {
-                    $this->redirect(ProspectResource::getUrl('view', ['record' => $this->record]));
+                    $this->redirect(ProspectResource::getUrl('view', ['record' => $record]));
                 }
             });
     }

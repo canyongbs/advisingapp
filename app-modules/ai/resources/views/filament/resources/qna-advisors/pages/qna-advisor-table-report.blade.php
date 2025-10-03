@@ -31,30 +31,22 @@
 
 </COPYRIGHT>
 --}}
-            
-@php
-    use Filament\Support\Colors\Color;
-@endphp
 
-<div  
-    x-data="{ isVisible: @entangle('isVisible') }" 
-    x-show="isVisible"
-    wire:loading.remove
-    style="display: none; --c-600: {{ Color::all()[$color][600] }}"
-    class="sticky top-16 z-10 bg-custom-600 text-sm font-medium text-white px-6 py-2 flex items-center h-10"
->
-    {{ $brandingBarText}}
-    
-    <button  
-          x-data="{ isDismissible: @entangle('dismissible') }" 
-          x-show="isDismissible" 
-          @click="$wire.dismiss()" 
-          class="hover:text-gray-400 ml-auto"
-    >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-    </button>
-</div>
+@use('AdvisingApp\Ai\Enums\QnaAdvisorReportTableTab')
 
-          
+<x-filament-widgets::widget class="fi-wi-table flex flex-col gap-y-6">
+    <div class="flex justify-center">
+        <x-filament::tabs>
+            @foreach (QnaAdvisorReportTableTab::cases() as $tab)
+                <x-filament::tabs.item
+                    wire:click="$set('activeTab', '{{ $tab->value }}')"
+                    :active="$activeTab === $tab->value"
+                >
+                    {{ $tab->getLabel() }}
+                </x-filament::tabs.item>
+            @endforeach
+        </x-filament::tabs>
+    </div>
+
+    {{ $this->table }}
+</x-filament-widgets::widget>

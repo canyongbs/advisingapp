@@ -60,7 +60,7 @@
         @else
             <div class="flex flex-col px-6">
                 <div class="mb-5 flex items-center justify-center">
-                    <div class="rounded-full bg-gray-100 p-3 dark:bg-gray-500/20">
+                    <div class="dark:bg-gray-500/20 rounded-full bg-gray-100 p-3">
                         <x-heroicon-o-bell-slash class="h-6 w-6 text-gray-500 dark:text-gray-400" />
                     </div>
                 </div>

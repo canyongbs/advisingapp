@@ -40,13 +40,15 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
+use Filament\Actions\ViewAction;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -58,7 +60,7 @@ class Inbox extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected static string $view = 'engagement::filament.pages.inbox';
+    protected string $view = 'engagement::filament.pages.inbox';
 
     protected static ?string $cluster = UnifiedInbox::class;
 
@@ -103,6 +105,21 @@ class Inbox extends Page implements HasTable
                         return (($record->sender instanceof Student) || ($record->sender instanceof Prospect))
                             ? $record->sender->full_name
                             : null;
+                    })
+                    ->url(function (EngagementResponse $record) {
+                        if ($record->sender instanceof Student) {
+                            return StudentResource::getUrl('view', [
+                                'record' => $record->sender,
+                            ]);
+                        }
+
+                        if ($record->sender instanceof Prospect) {
+                            return ProspectResource::getUrl('view', [
+                                'record' => $record->sender,
+                            ]);
+                        }
+
+                        return null;
                     }),
                 TextColumn::make('type')
                     ->formatStateUsing(fn (EngagementResponse $record) => match ($record->type) {
@@ -122,7 +139,7 @@ class Inbox extends Page implements HasTable
                     ->dateTime()
                     ->sortable(),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->url(fn (EngagementResponse $record): string => ViewEngagementResponse::getUrl(['record' => $record])),
             ])

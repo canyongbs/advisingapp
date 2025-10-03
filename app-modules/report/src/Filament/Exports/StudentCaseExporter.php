@@ -53,7 +53,7 @@ class StudentCaseExporter extends Exporter
                 ->label('Case Number'),
             ExportColumn::make('respondent')
                 ->label('Related To')
-                ->getStateUsing(function (CaseModel $record): string {
+                ->state(function (CaseModel $record): string {
                     $respondent = $record->respondent;
                     assert($respondent instanceof Student);
 
@@ -67,12 +67,12 @@ class StudentCaseExporter extends Exporter
                 ->label('Assigned To'),
             ExportColumn::make('response')
                 ->label('Response')
-                ->getStateUsing(function (CaseModel $record) {
+                ->state(function (CaseModel $record) {
                     return $record->getSlaResponseSeconds();
                 }),
             ExportColumn::make('sla_resolution_seconds')
                 ->label('Resolution')
-                ->getStateUsing(function (CaseModel $record) {
+                ->state(function (CaseModel $record) {
                     return $record->getSlaResolutionSeconds();
                 }),
         ];

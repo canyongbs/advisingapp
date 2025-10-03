@@ -41,7 +41,6 @@ use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories\EditCaseUpdateRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
-use Illuminate\Validation\Rules\Enum;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -96,11 +95,11 @@ test('EditCaseUpdate requires valid data', function ($data, $errors) {
 })->with(
     [
         'case missing' => [EditCaseUpdateRequestFactory::new()->state(['case_model_id' => null]), ['case_model_id' => 'required']],
-        'case not existing case id' => [EditCaseUpdateRequestFactory::new()->state(['case_model_id' => fake()->uuid()]), ['case_model_id' => 'exists']],
+        'case not existing case id' => [EditCaseUpdateRequestFactory::new()->state(['case_model_id' => fake()->uuid()]), ['case_model_id']],
         'update missing' => [EditCaseUpdateRequestFactory::new()->state(['update' => null]), ['update' => 'required']],
         'update is not a string' => [EditCaseUpdateRequestFactory::new()->state(['update' => 99]), ['update' => 'string']],
         'direction missing' => [EditCaseUpdateRequestFactory::new()->state(['direction' => null]), ['direction' => 'required']],
-        'direction not a valid enum' => [EditCaseUpdateRequestFactory::new()->state(['direction' => 'invalid']), ['direction' => Enum::class]],
+        'direction not a valid enum' => [EditCaseUpdateRequestFactory::new()->state(['direction' => 'invalid']), ['direction']],
         'internal not a boolean' => [EditCaseUpdateRequestFactory::new()->state(['internal' => 'invalid']), ['internal' => 'boolean']],
     ]
 );

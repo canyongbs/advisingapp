@@ -38,8 +38,8 @@ namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationMan
 
 use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
 
 class InteractionsRelationManager extends RelationManager
 {
@@ -47,8 +47,8 @@ class InteractionsRelationManager extends RelationManager
 
     protected static string $relationship = 'interactions';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return (resolve(CreateInteraction::class))->form($form);
+        return (resolve(CreateInteraction::class))->form($schema);
     }
 }

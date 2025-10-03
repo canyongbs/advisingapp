@@ -82,24 +82,37 @@
 
         @if ($this->table->getColumns())
             <div class="flex flex-col gap-y-6">
-                <x-filament-panels::resources.tabs />
+                @if (count($tabs = $this->getCachedTabs()))
+                    @php
+                        $activeTab = strval($this->activeTab);
+                        $renderHookScopes = $this->getRenderHookScopes();
+                    @endphp
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::RESOURCE_PAGES_MANAGE_RELATED_RECORDS_TABLE_BEFORE, scopes: $this->getRenderHookScopes()) }}
+                    <x-filament::tabs>
+                        @foreach ($tabs as $tabKey => $tab)
+                            @php
+                                $tabKey = strval($tabKey);
+                            @endphp
+
+                            <x-filament::tabs.item
+                                :active="$activeTab === $tabKey"
+                                :badge="$tab->getBadge()"
+                                :badge-color="$tab->getBadgeColor()"
+                                :badge-icon="$tab->getBadgeIcon()"
+                                :badge-icon-position="$tab->getBadgeIconPosition()"
+                                :icon="$tab->getIcon()"
+                                :icon-position="$tab->getIconPosition()"
+                                :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
+                                :attributes="$tab->getExtraAttributeBag()"
+                            >
+                                {{ $tab->getLabel() ?? $this->generateTabLabel($tabKey) }}
+                            </x-filament::tabs.item>
+                        @endforeach
+                    </x-filament::tabs>
+                @endif
 
                 {{ $this->table }}
-
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::RESOURCE_PAGES_MANAGE_RELATED_RECORDS_TABLE_AFTER, scopes: $this->getRenderHookScopes()) }}
             </div>
-        @endif
-
-        @if (count($relationManagers = $this->getRelationManagers()))
-            <x-filament-panels::resources.relation-managers
-                :active-locale="isset($activeLocale) ? $activeLocale : null"
-                :active-manager="$this->activeRelationManager ?? array_key_first($relationManagers)"
-                :managers="$relationManagers"
-                :owner-record="$record"
-                :page-class="static::class"
-            />
         @endif
     @elseif($viewType === 'kanban')
         @livewire('prospect-pipeline-kanban', [

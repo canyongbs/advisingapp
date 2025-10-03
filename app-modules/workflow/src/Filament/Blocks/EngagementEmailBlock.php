@@ -41,18 +41,18 @@ use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
@@ -70,7 +70,7 @@ class EngagementEmailBlock extends WorkflowActionBlock
     }
 
     /**
-     * @return array<int, covariant Field|Section|Actions>
+     * @return array<int, covariant Field|\Filament\Schemas\Components\Section|\Filament\Schemas\Components\Actions>
      */
     public function generateFields(string $fieldPrefix = ''): array
     {
@@ -105,7 +105,7 @@ class EngagementEmailBlock extends WorkflowActionBlock
                 ->profile('email')
                 ->required()
                 ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
-                    ->form([
+                    ->schema([
                         Select::make('emailTemplate')
                             ->searchable()
                             ->options(function (Get $get): array {
@@ -196,13 +196,13 @@ class EngagementEmailBlock extends WorkflowActionBlock
         return 'workflow_engagement_email_details';
     }
 
-    public function afterCreated(WorkflowDetails $details, ComponentContainer $componentContainer): void
+    public function afterCreated(WorkflowDetails $details, Schema $schema): void
     {
         if (! ($details instanceof WorkflowEngagementEmailDetails)) {
             return;
         }
 
-        $bodyField = $componentContainer->getComponent(fn (Component $component): bool => ($component instanceof TiptapEditor) && str($component->getName())->endsWith('body'));
+        $bodyField = $schema->getComponent(fn (Component $component): bool => ($component instanceof TiptapEditor) && str($component->getName())->endsWith('body'));
 
         if (! ($bodyField instanceof TiptapEditor)) {
             return;

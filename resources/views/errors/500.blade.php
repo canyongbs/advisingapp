@@ -42,14 +42,14 @@
                     src="{{ Vite::asset('resources/svg/canyongbs-500.svg') }}"
                     alt="Internal Server Error"
                 >
-                <h1 class="mb-3 text-5xl font-extrabold text-primary-600 dark:text-primary-500">
+                <h1 class="text-primary-600 dark:text-primary-500 mb-3 text-5xl font-extrabold">
                     We apologize, this feature is not currently available.
                 </h1>
-                <p class="mb-5 font-bold tracking-tight text-gray-900 dark:text-gray-400 md:text-xl">
+                <p class="mb-5 font-bold tracking-tight text-gray-900 md:text-xl dark:text-gray-400">
                     Please try back later. If you continue to experience a problem, please contact your administrator.
                 </p>
                 <x-filament::button
-                    class="inline-flex rounded-lg bg-primary-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
+                    class="bg-primary-600 hover:bg-primary-800 focus:ring-primary-300 dark:focus:ring-primary-900 inline-flex rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white focus:outline-none focus:ring-4"
                     href="{{ Filament::getUrl() }}"
                     icon="heroicon-o-chevron-left"
                     tag="a"

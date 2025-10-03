@@ -39,12 +39,11 @@ namespace App\Filament\Forms\Components;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
 use App\Models\User;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
-use Filament\Support\Colors\Color;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Text;
 
 class Licenses extends Section
 {
@@ -71,14 +70,11 @@ class Licenses extends Section
             ->columns(1)
             ->extraAttributes(['class' => 'grid justify-items-center'])
             ->schema([
-                Placeholder::make("{$licenseType->value}_count")
-                    ->extraAttributes(['class' => 'grid justify-items-center'])
-                    ->hiddenLabel()
-                    ->content(fn () => "{$licenseType->getAvailableSeats()} / {$licenseType->getSeats()}"),
+                Text::make(fn (): string => "{$licenseType->getAvailableSeats()} / {$licenseType->getSeats()}"),
                 Toggle::make("{$licenseType->value}_enabled")
                     ->hiddenLabel()
-                    ->offColor(Color::Red)
-                    ->onColor(Color::Green)
+                    ->offColor('danger')
+                    ->onColor('success')
                     ->formatStateUsing(function (?User $record) use ($licenseType) {
                         return $record?->hasLicense($licenseType);
                     })

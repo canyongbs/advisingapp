@@ -38,9 +38,9 @@ namespace AdvisingApp\Form\Filament\Blocks;
 
 use AdvisingApp\Form\Models\SubmissibleField;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\Facades\Storage;
 
 class UploadFormFieldBlock extends FormFieldBlock

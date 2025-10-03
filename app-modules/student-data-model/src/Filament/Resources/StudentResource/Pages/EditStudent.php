@@ -41,22 +41,21 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concer
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Support\Enums\ActionSize;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\Size;
 use Illuminate\Support\Arr;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
@@ -70,13 +69,13 @@ class EditStudent extends EditRecord
     // TODO: Automatically set from Filament
     protected static ?string $navigationLabel = 'Edit';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         $makeRepeaterItemPrimaryAction = fn (): Action => Action::make('makePrimary')
             ->tooltip('Make primary')
             ->icon('heroicon-m-star')
             ->iconButton()
-            ->size(ActionSize::Small)
+            ->size(Size::Small)
             ->color('primary')
             ->action(function (array $arguments, Repeater $component): void {
                 $items = $component->getState();
@@ -90,8 +89,8 @@ class EditStudent extends EditRecord
             })
             ->visible(fn (array $arguments, Repeater $component): bool => array_key_first($component->getState()) !== $arguments['item']);
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Personal Information')
                     ->schema([
                         TextInput::make('sisid')
@@ -154,7 +153,7 @@ class EditStudent extends EditRecord
                                     ]),
                             ])
                             ->orderColumn('order')
-                            ->itemLabel(fn (Repeater $component, ComponentContainer $container): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $container->getStatePath()) ? 'Primary email address' : 'Additional email address')
+                            ->itemLabel(fn (Repeater $component, Schema $schema): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary email address' : 'Additional email address')
                             ->extraItemActions([
                                 $makeRepeaterItemPrimaryAction(),
                             ])
@@ -237,7 +236,7 @@ class EditStudent extends EditRecord
                                 })
                             )
                             ->orderColumn('order')
-                            ->itemLabel(fn (Repeater $component, ComponentContainer $container): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $container->getStatePath()) ? 'Primary phone number' : 'Additional phone number')
+                            ->itemLabel(fn (Repeater $component, Schema $schema): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary phone number' : 'Additional phone number')
                             ->extraItemActions([
                                 $makeRepeaterItemPrimaryAction(),
                             ])
@@ -281,7 +280,7 @@ class EditStudent extends EditRecord
                                     ]),
                             ])
                             ->orderColumn('order')
-                            ->itemLabel(fn (Repeater $component, ComponentContainer $container): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $container->getStatePath()) ? 'Primary address' : 'Additional address')
+                            ->itemLabel(fn (Repeater $component, Schema $schema): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary address' : 'Additional address')
                             ->extraItemActions([
                                 $makeRepeaterItemPrimaryAction(),
                             ])

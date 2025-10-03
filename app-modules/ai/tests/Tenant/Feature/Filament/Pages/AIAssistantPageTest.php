@@ -53,6 +53,7 @@ use AdvisingApp\Team\Models\Team;
 use App\Filament\Pages\Dashboard;
 use App\Models\Authenticatable;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
@@ -751,7 +752,7 @@ it('can upvote a prompt from the library while inserting it', function () use ($
             'isSmart' => 0,
             'promptId' => $prompt->getKey(),
         ])
-        ->callFormComponentAction('promptId', 'upvote', formName: 'mountedActionForm');
+        ->callAction(TestAction::make('upvote')->schemaComponent('promptId'));
 
     assertDatabaseHas(PromptUpvote::class, [
         'prompt_id' => $prompt->getKey(),
@@ -776,7 +777,7 @@ it('can remove upvote from a prompt from the library while inserting it', functi
             'isSmart' => 0,
             'promptId' => $prompt->getKey(),
         ])
-        ->callFormComponentAction('promptId', 'upvote', formName: 'mountedActionForm');
+        ->callAction(TestAction::make('upvote')->schemaComponent('promptId'));
 
     assertSoftDeleted(PromptUpvote::class, [
         'prompt_id' => $prompt->getKey(),
@@ -1127,7 +1128,7 @@ test('super admin users do not show up in email user search', function () use ($
 
     Livewire::test(InstitutionalAdvisor::class)
         ->mountAction('emailThread')
-        ->assertFormFieldExists('targetIds', 'mountedActionForm', function (Select $select) use ($superAdmin) {
+        ->assertFormFieldExists('targetIds', checkFieldUsing: function (Select $select) use ($superAdmin) {
             $options = $select->getOptions();
             $searchOptions = $select->getSearchResults($superAdmin->name);
 
@@ -1144,7 +1145,7 @@ test('super admin users do not show up in clone user search', function () use ($
 
     Livewire::test(InstitutionalAdvisor::class)
         ->mountAction('cloneThread')
-        ->assertFormFieldExists('targetIds', 'mountedActionForm', function (Select $select) use ($superAdmin) {
+        ->assertFormFieldExists('targetIds', checkFieldUsing: function (Select $select) use ($superAdmin) {
             $options = $select->getOptions();
             $searchOptions = $select->getSearchResults($superAdmin->name);
 

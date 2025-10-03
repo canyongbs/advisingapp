@@ -48,7 +48,7 @@ abstract class StatsOverviewReportWidget extends StatsOverviewWidget
     #[Locked]
     public string $cacheTag;
 
-    protected static ?string $pollingInterval = null;
+    protected ?string $pollingInterval = null;
 
     protected static bool $isLazy = false;
 

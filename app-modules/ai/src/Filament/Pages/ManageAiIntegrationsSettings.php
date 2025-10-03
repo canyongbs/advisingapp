@@ -40,11 +40,11 @@ use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Illuminate\Validation\Rule;
 
 class ManageAiIntegrationsSettings extends SettingsPage
@@ -67,11 +67,11 @@ class ManageAiIntegrationsSettings extends SettingsPage
         return $user->isSuperAdmin();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->columns(1)
-            ->schema([
+            ->components([
                 Section::make('Azure OpenAI')
                     ->collapsible()
                     ->schema([

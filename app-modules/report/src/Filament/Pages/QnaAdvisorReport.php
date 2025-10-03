@@ -37,13 +37,18 @@
 namespace AdvisingApp\Report\Filament\Pages;
 
 use AdvisingApp\Report\Abstract\AiReport;
+use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportLineChart;
+use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
+use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTable;
+use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Filament\Clusters\ReportLibrary;
+use UnitEnum;
 
 class QnaAdvisorReport extends AiReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
 
     protected static ?string $title = 'QnA Advisor';
 
@@ -53,5 +58,22 @@ class QnaAdvisorReport extends AiReport
 
     protected string $cacheTag = 'qna-advisor-report';
 
-    protected static string $view = 'filament.pages.coming-soon';
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            QnaAdvisorReportStats::make(['cacheTag' => $this->cacheTag]),
+            QnaAdvisorReportLineChart::make(['cacheTag' => $this->cacheTag]),
+            QnaAdvisorReportTable::make(['cacheTag' => $this->cacheTag]),
+        ];
+    }
+
+    public function getColumns(): int | array
+    {
+        return [
+            'sm' => 2,
+            'md' => 4,
+            'lg' => 4,
+        ];
+    }
 }

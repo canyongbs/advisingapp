@@ -44,15 +44,14 @@ use AdvisingApp\Team\Models\Team;
 use App\Models\Scopes\WithoutSuperAdmin;
 use App\Models\User;
 use Filament\Actions\Action;
-use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Support\Enums\ActionSize;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\Size;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
@@ -164,7 +163,7 @@ trait CanManageRequests
     public function deleteRequestAction(): Action
     {
         return Action::make('deleteRequest')
-            ->size(ActionSize::ExtraSmall)
+            ->size(Size::ExtraSmall)
             ->requiresConfirmation()
             ->action(function (array $arguments) {
                 $request = auth()->user()->researchRequests()
@@ -192,13 +191,13 @@ trait CanManageRequests
         return Action::make('editRequest')
             ->modalSubmitActionLabel('Save')
             ->modalWidth('md')
-            ->size(ActionSize::ExtraSmall)
+            ->size(Size::ExtraSmall)
             ->fillForm(fn (array $arguments) => [
                 'title' => auth()->user()->researchRequests()
                     ->find($arguments['request'])
                     ?->title,
             ])
-            ->form([
+            ->schema([
                 TextInput::make('title')
                     ->label('Title')
                     ->autocomplete(false)
@@ -221,7 +220,7 @@ trait CanManageRequests
             })
             ->icon('heroicon-m-pencil')
             ->color('warning')
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
+            ->modalSubmitAction(fn (Action $action) => $action->color('primary'))
             ->iconButton()
             ->extraAttributes([
                 'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
@@ -236,7 +235,7 @@ trait CanManageRequests
             ->modalSubmitActionLabel('Continue')
             ->modalFooterActionsAlignment(Alignment::Center)
             ->modalWidth('md')
-            ->form([
+            ->schema([
                 Radio::make('targetType')
                     ->label('To')
                     ->options(ResearchRequestShareTarget::class)
@@ -247,15 +246,15 @@ trait CanManageRequests
                     ->afterStateUpdated(fn (Set $set) => $set('targetIds', [])),
                 Select::make('targetIds')
                     ->label(fn (Get $get): string => match ($get('targetType')) {
-                        ResearchRequestShareTarget::Team->value => 'Select Teams',
-                        ResearchRequestShareTarget::User->value => 'Select Users',
+                        ResearchRequestShareTarget::Team => 'Select Teams',
+                        ResearchRequestShareTarget::User => 'Select Users',
                         default => '',
                     })
                     ->visible(fn (Get $get): bool => filled($get('targetType')))
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
-                            ResearchRequestShareTarget::Team->value => Team::orderBy('name')->pluck('name', 'id'),
-                            ResearchRequestShareTarget::User->value => User::tap(new WithoutSuperAdmin())->orderBy('name')->pluck('name', 'id'),
+                            ResearchRequestShareTarget::Team => Team::orderBy('name')->pluck('name', 'id'),
+                            ResearchRequestShareTarget::User => User::tap(new WithoutSuperAdmin())->orderBy('name')->pluck('name', 'id'),
                             default => '',
                         };
                     })
@@ -264,8 +263,8 @@ trait CanManageRequests
                     ->required()
                     ->rules([
                         fn (Get $get) => match ($get('targetType')) {
-                            ResearchRequestShareTarget::User->value => new RestrictSuperAdmin('email'),
-                            ResearchRequestShareTarget::Team->value => null,
+                            ResearchRequestShareTarget::User => new RestrictSuperAdmin('email'),
+                            ResearchRequestShareTarget::Team => null,
                             default => '',
                         },
                     ]),
@@ -287,6 +286,6 @@ trait CanManageRequests
             ->link()
             ->icon('heroicon-m-envelope')
             ->color('warning')
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
+            ->modalSubmitAction(fn (Action $action) => $action->color('primary'));
     }
 }

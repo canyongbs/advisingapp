@@ -44,9 +44,9 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 
 class ManageCollegeBrandingSettings extends SettingsPage
 {
@@ -68,10 +68,10 @@ class ManageCollegeBrandingSettings extends SettingsPage
         return $user->can(['settings.view-any']);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Toggle::make('is_enabled')
                     ->inline(false)
                     ->label('Enable Branding Bar')

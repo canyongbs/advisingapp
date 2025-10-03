@@ -40,11 +40,11 @@ use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Enums\SegmentType;
 use AdvisingApp\Segment\Models\Segment;
 use Exception;
+use Filament\Actions\BulkAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
-use Filament\Tables\Actions\BulkAction;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -55,7 +55,7 @@ class BulkSegmentAction
         return BulkAction::make('segment')
             ->icon('heroicon-o-rectangle-group')
             ->label('Save Segment')
-            ->form(fn (Form $form) => $form->schema([
+            ->form(fn (Schema $schema) => $schema->components([
                 TextInput::make('name')
                     ->label('Name')
                     ->required()

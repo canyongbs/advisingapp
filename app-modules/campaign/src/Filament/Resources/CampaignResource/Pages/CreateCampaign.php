@@ -47,10 +47,10 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ViewField;
-use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Support\Enums\Width;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 
@@ -69,7 +69,7 @@ class CreateCampaign extends CreateRecord
             ->requiresConfirmation()
             ->modalHeading('Great work on this campaign! 🎉')
             ->modalDescription('Before we create it, let us know how you’d like to proceed. Click the "Save as Draft" button if you want to save the campaign for further edits or choose the "Save and Enable" button to create and make it live immediately. If you’re not quite ready to create the campaign, simply select the "Cancel" button.')
-            ->modalWidth(MaxWidth::ThreeExtraLarge)
+            ->modalWidth(Width::ThreeExtraLarge)
             ->modalSubmitActionLabel('Save and Enable')
             ->extraModalFooterActions([
                 Action::make('draft')

@@ -86,7 +86,7 @@ it('returns correct total student stats of students, alerts, segments and tasks 
 
     $widget = new StudentsStats();
     $widget->cacheTag = 'report-student';
-    $widget->filters = [
+    $widget->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];
@@ -179,7 +179,7 @@ it('returns correct total student stats of students, alerts, cases and tasks bas
 
     $widget = new StudentsStats();
     $widget->cacheTag = 'report-student';
-    $widget->filters = [
+    $widget->pageFilters = [
         'populationSegment' => $segment->getKey(),
     ];
 

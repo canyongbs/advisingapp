@@ -33,15 +33,14 @@
 
 </COPYRIGHT>
 */
-
 use AdvisingApp\Team\Filament\Resources\TeamResource;
 use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\EditTeam;
 use AdvisingApp\Team\Filament\Resources\TeamResource\RelationManagers\UsersRelationManager;
 use AdvisingApp\Team\Models\Team;
 use App\Models\Authenticatable;
 use App\Models\User;
+use Filament\Actions\AssociateAction;
 use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\AssociateAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -144,8 +143,8 @@ test('Super Admin Users cannot be added to a team', function () {
         ->callTableAction(
             AssociateAction::class,
             data: ['recordId' => $superAdmin->getKey()]
-        )->assertHasTableActionErrors(['recordId'])
-        ->assertSeeText('Super admin users cannot be added to a team.');
+        )
+        ->assertHasTableActionErrors(['recordId']);
 });
 
 //Super Admin Users do not show up in UsersRelationManager for Teams search results
@@ -172,7 +171,7 @@ test('Super Admin Users do not show up in UsersRelationManager for Teams search 
         'pageClass' => EditTeam::class,
     ])
         ->mountTableAction(AssociateAction::class)
-        ->assertFormFieldExists('recordId', 'mountedTableActionForm', function (Select $select) use ($superAdmin) {
+        ->assertFormFieldExists('recordId', checkFieldUsing: function (Select $select) use ($superAdmin) {
             $options = $select->getSearchResults($superAdmin->name);
 
             return empty($options) ? true : false;

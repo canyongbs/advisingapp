@@ -41,7 +41,6 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\EditCase;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
-use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Notifications\SendClosedCaseFeedbackNotification;
 use AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories\EditCaseRequestFactory;
 use App\Models\User;
@@ -64,7 +63,11 @@ test('A successful action on the EditCase page', function () {
         )
         ->assertSuccessful();
 
-    $request = collect(EditCaseRequestFactory::new()->create());
+    $request = collect(EditCaseRequestFactory::new()->create([
+        'priority_id' => CasePriority::factory()->create([
+            'type_id' => $case->priority->type->getKey(),
+        ])->getKey(),
+    ]));
 
     livewire(EditCase::class, [
         'record' => $case->getRouteKey(),
@@ -79,7 +82,7 @@ test('A successful action on the EditCase page', function () {
             [
                 'division_id',
                 'status_id',
-                'priority_id',
+                'priority',
             ]
         )->toArray()
     );
@@ -121,12 +124,12 @@ test('EditCase requires valid data', function (EditCaseRequestFactory $data, arr
         'status_id missing' => [EditCaseRequestFactory::new()->state(['status_id' => null]), ['status_id' => 'required']],
         'status_id does not exist' => [
             EditCaseRequestFactory::new()->state(['status_id' => fake()->uuid()]),
-            ['status_id' => 'exists'],
+            ['status_id'],
         ],
         'priority_id missing' => [EditCaseRequestFactory::new()->state(['priority_id' => null]), ['priority_id' => 'required']],
         'priority_id does not exist' => [
             EditCaseRequestFactory::new()->state(['priority_id' => fake()->uuid()]),
-            ['priority_id' => 'exists'],
+            ['priority_id'],
         ],
         'close_details is not a string' => [EditCaseRequestFactory::new()->state(['close_details' => 1]), ['close_details' => 'string']],
         'res_details is not a string' => [EditCaseRequestFactory::new()->state(['res_details' => 1]), ['res_details' => 'string']],
@@ -162,7 +165,11 @@ test('EditCase is gated with proper access control', function () {
             ])
         )->assertSuccessful();
 
-    $request = collect(EditCaseRequestFactory::new()->create());
+    $request = collect(EditCaseRequestFactory::new()->create([
+        'priority_id' => CasePriority::factory()->create([
+            'type_id' => $case->priority->type->getKey(),
+        ])->getKey(),
+    ]));
 
     livewire(EditCase::class, [
         'record' => $case->getRouteKey(),
@@ -229,7 +236,11 @@ test('EditCase is gated with proper feature access control', function () {
             ])
         )->assertSuccessful();
 
-    $request = collect(EditCaseRequestFactory::new()->create());
+    $request = collect(EditCaseRequestFactory::new()->create([
+        'priority_id' => CasePriority::factory()->create([
+            'type_id' => $case->priority->type->getKey(),
+        ])->getKey(),
+    ]));
 
     livewire(EditCase::class, [
         'record' => $case->getRouteKey(),
@@ -261,18 +272,18 @@ test('send feedback email if case is closed', function () {
 
     actingAs($user);
 
-    $request = collect(EditCaseRequestFactory::new([
+    $request = collect(EditCaseRequestFactory::new()->create([
         'status_id' => CaseStatus::factory()->create([
             'classification' => SystemCaseClassification::Closed,
         ])->getKey(),
         'priority_id' => CasePriority::factory()->create([
-            'type_id' => CaseType::factory()->create([
+            'type_id' => $case->priority->type->update([
                 'has_enabled_feedback_collection' => true,
                 'has_enabled_csat' => true,
                 'has_enabled_nps' => true,
-            ])->getKey(),
+            ]) ? $case->priority->type->getKey() : null,
         ])->getKey(),
-    ])->create());
+    ]));
 
     livewire(EditCase::class, [
         'record' => $case->getRouteKey(),

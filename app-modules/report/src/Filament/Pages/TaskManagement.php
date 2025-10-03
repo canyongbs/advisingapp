@@ -42,12 +42,13 @@ use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\TaskCumulativeCountLineChart;
 use AdvisingApp\Report\Filament\Widgets\TaskStats;
 use App\Filament\Clusters\ReportLibrary;
+use UnitEnum;
 
 class TaskManagement extends EngagementReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?string $navigationGroup = 'Project Management';
+    protected static string | UnitEnum | null $navigationGroup = 'Project Management';
 
     protected static ?string $navigationLabel = 'Tasks Management';
 
@@ -69,7 +70,7 @@ class TaskManagement extends EngagementReport
         ];
     }
 
-    public function getColumns(): int | string | array
+    public function getColumns(): int|array
     {
         return [
             'sm' => 2,

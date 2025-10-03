@@ -45,7 +45,7 @@
             Care Team
         </x-slot>
 
-        <x-slot name="headerActions">
+        <x-slot name="afterHeader">
             <x-filament::button
                 color="gray"
                 tag="a"
@@ -79,8 +79,8 @@
                 <div class="grid gap-y-0.5">
                     @if (filled($careTeamUser->careTeamRole))
                         <span
-                            class="rounded-md bg-custom-50 px-2 py-1 text-xs text-custom-600 ring-1 ring-inset ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30"
-                            style="--c-50: var(--primary-50);--c-400: var(--primary-400);--c-600: var(--primary-600);"
+                            class="bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30 rounded-md px-2 py-1 text-xs ring-1 ring-inset"
+                            style="--color-50: var(--primary-50);--color-400: var(--primary-400);--color-600: var(--primary-600);"
                         >
                             {{ $careTeamUser->careTeamRole?->name }}
                         </span>
@@ -90,7 +90,7 @@
         @empty
             <div class="p-6">
                 <div class="mx-auto grid max-w-lg justify-items-center gap-4 text-center">
-                    <div class="rounded-full bg-gray-100 p-3 dark:bg-gray-500/20">
+                    <div class="dark:bg-gray-500/20 rounded-full bg-gray-100 p-3">
                         @svg('heroicon-o-user-group', 'h-6 w-6 text-gray-500 dark:text-gray-400')
                     </div>
 

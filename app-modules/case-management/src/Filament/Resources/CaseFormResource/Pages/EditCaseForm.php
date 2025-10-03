@@ -43,9 +43,9 @@ use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Form;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
 class EditCaseForm extends EditRecord
 {
@@ -54,10 +54,10 @@ class EditCaseForm extends EditRecord
 
     protected static string $resource = CaseFormResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema($this->fields());
+        return $schema
+            ->components($this->fields());
     }
 
     protected function getHeaderActions(): array
@@ -69,7 +69,7 @@ class EditCaseForm extends EditRecord
                 ->openUrlInNewTab(),
             Action::make('embed_snippet')
                 ->label('Embed Snippet')
-                ->infolist(
+                ->schema(
                     [
                         TextEntry::make('snippet')
                             ->label('Click to Copy')

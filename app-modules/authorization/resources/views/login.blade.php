@@ -34,7 +34,10 @@
 
 <div class="flex w-full flex-col items-center justify-center gap-8 lg:flex-row">
     <div class="w-full lg:w-1/2 lg:pr-8">
-        <x-filament-panels::form wire:submit="authenticate">
+        <form
+            class="grid gap-y-6"
+            wire:submit="authenticate"
+        >
             @if ($this->needsMfaSetup)
                 <h3 class="flex items-center gap-2 text-lg font-medium">
                     @svg('heroicon-o-question-mark-circle', 'w-6')
@@ -52,18 +55,18 @@
 
             {{ $this->form }}
 
-            <x-filament-panels::form.actions
-                :actions="$this->getCachedFormActions()"
+            <x-filament::actions
+                :actions="$this->getFormActions()"
                 :full-width="$this->hasFullWidthFormActions()"
             />
             @if (count($this->getSsoFormActions()) > 0)
                 <small class="text-gray-800 dark:text-gray-300">or log in with single sign-on</small>
             @endif
-            <x-filament-panels::form.actions
+            <x-filament::actions
                 :actions="$this->getSsoFormActions()"
                 :full-width="$this->hasFullWidthFormActions()"
             />
-        </x-filament-panels::form>
+        </form>
 
         @if ($this->needsMFA && !$this->needsMfaSetup)
             <x-filament::link
@@ -82,7 +85,7 @@
     </div>
 
     <div class="w-full lg:w-1/2">
-        <x-filament-panels::login-version-card :themeChangelogUrl="$themeChangelogUrl" />
-        <x-filament-panels::login-resource-portal-card :productResourcehubUrl="$productResourcehubUrl" />
+        <x-authorization::login-version-card :themeChangelogUrl="$themeChangelogUrl" />
+        <x-authorization::login-resource-portal-card :productResourcehubUrl="$productResourcehubUrl" />
     </div>
 </div>

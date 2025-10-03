@@ -43,7 +43,6 @@ use AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories\EditCaseTypeAssignm
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
 use App\Settings\LicenseSettings;
-use Illuminate\Validation\Rules\Enum;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -68,7 +67,7 @@ test('A successful action on the EditCaseTypeAssignments page', function () {
         'record' => $caseType->getRouteKey(),
     ])
         ->assertFormSet([
-            'assignment_type' => CaseTypeAssignmentTypes::None->value,
+            'assignment_type' => CaseTypeAssignmentTypes::None,
         ])
         ->fillForm($editRequest)
         ->call('save')
@@ -126,7 +125,7 @@ test('EditCaseTypeAssignments requires valid data', function (EditCaseTypeAssign
 })->with(
     [
         'assignment_type is required' => [EditCaseTypeAssignmentsRequestFactory::new()->state(['assignment_type' => null]), ['assignment_type' => 'required']],
-        'assignment_type is not a valid enum value' => [EditCaseTypeAssignmentsRequestFactory::new()->state(['assignment_type' => 'blah']), ['assignment_type' => Enum::class]],
+        'assignment_type is not a valid enum value' => [EditCaseTypeAssignmentsRequestFactory::new()->state(['assignment_type' => 'blah']), ['assignment_type']],
         'assignment_type_individual_id is required when assignment_type is Individual' => [EditCaseTypeAssignmentsRequestFactory::new()->withIndividualType()->state(['assignment_type_individual_id' => null]), ['assignment_type_individual_id' => 'required']],
         'assignment_type_individual_id must be a User in the CaseTypes managers' => [EditCaseTypeAssignmentsRequestFactory::new()->withIndividualType()->state(['assignment_type_individual_id' => User::factory()]), ['assignment_type_individual_id' => CaseTypeAssignmentsIndividualUserMustBeAManager::class]],
     ]

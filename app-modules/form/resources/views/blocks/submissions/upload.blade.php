@@ -40,7 +40,7 @@
         @if (isset($media) && count($media) > 0)
             @foreach ($media as $item)
                 <a
-                    class="inline-flex items-center space-x-1 text-sm text-primary-600 hover:underline"
+                    class="text-primary-600 inline-flex items-center space-x-1 text-sm hover:underline"
                     href="{{ $item['temporary_url'] }}"
                 >
                     <span>{{ $item['name'] }}</span>

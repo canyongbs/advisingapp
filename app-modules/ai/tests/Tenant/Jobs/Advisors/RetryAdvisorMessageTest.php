@@ -85,7 +85,7 @@ it('retries a message', function () {
 
     $response = $messages->last();
 
-    expect($response)
+    expect($response) /** @phpstan-ignore method.nonObject */
         ->thread->getKey()->toBe($thread->getKey())
         ->user->toBeNull();
 
@@ -134,7 +134,7 @@ it('does not create a new message if the most recent one has the same content', 
 
     $response = $messages->last();
 
-    expect($response)
+    expect($response) /** @phpstan-ignore method.nonObject */
         ->thread->getKey()->toBe($thread->getKey())
         ->user->toBeNull();
 

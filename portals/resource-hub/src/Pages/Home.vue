@@ -101,7 +101,9 @@ function debounce(func, delay) {
             <Bars3Icon class="h-6 w-6 text-gray-900"></Bars3Icon>
         </button>
 
-        <div class="bg-gradient-to-br from-primary-500 to-primary-800 w-full px-6">
+        <div
+            class="bg-[linear-gradient(to_right_bottom,rgba(var(--primary-500),1),rgba(var(--primary-800),1))] w-full px-6"
+        >
             <div class="max-w-screen-xl flex flex-col gap-y-6 mx-auto py-8">
                 <div class="flex flex-col gap-y-1 text-left">
                     <h3 class="text-3xl font-semibold text-white">Need help?</h3>

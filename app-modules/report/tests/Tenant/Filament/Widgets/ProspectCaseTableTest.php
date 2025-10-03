@@ -92,7 +92,7 @@ it('returns all cases information created for prospects in given time range', fu
 
     livewire(ProspectCaseTable::class, [
         'cacheTag' => 'report-prospect-case',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $openCases,
@@ -169,7 +169,7 @@ it('returns all cases information created for prospects based on segment filters
     // with segment filter
     livewire(ProspectCaseTable::class, [
         'cacheTag' => 'report-prospect-case',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $openCases,

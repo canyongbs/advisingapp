@@ -91,7 +91,7 @@ enum SegmentModel: string implements HasLabel
         })::configure($table);
     }
 
-    public static function tryFromCaseOrValue(SegmentModel | string $value): ?static
+    public static function parse(SegmentModel | string $value): ?static
     {
         if ($value instanceof SegmentModel) {
             return $value;

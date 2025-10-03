@@ -62,7 +62,7 @@ class ColorSelect extends Select
                 ->sort()
                 ->mapWithKeys(fn (string $color) => [
                     $color => "<span class='flex items-center gap-x-4'>
-                            <span class='rounded-full w-4 h-4' style='background:rgb(" . Color::all()[$color][$shade] . ")'></span>
+                            <span class='rounded-full w-4 h-4' style='background:" . Color::convertToRgb(Color::all()[$color][$shade]) . "'></span>
                             <span>" . str($color)->headline() . '</span>
                             </span>',
                 ])

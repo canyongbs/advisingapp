@@ -37,18 +37,18 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Clusters\ProfileSettings;
-use Filament\Forms\Form;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 class MultifactorAuthentication extends Page
 {
     use InteractsWithFormActions;
 
-    protected static string $view = 'filament.pages.multifactor-authentication';
+    protected string $view = 'filament.pages.multifactor-authentication';
 
     protected static ?string $cluster = ProfileSettings::class;
 

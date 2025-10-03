@@ -45,8 +45,9 @@ use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Schema;
+use UnitEnum;
 
 class PipelineSettings extends SettingsPage
 {
@@ -56,7 +57,7 @@ class PipelineSettings extends SettingsPage
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static ?string $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
 
     protected static string $settings = ProspectPipelineSettings::class;
 
@@ -74,9 +75,9 @@ class PipelineSettings extends SettingsPage
         return $user->can(['settings.view-any']);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             Toggle::make('is_enabled')
                 ->inline(true)
                 ->label('Is Enabled?')

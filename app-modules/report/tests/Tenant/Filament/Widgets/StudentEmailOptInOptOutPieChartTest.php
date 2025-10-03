@@ -68,7 +68,7 @@ it('it filters student email opt-in/out/null data accurately using start and end
 
     $widgetInstance = new StudentEmailOptInOptOutPieChart();
     $widgetInstance->cacheTag = 'report-student-deliverability';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];
@@ -156,7 +156,7 @@ it('it filters student email opt-in/out/null data accurately based on segment fi
     // with segment filter
     $widgetInstance = new StudentEmailOptInOptOutPieChart();
     $widgetInstance->cacheTag = 'report-student-deliverability';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'populationSegment' => $segment->getKey(),
     ];
 
@@ -169,7 +169,7 @@ it('it filters student email opt-in/out/null data accurately based on segment fi
     // without segment filter
     $widgetInstance = new StudentEmailOptInOptOutPieChart();
     $widgetInstance->cacheTag = 'report-student-deliverability';
-    $widgetInstance->filters = [];
+    $widgetInstance->pageFilters = [];
 
     $stats = $widgetInstance->getData()['datasets'][0]['data'];
 

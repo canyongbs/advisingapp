@@ -43,6 +43,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\ViewPro
 use AdvisingApp\Prospect\Models\ProspectSource;
 use App\Filament\Clusters\ConstituentManagement;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class ProspectSourceResource extends Resource
 {
@@ -54,7 +55,7 @@ class ProspectSourceResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static ?string $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
 
     public static function getRelations(): array
     {

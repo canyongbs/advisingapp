@@ -42,7 +42,7 @@ use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSort;
 use App\Filament\Tables\Columns\IdColumn;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -77,7 +77,7 @@ class MyCases extends BaseWidget
                     ->sortable(),
                 TextColumn::make('respondent.display_name')
                     ->label('Related To')
-                    ->getStateUsing(fn (CaseModel $record) => $record->respondent->{$record->respondent::displayNameKey()})
+                    ->state(fn (CaseModel $record) => $record->respondent->{$record->respondent::displayNameKey()})
                     ->searchable(query: fn (Builder $query, $search) => $query->tap(new EducatableSearch(relationship: 'respondent', search: $search)))
                     ->sortable(query: fn (Builder $query, string $direction): Builder => $query->tap(new EducatableSort($direction))),
                 TextColumn::make('respondent.sisid')
@@ -102,7 +102,7 @@ class MyCases extends BaseWidget
                     ->multiple()
                     ->preload(),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->url(fn (CaseModel $record): string => CaseResource::getUrl(name: 'view', parameters: ['record' => $record->case_model_id])),
             ])

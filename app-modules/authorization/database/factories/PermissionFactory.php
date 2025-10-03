@@ -36,10 +36,11 @@
 
 namespace AdvisingApp\Authorization\Database\Factories;
 
+use AdvisingApp\Authorization\Models\Permission;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Authorization\Models\Permission>
+ * @extends Factory<Permission>
  */
 class PermissionFactory extends Factory
 {

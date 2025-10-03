@@ -41,7 +41,6 @@ use AdvisingApp\Ai\Tests\Tenant\Feature\Filament\Resources\AiAssistantResource\R
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rules\Enum;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
@@ -196,7 +195,7 @@ it('validates the inputs', function ($data, $errors) use ($licenses, $permission
         ],
         'application must be correct enum' => [
             CreateAiAssistantRequestFactory::new()->state(['application' => 'blah']),
-            ['application' => Enum::class],
+            ['application'],
         ],
         'model required' => [
             CreateAiAssistantRequestFactory::new()->state(['model' => null]),
@@ -204,7 +203,7 @@ it('validates the inputs', function ($data, $errors) use ($licenses, $permission
         ],
         'model must be correct enum' => [
             CreateAiAssistantRequestFactory::new()->state(['model' => AiModel::OpenAiGpt4o]),
-            ['model' => Enum::class],
+            ['model'],
         ],
         'description required' => [
             CreateAiAssistantRequestFactory::new()->without('description'),

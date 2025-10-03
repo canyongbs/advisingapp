@@ -38,11 +38,10 @@ namespace AdvisingApp\Authorization\Http\Controllers\Auth;
 
 use AdvisingApp\Authorization\Enums\SocialiteProvider;
 use AdvisingApp\Authorization\Http\Responses\Auth\SocialiteLogoutResponse;
+use Filament\Auth\Http\Responses\Contracts\LogoutResponse;
 use Filament\Facades\Filament;
-use Filament\Http\Controllers\Auth\LogoutController as FilamentLogoutController;
-use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 
-class LogoutController extends FilamentLogoutController
+class LogoutController extends \Filament\Auth\Http\Controllers\LogoutController
 {
     public function __invoke(): LogoutResponse
     {

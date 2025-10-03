@@ -60,10 +60,10 @@ class EnsureQnaAdvisorRequestComingFromAuthorizedDomain
             return $next($request);
         }
 
-        $origin = $request->headers->get('origin');
+        $requestingUrlHeader = $request->headers->get('origin') ?? $request->headers->get('referer');
 
-        if (! $origin) {
-            return response()->json(['error' => 'Missing origin header.'], 400);
+        if (! $requestingUrlHeader) {
+            return response()->json(['error' => 'Missing origin/referer header.'], 400);
         }
 
         $appRootDomain = parse_url(config('app.url'))['host'];
@@ -80,10 +80,10 @@ class EnsureQnaAdvisorRequestComingFromAuthorizedDomain
             $allowedDomains = array_merge($allowedDomains, $flatAuthorized);
         }
 
-        $origin = parse_url($origin)['host'];
+        $requestingUrlHeader = parse_url($requestingUrlHeader)['host'];
 
-        if (! in_array($origin, $allowedDomains)) {
-            return response()->json(['error' => 'Origin not allowed'], 403);
+        if (! in_array($requestingUrlHeader, $allowedDomains)) {
+            return response()->json(['error' => 'Origin/Referer not allowed'], 403);
         }
 
         return $next($request);

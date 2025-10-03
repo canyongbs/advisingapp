@@ -50,18 +50,18 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use Exception;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action as FormComponentAction;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\CreateAction;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Schema;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
@@ -236,8 +236,8 @@ class RelationManagerSendEngagementAction extends CreateAction
                             ])
                             ->profile('email')
                             ->required()
-                            ->hintAction(fn (TiptapEditor $component) => FormComponentAction::make('loadEmailTemplate')
-                                ->form([
+                            ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
+                                ->schema([
                                     Select::make('emailTemplate')
                                         ->searchable()
                                         ->options(function (Get $get): array {
@@ -325,7 +325,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                             ->visible(fn (Get $get) => $get('send_later')),
                     ]),
             ])
-            ->action(function (array $data, Form $form, RelationManager $livewire) {
+            ->action(function (array $data, Schema $schema, RelationManager $livewire) {
                 $recipient = $livewire->getOwnerRecord();
 
                 throw_if(
@@ -344,7 +344,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                     ...($data['signature']['content'] ?? []),
                 ];
 
-                $formFields = $form->getFlatFields();
+                $formFields = $schema->getFlatFields();
 
                 $channel = NotificationChannel::parse($data['channel']);
 
@@ -380,7 +380,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                     recipientRoute: $recipientRoute,
                 ));
 
-                $form->model($engagement)->saveRelationships();
+                $schema->model($engagement)->saveRelationships();
             })
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)

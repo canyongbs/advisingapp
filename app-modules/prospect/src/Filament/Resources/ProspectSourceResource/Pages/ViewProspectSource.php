@@ -37,19 +37,19 @@
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages;
 
 use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
-use Filament\Actions;
-use Filament\Infolists\Components\Section;
+use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class ViewProspectSource extends ViewRecord
 {
     protected static string $resource = ProspectSourceResource::class;
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->schema([
                 Section::make()
                     ->schema([
@@ -63,7 +63,7 @@ class ViewProspectSource extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 }

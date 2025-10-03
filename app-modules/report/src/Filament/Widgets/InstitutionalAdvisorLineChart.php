@@ -43,7 +43,7 @@ use Illuminate\Support\Facades\Cache;
 
 class InstitutionalAdvisorLineChart extends LineChartReportWidget
 {
-    protected static ?string $heading = 'Usage by month';
+    protected ?string $heading = 'Usage by month';
 
     protected int | string | array $columnSpan = 'full';
 

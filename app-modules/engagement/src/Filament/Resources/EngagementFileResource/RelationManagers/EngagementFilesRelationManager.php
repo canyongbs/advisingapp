@@ -40,14 +40,14 @@ use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Tables\Columns\IdColumn;
-use Filament\Forms\Form;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -63,9 +63,9 @@ class EngagementFilesRelationManager extends RelationManager
 
     protected static ?string $modelLabel = 'File';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return EngagementFileResource::form($form);
+        return EngagementFileResource::form($schema);
     }
 
     public function table(Table $table): Table
@@ -130,7 +130,7 @@ class EngagementFilesRelationManager extends RelationManager
                         return auth()->user()->can('create', [EngagementFile::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('download')
                     ->icon('heroicon-o-arrow-down-on-square')
                     ->action(
@@ -145,7 +145,7 @@ class EngagementFilesRelationManager extends RelationManager
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

@@ -40,15 +40,15 @@ use AdvisingApp\Form\Actions\DuplicateForm;
 use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Form\Models\Form;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ReplicateAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form as FormsForm;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ReplicateAction;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -66,7 +66,7 @@ class ListForms extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('name'),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('Respond')
                     ->url(fn (Form $form) => route('forms.show', ['form' => $form]))
                     ->icon('heroicon-m-arrow-top-right-on-square')
@@ -82,8 +82,8 @@ class ListForms extends ListRecords
 
                         return $data;
                     })
-                    ->form(function (FormsForm $form): FormsForm {
-                        return $form->schema([
+                    ->schema(function (Schema $schema): Schema {
+                        return $schema->components([
                             TextInput::make('name')
                                 ->label('Name')
                                 ->required(),
@@ -96,7 +96,7 @@ class ListForms extends ListRecords
                         resolve(DuplicateForm::class, ['original' => $record, 'replica' => $replica])();
                     }),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

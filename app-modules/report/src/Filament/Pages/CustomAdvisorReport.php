@@ -43,6 +43,7 @@ use AdvisingApp\Report\Filament\Widgets\CustomAdvisorStats;
 use AdvisingApp\Report\Filament\Widgets\CustomAdvisorTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Filament\Clusters\ReportLibrary;
+use UnitEnum;
 
 class CustomAdvisorReport extends AiReport
 {
@@ -50,7 +51,7 @@ class CustomAdvisorReport extends AiReport
 
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
 
     protected static ?string $title = 'Custom Advisor';
 

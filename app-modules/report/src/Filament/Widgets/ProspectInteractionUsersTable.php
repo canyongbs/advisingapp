@@ -41,7 +41,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use App\Models\User;
 use Carbon\Carbon;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -141,7 +141,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                     ),
                 TextColumn::make('first_interaction_at')
                     ->label('First')
-                    ->getStateUsing(function ($record) use ($startDate, $endDate) {
+                    ->state(function ($record) use ($startDate, $endDate) {
                         $first = $record
                             ->interactions()
                             ->whereHasMorph(
@@ -159,7 +159,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                     }),
                 TextColumn::make('most_recent_interaction_at')
                     ->label('Most Recent')
-                    ->getStateUsing(function ($record) use ($startDate, $endDate) {
+                    ->state(function ($record) use ($startDate, $endDate) {
                         $last = $record
                             ->interactions()
                             ->whereHasMorph(
@@ -177,7 +177,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                     }),
                 TextColumn::make('total_interactions')
                     ->label('Total')
-                    ->getStateUsing(function ($record) use ($startDate, $endDate) {
+                    ->state(function ($record) use ($startDate, $endDate) {
                         return $record
                             ->interactions()
                             ->whereHasMorph(
@@ -192,7 +192,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                     }),
                 TextColumn::make('total_interactions_percent')
                     ->label('Total %')
-                    ->getStateUsing(function ($record) use ($startDate, $endDate) {
+                    ->state(function ($record) use ($startDate, $endDate) {
                         $allInteractions = Interaction::whereHasMorph('interactable', Prospect::class)->count();
                         $userInteractionsCount = $record
                             ->interactions()
@@ -216,7 +216,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                     }),
                 TextColumn::make('avg_interaction_duration')
                     ->label('Avg. Duration')
-                    ->getStateUsing(function ($record) use ($startDate, $endDate) {
+                    ->state(function ($record) use ($startDate, $endDate) {
                         $durations = $record
                             ->interactions()
                             ->whereHasMorph(
@@ -296,6 +296,6 @@ class ProspectInteractionUsersTable extends BaseWidget
                     ->preload(),
             ])
             ->paginated([5])
-            ->filtersFormWidth(MaxWidth::Small);
+            ->filtersFormWidth(Width::Small);
     }
 }

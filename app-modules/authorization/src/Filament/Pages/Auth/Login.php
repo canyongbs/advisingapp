@@ -44,17 +44,17 @@ use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Models\User;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Actions\Action;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
-use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Models\Contracts\FilamentUser;
-use Filament\Pages\Auth\Login as FilamentLogin;
+use Filament\Schemas\Schema;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 
-class Login extends FilamentLogin
+class Login extends \Filament\Auth\Pages\Login
 {
-    protected static string $view = 'authorization::login';
+    protected string $view = 'authorization::login';
 
     public ?array $data;
 
@@ -110,7 +110,7 @@ class Login extends FilamentLogin
 
         if (
             ($user instanceof FilamentUser) &&
-            (! $user->canAccessPanel(Filament::getCurrentPanel()))
+            (! $user->canAccessPanel(Filament::getCurrentOrDefaultPanel()))
         ) {
             Filament::auth()->logout();
 
@@ -209,6 +209,55 @@ class Login extends FilamentLogin
         $this->usingRecoveryCode = ! $this->usingRecoveryCode;
     }
 
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getEmailFormComponent() /** @phpstan-ignore method.notFound */
+                    ->label('Email')
+                    ->hidden(fn (Login $livewire) => $livewire->needsMFA)
+                    ->dehydratedWhenHidden(),
+                $this->getPasswordFormComponent()
+                    ->hidden(fn (Login $livewire) => $livewire->needsMFA)
+                    ->dehydratedWhenHidden(),
+                $this->getRememberFormComponent()
+                    ->hidden(fn (Login $livewire) => $livewire->needsMFA)
+                    ->dehydratedWhenHidden(),
+                TextInput::make('code')
+                    ->label(
+                        fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                            ? 'Multifactor Authentication Code'
+                            : 'Multifactor Recovery Code'
+                    )
+                    ->placeholder(
+                        fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                            ? '###-###'
+                            : 'abcdef-98765'
+                    )
+                    ->mask(
+                        fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                            ? '999-999'
+                            : null
+                    )
+                    ->stripCharacters(
+                        fn (Login $livewire) => ! $livewire->usingRecoveryCode
+                            ? '-'
+                            : null
+                    )
+                    ->helperText(
+                        fn (Login $livewire) => $livewire->usingRecoveryCode
+                            ? 'Enter one of your recovery codes provided when you enabled multifactor authentication. Recovery codes are one-time use only. If you have used all of your recovery codes, you will need to contact your administrator to reset your multifactor authentication.'
+                            : null
+                    )
+                    ->numeric(fn (Login $livewire) => ! $livewire->usingRecoveryCode)
+                    ->string(fn (Login $livewire) => $livewire->usingRecoveryCode)
+                    ->required(fn (Login $livewire) => $livewire->needsMFA)
+                    ->hidden(fn (Login $livewire) => ! $livewire->needsMFA)
+                    ->dehydratedWhenHidden(),
+            ])
+            ->statePath('data');
+    }
+
     protected function isValidCode(User $user, string $code): bool
     {
         if ($this->usingRecoveryCode) {
@@ -249,59 +298,6 @@ class Login extends FilamentLogin
         }
 
         return $ssoActions;
-    }
-
-    protected function getForms(): array
-    {
-        return [
-            'form' => $this->form(
-                $this->makeForm()
-                    ->schema([
-                        $this->getEmailFormComponent()
-                            ->label('Email')
-                            ->hidden(fn (Login $livewire) => $livewire->needsMFA)
-                            ->dehydratedWhenHidden(),
-                        $this->getPasswordFormComponent()
-                            ->hidden(fn (Login $livewire) => $livewire->needsMFA)
-                            ->dehydratedWhenHidden(),
-                        $this->getRememberFormComponent()
-                            ->hidden(fn (Login $livewire) => $livewire->needsMFA)
-                            ->dehydratedWhenHidden(),
-                        TextInput::make('code')
-                            ->label(
-                                fn (Login $livewire) => ! $livewire->usingRecoveryCode
-                                    ? 'Multifactor Authentication Code'
-                                    : 'Multifactor Recovery Code'
-                            )
-                            ->placeholder(
-                                fn (Login $livewire) => ! $livewire->usingRecoveryCode
-                                    ? '###-###'
-                                    : 'abcdef-98765'
-                            )
-                            ->mask(
-                                fn (Login $livewire) => ! $livewire->usingRecoveryCode
-                                    ? '999-999'
-                                    : null
-                            )
-                            ->stripCharacters(
-                                fn (Login $livewire) => ! $livewire->usingRecoveryCode
-                                    ? '-'
-                                    : null
-                            )
-                            ->helperText(
-                                fn (Login $livewire) => $livewire->usingRecoveryCode
-                                    ? 'Enter one of your recovery codes provided when you enabled multifactor authentication. Recovery codes are one-time use only. If you have used all of your recovery codes, you will need to contact your administrator to reset your multifactor authentication.'
-                                    : null
-                            )
-                            ->numeric(fn (Login $livewire) => ! $livewire->usingRecoveryCode)
-                            ->string(fn (Login $livewire) => $livewire->usingRecoveryCode)
-                            ->required(fn (Login $livewire) => $livewire->needsMFA)
-                            ->hidden(fn (Login $livewire) => ! $livewire->needsMFA)
-                            ->dehydratedWhenHidden(),
-                    ])
-                    ->statePath('data'),
-            ),
-        ];
     }
 
     protected function getFormActions(): array

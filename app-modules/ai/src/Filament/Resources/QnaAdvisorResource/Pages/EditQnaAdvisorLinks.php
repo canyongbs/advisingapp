@@ -42,10 +42,11 @@ use AdvisingApp\Ai\Models\QnaAdvisorLink;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Str;
+use UnitEnum;
 
 class EditQnaAdvisorLinks extends EditRecord
 {
@@ -55,7 +56,7 @@ class EditQnaAdvisorLinks extends EditRecord
 
     protected static ?string $title = 'Websites';
 
-    protected static ?string $navigationGroup = 'Configuration';
+    protected static string | UnitEnum | null $navigationGroup = 'Configuration';
 
     /**
      * @return array<int|string, string|null>
@@ -80,10 +81,10 @@ class EditQnaAdvisorLinks extends EditRecord
         return $breadcrumbs;
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Repeater::make('links')
                     ->schema([
                         TextInput::make('url')

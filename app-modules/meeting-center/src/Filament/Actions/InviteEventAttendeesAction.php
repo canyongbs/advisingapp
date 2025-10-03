@@ -51,7 +51,7 @@ class InviteEventAttendeesAction extends Action
 
         $this->label('Invite')
             ->icon('heroicon-o-envelope')
-            ->form([
+            ->schema([
                 TagsInput::make('attendees')
                     ->placeholder('Add attendee email')
                     ->nestedRecursiveRules(['email'])

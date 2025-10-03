@@ -112,7 +112,7 @@ it('displays engagements and responses within the given date range', function ()
 
     livewire(ProspectMessagesDetailTable::class, [
         'cacheTag' => 'report-prospect-messages',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $holisticEngagementInRangeOutbound,
@@ -169,7 +169,7 @@ it('displays engagements and responses based on segment filters', function () {
 
     livewire(ProspectMessagesDetailTable::class, [
         'cacheTag' => 'report-prospect-messages',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $holisticEngagementJohnOutbound,

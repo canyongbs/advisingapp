@@ -44,7 +44,7 @@ use Illuminate\Support\Facades\Cache;
 
 class StudentSmsOptInOptOutPieChart extends PieChartReportWidget
 {
-    protected static ?string $heading = 'Student SMS';
+    protected ?string $heading = 'Student SMS';
 
     protected int | string | array $columnSpan = [
         'sm' => 12,
@@ -52,7 +52,7 @@ class StudentSmsOptInOptOutPieChart extends PieChartReportWidget
         'lg' => 6,
     ];
 
-    protected static ?string $maxHeight = '240px';
+    protected ?string $maxHeight = '240px';
 
     public function render(): View
     {
@@ -62,7 +62,7 @@ class StudentSmsOptInOptOutPieChart extends PieChartReportWidget
             return view('livewire.no-widget-data');
         }
 
-        return view(static::$view, $this->getViewData());
+        return view($this->view, $this->getViewData());
     }
 
     public function getData(): array
@@ -110,7 +110,7 @@ class StudentSmsOptInOptOutPieChart extends PieChartReportWidget
 
     protected function getRgbString($color): string
     {
-        return "rgb({$color})";
+        return Color::convertToRgb($color);
     }
 
     protected function getOptions(): array

@@ -41,12 +41,12 @@ use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use Filament\Actions\BulkAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Tables\Actions\BulkAction;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -78,7 +78,7 @@ class BulkTextAction
                             ->visible(fn (Get $get) => $get('send_later')),
                     ]),
             ])
-            ->action(function (Collection $records, array $data, Form $form) {
+            ->action(function (Collection $records, array $data, Schema $schema) {
                 /** @var Collection<int, CanBeNotified> $records */
                 app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
                     user: Auth::user(),
@@ -92,7 +92,7 @@ class BulkTextAction
                             'path' => (fn () => $this->path)->call($file),
                         ],
                         /**@phpstan-ignore-next-line */
-                        $form->getFlatFields()['body']->getTemporaryImages(),
+                        $schema->getFlatFields()['body']->getTemporaryImages(),
                     ),
                     scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['scheduled_at'] ?? null) : null,
                 ));

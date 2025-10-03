@@ -38,24 +38,24 @@ namespace App\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
-use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 class ProfileInformation extends ProfilePage
 {
@@ -65,14 +65,14 @@ class ProfileInformation extends ProfilePage
 
     protected static ?int $navigationSort = 10;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         /** @var User $user */
         $user = auth()->user();
         $hasCrmLicense = $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Public Profile')
                     ->visible($hasCrmLicense)
                     ->schema([
@@ -90,7 +90,7 @@ class ProfileInformation extends ProfilePage
                             //The id doesn't matter because we're just using it to generate a piece of a url
                             ->prefix(str(route('users.profile.view.public', ['user' => -1]))->beforeLast('/')->append('/'))
                             ->suffixAction(
-                                FormAction::make('viewPublicProfile')
+                                Action::make('viewPublicProfile')
                                     ->url(fn () => route('users.profile.view.public', ['user' => $user->public_profile_slug]))
                                     ->icon('heroicon-m-arrow-top-right-on-square')
                                     ->openUrlInNewTab()
@@ -171,7 +171,7 @@ class ProfileInformation extends ProfilePage
     protected function getNameFormComponent(): Component
     {
         return TextInput::make('name')
-            ->label(__('filament-panels::pages/auth/edit-profile.form.name.label'))
+            ->label(__('filament-panels::auth/pages/edit-profile.form.name.label'))
             ->required()
             ->maxLength(255)
             ->autofocus();
@@ -180,7 +180,7 @@ class ProfileInformation extends ProfilePage
     protected function getEmailFormComponent(): Component
     {
         return TextInput::make('email')
-            ->label(__('filament-panels::pages/auth/edit-profile.form.email.label'))
+            ->label(__('filament-panels::auth/pages/edit-profile.form.email.label'))
             ->email()
             ->required()
             ->maxLength(255)
@@ -191,7 +191,7 @@ class ProfileInformation extends ProfilePage
     protected function getPasswordFormComponent(): Component
     {
         return TextInput::make('password')
-            ->label(__('filament-panels::pages/auth/edit-profile.form.password.label'))
+            ->label(__('filament-panels::auth/pages/edit-profile.form.password.label'))
             ->password()
             ->rule(Password::default())
             ->autocomplete('new-password')
@@ -204,31 +204,10 @@ class ProfileInformation extends ProfilePage
     protected function getPasswordConfirmationFormComponent(): Component
     {
         return TextInput::make('passwordConfirmation')
-            ->label(__('filament-panels::pages/auth/edit-profile.form.password_confirmation.label'))
+            ->label(__('filament-panels::auth/pages/edit-profile.form.password_confirmation.label'))
             ->password()
             ->required()
             ->visible(fn (Get $get): bool => filled($get('password')))
             ->dehydrated(false);
-    }
-
-    /**
-     * @return array<int | string, string | Form>
-     */
-    protected function getForms(): array
-    {
-        return [
-            'form' => $this->form(
-                $this->makeForm()
-                    ->schema([
-                        $this->getNameFormComponent(),
-                        $this->getEmailFormComponent(),
-                        $this->getPasswordFormComponent(),
-                        $this->getPasswordConfirmationFormComponent(),
-                    ])
-                    ->operation('edit')
-                    ->model($this->getUser())
-                    ->statePath('data'),
-            ),
-        ];
     }
 }

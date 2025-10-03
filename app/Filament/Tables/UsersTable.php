@@ -38,9 +38,10 @@ namespace App\Filament\Tables;
 
 use App\Filament\Resources\UserResource;
 use App\Models\User;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\QueryBuilder;
+use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tables\Table;
 
@@ -54,7 +55,7 @@ class UsersTable
                 QueryBuilder::make()
                     ->constraints([
                         TextConstraint::make('name'),
-                        QueryBuilder\Constraints\DateConstraint::make('created_at')
+                        DateConstraint::make('created_at')
                             ->icon('heroicon-m-calendar'),
                         TextConstraint::make('email')
                             ->label('Email Address')
@@ -69,7 +70,7 @@ class UsersTable
                     ])
                     ->constraintPickerWidth('7xl'),
             ], layout: FiltersLayout::AboveContent)
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->authorize('view')
                     ->url(fn (User $record) => UserResource::getUrl('view', ['record' => $record])),

@@ -78,7 +78,7 @@ it('shows the form and validation', function (BulkCreateAlertActionRequestFactor
     ],
     'status_id exists' => [
         BulkCreateAlertActionRequestFactory::new()->state(['status_id' => (string) Str::uuid()]),
-        ['status_id' => 'exists'],
+        ['status_id'],
     ],
     'suggested_intervention required' => [
         BulkCreateAlertActionRequestFactory::new()->without('suggested_intervention'),

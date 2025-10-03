@@ -44,8 +44,8 @@ use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Schema;
 use Illuminate\Validation\Rule;
 
 class ManageAiResearchAssistantSettings extends SettingsPage
@@ -68,10 +68,10 @@ class ManageAiResearchAssistantSettings extends SettingsPage
         return $user->isSuperAdmin();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('discovery_model')
                     ->options(fn (AiModel|string|null $state) => array_unique([
                         ...AiModelApplicabilityFeature::IntegratedAdvisor->getModelsAsSelectOptions(),

@@ -44,7 +44,7 @@ abstract class ProjectManagementReport extends Dashboard
 {
     use HasFiltersForm;
 
-    protected static string $view = 'filament.pages.coming-soon';
+    protected string $view = 'filament.pages.coming-soon';
 
     public static function canAccess(): bool
     {

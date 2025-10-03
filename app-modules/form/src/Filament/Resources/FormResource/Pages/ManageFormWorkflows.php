@@ -42,8 +42,8 @@ use AdvisingApp\Workflow\Filament\Resources\WorkflowResource;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use Filament\Actions\Action;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -71,7 +71,7 @@ class ManageFormWorkflows extends ManageRelatedRecords
                     ->label('Enabled')
                     ->boolean(),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()
                     ->url(fn (Workflow $record) => WorkflowResource::getUrl('edit', [$record])),
             ])

@@ -42,20 +42,20 @@ use AdvisingApp\Prospect\Models\ProspectAddress;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use App\Infolists\Components\Subsection;
-use Filament\Infolists\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 
 class ProspectProfileInfolist
 {
-    public static function configure(Infolist $infolist): Infolist
+    public static function configure(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Profile Information')
                     ->schema([
                         Subsection::make([
@@ -63,7 +63,7 @@ class ProspectProfileInfolist
                                 ->label('Tags')
                                 ->badge()
                                 ->placeholder('-')
-                                ->getStateUsing(
+                                ->state(
                                     fn ($record) => $record->tags->sortBy('name')->pluck('name')->all()
                                 ),
                             TextEntry::make('preferred')
@@ -79,7 +79,7 @@ class ProspectProfileInfolist
                             TextEntry::make('primaryEmailAddress')
                                 ->label('Primary Email Address')
                                 ->state(fn (Prospect $record): View => view('student-data-model::components.filament.resources.educatable-resource.view-educatable.email-address-detail', ['emailAddress' => $record->primaryEmailAddress]))
-                                ->visible(fn (?View $state): bool => filled($state)),
+                                ->visible(fn (Prospect $record): bool => filled($record->primaryEmailAddress)),
                             TextEntry::make('additionalEmailAddresses')
                                 ->label(fn (?array $state): string => Str::plural('Other email address', count($state ?? [])))
                                 ->state(fn (Prospect $record): array => array_map(
@@ -91,7 +91,7 @@ class ProspectProfileInfolist
                             TextEntry::make('primaryPhoneNumber')
                                 ->label('Primary Phone Number')
                                 ->state(fn (Prospect $record): View => view('student-data-model::components.filament.resources.educatable-resource.view-educatable.phone-number-detail', ['phoneNumber' => $record->primaryPhoneNumber]))
-                                ->visible(fn (?View $state): bool => filled($state)),
+                                ->visible(fn (Prospect $record): bool => filled($record->primaryPhoneNumber)),
                             TextEntry::make('additionalPhoneNumbers')
                                 ->label(fn (?array $state): string => Str::plural('Other phone number', count($state ?? [])))
                                 ->state(fn (Prospect $record): array => array_map(
@@ -127,8 +127,8 @@ class ProspectProfileInfolist
                     ->extraAttributes(['class' => 'fi-section-has-subsections'])
                     ->headerActions([
                         Action::make('edit')
-                            ->url(fn (): string => ProspectResource::getUrl('edit', ['record' => $infolist->getRecord()]))
-                            ->visible(auth()->user()->can('update', $infolist->getRecord())),
+                            ->url(fn (): string => ProspectResource::getUrl('edit', ['record' => $schema->getRecord()]))
+                            ->visible(auth()->user()->can('update', $schema->getRecord())),
                     ]),
             ]);
     }

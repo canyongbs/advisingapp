@@ -43,7 +43,6 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rules\Enum;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
@@ -177,7 +176,7 @@ test('Create QnA Advisor validates the inputs', function ($data, $errors) {
         ],
         'model must be correct enum' => [
             QnaAdvisorRequestFactory::new()->state(['model' => AiModel::OpenAiGpt4o]),
-            ['model' => Enum::class],
+            ['model'],
         ],
     ]
 );

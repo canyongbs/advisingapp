@@ -72,7 +72,7 @@ it('returns correct counts of students, emails, texts, and staff engagements wit
 
     $widget = new StudentEngagementStats();
     $widget->cacheTag = 'report-student-engagement';
-    $widget->filters = [
+    $widget->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];
@@ -156,7 +156,7 @@ it('returns correct counts of students, emails, texts, and staff engagements bas
 
     $widget = new StudentEngagementStats();
     $widget->cacheTag = 'report-student-engagement';
-    $widget->filters = [
+    $widget->pageFilters = [
         'populationSegment' => $segment->getKey(),
     ];
 
@@ -170,7 +170,7 @@ it('returns correct counts of students, emails, texts, and staff engagements bas
     // without filter
     $widget = new StudentEngagementStats();
     $widget->cacheTag = 'report-student-engagement';
-    $widget->filters = [];
+    $widget->pageFilters = [];
 
     $stats = $widget->getStats();
 

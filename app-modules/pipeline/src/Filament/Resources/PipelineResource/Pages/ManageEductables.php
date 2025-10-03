@@ -41,9 +41,10 @@ use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Segment\Enums\SegmentModel;
+use BackedEnum;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Schemas\Schema;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -63,9 +64,9 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
 
     protected static string $relationship = 'educatablePipelineStages';
 
-    protected static ?string $navigationIcon = 'heroicon-o-adjustments-vertical';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-adjustments-vertical';
 
-    protected static string $view = 'pipeline::filament.pages.manage-pipeline-educatables';
+    protected string $view = 'pipeline::filament.pages.manage-pipeline-educatables';
 
     public function getTitle(): string
     {
@@ -153,10 +154,10 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
         session(['pipeline-view-type' => $viewType]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('full_name')
                     ->required()
                     ->maxLength(255),

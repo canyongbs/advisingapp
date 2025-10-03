@@ -290,7 +290,7 @@ it('displays only users with prospect interactions within the selected date rang
 
     livewire(ProspectInteractionUsersTable::class, [
         'cacheTag' => 'report-prospect-interaction',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $userWithOldInteractions,
@@ -354,7 +354,7 @@ it('displays only users with prospect interactions based on segment filter', fun
     // with segment filter
     livewire(ProspectInteractionUsersTable::class, [
         'cacheTag' => 'report-prospect-interaction',
-        'filters' => $filters,
+        'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords(collect([
             $userWithOldInteractions,

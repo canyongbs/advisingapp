@@ -31,14 +31,40 @@
 
 </COPYRIGHT>
 --}}
-<div class="fi-resource-relation-manager flex flex-col gap-y-6">
-    <x-filament-panels::resources.tabs />
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::RESOURCE_RELATION_MANAGER_BEFORE, scopes: $this->getRenderHookScopes()) }}
+@php
+    use Filament\Support\Colors\Color;
+@endphp
 
-    {{ $this->table }}
+<div
+    class="bg-custom-600 sticky top-16 z-10 flex h-10 items-center px-6 py-2 text-sm font-medium text-white"
+    style="display: none; --color-600: {{ Color::all()[$color][600] }}"
+    x-data="{ isVisible: @entangle('isVisible') }"
+    x-show="isVisible"
+    x-bind:class="{ 'branding-bar': isVisible }"
+    wire:loading.remove
+>
+    {{ $brandingBarText }}
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::RESOURCE_RELATION_MANAGER_AFTER, scopes: $this->getRenderHookScopes()) }}
-
-    <x-filament-panels::unsaved-action-changes-alert />
+    <button
+        class="ml-auto hover:text-gray-400"
+        x-data="{ isDismissible: @entangle('dismissible') }"
+        x-show="isDismissible"
+        @click="$wire.dismiss()"
+    >
+        <svg
+            class="h-6 w-6"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+            />
+        </svg>
+    </button>
 </div>

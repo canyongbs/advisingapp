@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,14 +32,28 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-<div class="bg-turkish-500 text-white rounded-xl p-6 mb-6">
-    <div class="flex md:flex-row flex-col justify-center items-center gap-6">
-        <div>
-            <p class="text-white text-sm font-semibold">Version {{ app('current-version') }} is now available!</p>
-            <p class="text-white-500 text-sm my-4">Your instance of Advising App&#174; was automatically updated with our latest available features.</p>
-            <a href="{{ $themeChangelogUrl }}" target="_blank" class="border-2 border-white px-4 py-2 text-white rounded-xl text-sm font-semibold inline-block">Learn More</a>
-        </div>
-        <img src="{{ Vite::asset('resources/images/version_image.svg') }}" class="block max-h-32" />
-    </div>
-</div>
+*/
+
+namespace AdvisingApp\Ai\Database\Factories;
+
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<QnaAdvisorThread>
+ */
+class QnaAdvisorThreadFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'advisor_id' => QnaAdvisor::factory(),
+        ];
+    }
+}

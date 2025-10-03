@@ -64,7 +64,7 @@ it('returns correct monthly email and sms engagement data for prospects within t
 
     $widgetInstance = new ProspectEngagementLineChart();
     $widgetInstance->cacheTag = 'report-prospect-engagement';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];
@@ -130,7 +130,7 @@ it('returns correct monthly email and sms engagement data for prospects based on
 
     $widgetInstance = new ProspectEngagementLineChart();
     $widgetInstance->cacheTag = 'report-prospect-engagement';
-    $widgetInstance->filters = [
+    $widgetInstance->pageFilters = [
         'populationSegment' => $segment->getKey(),
     ];
 
@@ -142,7 +142,7 @@ it('returns correct monthly email and sms engagement data for prospects based on
 
     $widgetInstance = new ProspectEngagementLineChart();
     $widgetInstance->cacheTag = 'report-prospect-engagement';
-    $widgetInstance->filters = [];
+    $widgetInstance->pageFilters = [];
 
     $dataWithoutSegment = $widgetInstance->getData();
 

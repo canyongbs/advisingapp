@@ -38,8 +38,8 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
 use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -74,7 +74,7 @@ class ListAiAssistants extends ListRecords
                     ->query(fn (Builder $query) => $query->whereNull('archived_at'))
                     ->default(),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
             ])
             ->emptyStateHeading('No AI Assistants')

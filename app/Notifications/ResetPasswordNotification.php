@@ -40,7 +40,7 @@ use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\NotificationSetting;
 use App\Models\User;
-use Filament\Notifications\Auth\ResetPassword;
+use Filament\Auth\Notifications\ResetPassword;
 
 #[SystemNotification]
 class ResetPasswordNotification extends ResetPassword

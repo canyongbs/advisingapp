@@ -40,16 +40,17 @@ use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Filament\Actions\Action;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use UnitEnum;
 
 class ViewQnaAdvisor extends ViewRecord
 {
@@ -57,11 +58,11 @@ class ViewQnaAdvisor extends ViewRecord
 
     protected static ?string $navigationLabel = 'View';
 
-    protected static ?string $navigationGroup = 'QnA Advisor';
+    protected static string | UnitEnum | null $navigationGroup = 'QnA Advisor';
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist->schema([
+        return $schema->schema([
             Section::make()->schema([
                 SpatieMediaLibraryImageEntry::make('avatar')
                     ->visibility('private')
@@ -79,7 +80,7 @@ class ViewQnaAdvisor extends ViewRecord
                                     ->columnSpanFull()
                                     ->html()
                                     ->extraAttributes(['class' => 'overflow-auto'])
-                                    ->getStateUsing(fn (QnaAdvisor $record): string => new HtmlString(
+                                    ->state(fn (QnaAdvisor $record): string => new HtmlString(
                                         '<pre>' . app(GetQnaAdvisorInstructions::class)->execute($record) . '</pre>'
                                     )),
                             ]),
@@ -91,7 +92,7 @@ class ViewQnaAdvisor extends ViewRecord
                                     ->hiddenLabel()
                                     ->columnSpanFull()
                                     ->markdown()
-                                    ->getStateUsing(fn (QnaAdvisor $record): string => app(GetQnaAdvisorInstructions::class)->execute($record)),
+                                    ->state(fn (QnaAdvisor $record): string => app(GetQnaAdvisorInstructions::class)->execute($record)),
                             ]),
                     ])->visible(fn () => auth()->guard('web')->user()?->isSuperAdmin()),
             ]),

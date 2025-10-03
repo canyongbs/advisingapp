@@ -37,12 +37,12 @@
 namespace App\Filament\Pages;
 
 use App\Settings\CollegeBrandingSettings;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 class BrandingBar extends ProfilePage
 {
@@ -57,10 +57,10 @@ class BrandingBar extends ProfilePage
         return app(CollegeBrandingSettings::class)->is_enabled && app(CollegeBrandingSettings::class)->dismissible && parent::canAccess();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('Branding Bar')
                     ->schema([
                         Toggle::make('is_branding_bar_dismissed')
