@@ -88,8 +88,9 @@ class EducatableCaseUpdatedNotification extends Notification implements ShouldQu
                 ->settings($this->resolveNotificationSetting($notifiable))
                 ->subject("There’s an update on your case {$this->case->case_number}")
                 ->greeting("Hello {$name},")
-                ->line("There’s been a new update to your case {$this->case->case_number}. Please check the latest details.")
-                ->action('View case', route('portal.case.show', $this->case));
+                ->line("There’s been a new update to your case {$this->case->case_number}. Please check the latest details.");
+            // This can be restored if/when we add case management to the portal
+            // ->action('View case', route('portal.case.show', $this->case));
         }
 
         $subject = $this->getSubject($template->subject);

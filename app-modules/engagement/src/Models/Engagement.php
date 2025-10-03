@@ -239,14 +239,14 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         );
     }
 
-    public function getSubject(): HtmlString
+    public function getSubject(): ?HtmlString
     {
-        return app(GenerateEngagementSubjectContent::class)(
+        return $this->subject ? app(GenerateEngagementSubjectContent::class)(
             $this->subject,
             $this->getMergeData(),
             $this->batch ?? $this->campaignAction ?? $this,
             $this->campaignAction ? 'data.subject' : 'subject',
-        );
+        ) : null;
     }
 
     public function getBodyMarkdown(): string
@@ -254,9 +254,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return stripslashes((new HtmlConverter())->convert($this->getBody()));
     }
 
-    public function getSubjectMarkdown(): string
+    public function getSubjectMarkdown(): ?string
     {
-        return stripslashes((new HtmlConverter())->convert($this->getSubject()));
+        return $this->getSubject() ? stripslashes((new HtmlConverter())->convert($this->getSubject())) : null;
     }
 
     public function getMergeData(): array
