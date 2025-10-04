@@ -37,6 +37,9 @@
 namespace AdvisingApp\Report\Filament\Pages;
 
 use AdvisingApp\Report\Abstract\AiReport;
+use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use AdvisingApp\Report\Filament\Widgets\ResearchAdvisorReportStats;
+use AdvisingApp\Report\Filament\Widgets\ResearchAdvisorReportTable;
 use App\Filament\Clusters\ReportLibrary;
 use UnitEnum;
 
@@ -54,5 +57,21 @@ class ResearchAdvisorReport extends AiReport
 
     protected string $cacheTag = 'research-advisor-report';
 
-    protected string $view = 'filament.pages.coming-soon';
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            ResearchAdvisorReportStats::make(['cacheTag' => $this->cacheTag]),
+            ResearchAdvisorReportTable::make(['cacheTag' => $this->cacheTag]),
+        ];
+    }
+
+    public function getColumns(): int | array
+    {
+        return [
+            'sm' => 2,
+            'md' => 4,
+            'lg' => 4,
+        ];
+    }
 }
