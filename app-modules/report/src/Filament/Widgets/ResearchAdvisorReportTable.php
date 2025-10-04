@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\Research\Models\ResearchRequest;
 use Filament\Tables\Columns\TextColumn;
