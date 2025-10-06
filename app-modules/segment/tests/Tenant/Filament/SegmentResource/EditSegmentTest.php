@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Segment\Filament\Resources\SegmentResource;
+use AdvisingApp\Segment\Filament\Resources\Segments\SegmentResource;
 use AdvisingApp\Segment\Models\Segment;
 use App\Models\User;
 

@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Segment\Actions;
 
-use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\GetSegmentQuery;
+use AdvisingApp\Segment\Filament\Resources\Segments\Pages\GetSegmentQuery;
 use AdvisingApp\Segment\Models\Segment;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

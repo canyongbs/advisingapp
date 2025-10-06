@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages;
+namespace AdvisingApp\Segment\Filament\Resources\Segments\Pages;
 
 use AdvisingApp\Segment\Enums\SegmentType;
-use AdvisingApp\Segment\Filament\Resources\SegmentResourceForProcesses;
+use AdvisingApp\Segment\Filament\Resources\Segments\SegmentResourceForProcesses;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Tables\Concerns\InteractsWithTable;
