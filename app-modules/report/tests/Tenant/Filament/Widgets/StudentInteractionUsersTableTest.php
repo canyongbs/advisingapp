@@ -402,6 +402,6 @@ it('can start an export, sending a notification', function () {
         'filters' => [],
     ])
         ->callTableAction(ExportAction::class)
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->assertNotified();
 });
