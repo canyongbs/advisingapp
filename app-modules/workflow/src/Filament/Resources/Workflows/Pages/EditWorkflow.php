@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Filament\Resources\WorkflowResource\Pages;
+namespace AdvisingApp\Workflow\Filament\Resources\Workflows\Pages;
 
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Form\Models\Form;
-use AdvisingApp\Workflow\Filament\Resources\WorkflowResource;
+use AdvisingApp\Workflow\Filament\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Workflow\Models\Workflow;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;

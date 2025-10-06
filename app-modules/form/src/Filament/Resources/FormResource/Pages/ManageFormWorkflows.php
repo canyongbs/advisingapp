@@ -38,7 +38,7 @@ namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
 
 use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
-use AdvisingApp\Workflow\Filament\Resources\WorkflowResource;
+use AdvisingApp\Workflow\Filament\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use Filament\Actions\Action;
