@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Filament\Resources\WorkflowResource\Pages;
+namespace AdvisingApp\Workflow\Filament\Resources\Workflows\Pages;
 
-use AdvisingApp\Workflow\Filament\Resources\WorkflowResource;
+use AdvisingApp\Workflow\Filament\Resources\Workflows\WorkflowResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 

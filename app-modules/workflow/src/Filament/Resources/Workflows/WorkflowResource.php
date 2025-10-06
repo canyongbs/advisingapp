@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Filament\Resources;
+namespace AdvisingApp\Workflow\Filament\Resources\Workflows;
 
-use AdvisingApp\Workflow\Filament\Resources\WorkflowResource\Pages\EditWorkflow;
-use AdvisingApp\Workflow\Filament\Resources\WorkflowResource\Pages\ListWorkflows;
-use AdvisingApp\Workflow\Filament\Resources\WorkflowResource\RelationManagers\WorkflowStepsRelationManager;
+use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow;
+use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\ListWorkflows;
+use AdvisingApp\Workflow\Filament\Resources\Workflows\RelationManagers\WorkflowStepsRelationManager;
 use AdvisingApp\Workflow\Models\Workflow;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;

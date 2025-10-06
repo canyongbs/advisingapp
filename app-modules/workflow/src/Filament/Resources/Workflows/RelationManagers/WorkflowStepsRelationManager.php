@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Filament\Resources\WorkflowResource\RelationManagers;
+namespace AdvisingApp\Workflow\Filament\Resources\Workflows\RelationManagers;
 
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Models\Workflow;
