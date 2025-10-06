@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Webhook\Filament\Resources;
+namespace AdvisingApp\Webhook\Filament\Resources\InboundWebhooks;
 
-use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages\ListInboundWebhooks;
-use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages\ViewInboundWebhook;
+use AdvisingApp\Webhook\Filament\Resources\InboundWebhooks\Pages\ListInboundWebhooks;
+use AdvisingApp\Webhook\Filament\Resources\InboundWebhooks\Pages\ViewInboundWebhook;
 use AdvisingApp\Webhook\Models\InboundWebhook;
 use Filament\Resources\Resource;
 use UnitEnum;
