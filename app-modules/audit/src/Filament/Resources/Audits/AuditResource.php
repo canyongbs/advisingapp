@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Audit\Filament\Resources;
+namespace AdvisingApp\Audit\Filament\Resources\Audits;
 
-use AdvisingApp\Audit\Filament\Resources\AuditResource\Pages\ListAudits;
-use AdvisingApp\Audit\Filament\Resources\AuditResource\Pages\ViewAudit;
+use AdvisingApp\Audit\Filament\Resources\Audits\AuditResource\Pages\ListAudits;
+use AdvisingApp\Audit\Filament\Resources\Audits\AuditResource\Pages\ViewAudit;
 use AdvisingApp\Audit\Models\Audit;
 use App\Filament\Clusters\UsageAuditing;
 use Filament\Resources\Resource;
