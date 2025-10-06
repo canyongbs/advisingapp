@@ -105,12 +105,16 @@ it('will execute appropriately on each educatable in the segment', function (arr
             : count($priorSubscriptions) + $users->count()
     );
 
+    $expectedUserIds = $removePrior
+        ? $users->pluck('id')->toArray()
+        : [...$priorSubscriptions, ...$users->pluck('id')->toArray()];
+
     $relatedModel->subscriptions()
-        ->each(function (Subscription $subscription) use ($users) {
+        ->each(function (Subscription $subscription) use ($expectedUserIds) {
             expect($subscription)->toBeInstanceOf(Subscription::class);
 
             /** @var Subscription $subscription */
-            expect($subscription->user->getKey())->toBeIn($users->pluck('id'))
+            expect($subscription->user->getKey())->toBeIn($expectedUserIds)
                 ->and($subscription->subscribable->is($subscription->subscribable))->toBeTrue();
         });
 })->with(
@@ -156,4 +160,4 @@ it('will execute appropriately on each educatable in the segment', function (arr
             true,
         ],
     ]
-);
+)->repeat(20);
