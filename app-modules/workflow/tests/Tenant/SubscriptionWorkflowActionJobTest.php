@@ -99,10 +99,13 @@ it('will execute appropriately on each educatable in the segment', function (arr
 
     $relatedModel = $workflowRunStep->workflowRun->related;
     assert($relatedModel instanceof Subscribable);
-    expect($relatedModel->subscriptions()->get())->toHaveCount($users->count());
+    expect($relatedModel->subscriptions()->get())->toHaveCount(
+        $removePrior
+            ? $users->count()
+            : count($priorSubscriptions) + $users->count()
+    );
 
     $relatedModel->subscriptions()
-        // @phpstan-ignore argument.type
         ->each(function (Subscription $subscription) use ($users) {
             expect($subscription)->toBeInstanceOf(Subscription::class);
 
