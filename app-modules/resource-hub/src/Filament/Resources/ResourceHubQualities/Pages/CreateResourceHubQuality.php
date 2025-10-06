@@ -34,18 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\Pages;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
-use App\Filament\Forms\Components\IconSelect;
-use Filament\Forms\Components\Textarea;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\ResourceHubQualityResource;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
 
-class CreateResourceHubCategory extends CreateRecord
+class CreateResourceHubQuality extends CreateRecord
 {
-    protected static string $resource = ResourceHubCategoryResource::class;
+    protected static string $resource = ResourceHubQualityResource::class;
 
     public function form(Schema $schema): Schema
     {
@@ -55,12 +53,6 @@ class CreateResourceHubCategory extends CreateRecord
                     ->label('Name')
                     ->required()
                     ->string(),
-                IconSelect::make('icon'),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string()
-                    ->columnSpanFull(),
             ]);
     }
 }

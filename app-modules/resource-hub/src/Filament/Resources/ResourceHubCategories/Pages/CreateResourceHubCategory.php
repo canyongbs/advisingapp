@@ -34,22 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages;
 
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
 use App\Filament\Forms\Components\IconSelect;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
 
-class EditResourceHubCategory extends EditRecord
+class CreateResourceHubCategory extends CreateRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = ResourceHubCategoryResource::class;
 
     public function form(Schema $schema): Schema
@@ -67,13 +62,5 @@ class EditResourceHubCategory extends EditRecord
                     ->string()
                     ->columnSpanFull(),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
     }
 }

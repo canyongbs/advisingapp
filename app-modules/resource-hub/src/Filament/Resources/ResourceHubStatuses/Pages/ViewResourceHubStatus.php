@@ -34,35 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\CreateResourceHubCategory;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\EditResourceHubCategory;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\ListResourceHubCategories;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\ViewResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use App\Filament\Clusters\ResourceHub;
-use Filament\Resources\Resource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
-class ResourceHubCategoryResource extends Resource
+class ViewResourceHubStatus extends ViewRecord
 {
-    protected static ?string $model = ResourceHubCategory::class;
+    protected static string $resource = ResourceHubStatusResource::class;
 
-    protected static ?string $navigationLabel = 'Categories';
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name')
+                            ->label('Name'),
+                    ])
+                    ->columns(),
+            ]);
+    }
 
-    protected static ?string $modelLabel = 'resource hub category';
-
-    protected static ?int $navigationSort = 1;
-
-    protected static ?string $cluster = ResourceHub::class;
-
-    public static function getPages(): array
+    protected function getHeaderActions(): array
     {
         return [
-            'index' => ListResourceHubCategories::route('/'),
-            'create' => CreateResourceHubCategory::route('/create'),
-            'view' => ViewResourceHubCategory::route('/{record}'),
-            'edit' => EditResourceHubCategory::route('/{record}/edit'),
+            EditAction::make(),
         ];
     }
 }

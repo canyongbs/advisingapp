@@ -34,52 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
-class ListResourceHubQualities extends ListRecords
+class CreateResourceHubStatus extends CreateRecord
 {
-    protected static string $resource = ResourceHubQualityResource::class;
+    protected static string $resource = ResourceHubStatusResource::class;
 
-    public function table(Table $table): Table
+    public function form(Schema $schema): Schema
     {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->label('Name')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('resource_hub_articles_count')
-                    ->label('# of Resource Hub Articles')
-                    ->counts('resourceHubArticles')
-                    ->sortable(),
-            ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                    ->required()
+                    ->string(),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
     }
 }

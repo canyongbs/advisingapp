@@ -35,8 +35,8 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\CreateResourceHubStatus;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages\CreateResourceHubStatus;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use AdvisingApp\ResourceHub\Tests\Tenant\ResourceHubStatus\RequestFactories\CreateResourceHubStatusRequestFactory;
 use App\Models\User;

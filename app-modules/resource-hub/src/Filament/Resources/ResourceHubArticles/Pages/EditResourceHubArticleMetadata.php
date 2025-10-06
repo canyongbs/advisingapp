@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages;
 
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;

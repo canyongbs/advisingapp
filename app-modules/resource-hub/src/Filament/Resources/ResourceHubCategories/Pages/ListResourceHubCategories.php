@@ -34,63 +34,56 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Widgets;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Widgets\TableWidget as BaseWidget;
 
-class RecentResourceHubArticlesList extends BaseWidget
+class ListResourceHubCategories extends ListRecords
 {
-    protected int | string | array $columnSpan = [
-        'sm' => 1,
-        'md' => 1,
-        'lg' => 2,
-    ];
+    protected static string $resource = ResourceHubCategoryResource::class;
 
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Latest KB Articles (5)')
-            ->query(
-                ResourceHubArticle::latest()->limit(5)
-            )
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('title')
-                    ->label('Title')
+                TextColumn::make('name')
+                    ->label('Name')
                     ->searchable()
-                    ->sortable()
-                    ->limit(),
-                TextColumn::make('quality.name')
-                    ->label('Quality')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('status.name')
-                    ->label('Status')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('public')
-                    ->label('Public')
-                    ->sortable()
-                    ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('category.name')
-                    ->label('Category')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
+                TextColumn::make('resource_hub_articles_count')
+                    ->label('# of Resource Hub Articles')
+                    ->counts('resourceHubArticles')
+                    ->sortable(),
+                IconColumn::make('icon')
+                    ->icon(fn (string $state): string => $state)
+                    ->tooltip(fn (?string $state): ?string => filled($state) ? (string) str($state)->after('heroicon-o-')->headline() : null),
             ])
             ->recordActions([
-                ViewAction::make()
-                    ->url(fn (ResourceHubArticle $record): string => ResourceHubArticleResource::getUrl(name: 'view', parameters: ['record' => $record])),
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->recordUrl(
-                fn (ResourceHubArticle $record): string => ResourceHubArticleResource::getUrl(name: 'view', parameters: ['record' => $record]),
-            )
-            ->paginated(false);
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
     }
 }

@@ -34,52 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
+use App\Filament\Forms\Components\IconSelect;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
-class ListResourceHubStatuses extends ListRecords
+class EditResourceHubCategory extends EditRecord
 {
-    protected static string $resource = ResourceHubStatusResource::class;
+    use EditPageRedirection;
 
-    public function table(Table $table): Table
+    protected static string $resource = ResourceHubCategoryResource::class;
+
+    public function form(Schema $schema): Schema
     {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->label('Name')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('resource_hub_articles_count')
-                    ->label('# of Resource Hub Articles')
-                    ->counts('resourceHubArticles')
-                    ->sortable(),
-            ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                    ->required()
+                    ->string(),
+                IconSelect::make('icon'),
+                Textarea::make('description')
+                    ->label('Description')
+                    ->nullable()
+                    ->string()
+                    ->columnSpanFull(),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            ViewAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

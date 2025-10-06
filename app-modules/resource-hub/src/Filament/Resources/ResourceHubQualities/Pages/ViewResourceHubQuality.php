@@ -34,35 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\Pages;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\CreateResourceHubStatus;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\EditResourceHubStatus;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\ListResourceHubStatuses;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\ViewResourceHubStatus;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use App\Filament\Clusters\ResourceHub;
-use Filament\Resources\Resource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\ResourceHubQualityResource;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
-class ResourceHubStatusResource extends Resource
+class ViewResourceHubQuality extends ViewRecord
 {
-    protected static ?string $model = ResourceHubStatus::class;
+    protected static string $resource = ResourceHubQualityResource::class;
 
-    protected static ?string $navigationLabel = 'Statuses';
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name')
+                            ->label('Name'),
+                    ])
+                    ->columns(),
+            ]);
+    }
 
-    protected static ?string $modelLabel = 'resource hub status';
-
-    protected static ?int $navigationSort = 3;
-
-    protected static ?string $cluster = ResourceHub::class;
-
-    public static function getPages(): array
+    protected function getHeaderActions(): array
     {
         return [
-            'index' => ListResourceHubStatuses::route('/'),
-            'create' => CreateResourceHubStatus::route('/create'),
-            'view' => ViewResourceHubStatus::route('/{record}'),
-            'edit' => EditResourceHubStatus::route('/{record}/edit'),
+            EditAction::make(),
         ];
     }
 }

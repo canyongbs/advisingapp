@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
