@@ -52,36 +52,35 @@ use OwenIt\Auditing\Contracts\Auditable;
  */
 class WorkflowSubscriptionDetails extends WorkflowDetails implements Auditable
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
+  use SoftDeletes;
+  use AuditableTrait;
+  use HasUuids;
 
-    /** @use HasFactory<WorkflowSubscriptionDetailsFactory> */
-    use HasFactory;
+  /** @use HasFactory<WorkflowSubscriptionDetailsFactory> */
+  use HasFactory;
 
-    protected $fillable = [
-        'user_ids',
-        'remove_prior',
-        'workflow_step_id',
-    ];
+  protected $fillable = [
+    'user_ids',
+    'remove_prior',
+  ];
 
-    protected $casts = [
-        'user_ids' => 'array',
-        'remove_prior' => 'boolean',
-    ];
+  protected $casts = [
+    'user_ids' => 'array',
+    'remove_prior' => 'boolean',
+  ];
 
-    public function getLabel(): string
-    {
-        return 'Subscription';
-    }
+  public function getLabel(): string
+  {
+    return 'Subscription';
+  }
 
-    public function getBlock(): WorkflowActionBlock
-    {
-        return SubscriptionBlock::make();
-    }
+  public function getBlock(): WorkflowActionBlock
+  {
+    return SubscriptionBlock::make();
+  }
 
-    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
-    {
-        return new SubscriptionWorkflowActionJob($workflowRunStep);
-    }
+  public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
+  {
+    return new SubscriptionWorkflowActionJob($workflowRunStep);
+  }
 }
