@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages;
+namespace AdvisingApp\Segment\Filament\Resources\Segments\Pages;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Enums\SegmentType;
-use AdvisingApp\Segment\Filament\Resources\SegmentResource;
+use AdvisingApp\Segment\Filament\Resources\Segments\SegmentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Import;
 use App\Models\User;
@@ -75,6 +75,9 @@ class CreateSegment extends CreateRecord implements HasTable
 
     protected static string $resource = SegmentResource::class;
 
+    /**
+     * @return array<Step>
+     */
     public function getSteps(): array
     {
         return [

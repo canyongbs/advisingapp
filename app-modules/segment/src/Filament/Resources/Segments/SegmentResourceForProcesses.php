@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Segment\Filament\Resources;
+namespace AdvisingApp\Segment\Filament\Resources\Segments;
 
 use AdvisingApp\Segment\Models\Segment;
 use Filament\Resources\Resource;

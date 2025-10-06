@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Segment\Filament\Resources;
+namespace AdvisingApp\Segment\Filament\Resources\Segments;
 
-use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\CreateSegment;
-use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\EditSegment;
-use AdvisingApp\Segment\Filament\Resources\SegmentResource\Pages\ListSegments;
+use AdvisingApp\Segment\Filament\Resources\Segments\Pages\CreateSegment;
+use AdvisingApp\Segment\Filament\Resources\Segments\Pages\EditSegment;
+use AdvisingApp\Segment\Filament\Resources\Segments\Pages\ListSegments;
 use AdvisingApp\Segment\Models\Segment;
 use Filament\Resources\Resource;
 use UnitEnum;
