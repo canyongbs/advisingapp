@@ -48,6 +48,8 @@ class PreviewQnaAdvisor extends ViewRecord
 
     protected static string | UnitEnum | null $navigationGroup = 'Configuration';
 
+    protected static ?string $navigationLabel = 'Preview';
+
     protected static ?string $title = 'Preview';
 
     protected static ?string $breadcrumb = 'Preview';
