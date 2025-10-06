@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\ResourceHubCategoryResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;

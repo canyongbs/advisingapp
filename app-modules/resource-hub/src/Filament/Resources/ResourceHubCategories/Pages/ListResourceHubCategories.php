@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\ResourceHubCategoryResource;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;

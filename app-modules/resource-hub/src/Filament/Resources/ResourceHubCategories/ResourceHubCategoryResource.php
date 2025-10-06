@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories;
 
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages\CreateResourceHubCategory;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages\EditResourceHubCategory;
