@@ -61,7 +61,7 @@ it('will execute appropriately on each educatable in the segment', function (arr
 
     $workflowRun = WorkflowRun::factory()->create([
         'workflow_trigger_id' => $workflowTrigger->id,
-        'related_type' => get_class($educatable),
+        'related_type' => $educatable->getMorphClass(),
         'related_id' => $educatable->getKey(),
     ]);
 

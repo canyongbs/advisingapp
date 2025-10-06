@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Workflow\Database\Factories;
 
-use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
+use AdvisingApp\Workflow\Models\WorkflowSubscriptionDetails;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<WorkflowProactiveAlertDetails>
+ * @extends Factory<WorkflowSubscriptionDetails>
  */
 class WorkflowSubscriptionDetailsFactory extends Factory
 {
@@ -53,7 +53,7 @@ class WorkflowSubscriptionDetailsFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_ids' => User::inRandomOrder()->take(3)->pluck('id')->toArray(),
+            'user_ids' => fn () => User::factory()->count(3)->create()->pluck('id')->toArray(),
             'remove_prior' => $this->faker->boolean,
         ];
     }
