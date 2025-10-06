@@ -49,7 +49,7 @@ class GenerateQnaAdvisorWidgetEmbedCode
         $manifest = json_decode(File::get($manifestPath), true);
 
         $loaderScriptUrl = url("js/widgets/qna-advisor/{$manifest['src/loader.js']['file']}");
-        $resourcesUrl = route('ai.qna-advisors.resources');
+        $resourcesUrl = route('ai.qna-advisors.resources', ['advisor' => $qnaAdvisor]);
 
         $widgetDefinitionUrl = URL::route(name: 'ai.qna-advisors.show', parameters: ['advisor' => $qnaAdvisor]);
 
