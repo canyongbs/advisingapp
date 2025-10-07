@@ -71,7 +71,7 @@ class ListAudits extends ListRecords
                 TextColumn::make('auditable_type')
                     ->label('Auditable')
                     ->sortable()
-                    ->formatStateUsing(fn($state) => Str::of($state)->headline()),
+                    ->formatStateUsing(fn ($state) => Str::of($state)->headline()),
                 TextColumn::make('change_agent_name')
                     ->label('Change Agent (User)')
                     ->sortable()
@@ -81,14 +81,14 @@ class ListAudits extends ListRecords
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('Occurred At')
-                    ->formatStateUsing(fn(string $state) => Carbon::parse($state)->format('m-d-Y h:i A')),
+                    ->formatStateUsing(fn (string $state) => Carbon::parse($state)->format('m-d-Y h:i A')),
             ])
             ->defaultSort('id', 'desc')
             ->filters([
                 Filter::make('exclude_system_user')
                     ->label('Exclude System User')
                     ->query(
-                        fn(Builder $query, array $data): Builder => $query->when($data['isActive'], fn(Builder $query) => $query->whereHas('user'))
+                        fn (Builder $query, array $data): Builder => $query->when($data['isActive'], fn (Builder $query) => $query->whereHas('user'))
                     )
                     ->schema([
                         Checkbox::make('isActive')
@@ -97,13 +97,13 @@ class ListAudits extends ListRecords
                     ]),
                 SelectFilter::make('change_agent_user')
                     ->label('Change Agent (User)')
-                    ->options(fn(): array => User::query()->pluck('name', 'id')->all())
+                    ->options(fn (): array => User::query()->pluck('name', 'id')->all())
                     ->searchable()
-                    ->query(fn(Builder $query, array $data) => $data['value'] ? $query->where('change_agent_type', 'user')->where('change_agent_id', $data['value']) : null),
+                    ->query(fn (Builder $query, array $data) => $data['value'] ? $query->where('change_agent_type', 'user')->where('change_agent_id', $data['value']) : null),
                 SelectFilter::make('auditable')
                     ->label('Auditable')
                     ->options(AuditableModels::all())
-                    ->query(fn(Builder $query, array $data) => $data['value'] ? $query->where('auditable_type', $data['value']) : null),
+                    ->query(fn (Builder $query, array $data) => $data['value'] ? $query->where('auditable_type', $data['value']) : null),
                 Filter::make('created_at')
                     ->schema([
                         DatePicker::make('created_from')
@@ -130,11 +130,11 @@ class ListAudits extends ListRecords
                         return $query
                             ->when(
                                 $data['created_from'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
                             )
                             ->when(
                                 $data['created_until'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
                     }),
             ])

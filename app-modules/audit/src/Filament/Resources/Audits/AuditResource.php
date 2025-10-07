@@ -44,23 +44,23 @@ use Filament\Resources\Resource;
 
 class AuditResource extends Resource
 {
-  protected static ?string $model = Audit::class;
+    protected static ?string $model = Audit::class;
 
-  protected static ?string $navigationLabel = 'System Administration';
+    protected static ?string $navigationLabel = 'System Administration';
 
-  protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 40;
 
-  protected static ?string $cluster = UsageAuditing::class;
+    protected static ?string $cluster = UsageAuditing::class;
 
-  protected static ?string $breadcrumb = 'System Administration';
+    protected static ?string $breadcrumb = 'System Administration';
 
-  protected static ?string $slug = 'system-administration';
+    protected static ?string $slug = 'system-administration';
 
-  public static function getPages(): array
-  {
-    return [
-      'index' => ListAudits::route('/'),
-      'view' => ViewAudit::route('/{record}'),
-    ];
-  }
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListAudits::route('/'),
+            'view' => ViewAudit::route('/{record}'),
+        ];
+    }
 }

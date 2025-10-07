@@ -59,7 +59,7 @@ class ViewAudit extends ViewRecord
                     ->schema([
                         TextEntry::make('auditable_type')
                             ->label('Auditable')
-                            ->formatStateUsing(fn($state) => Str::of($state)->headline()),
+                            ->formatStateUsing(fn ($state) => Str::of($state)->headline()),
                         TextEntry::make('change_agent_name')
                             ->label('Change Agent (User)')
                             ->placeholder('System'),
@@ -73,7 +73,7 @@ class ViewAudit extends ViewRecord
                             ->label('User Agent'),
                         TextEntry::make('created_at')
                             ->label('Occurred At')
-                            ->formatStateUsing(fn(string $state) => Carbon::parse($state)->format('m-d-Y h:i A')),
+                            ->formatStateUsing(fn (string $state) => Carbon::parse($state)->format('m-d-Y h:i A')),
                         TextEntry::make('getModified')
                             ->label('Changes')
                             ->columnSpanFull()
