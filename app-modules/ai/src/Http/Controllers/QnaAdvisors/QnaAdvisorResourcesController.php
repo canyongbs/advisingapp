@@ -36,20 +36,23 @@
 
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
+use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
 class QnaAdvisorResourcesController
 {
-    public function __invoke(): JsonResponse
+    public function __invoke(Request $request, QnaAdvisor $advisor): JsonResponse
     {
         // Read the Vite manifest for portal assets
         $manifestPath = public_path('js/widgets/qna-advisor/.vite/manifest.json');
         $manifest = json_decode(File::get($manifestPath), true);
 
-        $portalEntry = $manifest['src/portal.js'];
+        $portalEntry = $manifest['src/widget.js'];
 
         return response()->json([
+            'entry' => route('ai.qna-advisors.entry', ['advisor' => $advisor]),
             'js' => url("js/widgets/qna-advisor/{$portalEntry['file']}"),
             'css' => url("js/widgets/qna-advisor/{$portalEntry['css'][0]}"),
         ]);

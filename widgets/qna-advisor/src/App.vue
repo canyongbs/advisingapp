@@ -42,7 +42,7 @@ import userAvatar from '../public/images/user-default-avatar.svg?url';
 import { useAuthStore } from './stores/auth';
 
 const props = defineProps({
-    url: {
+    entryUrl: {
         type: String,
         required: true,
     },
@@ -84,7 +84,7 @@ let websocketChannel = null;
 
 onMounted(async () => {
     axios
-        .post(props.url)
+        .post(props.entryUrl)
         .then((response) => {
             const json = response.data;
 

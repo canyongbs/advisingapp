@@ -48,7 +48,6 @@ use AdvisingApp\Ai\Http\Middleware\QnaAdvisorAuthorization;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Support\Facades\Route;
 
-
 Route::middleware([
     'api',
     EncryptCookies::class,
@@ -58,11 +57,11 @@ Route::middleware([
     ->name('ai.qna-advisors.')
     ->prefix('api/ai/qna-advisors/{advisor}')
     ->group(function () {
-        Route::post('/', ShowAdvisorController::class)
-            ->name('show');
-
-        Route::get('/resources', QnaAdvisorResourcesController::class)
+        Route::get('/', QnaAdvisorResourcesController::class)
             ->name('resources');
+
+        Route::post('/entry', ShowAdvisorController::class)
+            ->name('entry');
 
         Route::post('/authenticate/request', RequestAuthenticationController::class)
             ->middleware(['signed'])

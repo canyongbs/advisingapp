@@ -49,18 +49,11 @@ class GenerateQnaAdvisorWidgetEmbedCode
         $manifest = json_decode(File::get($manifestPath), true);
 
         $loaderScriptUrl = url("js/widgets/qna-advisor/{$manifest['src/loader.js']['file']}");
-        $resourcesUrl = route('ai.qna-advisors.resources', ['advisor' => $qnaAdvisor]);
 
-        $widgetDefinitionUrl = URL::route(name: 'ai.qna-advisors.show', parameters: ['advisor' => $qnaAdvisor]);
-
-        // TODO: This requires that folks update their embed, can we avoid that by pulling in from the main URL?
+        $resourcesUrl = URL::route(name: 'ai.qna-advisors.resources', parameters: ['advisor' => $qnaAdvisor]);
 
         return <<<EOD
-        <qna-advisor-embed
-            url="{$widgetDefinitionUrl}"
-            resources-url="{$resourcesUrl}"
-        >
-        </qna-advisor-embed>
+        <qna-advisor-embed url="{$resourcesUrl}"></qna-advisor-embed>
         <script src="{$loaderScriptUrl}"></script>
         EOD;
     }
