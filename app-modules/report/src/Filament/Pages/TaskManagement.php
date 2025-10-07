@@ -64,8 +64,6 @@ class TaskManagement extends EngagementReport
     {
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            TaskStats::make(['cacheTag' => $this->cacheTag]),
-            TaskCumulativeCountLineChart::make(['cacheTag' => $this->cacheTag]),
             MostRecentTasksTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
