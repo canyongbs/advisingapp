@@ -47,17 +47,17 @@ use function Pest\Laravel\actingAs;
 // Permission Tests
 
 test('ListAudits is gated with proper access control', function () {
-  $user = User::factory()->create();
+    $user = User::factory()->create();
 
-  actingAs($user)
-    ->get(
-      AuditResource::getUrl('index')
-    )->assertForbidden();
+    actingAs($user)
+        ->get(
+            AuditResource::getUrl('index')
+        )->assertForbidden();
 
-  $user->givePermissionTo('audit.view-any');
+    $user->givePermissionTo('audit.view-any');
 
-  actingAs($user)
-    ->get(
-      AuditResource::getUrl('index')
-    )->assertSuccessful();
+    actingAs($user)
+        ->get(
+            AuditResource::getUrl('index')
+        )->assertSuccessful();
 });
