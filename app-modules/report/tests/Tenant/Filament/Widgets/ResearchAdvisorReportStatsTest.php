@@ -46,12 +46,16 @@ it('returns correct total research advisor stats within the given date range', f
 
     $count = random_int(1, 5);
 
+    $userOne = User::factory()->create();
+    $userTwo = User::factory()->create();
+    $userThree = User::factory()->create();
+
     ResearchRequest::factory()
         ->has(ResearchRequestParsedLink::factory()->count(2), 'parsedLinks')
         ->count($count)
         ->create([
             'created_at' => $startDate,
-            'user_id' => User::factory(),
+            'user_id' => $userOne,
         ]);
 
     ResearchRequest::factory()
@@ -59,7 +63,7 @@ it('returns correct total research advisor stats within the given date range', f
         ->count($count)
         ->create([
             'created_at' => $endDate,
-            'user_id' => User::factory(),
+            'user_id' => $userTwo,
         ]);
 
     ResearchRequest::factory()
@@ -67,7 +71,7 @@ it('returns correct total research advisor stats within the given date range', f
         ->count($count)
         ->create([
             'created_at' => now()->subDays(20),
-            'user_id' => User::factory(),
+            'user_id' => $userThree,
         ]);
 
     $widget = new ResearchAdvisorReportStats();
