@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Filament\Resources\Roles\RelationManagers;
+namespace AdvisingApp\Authorization\Filament\Resources\Permissions\RelationManagers;
 
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Forms\Components\TextInput;
