@@ -39,7 +39,7 @@ namespace AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages;
 use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Pipeline\Models\PipelineStage;
-use AdvisingApp\Project\Filament\Resources\ProjectResource;
+use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;

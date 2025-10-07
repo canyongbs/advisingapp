@@ -34,37 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages;
+namespace AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\Pages;
 
-use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource;
-use Filament\Actions\EditAction;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Components\Section;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\ProjectMilestoneStatusResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 
-class ViewProjectMilestoneStatus extends ViewRecord
+class EditProjectMilestoneStatus extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = ProjectMilestoneStatusResource::class;
 
-    public function infolist(Schema $schema): Schema
+    public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('name')
-                            ->label('Name'),
-                        TextEntry::make('description')
-                            ->label('Description'),
-                    ]),
+            ->components([
+                TextInput::make('name')
+                    ->label('Name')
+                    ->maxLength(255)
+                    ->autofocus()
+                    ->required()
+                    ->string()
+                    ->unique(ignoreRecord: true),
+                Textarea::make('description')
+                    ->label('Description')
+                    ->maxLength(65535)
+                    ->required(),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            EditAction::make(),
+            ViewAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

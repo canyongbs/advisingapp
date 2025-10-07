@@ -34,31 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
+namespace AdvisingApp\Project\Filament\Resources\Projects\Pages;
 
-use AdvisingApp\Project\Filament\Resources\ProjectResource;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
-class CreateProject extends CreateRecord
+class ViewProject extends ViewRecord
 {
     protected static string $resource = ProjectResource::class;
 
-    public function form(Schema $schema): Schema
+    protected static ?string $navigationLabel = 'View';
+
+    public function infolist(Schema $schema): Schema
     {
         return $schema
-            ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->unique()
-                    ->string()
-                    ->maxLength(255),
-                Textarea::make('description')
-                    ->string()
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name'),
+                        TextEntry::make('description')
+                            ->label('Description')
+                            ->columnSpanFull(),
+                    ]),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            EditAction::make(),
+        ];
     }
 }

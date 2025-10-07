@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ViewProject;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\ViewProject;
 use AdvisingApp\Project\Models\Project;
 use App\Models\User;
 

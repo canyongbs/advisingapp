@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\CreateProject;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\CreateProject;
 use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\Tests\Tenant\Filament\Resources\ProjectResource\RequestFactory\CreateProjectRequestFactory;
+use AdvisingApp\Project\Tests\Tenant\Filament\Resources\Projects\RequestFactory\CreateProjectRequestFactory;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;

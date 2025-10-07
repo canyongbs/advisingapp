@@ -36,7 +36,7 @@
 
 use AdvisingApp\Project\Database\Factories\ProjectMilestoneFactory;
 use AdvisingApp\Project\Database\Seeders\ProjectMilestoneStatusSeeder;
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageMilestones;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageMilestones;
 use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Project\Models\ProjectMilestone;
 use AdvisingApp\Project\Models\ProjectMilestoneStatus;

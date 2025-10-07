@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Filament\Resources;
+namespace AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses;
 
-use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages\CreateProjectMilestoneStatus;
-use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages\EditProjectMilestoneStatus;
-use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages\ListProjectMilestoneStatuses;
-use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages\ViewProjectMilestoneStatus;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\Pages\CreateProjectMilestoneStatus;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\Pages\EditProjectMilestoneStatus;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\Pages\ListProjectMilestoneStatuses;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\Pages\ViewProjectMilestoneStatus;
 use AdvisingApp\Project\Models\ProjectMilestoneStatus;
 use App\Filament\Clusters\ProjectManagement;
 use BackedEnum;

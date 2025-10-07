@@ -34,56 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
+namespace AdvisingApp\Project\Filament\Resources\Projects\Pages;
 
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
-use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Project\Filament\Resources\ProjectResource;
-use BackedEnum;
+use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
-class ManageProjectPipelines extends ManageRelatedRecords
+class ListProjects extends ListRecords
 {
     protected static string $resource = ProjectResource::class;
-
-    protected static string $relationship = 'pipelines';
-
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static ?string $title = 'Pipelines';
 
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('name')
             ->columns([
-                TextColumn::make('name'),
-                TextColumn::make('segment.name'),
-                TextColumn::make('createdBy.name')->label('Created By'),
-            ])
-            ->filters([
-                Filter::make('createdBy')
-                    ->label('My Pipelines')
-                    ->default()
-                    ->query(fn (Builder $query) => $query->where('user_id', auth()->id())),
-            ])
-            ->headerActions([
-                CreateAction::make()
-                    ->url(PipelineResource::getUrl('create', ['project' => $this->getRecord()->getKey()]))
-                    ->authorize(fn (): bool => auth()->user()->can('create', Pipeline::class) && auth()->user()->can('update', $this->getRecord())),
+                IdColumn::make(),
+                TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
             ])
             ->recordActions([
-                ViewAction::make()
-                    ->url(fn (Pipeline $record): string => PipelineResource::getUrl('view', ['record' => $record])),
-                EditAction::make()
-                    ->url(fn (Pipeline $record): string => PipelineResource::getUrl('edit', ['record' => $record])),
+                ViewAction::make(),
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
     }
 }
