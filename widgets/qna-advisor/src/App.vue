@@ -259,15 +259,11 @@ async function authenticate(formData, node) {
         };
 
         axios
-            .post(
-                authentication.value.confirmationUrl,
-                data,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+            .post(authentication.value.confirmationUrl, data, {
+                headers: {
+                    'Content-Type': 'application/json',
                 },
-            )
+            })
             .then((response) => {
                 if (response.errors) {
                     node.setErrors([], response.errors);
@@ -386,11 +382,7 @@ async function authorizedPost(url, data) {
     }
 
     try {
-        return await axios.post(
-            url,
-            data,
-            { headers },
-        );
+        return await axios.post(url, data, { headers });
     } catch (error) {
         if (error.response && error.response.status === 401) {
             // Token expired, try to refresh
