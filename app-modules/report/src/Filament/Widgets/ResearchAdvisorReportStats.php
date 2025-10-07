@@ -89,7 +89,8 @@ class ResearchAdvisorReportStats extends StatsOverviewReportWidget
             );
 
         $sourcesCount = $shouldBypassCache
-            ? DB::selectOne("
+            ? DB::selectOne(
+                '
                 WITH filtered_research_requests AS (
                     SELECT id FROM research_requests
                     WHERE title IS NOT NULL
@@ -101,12 +102,13 @@ class ResearchAdvisorReportStats extends StatsOverviewReportWidget
                     (SELECT COUNT(*) FROM research_request_parsed_links WHERE research_request_id IN (SELECT id FROM filtered_research_requests))
                     +
                     (SELECT COUNT(*) FROM research_request_parsed_search_results WHERE research_request_id IN (SELECT id FROM filtered_research_requests))
-                    AS total",
-                    [$startDate, $endDate])->total
+                    AS total',
+                [$startDate, $endDate]
+            )->total
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'research-advisor-sources-count',
                 now()->addHours(24),
-                fn (): int => DB::selectOne("
+                fn (): int => DB::selectOne('
                     WITH filtered_research_requests AS (
                         SELECT id FROM research_requests
                         WHERE title IS NOT NULL
@@ -117,7 +119,7 @@ class ResearchAdvisorReportStats extends StatsOverviewReportWidget
                         (SELECT COUNT(*) FROM research_request_parsed_links WHERE research_request_id IN (SELECT id FROM filtered_research_requests))
                         +
                         (SELECT COUNT(*) FROM research_request_parsed_search_results WHERE research_request_id IN (SELECT id FROM filtered_research_requests))
-                        AS total")->total,
+                        AS total')->total,
             );
 
         return [
