@@ -86,6 +86,19 @@ class EnsureQnaAdvisorRequestComingFromAuthorizedDomain
             return response()->json(['error' => 'Origin/Referer not allowed'], 403);
         }
 
-        return $next($request);
+        $response = $next($request);
+
+        //        header('Access-Control-Allow-Origin: ' . $requestingUrlHeader);
+        //        header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+        //        header('Access-Control-Allow-Headers: *');
+        //        header('Access-Control-Allow-Credentials: true');
+
+        //        $response->headers->set('Access-Control-Allow-Origin', 'https://test.com');
+
+        return $response;
+        //            ->headers('Access-Control-Allow-Origin', 'test.com')
+        //            ->header('Access-Control-Allow-Methods', '*')
+        //            ->header('Access-Control-Allow-Headers', '*')
+        //            ->header('Access-Control-Allow-Credentials', 'true');
     }
 }
