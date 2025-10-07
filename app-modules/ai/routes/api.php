@@ -46,8 +46,10 @@ use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\ShowAdvisorController;
 use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorEmbedIsEnabled;
 use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorRequestComingFromAuthorizedDomain;
 use AdvisingApp\Ai\Http\Middleware\QnaAdvisorAuthorization;
+use AdvisingApp\Ai\Models\QnaAdvisor;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Http\Middleware\HandleCors;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([
@@ -85,7 +87,7 @@ Route::middleware([
             ->middleware(['signed'])
             ->name('authentication.refresh');
 
-        Route::match(['POST', 'OPTIONS'], '/messages', SendQnaAdvisorMessageController::class)
+        Route::post('/messages', SendQnaAdvisorMessageController::class)
             ->middleware([
                 'signed',
                 QnaAdvisorAuthorization::class,
@@ -98,4 +100,12 @@ Route::middleware([
                 QnaAdvisorAuthorization::class,
             ])
             ->name('threads.finish');
+
+        // Handle preflight CORS requests for all routes in this group
+        // MUST remain the last route in this group
+        Route::options('/{any}', function (Request $request, QnaAdvisor $advisor) {
+            return response()->noContent();
+        })
+            ->where('any', '.*')
+            ->name('preflight');
     });
