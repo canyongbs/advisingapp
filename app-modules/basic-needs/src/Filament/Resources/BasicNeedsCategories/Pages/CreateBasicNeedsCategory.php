@@ -34,38 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\BasicNeeds\Filament\Resources;
+namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\Pages;
 
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages\CreateBasicNeedsCategory;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages\EditBasicNeedsCategory;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages\ListBasicNeedsCategories;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages\ViewBasicNeedsCategory;
-use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
-use App\Filament\Clusters\ConstituentManagement;
-use Filament\Resources\Resource;
-use UnitEnum;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\BasicNeedsCategoryResource;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
-class BasicNeedsCategoryResource extends Resource
+class CreateBasicNeedsCategory extends CreateRecord
 {
-    protected static ?string $model = BasicNeedsCategory::class;
+  protected static string $resource = BasicNeedsCategoryResource::class;
 
-    protected static ?string $navigationLabel = 'Category';
-
-    protected static ?string $modelLabel = 'Category';
-
-    protected static ?int $navigationSort = 10;
-
-    protected static ?string $cluster = ConstituentManagement::class;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Basic Needs';
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListBasicNeedsCategories::route('/'),
-            'create' => CreateBasicNeedsCategory::route('/create'),
-            'view' => ViewBasicNeedsCategory::route('/{record}'),
-            'edit' => EditBasicNeedsCategory::route('/{record}/edit'),
-        ];
-    }
+  public function form(Schema $schema): Schema
+  {
+    return $schema
+      ->components([
+        TextInput::make('name')
+          ->label('Category Name')
+          ->required()
+          ->string()
+          ->maxLength(255)
+          ->unique(),
+        Textarea::make('description')
+          ->label('Description')
+          ->maxLength(65535)
+          ->string(),
+      ])->columns(1);
+  }
 }

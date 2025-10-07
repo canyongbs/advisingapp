@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages;
+namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\Pages;
 
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\BasicNeedsCategoryResource;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
@@ -45,27 +45,27 @@ use Filament\Schemas\Schema;
 
 class ViewBasicNeedsCategory extends ViewRecord
 {
-    protected static string $resource = BasicNeedsCategoryResource::class;
+  protected static string $resource = BasicNeedsCategoryResource::class;
 
-    public function infolist(Schema $schema): Schema
-    {
-        return $schema
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('name')
-                            ->label('Category Name'),
-                        TextEntry::make('description')
-                            ->label('Description'),
-                    ])
-                    ->columns(1),
-            ]);
-    }
+  public function infolist(Schema $schema): Schema
+  {
+    return $schema
+      ->schema([
+        Section::make()
+          ->schema([
+            TextEntry::make('name')
+              ->label('Category Name'),
+            TextEntry::make('description')
+              ->label('Description'),
+          ])
+          ->columns(1),
+      ]);
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            EditAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      EditAction::make(),
+    ];
+  }
 }

@@ -34,32 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages;
+namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories;
 
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Schemas\Schema;
+use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
+use App\Filament\Clusters\ConstituentManagement;
+use Filament\Resources\Resource;
+use UnitEnum;
 
-class CreateBasicNeedsCategory extends CreateRecord
+class BasicNeedsCategoryResource extends Resource
 {
-    protected static string $resource = BasicNeedsCategoryResource::class;
+  protected static ?string $model = BasicNeedsCategory::class;
 
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TextInput::make('name')
-                    ->label('Category Name')
-                    ->required()
-                    ->string()
-                    ->maxLength(255)
-                    ->unique(),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->maxLength(65535)
-                    ->string(),
-            ])->columns(1);
-    }
+  protected static ?string $navigationLabel = 'Category';
+
+  protected static ?string $modelLabel = 'Category';
+
+  protected static ?int $navigationSort = 10;
+
+  protected static ?string $cluster = ConstituentManagement::class;
+
+  protected static string | UnitEnum | null $navigationGroup = 'Basic Needs';
+
+  public static function getPages(): array
+  {
+    return [
+      'index' => ListBasicNeedsCategories::route('/'),
+      'create' => CreateBasicNeedsCategory::route('/create'),
+      'view' => ViewBasicNeedsCategory::route('/{record}'),
+      'edit' => EditBasicNeedsCategory::route('/{record}/edit'),
+    ];
+  }
 }

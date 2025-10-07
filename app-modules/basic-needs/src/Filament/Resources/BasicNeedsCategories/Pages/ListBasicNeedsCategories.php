@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages;
+namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\Pages;
 
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\BasicNeedsCategoryResource;
 use App\Exceptions\SoftDeleteContraintViolationException;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkAction;
