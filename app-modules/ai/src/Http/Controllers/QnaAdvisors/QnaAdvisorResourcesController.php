@@ -54,7 +54,6 @@ class QnaAdvisorResourcesController
         return response()->json([
             'entry' => route('ai.qna-advisors.entry', ['advisor' => $advisor]),
             'js' => route('ai.qna-advisors.resource', ['advisor' => $advisor, 'resource' => "js/widgets/qna-advisor/{$portalEntry['file']}"]),
-            //            'js' => url("js/widgets/qna-advisor/{$portalEntry['file']}"),
             'css' => url("js/widgets/qna-advisor/{$portalEntry['css'][0]}"),
         ]);
     }
