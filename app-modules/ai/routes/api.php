@@ -37,6 +37,7 @@
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\AuthenticationConfirmController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\AuthenticationRefreshController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\FinishAdvisorThreadController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\QnaAdvisorResourceController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\QnaAdvisorResourcesController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\RegisterProspectController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\RequestAuthenticationController;
@@ -59,6 +60,9 @@ Route::middleware([
     ->group(function () {
         Route::get('/', QnaAdvisorResourcesController::class)
             ->name('resources');
+
+        Route::get('/resource', QnaAdvisorResourceController::class)
+            ->name('resource');
 
         Route::post('/entry', ShowAdvisorController::class)
             ->name('entry');

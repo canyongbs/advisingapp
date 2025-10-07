@@ -37,25 +37,26 @@
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class QnaAdvisorResourcesController
+class QnaAdvisorResourceController
 {
-    public function __invoke(Request $request, QnaAdvisor $advisor): JsonResponse
+    public function __invoke(Request $request, QnaAdvisor $advisor): StreamedResponse
     {
-        // Read the Vite manifest for portal assets
-        $manifestPath = public_path('js/widgets/qna-advisor/.vite/manifest.json');
-        $manifest = json_decode(File::get($manifestPath), true);
+        $resourcePath = $request->query('resource');
 
-        $portalEntry = $manifest['src/widget.js'];
+        dd($resourcePath);
 
-        return response()->json([
-            'entry' => route('ai.qna-advisors.entry', ['advisor' => $advisor]),
-            'js' => route('ai.qna-advisors.resource', ['advisor' => $advisor, 'resource' => "js/widgets/qna-advisor/{$portalEntry['file']}"]),
-            //            'js' => url("js/widgets/qna-advisor/{$portalEntry['file']}"),
-            'css' => url("js/widgets/qna-advisor/{$portalEntry['css'][0]}"),
-        ]);
+        return response()->streamDownload(function () use ($resourcePath) {
+            $stream = Storage::disk('public')->readStream($resourcePath);
+            fpassthru($stream); // Output the file stream directly
+
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+        });
     }
 }
