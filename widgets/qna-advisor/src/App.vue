@@ -41,6 +41,11 @@ import loadingSpinner from '../public/images/loading-spinner.svg?url';
 import userAvatar from '../public/images/user-default-avatar.svg?url';
 import { useAuthStore } from './stores/auth';
 
+// Configure axios defaults
+axios.defaults.withCredentials = true;
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.headers.common['Accept'] = 'application/json';
+
 const props = defineProps({
     entryUrl: {
         type: String,
@@ -91,7 +96,6 @@ onMounted(async () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                withCredentials: true,
             },
         )
         .then((response) => {
@@ -262,7 +266,6 @@ async function authenticate(formData, node) {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    withCredentials: true,
                 },
             )
             .then((response) => {
@@ -307,7 +310,6 @@ async function authenticate(formData, node) {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    withCredentials: true,
                 },
             )
             .then((response) => {
@@ -340,7 +342,6 @@ async function authenticate(formData, node) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                withCredentials: true,
             },
         )
         .then((response) => {
@@ -398,7 +399,6 @@ async function authorizedPost(url, data) {
                     authentication.value.refreshUrl,
                     {},
                     {
-                        withCredentials: true,
                         headers: {
                             'Content-Type': 'application/json',
                         },
