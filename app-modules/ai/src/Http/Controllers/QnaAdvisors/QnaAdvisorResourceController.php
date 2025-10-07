@@ -38,25 +38,23 @@ namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class QnaAdvisorResourceController
 {
     public function __invoke(Request $request, QnaAdvisor $advisor): StreamedResponse
     {
-        $resourcePath = $request->query('resource');
+        $resourcePath = str_replace('\\/', '/', $request->query('resource'));
+        $fullPath = public_path($resourcePath);
 
-        dd($resourcePath);
+        if (! file_exists($fullPath)) {
+            abort(404, 'Resource not found.');
+        }
 
-        return response()->streamDownload(function () use ($resourcePath) {
-            $stream = Storage::disk('public')->readStream($resourcePath);
-            fpassthru($stream); // Output the file stream directly
-
-            if (is_resource($stream)) {
-                fclose($stream);
-            }
-        });
+        return response()->streamDownload(function () use ($fullPath) {
+            $stream = fopen($fullPath, 'rb');
+            fpassthru($stream);
+            fclose($stream);
+        }, basename($fullPath));
     }
 }
