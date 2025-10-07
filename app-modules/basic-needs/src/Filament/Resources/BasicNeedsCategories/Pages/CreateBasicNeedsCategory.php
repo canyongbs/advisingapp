@@ -44,22 +44,22 @@ use Filament\Schemas\Schema;
 
 class CreateBasicNeedsCategory extends CreateRecord
 {
-  protected static string $resource = BasicNeedsCategoryResource::class;
+    protected static string $resource = BasicNeedsCategoryResource::class;
 
-  public function form(Schema $schema): Schema
-  {
-    return $schema
-      ->components([
-        TextInput::make('name')
-          ->label('Category Name')
-          ->required()
-          ->string()
-          ->maxLength(255)
-          ->unique(),
-        Textarea::make('description')
-          ->label('Description')
-          ->maxLength(65535)
-          ->string(),
-      ])->columns(1);
-  }
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('name')
+                    ->label('Category Name')
+                    ->required()
+                    ->string()
+                    ->maxLength(255)
+                    ->unique(),
+                Textarea::make('description')
+                    ->label('Description')
+                    ->maxLength(65535)
+                    ->string(),
+            ])->columns(1);
+    }
 }

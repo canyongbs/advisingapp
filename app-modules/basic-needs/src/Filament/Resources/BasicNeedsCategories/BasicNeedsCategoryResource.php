@@ -43,25 +43,25 @@ use UnitEnum;
 
 class BasicNeedsCategoryResource extends Resource
 {
-  protected static ?string $model = BasicNeedsCategory::class;
+    protected static ?string $model = BasicNeedsCategory::class;
 
-  protected static ?string $navigationLabel = 'Category';
+    protected static ?string $navigationLabel = 'Category';
 
-  protected static ?string $modelLabel = 'Category';
+    protected static ?string $modelLabel = 'Category';
 
-  protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 10;
 
-  protected static ?string $cluster = ConstituentManagement::class;
+    protected static ?string $cluster = ConstituentManagement::class;
 
-  protected static string | UnitEnum | null $navigationGroup = 'Basic Needs';
+    protected static string | UnitEnum | null $navigationGroup = 'Basic Needs';
 
-  public static function getPages(): array
-  {
-    return [
-      'index' => ListBasicNeedsCategories::route('/'),
-      'create' => CreateBasicNeedsCategory::route('/create'),
-      'view' => ViewBasicNeedsCategory::route('/{record}'),
-      'edit' => EditBasicNeedsCategory::route('/{record}/edit'),
-    ];
-  }
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListBasicNeedsCategories::route('/'),
+            'create' => CreateBasicNeedsCategory::route('/create'),
+            'view' => ViewBasicNeedsCategory::route('/{record}'),
+            'edit' => EditBasicNeedsCategory::route('/{record}/edit'),
+        ];
+    }
 }
