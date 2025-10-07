@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\Roles\Pages;
 
-use AdvisingApp\Authorization\Filament\Resources\authorizations\RoleResource;
+use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\Role;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Authenticatable;
