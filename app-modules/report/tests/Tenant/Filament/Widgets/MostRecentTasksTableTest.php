@@ -169,7 +169,7 @@ it('properly filters students by segment', function () {
     ])
         ->assertCanSeeTableRecords(collect([$segmentTasks]))
         ->assertCanNotSeeTableRecords(collect([$nonSegmentTasks]));
-})->only()->repeat(100);
+});
 
 it('properly filters prospects by segment', function () {
     $segment = Segment::factory()->create([
