@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Pages;
 
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Schemas\ProspectProfileInfolist;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\Concerns\HasProspectHeader;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Schemas\ProspectProfileInfolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
 

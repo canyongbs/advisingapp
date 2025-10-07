@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Segment\Enums;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Tables\ProspectsTable;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Tables\ProspectsTable;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Importers\ProspectSegmentSubjectImporter;
 use AdvisingApp\Segment\Importers\StudentSegmentSubjectImporter;

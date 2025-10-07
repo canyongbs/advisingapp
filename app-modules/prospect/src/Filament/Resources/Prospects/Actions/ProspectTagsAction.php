@@ -34,53 +34,54 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers;
+namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Actions;
 
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\ViewAction;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Prospect\Models\Prospect;
+use App\Enums\TagType;
+use App\Models\Tag;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
+use Filament\Support\Enums\Width;
 
-class EngagementResponsesRelationManager extends RelationManager
+class ProspectTagsAction extends Action
 {
-    protected static string $relationship = 'engagementResponses';
-
-    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    protected function setUp(): void
     {
-        return 'Inbound';
+        parent::setUp();
+
+        $this
+            ->modalHeading('Prospect Tags')
+            ->modalWidth(Width::ExtraLarge)
+            ->modalSubmitActionLabel('Save')
+            ->schema([
+                Select::make('tag_ids')
+                    ->options(
+                        fn (): array => Tag::where('type', TagType::Prospect)
+                            ->orderBy('name', 'ASC')
+                            ->pluck('name', 'id')
+                            ->toArray()
+                    )
+                    ->required()
+                    ->label('Tag')
+                    ->multiple()
+                    ->required()
+                    ->default(fn (?Prospect $record): array => $record ? $record->tags->sortBy('name')->pluck('id')->toArray() : [])
+                    ->searchable(),
+            ])
+            ->action(function (array $data, Prospect $record) {
+                $record->tags()->sync($data['tag_ids']);
+                $record->save();
+
+                Notification::make()
+                    ->title('Tags succesfully modified.')
+                    ->success()
+                    ->send();
+            });
     }
 
-    public function infolist(Schema $schema): Schema
+    public static function getDefaultName(): ?string
     {
-        return $schema
-            ->components([
-                TextEntry::make('content'),
-                TextEntry::make('sent_at')
-                    ->dateTime('Y-m-d H:i:s'),
-            ]);
-    }
-
-    public function table(Table $table): Table
-    {
-        return $table
-            ->heading('Email and Text Messages')
-            ->recordTitleAttribute('id')
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('content'),
-                TextColumn::make('sent_at')
-                    ->dateTime('Y-m-d H:i:s'),
-            ])
-            ->headerActions([
-            ])
-            ->recordActions([
-                ViewAction::make(),
-            ])
-            ->toolbarActions([
-            ]);
+        return 'Tags';
     }
 }

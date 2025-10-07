@@ -34,76 +34,50 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions;
+namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Actions;
 
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
-use Filament\Pages\Page;
-use Filament\Support\Enums\Width;
 
-class ConvertToStudent extends Action
+class DisassociateStudent extends Action
 {
     protected function setUp(): void
     {
         parent::setUp();
 
         $this
-            ->modalHeading('Convert Prospect to Student')
-            ->modalWidth(Width::ExtraLarge)
-            ->modalSubmitActionLabel('Convert')
-            ->schema([
-                Select::make('student_id')
-                    ->relationship('student', 'full_name')
-                    ->required()
-                    ->label('Select Student')
-                    ->searchable(),
-            ])
-            ->action(function ($data, Prospect $record, Page $livewire) {
-                /** @var Student $student */
-                $student = Student::find($data['student_id']);
-
-                if (! $student) {
-                    Notification::make()
-                        ->title('Student not found!')
-                        ->danger()
-                        ->send();
-
-                    $this->halt();
-
-                    return;
-                }
-
-                $record->student()->associate($student);
+            ->modalHeading('Disassociate Prospect from Student?')
+            ->requiresConfirmation()
+            ->color('danger')
+            ->modalSubmitActionLabel('Yes')
+            ->action(function ($record) {
+                /** @var Prospect $record */
+                $record->student()->dissociate();
 
                 $record->status()->associate(
                     ProspectStatus::query()
-                        ->where('classification', SystemProspectClassification::Converted)
-                        ->where('name', 'Converted')
+                        ->where('classification', SystemProspectClassification::New)
+                        ->where('name', 'New')
                         ->where('is_system_protected', true)
                         ->firstOrFail()
                 );
 
                 $record->save();
 
+                $this->dispatch('reload-prospect');
+
                 Notification::make()
-                    ->title('Prospect converted to Student')
+                    ->title('Prospect disassociated from Student')
                     ->success()
                     ->send();
-
-                if ($livewire::getResourcePageName() === 'edit') {
-                    $this->redirect(ProspectResource::getUrl('view', ['record' => $record]));
-                }
             });
     }
 
     public static function getDefaultName(): ?string
     {
-        return 'convert';
+        return 'disassociate';
     }
 }

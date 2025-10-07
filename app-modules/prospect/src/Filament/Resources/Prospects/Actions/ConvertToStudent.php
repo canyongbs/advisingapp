@@ -34,54 +34,76 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions;
+namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Actions;
 
+use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
-use App\Enums\TagType;
-use App\Models\Tag;
+use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 use Filament\Support\Enums\Width;
 
-class ProspectTagsAction extends Action
+class ConvertToStudent extends Action
 {
     protected function setUp(): void
     {
         parent::setUp();
 
         $this
-            ->modalHeading('Prospect Tags')
+            ->modalHeading('Convert Prospect to Student')
             ->modalWidth(Width::ExtraLarge)
-            ->modalSubmitActionLabel('Save')
+            ->modalSubmitActionLabel('Convert')
             ->schema([
-                Select::make('tag_ids')
-                    ->options(
-                        fn (): array => Tag::where('type', TagType::Prospect)
-                            ->orderBy('name', 'ASC')
-                            ->pluck('name', 'id')
-                            ->toArray()
-                    )
+                Select::make('student_id')
+                    ->relationship('student', 'full_name')
                     ->required()
-                    ->label('Tag')
-                    ->multiple()
-                    ->required()
-                    ->default(fn (?Prospect $record): array => $record ? $record->tags->sortBy('name')->pluck('id')->toArray() : [])
+                    ->label('Select Student')
                     ->searchable(),
             ])
-            ->action(function (array $data, Prospect $record) {
-                $record->tags()->sync($data['tag_ids']);
+            ->action(function ($data, Prospect $record, Page $livewire) {
+                /** @var Student $student */
+                $student = Student::find($data['student_id']);
+
+                if (! $student) {
+                    Notification::make()
+                        ->title('Student not found!')
+                        ->danger()
+                        ->send();
+
+                    $this->halt();
+
+                    return;
+                }
+
+                $record->student()->associate($student);
+
+                $record->status()->associate(
+                    ProspectStatus::query()
+                        ->where('classification', SystemProspectClassification::Converted)
+                        ->where('name', 'Converted')
+                        ->where('is_system_protected', true)
+                        ->firstOrFail()
+                );
+
                 $record->save();
 
                 Notification::make()
-                    ->title('Tags succesfully modified.')
+                    ->title('Prospect converted to Student')
                     ->success()
                     ->send();
+
+                if ($livewire::getResourcePageName() === 'edit') {
+                    $this->redirect(ProspectResource::getUrl('view', ['record' => $record]));
+                }
             });
     }
 
     public static function getDefaultName(): ?string
     {
-        return 'Tags';
+        return 'convert';
     }
 }

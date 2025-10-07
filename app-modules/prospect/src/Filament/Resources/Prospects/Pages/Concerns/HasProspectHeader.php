@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns;
+namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\Concerns;
 
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ProspectTagsAction;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Actions\ConvertToStudent;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Actions\DisassociateStudent;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Actions\ProspectTagsAction;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspect;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns\HasEducatableHeader;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;

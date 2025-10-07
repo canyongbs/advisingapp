@@ -34,28 +34,53 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\Prospects\RelationManagers;
 
-use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
-use AdvisingApp\Task\Filament\RelationManagers\BaseTaskRelationManager;
-use BackedEnum;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
-class ManageProspectTasks extends BaseTaskRelationManager
+class EngagementResponsesRelationManager extends RelationManager
 {
-    use ProspectHolisticViewPage;
-    use HasProspectHeader;
+    protected static string $relationship = 'engagementResponses';
 
-    protected static string $resource = ProspectResource::class;
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return 'Inbound';
+    }
 
-    protected static string $relationship = 'tasks';
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextEntry::make('content'),
+                TextEntry::make('sent_at')
+                    ->dateTime('Y-m-d H:i:s'),
+            ]);
+    }
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Tasks';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Tasks';
-
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-check';
+    public function table(Table $table): Table
+    {
+        return $table
+            ->heading('Email and Text Messages')
+            ->recordTitleAttribute('id')
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('content'),
+                TextColumn::make('sent_at')
+                    ->dateTime('Y-m-d H:i:s'),
+            ])
+            ->headerActions([
+            ])
+            ->recordActions([
+                ViewAction::make(),
+            ])
+            ->toolbarActions([
+            ]);
+    }
 }

@@ -35,10 +35,10 @@
 */
 
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\EditProspect;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Actions\ConvertToStudent;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Actions\DisassociateStudent;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\EditProspect;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Tests\Tenant\Prospect\RequestFactories\EditProspectRequestFactory;

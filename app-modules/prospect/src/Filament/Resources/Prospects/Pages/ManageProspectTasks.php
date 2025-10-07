@@ -34,21 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Pages;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns\HasProspectHeader;
-use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns\HasEducatableActivityFeed;
-use Filament\Resources\Pages\Page;
+use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\Concerns\HasProspectHeader;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
+use AdvisingApp\Task\Filament\RelationManagers\BaseTaskRelationManager;
+use BackedEnum;
 
-class ViewProspectActivityFeed extends Page
+class ManageProspectTasks extends BaseTaskRelationManager
 {
-    use HasEducatableActivityFeed;
+    use ProspectHolisticViewPage;
     use HasProspectHeader;
 
     protected static string $resource = ProspectResource::class;
 
-    protected static ?string $title = 'Activity Feed';
+    protected static string $relationship = 'tasks';
 
-    protected string $view = 'student-data-model::filament.resources.educatable-resource.view-educatable-activity-feed';
+    // TODO: Automatically set from Filament based on relationship name
+    protected static ?string $navigationLabel = 'Tasks';
+
+    // TODO: Automatically set from Filament based on relationship name
+    protected static ?string $breadcrumb = 'Tasks';
+
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-check';
 }

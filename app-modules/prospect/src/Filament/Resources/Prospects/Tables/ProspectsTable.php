@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Tables;
+namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Tables;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;

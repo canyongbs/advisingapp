@@ -34,49 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions;
+namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Pages;
 
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use Filament\Actions\Action;
-use Filament\Notifications\Notification;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\Concerns\HasProspectHeader;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
+use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns\HasEducatableActivityFeed;
+use Filament\Resources\Pages\Page;
 
-class DisassociateStudent extends Action
+class ViewProspectActivityFeed extends Page
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
+    use HasEducatableActivityFeed;
+    use HasProspectHeader;
 
-        $this
-            ->modalHeading('Disassociate Prospect from Student?')
-            ->requiresConfirmation()
-            ->color('danger')
-            ->modalSubmitActionLabel('Yes')
-            ->action(function ($record) {
-                /** @var Prospect $record */
-                $record->student()->dissociate();
+    protected static string $resource = ProspectResource::class;
 
-                $record->status()->associate(
-                    ProspectStatus::query()
-                        ->where('classification', SystemProspectClassification::New)
-                        ->where('name', 'New')
-                        ->where('is_system_protected', true)
-                        ->firstOrFail()
-                );
+    protected static ?string $title = 'Activity Feed';
 
-                $record->save();
-
-                $this->dispatch('reload-prospect');
-
-                Notification::make()
-                    ->title('Prospect disassociated from Student')
-                    ->success()
-                    ->send();
-            });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'disassociate';
-    }
+    protected string $view = 'student-data-model::filament.resources.educatable-resource.view-educatable-activity-feed';
 }
