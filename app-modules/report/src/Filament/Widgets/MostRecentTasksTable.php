@@ -87,10 +87,10 @@ class MostRecentTasksTable extends BaseWidget
         return $table
             ->query(function () use ($startDate, $endDate, $segmentId): Builder {
                 return Task::query()
-                    ->whereHasMorph('concern', $this->educatableType, function(Builder $query) use ($segmentId) {
-                        $query->when($segmentId, fn(Builder $query) => $this->segmentFilter($query, $segmentId));
+                    ->whereHasMorph('concern', $this->educatableType, function (Builder $query) use ($segmentId) {
+                        $query->when($segmentId, fn (Builder $query) => $this->segmentFilter($query, $segmentId));
                     })
-                    ->when($startDate && $endDate, function(Builder $query) use ($startDate, $endDate): Builder {
+                    ->when($startDate && $endDate, function (Builder $query) use ($startDate, $endDate): Builder {
                         return $query->whereBetween('created_at', [$startDate, $endDate]);
                     })
                     ->orderBy('created_at', 'desc')

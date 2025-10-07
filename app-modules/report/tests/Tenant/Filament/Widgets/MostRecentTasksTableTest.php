@@ -48,11 +48,11 @@ it('displays only tasks added within the selected date range for students', func
     $endDate = now()->subDays(5);
 
     $taskWithinRange1 = Task::factory()
-      ->concerningStudent()
-      ->state([
-          'created_at' => $startDate,
-          'is_confidential' => false,
-      ])->create();
+        ->concerningStudent()
+        ->state([
+            'created_at' => $startDate,
+            'is_confidential' => false,
+        ])->create();
 
     $taskWithinRange2 = Task::factory()
         ->concerningStudent()
@@ -90,11 +90,11 @@ it('displays only tasks added within the selected date range for prospects', fun
     $endDate = now()->subDays(5);
 
     $taskWithinRange1 = Task::factory()
-      ->concerningProspect()
-      ->state([
-          'created_at' => $startDate,
-          'is_confidential' => false,
-      ])->create();
+        ->concerningProspect()
+        ->state([
+            'created_at' => $startDate,
+            'is_confidential' => false,
+        ])->create();
 
     $taskWithinRange2 = Task::factory()
         ->concerningProspect()

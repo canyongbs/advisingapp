@@ -87,6 +87,6 @@ class StudentTaskManagement extends EngagementReport implements HasSegmentModel
 
     public function segmentModel(): ?SegmentModel
     {
-      return SegmentModel::Student;
+        return SegmentModel::Student;
     }
 }

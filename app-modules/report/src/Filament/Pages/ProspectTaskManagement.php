@@ -87,6 +87,6 @@ class ProspectTaskManagement extends EngagementReport implements HasSegmentModel
 
     public function segmentModel(): ?SegmentModel
     {
-      return SegmentModel::Prospect;
+        return SegmentModel::Prospect;
     }
 }
