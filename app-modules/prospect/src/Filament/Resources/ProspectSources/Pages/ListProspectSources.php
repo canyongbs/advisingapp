@@ -34,41 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectSources\Pages;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\CreateProspectSource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\EditProspectSource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\ListProspectSources;
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\ViewProspectSource;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use App\Filament\Clusters\ConstituentManagement;
-use Filament\Resources\Resource;
-use UnitEnum;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSources\ProspectSourceResource;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-class ProspectSourceResource extends Resource
+class ListProspectSources extends ListRecords
 {
-    protected static ?string $model = ProspectSource::class;
+    protected static string $resource = ProspectSourceResource::class;
 
-    protected static ?string $navigationLabel = 'Sources';
-
-    protected static ?int $navigationSort = 20;
-
-    protected static ?string $cluster = ConstituentManagement::class;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
-
-    public static function getRelations(): array
+    public function table(Table $table): Table
     {
-        return [];
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name')
+                    ->label('Name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('prospects_count')
+                    ->label('# of Prospects')
+                    ->counts('prospects')
+                    ->sortable(),
+            ])
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
-    public static function getPages(): array
+    protected function getHeaderActions(): array
     {
         return [
-            'index' => ListProspectSources::route('/'),
-            'create' => CreateProspectSource::route('/create'),
-            'view' => ViewProspectSource::route('/{record}'),
-            'edit' => EditProspectSource::route('/{record}/edit'),
+            CreateAction::make(),
         ];
     }
 }

@@ -34,52 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectSources\Pages;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSources\ProspectSourceResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
-class ListProspectSources extends ListRecords
+class EditProspectSource extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = ProspectSourceResource::class;
 
-    public function table(Table $table): Table
+    public function form(Schema $schema): Schema
     {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->label('Name')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('prospects_count')
-                    ->label('# of Prospects')
-                    ->counts('prospects')
-                    ->sortable(),
-            ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                    ->required()
+                    ->string(),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            ViewAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

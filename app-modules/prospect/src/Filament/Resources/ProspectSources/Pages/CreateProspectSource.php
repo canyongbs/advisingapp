@@ -34,36 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectSources\Pages;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
-use Filament\Actions\EditAction;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Components\Section;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSources\ProspectSourceResource;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
 
-class ViewProspectSource extends ViewRecord
+class CreateProspectSource extends CreateRecord
 {
     protected static string $resource = ProspectSourceResource::class;
 
-    public function infolist(Schema $schema): Schema
+    public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('name')
-                            ->label('Name'),
-                    ])
-                    ->columns(),
+            ->components([
+                TextInput::make('name')
+                    ->label('Name')
+                    ->required()
+                    ->string(),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            EditAction::make(),
-        ];
     }
 }

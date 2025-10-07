@@ -34,25 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectSources;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Schemas\Schema;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSources\Pages\CreateProspectSource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSources\Pages\EditProspectSource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSources\Pages\ListProspectSources;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSources\Pages\ViewProspectSource;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use App\Filament\Clusters\ConstituentManagement;
+use Filament\Resources\Resource;
+use UnitEnum;
 
-class CreateProspectSource extends CreateRecord
+class ProspectSourceResource extends Resource
 {
-    protected static string $resource = ProspectSourceResource::class;
+    protected static ?string $model = ProspectSource::class;
 
-    public function form(Schema $schema): Schema
+    protected static ?string $navigationLabel = 'Sources';
+
+    protected static ?int $navigationSort = 20;
+
+    protected static ?string $cluster = ConstituentManagement::class;
+
+    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
+
+    public static function getRelations(): array
     {
-        return $schema
-            ->components([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-            ]);
+        return [];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListProspectSources::route('/'),
+            'create' => CreateProspectSource::route('/create'),
+            'view' => ViewProspectSource::route('/{record}'),
+            'edit' => EditProspectSource::route('/{record}/edit'),
+        ];
     }
 }

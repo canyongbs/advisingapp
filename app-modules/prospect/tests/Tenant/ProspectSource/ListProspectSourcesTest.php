@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\ListProspectSources;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSources\Pages\ListProspectSources;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSources\ProspectSourceResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use App\Models\User;
