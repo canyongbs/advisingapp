@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;

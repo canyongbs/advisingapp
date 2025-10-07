@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
@@ -99,8 +99,8 @@ class ListProspectStatuses extends ListRecords
                                         $record->delete();
 
                                         $totalDeleted++;
-                                    } catch (QueryException $e) {
-                                        if (str_contains($e->getMessage(), 'Cannot modify system protected rows')) {
+                                    } catch (QueryException $error) {
+                                        if (str_contains($error->getMessage(), 'Cannot modify system protected rows')) {
                                             Notification::make()
                                                 ->title('Cannot Delete System Protected record')
                                                 ->body('A system protected record cannot be deleted.')

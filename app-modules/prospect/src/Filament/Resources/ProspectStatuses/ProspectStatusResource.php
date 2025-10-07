@@ -34,40 +34,50 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatuses;
 
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages\CreateProspectStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages\EditProspectStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages\ListProspectStatuses;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages\ViewProspectStatus;
+use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Filament\Clusters\ConstituentManagement;
+use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use UnitEnum;
 
-class CreateProspectStatus extends CreateRecord
+class ProspectStatusResource extends Resource
 {
-    protected static string $resource = ProspectStatusResource::class;
+    protected static ?string $model = ProspectStatus::class;
 
-    public function form(Schema $schema): Schema
+    protected static ?string $navigationLabel = 'Statuses';
+
+    protected static ?int $navigationSort = 10;
+
+    protected static ?string $cluster = ConstituentManagement::class;
+
+    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
+
+    public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Select::make('classification')
-                    ->label('Classification')
-                    ->searchable()
-                    ->options(SystemProspectClassification::class)
-                    ->required()
-                    ->enum(SystemProspectClassification::class),
-                Select::make('color')
-                    ->label('Color')
-                    ->searchable()
-                    ->options(ProspectStatusColorOptions::class)
-                    ->required()
-                    ->enum(ProspectStatusColorOptions::class),
             ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListProspectStatuses::route('/'),
+            'create' => CreateProspectStatus::route('/create'),
+            'view' => ViewProspectStatus::route('/{record}'),
+            'edit' => EditProspectStatus::route('/{record}/edit'),
+        ];
     }
 }
