@@ -42,6 +42,13 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class QnaAdvisorResourceController
 {
+    private array $mimeTypes = [
+        'js' => 'application/javascript',
+        'mjs' => 'application/javascript',
+        'css' => 'text/css',
+        'json' => 'application/json',
+    ];
+
     public function __invoke(Request $request, QnaAdvisor $advisor): StreamedResponse
     {
         $resourcePath = str_replace('\\/', '/', $request->query('resource'));
@@ -51,10 +58,17 @@ class QnaAdvisorResourceController
             abort(404, 'Resource not found.');
         }
 
-        return response()->streamDownload(function () use ($fullPath) {
-            $stream = fopen($fullPath, 'rb');
-            fpassthru($stream);
-            fclose($stream);
-        }, basename($fullPath));
+        $extension = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
+        $mimeType = $this->mimeTypes[$extension] ?? 'text/plain';
+
+        return response()->streamDownload(
+            function () use ($fullPath) {
+                $stream = fopen($fullPath, 'rb');
+                fpassthru($stream);
+                fclose($stream);
+            },
+            basename($fullPath),
+            ['Content-Type' => $mimeType]
+        );
     }
 }
