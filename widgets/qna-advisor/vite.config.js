@@ -37,11 +37,11 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
     plugins: [vue()],
-    base: '',
     experimental: {
         renderBuiltUrl(filename) {
-            // Use the global resource URL if available, otherwise use relative path
-            return `" + (window.__VITE_QNA_ADVISOR_RESOURCE_URL__ || '') + "${filename}`;
+            return {
+                runtime: `window.__VITE_QNA_ADVISOR_RESOURCE_URL__ + ${JSON.stringify(filename)}`,
+            };
         },
     },
     build: {
@@ -52,14 +52,6 @@ export default defineConfig({
                 loader: resolve(__dirname, './src/loader.js'),
             },
             output: {
-                manualChunks: {
-                    // Vue ecosystem
-                    'vue-vendor': ['vue', 'vue-router', 'pinia'],
-                    // FormKit
-                    formkit: ['@formkit/vue', '@formkit/icons', '@formkit/themes'],
-                    // Axios and other utilities
-                    utils: ['axios'],
-                },
                 entryFileNames: (chunkInfo) => {
                     return chunkInfo.name === 'loader'
                         ? 'advising-app-qna-advisor-widget.js'
