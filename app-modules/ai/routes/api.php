@@ -47,6 +47,7 @@ use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorEmbedIsEnabled;
 use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorRequestComingFromAuthorizedDomain;
 use AdvisingApp\Ai\Http\Middleware\QnaAdvisorAuthorization;
 use App\Http\Middleware\EncryptCookies;
+use Illuminate\Http\Middleware\HandleCors;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([
@@ -55,6 +56,7 @@ Route::middleware([
     EnsureQnaAdvisorEmbedIsEnabled::class,
     EnsureQnaAdvisorRequestComingFromAuthorizedDomain::class,
 ])
+    ->withoutMiddleware(HandleCors::class)
     ->name('ai.qna-advisors.')
     ->prefix('api/ai/qna-advisors/{advisor}')
     ->group(function () {
@@ -83,7 +85,7 @@ Route::middleware([
             ->middleware(['signed'])
             ->name('authentication.refresh');
 
-        Route::post('/messages', SendQnaAdvisorMessageController::class)
+        Route::match(['POST', 'OPTIONS'], '/messages', SendQnaAdvisorMessageController::class)
             ->middleware([
                 'signed',
                 QnaAdvisorAuthorization::class,

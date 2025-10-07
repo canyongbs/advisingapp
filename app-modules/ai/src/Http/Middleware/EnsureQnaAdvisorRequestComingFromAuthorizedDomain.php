@@ -38,11 +38,16 @@ namespace AdvisingApp\Ai\Http\Middleware;
 
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Closure;
+use Fruitcake\Cors\CorsService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureQnaAdvisorRequestComingFromAuthorizedDomain
 {
+    public function __construct(
+        protected CorsService $cors,
+    ) {}
+
     /**
      * Handle an incoming request.
      *
@@ -80,22 +85,50 @@ class EnsureQnaAdvisorRequestComingFromAuthorizedDomain
             $allowedDomains = array_merge($allowedDomains, $flatAuthorized);
         }
 
-        $requestingUrlHeader = parse_url($requestingUrlHeader)['host'];
-
-        if (! in_array($requestingUrlHeader, $allowedDomains)) {
+        if (! in_array(parse_url($requestingUrlHeader)['host'], $allowedDomains)) {
             return response()->json(['error' => 'Origin/Referer not allowed'], 403);
+        }
+
+        $this->cors->setOptions([
+            'allowedOrigins' => [$requestingUrlHeader],
+            'allowedHeaders' => ['*'],
+            'allowedMethods' => ['GET', 'POST', 'OPTIONS'],
+            'supportsCredentials' => true,
+        ]);
+
+        if ($this->cors->isPreflightRequest($request)) {
+            logger()->debug('here2');
+            $response = $this->cors->handlePreflightRequest($request);
+
+            $this->cors->varyHeader($response, 'Access-Control-Request-Method');
+
+            return $response;
         }
 
         $response = $next($request);
 
-        //        header('Access-Control-Allow-Origin: ' . $requestingUrlHeader);
-        //        header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-        //        header('Access-Control-Allow-Headers: *');
-        //        header('Access-Control-Allow-Credentials: true');
+        if ($request->getMethod() === 'OPTIONS') {
+            $this->cors->varyHeader($response, 'Access-Control-Request-Method');
+        }
 
-        //        $response->headers->set('Access-Control-Allow-Origin', 'https://test.com');
+        //                header('Access-Control-Allow-Origin: ' . $requestingUrlHeader);
+        //                header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+        //                header('Access-Control-Allow-Headers: *');
+        //                header('Access-Control-Allow-Credentials: true');
 
-        return $response;
+        //        $response->headers->set('Access-Control-Allow-Origin', $requestingUrlHeader);
+        //        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        //        $response->headers->set('Access-Control-Allow-Headers', '*');
+        //        $response->headers->set('Access-Control-Expose-Headers', '*');
+        //        $response->headers->set('Access-Control-Allow-Credentials', 'true');
+
+        //        if ($request->getMethod() === 'OPTIONS') {
+        //            if ($request->headers->has('Access-Control-Request-Method')) {
+        //            }
+        //        }
+
+        return $this->cors->addActualRequestHeaders($response, $request);
+        //        return $response;
         //            ->headers('Access-Control-Allow-Origin', 'test.com')
         //            ->header('Access-Control-Allow-Methods', '*')
         //            ->header('Access-Control-Allow-Headers', '*')
