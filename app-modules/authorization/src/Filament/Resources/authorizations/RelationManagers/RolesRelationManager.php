@@ -34,23 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
+namespace AdvisingApp\Authorization\Filament\Resources\authorizations\RelationManagers;
 
-use AdvisingApp\Authorization\Filament\Resources\RoleResource;
-use AdvisingApp\Authorization\Models\PermissionGroup;
-use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
-use Illuminate\Validation\Rules\Unique;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-class CreateRole extends CreateRecord
+class RolesRelationManager extends RelationManager
 {
-    protected static string $resource = RoleResource::class;
+    protected static string $relationship = 'roles';
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     public function form(Schema $schema): Schema
     {
@@ -58,32 +55,19 @@ class CreateRole extends CreateRecord
             ->components([
                 TextInput::make('name')
                     ->required()
-                    ->maxLength(125)
-                    ->unique(
-                        table: 'roles',
-                        column: 'name',
-                        modifyRuleUsing: function (Unique $rule, Get $get) {
-                            $rule->where('guard_name', $get('guard_name'));
-                        }
-                    ),
-                Select::make('guard_name')
-                    ->required()
-                    ->options([
-                        'web' => 'Web',
-                        'api' => 'API',
-                    ])
-                    ->default('web')
-                    ->live()
-                    ->afterStateUpdated(fn (Set $set) => $set('permissions', [])),
-                Textarea::make('description')
-                    ->nullable()
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
-                PermissionsMatrix::make('permissions')
-                    ->columnSpanFull()
-                    ->guard(fn (Get $get): string => $get('guard_name'))
-                    ->visible(fn (Get $get): bool => filled($get('guard_name')))
-                    ->permissionGroupModel(PermissionGroup::class),
+                    ->maxLength(255),
             ]);
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name'),
+            ])
+            ->headerActions([])
+            ->recordActions([])
+            ->toolbarActions([]);
     }
 }

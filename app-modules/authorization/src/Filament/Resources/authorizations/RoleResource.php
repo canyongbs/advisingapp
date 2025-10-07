@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Filament\Resources;
+namespace AdvisingApp\Authorization\Filament\Resources\authorizations;
 
-use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\CreateRole;
-use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\EditRole;
-use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\ListRoles;
-use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\ViewRole;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\CreateRole;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\EditRole;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\ListRoles;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\ViewRole;
 use AdvisingApp\Authorization\Models\Role;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;

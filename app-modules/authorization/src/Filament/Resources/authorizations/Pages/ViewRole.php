@@ -34,20 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Filament\Resources\PermissionResource\RelationManagers;
+namespace AdvisingApp\Authorization\Filament\Resources\Roles\Pages;
 
-use App\Filament\Tables\Columns\IdColumn;
+use AdvisingApp\Authorization\Filament\Resources\authorizations\RoleResource;
+use AdvisingApp\Authorization\Models\PermissionGroup;
+use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
 
-class RolesRelationManager extends RelationManager
+class ViewRole extends ViewRecord
 {
-    protected static string $relationship = 'roles';
-
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static string $resource = RoleResource::class;
 
     public function form(Schema $schema): Schema
     {
@@ -55,22 +57,29 @@ class RolesRelationManager extends RelationManager
             ->components([
                 TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(125)
+                    ->unique('roles', 'name'),
+                Select::make('guard_name')
+                    ->required()
+                    ->options([
+                        'web' => 'Web',
+                        'api' => 'API',
+                    ]),
+                Textarea::make('description')
+                    ->nullable()
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
+                PermissionsMatrix::make('permissions')
+                    ->columnSpanFull()
+                    ->guard(fn (Get $get): string => $get('guard_name'))
+                    ->permissionGroupModel(PermissionGroup::class),
             ]);
     }
 
-    public function table(Table $table): Table
+    protected function getHeaderActions(): array
     {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name'),
-            ])
-            ->headerActions([
-            ])
-            ->recordActions([
-            ])
-            ->toolbarActions([
-            ]);
+        return [
+            EditAction::make(),
+        ];
     }
 }
