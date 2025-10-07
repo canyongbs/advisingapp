@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectTags\Pages;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectTags\ProspectTagResource;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;

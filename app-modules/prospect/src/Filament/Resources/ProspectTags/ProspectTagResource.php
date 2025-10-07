@@ -34,34 +34,54 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectTags;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectTags\Pages\CreateProspectTag;
+use AdvisingApp\Prospect\Filament\Resources\ProspectTags\Pages\EditProspectTag;
+use AdvisingApp\Prospect\Filament\Resources\ProspectTags\Pages\ListProspectTags;
+use AdvisingApp\Prospect\Filament\Resources\ProspectTags\Pages\ViewProspectTag;
+use AdvisingApp\Prospect\Models\Prospect;
 use App\Enums\TagType;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Schemas\Schema;
+use App\Filament\Clusters\ConstituentManagement;
+use App\Models\Tag;
+use App\Models\User;
+use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
 
-class CreateProspectTag extends CreateRecord
+class ProspectTagResource extends Resource
 {
-    protected static string $resource = ProspectTagResource::class;
+    protected static ?string $model = Tag::class;
 
-    public function form(Schema $schema): Schema
+    protected static ?string $navigationLabel = 'Tags';
+
+    protected static ?int $navigationSort = 50;
+
+    protected static ?string $cluster = ConstituentManagement::class;
+
+    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
+
+    public static function canAccess(): bool
     {
-        return $schema
-            ->components([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->maxLength(255)
-                    ->string(),
-            ]);
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->hasLicense(Prospect::getLicenseType());
     }
 
-    protected function mutateFormDataBeforeCreate(array $data): array
+    public static function getPages(): array
     {
-        $data['type'] = TagType::Prospect;
+        return [
+            'index' => ListProspectTags::route('/'),
+            'create' => CreateProspectTag::route('/create'),
+            'view' => ViewProspectTag::route('/{record}'),
+            'edit' => EditProspectTag::route('/{record}/edit'),
+        ];
+    }
 
-        return $data;
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('type', TagType::Prospect);
     }
 }
