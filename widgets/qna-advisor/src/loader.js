@@ -1,10 +1,10 @@
 (function() {
     // Get the portal embed element
-    const portalEmbedElement = document.querySelector("qna-advisor-embed");
+    const portalEmbedElement = document.querySelector('qna-advisor-embed');
     if (!portalEmbedElement) return;
 
     // Get the resources URL from the element
-    const resourcesUrl = portalEmbedElement.getAttribute("url");
+    const resourcesUrl = portalEmbedElement.getAttribute('url');
     if (!resourcesUrl) return;
 
     // Fetch the latest resource URLs
@@ -12,18 +12,21 @@
         .then((response) => response.json())
         .then((resources) => {
             if (!resources || !resources.entry || !resources.js || !resources.css) {
-                throw Error("Resources are missing or incomplete.");
+                throw Error('Resources are missing or incomplete.');
             }
 
-            portalEmbedElement.setAttribute("entry-url", resources.entry);
-            portalEmbedElement.setAttribute("css-url", resources.css);
+            portalEmbedElement.setAttribute('entry-url', resources.entry);
+            portalEmbedElement.setAttribute('css-url', resources.css);
 
-            const scriptElement = document.createElement("script");
+            // Set up the global variable for Vite's dynamic imports using the resource endpoint
+            window.__VITE_QNA_ADVISOR_RESOURCE_URL__ = `${resourcesUrl}/resource?resource=js/widgets/qna-advisor/`;
+
+            const scriptElement = document.createElement('script');
             scriptElement.src = resources.js;
-            scriptElement.type = "module";
+            scriptElement.type = 'module';
             document.body.appendChild(scriptElement);
         })
         .catch((error) => {
-            console.error("Failed to load portal resources:", error);
+            console.error('Failed to load portal resources:', error);
         });
 })();

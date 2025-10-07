@@ -37,7 +37,13 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
     plugins: [vue()],
-    base: '/js/widgets/qna-advisor/',
+    base: '',
+    experimental: {
+        renderBuiltUrl(filename) {
+            // Use the global resource URL if available, otherwise use relative path
+            return `" + (window.__VITE_QNA_ADVISOR_RESOURCE_URL__ || '') + "${filename}`;
+        },
+    },
     build: {
         manifest: true,
         rollupOptions: {
@@ -63,8 +69,10 @@ export default defineConfig({
                     if (assetInfo.names?.[0]?.endsWith('.css')) {
                         return 'advising-app-qna-advisor-widget-[hash].css';
                     }
-                    return 'assets/[name]-[hash][extname]';
+                    return '[name]-[hash][extname]';
                 },
+                // Place chunks directly in the root
+                chunkFileNames: '[name]-[hash].js',
             },
         },
         outDir: resolve(__dirname, '../../public/js/widgets/qna-advisor'),
