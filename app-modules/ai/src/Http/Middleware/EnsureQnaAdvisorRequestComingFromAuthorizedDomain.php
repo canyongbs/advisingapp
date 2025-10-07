@@ -97,7 +97,6 @@ class EnsureQnaAdvisorRequestComingFromAuthorizedDomain
         ]);
 
         if ($this->cors->isPreflightRequest($request)) {
-            logger()->debug('here2');
             $response = $this->cors->handlePreflightRequest($request);
 
             $this->cors->varyHeader($response, 'Access-Control-Request-Method');
@@ -111,27 +110,6 @@ class EnsureQnaAdvisorRequestComingFromAuthorizedDomain
             $this->cors->varyHeader($response, 'Access-Control-Request-Method');
         }
 
-        //                header('Access-Control-Allow-Origin: ' . $requestingUrlHeader);
-        //                header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-        //                header('Access-Control-Allow-Headers: *');
-        //                header('Access-Control-Allow-Credentials: true');
-
-        //        $response->headers->set('Access-Control-Allow-Origin', $requestingUrlHeader);
-        //        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-        //        $response->headers->set('Access-Control-Allow-Headers', '*');
-        //        $response->headers->set('Access-Control-Expose-Headers', '*');
-        //        $response->headers->set('Access-Control-Allow-Credentials', 'true');
-
-        //        if ($request->getMethod() === 'OPTIONS') {
-        //            if ($request->headers->has('Access-Control-Request-Method')) {
-        //            }
-        //        }
-
         return $this->cors->addActualRequestHeaders($response, $request);
-        //        return $response;
-        //            ->headers('Access-Control-Allow-Origin', 'test.com')
-        //            ->header('Access-Control-Allow-Methods', '*')
-        //            ->header('Access-Control-Allow-Headers', '*')
-        //            ->header('Access-Control-Allow-Credentials', 'true');
     }
 }
