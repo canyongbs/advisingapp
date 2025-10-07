@@ -246,7 +246,16 @@ async function authenticate(formData, node) {
         };
 
         axios
-            .post(authentication.value.confirmationUrl, data)
+            .post(
+                authentication.value.confirmationUrl,
+                data,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    withCredentials: true,
+                },
+            )
             .then((response) => {
                 if (response.errors) {
                     node.setErrors([], response.errors);
@@ -270,19 +279,28 @@ async function authenticate(formData, node) {
 
     if (authentication.value.registrationAllowed) {
         axios
-            .post(authentication.value.requestUrl, {
-                email: formData.email,
-                first_name: formData.first_name,
-                last_name: formData.last_name,
-                preferred: formData.preferred,
-                mobile: formData.mobile,
-                birthdate: formData.birthdate,
-                address: formData.address,
-                address_2: formData.address_2,
-                city: formData.city,
-                state: formData.state,
-                postal: formData.postal,
-            })
+            .post(
+                authentication.value.requestUrl,
+                {
+                    email: formData.email,
+                    first_name: formData.first_name,
+                    last_name: formData.last_name,
+                    preferred: formData.preferred,
+                    mobile: formData.mobile,
+                    birthdate: formData.birthdate,
+                    address: formData.address,
+                    address_2: formData.address_2,
+                    city: formData.city,
+                    state: formData.state,
+                    postal: formData.postal,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    withCredentials: true,
+                },
+            )
             .then((response) => {
                 if (!response.data.authentication_url) {
                     node.setErrors([response.data.message]);
@@ -304,9 +322,18 @@ async function authenticate(formData, node) {
     }
 
     axios
-        .post(authentication.value.requestUrl, {
-            email: formData.email,
-        })
+        .post(
+            authentication.value.requestUrl,
+            {
+                email: formData.email,
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                withCredentials: true,
+            },
+        )
         .then((response) => {
             if (!response.data.authentication_url) {
                 node.setErrors([response.data.message]);
@@ -349,7 +376,11 @@ async function authorizedPost(url, data) {
     }
 
     try {
-        return await axios.post(url, data, { headers });
+        return await axios.post(
+            url,
+            data,
+            { headers },
+        );
     } catch (error) {
         if (error.response && error.response.status === 401) {
             // Token expired, try to refresh
