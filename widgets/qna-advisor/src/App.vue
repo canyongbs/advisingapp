@@ -84,7 +84,16 @@ let websocketChannel = null;
 
 onMounted(async () => {
     axios
-        .post(props.entryUrl)
+        .post(
+            props.entryUrl,
+            {},
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                withCredentials: true,
+            },
+        )
         .then((response) => {
             const json = response.data;
 
