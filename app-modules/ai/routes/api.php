@@ -37,6 +37,7 @@
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\AuthenticationConfirmController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\AuthenticationRefreshController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\FinishAdvisorThreadController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\QnaAdvisorBroadcastController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\QnaAdvisorResourceController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\QnaAdvisorResourcesController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\RegisterProspectController;
@@ -70,6 +71,14 @@ Route::middleware([
 
         Route::post('/entry', ShowAdvisorController::class)
             ->name('entry');
+
+        Route::match(
+            ['GET', 'POST', 'HEAD'],
+            '/broadcasting/auth',
+            [QnaAdvisorBroadcastController::class, 'auth']
+        )
+            ->middleware(['auth:sanctum'])
+            ->name('broadcasting.auth');
 
         Route::post('/authenticate/request', RequestAuthenticationController::class)
             ->middleware(['signed'])

@@ -60,7 +60,7 @@ class ShowAdvisorController
             ),
             'websockets_config' => [
                 ...config('filament.broadcasting.echo'),
-                'authEndpoint' => url('api/broadcasting/auth'),
+                'authEndpoint' => route('ai.qna-advisors.broadcasting.auth', ['advisor' => $advisor]),
             ],
             'advisor' => [
                 'name' => $advisor->name,
