@@ -11,6 +11,7 @@
     "license": "Elastic-2.0",
     "require": {
         "php": "8.4.*",
+        "ext-fileinfo": "*",
         "ext-gd": "*",
         "ext-pdo": "*",
         "ably/ably-php": "^1.1",

@@ -39,21 +39,10 @@ namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Mime\MimeTypes;
 
 class QnaAdvisorResourceController
 {
-    private array $mimeTypes = [
-        'js' => 'application/javascript',
-        'mjs' => 'application/javascript',
-        'css' => 'text/css',
-        'json' => 'application/json',
-        'png' => 'image/png',
-        'jpg' => 'image/jpeg',
-        'jpeg' => 'image/jpeg',
-        'gif' => 'image/gif',
-        'svg' => 'image/svg+xml',
-    ];
-
     public function __invoke(Request $request, QnaAdvisor $advisor): StreamedResponse
     {
         $resourcePath = str_replace('\\/', '/', $request->query('resource'));
@@ -64,7 +53,7 @@ class QnaAdvisorResourceController
         }
 
         $extension = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
-        $mimeType = $this->mimeTypes[$extension] ?? 'text/plain';
+        $mimeType = (mime_content_type($fullPath) ?: null) ?? MimeTypes::getDefault()->getMimeTypes($extension)[0] ?? 'application/octet-stream';
 
         return response()->streamDownload(
             function () use ($fullPath) {
