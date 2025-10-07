@@ -34,33 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Audit\Filament\Resources;
+namespace AdvisingApp\Audit\Filament\Resources\Audits;
 
-use AdvisingApp\Audit\Filament\Resources\AuditResource\Pages\ListAudits;
-use AdvisingApp\Audit\Filament\Resources\AuditResource\Pages\ViewAudit;
+use AdvisingApp\Audit\Filament\Resources\Audits\Pages\ListAudits;
+use AdvisingApp\Audit\Filament\Resources\Audits\Pages\ViewAudit;
 use AdvisingApp\Audit\Models\Audit;
 use App\Filament\Clusters\UsageAuditing;
 use Filament\Resources\Resource;
 
 class AuditResource extends Resource
 {
-    protected static ?string $model = Audit::class;
+  protected static ?string $model = Audit::class;
 
-    protected static ?string $navigationLabel = 'System Administration';
+  protected static ?string $navigationLabel = 'System Administration';
 
-    protected static ?int $navigationSort = 40;
+  protected static ?int $navigationSort = 40;
 
-    protected static ?string $cluster = UsageAuditing::class;
+  protected static ?string $cluster = UsageAuditing::class;
 
-    protected static ?string $breadcrumb = 'System Administration';
+  protected static ?string $breadcrumb = 'System Administration';
 
-    protected static ?string $slug = 'system-administration';
+  protected static ?string $slug = 'system-administration';
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListAudits::route('/'),
-            'view' => ViewAudit::route('/{record}'),
-        ];
-    }
+  public static function getPages(): array
+  {
+    return [
+      'index' => ListAudits::route('/'),
+      'view' => ViewAudit::route('/{record}'),
+    ];
+  }
 }
