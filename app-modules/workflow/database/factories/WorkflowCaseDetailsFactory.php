@@ -54,11 +54,11 @@ class WorkflowCaseDetailsFactory extends Factory
      */
     public function definition(): array
     {
-        $priority = CasePriority::inRandomOrder()->first() ?? CasePriority::factory()->create();
+        $priority = CasePriority::factory()->create();
 
         return [
-            'division_id' => Division::inRandomOrder()->first()->id ?? Division::factory(),
-            'status_id' => CaseStatus::inRandomOrder()->first()->id ?? CaseStatus::factory(),
+            'division_id' => Division::factory(),
+            'status_id' => CaseStatus::factory(),
             'priority_id' => $priority->getKey(),
             'assigned_to_id' => User::factory()->for(Team::factory()->hasAttached($priority->type, relationship: 'manageableCaseTypes')),
             'close_details' => $this->faker->sentence(),

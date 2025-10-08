@@ -43,6 +43,7 @@ use AdvisingApp\Workflow\Jobs\CaseWorkflowActionJob;
 use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use AdvisingApp\Workflow\Models\WorkflowRun;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
+use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
@@ -91,6 +92,7 @@ it('executes case workflow step successfully', function () {
     $cases = $student->cases()->get();
 
     expect($cases)->toHaveCount(1)
+        ->and($cases->first()->id)->toBe(WorkflowRunStepRelated::where('workflow_run_step_id', $workflowRunStep->id)->first()->related->getKey())
         ->and($cases->first()->division->getKey())->toEqual($division->getKey())
         ->and($cases->first()->status->getKey())->toEqual($caseStatus->getKey())
         ->and($cases->first()->priority->getKey())->toEqual($casePriority->getKey())
