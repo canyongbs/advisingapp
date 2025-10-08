@@ -72,7 +72,7 @@ it('displays only research advisors created within the selected date range', fun
 
 it('can start an export, sending a notification', function () {
     asSuperAdmin();
-    
+
     Storage::fake('s3');
 
     ResearchRequest::factory()->count(random_int(1, 5))->create();
@@ -81,7 +81,7 @@ it('can start an export, sending a notification', function () {
         'cacheTag' => 'report-research-advisors',
         'pageFilters' => [],
     ])
-      ->callTableAction(ExportAction::class)
-      ->assertNotified()
-      ->assertHasNoTableActionErrors();
+        ->callTableAction(ExportAction::class)
+        ->assertNotified()
+        ->assertHasNoTableActionErrors();
 })->only();
