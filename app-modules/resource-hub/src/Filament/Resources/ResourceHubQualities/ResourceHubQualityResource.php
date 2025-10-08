@@ -34,25 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Schemas\Schema;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\Pages\CreateResourceHubQuality;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\Pages\EditResourceHubQuality;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\Pages\ListResourceHubQualities;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\Pages\ViewResourceHubQuality;
+use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
+use App\Filament\Clusters\ResourceHub;
+use Filament\Resources\Resource;
 
-class CreateResourceHubQuality extends CreateRecord
+class ResourceHubQualityResource extends Resource
 {
-    protected static string $resource = ResourceHubQualityResource::class;
+    protected static ?string $model = ResourceHubQuality::class;
 
-    public function form(Schema $schema): Schema
+    protected static ?string $navigationLabel = 'Qualities';
+
+    protected static ?string $modelLabel = 'resource hub quality';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $cluster = ResourceHub::class;
+
+    public static function getPages(): array
     {
-        return $schema
-            ->components([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-            ]);
+        return [
+            'index' => ListResourceHubQualities::route('/'),
+            'create' => CreateResourceHubQuality::route('/create'),
+            'view' => ViewResourceHubQuality::route('/{record}'),
+            'edit' => EditResourceHubQuality::route('/{record}/edit'),
+        ];
     }
 }

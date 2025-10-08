@@ -34,56 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\ResourceHubCategoryResource;
+use App\Filament\Forms\Components\IconSelect;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
-class ListResourceHubCategories extends ListRecords
+class CreateResourceHubCategory extends CreateRecord
 {
     protected static string $resource = ResourceHubCategoryResource::class;
 
-    public function table(Table $table): Table
+    public function form(Schema $schema): Schema
     {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->label('Name')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('resource_hub_articles_count')
-                    ->label('# of Resource Hub Articles')
-                    ->counts('resourceHubArticles')
-                    ->sortable(),
-                IconColumn::make('icon')
-                    ->icon(fn (string $state): string => $state)
-                    ->tooltip(fn (?string $state): ?string => filled($state) ? (string) str($state)->after('heroicon-o-')->headline() : null),
-            ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                    ->required()
+                    ->string(),
+                IconSelect::make('icon'),
+                Textarea::make('description')
+                    ->label('Description')
+                    ->nullable()
+                    ->string()
+                    ->columnSpanFull(),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
     }
 }

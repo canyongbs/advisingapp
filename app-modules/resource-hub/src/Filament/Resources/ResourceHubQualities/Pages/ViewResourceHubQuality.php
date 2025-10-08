@@ -34,25 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\Pages;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\ResourceHubQualityResource;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
-class CreateResourceHubStatus extends CreateRecord
+class ViewResourceHubQuality extends ViewRecord
 {
-    protected static string $resource = ResourceHubStatusResource::class;
+    protected static string $resource = ResourceHubQualityResource::class;
 
-    public function form(Schema $schema): Schema
+    public function infolist(Schema $schema): Schema
     {
         return $schema
-            ->components([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name')
+                            ->label('Name'),
+                    ])
+                    ->columns(),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            EditAction::make(),
+        ];
     }
 }

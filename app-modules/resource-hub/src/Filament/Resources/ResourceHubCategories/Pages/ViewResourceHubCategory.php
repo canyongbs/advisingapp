@@ -34,35 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\CreateResourceHubStatus;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\EditResourceHubStatus;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\ListResourceHubStatuses;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages\ViewResourceHubStatus;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use App\Filament\Clusters\ResourceHub;
-use Filament\Resources\Resource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\ResourceHubCategoryResource;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
-class ResourceHubStatusResource extends Resource
+class ViewResourceHubCategory extends ViewRecord
 {
-    protected static ?string $model = ResourceHubStatus::class;
+    protected static string $resource = ResourceHubCategoryResource::class;
 
-    protected static ?string $navigationLabel = 'Statuses';
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name')
+                            ->label('Name'),
+                        TextEntry::make('icon')
+                            ->state(fn (ResourceHubCategory $record): string => (string) str($record->icon)->after('heroicon-o-')->headline())
+                            ->icon(fn (ResourceHubCategory $record): string => $record->icon)
+                            ->hidden(fn (ResourceHubCategory $record): bool => blank($record->icon)),
+                        TextEntry::make('description')
+                            ->label('Description')
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(),
+            ]);
+    }
 
-    protected static ?string $modelLabel = 'resource hub status';
-
-    protected static ?int $navigationSort = 3;
-
-    protected static ?string $cluster = ResourceHub::class;
-
-    public static function getPages(): array
+    protected function getHeaderActions(): array
     {
         return [
-            'index' => ListResourceHubStatuses::route('/'),
-            'create' => CreateResourceHubStatus::route('/create'),
-            'view' => ViewResourceHubStatus::route('/{record}'),
-            'edit' => EditResourceHubStatus::route('/{record}/edit'),
+            EditAction::make(),
         ];
     }
 }

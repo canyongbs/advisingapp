@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages;
 
 use AdvisingApp\Division\Models\Division;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;

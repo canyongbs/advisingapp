@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\ResourceHubCategoryResource;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -44,12 +44,13 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class ListResourceHubQualities extends ListRecords
+class ListResourceHubCategories extends ListRecords
 {
-    protected static string $resource = ResourceHubQualityResource::class;
+    protected static string $resource = ResourceHubCategoryResource::class;
 
     public function table(Table $table): Table
     {
@@ -64,6 +65,9 @@ class ListResourceHubQualities extends ListRecords
                     ->label('# of Resource Hub Articles')
                     ->counts('resourceHubArticles')
                     ->sortable(),
+                IconColumn::make('icon')
+                    ->icon(fn (string $state): string => $state)
+                    ->tooltip(fn (?string $state): ?string => filled($state) ? (string) str($state)->after('heroicon-o-')->headline() : null),
             ])
             ->recordActions([
                 ViewAction::make(),

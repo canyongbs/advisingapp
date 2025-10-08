@@ -34,23 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\Pages;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
-use App\Filament\Forms\Components\IconSelect;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
-use Filament\Forms\Components\Textarea;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\ResourceHubQualityResource;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
 
-class EditResourceHubCategory extends EditRecord
+class CreateResourceHubQuality extends CreateRecord
 {
-    use EditPageRedirection;
-
-    protected static string $resource = ResourceHubCategoryResource::class;
+    protected static string $resource = ResourceHubQualityResource::class;
 
     public function form(Schema $schema): Schema
     {
@@ -60,20 +53,6 @@ class EditResourceHubCategory extends EditRecord
                     ->label('Name')
                     ->required()
                     ->string(),
-                IconSelect::make('icon'),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string()
-                    ->columnSpanFull(),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
     }
 }

@@ -34,35 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages\CreateResourceHubQuality;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages\EditResourceHubQuality;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages\ListResourceHubQualities;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages\ViewResourceHubQuality;
-use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages\CreateResourceHubStatus;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages\EditResourceHubStatus;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages\ListResourceHubStatuses;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages\ViewResourceHubStatus;
+use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use App\Filament\Clusters\ResourceHub;
 use Filament\Resources\Resource;
 
-class ResourceHubQualityResource extends Resource
+class ResourceHubStatusResource extends Resource
 {
-    protected static ?string $model = ResourceHubQuality::class;
+    protected static ?string $model = ResourceHubStatus::class;
 
-    protected static ?string $navigationLabel = 'Qualities';
+    protected static ?string $navigationLabel = 'Statuses';
 
-    protected static ?string $modelLabel = 'resource hub quality';
+    protected static ?string $modelLabel = 'resource hub status';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $cluster = ResourceHub::class;
 
     public static function getPages(): array
     {
         return [
-            'index' => ListResourceHubQualities::route('/'),
-            'create' => CreateResourceHubQuality::route('/create'),
-            'view' => ViewResourceHubQuality::route('/{record}'),
-            'edit' => EditResourceHubQuality::route('/{record}/edit'),
+            'index' => ListResourceHubStatuses::route('/'),
+            'create' => CreateResourceHubStatus::route('/create'),
+            'view' => ViewResourceHubStatus::route('/{record}'),
+            'edit' => EditResourceHubStatus::route('/{record}/edit'),
         ];
     }
 }

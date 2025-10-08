@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;

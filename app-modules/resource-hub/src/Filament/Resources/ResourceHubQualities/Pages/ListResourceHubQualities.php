@@ -34,33 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\Pages;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
-use App\Filament\Forms\Components\IconSelect;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Schemas\Schema;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\ResourceHubQualityResource;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-class CreateResourceHubCategory extends CreateRecord
+class ListResourceHubQualities extends ListRecords
 {
-    protected static string $resource = ResourceHubCategoryResource::class;
+    protected static string $resource = ResourceHubQualityResource::class;
 
-    public function form(Schema $schema): Schema
+    public function table(Table $table): Table
     {
-        return $schema
-            ->components([
-                TextInput::make('name')
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name')
                     ->label('Name')
-                    ->required()
-                    ->string(),
-                IconSelect::make('icon'),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable()
-                    ->string()
-                    ->columnSpanFull(),
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('resource_hub_articles_count')
+                    ->label('# of Resource Hub Articles')
+                    ->counts('resourceHubArticles')
+                    ->sortable(),
+            ])
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
     }
 }

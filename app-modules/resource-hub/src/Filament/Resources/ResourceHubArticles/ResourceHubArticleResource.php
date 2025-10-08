@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\CreateResourceHubArticle;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\EditResourceHubArticle;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\ListResourceHubArticles;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\ViewResourceHubArticle;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\CreateResourceHubArticle;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\EditResourceHubArticle;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\ListResourceHubArticles;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\ViewResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

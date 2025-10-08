@@ -6960,106 +6960,106 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Actions/DraftResourceHubArticleWithAiAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$category\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticleResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$division\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticleResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$quality\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticleResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$status\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticleResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\ResourceHub\\\\Filament\\\\Resources\\\\ResourceHubArticleResource\\:\\:getGlobalSearchEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticleResource.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$title\\.$#',
     'identifier' => 'property.notFound',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticleResource/Pages/EditResourceHubArticle.php',
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/Pages/EditResourceHubArticle.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticleResource/Pages/EditResourceHubArticle.php',
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/Pages/EditResourceHubArticle.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\ResourceHub\\\\Filament\\\\Resources\\\\ResourceHubArticleResource\\\\Pages\\\\EditResourceHubArticleMetadata\\:\\:form\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\ResourceHub\\\\Filament\\\\Resources\\\\ResourceHubArticles\\\\Pages\\\\EditResourceHubArticleMetadata\\:\\:form\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticleResource/Pages/EditResourceHubArticleMetadata.php',
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/Pages/EditResourceHubArticleMetadata.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\ResourceHub\\\\Models\\\\ResourceHubArticle\\:\\:\\$my_upvotes_count\\.$#',
     'identifier' => 'property.notFound',
     'count' => 3,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticleResource/Pages/ListResourceHubArticles.php',
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/Pages/ListResourceHubArticles.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$notes\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticleResource/Pages/ListResourceHubArticles.php',
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/Pages/ListResourceHubArticles.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$public\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticleResource/Pages/ListResourceHubArticles.php',
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/Pages/ListResourceHubArticles.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$title\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticleResource/Pages/ListResourceHubArticles.php',
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/Pages/ListResourceHubArticles.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:isUpvoted\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 3,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticleResource/Pages/ViewResourceHubArticle.php',
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/Pages/ViewResourceHubArticle.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:toggleUpvote\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticleResource/Pages/ViewResourceHubArticle.php',
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/Pages/ViewResourceHubArticle.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:upvotes\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticleResource/Pages/ViewResourceHubArticle.php',
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/Pages/ViewResourceHubArticle.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:views\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticleResource/Pages/ViewResourceHubArticle.php',
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/Pages/ViewResourceHubArticle.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Cannot access property \\$title on Illuminate\\\\Database\\\\Eloquent\\\\Model\\|int\\|string\\.$#',
     'identifier' => 'property.nonObject',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticleResource/Pages/ViewResourceHubArticle.php',
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/Pages/ViewResourceHubArticle.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$category\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/ResourceHubArticleResource.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$division\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/ResourceHubArticleResource.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$quality\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/ResourceHubArticleResource.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$status\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/ResourceHubArticleResource.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\ResourceHub\\\\Filament\\\\Resources\\\\ResourceHubArticles\\\\ResourceHubArticleResource\\:\\:getGlobalSearchEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/ResourceHubArticleResource.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\ResourceHub\\\\Jobs\\\\ResourceHubArticleDownloadExternalMedia\\:\\:processContentItem\\(\\) has parameter \\$content with no value type specified in iterable type array\\.$#',

@@ -34,36 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource\Pages;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
+use Filament\Actions\ViewAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-class ViewResourceHubStatus extends ViewRecord
+class ListResourceHubStatuses extends ListRecords
 {
     protected static string $resource = ResourceHubStatusResource::class;
 
-    public function infolist(Schema $schema): Schema
+    public function table(Table $table): Table
     {
-        return $schema
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('name')
-                            ->label('Name'),
-                    ])
-                    ->columns(),
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name')
+                    ->label('Name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('resource_hub_articles_count')
+                    ->label('# of Resource Hub Articles')
+                    ->counts('resourceHubArticles')
+                    ->sortable(),
+            ])
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            EditAction::make(),
+            CreateAction::make(),
         ];
     }
 }

@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages;
+namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\ResourceHub\Filament\Actions\DraftResourceHubArticleWithAiAction;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action as BaseAction;
 use Filament\Actions\EditAction;
