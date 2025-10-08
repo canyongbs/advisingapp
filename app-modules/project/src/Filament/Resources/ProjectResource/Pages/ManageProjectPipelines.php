@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
 
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
+use AdvisingApp\Pipeline\Filament\Resources\Pipelines\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use BackedEnum;

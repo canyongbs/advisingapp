@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages;
+namespace AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages;
 
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
+use AdvisingApp\Pipeline\Filament\Resources\Pipelines\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Project\Filament\Resources\ProjectResource;
 use Filament\Infolists\Components\RepeatableEntry;
