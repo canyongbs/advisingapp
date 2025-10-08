@@ -49,7 +49,7 @@ it('displays only research advisors created within the selected date range', fun
 
     $researchAdvisorsOutsideRange = ResearchRequest::factory()
         ->count(3)
-        ->create(['created_at' => now()->subDays(20)]); 
+        ->create(['created_at' => now()->subDays(20)]);
 
     livewire(ResearchAdvisorReportTable::class, [
         'cacheTag' => 'report-research-advisors',
