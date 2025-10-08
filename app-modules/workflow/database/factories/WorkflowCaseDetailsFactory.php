@@ -58,7 +58,7 @@ class WorkflowCaseDetailsFactory extends Factory
             'division_id' => Division::factory(),
             'status_id' => CaseStatus::factory(),
             'priority_id' => CasePriority::factory(),
-            'assigned_to_id' => fn(array $attributes) => User::factory()->for(Team::factory()->hasAttached(CasePriority::find($attributes['priority_id'])->type, relationship: 'manageableCaseTypes')),
+            'assigned_to_id' => fn (array $attributes) => User::factory()->for(Team::factory()->hasAttached(CasePriority::find($attributes['priority_id'])->type, relationship: 'manageableCaseTypes')),
             'close_details' => $this->faker->sentence(),
             'res_details' => $this->faker->sentence(),
         ];
