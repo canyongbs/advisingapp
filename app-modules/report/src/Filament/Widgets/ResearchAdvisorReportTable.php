@@ -36,8 +36,11 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Report\Filament\Exports\ResearchAdvisorReportTableExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\Research\Models\ResearchRequest;
+use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -86,6 +89,11 @@ class ResearchAdvisorReportTable extends BaseWidget
                     ->label('Created')
                     ->dateTime()
                     ->sortable(),
+            ])
+            ->headerActions([
+                ExportAction::make()
+                    ->exporter(ResearchAdvisorReportTableExporter::class)
+                    ->formats([ExportFormat::Csv]),
             ])
             ->defaultSort('created_at', 'desc')
             ->paginated([10, 25, 50])
