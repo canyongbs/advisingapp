@@ -34,49 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
+namespace AdvisingApp\Campaign\Filament\Resources\Campaigns;
 
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
-use AdvisingApp\Segment\Models\Segment;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Resources\Pages\EditRecord;
-use Filament\Schemas\Schema;
+use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\CreateCampaign;
+use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\EditCampaign;
+use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ListCampaigns;
+use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ViewCampaign;
+use AdvisingApp\Campaign\Filament\Resources\Campaigns\RelationManagers\CampaignActionsRelationManager;
+use AdvisingApp\Campaign\Models\Campaign;
+use Filament\Resources\Resource;
+use UnitEnum;
 
-class EditCampaign extends EditRecord
+class CampaignResource extends Resource
 {
-    use EditPageRedirection;
+    protected static ?string $model = Campaign::class;
 
-    protected static string $resource = CampaignResource::class;
+    protected static string | UnitEnum | null $navigationGroup = 'CRM';
 
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TextInput::make('name')
-                    ->required(),
-                Select::make('segment_id')
-                    ->label('Population Segment')
-                    ->options(function () {
-                        return Segment::query()
-                            ->whereHas('user', function ($query) {
-                                $query->whereKey(auth()->id())->orWhereRelation('team.users', 'id', auth()->id());
-                            })
-                            ->pluck('name', 'id');
-                    })
-                    ->searchable()
-                    ->required(),
-                Toggle::make('enabled'),
-            ]);
-    }
+    protected static ?int $navigationSort = 40;
 
-    protected function getHeaderActions(): array
+    public static function getRelations(): array
     {
         return [
-            DeleteAction::make(),
+            CampaignActionsRelationManager::class,
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListCampaigns::route('/'),
+            'create' => CreateCampaign::route('/create'),
+            'view' => ViewCampaign::route('/{record}'),
+            'edit' => EditCampaign::route('/{record}/edit'),
         ];
     }
 }

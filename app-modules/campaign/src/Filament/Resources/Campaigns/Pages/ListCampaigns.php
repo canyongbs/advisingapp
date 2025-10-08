@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
+namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
+use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;

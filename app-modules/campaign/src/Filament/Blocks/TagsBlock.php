@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\CreateCampaign;
+use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\CreateCampaign;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Segment\Models\Segment;
 use App\Models\Tag;

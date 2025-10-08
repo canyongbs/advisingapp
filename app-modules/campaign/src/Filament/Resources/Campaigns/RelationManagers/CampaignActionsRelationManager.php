@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\RelationManagers;
+namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\RelationManagers;
 
 use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;

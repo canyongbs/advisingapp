@@ -34,47 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
+namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
-use AdvisingApp\Campaign\Models\Campaign;
-use Filament\Actions\EditAction;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Components\Section;
+use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
+use AdvisingApp\Segment\Models\Segment;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 
-class ViewCampaign extends ViewRecord
+class EditCampaign extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = CampaignResource::class;
 
-    public function infolist(Schema $schema): Schema
+    public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('name'),
-                        TextEntry::make('segment.name')
-                            ->label('Population Segment'),
-                        IconEntry::make('enabled')
-                            ->boolean(),
-                        IconEntry::make('execution_status')
-                            ->label('Has Been Executed?')
-                            ->state(fn (Campaign $record) => $record->hasBeenExecuted())
-                            ->boolean(),
-                        TextEntry::make('createdBy.name')
-                            ->label('Created By'),
-                    ]),
+            ->components([
+                TextInput::make('name')
+                    ->required(),
+                Select::make('segment_id')
+                    ->label('Population Segment')
+                    ->options(function () {
+                        return Segment::query()
+                            ->whereHas('user', function ($query) {
+                                $query->whereKey(auth()->id())->orWhereRelation('team.users', 'id', auth()->id());
+                            })
+                            ->pluck('name', 'id');
+                    })
+                    ->searchable()
+                    ->required(),
+                Toggle::make('enabled'),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            EditAction::make()
-                ->hidden(fn (Campaign $record) => $record->hasBeenExecuted() === true),
+            DeleteAction::make(),
         ];
     }
 }
