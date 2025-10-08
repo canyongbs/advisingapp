@@ -34,31 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages;
+namespace AdvisingApp\Webhook\Filament\Resources\InboundWebhooks\Pages;
 
-use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
+use AdvisingApp\Webhook\Filament\Resources\InboundWebhooks\InboundWebhookResource;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\ViewAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-class ViewInboundWebhook extends ViewRecord
+class ListInboundWebhooks extends ListRecords
 {
     protected static string $resource = InboundWebhookResource::class;
 
-    public function infolist(Schema $schema): Schema
+    public function table(Table $table): Table
     {
-        return $schema
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('source'),
-                        TextEntry::make('event'),
-                        TextEntry::make('url'),
-                        TextEntry::make('payload')
-                            ->limit(100),
-                    ])
-                    ->columns(),
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('source')
+                    ->label('Source'),
+                TextColumn::make('event'),
+                TextColumn::make('url'),
+                TextColumn::make('payload'),
+            ])
+            ->recordActions([
+                ViewAction::make(),
+            ])
+            ->toolbarActions([
             ]);
     }
 }
