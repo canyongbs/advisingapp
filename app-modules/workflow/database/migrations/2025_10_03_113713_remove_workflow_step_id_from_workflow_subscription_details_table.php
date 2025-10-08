@@ -34,53 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Database\Factories\WorkflowSubscriptionDetailsFactory;
-use AdvisingApp\Workflow\Filament\Blocks\SubscriptionBlock;
-use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
-use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
-use AdvisingApp\Workflow\Jobs\SubscriptionWorkflowActionJob;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
-
-/**
- * @mixin IdeHelperWorkflowSubscriptionDetails
- */
-class WorkflowSubscriptionDetails extends WorkflowDetails implements Auditable
-{
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    /** @use HasFactory<WorkflowSubscriptionDetailsFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'user_ids',
-        'remove_prior',
-    ];
-
-    protected $casts = [
-        'user_ids' => 'array',
-        'remove_prior' => 'boolean',
-    ];
-
-    public function getLabel(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'Subscription';
+        Schema::table('workflow_subscription_details', function (Blueprint $table) {
+            $table->dropColumn('workflow_step_id');
+        });
     }
 
-    public function getBlock(): WorkflowActionBlock
+    public function down(): void
     {
-        return SubscriptionBlock::make();
+        Schema::table('workflow_subscription_details', function (Blueprint $table) {
+            $table->foreignUuid('workflow_step_id')->constrained('workflow_steps');
+        });
     }
-
-    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
-    {
-        return new SubscriptionWorkflowActionJob($workflowRunStep);
-    }
-}
+};
