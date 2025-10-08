@@ -1499,31 +1499,31 @@ $ignoreErrors[] = [
     'message' => '#^Dead catch \\- App\\\\Exceptions\\\\SoftDeleteContraintViolationException is never thrown in the try block\\.$#',
     'identifier' => 'catch.neverThrown',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/basic-needs/src/Filament/Resources/BasicNeedsCategoryResource/Pages/EditBasicNeedsCategory.php',
+    'path' => __DIR__ . '/app-modules/basic-needs/src/Filament/Resources/BasicNeedsCategories/Pages/EditBasicNeedsCategory.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
     'identifier' => 'MeliorStan.shortVariable',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/basic-needs/src/Filament/Resources/BasicNeedsCategoryResource/Pages/EditBasicNeedsCategory.php',
+    'path' => __DIR__ . '/app-modules/basic-needs/src/Filament/Resources/BasicNeedsCategories/Pages/EditBasicNeedsCategory.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Comparison operation "\\>" between 0 and 0 is always false\\.$#',
     'identifier' => 'greater.alwaysFalse',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/basic-needs/src/Filament/Resources/BasicNeedsCategoryResource/Pages/ListBasicNeedsCategories.php',
+    'path' => __DIR__ . '/app-modules/basic-needs/src/Filament/Resources/BasicNeedsCategories/Pages/ListBasicNeedsCategories.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Dead catch \\- App\\\\Exceptions\\\\SoftDeleteContraintViolationException is never thrown in the try block\\.$#',
     'identifier' => 'catch.neverThrown',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/basic-needs/src/Filament/Resources/BasicNeedsCategoryResource/Pages/ListBasicNeedsCategories.php',
+    'path' => __DIR__ . '/app-modules/basic-needs/src/Filament/Resources/BasicNeedsCategories/Pages/ListBasicNeedsCategories.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
     'identifier' => 'MeliorStan.shortVariable',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/basic-needs/src/Filament/Resources/BasicNeedsCategoryResource/Pages/ListBasicNeedsCategories.php',
+    'path' => __DIR__ . '/app-modules/basic-needs/src/Filament/Resources/BasicNeedsCategories/Pages/ListBasicNeedsCategories.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\BasicNeeds\\\\Providers\\\\BasicNeedsServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',

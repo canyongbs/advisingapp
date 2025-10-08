@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\BasicNeeds\Filament\Resources;
+namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms;
 
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\CreateBasicNeedsProgram;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\EditBasicNeedsProgram;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ListBasicNeedsPrograms;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ViewBasicNeedsProgram;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages\CreateBasicNeedsProgram;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages\EditBasicNeedsProgram;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages\ListBasicNeedsPrograms;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages\ViewBasicNeedsProgram;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;

@@ -36,6 +36,10 @@
 
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories;
 
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\Pages\CreateBasicNeedsCategory;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\Pages\EditBasicNeedsCategory;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\Pages\ListBasicNeedsCategories;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\Pages\ViewBasicNeedsCategory;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
 use App\Filament\Clusters\ConstituentManagement;
 use Filament\Resources\Resource;
