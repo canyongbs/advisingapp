@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages;
+namespace AdvisingApp\Consent\Filament\Resources\ConsentAgreements\Pages;
 
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
-use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource;
+use AdvisingApp\Consent\Filament\Resources\ConsentAgreements\ConsentAgreementResource;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;

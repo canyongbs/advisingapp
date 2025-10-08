@@ -2693,7 +2693,7 @@ $ignoreErrors[] = [
     'message' => '#^Cannot access property \\$title on Illuminate\\\\Database\\\\Eloquent\\\\Model\\|int\\|string\\.$#',
     'identifier' => 'property.nonObject',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/consent/src/Filament/Resources/ConsentAgreementResource/Pages/EditConsentAgreement.php',
+    'path' => __DIR__ . '/app-modules/consent/src/Filament/Resources/ConsentAgreements/Pages/EditConsentAgreement.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Consent\\\\Providers\\\\ConsentServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',

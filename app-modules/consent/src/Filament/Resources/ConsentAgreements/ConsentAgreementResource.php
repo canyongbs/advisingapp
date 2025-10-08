@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Consent\Filament\Resources;
+namespace AdvisingApp\Consent\Filament\Resources\ConsentAgreements;
 
-use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
+use AdvisingApp\Consent\Filament\Resources\ConsentAgreements\Pages\ListConsentAgreements;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use App\Filament\Clusters\ArtificialIntelligence;
 use Filament\Resources\Resource;
