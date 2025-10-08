@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\ViewProspectStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages\ViewProspectStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Models\User;

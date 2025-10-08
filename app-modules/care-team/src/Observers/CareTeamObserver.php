@@ -38,7 +38,7 @@ namespace AdvisingApp\CareTeam\Observers;
 
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;

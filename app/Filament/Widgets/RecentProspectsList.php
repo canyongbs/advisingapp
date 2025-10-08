@@ -36,7 +36,7 @@
 
 namespace App\Filament\Widgets;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\ViewAction;

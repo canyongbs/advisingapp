@@ -37,7 +37,7 @@
 namespace AdvisingApp\Pipeline\Filament\Pages;
 
 use AdvisingApp\Pipeline\Settings\ProspectPipelineSettings;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\ConstituentManagement;

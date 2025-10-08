@@ -40,7 +40,7 @@ use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Filament\Resources\AlertResource;
 use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectAlerts;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Segment\Models\Segment;

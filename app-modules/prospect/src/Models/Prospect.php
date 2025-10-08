@@ -58,7 +58,7 @@ use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Prospect\Database\Factories\ProspectFactory;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Observers\ProspectObserver;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;

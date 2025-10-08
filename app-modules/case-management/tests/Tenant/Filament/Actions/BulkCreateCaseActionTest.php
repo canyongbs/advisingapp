@@ -38,7 +38,7 @@ use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Tests\Tenant\Filament\Actions\RequestFactories\BulkCreateCaseActionRequestFactory;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ListProspects;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;

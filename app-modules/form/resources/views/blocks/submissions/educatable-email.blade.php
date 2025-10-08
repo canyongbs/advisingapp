@@ -35,7 +35,7 @@
     use AdvisingApp\StudentDataModel\Models\Student;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
     use AdvisingApp\Prospect\Models\Prospect;
-    use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+    use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 @endphp
 
 <x-form::blocks.field-wrapper

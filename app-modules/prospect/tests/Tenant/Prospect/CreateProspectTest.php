@@ -33,8 +33,8 @@
 
 </COPYRIGHT>
 */
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\CreateProspect;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\CreateProspect;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectAddress;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;

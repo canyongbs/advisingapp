@@ -41,7 +41,7 @@ use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Filament\Actions\BulkChangeStatusAction;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;

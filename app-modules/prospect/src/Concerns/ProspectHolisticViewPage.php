@@ -42,7 +42,7 @@ use Illuminate\Contracts\View\View;
 
 trait ProspectHolisticViewPage
 {
-    public function boot()
+    public function boot(): void
     {
         FilamentView::registerRenderHook(
             PanelsRenderHook::PAGE_START,

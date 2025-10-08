@@ -34,7 +34,7 @@
 @php
     use AdvisingApp\Prospect\Models\Prospect;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-    use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+    use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 
     $educatabletype = $educatable::class === Prospect::class ? 'prospect' : 'student';
 @endphp

@@ -32,7 +32,9 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/ declare(strict_types = 1);
+*/
+
+declare(strict_types = 1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -5802,328 +5804,250 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Pages/ManageProspectConversionSettings.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$otherid\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$preferred\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryEmailAddress\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryPhoneNumber\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sisid\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\:\\:getGlobalSearchEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\:\\:modifyGlobalSearchQuery\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\:\\:scoreGlobalSearchResults\\(\\) has parameter \\$attributeScores with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\:\\:scoreGlobalSearchResults\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined static method Filament\\\\Pages\\\\Page\\:\\:getResourcePageName\\(\\)\\.$#',
-    'identifier' => 'staticMethod.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Actions/ConvertToStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Negated boolean expression is always false\\.$#',
-    'identifier' => 'booleanNot.alwaysFalse',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Actions/ConvertToStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Actions/ConvertToStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to method save\\(\\) on an unknown class AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Actions\\\\Prospect\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Actions/DisassociateStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to method status\\(\\) on an unknown class AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Actions\\\\Prospect\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Actions/DisassociateStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to method student\\(\\) on an unknown class AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Actions\\\\Prospect\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Actions/DisassociateStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var for variable \\$record contains unknown class AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Actions\\\\Prospect\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Actions/DisassociateStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Actions/DisassociateStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Anonymous function never returns null so it can be removed from the return type\\.$#',
-    'identifier' => 'return.unusedType',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/CreateProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:addresses\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/CreateProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:emailAddresses\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/CreateProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:phoneNumbers\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/CreateProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryAddress\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/CreateProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryEmailAddress\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/CreateProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryPhoneNumber\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/CreateProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Anonymous function never returns null so it can be removed from the return type\\.$#',
-    'identifier' => 'return.unusedType',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/EditProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:addresses\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/EditProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:emailAddresses\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/EditProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:phoneNumbers\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/EditProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryAddress\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/EditProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryEmailAddress\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/EditProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryPhoneNumber\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/EditProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Pages\\\\EditProspect\\:\\:boot\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/EditProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Pages\\\\ListProspects\\:\\:segmentFilter\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ListProspects.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Pages\\\\ListProspects\\:\\:segmentFilter\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ListProspects.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\)\\: bool given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ListProspects.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Pages\\\\ManageProspectAlerts\\:\\:boot\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ManageProspectAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$badge of method Filament\\\\Navigation\\\\NavigationItem\\:\\:badge\\(\\) expects Closure\\|string\\|null, int\\<1, max\\>\\|null given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ManageProspectAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Pages\\\\ManageProspectCareTeam\\:\\:boot\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ManageProspectCareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Pages\\\\ManageProspectSubscriptions\\:\\:boot\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ManageProspectSubscriptions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Pages\\\\ManageProspectTasks\\:\\:boot\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ManageProspectTasks.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Pages\\\\ViewProspect\\:\\:boot\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ViewProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:timeline\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ViewProspectActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Pages\\\\ViewProspectActivityFeed\\:\\:viewRecord\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ViewProspectActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Pages\\\\ViewProspectActivityFeed\\:\\:viewRecord\\(\\) has parameter \\$key with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ViewProspectActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Pages\\\\ViewProspectActivityFeed\\:\\:viewRecord\\(\\) has parameter \\$morphReference with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ViewProspectActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Pages\\\\ViewProspectActivityFeed\\:\\:\\$modelsToTimeline type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ViewProspectActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectResource\\\\Pages\\\\ViewProspectActivityFeed\\:\\:\\$timelineRecords with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource/Pages/ViewProspectActivityFeed.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Dead catch \\- Illuminate\\\\Database\\\\QueryException is never thrown in the try block\\.$#',
     'identifier' => 'catch.neverThrown',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectStatusResource/Pages/ListProspectStatuses.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectStatusResource/Pages/ListProspectStatuses.php',
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectStatuses/Pages/ListProspectStatuses.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$is_system_protected\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectStatusResource/Pages/ViewProspectStatus.php',
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectStatuses/Pages/ViewProspectStatus.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe property access on non\\-nullable type Illuminate\\\\Database\\\\Eloquent\\\\Model\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectStatusResource/Pages/ViewProspectStatus.php',
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectStatuses/Pages/ViewProspectStatus.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to method hasLicense\\(\\) on an unknown class AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectTagResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectTagResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
+    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\ProspectTags\\\\ProspectTagResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectTagResource.php',
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectTags/ProspectTagResource.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var for variable \\$user contains unknown class AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\User\\.$#',
-    'identifier' => 'class.notFound',
+    'message' => '#^Call to an undefined static method Filament\\\\Pages\\\\Page\\:\\:getResourcePageName\\(\\)\\.$#',
+    'identifier' => 'staticMethod.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectTagResource.php',
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Actions/ConvertToStudent.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Negated boolean expression is always false\\.$#',
+    'identifier' => 'booleanNot.alwaysFalse',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Actions/ConvertToStudent.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
+    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Actions/ConvertToStudent.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
+    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Actions/DisassociateStudent.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Anonymous function never returns null so it can be removed from the return type\\.$#',
+    'identifier' => 'return.unusedType',
+    'count' => 3,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/CreateProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:addresses\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/CreateProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:emailAddresses\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/CreateProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:phoneNumbers\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/CreateProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryAddress\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/CreateProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryEmailAddress\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/CreateProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryPhoneNumber\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/CreateProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Anonymous function never returns null so it can be removed from the return type\\.$#',
+    'identifier' => 'return.unusedType',
+    'count' => 3,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/EditProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:addresses\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/EditProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:emailAddresses\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/EditProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:phoneNumbers\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/EditProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryAddress\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/EditProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryEmailAddress\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/EditProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:primaryPhoneNumber\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/EditProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\Pages\\\\ListProspects\\:\\:segmentFilter\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ListProspects.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\Pages\\\\ListProspects\\:\\:segmentFilter\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ListProspects.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\)\\: bool given\\.$#',
+    'identifier' => 'argument.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ListProspects.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Parameter \\#1 \\$badge of method Filament\\\\Navigation\\\\NavigationItem\\:\\:badge\\(\\) expects Closure\\|string\\|null, int\\<1, max\\>\\|null given\\.$#',
+    'identifier' => 'argument.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ManageProspectAlerts.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:timeline\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ViewProspectActivityFeed.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\Pages\\\\ViewProspectActivityFeed\\:\\:viewRecord\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ViewProspectActivityFeed.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\Pages\\\\ViewProspectActivityFeed\\:\\:viewRecord\\(\\) has parameter \\$key with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ViewProspectActivityFeed.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\Pages\\\\ViewProspectActivityFeed\\:\\:viewRecord\\(\\) has parameter \\$morphReference with no type specified\\.$#',
+    'identifier' => 'missingType.parameter',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ViewProspectActivityFeed.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Property AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\Pages\\\\ViewProspectActivityFeed\\:\\:\\$modelsToTimeline type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ViewProspectActivityFeed.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Property AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\Pages\\\\ViewProspectActivityFeed\\:\\:\\$timelineRecords with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ViewProspectActivityFeed.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$otherid\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/ProspectResource.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$preferred\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/ProspectResource.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryEmailAddress\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/ProspectResource.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryPhoneNumber\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/ProspectResource.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sisid\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/ProspectResource.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\ProspectResource\\:\\:getGlobalSearchEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/ProspectResource.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\ProspectResource\\:\\:modifyGlobalSearchQuery\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/ProspectResource.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\ProspectResource\\:\\:scoreGlobalSearchResults\\(\\) has parameter \\$attributeScores with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/ProspectResource.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\ProspectResource\\:\\:scoreGlobalSearchResults\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/ProspectResource.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:additionalAddresses\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',

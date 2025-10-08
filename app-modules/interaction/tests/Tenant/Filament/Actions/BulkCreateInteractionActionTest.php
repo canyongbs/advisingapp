@@ -36,7 +36,7 @@
 
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Tests\Tenant\Filament\Actions\RequestFactories\BulkCreateInteractionActionRequestFactory;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ListProspects;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
