@@ -34,49 +34,59 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Filament\Widgets\TaskCumulativeCountLineChart;
+namespace AdvisingApp\Report\Filament\Pages;
+
+use AdvisingApp\Report\Abstract\Contracts\HasSegmentModel;
+use AdvisingApp\Report\Abstract\EngagementReport;
+use AdvisingApp\Report\Filament\Widgets\MostRecentTasksTable;
+use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Task\Enums\TaskStatus;
-use AdvisingApp\Task\Models\Task;
+use App\Filament\Clusters\ReportLibrary;
+use UnitEnum;
 
-it('returns correct cumulative task counts grouped by month within the given date range', function () {
-    $startDate = now()->subDays(90);
-    $endDate = now()->subDays(5);
+class StudentTaskManagement extends EngagementReport implements HasSegmentModel
+{
+    protected static ?string $cluster = ReportLibrary::class;
 
-    $student = Student::factory()->create();
-    $prospect = Prospect::factory()->create();
+    protected static string | UnitEnum | null $navigationGroup = 'Students';
 
-    Task::factory()->count(2)->state([
-        'concern_id' => $student->sisid,
-        'concern_type' => (new Student())->getMorphClass(),
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
+    protected static ?string $navigationLabel = 'Tasks Management';
 
-    Task::factory()->count(2)->state([
-        'concern_id' => $prospect->getKey(),
-        'concern_type' => (new Prospect())->getMorphClass(),
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
+    protected static ?string $title = 'Tasks (Overview)';
 
-    Task::factory()->count(2)->state([
-        'concern_id' => null,
-        'concern_type' => null,
-        'status' => TaskStatus::Pending,
-        'created_at' => $endDate,
-        'is_confidential' => false,
-    ])->create();
+    protected static string $routePath = 'student-tasks-report';
 
-    $widgetInstance = new TaskCumulativeCountLineChart();
-    $widgetInstance->cacheTag = 'report-tasks';
-    $widgetInstance->pageFilters = [
-        'startDate' => $startDate->toDateString(),
-        'endDate' => $endDate->toDateString(),
-    ];
+    protected static ?int $navigationSort = 140;
 
-    expect($widgetInstance->getData())->toMatchSnapshot();
-});
+    protected string $cacheTag = 'report-tasks';
+
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            MostRecentTasksTable::make(['cacheTag' => $this->cacheTag, 'educatableType' => Student::class]),
+        ];
+    }
+
+    public function getColumns(): int|array
+    {
+        return [
+            'sm' => 2,
+            'md' => 4,
+            'lg' => 4,
+        ];
+    }
+
+    public function getWidgetData(): array
+    {
+        return [
+            'filters' => $this->filters,
+        ];
+    }
+
+    public function segmentModel(): ?SegmentModel
+    {
+        return SegmentModel::Student;
+    }
+}
