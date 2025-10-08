@@ -34,15 +34,14 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Project\Filament\Resources\Projects\Pages\EditProject;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\CreateProject;
 use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\Tests\Tenant\Filament\Resources\Projects\RequestFactory\EditProjectRequestFactory;
+use AdvisingApp\Project\Tests\Tenant\Filament\Resources\Projects\RequestFactory\CreateProjectRequestFactory;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
@@ -52,11 +51,7 @@ it('cannot render without proper permission.', function () {
 
     actingAs($user);
 
-    $project = Project::factory()->create();
-
-    get(EditProject::getUrl([
-        'record' => $project->getRouteKey(),
-    ]))
+    get(CreateProject::getUrl())
         ->assertForbidden();
 });
 
@@ -64,88 +59,71 @@ it('can render with proper permission.', function () {
     $user = User::factory()->create();
 
     $user->givePermissionTo('project.view-any');
-    $user->givePermissionTo('project.*.update');
+    $user->givePermissionTo('project.create');
 
     $user->refresh();
 
     actingAs($user);
 
-    $project = Project::factory()->create();
-
-    get(EditProject::getUrl([
-        'record' => $project->getRouteKey(),
-    ]))
+    get(CreateProject::getUrl())
         ->assertSuccessful();
 });
 
-it('validates the inputs', function (EditProjectRequestFactory $data, array $errors) {
+it('validates the inputs', function (CreateProjectRequestFactory $data, array $errors) {
     asSuperAdmin();
 
-    $user = User::factory()->create();
+    $request = CreateProjectRequestFactory::new($data)->create();
 
-    $project = Project::factory()->for($user, 'createdBy')->create();
+    $user = User::factory()->create();
 
     Project::factory()->for($user, 'createdBy')->create(['name' => 'Test Project']);
 
-    $request = EditProjectRequestFactory::new($data)->create();
-
-    livewire(EditProject::class, [
-        'record' => $project->getRouteKey(),
-    ])
+    livewire(CreateProject::class)
         ->fillForm($request)
-        ->call('save')
+        ->call('create')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseMissing(
-        Project::class,
-        $request
-    );
-})->with(
-    [
-        'name required' => [
-            EditProjectRequestFactory::new()->state(['name' => null]),
-            ['name' => 'required'],
-        ],
-        'name string' => [
-            EditProjectRequestFactory::new()->state(['name' => 1]),
-            ['name' => 'string'],
-        ],
-        'name max' => [
-            EditProjectRequestFactory::new()->state(['name' => str()->random(256)]),
-            ['name' => 'max'],
-        ],
-        'name unique' => [
-            EditProjectRequestFactory::new()->state(['name' => 'Test Project']),
-            ['name' => 'unique'],
-        ],
-        'description string' => [
-            EditProjectRequestFactory::new()->state(['description' => 1]),
-            ['description' => 'string'],
-        ],
-        'description max' => [
-            EditProjectRequestFactory::new()->state(['description' => str()->random(65536)]),
-            ['description' => 'max'],
-        ],
-    ]
-);
+    assertDatabaseCount(Project::class, 1);
+})->with([
+    'name required' => fn () => [
+        CreateProjectRequestFactory::new()->without('name'),
+        ['name' => 'required'],
+    ],
+    'name string' => fn () => [
+        CreateProjectRequestFactory::new()->state(['name' => 1]),
+        ['name' => 'string'],
+    ],
+    'name max' => fn () => [
+        CreateProjectRequestFactory::new()->state(['name' => str()->random(256)]),
+        ['name' => 'max'],
+    ],
+    'name unique' => fn () => [
+        CreateProjectRequestFactory::new()->state(['name' => 'Test Project']),
+        ['name' => 'unique'],
+    ],
+    'description string' => fn () => [
+        CreateProjectRequestFactory::new()->state(['description' => 1]),
+        ['description' => 'string'],
+    ],
+    'description max' => fn () => [
+        CreateProjectRequestFactory::new()->state(['description' => str()->random(65536)]),
+        ['description' => 'max'],
+    ],
+]);
 
-it('can edit a record', function () {
+it('can create a record', function () {
     $user = User::factory()->create();
 
     $user->givePermissionTo('project.view-any');
-    $user->givePermissionTo('project.*.update');
+    $user->givePermissionTo('project.create');
 
     actingAs($user);
 
-    $project = Project::factory()->for($user, 'createdBy')->create();
+    $request = CreateProjectRequestFactory::new()->create();
 
-    $request = EditProjectRequestFactory::new()->create();
-
-    livewire(EditProject::class, [
-        'record' => $project->getRouteKey(),
-    ])
+    livewire(CreateProject::class)
         ->fillForm($request)
-        ->call('save')
+        ->call('create')
         ->assertHasNoFormErrors()
         ->assertHasNoErrors();
 
