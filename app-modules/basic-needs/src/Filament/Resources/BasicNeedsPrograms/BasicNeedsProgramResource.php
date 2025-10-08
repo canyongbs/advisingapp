@@ -34,38 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages;
+namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms;
 
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
-use Filament\Actions\EditAction;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages\CreateBasicNeedsProgram;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages\EditBasicNeedsProgram;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages\ListBasicNeedsPrograms;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages\ViewBasicNeedsProgram;
+use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
+use Filament\Resources\Pages\Page;
+use Filament\Resources\Resource;
+use UnitEnum;
 
-class ViewBasicNeedsCategory extends ViewRecord
+class BasicNeedsProgramResource extends Resource
 {
-    protected static string $resource = BasicNeedsCategoryResource::class;
+    protected static ?string $model = BasicNeedsProgram::class;
 
-    public function infolist(Schema $schema): Schema
-    {
-        return $schema
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('name')
-                            ->label('Category Name'),
-                        TextEntry::make('description')
-                            ->label('Description'),
-                    ])
-                    ->columns(1),
-            ]);
-    }
+    protected static ?string $navigationLabel = 'Support Programs';
 
-    protected function getHeaderActions(): array
+    protected static ?string $modelLabel = 'Support Programs';
+
+    protected static ?int $navigationSort = 20;
+
+    protected static string | UnitEnum | null $navigationGroup = 'Knowledge Management';
+
+    public static function getPages(): array
     {
         return [
-            EditAction::make(),
+            'index' => ListBasicNeedsPrograms::route('/'),
+            'create' => CreateBasicNeedsProgram::route('/create'),
+            'view' => ViewBasicNeedsProgram::route('/{record}'),
+            'edit' => EditBasicNeedsProgram::route('/{record}/edit'),
         ];
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            ViewBasicNeedsProgram::class,
+            EditBasicNeedsProgram::class,
+        ]);
     }
 }

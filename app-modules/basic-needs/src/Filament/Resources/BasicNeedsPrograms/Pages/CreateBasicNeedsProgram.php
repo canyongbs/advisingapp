@@ -34,59 +34,67 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource\Pages;
+namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages;
 
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategoryResource;
-use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
-use App\Exceptions\SoftDeleteContraintViolationException;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\BasicNeedsProgramResource;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
-class EditBasicNeedsCategory extends EditRecord
+class CreateBasicNeedsProgram extends CreateRecord
 {
-    use EditPageRedirection;
-
-    protected static string $resource = BasicNeedsCategoryResource::class;
+    protected static string $resource = BasicNeedsProgramResource::class;
 
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->label('Category Name')
+                    ->label('Program Name')
                     ->required()
+                    ->string()
                     ->maxLength(255)
-                    ->string(),
+                    ->unique(),
                 Textarea::make('description')
                     ->label('Description')
                     ->maxLength(65535)
                     ->string(),
-            ])->columns(1);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make()
-                ->using(function (BasicNeedsCategory $basicNeedsCategory) {
-                    try {
-                        $basicNeedsCategory->delete();
-
-                        return $basicNeedsCategory;
-                    } catch (SoftDeleteContraintViolationException $e) {
-                        Notification::make()
-                            ->title($e->getMessage())
-                            ->danger()
-                            ->send();
-                    }
-                }),
-        ];
+                Select::make('basic_needs_category_id')
+                    ->label('Program Category')
+                    ->required()
+                    ->relationship('basicNeedsCategories', 'name')
+                    ->searchable()
+                    ->preload(),
+                TextInput::make('contact_person')
+                    ->label('Contact Person')
+                    ->maxLength(255)
+                    ->string(),
+                TextInput::make('contact_email')
+                    ->label('Email Address')
+                    ->maxLength(255)
+                    ->string()
+                    ->email(),
+                PhoneInput::make('contact_phone')
+                    ->label('Contact Phone'),
+                TextInput::make('location')
+                    ->label('Location')
+                    ->maxLength(255)
+                    ->string(),
+                TextInput::make('availability')
+                    ->label('Availability')
+                    ->maxLength(255)
+                    ->string(),
+                TextInput::make('eligibility_criteria')
+                    ->label('Eligibility Criteria')
+                    ->maxLength(255)
+                    ->string(),
+                TextInput::make('application_process')
+                    ->label('Application Process')
+                    ->maxLength(255)
+                    ->string(),
+            ]);
     }
 }

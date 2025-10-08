@@ -34,20 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages;
+namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\Pages;
 
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\BasicNeedsCategoryResource;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
-class ViewBasicNeedsProgram extends ViewRecord
+class ViewBasicNeedsCategory extends ViewRecord
 {
-    protected static string $resource = BasicNeedsProgramResource::class;
-
-    protected static ?string $navigationLabel = 'View';
+    protected static string $resource = BasicNeedsCategoryResource::class;
 
     public function infolist(Schema $schema): Schema
     {
@@ -56,26 +54,11 @@ class ViewBasicNeedsProgram extends ViewRecord
                 Section::make()
                     ->schema([
                         TextEntry::make('name')
-                            ->label('Program Name'),
-                        TextEntry::make('description'),
-                        TextEntry::make('basicNeedsCategories.name')
-                            ->label('Program Category'),
-                        TextEntry::make('contact_person')
-                            ->label('Contact Person'),
-                        TextEntry::make('contact_email')
-                            ->label('Email Address'),
-                        TextEntry::make('contact_phone')
-                            ->label('Contact Phone'),
-                        TextEntry::make('location')
-                            ->label('Location'),
-                        TextEntry::make('availability')
-                            ->label('Availability'),
-                        TextEntry::make('eligibility_criteria')
-                            ->label('Eligibility Criteria'),
-                        TextEntry::make('application_process')
-                            ->label('Application Process'),
+                            ->label('Category Name'),
+                        TextEntry::make('description')
+                            ->label('Description'),
                     ])
-                    ->columns(),
+                    ->columns(1),
             ]);
     }
 

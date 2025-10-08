@@ -34,26 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages;
+namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\Pages;
 
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource;
-use Filament\Forms\Components\Select;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsCategories\BasicNeedsCategoryResource;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
-use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
-class CreateBasicNeedsProgram extends CreateRecord
+class CreateBasicNeedsCategory extends CreateRecord
 {
-    protected static string $resource = BasicNeedsProgramResource::class;
+    protected static string $resource = BasicNeedsCategoryResource::class;
 
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->label('Program Name')
+                    ->label('Category Name')
                     ->required()
                     ->string()
                     ->maxLength(255)
@@ -62,39 +60,6 @@ class CreateBasicNeedsProgram extends CreateRecord
                     ->label('Description')
                     ->maxLength(65535)
                     ->string(),
-                Select::make('basic_needs_category_id')
-                    ->label('Program Category')
-                    ->required()
-                    ->relationship('basicNeedsCategories', 'name')
-                    ->searchable()
-                    ->preload(),
-                TextInput::make('contact_person')
-                    ->label('Contact Person')
-                    ->maxLength(255)
-                    ->string(),
-                TextInput::make('contact_email')
-                    ->label('Email Address')
-                    ->maxLength(255)
-                    ->string()
-                    ->email(),
-                PhoneInput::make('contact_phone')
-                    ->label('Contact Phone'),
-                TextInput::make('location')
-                    ->label('Location')
-                    ->maxLength(255)
-                    ->string(),
-                TextInput::make('availability')
-                    ->label('Availability')
-                    ->maxLength(255)
-                    ->string(),
-                TextInput::make('eligibility_criteria')
-                    ->label('Eligibility Criteria')
-                    ->maxLength(255)
-                    ->string(),
-                TextInput::make('application_process')
-                    ->label('Application Process')
-                    ->maxLength(255)
-                    ->string(),
-            ]);
+            ])->columns(1);
     }
 }
