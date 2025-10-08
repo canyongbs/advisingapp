@@ -36,8 +36,11 @@
 
 use AdvisingApp\Report\Filament\Widgets\ResearchAdvisorReportTable;
 use AdvisingApp\Research\Models\ResearchRequest;
+use Filament\Actions\ExportAction;
+use Illuminate\Support\Facades\Storage;
 
 use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 it('displays only research advisors created within the selected date range', function () {
     $startDate = now()->subDays(10);
@@ -66,3 +69,19 @@ it('displays only research advisors created within the selected date range', fun
         ->assertCanSeeTableRecords($researchAdvisorsWithinRange)
         ->assertCanNotSeeTableRecords($researchAdvisorsOutsideRange);
 });
+
+it('can start an export, sending a notification', function () {
+    asSuperAdmin();
+    
+    Storage::fake('s3');
+
+    ResearchRequest::factory()->count(random_int(1, 5))->create();
+
+    livewire(ResearchAdvisorReportTable::class, [
+        'cacheTag' => 'report-research-advisors',
+        'pageFilters' => [],
+    ])
+      ->callTableAction(ExportAction::class)
+      ->assertNotified()
+      ->assertHasNoTableActionErrors();
+})->only();
