@@ -89,7 +89,7 @@ it('executes case workflow step successfully', function () {
     $job = new CaseWorkflowActionJob($workflowRunStep);
     $job->handle();
 
-    $cases = $student->cases()->get();
+    $cases = $student->cases()->get(); 
 
     expect($cases)->toHaveCount(1)
         ->and($cases->first()->id)->toBe(WorkflowRunStepRelated::where('workflow_run_step_id', $workflowRunStep->id)->first()->related->getKey())
