@@ -43,7 +43,7 @@ use AdvisingApp\Task\Models\Task;
 
 use function Pest\Livewire\livewire;
 
-it('displays only tasks added within the selected date range for students', function () {
+it('displays only tasks added within the selected date range for students', function () { 
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
