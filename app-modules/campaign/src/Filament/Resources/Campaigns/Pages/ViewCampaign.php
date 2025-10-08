@@ -34,39 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Resources;
+namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\CreateCampaign;
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\EditCampaign;
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\ListCampaigns;
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\ViewCampaign;
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource\RelationManagers\CampaignActionsRelationManager;
+use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
-use Filament\Resources\Resource;
-use UnitEnum;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
-class CampaignResource extends Resource
+class ViewCampaign extends ViewRecord
 {
-    protected static ?string $model = Campaign::class;
+    protected static string $resource = CampaignResource::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
-
-    protected static ?int $navigationSort = 40;
-
-    public static function getRelations(): array
+    public function infolist(Schema $schema): Schema
     {
-        return [
-            CampaignActionsRelationManager::class,
-        ];
+        return $schema
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name'),
+                        TextEntry::make('segment.name')
+                            ->label('Population Segment'),
+                        IconEntry::make('enabled')
+                            ->boolean(),
+                        IconEntry::make('execution_status')
+                            ->label('Has Been Executed?')
+                            ->state(fn (Campaign $record) => $record->hasBeenExecuted())
+                            ->boolean(),
+                        TextEntry::make('createdBy.name')
+                            ->label('Created By'),
+                    ]),
+            ]);
     }
 
-    public static function getPages(): array
+    protected function getHeaderActions(): array
     {
         return [
-            'index' => ListCampaigns::route('/'),
-            'create' => CreateCampaign::route('/create'),
-            'view' => ViewCampaign::route('/{record}'),
-            'edit' => EditCampaign::route('/{record}/edit'),
+            EditAction::make()
+                ->hidden(fn (Campaign $record) => $record->hasBeenExecuted() === true),
         ];
     }
 }

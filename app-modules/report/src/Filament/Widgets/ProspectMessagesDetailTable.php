@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
+use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;

@@ -37,7 +37,7 @@
 namespace AdvisingApp\Campaign\Tests\Actions;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\ListCampaigns;
+use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ListCampaigns;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use App\Models\User;

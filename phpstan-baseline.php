@@ -1670,28 +1670,28 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/TaskBlock.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Resources\\\\CampaignResource\\\\Pages\\\\CreateCampaign\\:\\:getSteps\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Resources\\\\Campaigns\\\\Pages\\\\CreateCampaign\\:\\:getSteps\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Resources/CampaignResource/Pages/CreateCampaign.php',
+    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Resources/Campaigns/Pages/CreateCampaign.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$query of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Resources/CampaignResource/Pages/CreateCampaign.php',
+    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Resources/Campaigns/Pages/CreateCampaign.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$query of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Resources/CampaignResource/Pages/EditCampaign.php',
+    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Resources/Campaigns/Pages/EditCampaign.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Resources/CampaignResource/RelationManagers/CampaignActionsRelationManager.php',
+    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Resources/Campaigns/RelationManagers/CampaignActionsRelationManager.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
@@ -6164,12 +6164,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Policies/ProspectPolicy.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TValue in call to method static method Illuminate\\\\Support\\\\Arr\\:\\:first\\(\\)$#',
-    'identifier' => 'argument.templateType',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/Prospect/CreateProspectTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Faker\\\\Generator\\:\\:state\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
@@ -7096,12 +7090,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Property Filament\\\\Actions\\\\Imports\\\\Models\\\\Import\\:\\:\\$importer \\(class\\-string\\<Filament\\\\Actions\\\\Imports\\\\Importer\\>\\) does not accept class\\-string\\<AdvisingApp\\\\Segment\\\\Enums\\\\Importer\\>\\.$#',
     'identifier' => 'assign.propertyType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/segment/src/Filament/Resources/Segments/Pages/CreateSegment.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TValue in call to method static method Illuminate\\\\Support\\\\Arr\\:\\:first\\(\\)$#',
-    'identifier' => 'argument.templateType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/segment/src/Filament/Resources/Segments/Pages/CreateSegment.php',
 ];
