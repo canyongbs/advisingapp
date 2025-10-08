@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Policies;
 
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
@@ -73,9 +74,9 @@ class EngagementPolicy
         );
     }
 
-    public function create(Authenticatable $authenticatable, ?Prospect $prospect = null): Response
+    public function create(Authenticatable $authenticatable, ?Educatable $educatable = null): Response
     {
-        if (filled($prospect?->student_id)) {
+        if ($educatable instanceof Prospect && filled($educatable->student_id)) {
             return Response::deny('You cannot create an engagement for a Prospect that has been converted to a Student.');
         }
 
