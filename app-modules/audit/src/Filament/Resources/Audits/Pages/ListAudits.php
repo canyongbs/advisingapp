@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
+namespace AdvisingApp\Audit\Filament\Resources\Audits\Pages;
 
 use AdvisingApp\Audit\Actions\Finders\AuditableModels;
 use AdvisingApp\Audit\Filament\Exports\AuditExporter;
-use AdvisingApp\Audit\Filament\Resources\AuditResource;
+use AdvisingApp\Audit\Filament\Resources\Audits\AuditResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
 use Carbon\Carbon;

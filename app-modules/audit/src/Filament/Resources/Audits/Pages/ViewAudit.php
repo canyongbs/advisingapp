@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
+namespace AdvisingApp\Audit\Filament\Resources\Audits\Pages;
 
-use AdvisingApp\Audit\Filament\Resources\AuditResource;
+use AdvisingApp\Audit\Filament\Resources\Audits\AuditResource;
 use AdvisingApp\Audit\Models\Audit;
 use Carbon\Carbon;
 use Filament\Infolists\Components\TextEntry;

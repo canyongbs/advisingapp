@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Audit\Filament\Resources\AuditResource;
+use AdvisingApp\Audit\Filament\Resources\Audits\AuditResource;
 use AdvisingApp\Audit\Models\Audit;
 use App\Models\User;
 
