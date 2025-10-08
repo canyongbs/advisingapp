@@ -6398,46 +6398,46 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/src/Filament/Pages/UserLoginActivity.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Resources\\\\ReportResource\\\\Pages\\\\CreateReport\\:\\:getReportModels\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Resources\\\\Reports\\\\Pages\\\\CreateReport\\:\\:getReportModels\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/ReportResource/Pages/CreateReport.php',
+    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/Reports/Pages/CreateReport.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Resources\\\\ReportResource\\\\Pages\\\\CreateReport\\:\\:getSteps\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Resources\\\\Reports\\\\Pages\\\\CreateReport\\:\\:getSteps\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/ReportResource/Pages/CreateReport.php',
+    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/Reports/Pages/CreateReport.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Unable to resolve the template type TKey in call to function collect$#',
     'identifier' => 'argument.templateType',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/ReportResource/Pages/CreateReport.php',
+    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/Reports/Pages/CreateReport.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Unable to resolve the template type TValue in call to function collect$#',
     'identifier' => 'argument.templateType',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/ReportResource/Pages/CreateReport.php',
+    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/Reports/Pages/CreateReport.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$filters\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/ReportResource/Pages/EditReport.php',
+    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/Reports/Pages/EditReport.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$model\\.$#',
     'identifier' => 'property.notFound',
     'count' => 5,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/ReportResource/Pages/EditReport.php',
+    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/Reports/Pages/EditReport.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$user\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/ReportResource/Pages/EditReport.php',
+    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/Reports/Pages/EditReport.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Anonymous function never returns int so it can be removed from the return type\\.$#',

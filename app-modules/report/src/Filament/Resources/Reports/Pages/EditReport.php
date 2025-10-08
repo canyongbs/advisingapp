@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Resources\ReportResource\Pages;
+namespace AdvisingApp\Report\Filament\Resources\Reports\Pages;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\ReportModel;
-use AdvisingApp\Report\Filament\Resources\ReportResource;
+use AdvisingApp\Report\Filament\Resources\Reports\ReportResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;

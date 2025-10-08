@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Resources;
+namespace AdvisingApp\Report\Filament\Resources\Reports;
 
-use AdvisingApp\Report\Filament\Resources\ReportResource\Pages\CreateReport;
-use AdvisingApp\Report\Filament\Resources\ReportResource\Pages\EditReport;
-use AdvisingApp\Report\Filament\Resources\ReportResource\Pages\ListReports;
+use AdvisingApp\Report\Filament\Resources\Reports\Pages\CreateReport;
+use AdvisingApp\Report\Filament\Resources\Reports\Pages\EditReport;
+use AdvisingApp\Report\Filament\Resources\Reports\Pages\ListReports;
 use AdvisingApp\Report\Models\Report;
 use Filament\Resources\Resource;
 use UnitEnum;

@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Resources\ReportResource\Pages;
+namespace AdvisingApp\Report\Filament\Resources\Reports\Pages;
 
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Filament\Resources\ReportResource;
+use AdvisingApp\Report\Filament\Resources\Reports\ReportResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;

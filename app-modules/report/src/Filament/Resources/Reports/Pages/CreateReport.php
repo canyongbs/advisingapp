@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Resources\ReportResource\Pages;
+namespace AdvisingApp\Report\Filament\Resources\Reports\Pages;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\ReportModel;
-use AdvisingApp\Report\Filament\Resources\ReportResource;
+use AdvisingApp\Report\Filament\Resources\Reports\ReportResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Actions\ExportAction;
@@ -155,7 +155,7 @@ class CreateReport extends CreateRecord implements HasTable
         $models = $this->getReportModels();
 
         if (filled($model) && in_array(ReportModel::parse($model), $models)) {
-            return $model;
+            return ReportModel::parse($model);
         }
 
         return Arr::first($models);
