@@ -42,7 +42,7 @@ use Illuminate\Http\Request;
 
 class QnaAdvisorBroadcastController extends BroadcastController
 {
-    public function auth(Request $request, QnaAdvisor $advisor)
+    public function auth(Request $request, QnaAdvisor $advisor): mixed
     {
         return parent::authenticate($request);
     }
