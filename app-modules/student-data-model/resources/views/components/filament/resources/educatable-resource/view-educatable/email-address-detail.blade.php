@@ -34,6 +34,7 @@
 @php
     use AdvisingApp\Engagement\Models\Engagement;
     use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+    use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 @endphp
 
 <button
@@ -46,7 +47,11 @@
     @disabled(
         !auth()->user()->can('create', [
                 Engagement::class,
-                $emailAddress instanceof ProspectEmailAddress ? $emailAddress->prospect : null,
+                match (true) {
+                  $emailAddress instanceof StudentEmailAddress => $emailAddress->student,
+                  $emailAddress instanceof ProspectEmailAddress => $emailAddress->prospect,
+                  default => null,
+                },
             ]))
 >
     <div class="mt-1">
