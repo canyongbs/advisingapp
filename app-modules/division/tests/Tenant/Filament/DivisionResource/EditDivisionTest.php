@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Division\Filament\Resources\DivisionResource;
+use AdvisingApp\Division\Filament\Resources\Divisions\DivisionResource;
 use AdvisingApp\Division\Models\Division;
 use App\Models\User;
 

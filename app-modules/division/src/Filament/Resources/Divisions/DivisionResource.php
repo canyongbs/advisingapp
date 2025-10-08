@@ -34,42 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Division\Filament\Resources\DivisionResource\RelationManagers;
+namespace AdvisingApp\Division\Filament\Resources\Divisions;
 
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\AssociateAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DissociateAction;
-use Filament\Actions\DissociateBulkAction;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use AdvisingApp\Division\Filament\Resources\Divisions\Pages\CreateDivision;
+use AdvisingApp\Division\Filament\Resources\Divisions\Pages\EditDivision;
+use AdvisingApp\Division\Filament\Resources\Divisions\Pages\ListDivisions;
+use AdvisingApp\Division\Filament\Resources\Divisions\Pages\ViewDivision;
+use AdvisingApp\Division\Filament\Resources\Divisions\RelationManagers\TeamsRelationManager;
+use AdvisingApp\Division\Models\Division;
+use Filament\Resources\Resource;
+use UnitEnum;
 
-class TeamsRelationManager extends RelationManager
+class DivisionResource extends Resource
 {
-    protected static string $relationship = 'teams';
+    protected static ?string $model = Division::class;
 
-    public function table(Table $table): Table
+    protected static string | UnitEnum | null $navigationGroup = 'User Management';
+
+    protected static ?int $navigationSort = 50;
+
+    public static function getRelations(): array
     {
-        return $table
-            ->recordTitleAttribute('name')
-            ->inverseRelationship('division')
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name'),
-            ])
-            ->headerActions([
-                AssociateAction::make(),
-            ])
-            ->recordActions([
-                DissociateAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DissociateBulkAction::make(),
-                ]),
-            ])
-            ->emptyStateActions([
-            ]);
+        return [
+            TeamsRelationManager::make(),
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListDivisions::route('/'),
+            'create' => CreateDivision::route('/create'),
+            'view' => ViewDivision::route('/{record}'),
+            'edit' => EditDivision::route('/{record}/edit'),
+        ];
     }
 }

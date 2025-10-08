@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
+namespace AdvisingApp\Division\Filament\Resources\Divisions\Pages;
 
-use AdvisingApp\Division\Filament\Resources\DivisionResource;
+use AdvisingApp\Division\Filament\Resources\Divisions\DivisionResource;
 use AdvisingApp\Division\Models\Division;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\NotificationSetting;
