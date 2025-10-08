@@ -51,9 +51,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class CareTeamBlock extends WorkflowActionBlock
 {
-  /**
-     * @var Model | array<string, mixed> | class-string<Model> | Closure | null
-     */
+    /**
+       * @var Model | array<string, mixed> | class-string<Model> | Closure | null
+       */
     protected Model | array | string | Closure | null $model = CareTeam::class;
 
     protected function setUp(): void
@@ -64,22 +64,22 @@ class CareTeamBlock extends WorkflowActionBlock
 
         $this->schema($this->createFields());
     }
-    
+
     public function generateFields(): array
     {
         return [
             Repeater::make('careTeam')
-              ->label('Who should be assigned to the care team?')
-              ->schema([
-                Select::make('user_id')
-                  ->label('User')
-                  ->options(fn() => User::query()->tap(new HasLicense([Student::getLicenseType(), Prospect::getLicenseType()]))->pluck('name', 'id'))
-                  ->searchable()
-                  ->required()
-                  ->exists('users', 'id'),
-                Select::make('care_team_role_id')
-                  ->label('Role')
-              ])
+                ->label('Who should be assigned to the care team?')
+                ->schema([
+                    Select::make('user_id')
+                        ->label('User')
+                        ->options(fn () => User::query()->tap(new HasLicense([Student::getLicenseType(), Prospect::getLicenseType()]))->pluck('name', 'id'))
+                        ->searchable()
+                        ->required()
+                        ->exists('users', 'id'),
+                    Select::make('care_team_role_id')
+                        ->label('Role'),
+                ]),
         ];
     }
 
@@ -88,7 +88,7 @@ class CareTeamBlock extends WorkflowActionBlock
      */
     public function editFields(): array
     {
-      return $this->generateFields();
+        return $this->generateFields();
     }
 
     public static function type(): string
