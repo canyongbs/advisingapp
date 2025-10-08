@@ -34,38 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Filament\Resources;
+namespace AdvisingApp\Authorization\Filament\Resources\Roles\Pages;
 
-use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\CreateRole;
-use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\EditRole;
-use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\ListRoles;
-use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\ViewRole;
-use AdvisingApp\Authorization\Models\Role;
-use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Builder;
-use UnitEnum;
+use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
+use AdvisingApp\Authorization\Models\PermissionGroup;
+use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 
-class RoleResource extends Resource
+class ViewRole extends ViewRecord
 {
-    protected static ?string $model = Role::class;
+    protected static string $resource = RoleResource::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'User Management';
-
-    protected static ?int $navigationSort = 30;
-
-    public static function getPages(): array
+    public function form(Schema $schema): Schema
     {
-        return [
-            'index' => ListRoles::route('/'),
-            'create' => CreateRole::route('/create'),
-            'view' => ViewRole::route('/{record}'),
-            'edit' => EditRole::route('/{record}/edit'),
-        ];
+        return $schema
+            ->components([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(125)
+                    ->unique('roles', 'name'),
+                Select::make('guard_name')
+                    ->required()
+                    ->options([
+                        'web' => 'Web',
+                        'api' => 'API',
+                    ]),
+                Textarea::make('description')
+                    ->nullable()
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
+                PermissionsMatrix::make('permissions')
+                    ->columnSpanFull()
+                    ->guard(fn (Get $get): string => $get('guard_name'))
+                    ->permissionGroupModel(PermissionGroup::class),
+            ]);
     }
 
-    public static function getEloquentQuery(): Builder
+    protected function getHeaderActions(): array
     {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([]);
+        return [
+            EditAction::make(),
+        ];
     }
 }

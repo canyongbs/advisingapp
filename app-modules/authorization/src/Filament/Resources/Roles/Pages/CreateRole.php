@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
+namespace AdvisingApp\Authorization\Filament\Resources\Roles\Pages;
 
-use AdvisingApp\Authorization\Filament\Resources\RoleResource;
+use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Forms\Components\Select;

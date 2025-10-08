@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
+namespace AdvisingApp\Authorization\Filament\Resources\Roles\Pages;
 
-use AdvisingApp\Authorization\Filament\Resources\RoleResource;
+use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use AdvisingApp\Authorization\Models\Role;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;

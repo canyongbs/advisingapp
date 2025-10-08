@@ -34,43 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Filament\Resources\PermissionResource\RelationManagers;
+namespace AdvisingApp\Authorization\Filament\Resources\Roles;
 
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\CreateRole;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\EditRole;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\ListRoles;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\ViewRole;
+use AdvisingApp\Authorization\Models\Role;
+use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
 
-class RolesRelationManager extends RelationManager
+class RoleResource extends Resource
 {
-    protected static string $relationship = 'roles';
+    protected static ?string $model = Role::class;
 
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static string | UnitEnum | null $navigationGroup = 'User Management';
 
-    public function form(Schema $schema): Schema
+    protected static ?int $navigationSort = 30;
+
+    public static function getPages(): array
     {
-        return $schema
-            ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+        return [
+            'index' => ListRoles::route('/'),
+            'create' => CreateRole::route('/create'),
+            'view' => ViewRole::route('/{record}'),
+            'edit' => EditRole::route('/{record}/edit'),
+        ];
     }
 
-    public function table(Table $table): Table
+    public static function getEloquentQuery(): Builder
     {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name'),
-            ])
-            ->headerActions([
-            ])
-            ->recordActions([
-            ])
-            ->toolbarActions([
-            ]);
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([]);
     }
 }

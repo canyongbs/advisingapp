@@ -1334,28 +1334,34 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/ManageLocalPasswordSettings.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Authorization\\\\Filament\\\\Resources\\\\RoleResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/RoleResource.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Contracts\\\\Database\\\\Eloquent\\\\Builder\\:\\:api\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/RoleResource/Pages/ListRoles.php',
+    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/Roles/Pages/ListRoles.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Contracts\\\\Database\\\\Eloquent\\\\Builder\\:\\:web\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/RoleResource/Pages/ListRoles.php',
+    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/Roles/Pages/ListRoles.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
     'identifier' => 'MeliorStan.shortVariable',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/RoleResource/Pages/ListRoles.php',
+    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/Roles/Pages/ListRoles.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Authorization\\\\Filament\\\\Resources\\\\Roles\\\\RoleResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/Roles/RoleResource.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Authorization\\\\Filament\\\\Resources\\\\authorizations\\\\RoleResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/authorizations/RoleResource.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Laravel\\\\Socialite\\\\Contracts\\\\Provider\\|Mockery\\\\MockInterface\\:\\:setConfig\\(\\)\\.$#',
