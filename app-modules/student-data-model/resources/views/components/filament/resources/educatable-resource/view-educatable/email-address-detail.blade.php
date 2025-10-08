@@ -48,9 +48,9 @@
         !auth()->user()->can('create', [
                 Engagement::class,
                 match (true) {
-                  $emailAddress instanceof StudentEmailAddress => $emailAddress->student,
-                  $emailAddress instanceof ProspectEmailAddress => $emailAddress->prospect,
-                  default => null,
+                    $emailAddress instanceof StudentEmailAddress => $emailAddress->student,
+                    $emailAddress instanceof ProspectEmailAddress => $emailAddress->prospect,
+                    default => null,
                 },
             ]))
 >
