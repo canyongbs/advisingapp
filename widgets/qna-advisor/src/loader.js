@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,34 +31,35 @@
 
 </COPYRIGHT>
 */
+(function () {
+    // Get the portal embed element
+    const portalEmbedElement = document.querySelector('qna-advisor-embed');
+    if (!portalEmbedElement) return;
 
-namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
+    // Get the resources URL from the element
+    const resourcesUrl = portalEmbedElement.getAttribute('url');
+    if (!resourcesUrl) return;
 
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
-use AdvisingApp\Ai\Models\QnaAdvisor;
-use App\Models\User;
-use Filament\Resources\Pages\ViewRecord;
-use UnitEnum;
+    // Fetch the latest resource URLs
+    fetch(resourcesUrl)
+        .then((response) => response.json())
+        .then((resources) => {
+            if (!resources || !resources.entry || !resources.js || !resources.css) {
+                throw Error('Resources are missing or incomplete.');
+            }
 
-class PreviewQnaAdvisor extends ViewRecord
-{
-    protected static string $resource = QnaAdvisorResource::class;
+            portalEmbedElement.setAttribute('entry-url', resources.entry);
+            portalEmbedElement.setAttribute('css-url', resources.css);
 
-    protected static string | UnitEnum | null $navigationGroup = 'Configuration';
+            // Set up the global variable for Vite's dynamic imports using the resource endpoint
+            window.__VITE_QNA_ADVISOR_RESOURCE_URL__ = `${resourcesUrl}/resource?resource=js/widgets/qna-advisor/`;
 
-    protected static ?string $navigationLabel = 'Preview';
-
-    protected static ?string $title = 'Preview';
-
-    protected static ?string $breadcrumb = 'Preview';
-
-    protected string $view = 'ai::filament.resources.qna-advisors.pages.preview-qna-advisor';
-
-    public static function canAccess(array $parameters = []): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can('viewAny', QnaAdvisor::class) && ($user->can('create', QnaAdvisor::class) || $user->can('update', $parameters['record'])) && parent::canAccess($parameters);
-    }
-}
+            const scriptElement = document.createElement('script');
+            scriptElement.src = resources.js;
+            scriptElement.type = 'module';
+            document.body.appendChild(scriptElement);
+        })
+        .catch((error) => {
+            console.error('Failed to load portal resources:', error);
+        });
+})();

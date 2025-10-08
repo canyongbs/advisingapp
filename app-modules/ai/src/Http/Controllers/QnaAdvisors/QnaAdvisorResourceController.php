@@ -34,33 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
+namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use App\Models\User;
-use Filament\Resources\Pages\ViewRecord;
-use UnitEnum;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Mime\MimeTypes;
 
-class PreviewQnaAdvisor extends ViewRecord
+class QnaAdvisorResourceController
 {
-    protected static string $resource = QnaAdvisorResource::class;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Configuration';
-
-    protected static ?string $navigationLabel = 'Preview';
-
-    protected static ?string $title = 'Preview';
-
-    protected static ?string $breadcrumb = 'Preview';
-
-    protected string $view = 'ai::filament.resources.qna-advisors.pages.preview-qna-advisor';
-
-    public static function canAccess(array $parameters = []): bool
+    public function __invoke(Request $request, QnaAdvisor $advisor): StreamedResponse
     {
-        /** @var User $user */
-        $user = auth()->user();
+        $resourcePath = str_replace('\\/', '/', $request->query('resource'));
+        $fullPath = public_path($resourcePath);
 
-        return $user->can('viewAny', QnaAdvisor::class) && ($user->can('create', QnaAdvisor::class) || $user->can('update', $parameters['record'])) && parent::canAccess($parameters);
+        if (! file_exists($fullPath)) {
+            abort(404, 'Resource not found.');
+        }
+
+        $extension = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
+        $mimeType = (mime_content_type($fullPath) ?: null) ?? MimeTypes::getDefault()->getMimeTypes($extension)[0] ?? 'application/octet-stream';
+
+        return response()->streamDownload(
+            function () use ($fullPath) {
+                $stream = fopen($fullPath, 'rb');
+                fpassthru($stream);
+                fclose($stream);
+            },
+            basename($fullPath),
+            ['Content-Type' => $mimeType]
+        );
     }
 }

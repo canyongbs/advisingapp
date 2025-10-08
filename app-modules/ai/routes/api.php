@@ -37,6 +37,9 @@
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\AuthenticationConfirmController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\AuthenticationRefreshController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\FinishAdvisorThreadController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\QnaAdvisorBroadcastController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\QnaAdvisorResourceController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\QnaAdvisorResourcesController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\RegisterProspectController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\RequestAuthenticationController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendAdvisorMessageController as SendQnaAdvisorMessageController;
@@ -44,7 +47,10 @@ use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\ShowAdvisorController;
 use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorEmbedIsEnabled;
 use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorRequestComingFromAuthorizedDomain;
 use AdvisingApp\Ai\Http\Middleware\QnaAdvisorAuthorization;
+use AdvisingApp\Ai\Models\QnaAdvisor;
 use App\Http\Middleware\EncryptCookies;
+use Illuminate\Http\Middleware\HandleCors;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([
@@ -53,11 +59,26 @@ Route::middleware([
     EnsureQnaAdvisorEmbedIsEnabled::class,
     EnsureQnaAdvisorRequestComingFromAuthorizedDomain::class,
 ])
+    ->withoutMiddleware(HandleCors::class)
     ->name('ai.qna-advisors.')
     ->prefix('api/ai/qna-advisors/{advisor}')
     ->group(function () {
-        Route::post('/', ShowAdvisorController::class)
-            ->name('show');
+        Route::get('/', QnaAdvisorResourcesController::class)
+            ->name('resources');
+
+        Route::get('/resource', QnaAdvisorResourceController::class)
+            ->name('resource');
+
+        Route::post('/entry', ShowAdvisorController::class)
+            ->name('entry');
+
+        Route::match(
+            ['GET', 'POST', 'HEAD'],
+            '/broadcasting/auth',
+            [QnaAdvisorBroadcastController::class, 'auth']
+        )
+            ->middleware(['auth:sanctum'])
+            ->name('broadcasting.auth');
 
         Route::post('/authenticate/request', RequestAuthenticationController::class)
             ->middleware(['signed'])
@@ -88,4 +109,12 @@ Route::middleware([
                 QnaAdvisorAuthorization::class,
             ])
             ->name('threads.finish');
+
+        // Handle preflight CORS requests for all routes in this group
+        // MUST remain the last route in this group
+        Route::options('/{any}', function (Request $request, QnaAdvisor $advisor) {
+            return response()->noContent();
+        })
+            ->where('any', '.*')
+            ->name('preflight');
     });

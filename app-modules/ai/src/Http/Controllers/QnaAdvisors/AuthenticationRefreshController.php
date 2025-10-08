@@ -64,6 +64,7 @@ class AuthenticationRefreshController
                     minutes: 60 * 24 * 3, // 3 days
                     secure: true,
                     httpOnly: true,
+                    sameSite: 'none',
                 )
             );
     }

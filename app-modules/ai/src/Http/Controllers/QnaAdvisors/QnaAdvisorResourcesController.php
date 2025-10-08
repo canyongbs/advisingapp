@@ -34,33 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
+namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use App\Models\User;
-use Filament\Resources\Pages\ViewRecord;
-use UnitEnum;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
-class PreviewQnaAdvisor extends ViewRecord
+class QnaAdvisorResourcesController
 {
-    protected static string $resource = QnaAdvisorResource::class;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Configuration';
-
-    protected static ?string $navigationLabel = 'Preview';
-
-    protected static ?string $title = 'Preview';
-
-    protected static ?string $breadcrumb = 'Preview';
-
-    protected string $view = 'ai::filament.resources.qna-advisors.pages.preview-qna-advisor';
-
-    public static function canAccess(array $parameters = []): bool
+    public function __invoke(Request $request, QnaAdvisor $advisor): JsonResponse
     {
-        /** @var User $user */
-        $user = auth()->user();
+        // Read the Vite manifest for portal assets
+        $manifestPath = public_path('js/widgets/qna-advisor/.vite/manifest.json');
+        $manifest = json_decode(File::get($manifestPath), true);
 
-        return $user->can('viewAny', QnaAdvisor::class) && ($user->can('create', QnaAdvisor::class) || $user->can('update', $parameters['record'])) && parent::canAccess($parameters);
+        $portalEntry = $manifest['src/widget.js'];
+
+        return response()->json([
+            'entry' => route('ai.qna-advisors.entry', ['advisor' => $advisor]),
+            'js' => route('ai.qna-advisors.resource', ['advisor' => $advisor, 'resource' => "js/widgets/qna-advisor/{$portalEntry['file']}"]),
+            'css' => url("js/widgets/qna-advisor/{$portalEntry['css'][0]}"),
+        ]);
     }
 }

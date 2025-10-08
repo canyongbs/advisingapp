@@ -34,33 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource\Pages;
+namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use App\Models\User;
-use Filament\Resources\Pages\ViewRecord;
-use UnitEnum;
+use Illuminate\Broadcasting\BroadcastController;
+use Illuminate\Http\Request;
 
-class PreviewQnaAdvisor extends ViewRecord
+class QnaAdvisorBroadcastController extends BroadcastController
 {
-    protected static string $resource = QnaAdvisorResource::class;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Configuration';
-
-    protected static ?string $navigationLabel = 'Preview';
-
-    protected static ?string $title = 'Preview';
-
-    protected static ?string $breadcrumb = 'Preview';
-
-    protected string $view = 'ai::filament.resources.qna-advisors.pages.preview-qna-advisor';
-
-    public static function canAccess(array $parameters = []): bool
+    public function auth(Request $request, QnaAdvisor $advisor): mixed
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can('viewAny', QnaAdvisor::class) && ($user->can('create', QnaAdvisor::class) || $user->can('update', $parameters['record'])) && parent::canAccess($parameters);
+        return parent::authenticate($request);
     }
 }
