@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\EditProject;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\EditProject;
 use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\Tests\Tenant\Filament\Resources\ProjectResource\RequestFactory\EditProjectRequestFactory;
+use AdvisingApp\Project\Tests\Tenant\Filament\Resources\Projects\RequestFactory\EditProjectRequestFactory;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -102,27 +102,27 @@ it('validates the inputs', function (EditProjectRequestFactory $data, array $err
     );
 })->with(
     [
-        'name required' => [
+        'name required' => fn () => [
             EditProjectRequestFactory::new()->state(['name' => null]),
             ['name' => 'required'],
         ],
-        'name string' => [
+        'name string' => fn () => [
             EditProjectRequestFactory::new()->state(['name' => 1]),
             ['name' => 'string'],
         ],
-        'name max' => [
+        'name max' => fn () => [
             EditProjectRequestFactory::new()->state(['name' => str()->random(256)]),
             ['name' => 'max'],
         ],
-        'name unique' => [
+        'name unique' => fn () => [
             EditProjectRequestFactory::new()->state(['name' => 'Test Project']),
             ['name' => 'unique'],
         ],
-        'description string' => [
+        'description string' => fn () => [
             EditProjectRequestFactory::new()->state(['description' => 1]),
             ['description' => 'string'],
         ],
-        'description max' => [
+        'description max' => fn () => [
             EditProjectRequestFactory::new()->state(['description' => str()->random(65536)]),
             ['description' => 'max'],
         ],

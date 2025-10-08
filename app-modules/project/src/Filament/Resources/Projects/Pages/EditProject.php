@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
+namespace AdvisingApp\Project\Filament\Resources\Projects\Pages;
 
-use AdvisingApp\Project\Filament\Resources\ProjectResource;
+use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;

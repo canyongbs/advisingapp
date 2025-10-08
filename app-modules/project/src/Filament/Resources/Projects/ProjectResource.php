@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Filament\Resources;
+namespace AdvisingApp\Project\Filament\Resources\Projects;
 
 use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\CreateProject;
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\EditProject;
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ListProjects;
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageFiles;
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageMilestones;
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageProjectPipelines;
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageTasks;
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ViewProject;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\CreateProject;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\EditProject;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\ListProjects;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageFiles;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageMilestones;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageProjectPipelines;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageTasks;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\ViewProject;
 use AdvisingApp\Project\Models\Project;
 use BackedEnum;
 use Filament\Navigation\NavigationItem;

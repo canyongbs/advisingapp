@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\CreateProject;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\CreateProject;
 use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\Tests\Tenant\Filament\Resources\ProjectResource\RequestFactory\CreateProjectRequestFactory;
+use AdvisingApp\Project\Tests\Tenant\Filament\Resources\Projects\RequestFactory\CreateProjectRequestFactory;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -84,34 +84,32 @@ it('validates the inputs', function (CreateProjectRequestFactory $data, array $e
         ->assertHasFormErrors($errors);
 
     assertDatabaseCount(Project::class, 1);
-})->with(
-    [
-        'name required' => [
-            CreateProjectRequestFactory::new()->without('name'),
-            ['name' => 'required'],
-        ],
-        'name string' => [
-            CreateProjectRequestFactory::new()->state(['name' => 1]),
-            ['name' => 'string'],
-        ],
-        'name max' => [
-            CreateProjectRequestFactory::new()->state(['name' => str()->random(256)]),
-            ['name' => 'max'],
-        ],
-        'name unique' => [
-            CreateProjectRequestFactory::new()->state(['name' => 'Test Project']),
-            ['name' => 'unique'],
-        ],
-        'description string' => [
-            CreateProjectRequestFactory::new()->state(['description' => 1]),
-            ['description' => 'string'],
-        ],
-        'description max' => [
-            CreateProjectRequestFactory::new()->state(['description' => str()->random(65536)]),
-            ['description' => 'max'],
-        ],
-    ]
-);
+})->with([
+    'name required' => fn () => [
+        CreateProjectRequestFactory::new()->without('name'),
+        ['name' => 'required'],
+    ],
+    'name string' => fn () => [
+        CreateProjectRequestFactory::new()->state(['name' => 1]),
+        ['name' => 'string'],
+    ],
+    'name max' => fn () => [
+        CreateProjectRequestFactory::new()->state(['name' => str()->random(256)]),
+        ['name' => 'max'],
+    ],
+    'name unique' => fn () => [
+        CreateProjectRequestFactory::new()->state(['name' => 'Test Project']),
+        ['name' => 'unique'],
+    ],
+    'description string' => fn () => [
+        CreateProjectRequestFactory::new()->state(['description' => 1]),
+        ['description' => 'string'],
+    ],
+    'description max' => fn () => [
+        CreateProjectRequestFactory::new()->state(['description' => str()->random(65536)]),
+        ['description' => 'max'],
+    ],
+]);
 
 it('can create a record', function () {
     $user = User::factory()->create();

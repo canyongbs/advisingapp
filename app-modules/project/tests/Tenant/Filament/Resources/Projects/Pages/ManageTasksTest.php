@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ManageTasks;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageTasks;
 use AdvisingApp\Project\Models\Project;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;

@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
+namespace AdvisingApp\Project\Filament\Resources\Projects\Pages;
 
-use AdvisingApp\Project\Filament\Resources\ProjectResource;
+use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
 use AdvisingApp\Task\Models\Task;
 use Filament\Actions\AssociateAction;
 use Filament\Actions\BulkActionGroup;

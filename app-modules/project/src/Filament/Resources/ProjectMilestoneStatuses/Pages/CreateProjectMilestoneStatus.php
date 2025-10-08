@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages;
+namespace AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\Pages;
 
-use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\ProjectMilestoneStatusResource;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;

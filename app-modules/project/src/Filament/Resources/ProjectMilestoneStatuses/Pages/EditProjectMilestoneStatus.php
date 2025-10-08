@@ -34,36 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Filament\Resources;
+namespace AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\Pages;
 
-use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages\CreateProjectMilestoneStatus;
-use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages\EditProjectMilestoneStatus;
-use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages\ListProjectMilestoneStatuses;
-use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages\ViewProjectMilestoneStatus;
-use AdvisingApp\Project\Models\ProjectMilestoneStatus;
-use App\Filament\Clusters\ProjectManagement;
-use BackedEnum;
-use Filament\Resources\Resource;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\ProjectMilestoneStatusResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
-class ProjectMilestoneStatusResource extends Resource
+class EditProjectMilestoneStatus extends EditRecord
 {
-    protected static ?string $model = ProjectMilestoneStatus::class;
+    use EditPageRedirection;
 
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string $resource = ProjectMilestoneStatusResource::class;
 
-    protected static ?string $navigationLabel = 'Statuses';
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('name')
+                    ->label('Name')
+                    ->maxLength(255)
+                    ->autofocus()
+                    ->required()
+                    ->string()
+                    ->unique(ignoreRecord: true),
+                Textarea::make('description')
+                    ->label('Description')
+                    ->maxLength(65535)
+                    ->required(),
+            ]);
+    }
 
-    protected static ?string $cluster = ProjectManagement::class;
-
-    protected static ?int $navigationSort = 20;
-
-    public static function getPages(): array
+    protected function getHeaderActions(): array
     {
         return [
-            'index' => ListProjectMilestoneStatuses::route('/'),
-            'create' => CreateProjectMilestoneStatus::route('/create'),
-            'edit' => EditProjectMilestoneStatus::route('/{record}/edit'),
-            'view' => ViewProjectMilestoneStatus::route('/{record}'),
+            ViewAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

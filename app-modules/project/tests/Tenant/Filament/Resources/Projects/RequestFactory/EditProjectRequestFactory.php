@@ -34,46 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages;
+namespace AdvisingApp\Project\Tests\Tenant\Filament\Resources\Projects\RequestFactory;
 
-use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use Filament\Schemas\Schema;
+use Worksome\RequestFactories\RequestFactory;
 
-class EditProjectMilestoneStatus extends EditRecord
+class EditProjectRequestFactory extends RequestFactory
 {
-    use EditPageRedirection;
-
-    protected static string $resource = ProjectMilestoneStatusResource::class;
-
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->maxLength(255)
-                    ->autofocus()
-                    ->required()
-                    ->string()
-                    ->unique(ignoreRecord: true),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->maxLength(65535)
-                    ->required(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
+    public function definition(): array
     {
         return [
-            ViewAction::make(),
-            DeleteAction::make(),
+            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
+            'description' => $this->faker->paragraph(),
         ];
     }
 }

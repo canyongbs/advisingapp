@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource\Pages;
+namespace AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\Pages;
 
-use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatusResource;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\ProjectMilestoneStatusResource;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;

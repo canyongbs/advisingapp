@@ -34,39 +34,57 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\ViewProject;
+use AdvisingApp\Project\Models\Project;
+use App\Models\User;
 
-use AdvisingApp\Project\Filament\Resources\ProjectResource;
-use Filament\Actions\EditAction;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
+use function Pest\Livewire\livewire;
 
-class ViewProject extends ViewRecord
-{
-    protected static string $resource = ProjectResource::class;
+it('cannot render without proper permission.', function () {
+    $user = User::factory()->create();
 
-    protected static ?string $navigationLabel = 'View';
+    actingAs($user);
 
-    public function infolist(Schema $schema): Schema
-    {
-        return $schema
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('name'),
-                        TextEntry::make('description')
-                            ->label('Description')
-                            ->columnSpanFull(),
-                    ]),
-            ]);
-    }
+    $project = Project::factory()->create();
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            EditAction::make(),
-        ];
-    }
-}
+    get(ViewProject::getUrl([
+        'record' => $project->getRouteKey(),
+    ]))
+        ->assertForbidden();
+});
+
+it('can render with proper permission.', function () {
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('project.view-any');
+    $user->givePermissionTo('project.*.view');
+
+    $user->refresh();
+
+    actingAs($user);
+
+    $project = Project::factory()->create();
+
+    get(ViewProject::getUrl([
+        'record' => $project->getRouteKey(),
+    ]))
+        ->assertSuccessful();
+});
+
+it('can view a record', function () {
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('project.view-any');
+    $user->givePermissionTo('project.*.view');
+
+    actingAs($user);
+
+    $project = Project::factory()->create();
+
+    livewire(ViewProject::class, [
+        'record' => $project->getRouteKey(),
+    ])
+        ->assertHasNoErrors();
+});

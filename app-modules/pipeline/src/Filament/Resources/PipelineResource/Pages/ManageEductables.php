@@ -38,7 +38,7 @@ namespace AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages;
 
 use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Project\Filament\Resources\ProjectResource;
+use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
 use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use BackedEnum;

@@ -34,17 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Tests\Tenant\Filament\Resources\ProjectResource\RequestFactory;
+namespace AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses;
 
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\Pages\CreateProjectMilestoneStatus;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\Pages\EditProjectMilestoneStatus;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\Pages\ListProjectMilestoneStatuses;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\Pages\ViewProjectMilestoneStatus;
+use AdvisingApp\Project\Models\ProjectMilestoneStatus;
+use App\Filament\Clusters\ProjectManagement;
+use BackedEnum;
+use Filament\Resources\Resource;
 
-class CreateProjectRequestFactory extends RequestFactory
+class ProjectMilestoneStatusResource extends Resource
 {
-    public function definition(): array
+    protected static ?string $model = ProjectMilestoneStatus::class;
+
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationLabel = 'Statuses';
+
+    protected static ?string $cluster = ProjectManagement::class;
+
+    protected static ?int $navigationSort = 20;
+
+    public static function getPages(): array
     {
         return [
-            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
-            'description' => $this->faker->paragraph(),
+            'index' => ListProjectMilestoneStatuses::route('/'),
+            'create' => CreateProjectMilestoneStatus::route('/create'),
+            'edit' => EditProjectMilestoneStatus::route('/{record}/edit'),
+            'view' => ViewProjectMilestoneStatus::route('/{record}'),
         ];
     }
 }

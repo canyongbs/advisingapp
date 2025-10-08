@@ -34,39 +34,66 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
+namespace AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\Pages;
 
-use AdvisingApp\Project\Filament\Resources\ProjectResource;
-use App\Filament\Tables\Columns\IdColumn;
+use AdvisingApp\Project\Filament\Resources\ProjectMilestoneStatuses\ProjectMilestoneStatusResource;
+use AdvisingApp\Project\Models\ProjectMilestoneStatus;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 
-class ListProjects extends ListRecords
+class ListProjectMilestoneStatuses extends ListRecords
 {
-    protected static string $resource = ProjectResource::class;
+    protected static string $resource = ProjectMilestoneStatusResource::class;
 
     public function table(Table $table): Table
     {
         return $table
             ->columns([
-                IdColumn::make(),
                 TextColumn::make('name')
-                    ->searchable()
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('description')
+                    ->limit(50)
+                    ->searchable(),
+                TextColumn::make('project_milestones_count')
+                    ->label('Usage Count')
+                    ->counts('milestones')
                     ->sortable(),
             ])
             ->recordActions([
-                ViewAction::make(),
                 EditAction::make(),
+                ViewAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->action(function (Collection $records): void {
+                            $deletedCount = ProjectMilestoneStatus::query()
+                                ->whereKey($records)
+                                ->whereDoesntHave('milestones')
+                                ->delete();
+
+                            Notification::make()
+                                ->title('Deleted ' . $deletedCount . ' statuses')
+                                ->body(
+                                    $deletedCount < $records->count()
+                                        ? ($records->count() - $deletedCount) . ' statuses were not deleted because they have associated project milestones.'
+                                        : null
+                                )
+                                ->success()
+                                ->send();
+                        })
+                        ->fetchSelectedRecords(false),
                 ]),
             ]);
     }

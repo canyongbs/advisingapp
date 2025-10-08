@@ -34,57 +34,31 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Project\Filament\Resources\ProjectResource\Pages\ViewProject;
-use AdvisingApp\Project\Models\Project;
-use App\Models\User;
+namespace AdvisingApp\Project\Filament\Resources\Projects\Pages;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
+use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
-it('cannot render without proper permission.', function () {
-    $user = User::factory()->create();
+class CreateProject extends CreateRecord
+{
+    protected static string $resource = ProjectResource::class;
 
-    actingAs($user);
-
-    $project = Project::factory()->create();
-
-    get(ViewProject::getUrl([
-        'record' => $project->getRouteKey(),
-    ]))
-        ->assertForbidden();
-});
-
-it('can render with proper permission.', function () {
-    $user = User::factory()->create();
-
-    $user->givePermissionTo('project.view-any');
-    $user->givePermissionTo('project.*.view');
-
-    $user->refresh();
-
-    actingAs($user);
-
-    $project = Project::factory()->create();
-
-    get(ViewProject::getUrl([
-        'record' => $project->getRouteKey(),
-    ]))
-        ->assertSuccessful();
-});
-
-it('can view a record', function () {
-    $user = User::factory()->create();
-
-    $user->givePermissionTo('project.view-any');
-    $user->givePermissionTo('project.*.view');
-
-    actingAs($user);
-
-    $project = Project::factory()->create();
-
-    livewire(ViewProject::class, [
-        'record' => $project->getRouteKey(),
-    ])
-        ->assertHasNoErrors();
-});
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('name')
+                    ->required()
+                    ->unique()
+                    ->string()
+                    ->maxLength(255),
+                Textarea::make('description')
+                    ->string()
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
+            ]);
+    }
+}

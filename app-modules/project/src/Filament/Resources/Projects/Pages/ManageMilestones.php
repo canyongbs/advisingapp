@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Filament\Resources\ProjectResource\Pages;
+namespace AdvisingApp\Project\Filament\Resources\Projects\Pages;
 
-use AdvisingApp\Project\Filament\Resources\ProjectResource;
+use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
 use AdvisingApp\Project\Models\ProjectMilestone;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
