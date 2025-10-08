@@ -36,20 +36,103 @@
 
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
+use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Workflow\Models\WorkflowCareTeamDetails;
+use AdvisingApp\Workflow\Models\WorkflowDetails;
+use App\Models\Scopes\HasLicense;
+use App\Models\User;
+use Closure;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Section;
+use Illuminate\Database\Eloquent\Model;
 
 class CareTeamBlock extends WorkflowActionBlock
 {
-    //TODO: implement
+    /**
+       * @var Model | array<string, mixed> | class-string<Model> | Closure | null
+       */
+    protected Model | array | string | Closure | null $model = CareTeam::class;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->label('Care Team');
+
+        $this->schema($this->createFields());
+    }
+
     public function generateFields(): array
     {
         return [
-            Select::make('temp'),
+            Repeater::make('careTeam')
+                ->label('Who should be assigned to the care team?')
+                ->schema([
+                    Select::make('user_id')
+                        ->label('User')
+                        ->options(fn () => User::query()->tap(new HasLicense([Student::getLicenseType(), Prospect::getLicenseType()]))->pluck('name', 'id'))
+                        ->searchable()
+                        ->required()
+                        ->exists('users', 'id'),
+                    Select::make('care_team_role_id')
+                        ->label('Role'),
+                ]),
         ];
+    }
+
+    /**
+     * @return array<int, covariant Field|Section>
+     */
+    public function editFields(): array
+    {
+        return $this->generateFields();
     }
 
     public static function type(): string
     {
         return 'workflow_care_team_details';
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     */
+    public function beforeCreate(array $data): array
+    {
+        return $this->transformAssignmentData($data);
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     */
+    public function beforeUpdate(array $data): array
+    {
+        return $this->transformAssignmentData($data);
+    }
+
+    public function prepareForEdit(WorkflowDetails $details): void
+    {
+        assert($details instanceof WorkflowCareTeamDetails);
+        $details->load('priority.type');
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     */
+    private function transformAssignmentData(array $data): array
+    {
+        if (isset($data['assigned_to_id']) && $data['assigned_to_id'] === 'automatic') {
+            $data['assigned_to_id'] = null;
+        }
+
+        return $data;
     }
 }
