@@ -34,64 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
+namespace AdvisingApp\Division\Filament\Resources\Divisions\RelationManagers;
 
-use AdvisingApp\Division\Filament\Resources\DivisionResource;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\AssociateAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\DissociateAction;
+use Filament\Actions\DissociateBulkAction;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class ListDivisions extends ListRecords
+class TeamsRelationManager extends RelationManager
 {
-    protected static string $resource = DivisionResource::class;
+    protected static string $relationship = 'teams';
 
     public function table(Table $table): Table
     {
         return $table
+            ->recordTitleAttribute('name')
+            ->inverseRelationship('division')
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('name')
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('code')
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('createdBy.name')
-                    ->default('N/A')
-                    ->label('Created By')
-                    ->sortable(),
-                TextColumn::make('updated_at')
-                    ->label('Updated At')
-                    ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
-                    ->sortable(),
-                IconColumn::make('is_default')
-                    ->label('Default')
-                    ->boolean(),
-                TextColumn::make('notificationSetting.setting.name')
-                    ->label('Notification Setting'),
+                TextColumn::make('name'),
+            ])
+            ->headerActions([
+                AssociateAction::make(),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                DissociateAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DissociateBulkAction::make(),
                 ]),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
+            ])
+            ->emptyStateActions([]);
     }
 }
