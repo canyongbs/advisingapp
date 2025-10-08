@@ -89,6 +89,8 @@ it('renders only the interactions associated with student', function () {
     $user->givePermissionTo('student.*.view');
     $user->givePermissionTo('interaction.view-any');
 
+    actingAs($user);
+
     livewire(InteractionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,

@@ -90,8 +90,17 @@ test('CreateProspect is gated with proper access control', function () {
 
     assertCount(1, Prospect::all());
 
+    /** @var array<array<mixed>> $emailAddresses */
+    $emailAddresses = $request->toArray()['emailAddresses'];
+
+    /** @var array<array<mixed>> $phoneNumbers */
+    $phoneNumbers = $request->toArray()['phoneNumbers'];
+
+    /** @var array<array<mixed>> $addresses */
+    $addresses = $request->toArray()['addresses'];
+
     assertDatabaseHas(Prospect::class, Arr::except($request->toArray(), ['emailAddresses', 'phoneNumbers', 'addresses']));
-    assertDatabaseHas(ProspectEmailAddress::class, Arr::first($request->toArray()['emailAddresses']));
-    assertDatabaseHas(ProspectPhoneNumber::class, Arr::first($request->toArray()['phoneNumbers']));
-    assertDatabaseHas(ProspectAddress::class, Arr::first($request->toArray()['addresses']));
+    assertDatabaseHas(ProspectEmailAddress::class, Arr::first($emailAddresses));
+    assertDatabaseHas(ProspectPhoneNumber::class, Arr::first($phoneNumbers));
+    assertDatabaseHas(ProspectAddress::class, Arr::first($addresses));
 });

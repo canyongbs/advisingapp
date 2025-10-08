@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Interaction\Filament\Concerns;
 
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Schemas\InteractionForm;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -161,6 +162,7 @@ trait HasManyMorphedInteractionsTrait
             ])
             ->headerActions([
                 CreateAction::make()
+                    ->steps(InteractionForm::getSteps())
                     ->authorize(function () {
                         $ownerRecord = $this->getOwnerRecord();
 
@@ -176,6 +178,7 @@ trait HasManyMorphedInteractionsTrait
                             ->cancelParentActions(),
                     ]),
                 EditAction::make()
+                    ->steps(InteractionForm::getSteps())
                     ->modalHeading('Edit Interaction'),
             ])
             ->filters([
