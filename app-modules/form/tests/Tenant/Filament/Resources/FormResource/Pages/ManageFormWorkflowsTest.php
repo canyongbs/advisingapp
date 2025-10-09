@@ -49,7 +49,7 @@ use function Tests\asSuperAdmin;
 test('can successfully create a new workflow for a form through manage workflows page', function () {
     asSuperAdmin();
 
-    $form = Form::factory()->state(['name' => 'Contact Form'])->create();
+    $form = Form::factory()->create();
     $user = User::first();
     expect(WorkflowTrigger::count())->toBe(0);
 
@@ -89,7 +89,7 @@ test('can successfully create a new workflow for a form through manage workflows
 test('creates workflow with proper database transaction behavior', function () {
     asSuperAdmin();
 
-    $form = Form::factory()->state(['name' => 'Test Form'])->create();
+    $form = Form::factory()->create();
 
     expect(Workflow::count())->toBe(0);
     expect(WorkflowTrigger::count())->toBe(0);
@@ -104,7 +104,7 @@ test('creates workflow with proper database transaction behavior', function () {
 test('creates multiple workflows for the same form without conflicts', function () {
     asSuperAdmin();
 
-    $form = Form::factory()->state(['name' => 'Multi-Workflow Form'])->create();
+    $form = Form::factory()->create();
 
     expect(Workflow::count())->toBe(0);
 
@@ -133,7 +133,7 @@ test('creates multiple workflows for the same form without conflicts', function 
 });
 
 test('requires proper authentication to create workflows', function () {
-    $form = Form::factory()->state(['name' => 'Protected Form'])->create();
+    $form = Form::factory()->create();
 
     livewire(ManageFormWorkflows::class, ['record' => $form->getKey()])
         ->assertForbidden();
@@ -145,7 +145,7 @@ test('requires proper authentication to create workflows', function () {
 test('authenticated super admin user can create workflows', function () {
     asSuperAdmin();
 
-    $form = Form::factory()->state(['name' => 'User Form'])->create();
+    $form = Form::factory()->create();
 
     livewire(ManageFormWorkflows::class, ['record' => $form->getKey()])
         ->callAction('create');
@@ -163,7 +163,6 @@ test('creates workflow trigger with correct form relationships', function () {
 
     $form = Form::factory()
         ->has(FormField::factory()->count(3), 'fields')
-        ->state(['name' => 'Contact Information Form'])
         ->create();
 
     livewire(ManageFormWorkflows::class, ['record' => $form->getKey()])
@@ -175,7 +174,7 @@ test('creates workflow trigger with correct form relationships', function () {
 
     expect($relatedForm)->toBeInstanceOf(Form::class);
     expect($relatedForm->id)->toBe($form->id);
-    expect($relatedForm->name)->toBe('Contact Information Form');
+    expect($relatedForm->name)->toBe($form->name);
     expect($relatedForm->fields)->toHaveCount(3);
 });
 
@@ -214,7 +213,7 @@ test('creates workflow for form with different form configurations', function (c
 test('handles workflow creation gracefully when form does not exist', function () {
     asSuperAdmin();
 
-    $form = Form::factory()->state(['name' => 'Temporary Form'])->create();
+    $form = Form::factory()->create();
     $formId = $form->id;
     $form->delete();
 
@@ -231,7 +230,7 @@ test('handles workflow creation gracefully when form does not exist', function (
 test('creates workflow in disabled state by default for safety', function () {
     asSuperAdmin();
 
-    $form = Form::factory()->state(['name' => 'Safety Test Form'])->create();
+    $form = Form::factory()->create();
 
     livewire(ManageFormWorkflows::class, ['record' => $form->getKey()])
         ->callAction('create');
@@ -248,7 +247,7 @@ test('creates workflow in disabled state by default for safety', function () {
 test('creates workflow with event-based trigger type for form submissions', function () {
     asSuperAdmin();
 
-    $form = Form::factory()->state(['name' => 'Event Trigger Form'])->create();
+    $form = Form::factory()->create();
 
     livewire(ManageFormWorkflows::class, ['record' => $form->getKey()])
         ->callAction('create');
@@ -265,7 +264,7 @@ test('creates workflow with event-based trigger type for form submissions', func
 test('workflow creation integrates properly with existing form workflows list', function () {
     asSuperAdmin();
 
-    $form = Form::factory()->state(['name' => 'Integration Test Form'])->create();
+    $form = Form::factory()->create();
 
     Workflow::factory()
         ->count(2)

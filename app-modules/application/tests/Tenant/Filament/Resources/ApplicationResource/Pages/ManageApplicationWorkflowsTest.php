@@ -54,7 +54,7 @@ beforeEach(function () {
 test('can successfully create a new workflow for an application through manage workflows page', function () {
     asSuperAdmin();
 
-    $application = Application::factory()->state(['name' => 'Graduate Application'])->create();
+    $application = Application::factory()->create();
     $user = User::first();
     expect(WorkflowTrigger::count())->toBe(0);
 
@@ -94,7 +94,7 @@ test('can successfully create a new workflow for an application through manage w
 test('creates workflow with proper database transaction behavior', function () {
     asSuperAdmin();
 
-    $application = Application::factory()->state(['name' => 'Test Application'])->create();
+    $application = Application::factory()->create();
 
     expect(Workflow::count())->toBe(0);
     expect(WorkflowTrigger::count())->toBe(0);
@@ -109,7 +109,7 @@ test('creates workflow with proper database transaction behavior', function () {
 test('creates multiple workflows for the same application without conflicts', function () {
     asSuperAdmin();
 
-    $application = Application::factory()->state(['name' => 'Multi-Workflow Application'])->create();
+    $application = Application::factory()->create();
 
     expect(Workflow::count())->toBe(0);
 
@@ -138,7 +138,7 @@ test('creates multiple workflows for the same application without conflicts', fu
 });
 
 test('requires proper authentication to create workflows', function () {
-    $application = Application::factory()->state(['name' => 'Protected Application'])->create();
+    $application = Application::factory()->create();
 
     livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
         ->assertForbidden();
@@ -150,7 +150,7 @@ test('requires proper authentication to create workflows', function () {
 test('authenticated super admin user can create workflows', function () {
     asSuperAdmin();
 
-    $application = Application::factory()->state(['name' => 'User Application'])->create();
+    $application = Application::factory()->create();
 
     livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
         ->callAction('create');
@@ -166,9 +166,7 @@ test('authenticated super admin user can create workflows', function () {
 test('creates workflow trigger with correct application relationships', function () {
     asSuperAdmin();
 
-    $application = Application::factory()
-        ->state(['name' => 'Graduate School Application'])
-        ->create();
+    $application = Application::factory()->create();
 
     livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
         ->callAction('create');
@@ -179,7 +177,7 @@ test('creates workflow trigger with correct application relationships', function
     $relatedApplication = $workflowTrigger->related;
     assert($relatedApplication instanceof Application);
     expect($relatedApplication->id)->toBe($application->id);
-    expect($relatedApplication->name)->toBe('Graduate School Application');
+    expect($relatedApplication->name)->toBe($application->name);
 });
 
 test('creates workflow for application with different configurations', function (callable $applicationFactory, array $expectedConfig): void {
@@ -209,7 +207,7 @@ test('creates workflow for application with different configurations', function 
 test('handles workflow creation gracefully when application does not exist', function () {
     asSuperAdmin();
 
-    $application = Application::factory()->state(['name' => 'Temporary Application'])->create();
+    $application = Application::factory()->create();
     $applicationId = $application->id;
     $application->delete();
 
@@ -226,7 +224,7 @@ test('handles workflow creation gracefully when application does not exist', fun
 test('creates workflow in disabled state by default for safety', function () {
     asSuperAdmin();
 
-    $application = Application::factory()->state(['name' => 'Safety Test Application'])->create();
+    $application = Application::factory()->create();
 
     livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
         ->callAction('create');
@@ -243,7 +241,7 @@ test('creates workflow in disabled state by default for safety', function () {
 test('creates workflow with event-based trigger type for application submissions', function () {
     asSuperAdmin();
 
-    $application = Application::factory()->state(['name' => 'Event Trigger Application'])->create();
+    $application = Application::factory()->create();
 
     livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
         ->callAction('create');
@@ -260,7 +258,7 @@ test('creates workflow with event-based trigger type for application submissions
 test('workflow creation integrates properly with existing application workflows list', function () {
     asSuperAdmin();
 
-    $application = Application::factory()->state(['name' => 'Integration Test Application'])->create();
+    $application = Application::factory()->create();
 
     Workflow::factory()
         ->count(2)
