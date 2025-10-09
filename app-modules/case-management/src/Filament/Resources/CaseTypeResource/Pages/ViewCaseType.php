@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseForms\CaseFormResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use Filament\Actions\EditAction;

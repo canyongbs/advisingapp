@@ -34,29 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseForms\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages\CreateCaseForm;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages\EditCaseForm;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages\ListCaseForms;
-use AdvisingApp\CaseManagement\Models\CaseForm;
-use App\Filament\Clusters\CaseManagementAdministration;
-use Filament\Resources\Resource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseForms\CaseFormResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseForms\Pages\Concerns\HasSharedFormConfiguration;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
-class CaseFormResource extends Resource
+class CreateCaseForm extends CreateRecord
 {
-    protected static ?string $model = CaseForm::class;
+    use HasSharedFormConfiguration;
 
-    protected static ?int $navigationSort = 30;
+    protected static string $resource = CaseFormResource::class;
 
-    protected static ?string $cluster = CaseManagementAdministration::class;
-
-    public static function getPages(): array
+    public function form(Schema $schema): Schema
     {
-        return [
-            'index' => ListCaseForms::route('/'),
-            'create' => CreateCaseForm::route('/create'),
-            'edit' => EditCaseForm::route('/{record}/edit'),
-        ];
+        return $schema
+            ->components($this->fields());
     }
 }

@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseForms\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseForms\CaseFormResource;
 use AdvisingApp\CaseManagement\Models\CaseForm;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\Action;

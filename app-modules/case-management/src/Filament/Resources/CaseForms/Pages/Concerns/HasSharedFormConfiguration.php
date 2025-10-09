@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages\Concerns;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseForms\Pages\Concerns;
 
 use AdvisingApp\CaseManagement\Models\CaseForm;
 use AdvisingApp\CaseManagement\Models\CaseFormField;

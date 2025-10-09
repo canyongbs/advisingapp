@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseForms\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseFormResource\Pages\Concerns\HasSharedFormConfiguration;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseForms\CaseFormResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseForms\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\CaseManagement\Models\CaseForm;
 use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;

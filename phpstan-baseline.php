@@ -1358,12 +1358,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/Roles/RoleResource.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Authorization\\\\Filament\\\\Resources\\\\authorizations\\\\RoleResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/authorizations/RoleResource.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Laravel\\\\Socialite\\\\Contracts\\\\Provider\\|Mockery\\\\MockInterface\\:\\:setConfig\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 2,
@@ -2006,52 +2000,52 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/case-management/src/Filament/Actions/BulkCreateCaseAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseFormResource\\\\Pages\\\\CreateCaseForm\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseForms\\\\Pages\\\\CreateCaseForm\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseFormResource/Pages/CreateCaseForm.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseForms/Pages/CreateCaseForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseFormResource\\\\Pages\\\\CreateCaseForm\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseForms\\\\Pages\\\\CreateCaseForm\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseFormResource/Pages/CreateCaseForm.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseForms/Pages/CreateCaseForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseFormResource\\\\Pages\\\\CreateCaseForm\\:\\:saveFieldsFromComponents\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseForms\\\\Pages\\\\CreateCaseForm\\:\\:saveFieldsFromComponents\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseFormResource/Pages/CreateCaseForm.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseForms/Pages/CreateCaseForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$caseForm of method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseFormResource\\\\Pages\\\\CreateCaseForm\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseForm, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
+    'message' => '#^Parameter \\#1 \\$caseForm of method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseForms\\\\Pages\\\\CreateCaseForm\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseForm, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseFormResource/Pages/CreateCaseForm.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseForms/Pages/CreateCaseForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseFormResource\\\\Pages\\\\EditCaseForm\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseForms\\\\Pages\\\\EditCaseForm\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseFormResource/Pages/EditCaseForm.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseForms/Pages/EditCaseForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseFormResource\\\\Pages\\\\EditCaseForm\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseForms\\\\Pages\\\\EditCaseForm\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseFormResource/Pages/EditCaseForm.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseForms/Pages/EditCaseForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseFormResource\\\\Pages\\\\EditCaseForm\\:\\:saveFieldsFromComponents\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseForms\\\\Pages\\\\EditCaseForm\\:\\:saveFieldsFromComponents\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseFormResource/Pages/EditCaseForm.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseForms/Pages/EditCaseForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$caseForm of method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseFormResource\\\\Pages\\\\EditCaseForm\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseForm, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
+    'message' => '#^Parameter \\#1 \\$caseForm of method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseForms\\\\Pages\\\\EditCaseForm\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseForm, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseFormResource/Pages/EditCaseForm.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseForms/Pages/EditCaseForm.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Filament\\\\Resources\\\\Pages\\\\Page\\:\\:\\$record\\.$#',
@@ -6386,12 +6380,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/src/Filament/Pages/Students.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Report\\\\Filament\\\\Pages\\\\TaskManagement\\:\\:\\$cacheTag has no type specified\\.$#',
-    'identifier' => 'missingType.property',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Pages/TaskManagement.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Report\\\\Filament\\\\Pages\\\\UserLoginActivity\\:\\:\\$cacheTag has no type specified\\.$#',
     'identifier' => 'missingType.property',
     'count' => 1,
@@ -6744,12 +6732,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.parameter',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentSmsOptInOptOutPieChart.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Widgets\\\\TaskCumulativeCountLineChart\\:\\:getOptions\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/TaskCumulativeCountLineChart.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Widgets\\\\UserUniqueLoginCountLineChart\\:\\:getOptions\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -8778,12 +8760,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/survey/src/Providers/SurveyServiceProvider.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe property access "\\?\\-\\>id" on left side of \\?\\? is unnecessary\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/task/database/factories/TaskFactory.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Task\\\\Histories\\\\TaskHistory\\:\\:\\$formatted\\.$#',
