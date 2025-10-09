@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Project\Filament\Resources\Projects;
 
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
+use AdvisingApp\Pipeline\Filament\Resources\Pipelines\PipelineResource;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\CreateProject;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\EditProject;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\ListProjects;

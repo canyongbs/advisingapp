@@ -34,28 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages;
+namespace AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages;
 
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource;
+use AdvisingApp\Pipeline\Filament\Resources\Pipelines\PipelineResource;
+use AdvisingApp\Pipeline\Models\Pipeline;
+use AdvisingApp\Pipeline\Models\PipelineStage;
 use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
-use AdvisingApp\Project\Models\Project;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Js;
-use Livewire\Attributes\Locked;
-use Livewire\Attributes\Url;
+use Illuminate\Support\Str;
 
-class CreatePipeline extends CreateRecord
+class EditPipeline extends EditRecord
 {
-    protected static string $resource = PipelineResource::class;
+    use EditPageRedirection;
 
-    #[Locked, Url]
-    public ?string $project = null;
+    protected static string $resource = PipelineResource::class;
 
     public function form(Schema $schema): Schema
     {
@@ -88,6 +89,28 @@ class CreatePipeline extends CreateRecord
                             ->distinct()
                             ->required(),
                     ])
+                    ->deleteAction(
+                        function (Action $action) {
+                            $action->before(function (array $arguments, Repeater $component, Action $action) {
+                                $currentStage = $component->getRawItemState($arguments['item']);
+
+                                if (isset($currentStage['id'])) {
+                                    $currentStage = PipelineStage::whereHas('educatables')
+                                        ->find($currentStage['id']);
+                                }
+
+                                if (isset($currentStage['id'])) {
+                                    Notification::make()
+                                        ->title('Error !')
+                                        ->body('This stage cannot be deleted because it contains educatables!')
+                                        ->danger()
+                                        ->send();
+
+                                    $action->cancel();
+                                }
+                            });
+                        }
+                    )
                     ->orderColumn('order')
                     ->reorderable()
                     ->columnSpanFull()
@@ -97,9 +120,16 @@ class CreatePipeline extends CreateRecord
             ]);
     }
 
+    /**
+     * @return array<string>
+     */
     public function getBreadcrumbs(): array
     {
-        $project = Project::find($this->project);
+        $pipeline = $this->getRecord();
+
+        assert($pipeline instanceof Pipeline);
+
+        $project = $pipeline->project;
 
         $breadcrumbs = [
             ProjectResource::getUrl() => ProjectResource::getBreadcrumb(),
@@ -107,6 +137,7 @@ class CreatePipeline extends CreateRecord
                 ProjectResource::getUrl('view', ['record' => $project]) => $project->name ?? '',
                 ProjectResource::getUrl('manage-pipelines', ['record' => $project]) => 'Pipelines',
             ] : []),
+            PipelineResource::getUrl('view', ['record' => $this->getRecord()]) => Str::limit($this->getRecordTitle(), 16),
             ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
         ];
 
@@ -117,27 +148,23 @@ class CreatePipeline extends CreateRecord
         return $breadcrumbs;
     }
 
-    protected function mutateFormDataBeforeCreate(array $data): array
+    protected function getHeaderActions(): array
     {
-        $project = Project::find($this->project);
-
-        if ($project && (! auth()->user()->can('update', $project))) {
-            $project = null;
-        }
-
-        $data['user_id'] = auth()->id();
-        $data['project_id'] = $project?->getKey();
-
-        return $data;
+        return [
+            DeleteAction::make(),
+        ];
     }
 
-    protected function getCancelFormAction(): Action
+    protected function configureDeleteAction(DeleteAction $action): void
     {
-        $project = Project::find($this->project);
+        $pipeline = $this->getRecord();
 
-        return Action::make('cancel')
-            ->label(__('filament-panels::resources/pages/create-record.form.actions.cancel.label'))
-            ->alpineClickHandler('document.referrer ? window.history.back() : (window.location.href = ' . Js::from($this->previousUrl ?? ($project ? ProjectResource::getUrl('manage-pipelines', ['record' => $project]) : null)) . ')')
-            ->color('gray');
+        assert($pipeline instanceof Pipeline);
+
+        $resource = static::getResource();
+
+        $action
+            ->authorize($resource::canDelete($this->getRecord()))
+            ->successRedirectUrl(ProjectResource::getUrl('manage-pipelines', ['record' => $pipeline->project]));
     }
 }

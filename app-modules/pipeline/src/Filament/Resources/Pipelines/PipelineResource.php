@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Pipeline\Filament\Resources;
+namespace AdvisingApp\Pipeline\Filament\Resources\Pipelines;
 
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages\CreatePipeline;
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages\EditPipeline;
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages\ManageEductables;
-use AdvisingApp\Pipeline\Filament\Resources\PipelineResource\Pages\ViewPipeline;
+use AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages\CreatePipeline;
+use AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages\EditPipeline;
+use AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages\ManageEductables;
+use AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages\ViewPipeline;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Pipeline\Settings\ProspectPipelineSettings;
 use Filament\Pages\Page;
