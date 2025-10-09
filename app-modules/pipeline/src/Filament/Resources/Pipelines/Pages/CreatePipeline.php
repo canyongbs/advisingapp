@@ -37,7 +37,7 @@
 namespace AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages;
 
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\PipelineResource;
-use AdvisingApp\Project\Filament\Resources\ProjectResource;
+use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
 use AdvisingApp\Project\Models\Project;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
