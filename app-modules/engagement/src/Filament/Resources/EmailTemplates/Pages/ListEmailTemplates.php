@@ -47,29 +47,29 @@ use Filament\Tables\Table;
 
 class ListEmailTemplates extends ListRecords
 {
-  protected static string $resource = EmailTemplateResource::class;
+    protected static string $resource = EmailTemplateResource::class;
 
-  public function table(Table $table): Table
-  {
-    return $table
-      ->columns([
-        TextColumn::make('name'),
-        TextColumn::make('description'),
-      ])
-      ->recordActions([
-        EditAction::make(),
-      ])
-      ->toolbarActions([
-        BulkActionGroup::make([
-          DeleteBulkAction::make(),
-        ]),
-      ]);
-  }
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('description'),
+            ])
+            ->recordActions([
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      CreateAction::make(),
-    ];
-  }
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
 }

@@ -50,46 +50,46 @@ use FilamentTiptapEditor\TiptapEditor;
 
 class EditEmailTemplate extends EditRecord
 {
-  use EditPageRedirection;
+    use EditPageRedirection;
 
-  protected static string $resource = EmailTemplateResource::class;
+    protected static string $resource = EmailTemplateResource::class;
 
-  public function form(Schema $schema): Schema
-  {
-    return $schema
-      ->columns(1)
-      ->components([
-        TextInput::make('name')
-          ->string()
-          ->required()
-          ->autocomplete(false),
-        Textarea::make('description')
-          ->string(),
-        TiptapEditor::make('content')
-          ->disk('s3-public')
-          ->mergeTags($mergeTags = [
-            'recipient first name',
-            'recipient last name',
-            'recipient full name',
-            'recipient email',
-            'recipient preferred name',
-          ])
-          ->tools(['bold', 'italic', 'small', 'link', 'color', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', 'media', 'stock-image', '|', 'clear-formatting'])
-          ->columnSpanFull()
-          ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-          ->required(),
-        Actions::make([
-          DraftTemplateWithAiAction::make()
-            ->channel(NotificationChannel::Email)
-            ->mergeTags($mergeTags),
-        ]),
-      ]);
-  }
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->columns(1)
+            ->components([
+                TextInput::make('name')
+                    ->string()
+                    ->required()
+                    ->autocomplete(false),
+                Textarea::make('description')
+                    ->string(),
+                TiptapEditor::make('content')
+                    ->disk('s3-public')
+                    ->mergeTags($mergeTags = [
+                        'recipient first name',
+                        'recipient last name',
+                        'recipient full name',
+                        'recipient email',
+                        'recipient preferred name',
+                    ])
+                    ->tools(['bold', 'italic', 'small', 'link', 'color', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', 'media', 'stock-image', '|', 'clear-formatting'])
+                    ->columnSpanFull()
+                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+                    ->required(),
+                Actions::make([
+                    DraftTemplateWithAiAction::make()
+                        ->channel(NotificationChannel::Email)
+                        ->mergeTags($mergeTags),
+                ]),
+            ]);
+    }
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      DeleteAction::make(),
-    ];
-  }
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
+    }
 }

@@ -41,9 +41,9 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
 class EngagementFilesRelationManager extends BaseEngagementFilesRelationManager
 {
-  protected static string $resource = StudentResource::class;
+    protected static string $resource = StudentResource::class;
 
-  protected static string $relationship = 'engagementFiles';
+    protected static string $relationship = 'engagementFiles';
 
-  protected static ?string $title = 'Files';
+    protected static ?string $title = 'Files';
 }

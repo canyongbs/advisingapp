@@ -45,18 +45,18 @@ use Filament\Resources\Resource;
 
 class EmailTemplateResource extends Resource
 {
-  protected static ?string $model = EmailTemplate::class;
+    protected static ?string $model = EmailTemplate::class;
 
-  protected static ?int $navigationSort = 120;
+    protected static ?int $navigationSort = 120;
 
-  protected static ?string $cluster = Communication::class;
+    protected static ?string $cluster = Communication::class;
 
-  public static function getPages(): array
-  {
-    return [
-      'index' => ListEmailTemplates::route('/'),
-      'create' => CreateEmailTemplate::route('/create'),
-      'edit' => EditEmailTemplate::route('/{record}/edit'),
-    ];
-  }
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListEmailTemplates::route('/'),
+            'create' => CreateEmailTemplate::route('/create'),
+            'edit' => EditEmailTemplate::route('/{record}/edit'),
+        ];
+    }
 }

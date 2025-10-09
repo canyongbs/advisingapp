@@ -51,75 +51,75 @@ use UnitEnum;
 
 class EngagementFileResource extends Resource
 {
-  protected static ?string $model = EngagementFile::class;
+    protected static ?string $model = EngagementFile::class;
 
-  protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-document-duplicate';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-document-duplicate';
 
-  protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = 'CRM';
 
-  protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 7;
 
-  protected static ?string $navigationLabel = 'Files and Documents';
+    protected static ?string $navigationLabel = 'Files and Documents';
 
-  protected ?string $heading = 'Files and Documents';
+    protected ?string $heading = 'Files and Documents';
 
-  protected static ?string $modelLabel = 'File or Document';
+    protected static ?string $modelLabel = 'File or Document';
 
-  protected static ?string $pluralModelLabel = 'Files or Documents';
+    protected static ?string $pluralModelLabel = 'Files or Documents';
 
-  // TODO: Look into whether or not we should just delete this resource
-  protected static bool $shouldRegisterNavigation = false;
+    // TODO: Look into whether or not we should just delete this resource
+    protected static bool $shouldRegisterNavigation = false;
 
-  public static function form(Schema $schema): Schema
-  {
-    return $schema
-      ->components([
-        TextInput::make('description')
-          ->required()
-          ->maxLength(255),
-        DatePicker::make('retention_date')
-          ->label('Retention Date')
-          ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'The file will be deleted automatically after this date. If left blank, the file will be kept indefinitely.')
-          ->native(false)
-          ->closeOnDateSelection()
-          ->format('Y-m-d')
-          ->minDate(now()->addDay()),
-        SpatieMediaLibraryFileUpload::make('file')
-          ->label('File')
-          ->disk('s3')
-          ->collection('file')
-          ->required()
-          ->acceptedFileTypes([
-            'image/png',
-            'image/jpeg',
-            'image/gif',
-            'application/pdf',
-            'application/msword',
-            'text/csv',
-            'application/vnd.ms-excel',
-            'application/msexcel',
-            'application/ms-excel',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'application/vnd.ms-powerpoint',
-            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-            'text/plain',
-            'audio/mpeg',
-            'video/mp4',
-            'application/x-zip-compressed',
-            'application/zip',
-            'application/x-zip',
-          ]),
-      ]);
-  }
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('description')
+                    ->required()
+                    ->maxLength(255),
+                DatePicker::make('retention_date')
+                    ->label('Retention Date')
+                    ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'The file will be deleted automatically after this date. If left blank, the file will be kept indefinitely.')
+                    ->native(false)
+                    ->closeOnDateSelection()
+                    ->format('Y-m-d')
+                    ->minDate(now()->addDay()),
+                SpatieMediaLibraryFileUpload::make('file')
+                    ->label('File')
+                    ->disk('s3')
+                    ->collection('file')
+                    ->required()
+                    ->acceptedFileTypes([
+                        'image/png',
+                        'image/jpeg',
+                        'image/gif',
+                        'application/pdf',
+                        'application/msword',
+                        'text/csv',
+                        'application/vnd.ms-excel',
+                        'application/msexcel',
+                        'application/ms-excel',
+                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        'application/vnd.ms-powerpoint',
+                        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                        'text/plain',
+                        'audio/mpeg',
+                        'video/mp4',
+                        'application/x-zip-compressed',
+                        'application/zip',
+                        'application/x-zip',
+                    ]),
+            ]);
+    }
 
-  public static function getPages(): array
-  {
-    return [
-      'index' => ListEngagementFiles::route('/'),
-      'create' => CreateEngagementFile::route('/create'),
-      'view' => ViewEngagementFile::route('/{record}'),
-      'edit' => EditEngagementFile::route('/{record}/edit'),
-    ];
-  }
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListEngagementFiles::route('/'),
+            'create' => CreateEngagementFile::route('/create'),
+            'view' => ViewEngagementFile::route('/{record}'),
+            'edit' => EditEngagementFile::route('/{record}/edit'),
+        ];
+    }
 }

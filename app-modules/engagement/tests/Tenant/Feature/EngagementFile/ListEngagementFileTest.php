@@ -48,17 +48,17 @@ use function Pest\Laravel\actingAs;
 // Permission Tests
 
 test('ListEngagementFiles is gated with proper access control', function () {
-  $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
-  actingAs($user)
-    ->get(
-      EngagementFileResource::getUrl('index')
-    )->assertForbidden();
+    actingAs($user)
+        ->get(
+            EngagementFileResource::getUrl('index')
+        )->assertForbidden();
 
-  $user->givePermissionTo('engagement_file.view-any');
+    $user->givePermissionTo('engagement_file.view-any');
 
-  actingAs($user)
-    ->get(
-      EngagementFileResource::getUrl('index')
-    )->assertSuccessful();
+    actingAs($user)
+        ->get(
+            EngagementFileResource::getUrl('index')
+        )->assertSuccessful();
 });

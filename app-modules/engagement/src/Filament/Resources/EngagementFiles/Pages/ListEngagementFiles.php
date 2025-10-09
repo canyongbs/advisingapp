@@ -49,33 +49,33 @@ use Filament\Tables\Table;
 
 class ListEngagementFiles extends ListRecords
 {
-  protected static string $resource = EngagementFileResource::class;
+    protected static string $resource = EngagementFileResource::class;
 
-  public function table(Table $table): Table
-  {
-    return $table
-      ->columns([
-        IdColumn::make(),
-        TextColumn::make('description')
-          ->label('Description')
-          ->searchable()
-          ->sortable(),
-      ])
-      ->recordActions([
-        ViewAction::make(),
-        EditAction::make(),
-      ])
-      ->toolbarActions([
-        BulkActionGroup::make([
-          DeleteBulkAction::make(),
-        ]),
-      ]);
-  }
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('description')
+                    ->label('Description')
+                    ->searchable()
+                    ->sortable(),
+            ])
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
 
-  protected function getHeaderActions(): array
-  {
-    return [
-      CreateAction::make(),
-    ];
-  }
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
 }
