@@ -34,42 +34,48 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages;
 
-use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\EngagementFileResource;
+use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class ListEmailTemplates extends ListRecords
+class ListEngagementFiles extends ListRecords
 {
-    protected static string $resource = EmailTemplateResource::class;
+  protected static string $resource = EngagementFileResource::class;
 
-    public function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                TextColumn::make('name'),
-                TextColumn::make('description'),
-            ])
-            ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
+  public function table(Table $table): Table
+  {
+    return $table
+      ->columns([
+        IdColumn::make(),
+        TextColumn::make('description')
+          ->label('Description')
+          ->searchable()
+          ->sortable(),
+      ])
+      ->recordActions([
+        ViewAction::make(),
+        EditAction::make(),
+      ])
+      ->toolbarActions([
+        BulkActionGroup::make([
+          DeleteBulkAction::make(),
+        ]),
+      ]);
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      CreateAction::make(),
+    ];
+  }
 }

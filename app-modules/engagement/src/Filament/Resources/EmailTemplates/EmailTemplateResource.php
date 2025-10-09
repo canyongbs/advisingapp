@@ -34,48 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplates;
 
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages\CreateEmailTemplate;
+use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages\EditEmailTemplate;
+use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages\ListEmailTemplates;
+use AdvisingApp\Engagement\Models\EmailTemplate;
+use App\Filament\Clusters\Communication;
+use Filament\Resources\Resource;
 
-class ListEngagementFiles extends ListRecords
+class EmailTemplateResource extends Resource
 {
-    protected static string $resource = EngagementFileResource::class;
+  protected static ?string $model = EmailTemplate::class;
 
-    public function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('description')
-                    ->label('Description')
-                    ->searchable()
-                    ->sortable(),
-            ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
+  protected static ?int $navigationSort = 120;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
-    }
+  protected static ?string $cluster = Communication::class;
+
+  public static function getPages(): array
+  {
+    return [
+      'index' => ListEmailTemplates::route('/'),
+      'create' => CreateEmailTemplate::route('/create'),
+      'edit' => EditEmailTemplate::route('/{record}/edit'),
+    ];
+  }
 }

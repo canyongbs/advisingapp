@@ -33,9 +33,10 @@
 
 </COPYRIGHT>
 */
+
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\CreateEngagementFile;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\EngagementFileResource;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages\CreateEngagementFile;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -49,34 +50,34 @@ use function Pest\Livewire\livewire;
 // Permission Tests
 
 test('CreateEngagementFile is gated with proper access control', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
+  $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    actingAs($user)
-        ->get(
-            EngagementFileResource::getUrl('create')
-        )->assertForbidden();
+  actingAs($user)
+    ->get(
+      EngagementFileResource::getUrl('create')
+    )->assertForbidden();
 
-    livewire(CreateEngagementFile::class)
-        ->assertForbidden();
+  livewire(CreateEngagementFile::class)
+    ->assertForbidden();
 
-    $user->givePermissionTo('engagement_file.view-any');
-    $user->givePermissionTo('engagement_file.create');
+  $user->givePermissionTo('engagement_file.view-any');
+  $user->givePermissionTo('engagement_file.create');
 
-    actingAs($user)
-        ->get(
-            EngagementFileResource::getUrl('create')
-        )->assertSuccessful();
+  actingAs($user)
+    ->get(
+      EngagementFileResource::getUrl('create')
+    )->assertSuccessful();
 
-    // TODO: Test for file upload
+  // TODO: Test for file upload
 
-    //$request = collect(CreateEngagementFileRequestFactory::new()->create());
-    //
-    //livewire(EngagementFileResource\Pages\CreateEngagementFile::class)
-    //    ->fillForm($request->toArray())
-    //    ->call('create')
-    //    ->assertHasNoFormErrors();
-    //
-    //assertCount(1, EngagementFile::all());
-    //
-    //assertDatabaseHas(EngagementFile::class, $request->toArray());
+  //$request = collect(CreateEngagementFileRequestFactory::new()->create());
+  //
+  //livewire(EngagementFileResource\Pages\CreateEngagementFile::class)
+  //    ->fillForm($request->toArray())
+  //    ->call('create')
+  //    ->assertHasNoFormErrors();
+  //
+  //assertCount(1, EngagementFile::all());
+  //
+  //assertDatabaseHas(EngagementFile::class, $request->toArray());
 });

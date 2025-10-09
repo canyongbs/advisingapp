@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages;
 
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\EngagementFileResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -44,15 +44,15 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditEngagementFile extends EditRecord
 {
-    use EditPageRedirection;
+  use EditPageRedirection;
 
-    protected static string $resource = EngagementFileResource::class;
+  protected static string $resource = EngagementFileResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      ViewAction::make(),
+      DeleteAction::make(),
+    ];
+  }
 }

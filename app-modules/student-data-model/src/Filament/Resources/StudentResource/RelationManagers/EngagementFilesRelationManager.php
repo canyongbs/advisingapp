@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\RelationManagers\EngagementFilesRelationManager as BaseEngagementFilesRelationManager;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\RelationManagers\EngagementFilesRelationManager as BaseEngagementFilesRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
 class EngagementFilesRelationManager extends BaseEngagementFilesRelationManager
 {
-    protected static string $resource = StudentResource::class;
+  protected static string $resource = StudentResource::class;
 
-    protected static string $relationship = 'engagementFiles';
+  protected static string $relationship = 'engagementFiles';
 
-    protected static ?string $title = 'Files';
+  protected static ?string $title = 'Files';
 }

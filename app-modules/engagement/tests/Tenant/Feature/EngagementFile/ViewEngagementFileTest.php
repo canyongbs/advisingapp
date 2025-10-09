@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\EngagementFileResource;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use App\Models\User;
 
@@ -47,24 +47,24 @@ use function Pest\Laravel\actingAs;
 // Permission Tests
 
 test('ViewEngagementFile is gated with proper access control', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
+  $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $engagementFile = EngagementFile::factory()->create();
+  $engagementFile = EngagementFile::factory()->create();
 
-    actingAs($user)
-        ->get(
-            EngagementFileResource::getUrl('view', [
-                'record' => $engagementFile,
-            ])
-        )->assertForbidden();
+  actingAs($user)
+    ->get(
+      EngagementFileResource::getUrl('view', [
+        'record' => $engagementFile,
+      ])
+    )->assertForbidden();
 
-    $user->givePermissionTo('engagement_file.view-any');
-    $user->givePermissionTo('engagement_file.*.view');
+  $user->givePermissionTo('engagement_file.view-any');
+  $user->givePermissionTo('engagement_file.*.view');
 
-    actingAs($user)
-        ->get(
-            EngagementFileResource::getUrl('view', [
-                'record' => $engagementFile,
-            ])
-        )->assertSuccessful();
+  actingAs($user)
+    ->get(
+      EngagementFileResource::getUrl('view', [
+        'record' => $engagementFile,
+      ])
+    )->assertSuccessful();
 });

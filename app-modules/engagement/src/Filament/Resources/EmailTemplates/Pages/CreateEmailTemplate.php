@@ -34,62 +34,60 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages;
 
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
-use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource;
+use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\EmailTemplateResource;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Resource;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Schema;
 use FilamentTiptapEditor\TiptapEditor;
 
-class EditEmailTemplate extends EditRecord
+class CreateEmailTemplate extends CreateRecord
 {
-    use EditPageRedirection;
+  protected static string $resource = EmailTemplateResource::class;
 
-    protected static string $resource = EmailTemplateResource::class;
+  public function form(Schema $schema): Schema
+  {
+    return $schema
+      ->columns(1)
+      ->components([
+        TextInput::make('name')
+          ->string()
+          ->required()
+          ->autocomplete(false),
+        Textarea::make('description')
+          ->string(),
+        TiptapEditor::make('content')
+          ->disk('s3-public')
+          ->mergeTags($mergeTags = [
+            'recipient first name',
+            'recipient last name',
+            'recipient full name',
+            'recipient email',
+            'recipient preferred name',
+          ])
+          ->tools(['bold', 'italic', 'small', 'link', 'color', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', 'media', 'stock-image', '|', 'clear-formatting'])
+          ->columnSpanFull()
+          ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+          ->required(),
+        Actions::make([
+          DraftTemplateWithAiAction::make()
+            ->channel(NotificationChannel::Email)
+            ->mergeTags($mergeTags),
+        ]),
+      ]);
+  }
 
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->columns(1)
-            ->components([
-                TextInput::make('name')
-                    ->string()
-                    ->required()
-                    ->autocomplete(false),
-                Textarea::make('description')
-                    ->string(),
-                TiptapEditor::make('content')
-                    ->disk('s3-public')
-                    ->mergeTags($mergeTags = [
-                        'recipient first name',
-                        'recipient last name',
-                        'recipient full name',
-                        'recipient email',
-                        'recipient preferred name',
-                    ])
-                    ->tools(['bold', 'italic', 'small', 'link', 'color', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', 'media', 'stock-image', '|', 'clear-formatting'])
-                    ->columnSpanFull()
-                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                    ->required(),
-                Actions::make([
-                    DraftTemplateWithAiAction::make()
-                        ->channel(NotificationChannel::Email)
-                        ->mergeTags($mergeTags),
-                ]),
-            ]);
-    }
+  protected function getRedirectUrl(): string
+  {
+    /** @var class-string<Resource> $resource */
+    $resource = $this->getResource();
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            DeleteAction::make(),
-        ];
-    }
+    return $resource::getUrl();
+  }
 }

@@ -34,29 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources;
+namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages;
 
-use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages\CreateEmailTemplate;
-use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages\EditEmailTemplate;
-use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages\ListEmailTemplates;
-use AdvisingApp\Engagement\Models\EmailTemplate;
-use App\Filament\Clusters\Communication;
-use Filament\Resources\Resource;
+use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\EmailTemplateResource;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-class EmailTemplateResource extends Resource
+class ListEmailTemplates extends ListRecords
 {
-    protected static ?string $model = EmailTemplate::class;
+  protected static string $resource = EmailTemplateResource::class;
 
-    protected static ?int $navigationSort = 120;
+  public function table(Table $table): Table
+  {
+    return $table
+      ->columns([
+        TextColumn::make('name'),
+        TextColumn::make('description'),
+      ])
+      ->recordActions([
+        EditAction::make(),
+      ])
+      ->toolbarActions([
+        BulkActionGroup::make([
+          DeleteBulkAction::make(),
+        ]),
+      ]);
+  }
 
-    protected static ?string $cluster = Communication::class;
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListEmailTemplates::route('/'),
-            'create' => CreateEmailTemplate::route('/create'),
-            'edit' => EditEmailTemplate::route('/{record}/edit'),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      CreateAction::make(),
+    ];
+  }
 }

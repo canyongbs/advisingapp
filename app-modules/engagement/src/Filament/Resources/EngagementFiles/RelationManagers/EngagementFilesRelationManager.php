@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\RelationManagers;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementFiles\RelationManagers;
 
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\EngagementFileResource;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Tables\Columns\IdColumn;
@@ -76,7 +76,7 @@ class EngagementFilesRelationManager extends RelationManager
                 IdColumn::make(),
                 TextColumn::make('description'),
                 IconColumn::make('media')
-                    ->tooltip(fn ($record) => match ($record->getMedia('file')?->first()?->mime_type) {
+                    ->tooltip(fn($record) => match ($record->getMedia('file')?->first()?->mime_type) {
                         default => 'File',
                         'image/png' => 'Image (.png)',
                         'image/jpeg' => 'Image (.jpeg)',
@@ -95,7 +95,7 @@ class EngagementFilesRelationManager extends RelationManager
                         'video/mp4' => 'MP4',
                         'application/zip' => 'Zip File'
                     })
-                    ->icon(fn ($state) => match ($state->mime_type) {
+                    ->icon(fn($state) => match ($state->mime_type) {
                         default => 'heroicon-o-paper-clip',
                         'image/png' => 'heroicon-o-photo',
                         'image/jpeg' => 'heroicon-o-camera',
@@ -117,10 +117,10 @@ class EngagementFilesRelationManager extends RelationManager
                 TextColumn::make('created_at')
                     ->label('Date Created')
                     ->dateTime()
-                    ->sortable(query: fn ($query, $direction) => $query->orderBy('engagement_files.created_at', $direction)),
+                    ->sortable(query: fn($query, $direction) => $query->orderBy('engagement_files.created_at', $direction)),
                 TextColumn::make('createdBy.name')
                     ->label('Created By')
-                    ->sortable(query: fn ($query, $direction) => $query->orderBy('engagement_files.created_by_id', $direction)),
+                    ->sortable(query: fn($query, $direction) => $query->orderBy('engagement_files.created_by_id', $direction)),
             ])
             ->headerActions([
                 CreateAction::make()
@@ -134,7 +134,7 @@ class EngagementFilesRelationManager extends RelationManager
                 Action::make('download')
                     ->icon('heroicon-o-arrow-down-on-square')
                     ->action(
-                        fn (EngagementFile $record) => Storage::disk('s3')
+                        fn(EngagementFile $record) => Storage::disk('s3')
                             ->download(
                                 $record
                                     ->getMedia('file')

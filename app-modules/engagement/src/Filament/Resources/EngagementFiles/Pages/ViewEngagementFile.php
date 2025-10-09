@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages;
 
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\EngagementFileResource;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
@@ -47,42 +47,42 @@ use Filament\Schemas\Schema;
 
 class ViewEngagementFile extends ViewRecord
 {
-    protected static string $resource = EngagementFileResource::class;
+  protected static string $resource = EngagementFileResource::class;
 
-    public function infolist(Schema $schema): Schema
-    {
-        return $schema
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('description')
-                            ->label('Description'),
-                        TextEntry::make('retention_date')
-                            ->label('Retention Date')
-                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'The file will be deleted automatically after this date. If left blank, the file will be kept indefinitely.'),
-                        SpatieMediaLibraryImageEntry::make('file')
-                            ->collection('file')
-                            ->visibility('private')
-                            ->hintAction(
-                                Action::make('download')
-                                    ->label('Download')
-                                    ->icon('heroicon-m-arrow-down-tray')
-                                    ->color('primary')
-                                    ->extraAttributes([
-                                        'download' => true,
-                                        'target' => '_blank',
-                                    ])
-                                    ->url(route('engagement-file-download', ['file' => $this->record->id]))
-                            ),
-                    ])
-                    ->columns(),
-            ]);
-    }
+  public function infolist(Schema $schema): Schema
+  {
+    return $schema
+      ->schema([
+        Section::make()
+          ->schema([
+            TextEntry::make('description')
+              ->label('Description'),
+            TextEntry::make('retention_date')
+              ->label('Retention Date')
+              ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'The file will be deleted automatically after this date. If left blank, the file will be kept indefinitely.'),
+            SpatieMediaLibraryImageEntry::make('file')
+              ->collection('file')
+              ->visibility('private')
+              ->hintAction(
+                Action::make('download')
+                  ->label('Download')
+                  ->icon('heroicon-m-arrow-down-tray')
+                  ->color('primary')
+                  ->extraAttributes([
+                    'download' => true,
+                    'target' => '_blank',
+                  ])
+                  ->url(route('engagement-file-download', ['file' => $this->record->id]))
+              ),
+          ])
+          ->columns(),
+      ]);
+  }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            EditAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      EditAction::make(),
+    ];
+  }
 }
