@@ -34,21 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages;
 
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
-use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\SmsTemplateResource;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Resources\Resource;
+use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Schema;
 use FilamentTiptapEditor\TiptapEditor;
 
-class CreateSmsTemplate extends CreateRecord
+class EditSmsTemplate extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = SmsTemplateResource::class;
 
     public function form(Schema $schema): Schema
@@ -62,8 +65,6 @@ class CreateSmsTemplate extends CreateRecord
                     ->autocomplete(false),
                 Textarea::make('description')
                     ->string(),
-                // TODO Implement length validation (320 characters max)
-                // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
                 TiptapEditor::make('content')
                     ->mergeTags($mergeTags = [
                         'recipient first name',
@@ -84,11 +85,10 @@ class CreateSmsTemplate extends CreateRecord
             ]);
     }
 
-    protected function getRedirectUrl(): string
+    protected function getHeaderActions(): array
     {
-        /** @var class-string<Resource> $resource */
-        $resource = $this->getResource();
-
-        return $resource::getUrl();
+        return [
+            DeleteAction::make(),
+        ];
     }
 }

@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources;
+namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplates;
 
-use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\CreateSmsTemplate;
-use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\EditSmsTemplate;
-use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\ListSmsTemplates;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages\CreateSmsTemplate;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages\EditSmsTemplate;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages\ListSmsTemplates;
 use AdvisingApp\Engagement\Models\SmsTemplate;
 use App\Filament\Clusters\Communication;
 use Filament\Resources\Resource;

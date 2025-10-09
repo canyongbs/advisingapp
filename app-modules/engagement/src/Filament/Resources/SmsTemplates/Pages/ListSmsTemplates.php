@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages;
 
-use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\SmsTemplateResource;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
