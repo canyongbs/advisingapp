@@ -54,6 +54,11 @@ class MagicLinkLoginController
      */
     public function __invoke(Request $request, LoginMagicLink $magicLink): RedirectResponse|Response
     {
+        if ($request->getMethod() === 'HEAD') {
+            // Protection against link scanning bots, like Microsoft Outlook.
+            return response()->noContent();
+        }
+
         abort_if(
             boolean: now()->greaterThanOrEqualTo($magicLink->created_at->addMinutes(15))
                 || $magicLink->used_at !== null,
@@ -77,11 +82,6 @@ class MagicLinkLoginController
             code: 403,
             message: 'Invalid link. Please request a new one.'
         );
-
-        if ($request->getMethod() === 'HEAD') {
-            // Protection against link scanning bots, like Microsoft Outlook.
-            return response()->noContent();
-        }
 
         $user = User::findOrFail($payloadUserId);
 
