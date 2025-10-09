@@ -38,7 +38,7 @@ namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages
 
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 use AdvisingApp\CaseManagement\Filament\Concerns\CaseUpdateBreadcrumbs;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
 use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use Filament\Infolists\Components\IconEntry;

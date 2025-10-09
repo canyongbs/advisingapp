@@ -34,46 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers;
+namespace AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages;
 
-use App\Filament\Resources\UserResource;
-use App\Filament\Tables\Columns\IdColumn;
-use App\Models\User;
-use Filament\Actions\ViewAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\Concerns\HasCaseRecordHeader;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\RelationManagers\AssignedToRelationManager;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\RelationManagers\CreatedByRelationManager;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Illuminate\Database\Eloquent\Model;
 
-class CreatedByRelationManager extends RelationManager
+class ManageCaseAssignment extends ManageRelatedRecords
 {
-    protected static string $relationship = 'createdBy';
+    use HasCaseRecordHeader;
 
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static string $resource = CaseResource::class;
 
-    public function form(Schema $schema): Schema
+    // TODO: Obsolete when there is no table, remove from Filament
+    protected static string $relationship = 'assignedTo';
+
+    protected static ?string $navigationLabel = 'Assignments';
+
+    protected static ?string $breadcrumb = 'Assignments';
+
+    public static function canAccess(array $arguments = []): bool
     {
-        return $schema
-            ->components([
-                TextInput::make('full')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+        return (bool) count(static::managers($arguments['record'] ?? null));
     }
 
-    public function table(Table $table): Table
+    public function getRelationManagers(): array
     {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name')
-                    ->label('Name'),
-            ])
-            ->paginated(false)
-            ->recordActions([
-                ViewAction::make()
-                    ->url(fn (User $user) => UserResource::getUrl('view', ['record' => $user])),
-            ]);
+        return static::managers($this->getRecord());
+    }
+
+    private static function managers(?Model $record = null): array
+    {
+        return collect([
+            AssignedToRelationManager::class,
+            CreatedByRelationManager::class,
+        ])
+            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
+            ->toArray();
     }
 }

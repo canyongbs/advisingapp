@@ -34,43 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\Concerns\HasCaseRecordHeader;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers\CaseFormSubmissionRelationManager;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\Concerns\HasCaseRecordHeader;
+use AdvisingApp\CaseManagement\Models\CaseAssignment;
+use AdvisingApp\CaseManagement\Models\CaseHistory;
+use AdvisingApp\CaseManagement\Models\CaseUpdate;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
 
-class ManageCaseFormSubmission extends ManageRelatedRecords
+class CaseTimeline extends TimelinePage
 {
     use HasCaseRecordHeader;
 
     protected static string $resource = CaseResource::class;
 
-    // TODO: Obsolete when there is no table, remove from Filament
-    protected static string $relationship = 'caseFormSubmission';
+    protected static ?string $navigationLabel = 'Timeline';
 
-    protected static ?string $navigationLabel = 'Case Form Submission';
+    public string $emptyStateMessage = 'There are is no timeline available for this Case.';
 
-    protected static ?string $breadcrumb = 'Form Submission';
+    public string $noMoreRecordsMessage = "You have reached the end of this case's timeline.";
 
-    public static function canAccess(array $arguments = []): bool
-    {
-        return (bool) count(static::managers($arguments['record'] ?? null));
-    }
-
-    public function getRelationManagers(): array
-    {
-        return static::managers($this->getRecord());
-    }
-
-    private static function managers(?Model $record = null): array
-    {
-        return collect([
-            CaseFormSubmissionRelationManager::class,
-        ])
-            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
-            ->toArray();
-    }
+    public array $modelsToTimeline = [
+        CaseUpdate::class,
+        CaseAssignment::class,
+        CaseHistory::class,
+        Interaction::class,
+    ];
 }

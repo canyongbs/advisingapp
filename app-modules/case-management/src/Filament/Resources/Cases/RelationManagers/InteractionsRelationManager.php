@@ -34,45 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\Cases\RelationManagers;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\Concerns\HasCaseRecordHeader;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers\AssignedToRelationManager;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers\CreatedByRelationManager;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Interaction\Filament\Concerns\HasManyMorphedInteractionsTrait;
+use Filament\Resources\RelationManagers\RelationManager;
 
-class ManageCaseAssignment extends ManageRelatedRecords
+class InteractionsRelationManager extends RelationManager
 {
-    use HasCaseRecordHeader;
+    use HasManyMorphedInteractionsTrait;
 
-    protected static string $resource = CaseResource::class;
-
-    // TODO: Obsolete when there is no table, remove from Filament
-    protected static string $relationship = 'assignedTo';
-
-    protected static ?string $navigationLabel = 'Assignments';
-
-    protected static ?string $breadcrumb = 'Assignments';
-
-    public static function canAccess(array $arguments = []): bool
-    {
-        return (bool) count(static::managers($arguments['record'] ?? null));
-    }
-
-    public function getRelationManagers(): array
-    {
-        return static::managers($this->getRecord());
-    }
-
-    private static function managers(?Model $record = null): array
-    {
-        return collect([
-            AssignedToRelationManager::class,
-            CreatedByRelationManager::class,
-        ])
-            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
-            ->toArray();
-    }
+    protected static string $relationship = 'interactions';
 }

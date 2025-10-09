@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers;
+namespace AdvisingApp\CaseManagement\Filament\Resources\Cases\RelationManagers;
 
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;

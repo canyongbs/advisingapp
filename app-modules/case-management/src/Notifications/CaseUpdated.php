@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\CaseManagement\Notifications;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
 use AdvisingApp\CaseManagement\Models\CaseUpdate;

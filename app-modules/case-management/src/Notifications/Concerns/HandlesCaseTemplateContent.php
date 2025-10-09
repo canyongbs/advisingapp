@@ -39,7 +39,7 @@ namespace AdvisingApp\CaseManagement\Notifications\Concerns;
 use AdvisingApp\CaseManagement\Actions\GenerateCaseTypeEmailTemplateContent;
 use AdvisingApp\CaseManagement\Actions\GenerateCaseTypeEmailTemplateSubject;
 use AdvisingApp\CaseManagement\Enums\CaseTypeEmailTemplateRole;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
 use Illuminate\Support\HtmlString;
 
 trait HandlesCaseTemplateContent

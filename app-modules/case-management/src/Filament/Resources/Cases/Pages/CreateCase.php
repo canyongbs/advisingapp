@@ -34,42 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\Concerns\HasCaseRecordHeader;
+use AdvisingApp\CaseManagement\Actions\CreateCaseAction;
+use AdvisingApp\CaseManagement\DataTransferObjects\CaseDataObject;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Division\Models\Division;
 use App\Filament\Forms\Components\EducatableSelect;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
-class EditCase extends EditRecord
+class CreateCase extends CreateRecord
 {
-    use HasCaseRecordHeader;
-    use EditPageRedirection;
-
     protected static string $resource = CaseResource::class;
-
-    protected static ?string $navigationLabel = 'Edit';
 
     public function form(Schema $schema): Schema
     {
-        $disabledStatuses = CaseStatus::onlyTrashed()->pluck('id');
-        $disabledTypes = CaseType::onlyTrashed()->pluck('id');
-
         return $schema
             ->components([
                 Select::make('division_id')
@@ -94,38 +88,28 @@ class EditCase extends EditRecord
                 Select::make('status_id')
                     ->relationship('status', 'name')
                     ->label('Status')
-                    ->options(fn (CaseModel $record) => CaseStatus::withTrashed()
-                        ->whereKey($record->status_id)
-                        ->orWhereNull('deleted_at')
+                    ->options(fn () => CaseStatus::query()
                         ->orderBy('classification')
                         ->orderBy('name')
                         ->get(['id', 'name', 'classification'])
                         ->groupBy(fn (CaseStatus $status) => $status->classification->getlabel())
                         ->map(fn (Collection $group) => $group->pluck('name', 'id')))
                     ->required()
-                    ->exists((new CaseStatus())->getTable(), 'id')
-                    ->disableOptionWhen(fn (string $value) => $disabledStatuses->contains($value)),
+                    ->exists((new CaseStatus())->getTable(), 'id'),
                 Grid::make()
                     ->schema([
                         Select::make('type_id')
-                            ->options(
-                                fn (CaseModel $record) => CaseType::withTrashed()
-                                    ->whereKey($record->priority?->type_id)
-                                    ->orWhereNull('deleted_at')
-                                    ->orderBy('name')
-                                    ->pluck('name', 'id')
-                            )
+                            ->options(CaseType::pluck('name', 'id'))
                             ->afterStateUpdated(fn (Set $set) => $set('priority_id', null))
                             ->label('Type')
                             ->required()
                             ->live()
-                            ->exists(CaseType::class, 'id')
-                            ->disableOptionWhen(fn (string $value) => $disabledTypes->contains($value)),
+                            ->exists(CaseType::class, 'id'),
                         Select::make('priority_id')
                             ->relationship(
                                 name: 'priority',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: fn (Get $get, Builder $query, $record) => $query->where('type_id', $get('type_id'))->orderBy('order'),
+                                modifyQueryUsing: fn (Get $get, Builder $query) => $query->where('type_id', $get('type_id'))->orderBy('order'),
                             )
                             ->label('Priority')
                             ->required()
@@ -142,21 +126,20 @@ class EditCase extends EditRecord
                     ->string(),
                 EducatableSelect::make('respondent')
                     ->label('Related To')
-                    ->required(),
+                    ->required()
+                    ->preload()
+                    ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
             ]);
     }
 
-    protected function getHeaderActions(): array
+    protected function handleRecordCreation(array $data): Model
     {
-        return [
-            DeleteAction::make(),
-        ];
-    }
+        $data['division_id'] = $data['division_id']
+            ?? Division::where('is_default', true)->value('id')
+            ?? Division::first()->getKey();
 
-    protected function mutateFormDataBeforeFill(array $data): array
-    {
-        $data['type_id'] = $this->getRecord()->priority->type_id;
+        $caseDataObject = CaseDataObject::fromData($data);
 
-        return $data;
+        return app(CreateCaseAction::class)->execute($caseDataObject);
     }
 }

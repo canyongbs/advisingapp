@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\Concerns;
+namespace AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\Concerns;
 
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;

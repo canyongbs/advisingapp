@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources;
+namespace AdvisingApp\CaseManagement\Filament\Resources\Cases;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CaseTimeline;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CreateCase;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\EditCase;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ListCases;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ManageCaseAssignment;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ManageCaseFormSubmission;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ManageCaseInteraction;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ManageCaseUpdate;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ViewCase;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\CaseTimeline;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\CreateCase;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\EditCase;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\ListCases;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\ManageCaseAssignment;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\ManageCaseFormSubmission;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\ManageCaseInteraction;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\ManageCaseUpdate;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\ViewCase;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;

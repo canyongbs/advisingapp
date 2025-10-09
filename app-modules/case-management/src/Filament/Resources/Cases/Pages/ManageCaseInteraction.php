@@ -34,26 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\Concerns\HasCaseRecordHeader;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers\CaseUpdatesRelationManager;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\Concerns\HasCaseRecordHeader;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\RelationManagers\InteractionsRelationManager;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Illuminate\Database\Eloquent\Model;
 
-class ManageCaseUpdate extends ManageRelatedRecords
+class ManageCaseInteraction extends ManageRelatedRecords
 {
     use HasCaseRecordHeader;
 
     protected static string $resource = CaseResource::class;
 
     // TODO: Obsolete when there is no table, remove from Filament
-    protected static string $relationship = 'caseUpdates';
+    protected static string $relationship = 'interactions';
 
-    protected static ?string $navigationLabel = 'Updates';
+    protected static ?string $navigationLabel = 'Interactions';
 
-    protected static ?string $breadcrumb = 'Updates';
+    protected static ?string $breadcrumb = 'Interactions';
 
     public static function canAccess(array $arguments = []): bool
     {
@@ -68,7 +68,7 @@ class ManageCaseUpdate extends ManageRelatedRecords
     private static function managers(?Model $record = null): array
     {
         return collect([
-            CaseUpdatesRelationManager::class,
+            InteractionsRelationManager::class,
         ])
             ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
             ->toArray();

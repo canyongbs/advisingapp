@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Concerns;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
 use AdvisingApp\CaseManagement\Models\CaseHistory;
 use Filament\Infolists\Components\TextEntry;
 

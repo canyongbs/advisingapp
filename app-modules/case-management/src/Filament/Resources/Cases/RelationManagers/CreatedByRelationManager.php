@@ -34,28 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers;
+namespace AdvisingApp\CaseManagement\Filament\Resources\Cases\RelationManagers;
 
-use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
-use AdvisingApp\CaseManagement\Models\CaseAssignment;
-use AdvisingApp\CaseManagement\Models\CaseModel;
 use App\Filament\Resources\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
-use App\Models\Scopes\HasLicense;
 use App\Models\User;
-use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Query\Expression;
 
-class AssignedToRelationManager extends RelationManager
+class CreatedByRelationManager extends RelationManager
 {
-    protected static string $relationship = 'assignedTo';
+    protected static string $relationship = 'createdBy';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -63,7 +56,7 @@ class AssignedToRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                TextInput::make('user.full')
+                TextInput::make('full')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -74,45 +67,13 @@ class AssignedToRelationManager extends RelationManager
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('user.name')
+                TextColumn::make('name')
                     ->label('Name'),
             ])
             ->paginated(false)
-            ->headerActions([
-                Action::make('reassign-service-request')
-                    ->label('Reassign')
-                    ->color('gray')
-                    ->action(fn (array $data) => $this->getOwnerRecord()->assignments()->create([
-                        'user_id' => $data['userId'],
-                        'assigned_by_id' => auth()->user()?->id ?? null,
-                        'assigned_at' => now(),
-                        'status' => CaseAssignmentStatus::Active,
-                    ]))
-                    ->schema([
-                        Select::make('userId')
-                            ->label('Reassign Case To')
-                            ->searchable()
-                            ->getSearchResultsUsing(fn (string $search): array => User::query()
-                                ->tap(new HasLicense($this->getOwnerRecord()->respondent->getLicenseType()))
-                                ->where(new Expression('lower(name)'), 'like', '%' . str($search)->lower() . '%')
-                                ->pluck('name', 'id')
-                                ->all())
-                            ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name)
-                            ->placeholder('Search for and select a User')
-                            ->required(),
-                    ]),
-            ])
             ->recordActions([
                 ViewAction::make()
-                    ->url(fn (CaseAssignment $assignment) => UserResource::getUrl('view', ['record' => $assignment->user])),
+                    ->url(fn (User $user) => UserResource::getUrl('view', ['record' => $user])),
             ]);
-    }
-
-    public function getOwnerRecord(): CaseModel
-    {
-        /** @var CaseModel $record */
-        $record = parent::getOwnerRecord();
-
-        return $record;
     }
 }

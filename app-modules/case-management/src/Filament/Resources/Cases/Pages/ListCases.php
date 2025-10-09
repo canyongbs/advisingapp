@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages;
 
 use AdvisingApp\CaseManagement\Enums\SlaComplianceStatus;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\Prospect\Models\Prospect;

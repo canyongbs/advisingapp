@@ -34,26 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\Concerns\HasCaseRecordHeader;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\RelationManagers\InteractionsRelationManager;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\Concerns\HasCaseRecordHeader;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\RelationManagers\CaseFormSubmissionRelationManager;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Illuminate\Database\Eloquent\Model;
 
-class ManageCaseInteraction extends ManageRelatedRecords
+class ManageCaseFormSubmission extends ManageRelatedRecords
 {
     use HasCaseRecordHeader;
 
     protected static string $resource = CaseResource::class;
 
     // TODO: Obsolete when there is no table, remove from Filament
-    protected static string $relationship = 'interactions';
+    protected static string $relationship = 'caseFormSubmission';
 
-    protected static ?string $navigationLabel = 'Interactions';
+    protected static ?string $navigationLabel = 'Case Form Submission';
 
-    protected static ?string $breadcrumb = 'Interactions';
+    protected static ?string $breadcrumb = 'Form Submission';
 
     public static function canAccess(array $arguments = []): bool
     {
@@ -68,7 +68,7 @@ class ManageCaseInteraction extends ManageRelatedRecords
     private static function managers(?Model $record = null): array
     {
         return collect([
-            InteractionsRelationManager::class,
+            CaseFormSubmissionRelationManager::class,
         ])
             ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
             ->toArray();
