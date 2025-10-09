@@ -128,7 +128,7 @@ class ResearchAdvisorReportStats extends StatsOverviewReportWidget
 
         return [
             Stat::make('Research Advisors', Number::abbreviate($researchAdvisorsCount)),
-            Stat::make('Unique Users', Number::abbreviate($uniqueUsersCount)),
+            Stat::make('Active Users', Number::abbreviate($uniqueUsersCount)),
             Stat::make('Sources Used', Number::abbreviate($sourcesCount)),
         ];
     }
