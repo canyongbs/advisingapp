@@ -34,30 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementResponses;
 
-use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResponses\Pages\ListEngagementResponses;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResponses\Pages\ViewEngagementResponse;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use BackedEnum;
+use Filament\Resources\Resource;
 
-class ListEngagementResponses extends ListRecords
+class EngagementResponseResource extends Resource
 {
-    protected static string $resource = EngagementResponseResource::class;
+    protected static ?string $model = EngagementResponse::class;
 
-    public function table(Table $table): Table
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
+
+    protected static bool $shouldRegisterNavigation = false;
+
+    public static function getPages(): array
     {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('content'),
-            ])
-            ->recordActions([
-                ViewAction::make(),
-            ])
-            ->toolbarActions([
-            ]);
+        return [
+            'index' => ListEngagementResponses::route('/'),
+            'view' => ViewEngagementResponse::route('/{record}'),
+        ];
     }
 }

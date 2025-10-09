@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 declare(strict_types = 1);
 
 $ignoreErrors = [];
@@ -1356,12 +1322,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/Roles/RoleResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Authorization\\\\Filament\\\\Resources\\\\authorizations\\\\RoleResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/authorizations/RoleResource.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Laravel\\\\Socialite\\\\Contracts\\\\Provider\\|Mockery\\\\MockInterface\\:\\:setConfig\\(\\)\\.$#',
@@ -2957,19 +2917,19 @@ $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:\\$full\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Resources/EngagementResponseResource/Pages/ViewEngagementResponse.php',
+    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Resources/EngagementResponses/Pages/ViewEngagementResponse.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:\\$full\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Resources/EngagementResponseResource/Pages/ViewEngagementResponse.php',
+    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Resources/EngagementResponses/Pages/ViewEngagementResponse.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Match expression does not handle remaining values\\: \\(class\\-string\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\>&literal\\-string\\)\\|\\(class\\-string\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\>&literal\\-string\\)$#',
     'identifier' => 'match.unhandled',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Resources/EngagementResponseResource/Pages/ViewEngagementResponse.php',
+    'path' => __DIR__ . '/app-modules/engagement/src/Filament/Resources/EngagementResponses/Pages/ViewEngagementResponse.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Http\\\\Controllers\\\\EngagementFileDownloadController\\:\\:__invoke\\(\\) has no return type specified\\.$#',
@@ -5822,6 +5782,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectStatuses/Pages/ViewProspectStatus.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Using nullsafe property access on non\\-nullable type Illuminate\\\\Database\\\\Eloquent\\\\Model\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectStatuses/Pages/ViewProspectStatus.php',
@@ -6055,10 +6016,16 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/ProspectResource.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$preferred\\.$#',
-    'identifier' => 'property.notFound',
+    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:additionalAddresses\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'missingType.generics',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/ProspectResource.php',
+    'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:additionalEmailAddresses\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:additionalPhoneNumbers\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
@@ -6377,12 +6344,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.property',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/report/src/Filament/Pages/Students.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Report\\\\Filament\\\\Pages\\\\TaskManagement\\:\\:\\$cacheTag has no type specified\\.$#',
-    'identifier' => 'missingType.property',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Pages/TaskManagement.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Report\\\\Filament\\\\Pages\\\\UserLoginActivity\\:\\:\\$cacheTag has no type specified\\.$#',
@@ -6737,12 +6698,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.parameter',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentSmsOptInOptOutPieChart.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Widgets\\\\TaskCumulativeCountLineChart\\:\\:getOptions\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/TaskCumulativeCountLineChart.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Widgets\\\\UserUniqueLoginCountLineChart\\:\\:getOptions\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -8771,12 +8726,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/survey/src/Providers/SurveyServiceProvider.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe property access "\\?\\-\\>id" on left side of \\?\\? is unnecessary\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/task/database/factories/TaskFactory.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Task\\\\Histories\\\\TaskHistory\\:\\:\\$formatted\\.$#',

@@ -34,27 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementResponses\Actions;
 
-use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Pages\ListEngagementResponses;
-use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Pages\ViewEngagementResponse;
 use AdvisingApp\Engagement\Models\EngagementResponse;
-use BackedEnum;
-use Filament\Resources\Resource;
+use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Section;
+use Illuminate\Support\HtmlString;
 
-class EngagementResponseResource extends Resource
+class EngagementResponseViewAction
 {
-    protected static ?string $model = EngagementResponse::class;
-
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
-
-    protected static bool $shouldRegisterNavigation = false;
-
-    public static function getPages(): array
+    public static function make(): ViewAction
     {
-        return [
-            'index' => ListEngagementResponses::route('/'),
-            'view' => ViewEngagementResponse::route('/{record}'),
-        ];
+        return ViewAction::make()
+            ->schema([
+                Flex::make([
+                    Section::make([
+                        TextEntry::make('subject')
+                            ->state(fn (EngagementResponse $record): ?string => $record->subject)
+                            ->hidden(fn ($state): bool => blank($state)),
+                        TextEntry::make('content')
+                            ->state(fn (EngagementResponse $record): HtmlString => $record->getBody()),
+                    ]),
+                    Section::make([
+                        TextEntry::make('sent_at')
+                            ->dateTime('Y-m-d H:i:s'),
+                    ])->grow(false),
+                ]),
+            ]);
     }
 }
