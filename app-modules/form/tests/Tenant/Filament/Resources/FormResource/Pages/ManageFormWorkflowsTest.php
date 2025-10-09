@@ -38,11 +38,14 @@ use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ManageFormWorkflows;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormField;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
+use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
+use Filament\Actions\DeleteAction;
 
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -289,4 +292,320 @@ test('workflow creation integrates properly with existing form workflows list', 
     foreach ($allTriggers as $trigger) {
         expect($trigger->related_id)->toBe($form->id);
     }
+});
+
+test('can successfully edit workflow name for a form workflow', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+    $oldWorkflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()
+                ->state([
+                    'related_type' => $form->getMorphClass(),
+                    'related_id' => $form->id,
+                    'type' => WorkflowTriggerType::EventBased,
+                ])
+        )
+        ->create();
+
+    $newWorkflow = Workflow::factory()->make();
+
+    livewire(EditWorkflow::class, ['record' => $oldWorkflow->getKey()])
+        ->fillForm(['name' => $newWorkflow->name])
+        ->call('save');
+
+    $oldWorkflow->refresh();
+
+    expect($oldWorkflow->name)->toBe($newWorkflow->name);
+
+    assertDatabaseHas(Workflow::class, [
+        'id' => $oldWorkflow->id,
+        'name' => $newWorkflow->name,
+    ]);
+});
+
+test('can successfully enable and disable workflow for form', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()
+                ->state([
+                    'related_type' => $form->getMorphClass(),
+                    'related_id' => $form->id,
+                    'type' => WorkflowTriggerType::EventBased,
+                ])
+        )
+        ->state(['is_enabled' => false])
+        ->create();
+
+    livewire(EditWorkflow::class, ['record' => $workflow->getKey()])
+        ->fillForm(['is_enabled' => true])
+        ->call('save');
+
+    $workflow->refresh();
+    expect($workflow->is_enabled)->toBeTrue();
+
+    livewire(EditWorkflow::class, ['record' => $workflow->getKey()])
+        ->fillForm(['is_enabled' => false])
+        ->call('save');
+
+    $workflow->refresh();
+    expect($workflow->is_enabled)->toBeFalse();
+
+    assertDatabaseHas(Workflow::class, [
+        'id' => $workflow->id,
+        'is_enabled' => false,
+    ]);
+});
+
+test('can edit both workflow name and enabled status simultaneously', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+    $oldWorkflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()
+                ->state([
+                    'related_type' => $form->getMorphClass(),
+                    'related_id' => $form->id,
+                ])
+        )
+        ->state(['is_enabled' => false])
+        ->create();
+
+    $newWorkflow = Workflow::factory()->make();
+
+    livewire(EditWorkflow::class, ['record' => $oldWorkflow->getKey()])
+        ->fillForm([
+            'name' => $newWorkflow->name,
+            'is_enabled' => true,
+        ])
+        ->call('save');
+
+    $oldWorkflow->refresh();
+
+    expect($oldWorkflow->name)->toBe($newWorkflow->name);
+    expect($oldWorkflow->is_enabled)->toBeTrue();
+
+    assertDatabaseHas(Workflow::class, [
+        'id' => $oldWorkflow->id,
+        'name' => $newWorkflow->name,
+        'is_enabled' => true,
+    ]);
+});
+
+test('validates required workflow name during edit', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()
+                ->state([
+                    'related_type' => $form->getMorphClass(),
+                    'related_id' => $form->id,
+                ])
+        )
+        ->create();
+
+    livewire(EditWorkflow::class, ['record' => $workflow->getKey()])
+        ->fillForm(['name' => ''])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'required']);
+
+    $workflow->refresh();
+    expect($workflow->name)->not->toBe('');
+});
+
+test('validates workflow name maximum length during edit', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()
+                ->state([
+                    'related_type' => $form->getMorphClass(),
+                    'related_id' => $form->id,
+                ])
+        )
+        ->create();
+
+    $longName = str_repeat('a', 256);
+
+    livewire(EditWorkflow::class, ['record' => $workflow->getKey()])
+        ->fillForm(['name' => $longName])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'max']);
+
+    $workflow->refresh();
+    expect($workflow->name)->not->toBe($longName);
+});
+
+test('authenticated super admin user can edit workflows', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+    $oldWorkflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()
+                ->state([
+                    'related_type' => $form->getMorphClass(),
+                    'related_id' => $form->id,
+                ])
+        )
+        ->create();
+
+    $newWorkflow = Workflow::factory()->make();
+
+    livewire(EditWorkflow::class, ['record' => $oldWorkflow->getKey()])
+        ->fillForm(['name' => $newWorkflow->name])
+        ->call('save');
+
+    $oldWorkflow->refresh();
+    expect($oldWorkflow->name)->toBe($newWorkflow->name);
+});
+
+test('editing workflow preserves form relationships and trigger data', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()
+        ->has(FormField::factory()->count(3), 'fields')
+        ->create();
+
+    $workflowTrigger = WorkflowTrigger::factory()
+        ->state([
+            'related_type' => $form->getMorphClass(),
+            'related_id' => $form->id,
+            'type' => WorkflowTriggerType::EventBased,
+        ])
+        ->create();
+
+    $oldWorkflow = Workflow::factory()
+        ->for($workflowTrigger)
+        ->create();
+
+    $newWorkflow = Workflow::factory()->make();
+
+    livewire(EditWorkflow::class, ['record' => $oldWorkflow->getKey()])
+        ->fillForm(['name' => $newWorkflow->name])
+        ->call('save');
+
+    $oldWorkflow->refresh();
+    $workflowTrigger->refresh();
+
+    expect($oldWorkflow->name)->toBe($newWorkflow->name);
+
+    expect($workflowTrigger->related_type)->toBe($form->getMorphClass());
+    expect($workflowTrigger->related_id)->toBe($form->id);
+    expect($workflowTrigger->type)->toBe(WorkflowTriggerType::EventBased);
+
+    $relatedForm = $workflowTrigger->related;
+    assert($relatedForm instanceof Form);
+    expect($relatedForm)->toBeInstanceOf(Form::class);
+    expect($relatedForm->id)->toBe($form->id);
+    expect($relatedForm->fields)->toHaveCount(3);
+});
+
+test('editing workflow with different form configurations preserves specific form attributes', function (callable $formFactory, array $expectedConfig) {
+    asSuperAdmin();
+
+    $form = $formFactory();
+    $oldWorkflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()
+                ->state([
+                    'related_type' => $form->getMorphClass(),
+                    'related_id' => $form->id,
+                ])
+        )
+        ->create();
+
+    $newWorkflow = Workflow::factory()->make();
+
+    livewire(EditWorkflow::class, ['record' => $oldWorkflow->getKey()])
+        ->fillForm(['name' => $newWorkflow->name])
+        ->call('save');
+
+    $oldWorkflow->refresh();
+    $form->refresh();
+
+    expect($oldWorkflow->name)->toBe($newWorkflow->name);
+
+    foreach ($expectedConfig as $attribute => $value) {
+        expect($form->{$attribute})->toBe($value);
+    }
+})->with([
+    'embedded form' => [
+        fn () => Form::factory()->state(['embed_enabled' => true])->create(),
+        ['embed_enabled' => true],
+    ],
+    'form with description' => [
+        fn () => Form::factory()->state(['description' => 'Preserved description'])->create(),
+        ['description' => 'Preserved description'],
+    ],
+    'form with allowed domains' => [
+        fn () => Form::factory()->state(['allowed_domains' => ['edit.com', 'test.org']])->create(),
+        ['allowed_domains' => ['edit.com', 'test.org']],
+    ],
+]);
+
+test('editing workflow handles database transaction behavior properly', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+    $oldWorkflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()
+                ->state([
+                    'related_type' => $form->getMorphClass(),
+                    'related_id' => $form->id,
+                ])
+        )
+        ->create();
+
+    $newWorkflow = Workflow::factory()->make();
+
+    livewire(EditWorkflow::class, ['record' => $oldWorkflow->getKey()])
+        ->fillForm(['name' => $newWorkflow->name])
+        ->call('save');
+
+    $oldWorkflow->refresh();
+    expect($oldWorkflow->name)->toBe($newWorkflow->name);
+
+    assertDatabaseHas(Workflow::class, [
+        'id' => $oldWorkflow->id,
+        'name' => $newWorkflow->name,
+    ]);
+});
+
+test('can delete workflow through edit page', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()
+                ->state([
+                    'related_type' => $form->getMorphClass(),
+                    'related_id' => $form->id,
+                ])
+        )
+        ->create();
+
+    $triggerId = $workflow->workflow_trigger_id;
+
+    livewire(EditWorkflow::class, [
+        'record' => $workflow->getRouteKey(),
+    ])
+        ->assertActionExists(DeleteAction::class)
+        ->assertActionEnabled(DeleteAction::class)
+        ->callAction(DeleteAction::class);
+
+    assertSoftDeleted($workflow);
+
+    expect(WorkflowTrigger::find($triggerId))->not->toBeNull();
 });
