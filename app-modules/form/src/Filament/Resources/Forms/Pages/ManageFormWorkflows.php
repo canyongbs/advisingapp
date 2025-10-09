@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
+namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
 
-use AdvisingApp\Form\Filament\Resources\FormResource;
+use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Workflow\Models\Workflow;

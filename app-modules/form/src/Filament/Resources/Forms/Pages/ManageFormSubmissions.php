@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
+namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
 
 use AdvisingApp\Form\Enums\FormSubmissionStatus;
 use AdvisingApp\Form\Exports\FormSubmissionExport;
-use AdvisingApp\Form\Filament\Resources\FormResource;
+use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Tables\Filters\FormSubmissionStatusFilter;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;

@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Resources;
+namespace AdvisingApp\Form\Filament\Resources\Forms;
 
-use AdvisingApp\Form\Filament\Resources\FormResource\Pages\CreateForm;
-use AdvisingApp\Form\Filament\Resources\FormResource\Pages\EditForm;
-use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ListForms;
-use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ManageFormEmailAutoReply;
-use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ManageFormSubmissions;
-use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ManageFormWorkflows;
-use AdvisingApp\Form\Filament\Resources\FormResource\Pages\SubmissionOnScreenResponse;
+use AdvisingApp\Form\Filament\Resources\Forms\Pages\CreateForm;
+use AdvisingApp\Form\Filament\Resources\Forms\Pages\EditForm;
+use AdvisingApp\Form\Filament\Resources\Forms\Pages\ListForms;
+use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormEmailAutoReply;
+use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormSubmissions;
+use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormWorkflows;
+use AdvisingApp\Form\Filament\Resources\Forms\Pages\SubmissionOnScreenResponse;
 use AdvisingApp\Form\Models\Form;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;

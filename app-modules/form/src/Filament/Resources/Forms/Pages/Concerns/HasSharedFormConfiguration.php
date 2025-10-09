@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages\Concerns;
+namespace AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Enums\Rounding;

@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
+namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
 
-use AdvisingApp\Form\Filament\Resources\FormResource;
-use AdvisingApp\Form\Filament\Resources\FormResource\Pages\Concerns\HasSharedFormConfiguration;
+use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
+use AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns\HasSharedFormConfiguration;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
 
