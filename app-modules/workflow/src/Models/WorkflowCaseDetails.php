@@ -42,12 +42,14 @@ use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Workflow\Database\Factories\WorkflowCaseDetailsFactory;
 use AdvisingApp\Workflow\Filament\Blocks\CaseBlock;
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Jobs\CaseWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -60,6 +62,9 @@ class WorkflowCaseDetails extends WorkflowDetails implements Auditable
     use SoftDeletes;
     use AuditableTrait;
     use HasUuids;
+
+    /** @use HasFactory<WorkflowCaseDetailsFactory> */
+    use HasFactory;
 
     protected $fillable = [
         'division_id',
