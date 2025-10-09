@@ -34,44 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+namespace AdvisingApp\Report\Filament\Exports;
 
-use AdvisingApp\Report\Abstract\AiReport;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\Report\Filament\Widgets\ResearchAdvisorReportStats;
-use AdvisingApp\Report\Filament\Widgets\ResearchAdvisorReportTable;
-use App\Filament\Clusters\ReportLibrary;
-use UnitEnum;
+use AdvisingApp\Research\Models\ResearchRequest;
+use Filament\Actions\Exports\ExportColumn;
+use Filament\Actions\Exports\Exporter;
+use Filament\Actions\Exports\Models\Export;
 
-class ResearchAdvisorReport extends AiReport
+class ResearchAdvisorReportTableExporter extends Exporter
 {
-    protected static ?string $cluster = ReportLibrary::class;
+    protected static ?string $model = ResearchRequest::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?string $title = 'Research Advisor';
-
-    protected static string $routePath = 'research-advisor-report';
-
-    protected static ?int $navigationSort = 170;
-
-    protected string $cacheTag = 'research-advisor-report';
-
-    public function getWidgets(): array
+    public static function getColumns(): array
     {
         return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            ResearchAdvisorReportStats::make(['cacheTag' => $this->cacheTag]),
-            ResearchAdvisorReportTable::make(['cacheTag' => $this->cacheTag]),
+            ExportColumn::make('user.name')
+                ->label('Created By'),
+            ExportColumn::make('title')
+                ->label('Name'),
+            ExportColumn::make('created_at')
+                ->label('Created At'),
         ];
     }
 
-    public function getColumns(): int | array
+    public static function getCompletedNotificationBody(Export $export): string
     {
-        return [
-            'sm' => 2,
-            'md' => 4,
-            'lg' => 4,
-        ];
+        $body = 'Your research advisor report table export has completed and ' . number_format($export->successful_rows) . ' ' . str('row')->plural($export->successful_rows) . ' exported.';
+
+        if ($failedRowsCount = $export->getFailedRowsCount()) {
+            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to export.';
+        }
+
+        return $body;
     }
 }
