@@ -34,33 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementResponses\Pages;
 
-use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\CreateSmsTemplate;
-use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\EditSmsTemplate;
-use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\ListSmsTemplates;
-use AdvisingApp\Engagement\Models\SmsTemplate;
-use App\Filament\Clusters\Communication;
-use Filament\Resources\Resource;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResponses\EngagementResponseResource;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\ViewAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-class SmsTemplateResource extends Resource
+class ListEngagementResponses extends ListRecords
 {
-    protected static ?string $model = SmsTemplate::class;
+    protected static string $resource = EngagementResponseResource::class;
 
-    protected static ?string $navigationLabel = 'Text Message Templates';
-
-    protected static ?string $modelLabel = 'text message template';
-
-    protected static ?int $navigationSort = 130;
-
-    protected static ?string $cluster = Communication::class;
-
-    public static function getPages(): array
+    public function table(Table $table): Table
     {
-        return [
-            'index' => ListSmsTemplates::route('/'),
-            'create' => CreateSmsTemplate::route('/create'),
-            'edit' => EditSmsTemplate::route('/{record}/edit'),
-        ];
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('content'),
+            ])
+            ->recordActions([
+                ViewAction::make(),
+            ])
+            ->toolbarActions([
+            ]);
     }
 }

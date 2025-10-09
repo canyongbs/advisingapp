@@ -34,24 +34,60 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages;
 
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
+use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\SmsTemplateResource;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Schema;
+use FilamentTiptapEditor\TiptapEditor;
 
-class EditEngagementFile extends EditRecord
+class EditSmsTemplate extends EditRecord
 {
     use EditPageRedirection;
 
-    protected static string $resource = EngagementFileResource::class;
+    protected static string $resource = SmsTemplateResource::class;
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->columns(1)
+            ->components([
+                TextInput::make('name')
+                    ->string()
+                    ->required()
+                    ->autocomplete(false),
+                Textarea::make('description')
+                    ->string(),
+                TiptapEditor::make('content')
+                    ->mergeTags($mergeTags = [
+                        'recipient first name',
+                        'recipient last name',
+                        'recipient full name',
+                        'recipient email',
+                        'recipient preferred name',
+                    ])
+                    ->profile('sms')
+                    ->columnSpanFull()
+                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+                    ->required(),
+                Actions::make([
+                    DraftTemplateWithAiAction::make()
+                        ->channel(NotificationChannel::Sms)
+                        ->mergeTags($mergeTags),
+                ]),
+            ]);
+    }
 
     protected function getHeaderActions(): array
     {
         return [
-            ViewAction::make(),
             DeleteAction::make(),
         ];
     }

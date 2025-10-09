@@ -34,42 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementResponses\Actions;
 
-use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Section;
+use Illuminate\Support\HtmlString;
 
-class ListSmsTemplates extends ListRecords
+class EngagementResponseViewAction
 {
-    protected static string $resource = SmsTemplateResource::class;
-
-    public function table(Table $table): Table
+    public static function make(): ViewAction
     {
-        return $table
-            ->columns([
-                TextColumn::make('name'),
-                TextColumn::make('description'),
-            ])
-            ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+        return ViewAction::make()
+            ->schema([
+                Flex::make([
+                    Section::make([
+                        TextEntry::make('subject')
+                            ->state(fn (EngagementResponse $record): ?string => $record->subject)
+                            ->hidden(fn ($state): bool => blank($state)),
+                        TextEntry::make('content')
+                            ->state(fn (EngagementResponse $record): HtmlString => $record->getBody()),
+                    ]),
+                    Section::make([
+                        TextEntry::make('sent_at')
+                            ->dateTime('Y-m-d H:i:s'),
+                    ])->grow(false),
                 ]),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
     }
 }

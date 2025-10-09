@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementFiles;
 
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\CreateEngagementFile;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\EditEngagementFile;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\ListEngagementFiles;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\ViewEngagementFile;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages\CreateEngagementFile;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages\EditEngagementFile;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages\ListEngagementFiles;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages\ViewEngagementFile;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use BackedEnum;
 use Filament\Forms\Components\DatePicker;

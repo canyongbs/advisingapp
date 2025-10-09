@@ -34,29 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementResponses;
 
-use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages\CreateEmailTemplate;
-use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages\EditEmailTemplate;
-use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages\ListEmailTemplates;
-use AdvisingApp\Engagement\Models\EmailTemplate;
-use App\Filament\Clusters\Communication;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResponses\Pages\ListEngagementResponses;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResponses\Pages\ViewEngagementResponse;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use BackedEnum;
 use Filament\Resources\Resource;
 
-class EmailTemplateResource extends Resource
+class EngagementResponseResource extends Resource
 {
-    protected static ?string $model = EmailTemplate::class;
+    protected static ?string $model = EngagementResponse::class;
 
-    protected static ?int $navigationSort = 120;
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
 
-    protected static ?string $cluster = Communication::class;
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getPages(): array
     {
         return [
-            'index' => ListEmailTemplates::route('/'),
-            'create' => CreateEmailTemplate::route('/create'),
-            'edit' => EditEmailTemplate::route('/{record}/edit'),
+            'index' => ListEngagementResponses::route('/'),
+            'view' => ViewEngagementResponse::route('/{record}'),
         ];
     }
 }

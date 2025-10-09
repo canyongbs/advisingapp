@@ -34,34 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Actions;
+namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplates;
 
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use Filament\Actions\ViewAction;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Schemas\Components\Flex;
-use Filament\Schemas\Components\Section;
-use Illuminate\Support\HtmlString;
+use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages\CreateEmailTemplate;
+use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages\EditEmailTemplate;
+use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages\ListEmailTemplates;
+use AdvisingApp\Engagement\Models\EmailTemplate;
+use App\Filament\Clusters\Communication;
+use Filament\Resources\Resource;
 
-class EngagementResponseViewAction
+class EmailTemplateResource extends Resource
 {
-    public static function make(): ViewAction
+    protected static ?string $model = EmailTemplate::class;
+
+    protected static ?int $navigationSort = 120;
+
+    protected static ?string $cluster = Communication::class;
+
+    public static function getPages(): array
     {
-        return ViewAction::make()
-            ->schema([
-                Flex::make([
-                    Section::make([
-                        TextEntry::make('subject')
-                            ->state(fn (EngagementResponse $record): ?string => $record->subject)
-                            ->hidden(fn ($state): bool => blank($state)),
-                        TextEntry::make('content')
-                            ->state(fn (EngagementResponse $record): HtmlString => $record->getBody()),
-                    ]),
-                    Section::make([
-                        TextEntry::make('sent_at')
-                            ->dateTime('Y-m-d H:i:s'),
-                    ])->grow(false),
-                ]),
-            ]);
+        return [
+            'index' => ListEmailTemplates::route('/'),
+            'create' => CreateEmailTemplate::route('/create'),
+            'edit' => EditEmailTemplate::route('/{record}/edit'),
+        ];
     }
 }

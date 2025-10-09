@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementResponses\Pages;
 
-use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResponses\EngagementResponseResource;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;

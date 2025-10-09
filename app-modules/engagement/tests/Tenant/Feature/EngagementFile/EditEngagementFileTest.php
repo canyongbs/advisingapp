@@ -33,9 +33,10 @@
 
 </COPYRIGHT>
 */
+
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\EditEngagementFile;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\EngagementFileResource;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages\EditEngagementFile;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use App\Models\User;
 

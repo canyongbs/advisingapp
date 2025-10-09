@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages;
 
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
-use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
+use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\EmailTemplateResource;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
@@ -48,11 +48,11 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Schema;
 use FilamentTiptapEditor\TiptapEditor;
 
-class EditSmsTemplate extends EditRecord
+class EditEmailTemplate extends EditRecord
 {
     use EditPageRedirection;
 
-    protected static string $resource = SmsTemplateResource::class;
+    protected static string $resource = EmailTemplateResource::class;
 
     public function form(Schema $schema): Schema
     {
@@ -66,6 +66,7 @@ class EditSmsTemplate extends EditRecord
                 Textarea::make('description')
                     ->string(),
                 TiptapEditor::make('content')
+                    ->disk('s3-public')
                     ->mergeTags($mergeTags = [
                         'recipient first name',
                         'recipient last name',
@@ -73,13 +74,13 @@ class EditSmsTemplate extends EditRecord
                         'recipient email',
                         'recipient preferred name',
                     ])
-                    ->profile('sms')
+                    ->tools(['bold', 'italic', 'small', 'link', 'color', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', 'media', 'stock-image', '|', 'clear-formatting'])
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->required(),
                 Actions::make([
                     DraftTemplateWithAiAction::make()
-                        ->channel(NotificationChannel::Sms)
+                        ->channel(NotificationChannel::Email)
                         ->mergeTags($mergeTags),
                 ]),
             ]);

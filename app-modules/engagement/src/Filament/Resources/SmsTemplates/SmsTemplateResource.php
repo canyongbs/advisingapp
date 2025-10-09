@@ -34,42 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplates;
 
-use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages\CreateSmsTemplate;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages\EditSmsTemplate;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages\ListSmsTemplates;
+use AdvisingApp\Engagement\Models\SmsTemplate;
+use App\Filament\Clusters\Communication;
+use Filament\Resources\Resource;
 
-class ListEmailTemplates extends ListRecords
+class SmsTemplateResource extends Resource
 {
-    protected static string $resource = EmailTemplateResource::class;
+    protected static ?string $model = SmsTemplate::class;
 
-    public function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                TextColumn::make('name'),
-                TextColumn::make('description'),
-            ])
-            ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
+    protected static ?string $navigationLabel = 'Text Message Templates';
 
-    protected function getHeaderActions(): array
+    protected static ?string $modelLabel = 'text message template';
+
+    protected static ?int $navigationSort = 130;
+
+    protected static ?string $cluster = Communication::class;
+
+    public static function getPages(): array
     {
         return [
-            CreateAction::make(),
+            'index' => ListSmsTemplates::route('/'),
+            'create' => CreateSmsTemplate::route('/create'),
+            'edit' => EditSmsTemplate::route('/{record}/edit'),
         ];
     }
 }

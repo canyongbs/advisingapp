@@ -34,27 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources;
+namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages;
 
-use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Pages\ListEngagementResponses;
-use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Pages\ViewEngagementResponse;
-use AdvisingApp\Engagement\Models\EngagementResponse;
-use BackedEnum;
-use Filament\Resources\Resource;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\SmsTemplateResource;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-class EngagementResponseResource extends Resource
+class ListSmsTemplates extends ListRecords
 {
-    protected static ?string $model = EngagementResponse::class;
+    protected static string $resource = SmsTemplateResource::class;
 
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('description'),
+            ])
+            ->recordActions([
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
 
-    protected static bool $shouldRegisterNavigation = false;
-
-    public static function getPages(): array
+    protected function getHeaderActions(): array
     {
         return [
-            'index' => ListEngagementResponses::route('/'),
-            'view' => ViewEngagementResponse::route('/{record}'),
+            CreateAction::make(),
         ];
     }
 }

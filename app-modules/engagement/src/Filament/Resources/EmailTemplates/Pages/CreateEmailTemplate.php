@@ -34,24 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages;
 
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
-use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource;
+use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\EmailTemplateResource;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Resource;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Schema;
 use FilamentTiptapEditor\TiptapEditor;
 
-class EditEmailTemplate extends EditRecord
+class CreateEmailTemplate extends CreateRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = EmailTemplateResource::class;
 
     public function form(Schema $schema): Schema
@@ -86,10 +83,11 @@ class EditEmailTemplate extends EditRecord
             ]);
     }
 
-    protected function getHeaderActions(): array
+    protected function getRedirectUrl(): string
     {
-        return [
-            DeleteAction::make(),
-        ];
+        /** @var class-string<Resource> $resource */
+        $resource = $this->getResource();
+
+        return $resource::getUrl();
     }
 }

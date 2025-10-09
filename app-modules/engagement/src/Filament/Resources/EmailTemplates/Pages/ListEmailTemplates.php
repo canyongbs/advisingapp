@@ -34,50 +34,42 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\EngagementFileResource;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages\CreateEngagementFile;
-use App\Models\User;
+namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
+use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\EmailTemplateResource;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-// TODO: Add tests for the CreateEngagementFile
-//test('A successful action on the CreateEngagementFile page', function () {});
-//
-//test('CreateEngagementFile requires valid data', function ($data, $errors) {})->with([]);
+class ListEmailTemplates extends ListRecords
+{
+    protected static string $resource = EmailTemplateResource::class;
 
-// Permission Tests
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('description'),
+            ])
+            ->recordActions([
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
 
-test('CreateEngagementFile is gated with proper access control', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
-
-    actingAs($user)
-        ->get(
-            EngagementFileResource::getUrl('create')
-        )->assertForbidden();
-
-    livewire(CreateEngagementFile::class)
-        ->assertForbidden();
-
-    $user->givePermissionTo('engagement_file.view-any');
-    $user->givePermissionTo('engagement_file.create');
-
-    actingAs($user)
-        ->get(
-            EngagementFileResource::getUrl('create')
-        )->assertSuccessful();
-
-    // TODO: Test for file upload
-
-    //$request = collect(CreateEngagementFileRequestFactory::new()->create());
-    //
-    //livewire(EngagementFileResource\Pages\CreateEngagementFile::class)
-    //    ->fillForm($request->toArray())
-    //    ->call('create')
-    //    ->assertHasNoFormErrors();
-    //
-    //assertCount(1, EngagementFile::all());
-    //
-    //assertDatabaseHas(EngagementFile::class, $request->toArray());
-});
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
+}
