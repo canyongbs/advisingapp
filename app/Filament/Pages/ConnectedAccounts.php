@@ -39,7 +39,7 @@ namespace App\Filament\Pages;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use App\Models\User;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Placeholder;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
@@ -83,14 +83,14 @@ class ConnectedAccounts extends ProfilePage
         $connectedAccounts = collect([
             Grid::make()
                 ->schema([
-                    Placeholder::make('calendar')
+                    TextEntry::make('calendar')
                         ->label(function (): string {
                             /** @var User $user */
                             $user = auth()->user();
 
                             return "{$user->calendar->provider_type->getLabel()} Calendar";
                         })
-                        ->content(function (): ?string {
+                        ->state(function (): ?string {
                             /** @var User $user */
                             $user = auth()->user();
 
