@@ -35,8 +35,8 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource\Pages\EditResourceHubCategory;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\Pages\EditResourceHubCategory;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\ResourceHubCategoryResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Tests\Tenant\ResourceHubCategory\RequestFactories\EditResourceHubCategoryRequestFactory;
 use App\Models\User;

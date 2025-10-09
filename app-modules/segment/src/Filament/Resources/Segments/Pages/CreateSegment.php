@@ -169,8 +169,11 @@ class CreateSegment extends CreateRecord implements HasTable
             return;
         }
 
+        /** @var array<TemporaryUploadedFile> $files */
+        $files = $data['file'];
+
         /** @var TemporaryUploadedFile $file */
-        $file = Arr::first($data['file']);
+        $file = Arr::first($files);
 
         $fileStream = $this->getUploadedFileStream($file);
 

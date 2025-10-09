@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatusResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use App\Models\User;
 use App\Settings\LicenseSettings;

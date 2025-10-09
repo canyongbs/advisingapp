@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\EditProspectStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages\EditProspectStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Tests\Tenant\ProspectStatus\RequestFactories\EditProspectStatusRequestFactory;

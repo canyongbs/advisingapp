@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ListProspects;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Enums\TagType;
 use App\Models\Tag;

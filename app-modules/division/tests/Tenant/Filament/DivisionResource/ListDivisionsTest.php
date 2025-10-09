@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Division\Filament\Resources\DivisionResource;
+use AdvisingApp\Division\Filament\Resources\Divisions\DivisionResource;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;

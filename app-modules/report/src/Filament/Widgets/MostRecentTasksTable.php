@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
@@ -54,6 +54,8 @@ class MostRecentTasksTable extends BaseWidget
 
     public string $cacheTag;
 
+    public string $educatableType;
+
     protected static ?string $heading = 'Most Recent Tasks Added';
 
     protected static bool $isLazy = false;
@@ -66,9 +68,11 @@ class MostRecentTasksTable extends BaseWidget
         'lg' => 4,
     ];
 
-    public function mount(string $cacheTag)
+    public function mount(string $cacheTag, string $educatableType)
     {
         $this->cacheTag = $cacheTag;
+
+        $this->educatableType = $educatableType;
     }
 
     #[On('refresh-widgets')]
@@ -78,20 +82,20 @@ class MostRecentTasksTable extends BaseWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
+        $segmentId = $this->getSelectedSegment();
 
         return $table
-            ->query(
-                Task::query()
-                    ->with(['concern'])
-                    ->when(
-                        $startDate && $endDate,
-                        function (Builder $query) use ($startDate, $endDate): Builder {
-                            return $query->whereBetween('created_at', [$startDate, $endDate]);
-                        }
-                    )
+            ->query(function () use ($startDate, $endDate, $segmentId): Builder {
+                return Task::query()
+                    ->whereHasMorph('concern', $this->educatableType, function (Builder $query) use ($segmentId) {
+                        $query->when($segmentId, fn (Builder $query) => $this->segmentFilter($query, $segmentId));
+                    })
+                    ->when($startDate && $endDate, function (Builder $query) use ($startDate, $endDate): Builder {
+                        return $query->whereBetween('created_at', [$startDate, $endDate]);
+                    })
                     ->orderBy('created_at', 'desc')
-                    ->limit(10)
-            )
+                    ->limit(10);
+            })
             ->columns([
                 TextColumn::make('title'),
                 TextColumn::make('status'),

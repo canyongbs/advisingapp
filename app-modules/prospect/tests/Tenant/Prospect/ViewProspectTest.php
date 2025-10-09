@@ -35,14 +35,14 @@
 */
 
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\DisassociateStudent;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectCareTeam;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectSubscriptions;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectTasks;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Actions\ConvertToStudent;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Actions\DisassociateStudent;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectAlerts;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectCareTeam;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectSubscriptions;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectTasks;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspect;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;

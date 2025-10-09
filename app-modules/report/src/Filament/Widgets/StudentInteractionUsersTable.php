@@ -37,10 +37,13 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Report\Filament\Exports\StudentInteractionUsersTableExportExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Carbon\Carbon;
+use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -86,6 +89,13 @@ class StudentInteractionUsersTable extends BaseWidget
         $segmentId = $this->getSelectedSegment();
 
         return $table
+            ->headerActions([
+                ExportAction::make()
+                    ->exporter(StudentInteractionUsersTableExportExporter::class)
+                    ->formats([
+                        ExportFormat::Csv,
+                    ]),
+            ])
             ->query(
                 function () use ($startDate, $endDate, $segmentId): Builder {
                     return User::query()

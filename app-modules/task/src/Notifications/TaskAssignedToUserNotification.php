@@ -37,8 +37,8 @@
 namespace AdvisingApp\Task\Notifications;
 
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectTasks;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectTasks;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspect;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentTasks;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;

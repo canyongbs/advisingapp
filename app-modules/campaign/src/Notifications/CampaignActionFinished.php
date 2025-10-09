@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Campaign\Notifications;
 
-use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
+use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use App\Models\User;
 use Exception;

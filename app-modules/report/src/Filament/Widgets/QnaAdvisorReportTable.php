@@ -38,7 +38,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Ai\Enums\QnaAdvisorReportTableTab;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspect;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;

@@ -42,8 +42,11 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
 use Carbon\Carbon;
+use Filament\Actions\ExportAction;
+use Illuminate\Support\Facades\Storage;
 
 use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 it('can see student interaction users table', function () {
     $team = Team::factory()->create();
@@ -370,4 +373,35 @@ it('displays only users with student interactions based on segment filter', func
             $userWithOldInteractions, $userWithRecentAndOtherInteractions,
         ]))
         ->assertCanNotSeeTableRecords(collect([$userWithoutInteractions]));
+});
+
+it('has an export action', function () {
+    livewire(StudentInteractionUsersTable::class, [
+        'cacheTag' => 'report-student-interaction',
+        'filters' => [],
+    ])->assertTableActionExists(ExportAction::class);
+});
+
+it('can start an export, sending a notification', function () {
+    Storage::fake('s3');
+
+    $user1 = User::factory()->create();
+
+    $student = Student::factory()->create();
+
+    Interaction::factory()
+        ->count(5)
+        ->for($student, 'interactable')
+        ->for($user1, 'user')
+        ->create();
+
+    asSuperAdmin();
+
+    livewire(StudentInteractionUsersTable::class, [
+        'cacheTag' => 'report-student-interaction',
+        'filters' => [],
+    ])
+        ->callTableAction(ExportAction::class)
+        ->assertHasNoFormErrors()
+        ->assertNotified();
 });

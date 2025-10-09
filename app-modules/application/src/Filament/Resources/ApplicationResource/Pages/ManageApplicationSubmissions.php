@@ -119,7 +119,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                     })
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query
-                            ->join('application_submission_states', 'application_submissions.status_id', '=', 'application_submission_states.id')
+                            ->join('application_submission_states', 'application_submissions.state_id', '=', 'application_submission_states.id')
                             ->orderBy('application_submission_states.name', $direction);
                     }),
             ])

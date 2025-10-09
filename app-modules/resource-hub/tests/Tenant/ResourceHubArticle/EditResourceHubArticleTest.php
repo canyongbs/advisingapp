@@ -35,8 +35,8 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource\Pages\EditResourceHubArticle;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\EditResourceHubArticle;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use App\Models\User;
 use App\Settings\LicenseSettings;

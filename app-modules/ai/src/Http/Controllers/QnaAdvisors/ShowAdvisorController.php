@@ -60,7 +60,7 @@ class ShowAdvisorController
             ),
             'websockets_config' => [
                 ...config('filament.broadcasting.echo'),
-                'authEndpoint' => url('api/broadcasting/auth'),
+                'authEndpoint' => route('ai.qna-advisors.broadcasting.auth', ['advisor' => $advisor]),
             ],
             'advisor' => [
                 'name' => $advisor->name,
@@ -83,6 +83,7 @@ class ShowAdvisorController
                     minutes: 60 * 24 * 3, // 3 days
                     secure: true,
                     httpOnly: true,
+                    sameSite: 'none',
                 )
             );
         }

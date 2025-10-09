@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Report\Enums;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Tables\ProspectsTable;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Tables\ProspectsTable;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Exports\ProspectExporter;
 use AdvisingApp\Report\Filament\Exports\StudentExporter;

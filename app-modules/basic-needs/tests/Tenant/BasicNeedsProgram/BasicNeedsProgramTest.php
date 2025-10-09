@@ -33,11 +33,12 @@
 
 </COPYRIGHT>
 */
+
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\CreateBasicNeedsProgram;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\EditBasicNeedsProgram;
-use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsProgramResource\Pages\ListBasicNeedsPrograms;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\BasicNeedsProgramResource;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages\CreateBasicNeedsProgram;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages\EditBasicNeedsProgram;
+use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages\ListBasicNeedsPrograms;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;

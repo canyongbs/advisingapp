@@ -38,7 +38,7 @@ namespace AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\P
 
 use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource;
 use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;

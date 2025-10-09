@@ -33,8 +33,8 @@
 
 </COPYRIGHT>
 */
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\CreateProspectSource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSources\Pages\CreateProspectSource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSources\ProspectSourceResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Tests\Tenant\ProspectSource\RequestFactories\CreateProspectSourceRequestFactory;

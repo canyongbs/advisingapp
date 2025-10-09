@@ -38,7 +38,7 @@ namespace AdvisingApp\Engagement\Observers;
 
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspect;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Models\Student;

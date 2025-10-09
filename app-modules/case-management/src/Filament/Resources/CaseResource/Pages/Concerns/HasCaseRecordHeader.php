@@ -37,7 +37,7 @@
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\Concerns;
 
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Pages\ProspectCaseReport;
 use AdvisingApp\Report\Filament\Pages\StudentCaseReport;

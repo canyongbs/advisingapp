@@ -56,6 +56,8 @@ class EditQnaAdvisorLinks extends EditRecord
 
     protected static ?string $title = 'Websites';
 
+    protected static ?string $navigationLabel = 'Websites';
+
     protected static string | UnitEnum | null $navigationGroup = 'Configuration';
 
     /**

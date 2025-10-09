@@ -41,7 +41,22 @@ import loadingSpinner from '../public/images/loading-spinner.svg?url';
 import userAvatar from '../public/images/user-default-avatar.svg?url';
 import { useAuthStore } from './stores/auth';
 
-const props = defineProps(['url']);
+// Configure axios defaults
+axios.defaults.withCredentials = true;
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.headers.common['Accept'] = 'application/json';
+
+const props = defineProps({
+    entryUrl: {
+        type: String,
+        required: true,
+    },
+    cssUrl: {
+        type: String,
+        required: true,
+        default: null,
+    },
+});
 const authStore = useAuthStore();
 const requiresAuthentication = ref(false);
 const authentication = ref({
@@ -72,14 +87,17 @@ const advisor = ref({
 });
 let websocketChannel = null;
 
-const scriptUrl = new URL(document.currentScript.getAttribute('src'));
-const protocol = scriptUrl.protocol;
-const scriptHostname = scriptUrl.hostname;
-const hostUrl = `${protocol}//${scriptHostname}`;
-
 onMounted(async () => {
     axios
-        .post(props.url)
+        .post(
+            props.entryUrl,
+            {},
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            },
+        )
         .then((response) => {
             const json = response.data;
 
@@ -241,7 +259,11 @@ async function authenticate(formData, node) {
         };
 
         axios
-            .post(authentication.value.confirmationUrl, data)
+            .post(authentication.value.confirmationUrl, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
             .then((response) => {
                 if (response.errors) {
                     node.setErrors([], response.errors);
@@ -265,19 +287,27 @@ async function authenticate(formData, node) {
 
     if (authentication.value.registrationAllowed) {
         axios
-            .post(authentication.value.requestUrl, {
-                email: formData.email,
-                first_name: formData.first_name,
-                last_name: formData.last_name,
-                preferred: formData.preferred,
-                mobile: formData.mobile,
-                birthdate: formData.birthdate,
-                address: formData.address,
-                address_2: formData.address_2,
-                city: formData.city,
-                state: formData.state,
-                postal: formData.postal,
-            })
+            .post(
+                authentication.value.requestUrl,
+                {
+                    email: formData.email,
+                    first_name: formData.first_name,
+                    last_name: formData.last_name,
+                    preferred: formData.preferred,
+                    mobile: formData.mobile,
+                    birthdate: formData.birthdate,
+                    address: formData.address,
+                    address_2: formData.address_2,
+                    city: formData.city,
+                    state: formData.state,
+                    postal: formData.postal,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                },
+            )
             .then((response) => {
                 if (!response.data.authentication_url) {
                     node.setErrors([response.data.message]);
@@ -299,9 +329,17 @@ async function authenticate(formData, node) {
     }
 
     axios
-        .post(authentication.value.requestUrl, {
-            email: formData.email,
-        })
+        .post(
+            authentication.value.requestUrl,
+            {
+                email: formData.email,
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            },
+        )
         .then((response) => {
             if (!response.data.authentication_url) {
                 node.setErrors([response.data.message]);
@@ -353,7 +391,6 @@ async function authorizedPost(url, data) {
                     authentication.value.refreshUrl,
                     {},
                     {
-                        withCredentials: true,
                         headers: {
                             'Content-Type': 'application/json',
                         },
@@ -591,7 +628,7 @@ async function authorizedPost(url, data) {
             v-show="!isSplashScreenVisible && sendMessageUrl !== null && !authentication.promptToAuthenticate"
             class="flex flex-col gap-y-3 w-11/12 mx-auto"
         >
-            <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/qna-advisor/style.css'" />
+            <link rel="stylesheet" v-bind:href="cssUrl" />
             <div class="flex h-[calc(100dvh-16rem)] flex-col gap-y-3">
                 <div
                     class="flex flex-1 flex-col-reverse overflow-y-auto rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"

@@ -37,14 +37,14 @@
     use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableCareTeamWidget;
     use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableSubscriptionsWidget;
     use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Widgets\EducatableTasksWidget;
-    use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+    use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ApplicationSubmissionsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EventsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\FormSubmissionsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
-    use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\CasesRelationManager;
+    use AdvisingApp\Prospect\Filament\Resources\Prospects\RelationManagers\CasesRelationManager;
 @endphp
 
 <x-filament-panels::page>

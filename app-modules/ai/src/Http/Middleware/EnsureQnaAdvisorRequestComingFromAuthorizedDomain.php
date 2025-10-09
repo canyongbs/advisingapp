@@ -38,11 +38,16 @@ namespace AdvisingApp\Ai\Http\Middleware;
 
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Closure;
+use Fruitcake\Cors\CorsService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureQnaAdvisorRequestComingFromAuthorizedDomain
 {
+    public function __construct(
+        protected CorsService $cors,
+    ) {}
+
     /**
      * Handle an incoming request.
      *
@@ -80,12 +85,31 @@ class EnsureQnaAdvisorRequestComingFromAuthorizedDomain
             $allowedDomains = array_merge($allowedDomains, $flatAuthorized);
         }
 
-        $requestingUrlHeader = parse_url($requestingUrlHeader)['host'];
-
-        if (! in_array($requestingUrlHeader, $allowedDomains)) {
+        if (! in_array(parse_url($requestingUrlHeader)['host'], $allowedDomains)) {
             return response()->json(['error' => 'Origin/Referer not allowed'], 403);
         }
 
-        return $next($request);
+        $this->cors->setOptions([
+            'allowedOrigins' => [$requestingUrlHeader],
+            'allowedHeaders' => ['*'],
+            'allowedMethods' => ['GET', 'POST', 'OPTIONS'],
+            'supportsCredentials' => true,
+        ]);
+
+        if ($this->cors->isPreflightRequest($request)) {
+            $response = $this->cors->handlePreflightRequest($request);
+
+            $this->cors->varyHeader($response, 'Access-Control-Request-Method');
+
+            return $response;
+        }
+
+        $response = $next($request);
+
+        if ($request->getMethod() === 'OPTIONS') {
+            $this->cors->varyHeader($response, 'Access-Control-Request-Method');
+        }
+
+        return $this->cors->addActualRequestHeaders($response, $request);
     }
 }

@@ -37,11 +37,13 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Workflow\Database\Factories\WorkflowSubscriptionDetailsFactory;
 use AdvisingApp\Workflow\Filament\Blocks\SubscriptionBlock;
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\SubscriptionWorkflowActionJob;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -54,10 +56,12 @@ class WorkflowSubscriptionDetails extends WorkflowDetails implements Auditable
     use AuditableTrait;
     use HasUuids;
 
+    /** @use HasFactory<WorkflowSubscriptionDetailsFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'user_ids',
         'remove_prior',
-        'workflow_step_id',
     ];
 
     protected $casts = [

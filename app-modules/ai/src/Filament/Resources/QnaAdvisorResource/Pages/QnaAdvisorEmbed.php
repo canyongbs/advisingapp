@@ -62,6 +62,8 @@ class QnaAdvisorEmbed extends EditRecord
 
     protected static string | UnitEnum | null $navigationGroup = 'Configuration';
 
+    protected static ?string $navigationLabel = 'Embed';
+
     protected static ?string $title = 'Embed';
 
     protected static ?string $breadcrumb = 'Embed';

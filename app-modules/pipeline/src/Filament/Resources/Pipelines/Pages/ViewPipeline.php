@@ -38,7 +38,7 @@ namespace AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages;
 
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Project\Filament\Resources\ProjectResource;
+use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;

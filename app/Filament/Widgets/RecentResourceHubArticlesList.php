@@ -36,7 +36,7 @@
 
 namespace App\Filament\Widgets;
 
-use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticleResource;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\ViewAction;
