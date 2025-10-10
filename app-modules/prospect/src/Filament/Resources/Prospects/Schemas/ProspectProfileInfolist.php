@@ -87,7 +87,7 @@ class ProspectProfileInfolist
                                     $record->additionalEmailAddresses->all(),
                                 ))
                                 ->listWithLineBreaks()
-                                ->visible(fn (?array $state): bool => filled($state)),
+                                ->visible(fn (Prospect $record): bool => filled($record->additionalEmailAddresses)),
                             TextEntry::make('primaryPhoneNumber')
                                 ->label('Primary Phone Number')
                                 ->state(fn (Prospect $record): View => view('student-data-model::components.filament.resources.educatable-resource.view-educatable.phone-number-detail', ['phoneNumber' => $record->primaryPhoneNumber]))
