@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\CreateCaseStatus;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatuses\CaseStatusResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatuses\Pages\CreateCaseStatus;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories\CreateCaseStatusRequestFactory;
 use AdvisingApp\Prospect\Models\Prospect;

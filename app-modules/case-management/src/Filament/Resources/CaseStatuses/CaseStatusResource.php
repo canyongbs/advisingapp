@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseStatuses;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\CreateCaseStatus;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\EditCaseStatus;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\ListCaseStatuses;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\ViewCaseStatus;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatuses\Pages\CreateCaseStatus;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatuses\Pages\EditCaseStatus;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatuses\Pages\ListCaseStatuses;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatuses\Pages\ViewCaseStatus;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use App\Filament\Clusters\CaseManagementAdministration;
 use Filament\Resources\Resource;

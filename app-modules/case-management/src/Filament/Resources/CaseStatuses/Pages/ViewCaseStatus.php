@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseStatuses\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatuses\CaseStatusResource;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
