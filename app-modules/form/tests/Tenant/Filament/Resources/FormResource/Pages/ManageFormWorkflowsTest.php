@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ManageFormWorkflows;
+use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormWorkflows;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow;
