@@ -34,57 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Database\Factories;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Filament\Blocks\InteractionBlock;
-use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
-use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
-use AdvisingApp\Workflow\Jobs\InteractionWorkflowActionJob;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Interaction\Models\InteractionDriver;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
+use AdvisingApp\Interaction\Models\InteractionOutcome;
+use AdvisingApp\Interaction\Models\InteractionRelation;
+use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionType;
+use AdvisingApp\Workflow\Models\WorkflowInteractionDetails;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperWorkflowInteractionDetails
+ * @extends Factory<WorkflowInteractionDetails>
  */
-class WorkflowInteractionDetails extends WorkflowDetails implements Auditable
+class WorkflowInteractionDetailsFactory extends Factory
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'interaction_initiative_id',
-        'interaction_driver_id',
-        'division_id',
-        'interaction_outcome_id',
-        'interaction_relation_id',
-        'interaction_status_id',
-        'interaction_type_id',
-        'start_datetime',
-        'end_datetime',
-        'subject',
-        'description',
-    ];
-
-    protected $casts = [
-        'start_datetime' => 'datetime',
-        'end_datetime' => 'datetime',
-    ];
-
-    public function getLabel(): string
+    public function definition(): array
     {
-        return 'Interaction';
-    }
-
-    public function getBlock(): WorkflowActionBlock
-    {
-        return InteractionBlock::make();
-    }
-
-    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
-    {
-        return new InteractionWorkflowActionJob($workflowRunStep);
+        return [
+            'interaction_initiative_id' => InteractionInitiative::factory(),
+            'interaction_driver_id' => InteractionDriver::factory(),
+            'division_id' => Division::factory(),
+            'interaction_outcome_id' => InteractionOutcome::factory(),
+            'interaction_relation_id' => InteractionRelation::factory(),
+            'interaction_status_id' => InteractionStatus::factory(),
+            'interaction_type_id' => InteractionType::factory(),
+            'start_datetime' => $this->faker->dateTimeBetween('now', '+1 month'),
+            'end_datetime' => $this->faker->dateTimeBetween('+1 month', '+2 months'),
+            'subject' => $this->faker->sentence,
+            'description' => $this->faker->paragraph,
+        ];
     }
 }
