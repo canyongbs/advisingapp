@@ -40,12 +40,12 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
@@ -107,9 +107,9 @@ class ProfileInformation extends ProfilePage
                             ->collection('avatar')
                             ->hidden($user->is_external)
                             ->avatar(),
-                        Placeholder::make('external_avatar')
+                        TextEntry::make('external_avatar')
                             ->label('Avatar')
-                            ->content('Your authentication into this application is managed through single sign on (SSO). Please update your profile picture in your source authentication system and then logout and login here to persist that update into this application.')
+                            ->state('Your authentication into this application is managed through single sign on (SSO). Please update your profile picture in your source authentication system and then logout and login here to persist that update into this application.')
                             ->visible($user->is_external),
                         $this->getNameFormComponent()
                             ->disabled($user->is_external),
@@ -141,21 +141,19 @@ class ProfileInformation extends ProfilePage
                             ->label('Show Pronouns on profile')
                             ->live()
                             ->visible($hasCrmLicense),
-                        Placeholder::make('teams')
+                        TextEntry::make('teams')
                             ->label('Team')
-                            ->content(fn () => $user->team->name)
+                            ->state(fn () => $user->team->name)
                             ->hidden(! $user->team)
                             ->hint(fn (Get $get): string => $get('are_teams_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                        //TODO: Right now this is not passed to the frontend
                         Checkbox::make('are_teams_visible_on_profile')
                             ->label('Show ' . str('team') . ' on profile')
                             ->hidden(! $user->team)
                             ->live(),
-                        Placeholder::make('division')
-                            ->content($user->team?->division?->name)
+                        TextEntry::make('division')
+                            ->state($user->team?->division?->name)
                             ->hidden(! $user->team?->division()->exists())
                             ->hint(fn (Get $get): string => $get('is_division_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                        //TODO: Right now this is not passed to the frontend
                         Checkbox::make('is_division_visible_on_profile')
                             ->label('Show Division on profile')
                             ->hidden(! $user->team?->division()->exists())

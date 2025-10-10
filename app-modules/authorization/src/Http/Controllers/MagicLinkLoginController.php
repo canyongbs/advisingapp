@@ -41,6 +41,7 @@ use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
@@ -51,8 +52,13 @@ class MagicLinkLoginController
     /**
      * @throws Throwable
      */
-    public function __invoke(Request $request, LoginMagicLink $magicLink): RedirectResponse
+    public function __invoke(Request $request, LoginMagicLink $magicLink): RedirectResponse|Response
     {
+        if ($request->getMethod() === 'HEAD') {
+            // Protection against link scanning bots, like Microsoft Outlook.
+            return response()->noContent();
+        }
+
         abort_if(
             boolean: now()->greaterThanOrEqualTo($magicLink->created_at->addMinutes(15))
                 || $magicLink->used_at !== null,
