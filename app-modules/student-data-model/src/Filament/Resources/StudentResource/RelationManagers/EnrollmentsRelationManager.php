@@ -133,7 +133,7 @@ class EnrollmentsRelationManager extends RelationManager
             ->defaultGroup('semester_name')
             ->groups([
                 Group::make('semester_name')
-                    ->label('Semester')
+                    ->label('Semester'),
             ])
             ->groupingSettingsHidden()
             ->columns([
@@ -163,7 +163,7 @@ class EnrollmentsRelationManager extends RelationManager
                 SelectFilter::make('semester_name')
                     ->label('Semester')
                     ->options(
-                        fn(): array => $this->getRelationship()->getQuery()
+                        fn (): array => $this->getRelationship()->getQuery()
                             ->whereNotNull('semester_name')
                             ->distinct()
                             ->pluck('semester_name', 'semester_name')
@@ -199,7 +199,7 @@ class EnrollmentsRelationManager extends RelationManager
                                 }
                             }
 
-                            $wasWere = fn($count) => $count === 1 ? 'was' : 'were';
+                            $wasWere = fn ($count) => $count === 1 ? 'was' : 'were';
 
                             $notification = match (true) {
                                 $deletedCount === 0 => [
@@ -225,7 +225,7 @@ class EnrollmentsRelationManager extends RelationManager
                                 ->body($notification['body'])
                                 ->send();
                         })
-                        ->visible(fn(): bool => app(ManageStudentConfigurationSettings::class)->is_enabled && auth()->user()->can('enrollment.*.delete')),
+                        ->visible(fn (): bool => app(ManageStudentConfigurationSettings::class)->is_enabled && auth()->user()->can('enrollment.*.delete')),
                 ]),
             ])
             ->headerActions([
