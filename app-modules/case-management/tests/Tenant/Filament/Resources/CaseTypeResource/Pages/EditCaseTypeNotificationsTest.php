@@ -35,8 +35,8 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseTypeNotifications;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\CaseTypeResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages\EditCaseTypeNotifications;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use App\Models\User;
 

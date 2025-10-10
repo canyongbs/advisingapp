@@ -34,50 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\RelationManagers;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\SlaResource;
-use AdvisingApp\CaseManagement\Models\CasePriority;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\CaseTypeResource;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Schemas\Schema;
+use Filament\Actions\ViewAction;
+use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
-class CasePrioritiesRelationManager extends RelationManager
+class ListCaseTypes extends ListRecords
 {
-    protected static string $relationship = 'priorities';
-
-    protected static ?string $recordTitleAttribute = 'name';
-
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                TextInput::make('order')
-                    ->label('Priority Order')
-                    ->required()
-                    ->integer()
-                    ->numeric()
-                    ->disabledOn('edit'),
-                Select::make('sla_id')
-                    ->label('SLA')
-                    ->relationship('sla', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->createOptionForm(fn (Schema $schema) => SlaResource::form($schema)),
-            ]);
-    }
+    protected static string $resource = CaseTypeResource::class;
 
     public function table(Table $table): Table
     {
@@ -88,30 +61,33 @@ class CasePrioritiesRelationManager extends RelationManager
                     ->label('Name')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('order')
-                    ->label('Priority Order')
-                    ->sortable(),
-                TextColumn::make('sla.name')
-                    ->label('SLA')
-                    ->url(fn (CasePriority $record): ?string => $record->sla ? SlaResource::getUrl('edit', ['record' => $record->sla]) : null)
-                    ->searchable(),
                 TextColumn::make('cases_count')
                     ->label('# of Cases')
                     ->counts('cases')
                     ->sortable(),
-            ])
-            ->defaultSort('order')
-            ->reorderable('order')
-            ->paginated(false)
-            ->headerActions([
-                CreateAction::make(),
+                TextColumn::make('deleted_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
-                DeleteAction::make(),
             ])
-            ->groupedBulkActions([
-                DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ])
+            ->filters([
+                TrashedFilter::make(),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
     }
 }

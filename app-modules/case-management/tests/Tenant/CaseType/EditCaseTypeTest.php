@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\CaseTypeResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages\EditCaseType;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories\EditCaseTypeRequestFactory;
 use AdvisingApp\Prospect\Models\Prospect;

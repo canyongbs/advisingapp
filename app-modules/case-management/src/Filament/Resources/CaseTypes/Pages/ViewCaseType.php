@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages;
 
 use AdvisingApp\CaseManagement\Filament\Resources\CaseForms\CaseFormResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\CaseTypeResource;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;

@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\CaseTypeResource;
 use Filament\Actions\AttachAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DetachAction;

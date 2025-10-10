@@ -34,30 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
-use AdvisingApp\CaseManagement\Models\CaseType;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\RestoreAction;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\CaseTypeResource;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
-class EditCaseType extends EditRecord
+class CreateCaseType extends CreateRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = CaseTypeResource::class;
-
-    protected static ?string $navigationLabel = 'Edit';
 
     public function form(Schema $schema): Schema
     {
@@ -77,38 +67,23 @@ class EditCaseType extends EditRecord
                                     ->live(),
                                 Toggle::make('has_enabled_csat')
                                     ->label('CSAT')
-                                    ->live()
-                                    ->validationMessages([
-                                        'accepted' => 'At least one option must be accepted, CSAT or NPS.',
-                                    ])
-                                    ->accepted(fn (Get $get) => ! $get('has_enabled_nps') ? true : false)
                                     ->visible(fn (Get $get) => $get('has_enabled_feedback_collection')),
                                 Toggle::make('has_enabled_nps')
                                     ->label('NPS')
-                                    ->live()
-                                    ->validationMessages([
-                                        'accepted' => 'At least one option must be accepted, CSAT or NPS.',
-                                    ])
-                                    ->accepted(fn (Get $get) => ! $get('has_enabled_csat') ? true : false)
                                     ->visible(fn (Get $get) => $get('has_enabled_feedback_collection')),
                             ]),
                     ]),
-            ])
-            ->disabled(fn (CaseType $record) => $record->trashed());
+            ]);
     }
 
-    protected function getSaveFormAction(): Action
+    protected function afterCreate(): void
     {
-        return parent::getSaveFormAction()
-            ->hidden(fn (CaseType $record) => $record->trashed());
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            DeleteAction::make(),
-            RestoreAction::make(),
-            ForceDeleteAction::make(),
-        ];
+        $this->getRecord()->priorities()->createMany(
+            [
+                ['name' => 'High', 'order' => 1],
+                ['name' => 'Medium', 'order' => 2],
+                ['name' => 'Low', 'order' => 3],
+            ]
+        );
     }
 }

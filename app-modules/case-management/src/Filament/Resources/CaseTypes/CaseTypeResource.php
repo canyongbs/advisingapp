@@ -34,19 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypes;
 
 use AdvisingApp\CaseManagement\Enums\CaseEmailTemplateType;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\CreateCaseType;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseType;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseTypeAssignments;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseTypeNotifications;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ListCaseTypes;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ManageCaseTypeAuditors;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ManageCaseTypeEmailTemplate;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ManageCaseTypeManagers;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\ViewCaseType;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\RelationManagers\CasePrioritiesRelationManager;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages\CreateCaseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages\EditCaseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages\EditCaseTypeAssignments;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages\EditCaseTypeNotifications;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages\ListCaseTypes;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages\ManageCaseTypeAuditors;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages\ManageCaseTypeEmailTemplate;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages\ManageCaseTypeManagers;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages\ViewCaseType;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\RelationManagers\CasePrioritiesRelationManager;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use App\Filament\Clusters\CaseManagementAdministration;
 use Filament\Navigation\NavigationItem;

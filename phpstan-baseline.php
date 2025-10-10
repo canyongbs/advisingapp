@@ -2048,28 +2048,28 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseForms/Pages/EditCaseForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseStatusResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseStatuses\\\\CaseStatusResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseStatuses/CaseStatusResource.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseTypeResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseTypes\\\\CaseTypeResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseTypeResource.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseTypes/CaseTypeResource.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:priorities\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseTypeResource/Pages/CreateCaseType.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseTypes/Pages/CreateCaseType.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe property access on non\\-nullable type AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseType\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseTypeResource/Pages/ViewCaseType.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseTypes/Pages/ViewCaseType.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$join of anonymous function has no typehint\\.$#',

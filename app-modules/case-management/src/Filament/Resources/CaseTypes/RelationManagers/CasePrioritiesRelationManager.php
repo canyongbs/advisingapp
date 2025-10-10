@@ -34,23 +34,50 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\RelationManagers;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource;
+use AdvisingApp\CaseManagement\Filament\Resources\SlaResource;
+use AdvisingApp\CaseManagement\Models\CasePriority;
 use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
-class ListCaseTypes extends ListRecords
+class CasePrioritiesRelationManager extends RelationManager
 {
-    protected static string $resource = CaseTypeResource::class;
+    protected static string $relationship = 'priorities';
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('name')
+                    ->label('Name')
+                    ->required()
+                    ->string(),
+                TextInput::make('order')
+                    ->label('Priority Order')
+                    ->required()
+                    ->integer()
+                    ->numeric()
+                    ->disabledOn('edit'),
+                Select::make('sla_id')
+                    ->label('SLA')
+                    ->relationship('sla', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->createOptionForm(fn (Schema $schema) => SlaResource::form($schema)),
+            ]);
+    }
 
     public function table(Table $table): Table
     {
@@ -61,33 +88,30 @@ class ListCaseTypes extends ListRecords
                     ->label('Name')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('order')
+                    ->label('Priority Order')
+                    ->sortable(),
+                TextColumn::make('sla.name')
+                    ->label('SLA')
+                    ->url(fn (CasePriority $record): ?string => $record->sla ? SlaResource::getUrl('edit', ['record' => $record->sla]) : null)
+                    ->searchable(),
                 TextColumn::make('cases_count')
                     ->label('# of Cases')
                     ->counts('cases')
                     ->sortable(),
-                TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->defaultSort('order')
+            ->reorderable('order')
+            ->paginated(false)
+            ->headerActions([
+                CreateAction::make(),
             ])
             ->recordActions([
-                ViewAction::make(),
                 EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ])
-            ->filters([
-                TrashedFilter::make(),
+            ->groupedBulkActions([
+                DeleteBulkAction::make(),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
     }
 }
