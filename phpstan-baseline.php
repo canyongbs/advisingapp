@@ -2000,244 +2000,244 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/case-management/src/Filament/Actions/BulkCreateCaseAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseFormResource\\\\Pages\\\\CreateCaseForm\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseForms\\\\Pages\\\\CreateCaseForm\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseFormResource/Pages/CreateCaseForm.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseForms/Pages/CreateCaseForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseFormResource\\\\Pages\\\\CreateCaseForm\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseForms\\\\Pages\\\\CreateCaseForm\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseFormResource/Pages/CreateCaseForm.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseForms/Pages/CreateCaseForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseFormResource\\\\Pages\\\\CreateCaseForm\\:\\:saveFieldsFromComponents\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseForms\\\\Pages\\\\CreateCaseForm\\:\\:saveFieldsFromComponents\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseFormResource/Pages/CreateCaseForm.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseForms/Pages/CreateCaseForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$caseForm of method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseFormResource\\\\Pages\\\\CreateCaseForm\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseForm, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
+    'message' => '#^Parameter \\#1 \\$caseForm of method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseForms\\\\Pages\\\\CreateCaseForm\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseForm, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseFormResource/Pages/CreateCaseForm.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseForms/Pages/CreateCaseForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseFormResource\\\\Pages\\\\EditCaseForm\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseForms\\\\Pages\\\\EditCaseForm\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseFormResource/Pages/EditCaseForm.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseForms/Pages/EditCaseForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseFormResource\\\\Pages\\\\EditCaseForm\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseForms\\\\Pages\\\\EditCaseForm\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseFormResource/Pages/EditCaseForm.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseForms/Pages/EditCaseForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseFormResource\\\\Pages\\\\EditCaseForm\\:\\:saveFieldsFromComponents\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseForms\\\\Pages\\\\EditCaseForm\\:\\:saveFieldsFromComponents\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseFormResource/Pages/EditCaseForm.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseForms/Pages/EditCaseForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$caseForm of method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseFormResource\\\\Pages\\\\EditCaseForm\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseForm, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
+    'message' => '#^Parameter \\#1 \\$caseForm of method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseForms\\\\Pages\\\\EditCaseForm\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseForm, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseFormResource/Pages/EditCaseForm.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseForms/Pages/EditCaseForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Filament\\\\Resources\\\\Pages\\\\Page\\:\\:\\$record\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseResource\\\\Pages\\\\CaseTimeline\\:\\:\\$modelsToTimeline type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/CaseTimeline.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TGroupKey in call to method Illuminate\\\\Support\\\\Collection\\<int,AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseStatus\\>\\:\\:groupBy\\(\\)$#',
-    'identifier' => 'argument.templateType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/CreateCase.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$priority\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/EditCase.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TGroupKey in call to method Illuminate\\\\Support\\\\Collection\\<int,AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseStatus\\>\\:\\:groupBy\\(\\)$#',
-    'identifier' => 'argument.templateType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/EditCase.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseResource\\\\Pages\\\\ManageCaseAssignment\\:\\:managers\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ManageCaseAssignment.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unsafe call to private method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseResource\\\\Pages\\\\ManageCaseAssignment\\:\\:managers\\(\\) through static\\:\\:\\.$#',
-    'identifier' => 'staticClassAccess.privateMethod',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ManageCaseAssignment.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseResource\\\\Pages\\\\ManageCaseFormSubmission\\:\\:managers\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ManageCaseFormSubmission.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unsafe call to private method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseResource\\\\Pages\\\\ManageCaseFormSubmission\\:\\:managers\\(\\) through static\\:\\:\\.$#',
-    'identifier' => 'staticClassAccess.privateMethod',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ManageCaseFormSubmission.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseResource\\\\Pages\\\\ManageCaseInteraction\\:\\:managers\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ManageCaseInteraction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unsafe call to private method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseResource\\\\Pages\\\\ManageCaseInteraction\\:\\:managers\\(\\) through static\\:\\:\\.$#',
-    'identifier' => 'staticClassAccess.privateMethod',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ManageCaseInteraction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseResource\\\\Pages\\\\ManageCaseUpdate\\:\\:managers\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ManageCaseUpdate.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unsafe call to private method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseResource\\\\Pages\\\\ManageCaseUpdate\\:\\:managers\\(\\) through static\\:\\:\\.$#',
-    'identifier' => 'staticClassAccess.privateMethod',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ManageCaseUpdate.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Anonymous function never returns null so it can be removed from the return type\\.$#',
-    'identifier' => 'return.unusedType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ViewCase.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Match expression does not handle remaining values\\: \\(class\\-string\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\>&literal\\-string\\)\\|\\(class\\-string\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\>&literal\\-string\\)$#',
-    'identifier' => 'match.unhandled',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/Pages/ViewCase.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe property access "\\?\\-\\>id" on left side of \\?\\? is unnecessary\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/RelationManagers/AssignedToRelationManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Form\\\\Models\\\\Submissible\\:\\:\\$is_authenticated\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseResource/RelationManagers/CaseFormSubmissionRelationManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseStatusResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseStatuses\\\\CaseStatusResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseStatusResource.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseStatuses/CaseStatusResource.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseTypeResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseTypes\\\\CaseTypeResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseTypeResource.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseTypes/CaseTypeResource.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:priorities\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseTypeResource/Pages/CreateCaseType.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseTypes/Pages/CreateCaseType.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe property access on non\\-nullable type AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseType\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseTypeResource/Pages/ViewCaseType.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseTypes/Pages/ViewCaseType.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$join of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 3,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/CaseUpdateResource.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#3 \\$record of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 3,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/CaseUpdateResource.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseUpdateResource\\\\Components\\\\CaseAssignmentViewAction\\:\\:caseAssignmentInfolist\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseUpdates\\\\Components\\\\CaseAssignmentViewAction\\:\\:caseAssignmentInfolist\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Components/CaseAssignmentViewAction.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Components/CaseAssignmentViewAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseUpdateResource\\\\Components\\\\CaseHistoryViewAction\\:\\:caseHistoryInfolist\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseUpdates\\\\Components\\\\CaseHistoryViewAction\\:\\:caseHistoryInfolist\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Components/CaseHistoryViewAction.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Components/CaseHistoryViewAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseUpdateResource\\\\Components\\\\CaseUpdateViewAction\\:\\:caseUpdateInfolist\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseUpdates\\\\Components\\\\CaseUpdateViewAction\\:\\:caseUpdateInfolist\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Components/CaseUpdateViewAction.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Components/CaseUpdateViewAction.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$case\\.$#',
     'identifier' => 'property.notFound',
     'count' => 3,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Pages/EditCaseUpdate.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Pages/EditCaseUpdate.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe method call on non\\-nullable type Illuminate\\\\Database\\\\Eloquent\\\\Model\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Pages/EditCaseUpdate.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Pages/EditCaseUpdate.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe property access on non\\-nullable type Illuminate\\\\Database\\\\Eloquent\\\\Model\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Pages/EditCaseUpdate.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Pages/EditCaseUpdate.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$case\\.$#',
     'identifier' => 'property.notFound',
     'count' => 3,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Pages/ViewCaseUpdate.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Pages/ViewCaseUpdate.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe method call on non\\-nullable type Illuminate\\\\Database\\\\Eloquent\\\\Model\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Pages/ViewCaseUpdate.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Pages/ViewCaseUpdate.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe property access on non\\-nullable type Illuminate\\\\Database\\\\Eloquent\\\\Model\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Pages/ViewCaseUpdate.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Pages/ViewCaseUpdate.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Filament\\\\Resources\\\\Pages\\\\Page\\:\\:\\$record\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/CaseResource.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Property AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\Cases\\\\Pages\\\\CaseTimeline\\:\\:\\$modelsToTimeline type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/Pages/CaseTimeline.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Unable to resolve the template type TGroupKey in call to method Illuminate\\\\Support\\\\Collection\\<int,AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseStatus\\>\\:\\:groupBy\\(\\)$#',
+    'identifier' => 'argument.templateType',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/Pages/CreateCase.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$priority\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/Pages/EditCase.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Unable to resolve the template type TGroupKey in call to method Illuminate\\\\Support\\\\Collection\\<int,AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseStatus\\>\\:\\:groupBy\\(\\)$#',
+    'identifier' => 'argument.templateType',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/Pages/EditCase.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\Cases\\\\Pages\\\\ManageCaseAssignment\\:\\:managers\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/Pages/ManageCaseAssignment.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Unsafe call to private method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\Cases\\\\Pages\\\\ManageCaseAssignment\\:\\:managers\\(\\) through static\\:\\:\\.$#',
+    'identifier' => 'staticClassAccess.privateMethod',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/Pages/ManageCaseAssignment.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\Cases\\\\Pages\\\\ManageCaseFormSubmission\\:\\:managers\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/Pages/ManageCaseFormSubmission.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Unsafe call to private method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\Cases\\\\Pages\\\\ManageCaseFormSubmission\\:\\:managers\\(\\) through static\\:\\:\\.$#',
+    'identifier' => 'staticClassAccess.privateMethod',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/Pages/ManageCaseFormSubmission.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\Cases\\\\Pages\\\\ManageCaseInteraction\\:\\:managers\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/Pages/ManageCaseInteraction.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Unsafe call to private method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\Cases\\\\Pages\\\\ManageCaseInteraction\\:\\:managers\\(\\) through static\\:\\:\\.$#',
+    'identifier' => 'staticClassAccess.privateMethod',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/Pages/ManageCaseInteraction.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\Cases\\\\Pages\\\\ManageCaseUpdate\\:\\:managers\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/Pages/ManageCaseUpdate.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Unsafe call to private method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\Cases\\\\Pages\\\\ManageCaseUpdate\\:\\:managers\\(\\) through static\\:\\:\\.$#',
+    'identifier' => 'staticClassAccess.privateMethod',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/Pages/ManageCaseUpdate.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Anonymous function never returns null so it can be removed from the return type\\.$#',
+    'identifier' => 'return.unusedType',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/Pages/ViewCase.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Match expression does not handle remaining values\\: \\(class\\-string\\<AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\>&literal\\-string\\)\\|\\(class\\-string\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\>&literal\\-string\\)$#',
+    'identifier' => 'match.unhandled',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/Pages/ViewCase.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Using nullsafe property access "\\?\\-\\>id" on left side of \\?\\? is unnecessary\\. Use \\-\\> instead\\.$#',
+    'identifier' => 'nullsafe.neverNull',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/RelationManagers/AssignedToRelationManager.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Form\\\\Models\\\\Submissible\\:\\:\\$is_authenticated\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/RelationManagers/CaseFormSubmissionRelationManager.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe method call on non\\-nullable type AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseModel\\. Use \\-\\> instead\\.$#',

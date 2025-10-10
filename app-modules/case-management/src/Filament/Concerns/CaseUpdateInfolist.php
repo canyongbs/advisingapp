@@ -37,7 +37,7 @@
 namespace AdvisingApp\CaseManagement\Filament\Concerns;
 
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
 use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;

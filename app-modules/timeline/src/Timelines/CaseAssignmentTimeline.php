@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Timeline\Timelines;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Components\CaseAssignmentViewAction;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdates\Components\CaseAssignmentViewAction;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\Timeline\Models\CustomTimeline;
 use Filament\Actions\ViewAction;

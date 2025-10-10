@@ -36,7 +36,7 @@
 
 namespace App\Filament\Widgets;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;

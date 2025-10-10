@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatuses\CaseStatusResource;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;

@@ -33,7 +33,7 @@
 --}}
 @php
     use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
-    use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
+    use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdates\CaseUpdateResource;
 @endphp
 
 <div>

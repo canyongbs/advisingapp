@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Concerns;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ManageCaseUpdate;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\ManageCaseUpdate;
 use Illuminate\Support\Str;
 
 trait CaseUpdateBreadcrumbs

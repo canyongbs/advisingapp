@@ -38,9 +38,9 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Relati
 
 use AdvisingApp\CaseManagement\Actions\CreateCaseAction;
 use AdvisingApp\CaseManagement\DataTransferObjects\CaseDataObject;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\CreateCase;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseResource\Pages\ViewCase;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\CreateCase;
+use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\ViewCase;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use App\Filament\Tables\Columns\IdColumn;

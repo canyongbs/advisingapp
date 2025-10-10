@@ -36,7 +36,7 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseManagement\Enums\CaseTypeAssignmentTypes;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseTypeResource\Pages\EditCaseTypeAssignments;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages\EditCaseTypeAssignments;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Rules\CaseTypeAssignmentsIndividualUserMustBeAManager;
 use AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories\EditCaseTypeAssignmentsRequestFactory;

@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdates\CaseUpdateResource;
 use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use App\Models\User;
 use App\Settings\LicenseSettings;

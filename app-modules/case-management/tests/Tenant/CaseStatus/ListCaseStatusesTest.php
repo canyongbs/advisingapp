@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseStatusResource\Pages\ListCaseStatuses;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatuses\CaseStatusResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseStatuses\Pages\ListCaseStatuses;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Prospect\Models\Prospect;
