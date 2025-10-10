@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
+namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
 
 use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
-use AdvisingApp\Form\Filament\Resources\FormResource;
-use AdvisingApp\Form\Filament\Resources\FormResource\Pages\Concerns\HasSharedFormConfiguration;
+use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
+use AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\Form\Models\Form;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;

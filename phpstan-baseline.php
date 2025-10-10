@@ -3812,88 +3812,88 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/UrlFormFieldBlock.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\FormResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
+    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\Forms\\\\FormResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/FormResource.php',
+    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/FormResource.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\FormResource\\\\Pages\\\\CreateForm\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\Forms\\\\Pages\\\\CreateForm\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/FormResource/Pages/CreateForm.php',
+    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/CreateForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\FormResource\\\\Pages\\\\CreateForm\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\Forms\\\\Pages\\\\CreateForm\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/FormResource/Pages/CreateForm.php',
+    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/CreateForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\FormResource\\\\Pages\\\\CreateForm\\:\\:saveFieldsFromComponents\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\Forms\\\\Pages\\\\CreateForm\\:\\:saveFieldsFromComponents\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/FormResource/Pages/CreateForm.php',
+    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/CreateForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$form of method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\FormResource\\\\Pages\\\\CreateForm\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\Form\\\\Models\\\\Form, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
+    'message' => '#^Parameter \\#1 \\$form of method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\Forms\\\\Pages\\\\CreateForm\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\Form\\\\Models\\\\Form, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/FormResource/Pages/CreateForm.php',
+    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/CreateForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\FormResource\\\\Pages\\\\EditForm\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\Forms\\\\Pages\\\\EditForm\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/FormResource/Pages/EditForm.php',
+    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/EditForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\FormResource\\\\Pages\\\\EditForm\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\Forms\\\\Pages\\\\EditForm\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/FormResource/Pages/EditForm.php',
+    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/EditForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\FormResource\\\\Pages\\\\EditForm\\:\\:saveFieldsFromComponents\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\Forms\\\\Pages\\\\EditForm\\:\\:saveFieldsFromComponents\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/FormResource/Pages/EditForm.php',
+    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/EditForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$form of method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\FormResource\\\\Pages\\\\EditForm\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\Form\\\\Models\\\\Form, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
+    'message' => '#^Parameter \\#1 \\$form of method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\Forms\\\\Pages\\\\EditForm\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\Form\\\\Models\\\\Form, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/FormResource/Pages/EditForm.php',
+    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/EditForm.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$name\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/FormResource/Pages/ListForms.php',
+    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/ListForms.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Form\\\\Models\\\\Submissible\\:\\:\\$is_authenticated\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/FormResource/Pages/ManageFormSubmissions.php',
+    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/ManageFormSubmissions.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$name\\.$#',
     'identifier' => 'property.notFound',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/FormResource/Pages/ManageFormSubmissions.php',
+    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/ManageFormSubmissions.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$submissions\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/FormResource/Pages/ManageFormSubmissions.php',
+    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/ManageFormSubmissions.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$records of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/FormResource/Pages/ManageFormSubmissions.php',
+    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/ManageFormSubmissions.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:canceled\\(\\)\\.$#',

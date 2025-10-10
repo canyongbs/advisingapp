@@ -38,7 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Relati
 
 use AdvisingApp\Form\Enums\FormSubmissionStatus;
 use AdvisingApp\Form\Filament\Actions\RequestFormSubmission;
-use AdvisingApp\Form\Filament\Resources\FormResource;
+use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Tables\Filters\FormSubmissionStatusFilter;
 use AdvisingApp\Form\Models\FormSubmission;
 use App\Enums\Feature;

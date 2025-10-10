@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
+namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
 
-use AdvisingApp\Form\Filament\Resources\FormResource;
+use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Resources\Pages\EditRecord;
