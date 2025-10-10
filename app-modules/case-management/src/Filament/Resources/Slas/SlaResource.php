@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources;
+namespace AdvisingApp\CaseManagement\Filament\Resources\Slas;
 
-use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\CreateSla;
-use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\EditSla;
-use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages\ListSlas;
-use AdvisingApp\CaseManagement\Filament\Resources\SlaResource\RelationManagers\CasePrioritiesRelationManager;
+use AdvisingApp\CaseManagement\Filament\Resources\Slas\Pages\CreateSla;
+use AdvisingApp\CaseManagement\Filament\Resources\Slas\Pages\EditSla;
+use AdvisingApp\CaseManagement\Filament\Resources\Slas\Pages\ListSlas;
+use AdvisingApp\CaseManagement\Filament\Resources\Slas\RelationManagers\CasePrioritiesRelationManager;
 use AdvisingApp\CaseManagement\Models\Sla;
 use App\Filament\Clusters\CaseManagementAdministration;
 use App\Filament\Forms\Components\SecondsDurationInput;

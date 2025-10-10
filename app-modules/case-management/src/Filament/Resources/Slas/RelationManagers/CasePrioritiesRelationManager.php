@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\SlaResource\RelationManagers;
+namespace AdvisingApp\CaseManagement\Filament\Resources\Slas\RelationManagers;
 
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\CaseTypeResource;
 use AdvisingApp\CaseManagement\Models\CasePriority;

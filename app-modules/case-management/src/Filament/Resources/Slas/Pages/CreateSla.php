@@ -34,42 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\Slas\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\SlaResource;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use AdvisingApp\CaseManagement\Filament\Resources\Slas\SlaResource;
+use Filament\Resources\Pages\CreateRecord;
 
-class ListSlas extends ListRecords
+class CreateSla extends CreateRecord
 {
     protected static string $resource = SlaResource::class;
-
-    public function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                TextColumn::make('name')
-                    ->searchable(),
-            ])
-            ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
-    }
 }

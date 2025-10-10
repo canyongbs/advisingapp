@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\RelationManagers;
 
-use AdvisingApp\CaseManagement\Filament\Resources\SlaResource;
+use AdvisingApp\CaseManagement\Filament\Resources\Slas\SlaResource;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;

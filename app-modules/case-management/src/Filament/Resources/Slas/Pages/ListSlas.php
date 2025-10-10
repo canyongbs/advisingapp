@@ -34,23 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\Slas\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\SlaResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\CaseManagement\Filament\Resources\Slas\SlaResource;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-class EditSla extends EditRecord
+class ListSlas extends ListRecords
 {
-    use EditPageRedirection;
-
     protected static string $resource = SlaResource::class;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('name')
+                    ->searchable(),
+            ])
+            ->recordActions([
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
 
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            CreateAction::make(),
         ];
     }
 }

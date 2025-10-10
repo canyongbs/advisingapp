@@ -34,12 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\Slas\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\SlaResource;
-use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\CaseManagement\Filament\Resources\Slas\SlaResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Actions\DeleteAction;
+use Filament\Resources\Pages\EditRecord;
 
-class CreateSla extends CreateRecord
+class EditSla extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = SlaResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
+    }
 }
