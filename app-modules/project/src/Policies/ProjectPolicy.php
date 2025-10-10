@@ -80,11 +80,6 @@ class ProjectPolicy
                     return Response::deny("You don't have permission to update this project because you're not manager, or creator of this project.");
                 }
             }
-
-            return $authenticatable->canOrElse(
-                abilities: 'project.*.update',
-                denyResponse: 'You do not have permission to update this project.'
-            );
         }
 
         return $authenticatable->canOrElse(
@@ -106,11 +101,6 @@ class ProjectPolicy
                     return Response::deny("You don't have permission to delete this project because you're not manager, or creator of this project.");
                 }
             }
-
-            return $authenticatable->canOrElse(
-                abilities: 'project.*.delete',
-                denyResponse: 'You do not have permission to delete this project.'
-            );
         }
 
         return $authenticatable->canOrElse(
@@ -132,11 +122,6 @@ class ProjectPolicy
                     return Response::deny("You don't have permission to restore this project because you're not manager, or creator of this project.");
                 }
             }
-
-            return $authenticatable->canOrElse(
-                abilities: 'project.*.restore',
-                denyResponse: 'You do not have permission to restore this project.'
-            );
         }
 
         return $authenticatable->canOrElse(
@@ -158,11 +143,6 @@ class ProjectPolicy
                     return Response::deny("You don't have permission to permanently delete this project because you're not manager, or creator of this project.");
                 }
             }
-
-            return $authenticatable->canOrElse(
-                abilities: 'project.*.force-delete',
-                denyResponse: 'You do not have permission to permanently delete this project.'
-            );
         }
 
         return $authenticatable->canOrElse(
