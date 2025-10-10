@@ -203,7 +203,7 @@ trait CanManagePromptLibrary
                             ->label(fn (): string => ($prompt->isUpvoted() ? 'Upvoted ' : 'Upvote ') . "({$prompt->upvotes()->count()})")
                             ->color(fn (): string => $prompt->isUpvoted() ? 'success' : 'gray')
                             ->link()
-                            ->icon('heroicon-m-chevron-up')
+                            ->icon('heroicon-m-hand-thumb-up')
                             ->action(fn () => $prompt->toggleUpvote());
                     })
                     ->required()

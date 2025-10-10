@@ -82,7 +82,7 @@ class ViewPrompt extends ViewRecord
             Action::make('upvote')
                 ->label(fn (): string => ($prompt->isUpvoted() ? 'Upvoted ' : 'Upvote ') . "({$prompt->upvotes()->count()})")
                 ->color(fn (): string => $prompt->isUpvoted() ? 'success' : 'gray')
-                ->icon(fn (): ?string => $prompt->isUpvoted() ? 'heroicon-m-chevron-up' : null)
+                ->icon('heroicon-m-hand-thumb-up')
                 ->action(fn () => $prompt->toggleUpvote()),
             EditAction::make(),
         ];

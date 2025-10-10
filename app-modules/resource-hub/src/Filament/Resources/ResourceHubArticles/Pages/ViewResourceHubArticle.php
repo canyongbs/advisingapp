@@ -125,7 +125,7 @@ class ViewResourceHubArticle extends ViewRecord
             Action::make('upvote')
                 ->label(fn (): string => ($resourceHubArticle->isUpvoted() ? 'Upvoted ' : 'Upvote ') . "({$resourceHubArticle->upvotes()->count()})")
                 ->color(fn (): string => $resourceHubArticle->isUpvoted() ? 'success' : 'gray')
-                ->icon(fn (): ?string => $resourceHubArticle->isUpvoted() ? 'heroicon-m-chevron-up' : null)
+                ->icon('heroicon-m-hand-thumb-up')
                 ->action(fn () => $resourceHubArticle->toggleUpvote()),
             EditAction::make(),
             DeleteAction::make(),
