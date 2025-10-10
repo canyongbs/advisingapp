@@ -35,8 +35,8 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\EditCaseUpdate;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdates\CaseUpdateResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdates\Pages\EditCaseUpdate;
 use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories\EditCaseUpdateRequestFactory;
 use App\Models\User;

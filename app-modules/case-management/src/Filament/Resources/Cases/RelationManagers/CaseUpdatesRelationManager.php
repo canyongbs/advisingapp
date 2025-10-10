@@ -37,7 +37,7 @@
 namespace AdvisingApp\CaseManagement\Filament\Resources\Cases\RelationManagers;
 
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdates\CaseUpdateResource;
 use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;

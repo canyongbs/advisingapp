@@ -34,29 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdates\Components;
 
-use AdvisingApp\CaseManagement\Filament\Concerns\CaseUpdateBreadcrumbs;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\CaseManagement\Filament\Concerns\CaseAssignmentInfolist;
+use Filament\Actions\ViewAction;
 
-class EditCaseUpdate extends EditRecord
+class CaseAssignmentViewAction extends ViewAction
 {
-    use CaseUpdateBreadcrumbs;
-    use EditPageRedirection;
+    use CaseAssignmentInfolist;
 
-    protected static ?string $breadcrumb = 'Edit';
-
-    protected static ?string $navigationLabel = 'Edit';
-
-    protected static string $resource = CaseUpdateResource::class;
-
-    protected function getHeaderActions(): array
+    protected function setUp(): void
     {
-        return [
-            DeleteAction::make(),
-        ];
+        parent::setUp();
+
+        $this->schema($this->caseAssignmentInfolist());
     }
 }

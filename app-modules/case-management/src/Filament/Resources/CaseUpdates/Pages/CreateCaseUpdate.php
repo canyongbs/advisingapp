@@ -34,19 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Components;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdates\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Concerns\CaseAssignmentInfolist;
-use Filament\Actions\ViewAction;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdates\CaseUpdateResource;
+use Filament\Resources\Pages\CreateRecord;
 
-class CaseAssignmentViewAction extends ViewAction
+class CreateCaseUpdate extends CreateRecord
 {
-    use CaseAssignmentInfolist;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->schema($this->caseAssignmentInfolist());
-    }
+    protected static string $resource = CaseUpdateResource::class;
 }

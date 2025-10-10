@@ -2075,67 +2075,67 @@ $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$join of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 3,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/CaseUpdateResource.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#3 \\$record of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 3,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/CaseUpdateResource.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseUpdateResource\\\\Components\\\\CaseAssignmentViewAction\\:\\:caseAssignmentInfolist\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseUpdates\\\\Components\\\\CaseAssignmentViewAction\\:\\:caseAssignmentInfolist\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Components/CaseAssignmentViewAction.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Components/CaseAssignmentViewAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseUpdateResource\\\\Components\\\\CaseHistoryViewAction\\:\\:caseHistoryInfolist\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseUpdates\\\\Components\\\\CaseHistoryViewAction\\:\\:caseHistoryInfolist\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Components/CaseHistoryViewAction.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Components/CaseHistoryViewAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseUpdateResource\\\\Components\\\\CaseUpdateViewAction\\:\\:caseUpdateInfolist\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\CaseUpdates\\\\Components\\\\CaseUpdateViewAction\\:\\:caseUpdateInfolist\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Components/CaseUpdateViewAction.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Components/CaseUpdateViewAction.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$case\\.$#',
     'identifier' => 'property.notFound',
     'count' => 3,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Pages/EditCaseUpdate.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Pages/EditCaseUpdate.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe method call on non\\-nullable type Illuminate\\\\Database\\\\Eloquent\\\\Model\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Pages/EditCaseUpdate.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Pages/EditCaseUpdate.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe property access on non\\-nullable type Illuminate\\\\Database\\\\Eloquent\\\\Model\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Pages/EditCaseUpdate.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Pages/EditCaseUpdate.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$case\\.$#',
     'identifier' => 'property.notFound',
     'count' => 3,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Pages/ViewCaseUpdate.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Pages/ViewCaseUpdate.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe method call on non\\-nullable type Illuminate\\\\Database\\\\Eloquent\\\\Model\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Pages/ViewCaseUpdate.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Pages/ViewCaseUpdate.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe property access on non\\-nullable type Illuminate\\\\Database\\\\Eloquent\\\\Model\\. Use \\-\\> instead\\.$#',
     'identifier' => 'nullsafe.neverNull',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdateResource/Pages/ViewCaseUpdate.php',
+    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/CaseUpdates/Pages/ViewCaseUpdate.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Filament\\\\Resources\\\\Pages\\\\Page\\:\\:\\$record\\.$#',

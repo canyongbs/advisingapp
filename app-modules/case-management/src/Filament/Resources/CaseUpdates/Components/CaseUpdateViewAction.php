@@ -34,25 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdates\Components;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
-use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use AdvisingApp\CaseManagement\Filament\Concerns\CaseUpdateInfolist;
+use Filament\Actions\ViewAction;
 
-class ListCaseUpdates extends ListRecords
+class CaseUpdateViewAction extends ViewAction
 {
-    protected static string $resource = CaseUpdateResource::class;
+    use CaseUpdateInfolist;
 
-    public static function canAccess(array $arguments = []): bool
+    protected function setUp(): void
     {
-        return false;
-    }
+        parent::setUp();
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
+        $this->schema($this->caseUpdateInfolist());
     }
 }

@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdates;
 
 use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\CreateCaseUpdate;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\EditCaseUpdate;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\ListCaseUpdates;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages\ViewCaseUpdate;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdates\Pages\CreateCaseUpdate;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdates\Pages\EditCaseUpdate;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdates\Pages\ListCaseUpdates;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdates\Pages\ViewCaseUpdate;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CaseUpdate;
 use App\Filament\Tables\Columns\IdColumn;

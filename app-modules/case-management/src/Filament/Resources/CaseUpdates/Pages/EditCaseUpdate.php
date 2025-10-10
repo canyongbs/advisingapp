@@ -34,48 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource\Pages;
+namespace AdvisingApp\CaseManagement\Filament\Resources\CaseUpdates\Pages;
 
-use AdvisingApp\CaseManagement\Enums\CaseUpdateDirection;
 use AdvisingApp\CaseManagement\Filament\Concerns\CaseUpdateBreadcrumbs;
-use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdateResource;
-use AdvisingApp\CaseManagement\Models\CaseUpdate;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
+use AdvisingApp\CaseManagement\Filament\Resources\CaseUpdates\CaseUpdateResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Actions\DeleteAction;
+use Filament\Resources\Pages\EditRecord;
 
-class ViewCaseUpdate extends ViewRecord
+class EditCaseUpdate extends EditRecord
 {
     use CaseUpdateBreadcrumbs;
+    use EditPageRedirection;
+
+    protected static ?string $breadcrumb = 'Edit';
+
+    protected static ?string $navigationLabel = 'Edit';
 
     protected static string $resource = CaseUpdateResource::class;
 
-    protected static ?string $breadcrumb = 'View';
-
-    protected static ?string $navigationLabel = 'View';
-
-    public function infolist(Schema $schema): Schema
+    protected function getHeaderActions(): array
     {
-        return $schema
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('case.case_number')
-                            ->label('Case')
-                            ->url(fn (CaseUpdate $caseUpdate): string => CaseResource::getUrl('view', ['record' => $caseUpdate->case]))
-                            ->color('primary'),
-                        IconEntry::make('internal')
-                            ->boolean(),
-                        TextEntry::make('direction')
-                            ->icon(fn (CaseUpdateDirection $state): string => $state->getIcon())
-                            ->formatStateUsing(fn (CaseUpdateDirection $state): string => $state->getLabel()),
-                        TextEntry::make('update')
-                            ->columnSpanFull(),
-                    ])
-                    ->columns(),
-            ]);
+        return [
+            DeleteAction::make(),
+        ];
     }
 }
