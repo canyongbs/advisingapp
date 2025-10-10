@@ -143,6 +143,9 @@ class EnrollmentsRelationManager extends RelationManager
                 TextColumn::make('class_nbr')
                     ->label('Course')
                     ->placeholder('N/A'),
+                TextColumn::make('faculty_name')
+                    ->label('Instructor')
+                    ->placeholder('N/A'),
                 TextColumn::make('section')
                     ->label('Section')
                     ->placeholder('N/A'),
