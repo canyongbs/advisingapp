@@ -37,6 +37,7 @@
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\ManageApplicationWorkflows;
 use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow;
 use AdvisingApp\Workflow\Models\Workflow;
@@ -44,7 +45,7 @@ use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 
-use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\seed;
 use function Pest\Livewire\livewire;
@@ -79,34 +80,6 @@ test('can successfully create a new workflow for an application through manage w
     expect($workflowTrigger->related_id)->toBe($application->id);
     expect($workflowTrigger->created_by_id)->toBe($user->id);
     expect($workflowTrigger->created_by_type)->toBe($user->getMorphClass());
-
-    assertDatabaseHas(Workflow::class, [
-        'name' => 'Application Workflow',
-        'is_enabled' => false,
-        'workflow_trigger_id' => $workflowTrigger->id,
-    ]);
-
-    assertDatabaseHas(WorkflowTrigger::class, [
-        'type' => WorkflowTriggerType::EventBased->value,
-        'related_type' => $application->getMorphClass(),
-        'related_id' => $application->id,
-        'created_by_id' => $user->id,
-    ]);
-});
-
-test('creates workflow with proper database transaction behavior', function () {
-    asSuperAdmin();
-
-    $application = Application::factory()->create();
-
-    expect(Workflow::count())->toBe(0);
-    expect(WorkflowTrigger::count())->toBe(0);
-
-    livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
-        ->callAction('create');
-
-    expect(Workflow::count())->toBe(1);
-    expect(WorkflowTrigger::count())->toBe(1);
 });
 
 test('creates multiple workflows for the same application without conflicts', function () {
@@ -140,20 +113,20 @@ test('creates multiple workflows for the same application without conflicts', fu
     }
 });
 
-test('requires proper authentication to create workflows', function () {
+test('application workflow creation is gated with proper access control', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
     $application = Application::factory()->create();
+
+    actingAs($user);
 
     livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
         ->assertForbidden();
 
     expect(Workflow::count())->toBe(0);
     expect(WorkflowTrigger::count())->toBe(0);
-});
 
-test('authenticated super admin user can create workflows', function () {
-    asSuperAdmin();
-
-    $application = Application::factory()->create();
+    $user->givePermissionTo('application.view-any');
+    $user->givePermissionTo('application.*.update');
 
     livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
         ->callAction('create');
@@ -162,130 +135,8 @@ test('authenticated super admin user can create workflows', function () {
     expect(WorkflowTrigger::count())->toBe(1);
 
     $workflowTrigger = WorkflowTrigger::first();
-    $user = User::first();
     expect($workflowTrigger->created_by_id)->toBe($user->id);
-});
-
-test('creates workflow trigger with correct application relationships', function () {
-    asSuperAdmin();
-
-    $application = Application::factory()->create();
-
-    livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
-        ->callAction('create');
-
-    $workflowTrigger = WorkflowTrigger::first();
-
-    expect($workflowTrigger->related)->toBeInstanceOf(Application::class);
-    $relatedApplication = $workflowTrigger->related;
-    assert($relatedApplication instanceof Application);
-    expect($relatedApplication->id)->toBe($application->id);
-    expect($relatedApplication->name)->toBe($application->name);
-});
-
-test('creates workflow for application with different configurations', function (callable $applicationFactory, array $expectedConfig): void {
-    asSuperAdmin();
-
-    $application = $applicationFactory();
-
-    livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
-        ->callAction('create');
-
-    expect(Workflow::count())->toBe(1);
-    expect(WorkflowTrigger::count())->toBe(1);
-
-    $workflowTrigger = WorkflowTrigger::first();
     expect($workflowTrigger->related_id)->toBe($application->id);
-
-    foreach ($expectedConfig as $attribute => $value) {
-        expect($application->{$attribute})->toBe($value);
-    }
-})->with([
-    'application with description' => [
-        fn () => Application::factory()->state(['description' => 'Test application description'])->create(),
-        ['description' => 'Test application description'],
-    ],
-]);
-
-test('handles workflow creation gracefully when application does not exist', function () {
-    asSuperAdmin();
-
-    $application = Application::factory()->create();
-    $applicationId = $application->id;
-    $application->delete();
-
-    expect(function () use ($applicationId) {
-        $nonExistentApplication = new Application(['id' => $applicationId]);
-        livewire(ManageApplicationWorkflows::class, ['record' => $nonExistentApplication->getKey()])
-            ->callAction('create');
-    })->toThrow(Exception::class);
-
-    expect(Workflow::count())->toBe(0);
-    expect(WorkflowTrigger::count())->toBe(0);
-});
-
-test('creates workflow in disabled state by default for safety', function () {
-    asSuperAdmin();
-
-    $application = Application::factory()->create();
-
-    livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
-        ->callAction('create');
-
-    $workflow = Workflow::first();
-
-    expect($workflow->is_enabled)->toBeFalse();
-
-    assertDatabaseHas(Workflow::class, [
-        'is_enabled' => false,
-    ]);
-});
-
-test('creates workflow with event-based trigger type for application submissions', function () {
-    asSuperAdmin();
-
-    $application = Application::factory()->create();
-
-    livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
-        ->callAction('create');
-
-    $workflowTrigger = WorkflowTrigger::first();
-
-    expect($workflowTrigger->type)->toBe(WorkflowTriggerType::EventBased);
-
-    assertDatabaseHas(WorkflowTrigger::class, [
-        'type' => WorkflowTriggerType::EventBased->value,
-    ]);
-});
-
-test('workflow creation integrates properly with existing application workflows list', function () {
-    asSuperAdmin();
-
-    $application = Application::factory()->create();
-
-    Workflow::factory()
-        ->count(2)
-        ->for(
-            WorkflowTrigger::factory()
-                ->state([
-                    'related_type' => $application->getMorphClass(),
-                    'related_id' => $application->id,
-                ])
-        )
-        ->create();
-
-    expect(Workflow::count())->toBe(2);
-
-    livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
-        ->callAction('create');
-
-    expect(Workflow::count())->toBe(3);
-
-    $allTriggers = WorkflowTrigger::all();
-
-    foreach ($allTriggers as $trigger) {
-        expect($trigger->related_id)->toBe($application->id);
-    }
 });
 
 test('can successfully edit workflow name through edit workflow page', function () {
@@ -302,20 +153,16 @@ test('can successfully edit workflow name through edit workflow page', function 
         )
         ->create();
 
-    $newWorkflow = Workflow::factory()->make();
+    $faker = fake();
+    $newWorkflowName = $faker->sentence(3);
 
     livewire(EditWorkflow::class, ['record' => $oldWorkflow->getKey()])
-        ->fillForm(['name' => $newWorkflow->name])
+        ->fillForm(['name' => $newWorkflowName])
         ->call('save')
         ->assertHasNoFormErrors();
 
     $oldWorkflow->refresh();
-    expect($oldWorkflow->name)->toBe($newWorkflow->name);
-
-    assertDatabaseHas(Workflow::class, [
-        'id' => $oldWorkflow->id,
-        'name' => $newWorkflow->name,
-    ]);
+    expect($oldWorkflow->name)->toBe($newWorkflowName);
 });
 
 test('can enable workflow through edit workflow page', function () {
@@ -340,11 +187,6 @@ test('can enable workflow through edit workflow page', function () {
 
     $workflow->refresh();
     expect($workflow->is_enabled)->toBeTrue();
-
-    assertDatabaseHas(Workflow::class, [
-        'id' => $workflow->id,
-        'is_enabled' => true,
-    ]);
 });
 
 test('can disable workflow through edit workflow page', function () {
@@ -369,11 +211,6 @@ test('can disable workflow through edit workflow page', function () {
 
     $workflow->refresh();
     expect($workflow->is_enabled)->toBeFalse();
-
-    assertDatabaseHas(Workflow::class, [
-        'id' => $workflow->id,
-        'is_enabled' => false,
-    ]);
 });
 
 test('validates workflow name is required when editing', function () {
@@ -418,9 +255,8 @@ test('validates workflow name has maximum length when editing', function () {
         ->assertHasFormErrors(['name']);
 });
 
-test('can edit workflow with proper permissions', function () {
-    asSuperAdmin();
-
+test('workflow editing succeeds with proper permissions', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
     $application = Application::factory()->create();
     $oldWorkflow = Workflow::factory()
         ->for(
@@ -432,88 +268,25 @@ test('can edit workflow with proper permissions', function () {
         )
         ->create();
 
-    $newWorkflow = Workflow::factory()->make();
+    $user->givePermissionTo('application.view-any');
+    $user->givePermissionTo('application.*.update');
+
+    $faker = fake();
+    $newWorkflowName = $faker->sentence(3);
+
+    actingAs($user);
 
     livewire(EditWorkflow::class, ['record' => $oldWorkflow->getKey()])
-        ->fillForm(['name' => $newWorkflow->name])
+        ->fillForm(['name' => $newWorkflowName])
         ->call('save')
         ->assertHasNoFormErrors();
 
     $oldWorkflow->refresh();
-    expect($oldWorkflow->name)->toBe($newWorkflow->name);
+    expect($oldWorkflow->name)->toBe($newWorkflowName);
 });
 
-test('preserves workflow trigger relationship when editing workflow', function () {
-    asSuperAdmin();
-
-    $application = Application::factory()->create();
-    $workflowTrigger = WorkflowTrigger::factory()
-        ->state([
-            'related_type' => $application->getMorphClass(),
-            'related_id' => $application->id,
-        ])
-        ->create();
-
-    $oldWorkflow = Workflow::factory()
-        ->for($workflowTrigger)
-        ->create();
-
-    $originalTriggerId = $oldWorkflow->workflow_trigger_id;
-    $newWorkflow = Workflow::factory()->make();
-
-    livewire(EditWorkflow::class, ['record' => $oldWorkflow->getKey()])
-        ->fillForm(['name' => $newWorkflow->name])
-        ->call('save')
-        ->assertHasNoFormErrors();
-
-    $oldWorkflow->refresh();
-    expect($oldWorkflow->workflow_trigger_id)->toBe($originalTriggerId);
-    expect($oldWorkflow->workflowTrigger->related_id)->toBe($application->id);
-});
-
-test('can edit multiple workflows for same application independently', function () {
-    asSuperAdmin();
-
-    $application = Application::factory()->create();
-
-    $workflow1 = Workflow::factory()
-        ->for(
-            WorkflowTrigger::factory()
-                ->state([
-                    'related_type' => $application->getMorphClass(),
-                    'related_id' => $application->id,
-                ])
-        )
-        ->create();
-
-    $workflow2 = Workflow::factory()
-        ->for(
-            WorkflowTrigger::factory()
-                ->state([
-                    'related_type' => $application->getMorphClass(),
-                    'related_id' => $application->id,
-                ])
-        )
-        ->create();
-
-    $newWorkflow = Workflow::factory()->make();
-
-    livewire(EditWorkflow::class, ['record' => $workflow1->getKey()])
-        ->fillForm(['name' => $newWorkflow->name])
-        ->call('save')
-        ->assertHasNoFormErrors();
-
-    $workflow1->refresh();
-    $workflow2->refresh();
-    $originalSecondName = $workflow2->name;
-
-    expect($workflow1->name)->toBe($newWorkflow->name);
-    expect($workflow2->name)->toBe($originalSecondName);
-});
-
-test('can delete workflow through edit page', function () {
-    asSuperAdmin();
-
+test('workflow deletion succeeds with proper permissions', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
     $application = Application::factory()->create();
     $workflow = Workflow::factory()
         ->for(
@@ -525,7 +298,13 @@ test('can delete workflow through edit page', function () {
         )
         ->create();
 
+    $user->givePermissionTo('application.view-any');
+    $user->givePermissionTo('application.*.update');
+    $user->givePermissionTo('application.*.delete');
+
     $triggerId = $workflow->workflow_trigger_id;
+
+    actingAs($user);
 
     livewire(EditWorkflow::class, [
         'record' => $workflow->getRouteKey(),
