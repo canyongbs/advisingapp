@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Filament\Resources\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use App\Models\User;
 use Filament\Resources\Pages\ViewRecord;
+use Livewire\Attributes\Computed;
 use UnitEnum;
 
 class PreviewQnaAdvisor extends ViewRecord
@@ -62,5 +63,27 @@ class PreviewQnaAdvisor extends ViewRecord
         $user = auth()->user();
 
         return $user->can('viewAny', QnaAdvisor::class) && ($user->can('create', QnaAdvisor::class) || $user->can('update', $parameters['record'])) && parent::canAccess($parameters);
+    }
+
+    #[Computed]
+    public function isFailed(): bool
+    {
+        $advisor = $this->getRecord();
+
+        assert($advisor instanceof QnaAdvisor);
+
+        return $advisor->files()->whereNull('parsing_results')->where('updated_at', '<', now()->subHour())->exists()
+            || $advisor->links()->whereNull('parsing_results')->where('updated_at', '<', now()->subHour())->exists();
+    }
+
+    #[Computed]
+    public function isProcessing(): bool
+    {
+        $advisor = $this->getRecord();
+
+        assert($advisor instanceof QnaAdvisor);
+
+        return $advisor->files()->whereNull('parsing_results')->where('updated_at', '>=', now()->subHour())->exists()
+            || $advisor->links()->whereNull('parsing_results')->where('updated_at', '>=', now()->subHour())->exists();
     }
 }
