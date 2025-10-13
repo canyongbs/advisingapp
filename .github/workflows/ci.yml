@@ -77,7 +77,7 @@ jobs:
       - run: npm install
 
       - name: Set up Ruby
-        uses: ruby/setup-ruby@0481980f17b760ef6bca5e8c55809102a0af1e5a #1.263.0
+        uses: ruby/setup-ruby@ab177d40ee5483edb974554986f56b33477e21d0 #1.265.0
 
       - name: Run Ruby Script
         run: ruby ./copyright.rb
