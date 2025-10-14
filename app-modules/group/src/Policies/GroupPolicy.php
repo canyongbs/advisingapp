@@ -59,84 +59,84 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'segment.view-any',
-            denyResponse: 'You do not have permission to view segments.'
+            abilities: 'group.view-any',
+            denyResponse: 'You do not have permission to view groups.'
         );
     }
 
     public function view(Authenticatable $authenticatable, Group $group): Response
     {
         if (! $authenticatable->hasLicense($group->model->class()::getLicenseType())) {
-            return Response::deny('You do not have permission to view this segment.');
+            return Response::deny('You do not have permission to view this group.');
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["segment.{$group->getKey()}.view"],
-            denyResponse: 'You do not have permission to view this segment.'
+            abilities: ["group.{$group->getKey()}.view"],
+            denyResponse: 'You do not have permission to view this group.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'segment.create',
-            denyResponse: 'You do not have permission to create segments.'
+            abilities: 'group.create',
+            denyResponse: 'You do not have permission to create groups.'
         );
     }
 
     public function update(Authenticatable $authenticatable, Group $group): Response
     {
         if (! $authenticatable->hasLicense($group->model->class()::getLicenseType())) {
-            return Response::deny('You do not have permission to update this segment.');
+            return Response::deny('You do not have permission to update this group.');
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["segment.{$group->getKey()}.update"],
-            denyResponse: 'You do not have permission to update this segment.'
+            abilities: ["group.{$group->getKey()}.update"],
+            denyResponse: 'You do not have permission to update this group.'
         );
     }
 
     public function delete(Authenticatable $authenticatable, Group $group): Response
     {
         if (! $authenticatable->hasLicense($group->model->class()::getLicenseType())) {
-            return Response::deny('You do not have permission to delete this segment.');
+            return Response::deny('You do not have permission to delete this group.');
         }
 
         if ($group->campaigns()->exists()) {
-            return Response::deny('This population segment is associated with a campaign. Please remove the campaign before attempting to remove the segment.');
+            return Response::deny('This population group is associated with a campaign. Please remove the campaign before attempting to remove the group.');
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["segment.{$group->getKey()}.delete"],
-            denyResponse: 'You do not have permission to delete this segment.'
+            abilities: ["group.{$group->getKey()}.delete"],
+            denyResponse: 'You do not have permission to delete this group.'
         );
     }
 
     public function restore(Authenticatable $authenticatable, Group $group): Response
     {
         if (! $authenticatable->hasLicense($group->model->class()::getLicenseType())) {
-            return Response::deny('You do not have permission to restore this segment.');
+            return Response::deny('You do not have permission to restore this group.');
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["segment.{$group->getKey()}.restore"],
-            denyResponse: 'You do not have permission to restore this segment.'
+            abilities: ["group.{$group->getKey()}.restore"],
+            denyResponse: 'You do not have permission to restore this group.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable, Group $group): Response
     {
         if (! $authenticatable->hasLicense($group->model->class()::getLicenseType())) {
-            return Response::deny('You do not have permission to permanently delete this segment.');
+            return Response::deny('You do not have permission to permanently delete this group.');
         }
 
         if ($group->campaigns()->exists()) {
-            return Response::deny('This population segment is associated with a campaign. Please remove the campaign before attempting to remove the segment.');
+            return Response::deny('This population group is associated with a campaign. Please remove the campaign before attempting to remove the group.');
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["segment.{$group->getKey()}.force-delete"],
-            denyResponse: 'You do not have permission to permanently delete this segment.'
+            abilities: ["group.{$group->getKey()}.force-delete"],
+            denyResponse: 'You do not have permission to permanently delete this group.'
         );
     }
 }

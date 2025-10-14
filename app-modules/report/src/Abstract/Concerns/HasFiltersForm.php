@@ -85,8 +85,8 @@ trait HasFiltersForm
                     ->schema([
                         Select::make('populationSegment')
                             ->label('Select Group')
-                            ->options(fn (): array => $this->getSegmentOptions($groupModel))
-                            ->getSearchResultsUsing(fn (string $search): array => $this->getSegmentOptions($groupModel, $search))
+                            ->options(fn (): array => $this->getGroupOptions($groupModel))
+                            ->getSearchResultsUsing(fn (string $search): array => $this->getGroupOptions($groupModel, $search))
                             ->searchable(),
                     ])
                     ->heading('Advanced Filtering')
@@ -98,7 +98,7 @@ trait HasFiltersForm
     /**
      * @return array<int, string>
      */
-    protected function getSegmentOptions(?GroupModel $model, ?string $search = null): array
+    protected function getGroupOptions(?GroupModel $model, ?string $search = null): array
     {
         if (! $model) {
             return [];

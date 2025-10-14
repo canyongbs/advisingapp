@@ -263,7 +263,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     /**
      * @return HasMany<Group, $this>
      */
-    public function segments(): HasMany
+    public function groups(): HasMany
     {
         return $this->hasMany(Group::class);
     }

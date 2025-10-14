@@ -121,7 +121,7 @@ class ListProspects extends ListRecords
                 SelectFilter::make('my_segments')
                     ->label('My Population Groups')
                     ->options(
-                        auth()->user()->segments()
+                        auth()->user()->groups()
                             ->where('model', GroupModel::Prospect)
                             ->pluck('name', 'id'),
                     )
