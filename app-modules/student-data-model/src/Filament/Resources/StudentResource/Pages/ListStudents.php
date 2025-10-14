@@ -103,7 +103,7 @@ class ListStudents extends ListRecords
             ])
             ->filters([
                 SelectFilter::make('my_segments')
-                    ->label('My Population Segments')
+                    ->label('My Population Groups')
                     ->options(
                         auth()->user()->segments()
                             ->where('model', SegmentModel::Student)
@@ -113,7 +113,7 @@ class ListStudents extends ListRecords
                     ->optionsLimit(20)
                     ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 SelectFilter::make('all_segments')
-                    ->label('All Population Segments')
+                    ->label('All Population Groups')
                     ->options(
                         Segment::all()
                             ->where('model', SegmentModel::Student)

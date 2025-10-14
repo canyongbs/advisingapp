@@ -84,7 +84,7 @@ trait HasFiltersForm
                 Section::make()
                     ->schema([
                         Select::make('populationSegment')
-                            ->label('Select Segment')
+                            ->label('Select Group')
                             ->options(fn (): array => $this->getSegmentOptions($segmentModel))
                             ->getSearchResultsUsing(fn (string $search): array => $this->getSegmentOptions($segmentModel, $search))
                             ->searchable(),

@@ -62,7 +62,7 @@ class ListCampaigns extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('name'),
                 TextColumn::make('segment.name')
-                    ->label('Segment'),
+                    ->label('Group'),
                 TextColumn::make('enabled')
                     ->label('Enabled')
                     ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No')

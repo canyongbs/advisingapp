@@ -54,7 +54,7 @@ class BulkSegmentAction
     {
         return BulkAction::make('segment')
             ->icon('heroicon-o-rectangle-group')
-            ->label('Save Segment')
+            ->label('Save Group')
             ->form(fn (Schema $schema) => $schema->components([
                 TextInput::make('name')
                     ->label('Name')

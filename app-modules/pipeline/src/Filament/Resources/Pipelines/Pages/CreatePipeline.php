@@ -65,7 +65,7 @@ class CreatePipeline extends CreateRecord
                     ->required()
                     ->label('Name'),
                 Select::make('segment_id')
-                    ->label('Segment')
+                    ->label('Group')
                     ->required()
                     ->relationship('segment', 'name')
                     ->searchable()

@@ -133,7 +133,7 @@ class ListAlerts extends ListRecords
                         )
                     ),
                 SelectFilter::make('my_segments')
-                    ->label('My Population Segments')
+                    ->label('My Population Groups')
                     ->options(
                         auth()->user()->segments()
                             ->pluck('name', 'id'),
@@ -142,7 +142,7 @@ class ListAlerts extends ListRecords
                     ->optionsLimit(20)
                     ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
                 SelectFilter::make('all_segments')
-                    ->label('All Population Segments')
+                    ->label('All Population Groups')
                     ->options(
                         Segment::all()
                             ->pluck('name', 'id'),

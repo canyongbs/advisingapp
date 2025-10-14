@@ -89,7 +89,7 @@ class CreateSegment extends CreateRecord implements HasTable
                         ->required(),
                     Textarea::make('description'),
                 ]),
-            Step::make('Population Segment Type')
+            Step::make('Population Group Type')
                 ->schema([
                     Select::make('model')
                         ->label('Population')
@@ -112,7 +112,7 @@ class CreateSegment extends CreateRecord implements HasTable
                         ->required(),
                 ])
                 ->columns(2),
-            Step::make('Create Population Segment')
+            Step::make('Create Population Group')
                 ->schema([
                     View::make('filament.forms.components.table')
                         ->visible(fn (Get $get): bool => $get('type') === SegmentType::Dynamic),
