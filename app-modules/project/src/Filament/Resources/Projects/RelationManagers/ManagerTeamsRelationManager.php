@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Project\Filament\Resources\Projects\RelationManagers;
 
-use AdvisingApp\Project\Models\Project;
 use Filament\Actions\AttachAction;
 use Filament\Actions\DetachAction;
 use Filament\Actions\DetachBulkAction;
@@ -59,15 +58,21 @@ class ManagerTeamsRelationManager extends RelationManager
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->authorize('update', Project::class),
+                    ->authorize(function () {
+                        return auth()->user()->can('update', $this->ownerRecord);
+                    }),
             ])
             ->recordActions([
                 DetachAction::make()
-                    ->authorize('update', Project::class),
+                    ->authorize(function () {
+                        return auth()->user()->can('update', $this->ownerRecord);
+                    }),
             ])
             ->toolbarActions([
                 DetachBulkAction::make()
-                    ->authorize('update', Project::class),
+                    ->authorize(function () {
+                        return auth()->user()->can('update', $this->ownerRecord);
+                    }),
             ])
             ->inverseRelationship('managedProjects');
     }
