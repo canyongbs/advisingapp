@@ -37,7 +37,7 @@
 namespace AdvisingApp\Segment\Filament\Resources\Segments\Pages;
 
 use AdvisingApp\Segment\Enums\SegmentType;
-use AdvisingApp\Segment\Filament\Resources\Segments\SegmentResourceForProcesses;
+use AdvisingApp\Segment\Filament\Resources\Segments\GroupResourceForProcesses;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -45,14 +45,14 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class GetSegmentQuery extends EditRecord implements HasTable
+class GetGroupQuery extends EditRecord implements HasTable
 {
     use InteractsWithTable {
         bootedInteractsWithTable as baseBootedInteractsWithTable;
     }
     use EditPageRedirection;
 
-    protected static string $resource = SegmentResourceForProcesses::class;
+    protected static string $resource = GroupResourceForProcesses::class;
 
     public function mount(int | string $record): void
     {

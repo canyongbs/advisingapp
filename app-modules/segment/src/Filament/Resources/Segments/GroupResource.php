@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Segment\Filament\Resources\Segments;
 
-use AdvisingApp\Segment\Filament\Resources\Segments\Pages\CreateSegment;
-use AdvisingApp\Segment\Filament\Resources\Segments\Pages\EditSegment;
-use AdvisingApp\Segment\Filament\Resources\Segments\Pages\ListSegments;
+use AdvisingApp\Segment\Filament\Resources\Segments\Pages\CreateGroup;
+use AdvisingApp\Segment\Filament\Resources\Segments\Pages\EditGroup;
+use AdvisingApp\Segment\Filament\Resources\Segments\Pages\ListGroups;
 use AdvisingApp\Segment\Models\Segment;
 use Filament\Resources\Resource;
 use UnitEnum;
 
-class SegmentResource extends Resource
+class GroupResource extends Resource
 {
     protected static ?string $model = Segment::class;
 
@@ -64,9 +64,9 @@ class SegmentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListSegments::route('/'),
-            'create' => CreateSegment::route('/create'),
-            'edit' => EditSegment::route('/{record}/edit'),
+            'index' => ListGroups::route('/'),
+            'create' => CreateGroup::route('/create'),
+            'edit' => EditGroup::route('/{record}/edit'),
         ];
     }
 }

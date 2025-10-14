@@ -39,7 +39,7 @@ namespace AdvisingApp\Segment\Filament\Resources\Segments\Pages;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Enums\SegmentType;
-use AdvisingApp\Segment\Filament\Resources\Segments\SegmentResource;
+use AdvisingApp\Segment\Filament\Resources\Segments\GroupResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Import;
 use App\Models\User;
@@ -68,12 +68,12 @@ use Illuminate\Support\Str;
 use Iterator;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
-class CreateSegment extends CreateRecord implements HasTable
+class CreateGroup extends CreateRecord implements HasTable
 {
     use InteractsWithTable;
     use HasWizard;
 
-    protected static string $resource = SegmentResource::class;
+    protected static string $resource = GroupResource::class;
 
     /**
      * @return array<Step>

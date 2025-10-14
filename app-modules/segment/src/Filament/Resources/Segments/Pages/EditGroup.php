@@ -39,7 +39,7 @@ namespace AdvisingApp\Segment\Filament\Resources\Segments\Pages;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Enums\SegmentType;
-use AdvisingApp\Segment\Filament\Resources\Segments\SegmentResource;
+use AdvisingApp\Segment\Filament\Resources\Segments\GroupResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
@@ -55,14 +55,14 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class EditSegment extends EditRecord implements HasTable
+class EditGroup extends EditRecord implements HasTable
 {
     use InteractsWithTable {
         bootedInteractsWithTable as baseBootedInteractsWithTable;
     }
     use EditPageRedirection;
 
-    protected static string $resource = SegmentResource::class;
+    protected static string $resource = GroupResource::class;
 
     public function form(Schema $schema): Schema
     {

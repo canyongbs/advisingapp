@@ -37,7 +37,7 @@
 namespace AdvisingApp\Segment\Filament\Resources\Segments\Pages;
 
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Segment\Filament\Resources\Segments\SegmentResource;
+use AdvisingApp\Segment\Filament\Resources\Segments\GroupResource;
 use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Tables\Columns\IdColumn;
@@ -50,11 +50,11 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Auth\Access\AuthorizationException;
 
-class ListSegments extends ListRecords
+class ListGroups extends ListRecords
 {
     protected ?string $heading = 'Groups';
 
-    protected static string $resource = SegmentResource::class;
+    protected static string $resource = GroupResource::class;
 
     public function table(Table $table): Table
     {
