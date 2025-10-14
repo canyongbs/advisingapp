@@ -44,11 +44,11 @@ use function Pest\Laravel\actingAs;
 test('EditGroup is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $segment = Group::factory()->create();
+    $group = Group::factory()->create();
 
     actingAs($user)
         ->get(
-            GroupResource::getUrl('edit', ['record' => $segment])
+            GroupResource::getUrl('edit', ['record' => $group])
         )->assertForbidden();
 
     $user->givePermissionTo('segment.view-any');
@@ -56,6 +56,6 @@ test('EditGroup is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            GroupResource::getUrl('edit', ['record' => $segment])
+            GroupResource::getUrl('edit', ['record' => $group])
         )->assertSuccessful();
 });
