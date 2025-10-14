@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Group\Enums;
 
-use AdvisingApp\Group\Importers\ProspectSegmentSubjectImporter;
-use AdvisingApp\Group\Importers\StudentSegmentSubjectImporter;
+use AdvisingApp\Group\Importers\ProspectGroupSubjectImporter;
+use AdvisingApp\Group\Importers\StudentGroupSubjectImporter;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Tables\ProspectsTable;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Tables\StudentsTable;
@@ -106,8 +106,8 @@ enum GroupModel: string implements HasLabel
     public function getSubjectImporter(): string
     {
         return match ($this) {
-            static::Prospect => ProspectSegmentSubjectImporter::class,
-            static::Student => StudentSegmentSubjectImporter::class,
+            static::Prospect => ProspectGroupSubjectImporter::class,
+            static::Student => StudentGroupSubjectImporter::class,
         };
     }
 }

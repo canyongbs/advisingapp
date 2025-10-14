@@ -38,7 +38,7 @@ namespace AdvisingApp\Group\Providers;
 
 use AdvisingApp\Group\GroupPlugin;
 use AdvisingApp\Group\Models\Group;
-use AdvisingApp\Group\Models\SegmentSubject;
+use AdvisingApp\Group\Models\GroupSubject;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
@@ -54,7 +54,7 @@ class GroupServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'segment' => Group::class,
-            'segment_subject' => SegmentSubject::class,
+            'segment_subject' => GroupSubject::class,
         ]);
     }
 }

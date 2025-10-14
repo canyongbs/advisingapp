@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Group\Filament\Resources\Groups\Pages;
 
-use AdvisingApp\Group\Enums\SegmentType;
+use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResourceForProcesses;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Resources\Pages\EditRecord;
@@ -69,7 +69,7 @@ class GetGroupQuery extends EditRecord implements HasTable
 
         $table = $segment->model->table($table);
 
-        if ($segment->type === SegmentType::Static) {
+        if ($segment->type === GroupType::Static) {
             // TODO: Look into changing this. It is inefficient and may break with large datasets.
             $keys = $segment->subjects()->pluck('subject_id');
 

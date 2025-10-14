@@ -66,7 +66,7 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
 
     public function view(Authenticatable $authenticatable, Group $group): Response
     {
-        if (! $authenticatable->hasLicense($group->model?->class()::getLicenseType())) {
+        if (! $authenticatable->hasLicense($group->model->class()::getLicenseType())) {
             return Response::deny('You do not have permission to view this segment.');
         }
 
@@ -86,7 +86,7 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
 
     public function update(Authenticatable $authenticatable, Group $group): Response
     {
-        if (! $authenticatable->hasLicense($group->model?->class()::getLicenseType())) {
+        if (! $authenticatable->hasLicense($group->model->class()::getLicenseType())) {
             return Response::deny('You do not have permission to update this segment.');
         }
 
@@ -98,7 +98,7 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
 
     public function delete(Authenticatable $authenticatable, Group $group): Response
     {
-        if (! $authenticatable->hasLicense($group->model?->class()::getLicenseType())) {
+        if (! $authenticatable->hasLicense($group->model->class()::getLicenseType())) {
             return Response::deny('You do not have permission to delete this segment.');
         }
 
@@ -114,7 +114,7 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
 
     public function restore(Authenticatable $authenticatable, Group $group): Response
     {
-        if (! $authenticatable->hasLicense($group->model?->class()::getLicenseType())) {
+        if (! $authenticatable->hasLicense($group->model->class()::getLicenseType())) {
             return Response::deny('You do not have permission to restore this segment.');
         }
 
@@ -126,7 +126,11 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
 
     public function forceDelete(Authenticatable $authenticatable, Group $group): Response
     {
-        if (! $authenticatable->hasLicense($group->model?->class()::getLicenseType())) {
+        if (! $authenticatable->hasLicense($group->model->class()::getLicenseType())) {
+            return Response::deny('You do not have permission to permanently delete this segment.');
+        }
+
+        if ($group->campaigns()->exists()) {
             return Response::deny('This population segment is associated with a campaign. Please remove the campaign before attempting to remove the segment.');
         }
 

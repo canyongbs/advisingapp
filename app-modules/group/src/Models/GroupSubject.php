@@ -43,11 +43,13 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperSegmentSubject
+ * @mixin IdeHelperGroupSubject
  */
-class SegmentSubject extends BaseModel
+class GroupSubject extends BaseModel
 {
     use SoftDeletes;
+
+    protected $table = 'segment_subjects';
 
     protected $fillable = [
         'subject_id',

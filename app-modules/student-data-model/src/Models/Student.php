@@ -48,7 +48,7 @@ use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Engagement\Models\EngagementFileEntities;
 use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Group\Models\SegmentSubject;
+use AdvisingApp\Group\Models\GroupSubject;
 use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\Notification\Models\Concerns\HasSubscriptions;
@@ -355,12 +355,12 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     }
 
     /**
-     * @return MorphMany<SegmentSubject, $this>
+     * @return MorphMany<GroupSubject, $this>
      */
-    public function segmentSubjects(): MorphMany
+    public function groupSubjects(): MorphMany
     {
         return $this->morphMany(
-            related: SegmentSubject::class,
+            related: GroupSubject::class,
             name: 'subject',
             type: 'subject_type',
             id: 'subject_id',

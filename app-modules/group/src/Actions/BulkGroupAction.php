@@ -37,7 +37,7 @@
 namespace AdvisingApp\Group\Actions;
 
 use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Enums\SegmentType;
+use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
 use Exception;
 use Filament\Actions\BulkAction;
@@ -70,7 +70,7 @@ class BulkGroupAction
                     DB::beginTransaction();
                     $segment = Group::create([
                         ...$data,
-                        'type' => SegmentType::Static,
+                        'type' => GroupType::Static,
                         'filters' => [],
                         'model' => $groupModel,
                     ]);

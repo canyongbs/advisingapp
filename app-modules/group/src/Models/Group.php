@@ -38,7 +38,7 @@ namespace AdvisingApp\Group\Models;
 
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Enums\SegmentType;
+use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Observers\GroupObserver;
 use App\Models\Authenticatable;
 use App\Models\BaseModel;
@@ -71,7 +71,7 @@ class Group extends BaseModel
     protected $casts = [
         'filters' => 'array',
         'model' => GroupModel::class,
-        'type' => SegmentType::class,
+        'type' => GroupType::class,
     ];
 
     /**
@@ -83,11 +83,11 @@ class Group extends BaseModel
     }
 
     /**
-     * @return HasMany<SegmentSubject, $this>
+     * @return HasMany<GroupSubject, $this>
      */
     public function subjects(): HasMany
     {
-        return $this->hasMany(SegmentSubject::class);
+        return $this->hasMany(GroupSubject::class, 'segment_id');
     }
 
     /**
