@@ -105,7 +105,7 @@ class ListStudents extends ListRecords
                 SelectFilter::make('my_segments')
                     ->label('My Population Groups')
                     ->options(
-                        auth()->user()->segments()
+                        auth()->user()->groups()
                             ->where('model', GroupModel::Student)
                             ->pluck('name', 'id'),
                     )
