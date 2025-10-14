@@ -35,20 +35,20 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Segment\Filament\Resources\Segments\SegmentResource;
+use AdvisingApp\Segment\Filament\Resources\Segments\GroupResource;
 use AdvisingApp\Segment\Models\Segment;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-test('EditSegment is gated with proper access control', function () {
+test('EditGroup is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $segment = Segment::factory()->create();
 
     actingAs($user)
         ->get(
-            SegmentResource::getUrl('edit', ['record' => $segment])
+            GroupResource::getUrl('edit', ['record' => $segment])
         )->assertForbidden();
 
     $user->givePermissionTo('segment.view-any');
@@ -56,6 +56,6 @@ test('EditSegment is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            SegmentResource::getUrl('edit', ['record' => $segment])
+            GroupResource::getUrl('edit', ['record' => $segment])
         )->assertSuccessful();
 });

@@ -39,7 +39,7 @@ namespace AdvisingApp\Segment\Filament\Resources\Segments;
 use AdvisingApp\Segment\Models\Segment;
 use Filament\Resources\Resource;
 
-class SegmentResourceForProcesses extends Resource
+class GroupResourceForProcesses extends Resource
 {
     protected static ?string $model = Segment::class;
 

@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Segment\Actions;
 
-use AdvisingApp\Segment\Filament\Resources\Segments\Pages\GetSegmentQuery;
+use AdvisingApp\Segment\Filament\Resources\Segments\Pages\GetGroupQuery;
 use AdvisingApp\Segment\Models\Segment;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -50,8 +50,8 @@ class TranslateSegmentFilters
      */
     public function execute(Segment | string $segment): Builder
     {
-        // Create a fake Livewire component to replicate the table on the EditSegment page.
-        $page = app('livewire')->new(GetSegmentQuery::class);
+        // Create a fake Livewire component to replicate the table on the EditGroup page.
+        $page = app('livewire')->new(GetGroupQuery::class);
 
         if ($segment instanceof Segment) {
             $segment = $segment->getKey();
@@ -72,8 +72,8 @@ class TranslateSegmentFilters
      */
     public function applyFilterToQuery(Segment | string $segment, Builder $query): Builder
     {
-        // Create a fake Livewire component to replicate the table on the EditSegment page.
-        $page = app('livewire')->new(GetSegmentQuery::class);
+        // Create a fake Livewire component to replicate the table on the EditGroup page.
+        $page = app('livewire')->new(GetGroupQuery::class);
 
         if ($segment instanceof Segment) {
             $segment = $segment->getKey();

@@ -35,23 +35,23 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Segment\Filament\Resources\Segments\SegmentResource;
+use AdvisingApp\Segment\Filament\Resources\Segments\GroupResource;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-test('ListSegments is gated with proper access control', function () {
+test('ListGroups is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(
-            SegmentResource::getUrl('index')
+            GroupResource::getUrl('index')
         )->assertForbidden();
 
     $user->givePermissionTo('segment.view-any');
 
     actingAs($user)
         ->get(
-            SegmentResource::getUrl('index')
+            GroupResource::getUrl('index')
         )->assertSuccessful();
 });
