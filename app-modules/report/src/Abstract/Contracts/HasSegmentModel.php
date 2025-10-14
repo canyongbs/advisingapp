@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Report\Abstract\Contracts;
 
-use AdvisingApp\Segment\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\SegmentModel;
 
 interface HasSegmentModel
 {

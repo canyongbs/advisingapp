@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Pipeline\Jobs;
 
+use AdvisingApp\Group\Actions\TranslateSegmentFilters;
 use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
 use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

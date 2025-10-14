@@ -51,6 +51,7 @@ use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Consent\Models\Concerns\CanConsent;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
 use AdvisingApp\Interaction\Models\Interaction;
@@ -69,7 +70,6 @@ use AdvisingApp\Report\Models\TrackedEvent;
 use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestFolder;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
@@ -261,11 +261,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     }
 
     /**
-     * @return HasMany<Segment, $this>
+     * @return HasMany<Group, $this>
      */
     public function segments(): HasMany
     {
-        return $this->hasMany(Segment::class);
+        return $this->hasMany(Group::class);
     }
 
     /**

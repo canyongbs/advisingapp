@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
+use AdvisingApp\Group\Enums\SegmentModel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Abstract\Contracts\HasSegmentModel;
 use AdvisingApp\Report\Abstract\EngagementReport;
 use AdvisingApp\Report\Filament\Widgets\MostRecentTasksTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use AdvisingApp\Segment\Enums\SegmentModel;
 use App\Filament\Clusters\ReportLibrary;
 use UnitEnum;
 

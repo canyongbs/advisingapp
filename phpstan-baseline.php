@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -1772,6 +1772,18 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Providers/CampaignServiceProvider.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^PHPDoc tag @var for variable \\$group contains unknown class Segment\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/campaign/tests/Tenant/Jobs/CaseCampaignActionJobTest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Parameter \\#1 \\$factory of method Illuminate\\\\Database\\\\Eloquent\\\\Factories\\\\Factory\\<AdvisingApp\\\\Campaign\\\\Models\\\\Campaign\\>\\:\\:for\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Factories\\\\Factory\\|Illuminate\\\\Database\\\\Eloquent\\\\Model, Segment given\\.$#',
+    'identifier' => 'argument.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/campaign/tests/Tenant/Jobs/CaseCampaignActionJobTest.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
@@ -3092,7 +3104,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Models/Engagement.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method DOMNode\\:\\:getAttribute\\(\\)\\.$#',
+    'message' => '#^Call to an undefined method DOMNameSpaceNode\\|DOMNode\\:\\:getAttribute\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementBatch.php',
@@ -4212,6 +4224,342 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/form/src/Providers/FormServiceProvider.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Using nullsafe method call on non\\-nullable type App\\\\Models\\\\User\\. Use \\-\\> instead\\.$#',
+    'identifier' => 'nullsafe.neverNull',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/database/factories/GroupFactory.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
+    'identifier' => 'MeliorStan.shortVariable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Actions/BulkSegmentAction.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to method getKey\\(\\) on an unknown class AdvisingApp\\\\Group\\\\Actions\\\\Segment\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/group/src/Actions/TranslateSegmentFilters.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Class AdvisingApp\\\\Group\\\\Actions\\\\Segment not found\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/group/src/Actions/TranslateSegmentFilters.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Parameter \\$segment of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateSegmentFilters\\:\\:applyFilterToQuery\\(\\) has invalid type AdvisingApp\\\\Group\\\\Actions\\\\Segment\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Actions/TranslateSegmentFilters.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Parameter \\$segment of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateSegmentFilters\\:\\:execute\\(\\) has invalid type AdvisingApp\\\\Group\\\\Actions\\\\Segment\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Actions/TranslateSegmentFilters.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Undefined variable\\: \\$segment$#',
+    'identifier' => 'variable.undefined',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Console/Commands/TranslateSegment.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
+    'identifier' => 'return.unusedType',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Enums/SegmentModel.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel\\:\\:getSubjectImporter\\(\\) has invalid return type AdvisingApp\\\\Group\\\\Enums\\\\Importer\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Enums/SegmentModel.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel\\:\\:getSubjectImporter\\(\\) should return class\\-string\\<AdvisingApp\\\\Group\\\\Enums\\\\Importer\\> but returns string\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Enums/SegmentModel.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel\\:\\:query\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Enums/SegmentModel.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Group\\\\Enums\\\\SegmentType\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
+    'identifier' => 'return.unusedType',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Enums/SegmentType.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Group\\\\Filament\\\\Resources\\\\Segments\\\\GroupResourceForProcesses\\:\\:canAccess\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#',
+    'identifier' => 'missingType.iterableValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/GroupResourceForProcesses.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property App\\\\Models\\\\Import\\:\\:\\$failed_at\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/CreateGroup.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to protected property Spatie\\\\Invade\\\\Invader\\<Illuminate\\\\Filesystem\\\\AwsS3V3Adapter\\>\\:\\:\\$client\\.$#',
+    'identifier' => 'property.protected',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/CreateGroup.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined static method AdvisingApp\\\\Group\\\\Enums\\\\Importer\\:\\:getCompletedNotificationBody\\(\\)\\.$#',
+    'identifier' => 'staticMethod.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/CreateGroup.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^PHPDoc tag @var with type array\\<array\\<array\\<string, string\\>\\>\\> is not subtype of native type Generator\\.$#',
+    'identifier' => 'varTag.nativeType',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/CreateGroup.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Property Filament\\\\Actions\\\\Imports\\\\Models\\\\Import\\:\\:\\$importer \\(class\\-string\\<Filament\\\\Actions\\\\Imports\\\\Importer\\>\\) does not accept class\\-string\\<AdvisingApp\\\\Group\\\\Enums\\\\Importer\\>\\.$#',
+    'identifier' => 'assign.propertyType',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/CreateGroup.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$filters\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditGroup.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$model\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditGroup.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$type\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditGroup.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$user\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditGroup.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:subjects\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditGroup.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$filters\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditSegment.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$model\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditSegment.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$type\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditSegment.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$user\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditSegment.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:subjects\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditSegment.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$filters\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/GetGroupQuery.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$model\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/GetGroupQuery.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$type\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/GetGroupQuery.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$user\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/GetGroupQuery.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:subjects\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/GetGroupQuery.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to method delete\\(\\) on an unknown class AdvisingApp\\\\Group\\\\Filament\\\\Resources\\\\Segments\\\\Pages\\\\Segment\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/ListGroups.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Parameter \\$record of anonymous function has invalid type AdvisingApp\\\\Group\\\\Filament\\\\Resources\\\\Segments\\\\Pages\\\\Segment\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/ListGroups.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
+    'identifier' => 'MeliorStan.shortVariable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/ListGroups.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to method segment\\(\\) on an unknown class AdvisingApp\\\\Group\\\\Importers\\\\SegmentSubject\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Importers/ProspectSegmentSubjectImporter.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Class AdvisingApp\\\\Group\\\\Importers\\\\SegmentSubject not found\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Importers/ProspectSegmentSubjectImporter.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Instantiated class AdvisingApp\\\\Group\\\\Importers\\\\SegmentSubject not found\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Importers/ProspectSegmentSubjectImporter.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Group\\\\Importers\\\\ProspectSegmentSubjectImporter\\:\\:resolveRecord\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Model\\|null but returns AdvisingApp\\\\Group\\\\Importers\\\\SegmentSubject\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Importers/ProspectSegmentSubjectImporter.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^PHPDoc tag @var for variable \\$record contains unknown class AdvisingApp\\\\Group\\\\Importers\\\\SegmentSubject\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Importers/ProspectSegmentSubjectImporter.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^PHPDoc tag @var with type AdvisingApp\\\\Group\\\\Importers\\\\SegmentSubject is not subtype of native type Illuminate\\\\Database\\\\Eloquent\\\\Model\\|null\\.$#',
+    'identifier' => 'varTag.nativeType',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Importers/ProspectSegmentSubjectImporter.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Static property AdvisingApp\\\\Group\\\\Importers\\\\ProspectSegmentSubjectImporter\\:\\:\\$model \\(class\\-string\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\|null\\) does not accept default value of type string\\.$#',
+    'identifier' => 'property.defaultValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Importers/ProspectSegmentSubjectImporter.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to method segment\\(\\) on an unknown class AdvisingApp\\\\Group\\\\Importers\\\\SegmentSubject\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Importers/StudentSegmentSubjectImporter.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Class AdvisingApp\\\\Group\\\\Importers\\\\SegmentSubject not found\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Importers/StudentSegmentSubjectImporter.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Instantiated class AdvisingApp\\\\Group\\\\Importers\\\\SegmentSubject not found\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Importers/StudentSegmentSubjectImporter.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Group\\\\Importers\\\\StudentSegmentSubjectImporter\\:\\:resolveRecord\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Model\\|null but returns AdvisingApp\\\\Group\\\\Importers\\\\SegmentSubject\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Importers/StudentSegmentSubjectImporter.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^PHPDoc tag @var for variable \\$record contains unknown class AdvisingApp\\\\Group\\\\Importers\\\\SegmentSubject\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Importers/StudentSegmentSubjectImporter.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^PHPDoc tag @var with type AdvisingApp\\\\Group\\\\Importers\\\\SegmentSubject is not subtype of native type Illuminate\\\\Database\\\\Eloquent\\\\Model\\|null\\.$#',
+    'identifier' => 'varTag.nativeType',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Importers/StudentSegmentSubjectImporter.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Static property AdvisingApp\\\\Group\\\\Importers\\\\StudentSegmentSubjectImporter\\:\\:\\$model \\(class\\-string\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\|null\\) does not accept default value of type string\\.$#',
+    'identifier' => 'property.defaultValue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Importers/StudentSegmentSubjectImporter.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Group\\\\Models\\\\Group\\:\\:scopeModel\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
+    'identifier' => 'missingType.generics',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Models/Group.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Group\\\\Models\\\\SegmentSubject\\:\\:segment\\(\\) has invalid return type AdvisingApp\\\\Group\\\\Models\\\\Segment\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Models/SegmentSubject.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Group\\\\Models\\\\SegmentSubject\\:\\:segment\\(\\) should return Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsTo\\<AdvisingApp\\\\Group\\\\Models\\\\Segment, \\$this\\(AdvisingApp\\\\Group\\\\Models\\\\SegmentSubject\\)\\> but returns Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsTo\\<AdvisingApp\\\\Group\\\\Models\\\\Group, \\$this\\(AdvisingApp\\\\Group\\\\Models\\\\SegmentSubject\\)\\>\\.$#',
+    'identifier' => 'return.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Models/SegmentSubject.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Type AdvisingApp\\\\Group\\\\Models\\\\Segment in generic type Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsTo\\<AdvisingApp\\\\Group\\\\Models\\\\Segment, \\$this\\(AdvisingApp\\\\Group\\\\Models\\\\SegmentSubject\\)\\> in PHPDoc tag @return is not subtype of template type TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model of class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsTo\\.$#',
+    'identifier' => 'generics.notSubtype',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Models/SegmentSubject.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Using nullsafe method call on non\\-nullable type AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel\\. Use \\-\\> instead\\.$#',
+    'identifier' => 'nullsafe.neverNull',
+    'count' => 5,
+    'path' => __DIR__ . '/app-modules/group/src/Policies/GroupPolicy.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Method AdvisingApp\\\\Group\\\\Providers\\\\GroupServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
+    'identifier' => 'missingType.return',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Providers/GroupServiceProvider.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/in\\-app\\-communication/database/migrations/2025_03_20_125908_data_remove_realtime_chat_api_permission\\.php\\:41\\:\\:\\$guards type has no value type specified in iterable type array\\.$#',

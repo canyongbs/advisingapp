@@ -48,10 +48,10 @@ use AdvisingApp\Campaign\Jobs\TaskCampaignActionJob;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
+use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\SegmentType;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Enums\SegmentType;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -64,7 +64,7 @@ use function Pest\Laravel\assertDatabaseHas;
 it('dispatches the correct job based on the CampaignAction type into the batch', function (SegmentModel $segmentModel, Collection $educatables, CampaignActionType $actionType, string $jobClass) {
     Bus::fake();
 
-    $segment = Segment::factory()->create([
+    $segment = Group::factory()->create([
         'type' => SegmentType::Static,
         'model' => $segmentModel,
     ]);
@@ -162,7 +162,7 @@ it('re-uses the same CampaignActionEducatable if it already exists', function ()
 
     $segmentModel = SegmentModel::cases()[array_rand(SegmentModel::cases())];
 
-    $segment = Segment::factory()->create([
+    $segment = Group::factory()->create([
         'type' => SegmentType::Static,
         'model' => $segmentModel,
     ]);

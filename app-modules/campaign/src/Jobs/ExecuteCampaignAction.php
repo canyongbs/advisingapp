@@ -38,7 +38,7 @@ namespace AdvisingApp\Campaign\Jobs;
 
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
-use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
+use AdvisingApp\Group\Actions\TranslateSegmentFilters;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use App\Models\Tenant;
 use App\Models\User;

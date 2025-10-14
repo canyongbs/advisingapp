@@ -37,7 +37,7 @@
 namespace AdvisingApp\Campaign\Database\Factories;
 
 use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\Group\Models\Group;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -51,7 +51,7 @@ class CampaignFactory extends Factory
         return [
             'created_by_id' => User::factory(),
             'created_by_type' => 'user',
-            'segment_id' => Segment::factory(),
+            'segment_id' => Group::factory(),
             'name' => $this->faker->catchPhrase(),
             'enabled' => true,
         ];

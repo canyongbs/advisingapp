@@ -41,13 +41,13 @@ use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
 use AdvisingApp\CaseManagement\Filament\Actions\BulkCreateCaseAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEmailAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkTextAction;
+use AdvisingApp\Group\Actions\BulkSegmentAction;
+use AdvisingApp\Group\Actions\TranslateSegmentFilters;
+use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Filament\Actions\BulkCreateInteractionAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
-use AdvisingApp\Segment\Actions\BulkSegmentAction;
-use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
 use AdvisingApp\StudentDataModel\Filament\Actions\StudentTagsBulkAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
@@ -115,7 +115,7 @@ class ListStudents extends ListRecords
                 SelectFilter::make('all_segments')
                     ->label('All Population Groups')
                     ->options(
-                        Segment::all()
+                        Group::all()
                             ->where('model', SegmentModel::Student)
                             ->pluck('name', 'id'),
                     )

@@ -37,7 +37,7 @@
 namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
-use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\Group\Models\Group;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
@@ -61,7 +61,7 @@ class EditCampaign extends EditRecord
                 Select::make('segment_id')
                     ->label('Population Group')
                     ->options(function () {
-                        return Segment::query()
+                        return Group::query()
                             ->whereHas('user', function ($query) {
                                 $query->whereKey(auth()->id())->orWhereRelation('team.users', 'id', auth()->id());
                             })
