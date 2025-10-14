@@ -40,7 +40,7 @@ use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Filament\Resources\Alerts\AlertResource;
 use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Group\Actions\TranslateSegmentFilters;
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
 use AdvisingApp\Group\Models\Group as GroupModel;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectAlerts;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -213,7 +213,7 @@ class ListAlerts extends ListRecords
 
         $query->whereIn(
             'concern_id',
-            app(TranslateSegmentFilters::class)
+            app(TranslateGroupFilters::class)
                 ->execute($data['value'])
                 ->pluck($model->getQualifiedKeyName()),
         );

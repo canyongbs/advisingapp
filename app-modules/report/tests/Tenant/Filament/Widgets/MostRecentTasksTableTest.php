@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\MostRecentTasksTable;
@@ -129,7 +129,7 @@ it('displays only tasks added within the selected date range for prospects', fun
 
 it('properly filters students by segment', function () {
     $segment = Group::factory()->create([
-        'model' => SegmentModel::Student,
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -173,7 +173,7 @@ it('properly filters students by segment', function () {
 
 it('properly filters prospects by segment', function () {
     $segment = Group::factory()->create([
-        'model' => SegmentModel::Prospect,
+        'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [

@@ -36,28 +36,29 @@
 
 namespace AdvisingApp\Group\Actions;
 
-use AdvisingApp\Group\Filament\Resources\Segments\Pages\GetGroupQuery;
+use AdvisingApp\Group\Filament\Resources\Groups\Pages\GetGroupQuery;
+use AdvisingApp\Group\Models\Group;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 use function Livewire\trigger;
 
-class TranslateSegmentFilters
+class TranslateGroupFilters
 {
     /**
      * @return Builder<Model>
      */
-    public function execute(Segment | string $segment): Builder
+    public function execute(Group | string $group): Builder
     {
         // Create a fake Livewire component to replicate the table on the EditGroup page.
         $page = app('livewire')->new(GetGroupQuery::class);
 
-        if ($segment instanceof Segment) {
-            $segment = $segment->getKey();
+        if ($group instanceof Group) {
+            $group = $group->getKey();
         }
 
-        // Mount the fake Livewire component with the desired segment.
-        trigger('mount', $page, [$segment], null, null);
+        // Mount the fake Livewire component with the desired group.
+        trigger('mount', $page, [$group], null, null);
 
         // Extract the filtered table query from the fake Livewire component,
         // which already respects both dynamic and static populations.
@@ -69,17 +70,17 @@ class TranslateSegmentFilters
      *
      * @return Builder<Model>
      */
-    public function applyFilterToQuery(Segment | string $segment, Builder $query): Builder
+    public function applyFilterToQuery(Group | string $group, Builder $query): Builder
     {
         // Create a fake Livewire component to replicate the table on the EditGroup page.
         $page = app('livewire')->new(GetGroupQuery::class);
 
-        if ($segment instanceof Segment) {
-            $segment = $segment->getKey();
+        if ($group instanceof Group) {
+            $group = $group->getKey();
         }
 
-        // Mount the fake Livewire component with the desired segment.
-        trigger('mount', $page, [$segment], null, null);
+        // Mount the fake Livewire component with the desired group.
+        trigger('mount', $page, [$group], null, null);
 
         // Extract the filtered table query from the fake Livewire component,
         // which already respects both dynamic and static populations.

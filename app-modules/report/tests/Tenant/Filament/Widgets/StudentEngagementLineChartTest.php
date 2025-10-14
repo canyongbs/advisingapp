@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Report\Filament\Widgets\StudentEngagementLineChart;
@@ -77,7 +77,7 @@ it('returns correct monthly email and sms engagement data for students based on 
     $endDate = now()->subDays(5);
 
     $segment = Group::factory()->create([
-        'model' => SegmentModel::Student,
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [

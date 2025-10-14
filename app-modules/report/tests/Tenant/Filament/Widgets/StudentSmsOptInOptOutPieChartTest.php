@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentSmsOptInOptOutPieChart;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -84,7 +84,7 @@ it('it filters student SMS opt-in/out/null data accurately based on segment filt
     $count = random_int(1, 10);
 
     $segment = Group::factory()->create([
-        'model' => SegmentModel::Student,
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [

@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Pipeline\Jobs;
 
-use AdvisingApp\Group\Actions\TranslateSegmentFilters;
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
 use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use Illuminate\Bus\Batchable;
@@ -66,7 +66,7 @@ class PruneEducatablePipelineStagesForPipeline implements ShouldQueue
             ->whereDoesntHaveMorph(
                 'educatable',
                 $this->pipeline->segment->model->class(),
-                fn (Builder $query) => app(TranslateSegmentFilters::class)->applyFilterToQuery($this->pipeline->segment, $query),
+                fn (Builder $query) => app(TranslateGroupFilters::class)->applyFilterToQuery($this->pipeline->segment, $query),
             )
             ->delete();
     }

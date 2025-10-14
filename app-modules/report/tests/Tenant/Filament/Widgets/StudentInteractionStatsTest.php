@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Report\Filament\Pages\StudentInteractionReport;
@@ -165,7 +165,7 @@ it('returns correct total and unique student interaction counts based on segment
     $studentsWithDoeNameInteractions = random_int(1, 10);
 
     $segment = Group::factory()->create([
-        'model' => SegmentModel::Student,
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [

@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages;
 
-use AdvisingApp\Group\Actions\TranslateSegmentFilters;
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
@@ -77,8 +77,8 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
         $model = $record->segment->model;
 
         $label = match ($model) {
-            SegmentModel::Prospect => 'Prospects',
-            SegmentModel::Student => 'Students',
+            GroupModel::Prospect => 'Prospects',
+            GroupModel::Student => 'Students',
         };
 
         return "Manage {$label}";
@@ -95,8 +95,8 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
         $model = $ownerRecord->segment->model;
 
         $label = match ($model) {
-            SegmentModel::Prospect => 'Prospects',
-            SegmentModel::Student => 'Students',
+            GroupModel::Prospect => 'Prospects',
+            GroupModel::Student => 'Students',
         };
 
         $item->label($label);
@@ -112,7 +112,7 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
 
         assert($ownerRecord instanceof Pipeline);
 
-        $this->segmentCount = app(TranslateSegmentFilters::class)->execute($ownerRecord->segment)->count();
+        $this->segmentCount = app(TranslateGroupFilters::class)->execute($ownerRecord->segment)->count();
 
         if ($this->segmentCount >= 100) {
             session(['pipeline-view-type' => 'table']);
@@ -173,7 +173,7 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
         $table = $pipeline->segment->model
             ->table($table);
 
-        $table->query(fn () => app(TranslateSegmentFilters::class)->execute($pipeline->segment));
+        $table->query(fn () => app(TranslateGroupFilters::class)->execute($pipeline->segment));
 
         return $table;
     }

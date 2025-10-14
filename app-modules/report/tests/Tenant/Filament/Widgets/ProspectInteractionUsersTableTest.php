@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -301,7 +301,7 @@ it('displays only users with prospect interactions within the selected date rang
 
 it('displays only users with prospect interactions based on segment filter', function () {
     $segment = Group::factory()->create([
-        'model' => SegmentModel::Prospect,
+        'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [

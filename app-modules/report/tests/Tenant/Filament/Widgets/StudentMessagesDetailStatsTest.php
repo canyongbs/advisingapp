@@ -37,7 +37,7 @@
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Report\Filament\Widgets\StudentMessagesDetailStats;
@@ -153,7 +153,7 @@ it('returns correct counts of emails and SMS sent/received within the given date
 
 it('returns correct counts of emails and SMS sent/received based on segment filters', function () {
     $segment = Group::factory()->create([
-        'model' => SegmentModel::Student,
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [

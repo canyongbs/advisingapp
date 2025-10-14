@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -164,7 +164,7 @@ it('returns correct total and unique prospect interaction counts based on segmen
     $prospectsWithDoeNameInteractions = random_int(1, 10);
 
     $segment = Group::factory()->create([
-        'model' => SegmentModel::Prospect,
+        'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [

@@ -46,7 +46,7 @@ use Filament\Support\Contracts\HasLabel;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-enum SegmentModel: string implements HasLabel
+enum GroupModel: string implements HasLabel
 {
     case Prospect = 'prospect';
 
@@ -91,9 +91,9 @@ enum SegmentModel: string implements HasLabel
         })::configure($table);
     }
 
-    public static function parse(SegmentModel | string $value): ?static
+    public static function parse(GroupModel | string $value): ?static
     {
-        if ($value instanceof SegmentModel) {
+        if ($value instanceof GroupModel) {
             return $value;
         }
 

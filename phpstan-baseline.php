@@ -460,31 +460,13 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/alert/src/Filament/Actions/BulkCreateAlertAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Alert\\\\Models\\\\AlertStatus\\:\\:\\$is_default\\.$#',
-    'identifier' => 'property.notFound',
+    'message' => '#^Call to method class\\(\\) on an unknown class AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel\\.$#',
+    'identifier' => 'class.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/AlertStatuses/Pages/CreateAlertStatus.php',
+    'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/AlertResource/Pages/ListAlerts.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/AlertStatuses/Pages/CreateAlertStatus.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Alert\\\\Models\\\\AlertStatus\\:\\:\\$is_default\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/AlertStatuses/Pages/EditAlertStatus.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/AlertStatuses/Pages/EditAlertStatus.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Filament\\\\Resources\\\\Alerts\\\\Pages\\\\ListAlerts\\:\\:segmentFilter\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Alert\\\\Filament\\\\Resources\\\\AlertResource\\\\Pages\\\\ListAlerts\\:\\:segmentFilter\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/Alerts/Pages/ListAlerts.php',
@@ -1558,6 +1540,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/CampaignActionBlock.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Call to method getLabel\\(\\) on an unknown class AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 4,
+    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/CareTeamBlock.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\CareTeamBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -1684,6 +1672,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Jobs/EventCampaignActionJob.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Call to method instance\\(\\) on an unknown class AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/campaign/src/Jobs/ExecuteCampaignAction.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
     'identifier' => 'MeliorStan.shortVariable',
     'count' => 1,
@@ -1718,6 +1712,12 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/campaign/src/Models/Campaign.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to method getLabel\\(\\) on an unknown class AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 3,
+    'path' => __DIR__ . '/app-modules/campaign/src/Notifications/CampaignActionFinished.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to function is_null\\(\\) with string will always evaluate to false\\.$#',
@@ -4201,67 +4201,31 @@ $ignoreErrors[] = [
     'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
     'identifier' => 'MeliorStan.shortVariable',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Actions/BulkSegmentAction.php',
+    'path' => __DIR__ . '/app-modules/group/src/Actions/BulkGroupAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to method getKey\\(\\) on an unknown class AdvisingApp\\\\Group\\\\Actions\\\\Segment\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/group/src/Actions/TranslateSegmentFilters.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Class AdvisingApp\\\\Group\\\\Actions\\\\Segment not found\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/group/src/Actions/TranslateSegmentFilters.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Class AdvisingApp\\\\Group\\\\Filament\\\\Resources\\\\Segments\\\\Pages\\\\GetGroupQuery not found\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/group/src/Actions/TranslateSegmentFilters.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\$segment of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateSegmentFilters\\:\\:applyFilterToQuery\\(\\) has invalid type AdvisingApp\\\\Group\\\\Actions\\\\Segment\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Actions/TranslateSegmentFilters.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\$segment of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateSegmentFilters\\:\\:execute\\(\\) has invalid type AdvisingApp\\\\Group\\\\Actions\\\\Segment\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Actions/TranslateSegmentFilters.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Undefined variable\\: \\$segment$#',
-    'identifier' => 'variable.undefined',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Console/Commands/TranslateSegment.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Group\\\\Enums\\\\GroupModel\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
     'identifier' => 'return.unusedType',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Enums/SegmentModel.php',
+    'path' => __DIR__ . '/app-modules/group/src/Enums/GroupModel.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel\\:\\:getSubjectImporter\\(\\) has invalid return type AdvisingApp\\\\Group\\\\Enums\\\\Importer\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Group\\\\Enums\\\\GroupModel\\:\\:getSubjectImporter\\(\\) has invalid return type AdvisingApp\\\\Group\\\\Enums\\\\Importer\\.$#',
     'identifier' => 'class.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Enums/SegmentModel.php',
+    'path' => __DIR__ . '/app-modules/group/src/Enums/GroupModel.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel\\:\\:getSubjectImporter\\(\\) should return class\\-string\\<AdvisingApp\\\\Group\\\\Enums\\\\Importer\\> but returns string\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Group\\\\Enums\\\\GroupModel\\:\\:getSubjectImporter\\(\\) should return class\\-string\\<AdvisingApp\\\\Group\\\\Enums\\\\Importer\\> but returns string\\.$#',
     'identifier' => 'return.type',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Enums/SegmentModel.php',
+    'path' => __DIR__ . '/app-modules/group/src/Enums/GroupModel.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel\\:\\:query\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
+    'message' => '#^Method AdvisingApp\\\\Group\\\\Enums\\\\GroupModel\\:\\:query\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Enums/SegmentModel.php',
+    'path' => __DIR__ . '/app-modules/group/src/Enums/GroupModel.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Group\\\\Enums\\\\SegmentType\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
@@ -4490,6 +4454,12 @@ $ignoreErrors[] = [
     'identifier' => 'generics.notSubtype',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/group/src/Models/SegmentSubject.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to method class\\(\\) on an unknown class AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 5,
+    'path' => __DIR__ . '/app-modules/group/src/Policies/GroupPolicy.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Using nullsafe method call on non\\-nullable type AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel\\. Use \\-\\> instead\\.$#',
@@ -5884,6 +5854,24 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/notification/tests/Tenant/Notifications/Channels/MailChannelEmailMessageTest.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Call to method table\\(\\) on an unknown class AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/pipeline/src/Filament/Resources/Pipelines/Pages/ManageEductables.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Match expression does not handle remaining value\\: AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel$#',
+    'identifier' => 'match.unhandled',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/pipeline/src/Filament/Resources/Pipelines/Pages/ManageEductables.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to method class\\(\\) on an unknown class AdvisingApp\\\\Group\\\\Enums\\\\SegmentModel\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/pipeline/src/Jobs/PruneEducatablePipelineStagesForPipeline.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Portal\\\\DataTransferObjects\\\\ResourceHubSearchData\\:\\:\\$articles with generic class Spatie\\\\LaravelData\\\\DataCollection does not specify its types\\: TKey, TValue$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -6220,8 +6208,20 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ListProspects.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Missing parameter \\$groupModel \\(AdvisingApp\\\\Group\\\\Enums\\\\GroupModel\\) in call to static method AdvisingApp\\\\Group\\\\Actions\\\\BulkGroupAction\\:\\:make\\(\\)\\.$#',
+    'identifier' => 'argument.missing',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ListProspects.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\)\\: bool given\\.$#',
     'identifier' => 'argument.type',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ListProspects.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Unknown parameter \\$GroupModel in call to static method AdvisingApp\\\\Group\\\\Actions\\\\BulkGroupAction\\:\\:make\\(\\)\\.$#',
+    'identifier' => 'argument.unknown',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ListProspects.php',
 ];
@@ -9775,6 +9775,18 @@ $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$relations of method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:with\\(\\) expects array\\<array\\|\\(Closure\\(Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\Relation\\<\\*, \\*, \\*\\>\\)\\: mixed\\)\\|string\\>\\|string, array\\{educatablePipelineStages\\: Closure\\(AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany\\)\\: AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany\\} given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
+    'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Variable \\$educatable might not be defined\\.$#',
+    'identifier' => 'variable.undefined',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Variable \\$educatablePipelineStages might not be defined\\.$#',
+    'identifier' => 'variable.undefined',
+    'count' => 2,
     'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
 ];
 $ignoreErrors[] = [

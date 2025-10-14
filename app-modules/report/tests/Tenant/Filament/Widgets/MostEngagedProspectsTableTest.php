@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -93,7 +93,7 @@ it('returns top engaged prospects engagements based on segment filter', function
     $endDate = now()->subDays(5);
 
     $segment = Group::factory()->create([
-        'model' => SegmentModel::Prospect,
+        'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [

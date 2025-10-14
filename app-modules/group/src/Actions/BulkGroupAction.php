@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Group\Actions;
 
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\SegmentType;
 use AdvisingApp\Group\Models\Group;
 use Exception;
@@ -48,9 +48,9 @@ use Filament\Schemas\Schema;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-class BulkSegmentAction
+class BulkGroupAction
 {
-    public static function make(SegmentModel $segmentModel): BulkAction
+    public static function make(GroupModel $groupModel): BulkAction
     {
         return BulkAction::make('segment')
             ->icon('heroicon-o-rectangle-group')
@@ -65,14 +65,14 @@ class BulkSegmentAction
                     ->label('Description')
                     ->maxLength(65535),
             ]))
-            ->action(function (Collection $records, array $data) use ($segmentModel) {
+            ->action(function (Collection $records, array $data) use ($groupModel) {
                 try {
                     DB::beginTransaction();
                     $segment = Group::create([
                         ...$data,
                         'type' => SegmentType::Static,
                         'filters' => [],
-                        'model' => $segmentModel,
+                        'model' => $groupModel,
                     ]);
                     $records->chunk(100)->each(
                         fn ($chunkRecord) => $segment

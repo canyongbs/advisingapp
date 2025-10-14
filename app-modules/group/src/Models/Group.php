@@ -37,7 +37,7 @@
 namespace AdvisingApp\Group\Models;
 
 use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\SegmentType;
 use AdvisingApp\Group\Observers\GroupObserver;
 use App\Models\Authenticatable;
@@ -70,7 +70,7 @@ class Group extends BaseModel
 
     protected $casts = [
         'filters' => 'array',
-        'model' => SegmentModel::class,
+        'model' => GroupModel::class,
         'type' => SegmentType::class,
     ];
 
@@ -98,7 +98,7 @@ class Group extends BaseModel
         return $this->hasMany(Campaign::class, 'segment_id');
     }
 
-    public function scopeModel(Builder $query, SegmentModel $model): void
+    public function scopeModel(Builder $query, GroupModel $model): void
     {
         $query->where('model', $model);
     }
@@ -113,7 +113,7 @@ class Group extends BaseModel
             /** @var Authenticatable $user */
             $user = auth()->guard('web')->user();
 
-            foreach (SegmentModel::cases() as $model) {
+            foreach (GroupModel::cases() as $model) {
                 if (! $user->hasLicense($model->class()::getLicenseType())) {
                     $builder->where('model', '!=', $model);
                 }

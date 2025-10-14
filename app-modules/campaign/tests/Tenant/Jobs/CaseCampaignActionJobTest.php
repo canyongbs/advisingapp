@@ -45,7 +45,7 @@ use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Division\Models\Division;
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\SegmentType;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -61,8 +61,8 @@ it('will execute appropriately on each educatable in the group', function (Educa
     $group = Group::factory()->create([
         'type' => SegmentType::Static,
         'model' => match ($educatable::class) {
-            Student::class => SegmentModel::Student,
-            Prospect::class => SegmentModel::Prospect,
+            Student::class => GroupModel::Student,
+            Prospect::class => GroupModel::Prospect,
             default => throw new Exception('Invalid model type'),
         },
     ]);
@@ -140,8 +140,8 @@ it('will create the proper assignment if provided', function (Educatable $educat
     $group = Group::factory()->create([
         'type' => SegmentType::Static,
         'model' => match ($educatable::class) {
-            Student::class => SegmentModel::Student,
-            Prospect::class => SegmentModel::Prospect,
+            Student::class => GroupModel::Student,
+            Prospect::class => GroupModel::Prospect,
             default => throw new Exception('Invalid model type'),
         },
     ]);

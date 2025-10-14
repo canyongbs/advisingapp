@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentDeliverableTable;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -92,7 +92,7 @@ it('it returns deliverability data only for students created within the given da
 
 it('it returns deliverability data only for students based on segment filters', function () {
     $segment = Group::factory()->create([
-        'model' => SegmentModel::Student,
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [

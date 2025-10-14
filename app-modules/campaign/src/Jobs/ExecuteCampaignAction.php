@@ -38,7 +38,7 @@ namespace AdvisingApp\Campaign\Jobs;
 
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
-use AdvisingApp\Group\Actions\TranslateSegmentFilters;
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use App\Models\Tenant;
 use App\Models\User;
@@ -92,7 +92,7 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
         }
 
         try {
-            app(TranslateSegmentFilters::class)
+            app(TranslateGroupFilters::class)
                 ->execute($this->action->campaign->segment)
                 ->lazyById(
                     1000,

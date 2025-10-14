@@ -36,7 +36,7 @@
 
 use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
@@ -98,7 +98,7 @@ it('returns correct total prospect stats of prospects, alerts, cases and tasks b
     $count = random_int(1, 5);
 
     $segment = Group::factory()->create([
-        'model' => SegmentModel::Prospect,
+        'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [

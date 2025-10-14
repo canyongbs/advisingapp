@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Report\Abstract\Concerns;
 
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
-use AdvisingApp\Report\Abstract\Contracts\HasSegmentModel;
+use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
 use AdvisingApp\Report\Filament\Pages\ProspectCaseReport;
 use AdvisingApp\Report\Filament\Pages\StudentCaseReport;
 use Filament\Forms\Components\DatePicker;
@@ -57,7 +57,7 @@ trait HasFiltersForm
     {
         $heading = ($this instanceof StudentCaseReport || $this instanceof ProspectCaseReport) ? 'Date Created' : null;
 
-        $segmentModel = $this instanceof HasSegmentModel ? $this->segmentModel() : null;
+        $groupModel = $this instanceof HasGroupModel ? $this->groupModel() : null;
 
         return $schema
             ->components([
@@ -85,12 +85,12 @@ trait HasFiltersForm
                     ->schema([
                         Select::make('populationSegment')
                             ->label('Select Group')
-                            ->options(fn (): array => $this->getSegmentOptions($segmentModel))
-                            ->getSearchResultsUsing(fn (string $search): array => $this->getSegmentOptions($segmentModel, $search))
+                            ->options(fn (): array => $this->getSegmentOptions($groupModel))
+                            ->getSearchResultsUsing(fn (string $search): array => $this->getSegmentOptions($groupModel, $search))
                             ->searchable(),
                     ])
                     ->heading('Advanced Filtering')
-                    ->visible($this instanceof HasSegmentModel)
+                    ->visible($this instanceof HasGroupModel)
                     ->columns(1),
             ]);
     }
@@ -98,7 +98,7 @@ trait HasFiltersForm
     /**
      * @return array<int, string>
      */
-    protected function getSegmentOptions(?SegmentModel $model, ?string $search = null): array
+    protected function getSegmentOptions(?GroupModel $model, ?string $search = null): array
     {
         if (! $model) {
             return [];
