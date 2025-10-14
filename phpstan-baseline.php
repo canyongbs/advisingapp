@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 declare(strict_types=1);
 
 $ignoreErrors = [];
@@ -4250,6 +4216,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/group/src/Actions/TranslateSegmentFilters.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Class AdvisingApp\\\\Group\\\\Filament\\\\Resources\\\\Segments\\\\Pages\\\\GetGroupQuery not found\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/group/src/Actions/TranslateSegmentFilters.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Parameter \\$segment of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateSegmentFilters\\:\\:applyFilterToQuery\\(\\) has invalid type AdvisingApp\\\\Group\\\\Actions\\\\Segment\\.$#',
     'identifier' => 'class.notFound',
     'count' => 1,
@@ -4298,148 +4270,118 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/group/src/Enums/SegmentType.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Group\\\\Filament\\\\Resources\\\\Segments\\\\GroupResourceForProcesses\\:\\:canAccess\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Group\\\\Filament\\\\Resources\\\\Groups\\\\GroupResourceForProcesses\\:\\:canAccess\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/GroupResourceForProcesses.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/GroupResourceForProcesses.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property App\\\\Models\\\\Import\\:\\:\\$failed_at\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/CreateGroup.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/CreateGroup.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to protected property Spatie\\\\Invade\\\\Invader\\<Illuminate\\\\Filesystem\\\\AwsS3V3Adapter\\>\\:\\:\\$client\\.$#',
     'identifier' => 'property.protected',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/CreateGroup.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/CreateGroup.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined static method AdvisingApp\\\\Group\\\\Enums\\\\Importer\\:\\:getCompletedNotificationBody\\(\\)\\.$#',
     'identifier' => 'staticMethod.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/CreateGroup.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/CreateGroup.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^PHPDoc tag @var with type array\\<array\\<array\\<string, string\\>\\>\\> is not subtype of native type Generator\\.$#',
     'identifier' => 'varTag.nativeType',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/CreateGroup.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/CreateGroup.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Property Filament\\\\Actions\\\\Imports\\\\Models\\\\Import\\:\\:\\$importer \\(class\\-string\\<Filament\\\\Actions\\\\Imports\\\\Importer\\>\\) does not accept class\\-string\\<AdvisingApp\\\\Group\\\\Enums\\\\Importer\\>\\.$#',
     'identifier' => 'assign.propertyType',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/CreateGroup.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/CreateGroup.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$filters\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditGroup.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/EditGroup.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$model\\.$#',
     'identifier' => 'property.notFound',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditGroup.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/EditGroup.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$type\\.$#',
     'identifier' => 'property.notFound',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditGroup.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/EditGroup.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$user\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditGroup.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/EditGroup.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:subjects\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditGroup.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/EditGroup.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$filters\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditSegment.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/GetGroupQuery.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$model\\.$#',
     'identifier' => 'property.notFound',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditSegment.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/GetGroupQuery.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$type\\.$#',
     'identifier' => 'property.notFound',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditSegment.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/GetGroupQuery.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$user\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditSegment.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/GetGroupQuery.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:subjects\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/EditSegment.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/GetGroupQuery.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$filters\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/GetGroupQuery.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$model\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/GetGroupQuery.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/GetGroupQuery.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$user\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/GetGroupQuery.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:subjects\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/GetGroupQuery.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to method delete\\(\\) on an unknown class AdvisingApp\\\\Group\\\\Filament\\\\Resources\\\\Segments\\\\Pages\\\\Segment\\.$#',
+    'message' => '#^Call to method delete\\(\\) on an unknown class AdvisingApp\\\\Group\\\\Filament\\\\Resources\\\\Groups\\\\Pages\\\\Segment\\.$#',
     'identifier' => 'class.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/ListGroups.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/ListGroups.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\$record of anonymous function has invalid type AdvisingApp\\\\Group\\\\Filament\\\\Resources\\\\Segments\\\\Pages\\\\Segment\\.$#',
+    'message' => '#^Parameter \\$record of anonymous function has invalid type AdvisingApp\\\\Group\\\\Filament\\\\Resources\\\\Groups\\\\Pages\\\\Segment\\.$#',
     'identifier' => 'class.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/ListGroups.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/ListGroups.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
     'identifier' => 'MeliorStan.shortVariable',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Segments/Pages/ListGroups.php',
+    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/ListGroups.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to method segment\\(\\) on an unknown class AdvisingApp\\\\Group\\\\Importers\\\\SegmentSubject\\.$#',

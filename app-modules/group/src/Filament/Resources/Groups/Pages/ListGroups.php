@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Group\Filament\Resources\Segments\Pages;
+namespace AdvisingApp\Group\Filament\Resources\Groups\Pages;
 
-use AdvisingApp\Group\Filament\Resources\Segments\GroupResource;
+use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Tables\Columns\IdColumn;

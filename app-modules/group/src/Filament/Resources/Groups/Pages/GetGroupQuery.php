@@ -34,63 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Group\Filament\Resources\Segments\Pages;
+namespace AdvisingApp\Group\Filament\Resources\Groups\Pages;
 
-use AdvisingApp\Group\Enums\SegmentModel;
 use AdvisingApp\Group\Enums\SegmentType;
-use AdvisingApp\Group\Filament\Resources\Segments\GroupResource;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Group\Filament\Resources\Groups\GroupResourceForProcesses;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Schemas\Components\EmbeddedTable;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Schema;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class EditSe extends EditRecord implements HasTable
+class GetGroupQuery extends EditRecord implements HasTable
 {
     use InteractsWithTable {
         bootedInteractsWithTable as baseBootedInteractsWithTable;
     }
     use EditPageRedirection;
 
-    protected static string $resource = GroupResource::class;
+    protected static string $resource = GroupResourceForProcesses::class;
 
-    public function form(Schema $schema): Schema
+    public function mount(int | string $record): void
     {
-        return $schema
-            ->components([
-                TextInput::make('name')
-                    ->autocomplete(false)
-                    ->string()
-                    ->required()
-                    ->columnSpanFull(),
-                Textarea::make('description')
-                    ->columnSpanFull(),
-                Grid::make()
-                    ->schema([
-                        Select::make('type')
-                            ->options(SegmentType::class)
-                            ->disabled(),
-                        Select::make('model')
-                            ->label('Population')
-                            ->options(SegmentModel::class)
-                            ->disabled()
-                            ->visible(auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])),
-                        TextInput::make('user.name')
-                            ->label('User')
-                            ->disabled(),
-                    ])
-                    ->columns(3),
-            ]);
+        $this->record = $this->resolveRecord($record);
+
+        $this->fillForm();
+
+        $this->previousUrl = url()->previous();
     }
 
     public function table(Table $table): Table
@@ -100,6 +70,7 @@ class EditSe extends EditRecord implements HasTable
         $table = $segment->model->table($table);
 
         if ($segment->type === SegmentType::Static) {
+            // TODO: Look into changing this. It is inefficient and may break with large datasets.
             $keys = $segment->subjects()->pluck('subject_id');
 
             $table->modifyQueryUsing(fn (Builder $query) => $query->whereKey($keys));
@@ -117,16 +88,6 @@ class EditSe extends EditRecord implements HasTable
         $this->baseBootedInteractsWithTable();
     }
 
-    public function content(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                $this->getFormContentComponent(),
-                $this->getRelationManagersContentComponent(),
-                EmbeddedTable::make(),
-            ]);
-    }
-
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $segment = $this->getRecord();
@@ -134,24 +95,6 @@ class EditSe extends EditRecord implements HasTable
         $data['model'] = $segment->model;
         $data['type'] = $segment->type;
         $data['user']['name'] = $segment->user->name;
-
-        return $data;
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            DeleteAction::make(),
-        ];
-    }
-
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        if (SegmentType::parse($this->data['type']) === SegmentType::Dynamic) {
-            $data['filters'] = $this->tableFilters ?? [];
-        } else {
-            $data['filters'] = [];
-        }
 
         return $data;
     }

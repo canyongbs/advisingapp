@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Group\Filament\Resources\Segments\GroupResource;
+use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
