@@ -42,7 +42,7 @@ use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
 use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Enums\SegmentType;
+use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Models\Event;
@@ -63,7 +63,7 @@ it('will execute appropriately on each educatable in the group', function (Educa
 
     /** @var Group $group */
     $group = Group::factory()->create([
-        'type' => SegmentType::Static,
+        'type' => GroupType::Static,
         'model' => match ($educatable::class) {
             Student::class => GroupModel::Student,
             Prospect::class => GroupModel::Prospect,
@@ -145,7 +145,7 @@ it('will not duplicate an invite if the group educatable was already invited', f
 
     /** @var Group $group */
     $group = Group::factory()->create([
-        'type' => SegmentType::Static,
+        'type' => GroupType::Static,
         'model' => match ($educatable::class) {
             Student::class => GroupModel::Student,
             Prospect::class => GroupModel::Prospect,

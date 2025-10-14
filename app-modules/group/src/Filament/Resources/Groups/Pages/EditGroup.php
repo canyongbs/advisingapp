@@ -37,7 +37,7 @@
 namespace AdvisingApp\Group\Filament\Resources\Groups\Pages;
 
 use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Enums\SegmentType;
+use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -78,7 +78,7 @@ class EditGroup extends EditRecord implements HasTable
                 Grid::make()
                     ->schema([
                         Select::make('type')
-                            ->options(SegmentType::class)
+                            ->options(GroupType::class)
                             ->disabled(),
                         Select::make('model')
                             ->label('Population')
@@ -99,7 +99,7 @@ class EditGroup extends EditRecord implements HasTable
 
         $table = $segment->model->table($table);
 
-        if ($segment->type === SegmentType::Static) {
+        if ($segment->type === GroupType::Static) {
             $keys = $segment->subjects()->pluck('subject_id');
 
             $table->modifyQueryUsing(fn (Builder $query) => $query->whereKey($keys));
@@ -147,7 +147,7 @@ class EditGroup extends EditRecord implements HasTable
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        if (SegmentType::parse($this->data['type']) === SegmentType::Dynamic) {
+        if (GroupType::parse($this->data['type']) === GroupType::Dynamic) {
             $data['filters'] = $this->tableFilters ?? [];
         } else {
             $data['filters'] = [];

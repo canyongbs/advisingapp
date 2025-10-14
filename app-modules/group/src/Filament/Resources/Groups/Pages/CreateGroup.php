@@ -37,7 +37,7 @@
 namespace AdvisingApp\Group\Filament\Resources\Groups\Pages;
 
 use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Enums\SegmentType;
+use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -106,8 +106,8 @@ class CreateGroup extends CreateRecord implements HasTable
             Step::make('Identify Population')
                 ->schema([
                     Select::make('type')
-                        ->options(SegmentType::class)
-                        ->default(SegmentType::default())
+                        ->options(GroupType::class)
+                        ->default(GroupType::default())
                         ->selectablePlaceholder(false)
                         ->required(),
                 ])
@@ -115,14 +115,14 @@ class CreateGroup extends CreateRecord implements HasTable
             Step::make('Create Population Group')
                 ->schema([
                     View::make('filament.forms.components.table')
-                        ->visible(fn (Get $get): bool => $get('type') === SegmentType::Dynamic),
+                        ->visible(fn (Get $get): bool => $get('type') === GroupType::Dynamic),
                     FileUpload::make('file')
                         ->acceptedFileTypes(['text/csv', 'text/plain'])
                         ->storeFiles(false)
                         ->visibility('private')
                         ->required()
                         ->hiddenLabel()
-                        ->visible(fn (Get $get): bool => $get('type') === SegmentType::Static)
+                        ->visible(fn (Get $get): bool => $get('type') === GroupType::Static)
                         ->helperText(fn (): string => match ($this->getGroupModel()) {
                             GroupModel::Student => 'Upload a file of Student IDs or Other IDs, with each on a new line.',
                             GroupModel::Prospect => 'Upload a file of prospect email addresses, with each on a new line.',
@@ -165,7 +165,7 @@ class CreateGroup extends CreateRecord implements HasTable
     {
         $data = $this->form->getRawState();
 
-        if (SegmentType::parse($data['type']) === SegmentType::Dynamic) {
+        if (GroupType::parse($data['type']) === GroupType::Dynamic) {
             return;
         }
 
@@ -309,7 +309,7 @@ class CreateGroup extends CreateRecord implements HasTable
     {
         $data['model'] = $this->getGroupModel();
 
-        if (SegmentType::parse($data['type']) === SegmentType::Dynamic) {
+        if (GroupType::parse($data['type']) === GroupType::Dynamic) {
             $data['filters'] = $this->tableFilters ?? [];
         } else {
             $data['filters'] = [];

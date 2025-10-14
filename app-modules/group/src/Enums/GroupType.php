@@ -38,7 +38,7 @@ namespace AdvisingApp\Group\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 
-enum SegmentType: string implements HasLabel
+enum GroupType: string implements HasLabel
 {
     case Dynamic = 'dynamic';
 
@@ -57,7 +57,7 @@ enum SegmentType: string implements HasLabel
         return static::Dynamic;
     }
 
-    public static function parse(SegmentType | string $value): ?static
+    public static function parse(GroupType | string $value): ?static
     {
         if ($value instanceof static) {
             return $value;

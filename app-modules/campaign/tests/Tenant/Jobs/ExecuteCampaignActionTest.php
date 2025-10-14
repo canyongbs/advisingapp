@@ -49,7 +49,7 @@ use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Enums\SegmentType;
+use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -65,7 +65,7 @@ it('dispatches the correct job based on the CampaignAction type into the batch',
     Bus::fake();
 
     $segment = Group::factory()->create([
-        'type' => SegmentType::Static,
+        'type' => GroupType::Static,
         'model' => $groupModel,
     ]);
 
@@ -163,7 +163,7 @@ it('re-uses the same CampaignActionEducatable if it already exists', function ()
     $groupModel = GroupModel::cases()[array_rand(GroupModel::cases())];
 
     $segment = Group::factory()->create([
-        'type' => SegmentType::Static,
+        'type' => GroupType::Static,
         'model' => $groupModel,
     ]);
 

@@ -46,7 +46,7 @@ use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Enums\SegmentType;
+use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -59,7 +59,7 @@ it('will execute appropriately on each educatable in the group', function (Educa
 
     /** @var Group $group */
     $group = Group::factory()->create([
-        'type' => SegmentType::Static,
+        'type' => GroupType::Static,
         'model' => match ($educatable::class) {
             Student::class => GroupModel::Student,
             Prospect::class => GroupModel::Prospect,
@@ -138,7 +138,7 @@ it('will create the proper assignment if provided', function (Educatable $educat
 
     /** @var Segment $group */
     $group = Group::factory()->create([
-        'type' => SegmentType::Static,
+        'type' => GroupType::Static,
         'model' => match ($educatable::class) {
             Student::class => GroupModel::Student,
             Prospect::class => GroupModel::Prospect,

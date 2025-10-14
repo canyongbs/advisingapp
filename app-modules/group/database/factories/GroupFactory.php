@@ -37,7 +37,7 @@
 namespace AdvisingApp\Group\Database\Factories;
 
 use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Enums\SegmentType;
+use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -55,7 +55,7 @@ class GroupFactory extends Factory
         return [
             'name' => $this->faker->words(asText: true),
             'model' => $this->faker->randomElement(GroupModel::cases()),
-            'type' => SegmentType::Dynamic, //TODO: add static later
+            'type' => GroupType::Dynamic, //TODO: add static later
             'user_id' => User::inRandomOrder()->first()?->getKey() ?? User::factory()->create()?->getKey(),
         ];
     }

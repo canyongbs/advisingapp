@@ -36,27 +36,27 @@
 
 namespace AdvisingApp\Group\Importers;
 
-use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Group\Models\GroupSubject;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class StudentSegmentSubjectImporter extends Importer
+class ProspectGroupSubjectImporter extends Importer
 {
-    protected static ?string $model = SegmentSubject::class;
+    protected static ?string $model = GroupSubject::class;
 
     public static function getColumns(): array
     {
         return [
             ImportColumn::make('subject')
-                ->label('Student ID / Other ID')
-                ->rules(['required'])
+                ->label('Email address')
+                ->rules(['required', 'email'])
                 ->relationship(
-                    resolveUsing: fn (mixed $state) => Student::query()
-                        ->where('sisid', $state)
-                        ->orWhere('otherid', $state)
+                    resolveUsing: fn (mixed $state) => Prospect::query()
+                        ->whereRelation('emailAddresses', 'address', $state)
                         ->first(),
                 )
                 ->requiredMapping(),
@@ -65,12 +65,12 @@ class StudentSegmentSubjectImporter extends Importer
 
     public function resolveRecord(): ?Model
     {
-        return new SegmentSubject();
+        return new GroupSubject();
     }
 
     public function beforeCreate(): void
     {
-        /** @var SegmentSubject $record */
+        /** @var GroupSubject $record */
         $record = $this->record;
 
         $record->segment()->associate($this->getOptions()['segment_id']);
@@ -78,10 +78,10 @@ class StudentSegmentSubjectImporter extends Importer
 
     public static function getCompletedNotificationBody(Import $import): string
     {
-        $body = 'Your segment import has completed and ' . number_format($import->successful_rows) . ' ' . Str::plural('student', $import->successful_rows) . ' imported.';
+        $body = 'Your group import has completed and ' . number_format($import->successful_rows) . ' ' . Str::plural('prospect', $import->successful_rows) . ' imported.';
 
         if ($failedRowsCount = $import->getFailedRowsCount()) {
-            $body .= ' ' . number_format($failedRowsCount) . ' ' . Str::plural('student', $failedRowsCount) . ' failed to import.';
+            $body .= ' ' . number_format($failedRowsCount) . ' ' . Str::plural('prospect', $failedRowsCount) . ' failed to import.';
         }
 
         return $body;

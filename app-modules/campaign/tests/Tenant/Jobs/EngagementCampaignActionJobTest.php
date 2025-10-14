@@ -44,7 +44,7 @@ use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
 use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Enums\SegmentType;
+use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -62,7 +62,7 @@ it('will execute appropriately on each educatable in the group', function (Educa
 
     /** @var Group $group */
     $group = Group::factory()->create([
-        'type' => SegmentType::Static,
+        'type' => GroupType::Static,
         'model' => match ($educatable::class) {
             Student::class => GroupModel::Student,
             Prospect::class => GroupModel::Prospect,
@@ -163,7 +163,7 @@ it('will throw an exception if a canRecieve check fails', function (Educatable $
 
     /** @var Group $group */
     $group = Group::factory()->create([
-        'type' => SegmentType::Static,
+        'type' => GroupType::Static,
         'model' => match ($educatable::class) {
             Student::class => GroupModel::Student,
             Prospect::class => GroupModel::Prospect,
