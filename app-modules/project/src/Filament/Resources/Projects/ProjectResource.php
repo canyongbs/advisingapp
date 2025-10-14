@@ -40,7 +40,9 @@ use AdvisingApp\Pipeline\Filament\Resources\Pipelines\PipelineResource;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\CreateProject;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\EditProject;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\ListProjects;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageAuditors;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageFiles;
+use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageManagers;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageMilestones;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageProjectPipelines;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageTasks;
@@ -69,6 +71,8 @@ class ProjectResource extends Resource
         return $page->generateNavigationItems([
             ViewProject::class,
             EditProject::class,
+            ManageManagers::class,
+            ManageAuditors::class,
             ManageFiles::class,
             ManageProjectPipelines::class,
             ManageMilestones::class,
@@ -100,6 +104,8 @@ class ProjectResource extends Resource
             'view' => ViewProject::route('/{record}'),
             'edit' => EditProject::route('/{record}/edit'),
             'files' => ManageFiles::route('/{record}/files'),
+            'manage-managers' => ManageManagers::route('/{record}/managers'),
+            'manage-auditors' => ManageAuditors::route('/{record}/auditors'),
             'manage-pipelines' => ManageProjectPipelines::route('/{record}/pipelines'),
             'manage-milestones' => ManageMilestones::route('/{record}/milestones'),
             'manage-tasks' => ManageTasks::route('/{record}/tasks'),
