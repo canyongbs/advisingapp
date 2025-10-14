@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Group\Filament\Resources\Segments;
+namespace AdvisingApp\Group\Filament\Resources\Groups;
 
 use AdvisingApp\Group\Models\Group;
 use Filament\Resources\Resource;
