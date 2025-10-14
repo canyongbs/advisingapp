@@ -51,13 +51,15 @@ class SegmentResource extends Resource
 
     protected static ?int $navigationSort = 50;
 
-    protected static ?string $navigationLabel = 'Segments';
+    protected static ?string $navigationLabel = 'Groups';
 
-    protected static ?string $breadcrumb = 'Segments';
+    protected static ?string $breadcrumb = 'Groups';
 
-    protected static ?string $modelLabel = 'Segment';
+    protected static ?string $modelLabel = 'Group';
 
-    protected static ?string $pluralModelLabel = 'Segments';
+    protected static ?string $pluralModelLabel = 'Groups';
+
+    protected static ?string $slug = 'groups';
 
     public static function getPages(): array
     {

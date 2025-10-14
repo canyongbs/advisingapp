@@ -102,7 +102,7 @@ class CreateCampaign extends CreateRecord
                         ->autocomplete(false)
                         ->required(),
                     Select::make('segment_id')
-                        ->label('Population Segment')
+                        ->label('Population Group')
                         ->options(function () {
                             return Segment::query()
                                 ->whereHas('user', function ($query) {

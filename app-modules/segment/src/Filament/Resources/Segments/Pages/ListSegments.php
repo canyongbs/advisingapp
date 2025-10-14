@@ -52,7 +52,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 
 class ListSegments extends ListRecords
 {
-    protected ?string $heading = 'Segments';
+    protected ?string $heading = 'Groups';
 
     protected static string $resource = SegmentResource::class;
 
@@ -94,7 +94,7 @@ class ListSegments extends ListRecords
             ])
             ->filters([
                 Filter::make('my_segments')
-                    ->label('My Population Segments')
+                    ->label('My Population Groups')
                     ->query(
                         fn ($query) => $query->where('user_id', auth()->id())
                     )

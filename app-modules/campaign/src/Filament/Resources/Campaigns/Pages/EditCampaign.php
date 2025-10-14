@@ -59,7 +59,7 @@ class EditCampaign extends EditRecord
                 TextInput::make('name')
                     ->required(),
                 Select::make('segment_id')
-                    ->label('Population Segment')
+                    ->label('Population Group')
                     ->options(function () {
                         return Segment::query()
                             ->whereHas('user', function ($query) {
