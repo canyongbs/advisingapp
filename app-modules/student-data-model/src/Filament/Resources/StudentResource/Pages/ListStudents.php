@@ -65,6 +65,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -184,7 +185,7 @@ class ListStudents extends ListRecords
                     ),
                 TernaryFilter::make('firstgen')
                     ->label('First Generation'),
-            ])
+            ], layout: FiltersLayout::BeforeContent)
             ->recordActions([
                 ViewAction::make()
                     ->visible(function (Student $record) {

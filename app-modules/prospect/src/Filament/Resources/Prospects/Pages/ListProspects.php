@@ -73,6 +73,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -181,7 +182,7 @@ class ListProspects extends ListRecords
                             });
                         }
                     ),
-            ])
+            ], layout: FiltersLayout::BeforeContent)
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),

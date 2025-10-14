@@ -56,6 +56,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
@@ -120,7 +121,7 @@ class ListResourceHubArticles extends ListRecords
                     ->multiple()
                     ->preload(),
                 TernaryFilter::make('public'),
-            ])
+            ], layout: FiltersLayout::BeforeContent)
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
