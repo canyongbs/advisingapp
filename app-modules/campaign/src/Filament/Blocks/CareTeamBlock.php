@@ -40,8 +40,8 @@ use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\CreateCampaign;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
 use App\Models\Scopes\HasLicense;
@@ -80,7 +80,7 @@ class CareTeamBlock extends CampaignActionBlock
                             } else {
                                 $segmentId = $livewire->getOwnerRecord()->segment_id;
                             }
-                            $segment = Segment::find($segmentId);
+                            $segment = Group::find($segmentId);
 
                             return User::query()->tap(new HasLicense(match ($segment->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => Student::getLicenseType(),
@@ -99,7 +99,7 @@ class CareTeamBlock extends CampaignActionBlock
                             } else {
                                 $segmentId = $livewire->getOwnerRecord()->segment_id;
                             }
-                            $segment = Segment::find($segmentId);
+                            $segment = Group::find($segmentId);
 
                             $query->where('type', match ($segment->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => CareTeamRoleType::Student,
@@ -116,7 +116,7 @@ class CareTeamBlock extends CampaignActionBlock
                             } else {
                                 $segmentId = $livewire->getOwnerRecord()->segment_id;
                             }
-                            $segment = Segment::find($segmentId);
+                            $segment = Group::find($segmentId);
 
                             return match ($segment->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => CareTeamRoleType::studentDefault()?->getKey(),
@@ -131,7 +131,7 @@ class CareTeamBlock extends CampaignActionBlock
                             } else {
                                 $segmentId = $livewire->getOwnerRecord()->segment_id;
                             }
-                            $segment = Segment::find($segmentId);
+                            $segment = Group::find($segmentId);
 
                             return CareTeamRole::where('type', match ($segment->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => CareTeamRoleType::Student,

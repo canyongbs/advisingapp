@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionLineChart;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('checks student interactions monthly line chart', function () {
@@ -92,7 +92,7 @@ it('returns correct data for student interactions based on segment filter', func
     $interactionStartDate = now()->subDays(90);
     $interactionEndDate = now()->subDays(5);
 
-    $segment = Segment::factory()->create([
+    $segment = Group::factory()->create([
         'model' => SegmentModel::Student,
         'filters' => [
             'queryBuilder' => [

@@ -37,11 +37,11 @@
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectMessagesDetailStats;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 
 it('returns correct counts of emails and SMS sent/received with no filters', function () {
     $prospectOne = Prospect::factory()->create();
@@ -152,7 +152,7 @@ it('returns correct counts of emails and SMS sent/received within the given date
 });
 
 it('returns correct counts of emails and SMS sent/received based on segment filters', function () {
-    $segment = Segment::factory()->create([
+    $segment = Group::factory()->create([
         'model' => SegmentModel::Prospect,
         'filters' => [
             'queryBuilder' => [

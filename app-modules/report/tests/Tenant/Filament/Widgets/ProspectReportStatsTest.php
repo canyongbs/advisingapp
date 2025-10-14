@@ -36,10 +36,10 @@
 
 use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Task\Models\Task;
 
 it('returns correct total prospect stats of prospects, alerts, cases and tasks within the given date range', function () {
@@ -97,7 +97,7 @@ it('returns correct total prospect stats of prospects, alerts, cases and tasks w
 it('returns correct total prospect stats of prospects, alerts, cases and tasks based on segment filter', function () {
     $count = random_int(1, 5);
 
-    $segment = Segment::factory()->create([
+    $segment = Group::factory()->create([
         'model' => SegmentModel::Prospect,
         'filters' => [
             'queryBuilder' => [

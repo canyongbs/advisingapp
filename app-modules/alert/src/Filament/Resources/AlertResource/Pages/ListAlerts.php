@@ -40,10 +40,10 @@ use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Filament\Resources\AlertResource;
 use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Group\Actions\TranslateSegmentFilters;
+use AdvisingApp\Group\Models\Group as GroupModel;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectAlerts;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -144,7 +144,7 @@ class ListAlerts extends ListRecords
                 SelectFilter::make('all_segments')
                     ->label('All Population Groups')
                     ->options(
-                        Segment::all()
+                        GroupModel::all()
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
@@ -206,7 +206,7 @@ class ListAlerts extends ListRecords
             return;
         }
 
-        $segment = Segment::find($data['value']);
+        $segment = GroupModel::find($data['value']);
 
         /** @var Model $model */
         $model = resolve($segment->model->class());

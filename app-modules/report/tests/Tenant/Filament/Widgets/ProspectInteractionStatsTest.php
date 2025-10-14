@@ -35,12 +35,12 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Pages\ProspectInteractionReport;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionStats;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -163,7 +163,7 @@ it('returns correct total and unique prospect interaction counts based on segmen
     $prospectsWithJohnNameInteractions = random_int(1, 10);
     $prospectsWithDoeNameInteractions = random_int(1, 10);
 
-    $segment = Segment::factory()->create([
+    $segment = Group::factory()->create([
         'model' => SegmentModel::Prospect,
         'filters' => [
             'queryBuilder' => [

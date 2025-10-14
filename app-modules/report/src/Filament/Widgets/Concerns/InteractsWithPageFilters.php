@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Widgets\Concerns;
 
-use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
+use AdvisingApp\Group\Actions\TranslateSegmentFilters;
 use Carbon\Carbon;
 use Filament\Widgets\Concerns\InteractsWithPageFilters as InteractsWithPageFiltersBase;
 use Illuminate\Database\Eloquent\Builder;

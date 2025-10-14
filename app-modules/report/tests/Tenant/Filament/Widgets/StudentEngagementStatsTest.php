@@ -35,10 +35,10 @@
 */
 
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Report\Filament\Widgets\StudentEngagementStats;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 
@@ -89,7 +89,7 @@ it('returns correct counts of students, emails, texts, and staff engagements bas
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
-    $segment = Segment::factory()->create([
+    $segment = Group::factory()->create([
         'model' => SegmentModel::Student,
         'filters' => [
             'queryBuilder' => [

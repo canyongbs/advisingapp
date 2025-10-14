@@ -37,9 +37,9 @@
 namespace AdvisingApp\Report\Abstract;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Group\Enums\SegmentModel;
 use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
 use AdvisingApp\Report\Abstract\Contracts\HasSegmentModel;
-use AdvisingApp\Segment\Enums\SegmentModel;
 use Filament\Pages\Dashboard;
 
 abstract class ProspectReport extends Dashboard implements HasSegmentModel

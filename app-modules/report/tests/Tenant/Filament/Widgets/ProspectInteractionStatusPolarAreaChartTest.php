@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionStatusPolarAreaChart;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 
 it('checks prospect interaction status polar area chart', function () {
     $interactionsCount = rand(1, 10);
@@ -135,7 +135,7 @@ it('returns correct interaction counts by status for prospects based on segment 
     $interactionStatusFirst = InteractionStatus::factory()->create();
     $interactionStatusSecond = InteractionStatus::factory()->create();
 
-    $segment = Segment::factory()->create([
+    $segment = Group::factory()->create([
         'model' => SegmentModel::Prospect,
         'filters' => [
             'queryBuilder' => [

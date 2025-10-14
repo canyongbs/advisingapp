@@ -57,7 +57,7 @@
         "canyon-gbs/multifactor-authentication": "*",
         "canyon-gbs/pipeline": "*",
         "canyon-gbs/research": "*",
-        "canyon-gbs/segment": "*",
+        "canyon-gbs/group": "*",
         "canyon-gbs/stock-media": "*",
         "canyon-gbs/workflow": "*",
         "canyongbs/common": "^2.0",

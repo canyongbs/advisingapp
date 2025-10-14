@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionUsersTable;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
@@ -303,7 +303,7 @@ it('displays only users with student interactions within the selected date range
 });
 
 it('displays only users with student interactions based on segment filter', function () {
-    $segment = Segment::factory()->create([
+    $segment = Group::factory()->create([
         'model' => SegmentModel::Student,
         'filters' => [
             'queryBuilder' => [

@@ -35,12 +35,12 @@
     use Carbon\Carbon;
     use App\Models\User;
     use AdvisingApp\Campaign\Settings\CampaignSettings;
-    use AdvisingApp\Segment\Models\Segment;
+    use AdvisingApp\Group\Models\Group;
     use App\Models\Tag;
 
     $get = $evaluate(fn($get) => $get);
     $segment_id = $get('segment_id');
-    $segment = Segment::find($segment_id);
+    $segment = Group::find($segment_id);
 @endphp
 
 <x-filament::fieldset>

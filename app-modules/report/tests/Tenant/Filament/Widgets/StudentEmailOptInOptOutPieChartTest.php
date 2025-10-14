@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentEmailOptInOptOutPieChart;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('it filters student email opt-in/out/null data accurately using start and end dates', function () {
@@ -86,7 +86,7 @@ it('it filters student email opt-in/out/null data accurately based on segment fi
     $startDate = now()->subDays(90);
     $endDate = now()->subDays(5);
 
-    $segment = Segment::factory()->create([
+    $segment = Group::factory()->create([
         'model' => SegmentModel::Student,
         'filters' => [
             'queryBuilder' => [

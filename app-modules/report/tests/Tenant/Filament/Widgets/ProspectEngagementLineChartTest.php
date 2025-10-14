@@ -35,11 +35,11 @@
 */
 
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectEngagementLineChart;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 
 it('returns correct monthly email and sms engagement data for prospects within the given date range', function () {
     $startDate = now()->subDays(90);
@@ -76,7 +76,7 @@ it('returns correct monthly email and sms engagement data for prospects based on
     $startDate = now()->subDays(90);
     $endDate = now()->subDays(5);
 
-    $segment = Segment::factory()->create([
+    $segment = Group::factory()->create([
         'model' => SegmentModel::Prospect,
         'filters' => [
             'queryBuilder' => [

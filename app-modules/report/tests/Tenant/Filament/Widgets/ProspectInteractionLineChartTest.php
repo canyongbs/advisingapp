@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionLineChart;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 
 it('checks prospect interactions monthly line chart', function () {
     $prospectCount = 5;
@@ -92,7 +92,7 @@ it('returns correct data for prospect interactions based on segment filter', fun
     $interactionStartDate = now()->subDays(90);
     $interactionEndDate = now()->subDays(5);
 
-    $segment = Segment::factory()->create([
+    $segment = Group::factory()->create([
         'model' => SegmentModel::Prospect,
         'filters' => [
             'queryBuilder' => [

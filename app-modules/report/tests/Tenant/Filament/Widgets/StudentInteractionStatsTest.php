@@ -35,11 +35,11 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Report\Filament\Pages\StudentInteractionReport;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionStats;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 use function Pest\Laravel\actingAs;
@@ -164,7 +164,7 @@ it('returns correct total and unique student interaction counts based on segment
     $studentsWithJohnNameInteractions = random_int(1, 10);
     $studentsWithDoeNameInteractions = random_int(1, 10);
 
-    $segment = Segment::factory()->create([
+    $segment = Group::factory()->create([
         'model' => SegmentModel::Student,
         'filters' => [
             'queryBuilder' => [

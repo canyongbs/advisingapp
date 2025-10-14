@@ -43,12 +43,12 @@ use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Survey\Models\SurveySubmission;
@@ -324,9 +324,9 @@ it('checks the API returns Alerts', function () {
 it('checks the API returns Segments', function () {
     $randomRecords = random_int(1, 10);
 
-    Segment::factory()->count($randomRecords)->create();
+    Group::factory()->count($randomRecords)->create();
 
-    $softDeleteSegment = Segment::factory()->create();
+    $softDeleteSegment = Group::factory()->create();
     $softDeleteSegment->delete();
 
     $response = get(route('utilization-metrics'));

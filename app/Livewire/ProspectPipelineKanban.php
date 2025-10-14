@@ -37,12 +37,12 @@
 namespace App\Livewire;
 
 use AdvisingApp\Audit\Overrides\MorphToMany;
+use AdvisingApp\Group\Actions\TranslateSegmentFilters;
+use AdvisingApp\Group\Enums\SegmentModel;
 use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Pipeline\Models\PipelineStage;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
-use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Exception;

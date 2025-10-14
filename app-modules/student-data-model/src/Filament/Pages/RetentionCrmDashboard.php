@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
+use AdvisingApp\Group\Enums\SegmentModel;
 use AdvisingApp\Report\Abstract\Contracts\HasSegmentModel;
 use AdvisingApp\Report\Abstract\RetentionCrmDashboardReport;
-use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentStats;
 use AdvisingApp\StudentDataModel\Models\Student;

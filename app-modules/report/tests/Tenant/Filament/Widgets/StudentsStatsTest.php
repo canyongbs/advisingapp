@@ -36,9 +36,9 @@
 
 use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentsStats;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 
@@ -102,7 +102,7 @@ it('returns correct total student stats of students, alerts, segments and tasks 
 it('returns correct total student stats of students, alerts, cases and tasks based on segment filters', function () {
     $count = random_int(1, 5);
 
-    $segment = Segment::factory()->create([
+    $segment = Group::factory()->create([
         'model' => SegmentModel::Student,
         'filters' => [
             'queryBuilder' => [

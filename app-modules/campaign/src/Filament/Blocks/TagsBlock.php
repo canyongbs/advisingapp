@@ -38,7 +38,7 @@ namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\CreateCampaign;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
-use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\Group\Models\Group;
 use App\Models\Tag;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\DateTimePicker;
@@ -75,7 +75,7 @@ class TagsBlock extends CampaignActionBlock
                     } else {
                         $segmentId = $livewire->getOwnerRecord()->segment_id;
                     }
-                    $segment = Segment::find($segmentId);
+                    $segment = Group::find($segmentId);
 
                     return Tag::where('type', $segment->model)->orderBy('name', 'ASC')->pluck('name', 'id');
                 })
