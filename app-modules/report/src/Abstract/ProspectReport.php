@@ -37,12 +37,12 @@
 namespace AdvisingApp\Report\Abstract;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use AdvisingApp\Report\Abstract\Contracts\HasSegmentModel;
+use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
 use Filament\Pages\Dashboard;
 
-abstract class ProspectReport extends Dashboard implements HasSegmentModel
+abstract class ProspectReport extends Dashboard implements HasGroupModel
 {
     use HasFiltersForm;
 
@@ -56,8 +56,8 @@ abstract class ProspectReport extends Dashboard implements HasSegmentModel
         return $user->hasLicense(LicenseType::RecruitmentCrm) && $user->can('report-library.view-any');
     }
 
-    public function segmentModel(): ?SegmentModel
+    public function groupModel(): ?GroupModel
     {
-        return SegmentModel::Prospect;
+        return GroupModel::Prospect;
     }
 }

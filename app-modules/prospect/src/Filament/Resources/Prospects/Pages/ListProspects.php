@@ -41,9 +41,9 @@ use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
 use AdvisingApp\CaseManagement\Filament\Actions\BulkCreateCaseAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEmailAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkTextAction;
-use AdvisingApp\Group\Actions\BulkSegmentAction;
-use AdvisingApp\Group\Actions\TranslateSegmentFilters;
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Actions\BulkGroupAction;
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Filament\Actions\BulkCreateInteractionAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
@@ -122,7 +122,7 @@ class ListProspects extends ListRecords
                     ->label('My Population Groups')
                     ->options(
                         auth()->user()->segments()
-                            ->where('model', SegmentModel::Prospect)
+                            ->where('model', GroupModel::Prospect)
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
@@ -132,7 +132,7 @@ class ListProspects extends ListRecords
                     ->label('All Population Groups')
                     ->options(
                         Group::all()
-                            ->where('model', SegmentModel::Prospect)
+                            ->where('model', GroupModel::Prospect)
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
@@ -275,7 +275,7 @@ class ListProspects extends ListRecords
                             ->authorize(fn () => auth()->user()->can('prospect.*.update')),
                     ])->dropdown(false),
                     ActionGroup::make([
-                        BulkSegmentAction::make(segmentModel: SegmentModel::Prospect),
+                        BulkGroupAction::make(GroupModel: GroupModel::Prospect),
                     ])->dropdown(false),
                     ActionGroup::make([
                         DeleteBulkAction::make()->label('Delete'),
@@ -291,7 +291,7 @@ class ListProspects extends ListRecords
         }
 
         $query->whereKey(
-            app(TranslateSegmentFilters::class)
+            app(TranslateGroupFilters::class)
                 ->execute($data['value'])
                 ->pluck($query->getModel()->getQualifiedKeyName()),
         );

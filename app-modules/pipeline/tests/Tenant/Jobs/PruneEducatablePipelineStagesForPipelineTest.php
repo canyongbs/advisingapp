@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\SegmentType;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Pipeline\Jobs\PruneEducatablePipelineStagesForPipeline;
@@ -51,7 +51,7 @@ it('deletes educatable pipeline stages for prospects outside a group', function 
 
     /** @var Group $group */
     $group = Group::factory()->create([
-        'model' => SegmentModel::Prospect,
+        'model' => GroupModel::Prospect,
         'type' => SegmentType::Dynamic,
         'filters' => [
             'queryBuilder' => [
@@ -101,7 +101,7 @@ it('does not delete educatable pipeline stages for prospects inside a group', fu
 
     /** @var Group $group */
     $group = Group::factory()->create([
-        'model' => SegmentModel::Prospect,
+        'model' => GroupModel::Prospect,
         'type' => SegmentType::Dynamic,
         'filters' => [
             'queryBuilder' => [

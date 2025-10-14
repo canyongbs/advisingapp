@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentCumulativeCountLineChart;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -66,7 +66,7 @@ it('returns correct cumulative student counts grouped by month based on segment 
     $endDate = now()->subDays(5);
 
     $segment = Group::factory()->create([
-        'model' => SegmentModel::Student,
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [

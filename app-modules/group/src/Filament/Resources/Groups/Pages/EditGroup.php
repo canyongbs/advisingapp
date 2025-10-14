@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Group\Filament\Resources\Groups\Pages;
 
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\SegmentType;
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -82,7 +82,7 @@ class EditGroup extends EditRecord implements HasTable
                             ->disabled(),
                         Select::make('model')
                             ->label('Population')
-                            ->options(SegmentModel::class)
+                            ->options(GroupModel::class)
                             ->disabled()
                             ->visible(auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])),
                         TextInput::make('user.name')

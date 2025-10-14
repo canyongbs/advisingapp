@@ -41,7 +41,7 @@ use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\SegmentType;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
@@ -65,8 +65,8 @@ it('will execute appropriately on each educatable in the group', function (Educa
     $group = Group::factory()->create([
         'type' => SegmentType::Static,
         'model' => match ($educatable::class) {
-            Student::class => SegmentModel::Student,
-            Prospect::class => SegmentModel::Prospect,
+            Student::class => GroupModel::Student,
+            Prospect::class => GroupModel::Prospect,
             default => throw new Exception('Invalid model type'),
         },
     ]);
@@ -147,8 +147,8 @@ it('will not duplicate an invite if the group educatable was already invited', f
     $group = Group::factory()->create([
         'type' => SegmentType::Static,
         'model' => match ($educatable::class) {
-            Student::class => SegmentModel::Student,
-            Prospect::class => SegmentModel::Prospect,
+            Student::class => GroupModel::Student,
+            Prospect::class => GroupModel::Prospect,
             default => throw new Exception('Invalid model type'),
         },
     ]);

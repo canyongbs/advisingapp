@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Group\Filament\Resources\Groups\Pages;
 
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\SegmentType;
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -93,9 +93,9 @@ class CreateGroup extends CreateRecord implements HasTable
                 ->schema([
                     Select::make('model')
                         ->label('Population')
-                        ->options(SegmentModel::class)
+                        ->options(GroupModel::class)
                         ->required()
-                        ->default(SegmentModel::default())
+                        ->default(GroupModel::default())
                         ->selectablePlaceholder(false)
                         ->afterStateUpdated(function () {
                             $this->resetTable();
@@ -123,9 +123,9 @@ class CreateGroup extends CreateRecord implements HasTable
                         ->required()
                         ->hiddenLabel()
                         ->visible(fn (Get $get): bool => $get('type') === SegmentType::Static)
-                        ->helperText(fn (): string => match ($this->getSegmentModel()) {
-                            SegmentModel::Student => 'Upload a file of Student IDs or Other IDs, with each on a new line.',
-                            SegmentModel::Prospect => 'Upload a file of prospect email addresses, with each on a new line.',
+                        ->helperText(fn (): string => match ($this->getGroupModel()) {
+                            GroupModel::Student => 'Upload a file of Student IDs or Other IDs, with each on a new line.',
+                            GroupModel::Prospect => 'Upload a file of prospect email addresses, with each on a new line.',
                         }),
                 ]),
         ];
@@ -133,7 +133,7 @@ class CreateGroup extends CreateRecord implements HasTable
 
     public function table(Table $table): Table
     {
-        return $this->getSegmentModel()->table($table);
+        return $this->getGroupModel()->table($table);
     }
 
     /**
@@ -209,7 +209,7 @@ class CreateGroup extends CreateRecord implements HasTable
         $import->user()->associate($user);
         $import->file_name = $file->getClientOriginalName();
         $import->file_path = $file->getRealPath();
-        $import->importer = $this->getSegmentModel()->getSubjectImporter();
+        $import->importer = $this->getGroupModel()->getSubjectImporter();
         $import->total_rows = $totalRows;
         $import->save();
 
@@ -292,22 +292,22 @@ class CreateGroup extends CreateRecord implements HasTable
             ->send();
     }
 
-    protected function getSegmentModel(): SegmentModel
+    protected function getGroupModel(): GroupModel
     {
         $canAccessStudents = auth()->user()->hasLicense(Student::getLicenseType());
         $canAccessProspects = auth()->user()->hasLicense(Prospect::getLicenseType());
 
         return match (true) {
-            $canAccessStudents && $canAccessProspects => SegmentModel::parse($this->form->getRawState()['model']) ?? throw new Exception('Neither students nor prospects were selected.'),
-            $canAccessStudents => SegmentModel::Student,
-            $canAccessProspects => SegmentModel::Prospect,
+            $canAccessStudents && $canAccessProspects => GroupModel::parse($this->form->getRawState()['model']) ?? throw new Exception('Neither students nor prospects were selected.'),
+            $canAccessStudents => GroupModel::Student,
+            $canAccessProspects => GroupModel::Prospect,
             default => throw new Exception('User cannot access students or prospects.'),
         };
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['model'] = $this->getSegmentModel();
+        $data['model'] = $this->getGroupModel();
 
         if (SegmentType::parse($data['type']) === SegmentType::Dynamic) {
             $data['filters'] = $this->tableFilters ?? [];

@@ -34,11 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Abstract\Contracts;
+namespace AdvisingApp\Group\Console\Commands;
 
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
+use AdvisingApp\Group\Models\Group;
+use Illuminate\Console\Command;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
-interface HasSegmentModel
+class TranslateGroup extends Command
 {
-    public function segmentModel(): ?SegmentModel;
+    use TenantAware;
+
+    protected $signature = 'group:translate {--tenant=*}';
+
+    protected $description = 'Translate group filters.';
+
+    public function handle(): int
+    {
+        Group::all()
+            ->each(function (Group $group) {
+                resolve(TranslateGroupFilters::class)->execute($group)->get();
+            });
+
+        return static::SUCCESS;
+    }
 }

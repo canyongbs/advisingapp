@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Widgets\Concerns;
 
-use AdvisingApp\Group\Actions\TranslateSegmentFilters;
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
 use Carbon\Carbon;
 use Filament\Widgets\Concerns\InteractsWithPageFilters as InteractsWithPageFiltersBase;
 use Illuminate\Database\Eloquent\Builder;
@@ -98,6 +98,6 @@ trait InteractsWithPageFilters
             return;
         }
 
-        app(TranslateSegmentFilters::class)->applyFilterToQuery($segmentId, $query);
+        app(TranslateGroupFilters::class)->applyFilterToQuery($segmentId, $query);
     }
 }

@@ -41,9 +41,9 @@ use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
 use AdvisingApp\CaseManagement\Filament\Actions\BulkCreateCaseAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEmailAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkTextAction;
-use AdvisingApp\Group\Actions\BulkSegmentAction;
-use AdvisingApp\Group\Actions\TranslateSegmentFilters;
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Actions\BulkGroupAction;
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Filament\Actions\BulkCreateInteractionAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
@@ -106,7 +106,7 @@ class ListStudents extends ListRecords
                     ->label('My Population Groups')
                     ->options(
                         auth()->user()->segments()
-                            ->where('model', SegmentModel::Student)
+                            ->where('model', GroupModel::Student)
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
@@ -116,7 +116,7 @@ class ListStudents extends ListRecords
                     ->label('All Population Groups')
                     ->options(
                         Group::all()
-                            ->where('model', SegmentModel::Student)
+                            ->where('model', GroupModel::Student)
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
@@ -216,7 +216,7 @@ class ListStudents extends ListRecords
                             ->authorize(fn () => auth()->user()->can('student.*.update')),
                     ])->dropdown(false),
                     ActionGroup::make([
-                        BulkSegmentAction::make(segmentModel: SegmentModel::Student),
+                        BulkGroupAction::make(groupModel: GroupModel::Student),
                     ])->dropdown(false),
                     ActionGroup::make([
                         DeleteBulkAction::make()
@@ -277,7 +277,7 @@ class ListStudents extends ListRecords
         }
 
         $query->whereKey(
-            app(TranslateSegmentFilters::class)
+            app(TranslateGroupFilters::class)
                 ->execute($data['value'])
                 ->pluck($query->getModel()->getQualifiedKeyName()),
         );

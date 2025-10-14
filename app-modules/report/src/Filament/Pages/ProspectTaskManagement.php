@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use AdvisingApp\Group\Enums\SegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Abstract\Contracts\HasSegmentModel;
+use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
 use AdvisingApp\Report\Abstract\EngagementReport;
 use AdvisingApp\Report\Filament\Widgets\MostRecentTasksTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Filament\Clusters\ReportLibrary;
 use UnitEnum;
 
-class ProspectTaskManagement extends EngagementReport implements HasSegmentModel
+class ProspectTaskManagement extends EngagementReport implements HasGroupModel
 {
     protected static ?string $cluster = ReportLibrary::class;
 
@@ -85,8 +85,8 @@ class ProspectTaskManagement extends EngagementReport implements HasSegmentModel
         ];
     }
 
-    public function segmentModel(): ?SegmentModel
+    public function groupModel(): ?GroupModel
     {
-        return SegmentModel::Prospect;
+        return GroupModel::Prospect;
     }
 }
