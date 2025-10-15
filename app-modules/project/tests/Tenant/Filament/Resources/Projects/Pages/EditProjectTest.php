@@ -49,10 +49,9 @@ use function Tests\asSuperAdmin;
 
 it('cannot render without proper permission.', function () {
     $user = User::factory()->create();
+    $project = Project::factory()->create();
 
     actingAs($user);
-
-    $project = Project::factory()->create();
 
     get(EditProject::getUrl([
         'record' => $project->getRouteKey(),
