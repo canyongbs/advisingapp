@@ -40,12 +40,10 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Project\Database\Factories\ProjectFactory;
 use AdvisingApp\Project\Models\Scopes\ProjectVisibilityScope;
-use AdvisingApp\Project\Observers\ProjectObserver;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -58,7 +56,6 @@ use OwenIt\Auditing\Contracts\Auditable;
 /**
  * @mixin IdeHelperProject
  */
-#[ObservedBy([ProjectObserver::class])]
 #[ScopedBy(ProjectVisibilityScope::class)]
 class Project extends BaseModel implements Auditable
 {
