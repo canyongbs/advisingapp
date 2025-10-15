@@ -59,7 +59,7 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'group.view-any',
+            abilities: 'segment.view-any',
             denyResponse: 'You do not have permission to view groups.'
         );
     }
@@ -71,7 +71,7 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["group.{$group->getKey()}.view"],
+            abilities: ["segment.{$group->getKey()}.view"],
             denyResponse: 'You do not have permission to view this group.'
         );
     }
@@ -79,7 +79,7 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'group.create',
+            abilities: 'segment.create',
             denyResponse: 'You do not have permission to create groups.'
         );
     }
@@ -91,7 +91,7 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["group.{$group->getKey()}.update"],
+            abilities: ["segment.{$group->getKey()}.update"],
             denyResponse: 'You do not have permission to update this group.'
         );
     }
@@ -107,7 +107,7 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["group.{$group->getKey()}.delete"],
+            abilities: ["segment.{$group->getKey()}.delete"],
             denyResponse: 'You do not have permission to delete this group.'
         );
     }
@@ -119,7 +119,7 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["group.{$group->getKey()}.restore"],
+            abilities: ["segment.{$group->getKey()}.restore"],
             denyResponse: 'You do not have permission to restore this group.'
         );
     }
@@ -135,7 +135,7 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["group.{$group->getKey()}.force-delete"],
+            abilities: ["segment.{$group->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this group.'
         );
     }
