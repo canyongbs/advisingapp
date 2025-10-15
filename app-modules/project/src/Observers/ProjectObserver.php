@@ -40,11 +40,13 @@ use AdvisingApp\Project\Models\Project;
 
 class ProjectObserver
 {
-    // public function creating(Project $project): void
-    // {
-    //     if (! $project->relationLoaded('createdBy')) {
-    //         $user = auth()->user();
-    //         $project->createdBy()->associate($user);
-    //     }
-    // }
+    public function creating(Project $project): void
+    {
+        if (! $project->relationLoaded('createdBy')) {
+            $user = auth()->user();
+
+            $project->setAttribute('created_by_id', $user->getKey());
+            $project->setAttribute('created_by_type', $user->getMorphClass());
+        }
+    }
 }
