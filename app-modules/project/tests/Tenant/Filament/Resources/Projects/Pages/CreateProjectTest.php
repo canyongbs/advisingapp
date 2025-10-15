@@ -136,4 +136,4 @@ it('can create a record', function () {
             'description' => $request['description'],
         ]
     );
-});
+})->only();

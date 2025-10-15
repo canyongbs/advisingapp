@@ -56,4 +56,15 @@ class ProjectFactory extends Factory
             'created_by_id' => User::factory(),
         ];
     }
+
+    public function configure(): static
+    {
+        return $this->afterMaking(function (Project $project) {
+            Project::unguarded(function () use ($project) {
+                if (blank($project->created_by_type)) {
+                    $project->created_by_type = User::getMorphClass();
+                }
+            });
+        });
+    }
 }
