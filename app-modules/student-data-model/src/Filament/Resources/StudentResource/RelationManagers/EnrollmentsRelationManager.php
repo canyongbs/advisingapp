@@ -140,9 +140,10 @@ class EnrollmentsRelationManager extends RelationManager
                 TextColumn::make(name: 'name')
                     ->label('Name')
                     ->placeholder('N/A')
-                    // Ambiguous column name 'name' error
                     ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query->whereRaw('LOWER(enrollments.name) LIKE ?', ['%' . strtolower($search) . '%']);
+                        return $query->whereRaw('LOWER(enrollments.name) LIKE ?', [
+                            '%' . strtolower($search) . '%',
+                        ]);
                     }),
                 TextColumn::make('class_nbr')
                     ->label('Course')
