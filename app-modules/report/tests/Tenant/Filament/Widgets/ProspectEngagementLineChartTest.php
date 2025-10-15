@@ -131,7 +131,7 @@ it('returns correct monthly email and sms engagement data for prospects based on
     $widgetInstance = new ProspectEngagementLineChart();
     $widgetInstance->cacheTag = 'report-prospect-engagement';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     $dataWithSegment = $widgetInstance->getData();

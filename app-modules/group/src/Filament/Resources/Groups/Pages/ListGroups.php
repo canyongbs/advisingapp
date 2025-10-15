@@ -72,7 +72,7 @@ class ListGroups extends ListRecords
                     ->label('Owner')
                     ->sortable()
                     ->hidden(function (Table $table) {
-                        return $table->getFilter('my_segments')->getState()['isActive'] ?? false;
+                        return $table->getFilter('my_groups')->getState()['isActive'] ?? false;
                     }),
             ])
             ->recordActions([
@@ -92,7 +92,7 @@ class ListGroups extends ListRecords
                     }),
             ])
             ->filters([
-                Filter::make('my_segments')
+                Filter::make('my_groups')
                     ->label('My Population Groups')
                     ->query(
                         fn ($query) => $query->where('user_id', auth()->id())

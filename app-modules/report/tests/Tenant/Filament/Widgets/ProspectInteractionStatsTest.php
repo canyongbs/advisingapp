@@ -201,7 +201,7 @@ it('returns correct total and unique prospect interaction counts based on segmen
     $widget = new ProspectInteractionStats();
     $widget->cacheTag = 'report-prospect-interaction';
     $widget->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     $stats = $widget->getStats();

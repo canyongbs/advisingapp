@@ -64,7 +64,7 @@ class StudentsActionCenterWidget extends TableWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedSegment();
+        $segmentId = $this->getSelectedGroup();
 
         return $table
             ->heading('Action Center Records')

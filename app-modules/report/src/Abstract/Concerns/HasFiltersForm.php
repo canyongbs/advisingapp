@@ -83,7 +83,7 @@ trait HasFiltersForm
                     ->columns(2),
                 Section::make()
                     ->schema([
-                        Select::make('populationSegment')
+                        Select::make('populationGroup')
                             ->label('Select Group')
                             ->options(fn (): array => $this->getGroupOptions($groupModel))
                             ->getSearchResultsUsing(fn (string $search): array => $this->getGroupOptions($groupModel, $search))

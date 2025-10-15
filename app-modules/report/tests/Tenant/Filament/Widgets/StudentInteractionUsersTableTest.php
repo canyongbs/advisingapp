@@ -351,7 +351,7 @@ it('displays only users with student interactions based on segment filter', func
         ->create();
 
     $filters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     // with segment filter

@@ -82,7 +82,7 @@ class MostRecentTasksTable extends BaseWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedSegment();
+        $segmentId = $this->getSelectedGroup();
 
         return $table
             ->query(function () use ($startDate, $endDate, $segmentId): Builder {

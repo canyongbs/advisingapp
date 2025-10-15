@@ -136,7 +136,7 @@ it('returns correct data for prospect interactions based on segment filter', fun
     $widgetInstance = new ProspectInteractionLineChart();
     $widgetInstance->cacheTag = 'report-prospect-interaction';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     expect($widgetInstance->getData())->toMatchSnapshot();

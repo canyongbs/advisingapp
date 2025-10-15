@@ -143,7 +143,7 @@ it('it returns deliverability data only for students based on segment filters', 
         ]);
 
     $filters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     livewire(StudentDeliverableTable::class, [

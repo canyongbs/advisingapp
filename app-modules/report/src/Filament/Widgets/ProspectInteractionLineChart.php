@@ -52,7 +52,7 @@ class ProspectInteractionLineChart extends LineChartReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedSegment();
+        $segmentId = $this->getSelectedGroup();
 
         $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
 

@@ -118,7 +118,7 @@ class ListProspects extends ListRecords
                     ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('my_segments')
+                SelectFilter::make('my_groups')
                     ->label('My Population Groups')
                     ->options(
                         auth()->user()->groups()

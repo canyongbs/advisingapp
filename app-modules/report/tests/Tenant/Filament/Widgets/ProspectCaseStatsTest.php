@@ -173,7 +173,7 @@ it('returns correct total cases, recent cases, open cases and closed cases of pr
     $widget = new ProspectCaseStats();
     $widget->cacheTag = 'report-prospect-case';
     $widget->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];

@@ -98,7 +98,7 @@ it('returns correct cumulative student counts grouped by month based on segment 
     $widgetInstance = new StudentCumulativeCountLineChart();
     $widgetInstance->cacheTag = 'report-student';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     expect($widgetInstance->getData())->toMatchSnapshot();

@@ -159,7 +159,7 @@ it('properly filters students by segment', function () {
         ->assertCanSeeTableRecords(collect([$segmentTask, $nonSegmentTask]));
 
     $filters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     livewire(MostRecentTasksTable::class, [
@@ -203,7 +203,7 @@ it('properly filters prospects by segment', function () {
         ->assertCanSeeTableRecords(collect([$segmentTask, $nonSegmentTask]));
 
     $filters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     livewire(MostRecentTasksTable::class, [

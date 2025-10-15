@@ -148,7 +148,7 @@ it('it filters student SMS opt-in/out/null data accurately based on segment filt
     $widgetInstance = new StudentSmsOptInOptOutPieChart();
     $widgetInstance->cacheTag = 'report-student-deliverability';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     $stats = $widgetInstance->getData()['datasets'][0]['data'];

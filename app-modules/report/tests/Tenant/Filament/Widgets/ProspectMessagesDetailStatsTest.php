@@ -244,7 +244,7 @@ it('returns correct counts of emails and SMS sent/received based on segment filt
     $widget = new ProspectMessagesDetailStats();
     $widget->cacheTag = 'report-prospect-messages-detail';
     $widget->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     $stats = $widget->getStats();

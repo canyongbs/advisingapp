@@ -180,7 +180,7 @@ it('returns correct total student stats of students, alerts, cases and tasks bas
     $widget = new StudentsStats();
     $widget->cacheTag = 'report-student';
     $widget->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     $stats = $widget->getStats();

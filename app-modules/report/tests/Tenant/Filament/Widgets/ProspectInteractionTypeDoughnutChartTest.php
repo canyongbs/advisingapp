@@ -184,7 +184,7 @@ it('returns correct interaction counts by type for prospects based on segment fi
     $widgetInstance = new ProspectInteractionTypeDoughnutChart();
     $widgetInstance->cacheTag = 'report-prospect-interaction';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     $stats = $widgetInstance->getData()['datasets'][0]['data'];

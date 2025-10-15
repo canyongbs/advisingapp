@@ -136,7 +136,7 @@ it('returns correct data for student interactions based on segment filter', func
     $widgetInstance = new StudentInteractionLineChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     expect($widgetInstance->getData())->toMatchSnapshot();

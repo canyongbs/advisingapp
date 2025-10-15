@@ -85,7 +85,7 @@ class ProspectReportTableChart extends TableWidget
 
                     $startDate = $this->getStartDate();
                     $endDate = $this->getEndDate();
-                    $segmentId = $this->getSelectedSegment();
+                    $segmentId = $this->getSelectedGroup();
 
                     return Prospect::query()
                         ->whereNotNull('created_at')

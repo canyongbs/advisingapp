@@ -170,7 +170,7 @@ it('returns correct total cases, recent cases, open cases and closed cases of st
     $widget = new StudentCaseStats();
     $widget->cacheTag = 'report-student-case';
     $widget->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     $stats = $widget->getStats();

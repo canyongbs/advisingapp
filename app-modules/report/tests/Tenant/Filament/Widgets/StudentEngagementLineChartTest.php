@@ -131,7 +131,7 @@ it('returns correct monthly email and sms engagement data for students based on 
     $widgetInstance = new StudentEngagementLineChart();
     $widgetInstance->cacheTag = 'report-student-engagement';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     $dataWithSegment = $widgetInstance->getData();

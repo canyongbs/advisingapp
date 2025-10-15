@@ -157,7 +157,7 @@ it('returns correct counts of prospects, emails, texts, and staff engagements ba
     $widget = new ProspectEngagementState();
     $widget->cacheTag = 'report-prospect-engagement';
     $widget->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     $stats = $widget->getStats();

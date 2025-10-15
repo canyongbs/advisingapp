@@ -157,7 +157,7 @@ it('returns correct counts of students, emails, texts, and staff engagements bas
     $widget = new StudentEngagementStats();
     $widget->cacheTag = 'report-student-engagement';
     $widget->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     $stats = $widget->getStats();
