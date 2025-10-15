@@ -100,7 +100,6 @@ class ListResourceHubArticles extends ListRecords
                         'upvotes',
                         'upvotes as my_upvotes_count' => fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
                     ])
-                    ->icon('heroicon-m-hand-thumb-up')
                     ->sortable()
                     ->action(fn (ResourceHubArticle $record) => $record->toggleUpvote())
                     ->icon('heroicon-m-hand-thumb-up')
