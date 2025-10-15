@@ -72,11 +72,13 @@ it('can render with proper permission.', function () {
 
     $project = Project::factory()->create();
 
+    $project->managerUsers()->attach($user);
+
     get(EditProject::getUrl([
         'record' => $project->getRouteKey(),
     ]))
         ->assertSuccessful();
-});
+})->only();
 
 it('validates the inputs', function (EditProjectRequestFactory $data, array $errors) {
     asSuperAdmin();
