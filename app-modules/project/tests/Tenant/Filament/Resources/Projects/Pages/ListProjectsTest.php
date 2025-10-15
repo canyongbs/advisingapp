@@ -114,6 +114,7 @@ it('does not list projects to unauthorized manager teams', function () {
     $authorizedTeam = Team::factory()->create();
 
     $user->team()->associate($authorizedTeam);
+    $user->save();
 
     $user->refresh();
 
@@ -165,6 +166,7 @@ it('does not list projects to unauthorized auditor teams', function () {
 
     $user->team()->associate($authorizedTeam);
 
+    $user->save();
     $user->refresh();
 
     $authorizedProjects = Project::factory()->count(5)->create();
