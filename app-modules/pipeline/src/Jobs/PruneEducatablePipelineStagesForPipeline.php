@@ -65,8 +65,8 @@ class PruneEducatablePipelineStagesForPipeline implements ShouldQueue
             ->whereBelongsTo($this->pipeline)
             ->whereDoesntHaveMorph(
                 'educatable',
-                $this->pipeline->segment->model->class(),
-                fn (Builder $query) => app(TranslateGroupFilters::class)->applyFilterToQuery($this->pipeline->segment, $query),
+                $this->pipeline->group->model->class(),
+                fn (Builder $query) => app(TranslateGroupFilters::class)->applyFilterToQuery($this->pipeline->group, $query),
             )
             ->delete();
     }

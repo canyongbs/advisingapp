@@ -60,7 +60,7 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
 
     public ?string $viewType = 'null';
 
-    public ?int $segmentCount = 0;
+    public ?int $groupCount = 0;
 
     protected static string $relationship = 'educatablePipelineStages';
 
@@ -74,7 +74,7 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
 
         assert($record instanceof Pipeline);
 
-        $model = $record->segment->model;
+        $model = $record->group->model;
 
         $label = match ($model) {
             GroupModel::Prospect => 'Prospects',
@@ -92,7 +92,7 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
 
         assert($ownerRecord instanceof Pipeline);
 
-        $model = $ownerRecord->segment->model;
+        $model = $ownerRecord->group->model;
 
         $label = match ($model) {
             GroupModel::Prospect => 'Prospects',
@@ -112,9 +112,9 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
 
         assert($ownerRecord instanceof Pipeline);
 
-        $this->segmentCount = app(TranslateGroupFilters::class)->execute($ownerRecord->segment)->count();
+        $this->groupCount = app(TranslateGroupFilters::class)->execute($ownerRecord->group)->count();
 
-        if ($this->segmentCount >= 100) {
+        if ($this->groupCount >= 100) {
             session(['pipeline-view-type' => 'table']);
         }
         $this->viewType = session('pipeline-view-type') ?? 'table';
@@ -170,10 +170,10 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
 
         assert($pipeline instanceof Pipeline);
 
-        $table = $pipeline->segment->model
+        $table = $pipeline->group->model
             ->table($table);
 
-        $table->query(fn () => app(TranslateGroupFilters::class)->execute($pipeline->segment));
+        $table->query(fn () => app(TranslateGroupFilters::class)->execute($pipeline->group));
 
         return $table;
     }

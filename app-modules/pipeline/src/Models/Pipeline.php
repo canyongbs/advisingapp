@@ -90,7 +90,7 @@ class Pipeline extends Model implements Auditable
     /**
      * @return BelongsTo<Group, $this>
      */
-    public function segment(): BelongsTo
+    public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class, 'segment_id');
     }

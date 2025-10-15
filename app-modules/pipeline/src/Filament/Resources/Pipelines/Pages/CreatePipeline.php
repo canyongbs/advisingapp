@@ -67,7 +67,7 @@ class CreatePipeline extends CreateRecord
                 Select::make('segment_id')
                     ->label('Group')
                     ->required()
-                    ->relationship('segment', 'name')
+                    ->relationship('group', 'name')
                     ->searchable()
                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                     ->preload(),

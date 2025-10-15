@@ -275,7 +275,7 @@ class ListProspects extends ListRecords
                             ->authorize(fn () => auth()->user()->can('prospect.*.update')),
                     ])->dropdown(false),
                     ActionGroup::make([
-                        BulkGroupAction::make(GroupModel: GroupModel::Prospect),
+                        BulkGroupAction::make(groupModel: GroupModel::Prospect),
                     ])->dropdown(false),
                     ActionGroup::make([
                         DeleteBulkAction::make()->label('Delete'),
