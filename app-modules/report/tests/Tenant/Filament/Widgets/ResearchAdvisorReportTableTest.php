@@ -84,4 +84,4 @@ it('can start an export, sending a notification', function () {
         ->callTableAction(ExportAction::class)
         ->assertNotified()
         ->assertHasNoTableActionErrors();
-})->only();
+});
