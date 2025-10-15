@@ -82,7 +82,7 @@ it('returns correct total research advisor stats within the given date range', f
     expect($stats)->toHaveCount(3)
         ->and($stats[0]->getLabel())->toBe('Research Advisors')
         ->and($stats[0]->getValue())->toEqual($count * 3)
-        ->and($stats[1]->getLabel())->toBe('Unique Users')
+        ->and($stats[1]->getLabel())->toBe('Active Users')
         ->and($stats[1]->getValue())->toEqual(3) //Unique user for each 'set' made above
         ->and($stats[2]->getLabel())->toBe('Sources Used')
         ->and($stats[2]->getValue())->toEqual($count * 6); //Two sources for each research advisor
@@ -97,7 +97,7 @@ it('returns correct total research advisor stats within the given date range', f
     expect($stats)->toHaveCount(3)
         ->and($stats[0]->getLabel())->toBe('Research Advisors')
         ->and($stats[0]->getValue())->toEqual($count * 2) //Only research advisors within range
-        ->and($stats[1]->getLabel())->toBe('Unique Users')
+        ->and($stats[1]->getLabel())->toBe('Active Users')
         ->and($stats[1]->getValue())->toEqual(2) //Unique user for each 'set' made above
         ->and($stats[2]->getLabel())->toBe('Sources Used')
         ->and($stats[2]->getValue())->toEqual($count * 4); //Two sources for each research advisor
