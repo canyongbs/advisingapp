@@ -62,7 +62,7 @@ class ProjectFactory extends Factory
         return $this->afterMaking(function (Project $project) {
             Project::unguarded(function () use ($project) {
                 if (blank($project->created_by_type)) {
-                    $project->created_by_type = User::getMorphClass();
+                    $project->created_by_type = new User()->getMorphClass();
                 }
             });
         });
