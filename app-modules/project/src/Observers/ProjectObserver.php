@@ -42,7 +42,7 @@ class ProjectObserver
 {
     public function creating(Project $project): void
     {
-        if (is_null($project->createdBy)) {
+        if (! $project->createdBy) {
             $user = auth()->user();
             $project->createdBy()->associate($user);
         }
