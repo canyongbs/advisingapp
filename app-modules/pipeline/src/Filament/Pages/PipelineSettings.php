@@ -40,14 +40,13 @@ use AdvisingApp\Pipeline\Settings\ProspectPipelineSettings;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Filament\Clusters\ConstituentManagement;
+use App\Filament\Clusters\ProjectManagement;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
-use UnitEnum;
 
 class PipelineSettings extends SettingsPage
 {
@@ -55,9 +54,7 @@ class PipelineSettings extends SettingsPage
 
     protected static ?string $title = 'Pipelines';
 
-    protected static ?string $cluster = ConstituentManagement::class;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
+    protected static ?string $cluster = ProjectManagement::class;
 
     protected static string $settings = ProspectPipelineSettings::class;
 
