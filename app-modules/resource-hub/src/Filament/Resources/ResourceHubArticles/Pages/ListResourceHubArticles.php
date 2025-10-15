@@ -103,6 +103,7 @@ class ListResourceHubArticles extends ListRecords
                     ])
                     ->sortable()
                     ->action(fn (ResourceHubArticle $record) => $record->toggleUpvote())
+                    ->icon('heroicon-m-hand-thumb-up')
                     ->color(fn (ResourceHubArticle $record): string => $record->my_upvotes_count ? 'success' : 'gray')
                     ->tooltip(fn (ResourceHubArticle $record): string => $record->my_upvotes_count ? 'Click to remove upvote' : 'Click to upvote')
                     ->formatStateUsing(fn (ResourceHubArticle $record, int $state): string => ($record->my_upvotes_count ? 'Upvoted ' : 'Upvote ') . "({$state})"),
