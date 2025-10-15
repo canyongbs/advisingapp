@@ -67,21 +67,36 @@ trait HasManyMorphedInteractionsTrait
                     ->formatStateUsing(fn ($state): string => $state ? 'Confidential' : '')
                     ->visible(fn ($record): bool => $record->is_confidential),
                 TextEntry::make('user.name')
-                    ->label('Created By'),
+                    ->label('Created By')
+                    ->placeholder('N/A'),
                 Fieldset::make('Details')
                     ->schema([
                         TextEntry::make('initiative.name')
+                            ->label('Initiative')
+                            ->placeholder('N/A')
                             ->visible(fn () => $this->getSettings()->is_initiative_enabled),
                         TextEntry::make('driver.name')
+                            ->label('Driver')
+                            ->placeholder('N/A')
                             ->visible(fn () => $this->getSettings()->is_driver_enabled),
-                        TextEntry::make('division.name'),
+                        TextEntry::make('division.name')
+                            ->label('Division')
+                            ->placeholder('N/A'),
                         TextEntry::make('outcome.name')
+                            ->label('Outcome')
+                            ->placeholder('N/A')
                             ->visible(fn () => $this->getSettings()->is_outcome_enabled),
                         TextEntry::make('relation.name')
+                            ->label('Relation')
+                            ->placeholder('N/A')
                             ->visible(fn () => $this->getSettings()->is_relation_enabled),
                         TextEntry::make('status.name')
+                            ->label('Status')
+                            ->placeholder('N/A')
                             ->visible(fn () => $this->getSettings()->is_status_enabled),
                         TextEntry::make('type.name')
+                            ->label('Type')
+                            ->placeholder('N/A')
                             ->visible(fn () => $this->getSettings()->is_type_enabled),
                     ]),
                 Fieldset::make('Time')
