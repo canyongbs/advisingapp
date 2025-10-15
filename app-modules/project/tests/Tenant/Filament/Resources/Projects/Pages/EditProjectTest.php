@@ -57,7 +57,7 @@ it('cannot render without proper permission.', function () {
     get(EditProject::getUrl([
         'record' => $project->getRouteKey(),
     ]))
-        ->assertForbidden();
+        ->assertNotFound();
 });
 
 it('can render with proper permission.', function () {
