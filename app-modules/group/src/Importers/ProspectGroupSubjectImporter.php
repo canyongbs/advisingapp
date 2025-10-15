@@ -73,7 +73,7 @@ class ProspectGroupSubjectImporter extends Importer
         /** @var GroupSubject $record */
         $record = $this->record;
 
-        $record->segment()->associate($this->getOptions()['segment_id']);
+        $record->group()->associate($this->getOptions()['segment_id']);
     }
 
     public static function getCompletedNotificationBody(Import $import): string
