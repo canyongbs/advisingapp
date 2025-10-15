@@ -76,7 +76,7 @@ class ProjectPolicy
                 $teamExists = $project->managerTeams()->where('teams.id', $team?->getKey())->exists();
                 $userExists = $project->managerUsers()->where('users.id', auth()->user()->getKey())->exists();
 
-                if (! $teamExists && ! $userExists && ! $project->createdBy?->is(auth()->user())) {
+                if (! $teamExists && ! $userExists && ! $project->createdBy->is(auth()->user())) {
                     return Response::deny("You do not have permission to update this project because you're not manager, or creator of this project.");
                 }
             }
@@ -97,7 +97,7 @@ class ProjectPolicy
                 $teamExists = $project->managerTeams()->where('teams.id', $team?->getKey())->exists();
                 $userExists = $project->managerUsers()->where('users.id', auth()->user()->getKey())->exists();
 
-                if (! $teamExists && ! $userExists && ! $project->createdBy?->is(auth()->user())) {
+                if (! $teamExists && ! $userExists && ! $project->createdBy->is(auth()->user())) {
                     return Response::deny("You do not have permission to delete this project because you're not manager, or creator of this project.");
                 }
             }
@@ -118,7 +118,7 @@ class ProjectPolicy
                 $teamExists = $project->managerTeams()->where('teams.id', $team?->getKey())->exists();
                 $userExists = $project->managerUsers()->where('users.id', auth()->user()->getKey())->exists();
 
-                if (! $teamExists && ! $userExists && ! $project->createdBy?->is(auth()->user())) {
+                if (! $teamExists && ! $userExists && ! $project->createdBy->is(auth()->user())) {
                     return Response::deny("You do not have permission to restore this project because you're not manager, or creator of this project.");
                 }
             }
@@ -139,7 +139,7 @@ class ProjectPolicy
                 $teamExists = $project->managerTeams()->where('teams.id', $team?->getKey())->exists();
                 $userExists = $project->managerUsers()->where('users.id', auth()->user()->getKey())->exists();
 
-                if (! $teamExists && ! $userExists && ! $project->createdBy?->is(auth()->user())) {
+                if (! $teamExists && ! $userExists && ! $project->createdBy->is(auth()->user())) {
                     return Response::deny("You do not have permission to permanently delete this project because you're not manager, or creator of this project.");
                 }
             }
