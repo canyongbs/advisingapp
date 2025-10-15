@@ -48,6 +48,8 @@ class ProjectManagerUser extends Pivot
 {
     use HasUuids;
 
+    protected $table = 'project_manager_users';
+
     /**
      * @return BelongsTo<Project, $this>
      */
