@@ -184,7 +184,7 @@ it('returns correct interaction counts by type for students based on segment fil
     $widgetInstance = new StudentInteractionTypeDoughnutChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     $stats = $widgetInstance->getData()['datasets'][0]['data'];

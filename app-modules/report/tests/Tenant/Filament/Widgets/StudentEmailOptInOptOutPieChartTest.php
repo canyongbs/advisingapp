@@ -157,7 +157,7 @@ it('it filters student email opt-in/out/null data accurately based on segment fi
     $widgetInstance = new StudentEmailOptInOptOutPieChart();
     $widgetInstance->cacheTag = 'report-student-deliverability';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     $stats = $widgetInstance->getData()['datasets'][0]['data'];

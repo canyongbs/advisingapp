@@ -183,7 +183,7 @@ it('returns correct total prospect stats of prospects, alerts, cases and tasks b
     $widget = new ProspectReportStats();
     $widget->cacheTag = 'prospect-report-cache';
     $widget->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     $stats = $widget->getStats();

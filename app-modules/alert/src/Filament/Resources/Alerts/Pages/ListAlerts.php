@@ -132,7 +132,7 @@ class ListAlerts extends ListRecords
                             callback: fn(Builder $query) => $query->whereRelation('careTeam', 'user_id', auth()->id())
                         )
                     ),
-                SelectFilter::make('my_segments')
+                SelectFilter::make('my_groups')
                     ->label('My Population Groups')
                     ->options(
                         auth()->user()->groups()
@@ -140,8 +140,8 @@ class ListAlerts extends ListRecords
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn(Builder $query, array $data) => $this->segmentFilter($query, $data)),
-                SelectFilter::make('all_segments')
+                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
+                SelectFilter::make('all_groups')
                     ->label('All Population Groups')
                     ->options(
                         GroupModel::all()

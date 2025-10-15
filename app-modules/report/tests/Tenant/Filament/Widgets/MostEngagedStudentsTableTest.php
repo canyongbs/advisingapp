@@ -132,7 +132,7 @@ it('returns top engaged students engagements based on segment filter', function 
     ])->create();
 
     $filters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     livewire(MostEngagedStudentsTable::class, [

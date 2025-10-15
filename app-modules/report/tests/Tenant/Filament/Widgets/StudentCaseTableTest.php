@@ -161,7 +161,7 @@ it('returns all cases information created for students based on segment filters'
     ])->create();
 
     $filters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     // with segment filter

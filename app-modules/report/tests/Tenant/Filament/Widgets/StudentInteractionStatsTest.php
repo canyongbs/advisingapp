@@ -202,7 +202,7 @@ it('returns correct total and unique student interaction counts based on segment
     $widget = new StudentInteractionStats();
     $widget->cacheTag = 'report-student';
     $widget->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     $stats = $widget->getStats();

@@ -79,9 +79,9 @@ trait InteractsWithPageFilters
         return $months;
     }
 
-    public function getSelectedSegment(): ?string
+    public function getSelectedGroup(): ?string
     {
-        return $this->filters['populationSegment'] ?? null;
+        return $this->filters['populationGroup'] ?? null;
     }
 
     /**

@@ -81,7 +81,7 @@ class MostRecentStudentsTable extends BaseWidget
 
                 $startDate = $this->getStartDate();
                 $endDate = $this->getEndDate();
-                $segmentId = $this->getSelectedSegment();
+                $segmentId = $this->getSelectedGroup();
 
                 return Student::query()
                     ->whereNotNull('created_at_source')

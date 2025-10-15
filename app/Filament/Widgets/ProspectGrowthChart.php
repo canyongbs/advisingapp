@@ -60,7 +60,7 @@ class ProspectGrowthChart extends ChartWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedSegment();
+        $segmentId = $this->getSelectedGroup();
 
         $baseQuery = Prospect::query()
             ->when(

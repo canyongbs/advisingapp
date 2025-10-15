@@ -59,7 +59,7 @@ class StudentStats extends StatsOverviewWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedSegment();
+        $segmentId = $this->getSelectedGroup();
 
         $studentQuery = function (Builder $query) use ($segmentId) {
             if ($segmentId) {

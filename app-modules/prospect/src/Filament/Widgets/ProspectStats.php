@@ -63,7 +63,7 @@ class ProspectStats extends StatsOverviewWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedSegment();
+        $segmentId = $this->getSelectedGroup();
 
         $prospectQuery = function (Builder $query) use ($segmentId) {
             if ($segmentId) {

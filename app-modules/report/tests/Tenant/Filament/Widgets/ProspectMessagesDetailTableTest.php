@@ -164,7 +164,7 @@ it('displays engagements and responses based on segment filters', function () {
     $holisticEngagementDoe = HolisticEngagement::where('record_id', $engagementDoe->id)->where('record_type', new Engagement()->getMorphClass())->first();
 
     $filters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     livewire(ProspectMessagesDetailTable::class, [

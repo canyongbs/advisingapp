@@ -102,7 +102,7 @@ class ListStudents extends ListRecords
                     ->searchable(),
             ])
             ->filters([
-                SelectFilter::make('my_segments')
+                SelectFilter::make('my_groups')
                     ->label('My Population Groups')
                     ->options(
                         auth()->user()->groups()

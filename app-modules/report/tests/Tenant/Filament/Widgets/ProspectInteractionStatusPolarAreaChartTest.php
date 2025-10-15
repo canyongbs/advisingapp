@@ -183,7 +183,7 @@ it('returns correct interaction counts by status for prospects based on segment 
     $widgetInstance = new ProspectInteractionStatusPolarAreaChart();
     $widgetInstance->cacheTag = 'report-prospect-interaction';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $segment->getKey(),
     ];
 
     $stats = $widgetInstance->getData()['datasets'][0]['data'];
