@@ -88,11 +88,11 @@ it('returns top engaged prospects based on engagements within the given date ran
         ->assertCanNotSeeTableRecords(collect([$prospect3]));
 });
 
-it('returns top engaged prospects engagements based on segment filter', function () {
+it('returns top engaged prospects engagements based on group filter', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
@@ -129,7 +129,7 @@ it('returns top engaged prospects engagements based on segment filter', function
     ])->create();
 
     $filters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     livewire(MostEngagedProspectsTable::class, [

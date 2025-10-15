@@ -72,11 +72,11 @@ it('returns correct monthly email and sms engagement data for students within th
     expect($widgetInstance->getData())->toMatchSnapshot();
 });
 
-it('returns correct monthly email and sms engagement data for students based on segment filters', function () {
+it('returns correct monthly email and sms engagement data for students based on group filters', function () {
     $startDate = now()->subDays(90);
     $endDate = now()->subDays(5);
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
@@ -131,22 +131,22 @@ it('returns correct monthly email and sms engagement data for students based on 
     $widgetInstance = new StudentEngagementLineChart();
     $widgetInstance->cacheTag = 'report-student-engagement';
     $widgetInstance->pageFilters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
-    $dataWithSegment = $widgetInstance->getData();
+    $dataWithGroup = $widgetInstance->getData();
 
-    expect($dataWithSegment)
+    expect($dataWithGroup)
         ->not->toBeEmpty()
-        ->and($dataWithSegment)->toMatchSnapshot();
+        ->and($dataWithGroup)->toMatchSnapshot();
 
     $widgetInstance = new StudentEngagementLineChart();
     $widgetInstance->cacheTag = 'report-student-engagement';
     $widgetInstance->pageFilters = [];
 
-    $dataWithoutSegment = $widgetInstance->getData();
+    $dataWithoutGroup = $widgetInstance->getData();
 
-    expect($dataWithoutSegment)
+    expect($dataWithoutGroup)
         ->not->toBeEmpty()
-        ->and($dataWithoutSegment)->toMatchSnapshot();
+        ->and($dataWithoutGroup)->toMatchSnapshot();
 });

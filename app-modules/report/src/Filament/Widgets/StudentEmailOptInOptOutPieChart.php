@@ -69,24 +69,24 @@ class StudentEmailOptInOptOutPieChart extends PieChartReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedGroup();
+        $groupId = $this->getSelectedGroup();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($groupId);
 
         $emailOptInPercentage = $shouldBypassCache
-            ? Student::where('email_bounce', false)->when($startDate && $endDate, fn (Builder $query) => $query->whereBetween('created_at_source', [$startDate, $endDate]))->when($segmentId, fn (Builder $query) => $this->segmentFilter($query, $segmentId))->count()
+            ? Student::where('email_bounce', false)->when($startDate && $endDate, fn (Builder $query) => $query->whereBetween('created_at_source', [$startDate, $endDate]))->when($groupId, fn (Builder $query) => $this->groupFilter($query, $groupId))->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember('email_opt_in_count', now()->addHours(24), function (): int {
                 return Student::where('email_bounce', false)->count();
             });
 
         $emailOptOutPercentage = $shouldBypassCache
-            ? Student::where('email_bounce', true)->when($startDate && $endDate, fn (Builder $query) => $query->whereBetween('created_at_source', [$startDate, $endDate]))->when($segmentId, fn (Builder $query) => $this->segmentFilter($query, $segmentId))->count()
+            ? Student::where('email_bounce', true)->when($startDate && $endDate, fn (Builder $query) => $query->whereBetween('created_at_source', [$startDate, $endDate]))->when($groupId, fn (Builder $query) => $this->groupFilter($query, $groupId))->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember('email_opt_out_count', now()->addHours(24), function (): int {
                 return Student::where('email_bounce', true)->count();
             });
 
         $emailNullPercentage = $shouldBypassCache
-            ? Student::whereNull('email_bounce')->when($startDate && $endDate, fn (Builder $query) => $query->whereBetween('created_at_source', [$startDate, $endDate]))->when($segmentId, fn (Builder $query) => $this->segmentFilter($query, $segmentId))->count()
+            ? Student::whereNull('email_bounce')->when($startDate && $endDate, fn (Builder $query) => $query->whereBetween('created_at_source', [$startDate, $endDate]))->when($groupId, fn (Builder $query) => $this->groupFilter($query, $groupId))->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember('email_null_count', now()->addHours(24), function (): int {
                 return Student::whereNull('email_bounce')->count();
             });

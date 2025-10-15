@@ -58,16 +58,16 @@ class ProspectMessagesDetailStats extends StatsOverviewReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedGroup();
+        $groupId = $this->getSelectedGroup();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($groupId);
 
         $emailsSentCount = $shouldBypassCache
             ? Engagement::query()
-                ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($segmentId) {
+                ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId) {
                     $query->when(
-                        $segmentId,
-                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->where('channel', NotificationChannel::Email)
@@ -87,10 +87,10 @@ class ProspectMessagesDetailStats extends StatsOverviewReportWidget
 
         $emailsReceivedCount = $shouldBypassCache
             ? EngagementResponse::query()
-                ->whereHasMorph('sender', Prospect::class, function (Builder $query) use ($segmentId) {
+                ->whereHasMorph('sender', Prospect::class, function (Builder $query) use ($groupId) {
                     $query->when(
-                        $segmentId,
-                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->where('type', EngagementResponseType::Email)
@@ -110,10 +110,10 @@ class ProspectMessagesDetailStats extends StatsOverviewReportWidget
 
         $smsSentCount = $shouldBypassCache
             ? Engagement::query()
-                ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($segmentId) {
+                ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId) {
                     $query->when(
-                        $segmentId,
-                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->where('channel', NotificationChannel::Sms)
@@ -133,10 +133,10 @@ class ProspectMessagesDetailStats extends StatsOverviewReportWidget
 
         $smsReceivedCount = $shouldBypassCache
             ? EngagementResponse::query()
-                ->whereHasMorph('sender', Prospect::class, function (Builder $query) use ($segmentId) {
+                ->whereHasMorph('sender', Prospect::class, function (Builder $query) use ($groupId) {
                     $query->when(
-                        $segmentId,
-                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->where('type', EngagementResponseType::Sms)

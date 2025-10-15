@@ -73,12 +73,12 @@ class StudentInteractionTypeDoughnutChart extends ChartReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedGroup();
+        $groupId = $this->getSelectedGroup();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($groupId);
 
         $interactionsByType = $shouldBypassCache
-            ? $this->getInteractionTypeData($startDate, $endDate, $segmentId)
+            ? $this->getInteractionTypeData($startDate, $endDate, $groupId)
             : Cache::tags(["{{$this->cacheTag}}"])->remember('student_interactions_by_type', now()->addHours(24), function () {
                 return $this->getInteractionTypeData();
             });
@@ -131,15 +131,15 @@ class StudentInteractionTypeDoughnutChart extends ChartReportWidget
     /**
      * @return Collection<int, InteractionType>
      */
-    protected function getInteractionTypeData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $segmentId = null): Collection
+    protected function getInteractionTypeData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $groupId = null): Collection
     {
         $query = InteractionType::withCount([
-            'interactions' => function ($query) use ($startDate, $endDate, $segmentId) {
+            'interactions' => function ($query) use ($startDate, $endDate, $groupId) {
                 $query
-                    ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($segmentId) {
+                    ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId) {
                         $query->when(
-                            $segmentId,
-                            fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                            $groupId,
+                            fn (Builder $query) => $this->groupFilter($query, $groupId)
                         );
                     })
                     ->when(

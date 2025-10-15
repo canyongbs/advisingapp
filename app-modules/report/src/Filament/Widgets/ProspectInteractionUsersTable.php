@@ -83,18 +83,18 @@ class ProspectInteractionUsersTable extends BaseWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedGroup();
+        $groupId = $this->getSelectedGroup();
 
         return $table
             ->query(
-                function () use ($startDate, $endDate, $segmentId) {
+                function () use ($startDate, $endDate, $groupId) {
                     return User::query()
-                        ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate, $segmentId): Builder {
+                        ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate, $groupId): Builder {
                             return $query
-                                ->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($segmentId) {
+                                ->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($groupId) {
                                     $query->when(
-                                        $segmentId,
-                                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                                        $groupId,
+                                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                                     );
                                 })
                                 ->when(

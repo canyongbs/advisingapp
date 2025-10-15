@@ -85,11 +85,11 @@ it('returns correct counts of students, emails, texts, and staff engagements wit
         ->and($stats[3]->getValue())->toEqual(2);
 });
 
-it('returns correct counts of students, emails, texts, and staff engagements based on segment filters', function () {
+it('returns correct counts of students, emails, texts, and staff engagements based on group filters', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
@@ -157,7 +157,7 @@ it('returns correct counts of students, emails, texts, and staff engagements bas
     $widget = new StudentEngagementStats();
     $widget->cacheTag = 'report-student-engagement';
     $widget->pageFilters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widget->getStats();

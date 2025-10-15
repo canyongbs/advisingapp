@@ -33,6 +33,7 @@
 
 </COPYRIGHT>
 */
+
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
@@ -124,8 +125,8 @@ it('displays engagements and responses within the given date range', function ()
         ->assertCanNotSeeTableRecords(collect([$holisticEngagementOutOfRange]));
 });
 
-it('displays engagements and responses based on segment filters', function () {
-    $segment = Group::factory()->create([
+it('displays engagements and responses based on group filters', function () {
+    $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
@@ -167,7 +168,7 @@ it('displays engagements and responses based on segment filters', function () {
     $holisticEngagementDoe = HolisticEngagement::where('record_id', $engagementDoe->id)->where('record_type', new Engagement()->getMorphClass())->first();
 
     $filters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     livewire(StudentMessagesDetailTable::class, [

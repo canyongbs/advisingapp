@@ -55,12 +55,12 @@ class ProspectReportLineChart extends ChartReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedGroup();
+        $groupId = $this->getSelectedGroup();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($groupId);
 
         $runningTotalPerMonth = $shouldBypassCache
-            ? $this->getProspectRunningTotalData($startDate, $endDate, $segmentId)
+            ? $this->getProspectRunningTotalData($startDate, $endDate, $groupId)
             : Cache::tags(["{{$this->cacheTag}}"])
                 ->remember('total-prospects_line_chart', now()->addHours(24), function (): array {
                     return $this->getProspectRunningTotalData();
@@ -100,7 +100,7 @@ class ProspectReportLineChart extends ChartReportWidget
     /**
      * @return array<string, int>
      */
-    protected function getProspectRunningTotalData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $segmentId = null): array
+    protected function getProspectRunningTotalData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $groupId = null): array
     {
         $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
         $endDate = $endDate ?? Carbon::now()->endOfMonth();
@@ -110,8 +110,8 @@ class ProspectReportLineChart extends ChartReportWidget
         $monthlyData = Prospect::query()
             ->whereBetween('created_at', [$startDate, $endDate])
             ->when(
-                $segmentId,
-                fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                $groupId,
+                fn (Builder $query) => $this->groupFilter($query, $groupId)
             )
             ->selectRaw("date_trunc('month', created_at) as month, COUNT(*) as monthly_total")
             ->groupByRaw("date_trunc('month', created_at)")

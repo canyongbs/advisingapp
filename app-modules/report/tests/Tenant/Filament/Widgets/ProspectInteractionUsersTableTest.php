@@ -299,8 +299,8 @@ it('displays only users with prospect interactions within the selected date rang
         ->assertCanNotSeeTableRecords(collect([$userWithoutInteractions]));
 });
 
-it('displays only users with prospect interactions based on segment filter', function () {
-    $segment = Group::factory()->create([
+it('displays only users with prospect interactions based on group filter', function () {
+    $group = Group::factory()->create([
         'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
@@ -348,10 +348,10 @@ it('displays only users with prospect interactions based on segment filter', fun
         ->create();
 
     $filters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
-    // with segment filter
+    // with group filter
     livewire(ProspectInteractionUsersTable::class, [
         'cacheTag' => 'report-prospect-interaction',
         'pageFilters' => $filters,

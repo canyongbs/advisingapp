@@ -52,12 +52,12 @@ class StudentInteractionLineChart extends LineChartReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedGroup();
+        $groupId = $this->getSelectedGroup();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($groupId);
 
         $runningTotalPerMonth = $shouldBypassCache
-            ? $this->getStudentInteractionData($startDate, $endDate, $segmentId)
+            ? $this->getStudentInteractionData($startDate, $endDate, $groupId)
             : Cache::tags(["{{$this->cacheTag}}"])->remember('student_interactions_line_chart', now()->addHours(24), function () {
                 return $this->getStudentInteractionData();
             });
@@ -94,7 +94,7 @@ class StudentInteractionLineChart extends LineChartReportWidget
     /**
      * @return array<string, int>
      */
-    protected function getStudentInteractionData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $segmentId = null): array
+    protected function getStudentInteractionData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $groupId = null): array
     {
         $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
         $endDate = $endDate ?? Carbon::now()->endOfMonth();
@@ -103,10 +103,10 @@ class StudentInteractionLineChart extends LineChartReportWidget
 
         $monthlyData = Interaction::query()
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($segmentId) {
+            ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId) {
                 $query->when(
-                    $segmentId,
-                    fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    $groupId,
+                    fn (Builder $query) => $this->groupFilter($query, $groupId)
                 );
             })
             ->selectRaw("date_trunc('month', created_at) AS month, COUNT(*) AS monthly_total")

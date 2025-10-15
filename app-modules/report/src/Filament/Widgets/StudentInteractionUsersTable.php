@@ -86,7 +86,7 @@ class StudentInteractionUsersTable extends BaseWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedGroup();
+        $groupId = $this->getSelectedGroup();
 
         return $table
             ->headerActions([
@@ -97,14 +97,14 @@ class StudentInteractionUsersTable extends BaseWidget
                     ]),
             ])
             ->query(
-                function () use ($startDate, $endDate, $segmentId): Builder {
+                function () use ($startDate, $endDate, $groupId): Builder {
                     return User::query()
-                        ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate, $segmentId): Builder {
+                        ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate, $groupId): Builder {
                             return $query
-                                ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($segmentId) {
+                                ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId) {
                                     $query->when(
-                                        $segmentId,
-                                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                                        $groupId,
+                                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                                     );
                                 })
                                 ->when(

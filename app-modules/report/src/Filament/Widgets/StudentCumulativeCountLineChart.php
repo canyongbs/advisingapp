@@ -72,12 +72,12 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedGroup();
+        $groupId = $this->getSelectedGroup();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate) || $segmentId;
+        $shouldBypassCache = filled($startDate) || filled($endDate) || $groupId;
 
         $runningTotalPerMonth = $shouldBypassCache
-            ? $this->getStudentRunningTotalData($startDate, $endDate, $segmentId)
+            ? $this->getStudentRunningTotalData($startDate, $endDate, $groupId)
             : Cache::tags(["{{$this->cacheTag}}"])
                 ->remember('student-cumulative-count-line-chart', now()->addHours(24), function (): array {
                     return $this->getStudentRunningTotalData();
@@ -112,7 +112,7 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
     /**
      * @return array<string, int>
      */
-    protected function getStudentRunningTotalData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $segmentId = null): array
+    protected function getStudentRunningTotalData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $groupId = null): array
     {
         $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
         $endDate = $endDate ?? Carbon::now()->endOfMonth();
@@ -122,8 +122,8 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
         $monthlyData = Student::query()
             ->whereBetween('created_at_source', [$startDate, $endDate])
             ->when(
-                $segmentId,
-                fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                $groupId,
+                fn (Builder $query) => $this->groupFilter($query, $groupId)
             )
             ->selectRaw("date_trunc('month', created_at_source) as month, COUNT(*) as monthly_total")
             ->groupByRaw("date_trunc('month', created_at_source)")

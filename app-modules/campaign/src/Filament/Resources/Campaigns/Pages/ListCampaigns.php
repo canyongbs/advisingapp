@@ -61,7 +61,7 @@ class ListCampaigns extends ListRecords
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name'),
-                TextColumn::make('segment.name')
+                TextColumn::make('group.name')
                     ->label('Group'),
                 TextColumn::make('enabled')
                     ->label('Enabled')

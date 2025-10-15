@@ -321,13 +321,13 @@ it('checks the API returns Alerts', function () {
     expect($data['alerts'])->toBe($randomRecords);
 });
 
-it('checks the API returns Segments', function () {
+it('checks the API returns Groups', function () {
     $randomRecords = random_int(1, 10);
 
     Group::factory()->count($randomRecords)->create();
 
-    $softDeleteSegment = Group::factory()->create();
-    $softDeleteSegment->delete();
+    $softDeleteGroup = Group::factory()->create();
+    $softDeleteGroup->delete();
 
     $response = get(route('utilization-metrics'));
 
@@ -335,7 +335,7 @@ it('checks the API returns Segments', function () {
 
     $response->assertStatus(200);
 
-    expect($data['segments'])->toBe($randomRecords);
+    expect($data['groups'])->toBe($randomRecords);
 });
 
 it('checks the API returns Resource Hub Articles', function () {

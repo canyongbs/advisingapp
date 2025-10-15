@@ -72,7 +72,7 @@ it('will execute appropriately on each educatable in the group', function (Educa
     ]);
 
     $campaign = Campaign::factory()
-        ->for($group, 'segment')
+        ->for($group, 'group')
         ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
         ->create();
 
@@ -154,7 +154,7 @@ it('will not duplicate an invite if the group educatable was already invited', f
     ]);
 
     $campaign = Campaign::factory()
-        ->for($group, 'segment')
+        ->for($group, 'group')
         ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
         ->create();
 

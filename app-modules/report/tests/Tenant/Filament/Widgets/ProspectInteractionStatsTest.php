@@ -159,11 +159,11 @@ it('returns correct total and unique prospect interaction counts within the give
     expect($prospectsWithInteractionsStat->getValue())
         ->toEqual($prospectsWithStartDateInteractions + $prospectsWithEndDateInteractions + $prospectsWithEndDateInteractions);
 });
-it('returns correct total and unique prospect interaction counts based on segment filter', function () {
+it('returns correct total and unique prospect interaction counts based on group filter', function () {
     $prospectsWithJohnNameInteractions = random_int(1, 10);
     $prospectsWithDoeNameInteractions = random_int(1, 10);
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
@@ -201,7 +201,7 @@ it('returns correct total and unique prospect interaction counts based on segmen
     $widget = new ProspectInteractionStats();
     $widget->cacheTag = 'report-prospect-interaction';
     $widget->pageFilters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widget->getStats();
@@ -216,7 +216,7 @@ it('returns correct total and unique prospect interaction counts based on segmen
     expect($prospectsWithInteractionsStat->getValue())
         ->toEqual($prospectsWithJohnNameInteractions);
 
-    // without segment filter
+    // without group filter
     $widget = new ProspectInteractionStats();
     $widget->cacheTag = 'report-prospect-interaction';
     $widget->pageFilters = [];

@@ -57,9 +57,9 @@ class StudentsStats extends StatsOverviewReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedGroup();
+        $groupId = $this->getSelectedGroup();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($groupId);
 
         $studentsCount = $shouldBypassCache
             ? Student::query()
@@ -68,8 +68,8 @@ class StudentsStats extends StatsOverviewReportWidget
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
                 )
                 ->when(
-                    $segmentId,
-                    fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    $groupId,
+                    fn (Builder $query) => $this->groupFilter($query, $groupId)
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
@@ -80,10 +80,10 @@ class StudentsStats extends StatsOverviewReportWidget
 
         $alertsCount = $shouldBypassCache
             ? Alert::query()
-                ->whereHasMorph('concern', Student::class, function (Builder $query) use ($segmentId) {
+                ->whereHasMorph('concern', Student::class, function (Builder $query) use ($groupId) {
                     $query->when(
-                        $segmentId,
-                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->when(
@@ -99,10 +99,10 @@ class StudentsStats extends StatsOverviewReportWidget
 
         $casesCount = $shouldBypassCache
             ? CaseModel::query()
-                ->whereHasMorph('respondent', Student::class, function (Builder $query) use ($segmentId) {
+                ->whereHasMorph('respondent', Student::class, function (Builder $query) use ($groupId) {
                     $query->when(
-                        $segmentId,
-                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->when(
@@ -118,10 +118,10 @@ class StudentsStats extends StatsOverviewReportWidget
 
         $tasksCount = $shouldBypassCache
             ? Task::query()
-                ->whereHasMorph('concern', Student::class, function (Builder $query) use ($segmentId) {
+                ->whereHasMorph('concern', Student::class, function (Builder $query) use ($groupId) {
                     $query->when(
-                        $segmentId,
-                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->when(

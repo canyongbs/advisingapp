@@ -37,6 +37,7 @@
 namespace AdvisingApp\Group\Filament\Resources\Groups\Pages;
 
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Tables\Columns\IdColumn;
@@ -81,7 +82,7 @@ class ListGroups extends ListRecords
                     ->authorize(function () {
                         return auth()->user()->can('delete');
                     })
-                    ->action(function (DeleteAction $action, Segment $record) {
+                    ->action(function (DeleteAction $action, Group $record) {
                         try {
                             $this->authorize('delete', $record);
                             $record->delete();

@@ -88,11 +88,11 @@ it('returns correct data for student interactions within the given date range', 
     expect($widgetInstance->getData())->toMatchSnapshot();
 });
 
-it('returns correct data for student interactions based on segment filter', function () {
+it('returns correct data for student interactions based on group filter', function () {
     $interactionStartDate = now()->subDays(90);
     $interactionEndDate = now()->subDays(5);
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
@@ -136,7 +136,7 @@ it('returns correct data for student interactions based on segment filter', func
     $widgetInstance = new StudentInteractionLineChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
     $widgetInstance->pageFilters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     expect($widgetInstance->getData())->toMatchSnapshot();

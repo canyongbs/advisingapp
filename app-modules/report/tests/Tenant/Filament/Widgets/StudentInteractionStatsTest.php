@@ -160,11 +160,11 @@ it('returns correct total and unique student interaction counts within the given
         ->toEqual($studentsWithStartDateInteractions + $studentsWithEndDateInteractions + $studentsWithEndDateInteractions);
 });
 
-it('returns correct total and unique student interaction counts based on segment filter', function () {
+it('returns correct total and unique student interaction counts based on group filter', function () {
     $studentsWithJohnNameInteractions = random_int(1, 10);
     $studentsWithDoeNameInteractions = random_int(1, 10);
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
@@ -202,7 +202,7 @@ it('returns correct total and unique student interaction counts based on segment
     $widget = new StudentInteractionStats();
     $widget->cacheTag = 'report-student';
     $widget->pageFilters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widget->getStats();
@@ -217,7 +217,7 @@ it('returns correct total and unique student interaction counts based on segment
     expect($studentsWithInteractionsStat->getValue())
         ->toEqual($studentsWithJohnNameInteractions);
 
-    // without segment filter
+    // without group filter
     $widget = new StudentInteractionStats();
     $widget->cacheTag = 'report-student';
     $widget->pageFilters = [];

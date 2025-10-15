@@ -85,7 +85,7 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
             return;
         }
 
-        // Required as some segment filters apply based on the logged in User.
+        // Required as some group filters apply based on the logged in User.
         // The campaign creator is the one who will be logged in.
         if ($this->action->campaign->createdBy instanceof User) {
             Auth::setUser($this->action->campaign->createdBy);
@@ -93,10 +93,10 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
 
         try {
             app(TranslateGroupFilters::class)
-                ->execute($this->action->campaign->segment)
+                ->execute($this->action->campaign->group)
                 ->lazyById(
                     1000,
-                    $this->action->campaign->segment->model->instance()->getKeyName(),
+                    $this->action->campaign->group->model->instance()->getKeyName(),
                 )
                 ->each(function (Model $educatable) {
                     try {

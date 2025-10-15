@@ -73,10 +73,10 @@ class MostEngagedStudentsTable extends BaseWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedGroup();
+        $groupId = $this->getSelectedGroup();
 
         return $table
-            ->query(function () use ($startDate, $endDate, $segmentId) {
+            ->query(function () use ($startDate, $endDate, $groupId) {
                 return Student::with('primaryEmailAddress:id,address')
                     ->select('sisid', 'full_name', 'primary_email_id')
                     ->withCount([
@@ -100,8 +100,8 @@ class MostEngagedStudentsTable extends BaseWidget
                         }
                     )
                     ->when(
-                        $segmentId,
-                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                     )
                     ->orderBy('engagements_count', 'desc')
                     ->limit(10);

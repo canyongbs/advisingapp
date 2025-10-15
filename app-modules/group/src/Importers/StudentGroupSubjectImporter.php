@@ -79,7 +79,7 @@ class StudentGroupSubjectImporter extends Importer
 
     public static function getCompletedNotificationBody(Import $import): string
     {
-        $body = 'Your segment import has completed and ' . number_format($import->successful_rows) . ' ' . Str::plural('student', $import->successful_rows) . ' imported.';
+        $body = 'Your group import has completed and ' . number_format($import->successful_rows) . ' ' . Str::plural('student', $import->successful_rows) . ' imported.';
 
         if ($failedRowsCount = $import->getFailedRowsCount()) {
             $body .= ' ' . number_format($failedRowsCount) . ' ' . Str::plural('student', $failedRowsCount) . ' failed to import.';

@@ -61,11 +61,11 @@ it('returns correct cumulative student counts grouped by month within the given 
     expect($widgetInstance->getData())->toMatchSnapshot();
 });
 
-it('returns correct cumulative student counts grouped by month based on segment filters', function () {
+it('returns correct cumulative student counts grouped by month based on group filters', function () {
     $startDate = now()->subDays(90);
     $endDate = now()->subDays(5);
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
@@ -98,7 +98,7 @@ it('returns correct cumulative student counts grouped by month based on segment 
     $widgetInstance = new StudentCumulativeCountLineChart();
     $widgetInstance->cacheTag = 'report-student';
     $widgetInstance->pageFilters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     expect($widgetInstance->getData())->toMatchSnapshot();

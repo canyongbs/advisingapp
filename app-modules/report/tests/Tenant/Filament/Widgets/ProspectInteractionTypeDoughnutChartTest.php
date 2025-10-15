@@ -128,14 +128,14 @@ it('returns correct interaction counts by type for prospects within the selected
         ->and($interactionsCount)->not->toEqual($stats[2]);
 });
 
-it('returns correct interaction counts by type for prospects based on segment filter', function () {
+it('returns correct interaction counts by type for prospects based on group filter', function () {
     $interactionsCount = random_int(1, 10);
     $interactionsCountForDoe = random_int(1, 10);
 
     $interactionTypeFirst = InteractionType::factory()->create();
     $interactionTypeSecond = InteractionType::factory()->create();
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
@@ -180,11 +180,11 @@ it('returns correct interaction counts by type for prospects based on segment fi
             'last_name' => 'Doe',
         ]);
 
-    //  with segment filter
+    //  with group filter
     $widgetInstance = new ProspectInteractionTypeDoughnutChart();
     $widgetInstance->cacheTag = 'report-prospect-interaction';
     $widgetInstance->pageFilters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widgetInstance->getData()['datasets'][0]['data'];
@@ -192,7 +192,7 @@ it('returns correct interaction counts by type for prospects based on segment fi
     expect($interactionsCount)->toEqual($stats[0])
         ->and($interactionsCount)->not->toEqual($stats[1]);
 
-    //  with segment filter
+    //  with group filter
     $widgetInstance = new ProspectInteractionTypeDoughnutChart();
     $widgetInstance->cacheTag = 'report-prospect-interaction';
     $widgetInstance->pageFilters = [];
