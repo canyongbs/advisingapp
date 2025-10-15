@@ -47,11 +47,11 @@ it('can filter by name search', function (): void {
 
     $regularEnrollment = Enrollment::factory()->state([
         'name' => 'Regular Course Name',
-    ]);
+    ])->create();
 
     $searchableEnrollment = Enrollment::factory()->state([
         'name' => 'Unique Course Name',
-    ]);
+    ])->create();
 
     $student = Student::factory()
         ->has($regularEnrollment, 'enrollments')
@@ -64,6 +64,6 @@ it('can filter by name search', function (): void {
     ])
         ->assertCanSeeTableRecords($student->enrollments)
         ->searchTable('Unique')
-        ->assertCanSeeTableRecords([$student->enrollments->where('name', 'Unique Course Name')->first()])
-        ->assertCanNotSeeTableRecords($student->enrollments->where('name', 'Regular Course Name'));
-})->only();
+        ->assertCanSeeTableRecords([$searchableEnrollment])
+        ->assertCanNotSeeTableRecords([$regularEnrollment]);
+});
