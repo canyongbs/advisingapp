@@ -71,9 +71,9 @@ class Campaign extends BaseModel implements Auditable
     /**
      * @return BelongsTo<Group, $this>
      */
-    public function segment(): BelongsTo
+    public function group(): BelongsTo
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsTo(Group::class, 'segment_id');
     }
 
     /**
@@ -111,7 +111,7 @@ class Campaign extends BaseModel implements Auditable
                 return;
             }
 
-            $builder->whereHas('segment');
+            $builder->whereHas('group');
         });
     }
 }

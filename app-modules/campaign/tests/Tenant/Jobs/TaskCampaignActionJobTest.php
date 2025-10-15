@@ -64,7 +64,7 @@ it('will execute appropriately on each educatable in the group', function (Educa
     ]);
 
     $campaign = Campaign::factory()
-        ->for($group, 'segment')
+        ->for($group, 'group')
         ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
         ->create();
 

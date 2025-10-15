@@ -127,8 +127,8 @@ it('displays only tasks added within the selected date range for prospects', fun
         ->assertCanNotSeeTableRecords(collect([$taskOutsideRange]));
 });
 
-it('properly filters students by segment', function () {
-    $segment = Group::factory()->create([
+it('properly filters students by group', function () {
+    $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
@@ -147,19 +147,19 @@ it('properly filters students by segment', function () {
         ],
     ]);
 
-    $segmentTask = Task::factory()->concerningStudent(Student::factory()->create(['last' => 'John']))->state(['is_confidential' => false])->create();
+    $groupTask = Task::factory()->concerningStudent(Student::factory()->create(['last' => 'John']))->state(['is_confidential' => false])->create();
 
-    $nonSegmentTask = Task::factory()->concerningStudent(Student::factory()->create(['last' => 'Doe']))->state(['is_confidential' => false])->create();
+    $nonGroupTask = Task::factory()->concerningStudent(Student::factory()->create(['last' => 'Doe']))->state(['is_confidential' => false])->create();
 
     livewire(MostRecentTasksTable::class, [
         'cacheTag' => 'report-tasks',
         'educatableType' => Student::class,
         'pageFilters' => [],
     ])
-        ->assertCanSeeTableRecords(collect([$segmentTask, $nonSegmentTask]));
+        ->assertCanSeeTableRecords(collect([$groupTask, $nonGroupTask]));
 
     $filters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     livewire(MostRecentTasksTable::class, [
@@ -167,12 +167,12 @@ it('properly filters students by segment', function () {
         'educatableType' => Student::class,
         'pageFilters' => $filters,
     ])
-        ->assertCanSeeTableRecords(collect([$segmentTask]))
-        ->assertCanNotSeeTableRecords(collect([$nonSegmentTask]));
+        ->assertCanSeeTableRecords(collect([$groupTask]))
+        ->assertCanNotSeeTableRecords(collect([$nonGroupTask]));
 });
 
-it('properly filters prospects by segment', function () {
-    $segment = Group::factory()->create([
+it('properly filters prospects by group', function () {
+    $group = Group::factory()->create([
         'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
@@ -191,19 +191,19 @@ it('properly filters prospects by segment', function () {
         ],
     ]);
 
-    $segmentTask = Task::factory()->concerningProspect(Prospect::factory()->create(['last_name' => 'John']))->state(['is_confidential' => false])->create();
+    $groupTask = Task::factory()->concerningProspect(Prospect::factory()->create(['last_name' => 'John']))->state(['is_confidential' => false])->create();
 
-    $nonSegmentTask = Task::factory()->concerningProspect(Prospect::factory()->create(['last_name' => 'Doe']))->state(['is_confidential' => false])->create();
+    $nonGroupTask = Task::factory()->concerningProspect(Prospect::factory()->create(['last_name' => 'Doe']))->state(['is_confidential' => false])->create();
 
     livewire(MostRecentTasksTable::class, [
         'cacheTag' => 'report-tasks',
         'educatableType' => Prospect::class,
         'pageFilters' => [],
     ])
-        ->assertCanSeeTableRecords(collect([$segmentTask, $nonSegmentTask]));
+        ->assertCanSeeTableRecords(collect([$groupTask, $nonGroupTask]));
 
     $filters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     livewire(MostRecentTasksTable::class, [
@@ -211,6 +211,6 @@ it('properly filters prospects by segment', function () {
         'educatableType' => Prospect::class,
         'pageFilters' => $filters,
     ])
-        ->assertCanSeeTableRecords(collect([$segmentTask]))
-        ->assertCanNotSeeTableRecords(collect([$nonSegmentTask]));
+        ->assertCanSeeTableRecords(collect([$groupTask]))
+        ->assertCanNotSeeTableRecords(collect([$nonGroupTask]));
 });

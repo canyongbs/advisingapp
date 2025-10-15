@@ -90,9 +90,9 @@ class CampaignActionFinished extends Notification
         $actionLabel = $this->action->type->getLabel();
 
         $message = match (true) {
-            $totalExecutions === $totalSucceeded => "{$campaignLink} successfully completed the {$actionLabel} journey step for {$totalExecutions} {$this->action->campaign->segment->model->getLabel()}s.",
-            $totalExecutions === $totalFailed => "{$campaignLink} could not complete the {$actionLabel} journey step for {$totalExecutions} {$this->action->campaign->segment->model->getLabel()}s.",
-            default => "{$campaignLink} completed the {$actionLabel} journey step for {$totalExecutions} {$this->action->campaign->segment->model->getLabel()}s. {$totalSucceeded} were successful and {$totalFailed} were unable to be executed.",
+            $totalExecutions === $totalSucceeded => "{$campaignLink} successfully completed the {$actionLabel} journey step for {$totalExecutions} {$this->action->campaign->group->model->getLabel()}s.",
+            $totalExecutions === $totalFailed => "{$campaignLink} could not complete the {$actionLabel} journey step for {$totalExecutions} {$this->action->campaign->group->model->getLabel()}s.",
+            default => "{$campaignLink} completed the {$actionLabel} journey step for {$totalExecutions} {$this->action->campaign->group->model->getLabel()}s. {$totalSucceeded} were successful and {$totalFailed} were unable to be executed.",
         };
 
         $notification = FilamentNotification::make()->title($message);

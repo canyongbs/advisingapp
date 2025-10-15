@@ -68,14 +68,14 @@ class BulkGroupAction
             ->action(function (Collection $records, array $data) use ($groupModel) {
                 try {
                     DB::beginTransaction();
-                    $segment = Group::create([
+                    $group = Group::create([
                         ...$data,
                         'type' => GroupType::Static,
                         'filters' => [],
                         'model' => $groupModel,
                     ]);
                     $records->chunk(100)->each(
-                        fn ($chunkRecord) => $segment
+                        fn ($chunkRecord) => $group
                             ->subjects()
                             ->createMany(
                                 $chunkRecord->map(fn ($record) => [
@@ -88,16 +88,16 @@ class BulkGroupAction
                 } catch (Exception $e) {
                     DB::rollBack();
                     Notification::make()
-                        ->title('Could not save segment')
-                        ->body('We failed to create the segment. Please try again later.')
+                        ->title('Could not save group')
+                        ->body('We failed to create the group. Please try again later.')
                         ->danger()
                         ->send();
 
                     return;
                 }
                 Notification::make()
-                    ->title('Segment created')
-                    ->body('The segment has been created and populated with your selections.')
+                    ->title('group created')
+                    ->body('The group has been created and populated with your selections.')
                     ->success()
                     ->send();
             });

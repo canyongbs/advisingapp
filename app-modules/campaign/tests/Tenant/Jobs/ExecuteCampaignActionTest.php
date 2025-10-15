@@ -64,20 +64,20 @@ use function Pest\Laravel\assertDatabaseHas;
 it('dispatches the correct job based on the CampaignAction type into the batch', function (GroupModel $groupModel, Collection $educatables, CampaignActionType $actionType, string $jobClass) {
     Bus::fake();
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'type' => GroupType::Static,
         'model' => $groupModel,
     ]);
 
-    $educatables->each(function (Model $educatable) use ($segment) {
-        $segment->subjects()->create([
+    $educatables->each(function (Model $educatable) use ($group) {
+        $group->subjects()->create([
             'subject_id' => $educatable->getKey(),
             'subject_type' => $educatable->getMorphClass(),
         ]);
     });
 
     $campaign = Campaign::factory()
-        ->for($segment, 'segment')
+        ->for($group, 'group')
         ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
         ->create();
 
@@ -107,7 +107,7 @@ it('dispatches the correct job based on the CampaignAction type into the batch',
         ])
     );
 })
-    // TODO: Determine how to make a dynamic segment in tests and add a dataset between static and dynamic here
+    // TODO: Determine how to make a dynamic group in tests and add a dataset between static and dynamic here
     ->with([
         'prospects' => [
             GroupModel::Prospect,
@@ -162,7 +162,7 @@ it('re-uses the same CampaignActionEducatable if it already exists', function ()
 
     $groupModel = GroupModel::cases()[array_rand(GroupModel::cases())];
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'type' => GroupType::Static,
         'model' => $groupModel,
     ]);
@@ -172,15 +172,15 @@ it('re-uses the same CampaignActionEducatable if it already exists', function ()
         GroupModel::Prospect => Prospect::factory()->count(rand(1, 10))->create(),
     };
 
-    $educatables->each(function (Model $educatable) use ($segment) {
-        $segment->subjects()->create([
+    $educatables->each(function (Model $educatable) use ($group) {
+        $group->subjects()->create([
             'subject_id' => $educatable->getKey(),
             'subject_type' => $educatable->getMorphClass(),
         ]);
     });
 
     $campaign = Campaign::factory()
-        ->for($segment, 'segment')
+        ->for($group, 'group')
         ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
         ->create();
 

@@ -94,10 +94,10 @@ it('returns correct total prospect stats of prospects, alerts, cases and tasks w
         ->and($stats[3]->getValue())->toEqual($taskCount);
 });
 
-it('returns correct total prospect stats of prospects, alerts, cases and tasks based on segment filter', function () {
+it('returns correct total prospect stats of prospects, alerts, cases and tasks based on group filter', function () {
     $count = random_int(1, 5);
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
@@ -183,7 +183,7 @@ it('returns correct total prospect stats of prospects, alerts, cases and tasks b
     $widget = new ProspectReportStats();
     $widget->cacheTag = 'prospect-report-cache';
     $widget->pageFilters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widget->getStats();

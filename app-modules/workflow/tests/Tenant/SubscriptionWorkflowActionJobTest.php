@@ -50,7 +50,7 @@ use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
 use Illuminate\Support\Facades\Bus;
 
-it('will execute appropriately on each educatable in the segment', function (array $priorSubscriptions, Educatable&Subscribable $educatable, bool $removePrior) {
+it('will execute appropriately on each educatable in the group', function (array $priorSubscriptions, Educatable&Subscribable $educatable, bool $removePrior) {
     Bus::fake();
     $user = User::factory()->create();
 

@@ -100,12 +100,12 @@ it('returns all cases information created for students in given time range', fun
         ->assertCanNotSeeTableRecords(collect([$otherCases]));
 });
 
-it('returns all cases information created for students based on segment filters', function () {
+it('returns all cases information created for students based on group filters', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
     $otherDate = now()->subDays(15);
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
@@ -161,10 +161,10 @@ it('returns all cases information created for students based on segment filters'
     ])->create();
 
     $filters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
-    // with segment filter
+    // with group filter
     livewire(StudentCaseTable::class, [
         'cacheTag' => 'report-student-case',
         'pageFilters' => $filters,

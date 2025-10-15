@@ -91,11 +91,11 @@ it('returns top engaged students based on engagements within the given date rang
         ->assertCanNotSeeTableRecords(collect([$student3]));
 });
 
-it('returns top engaged students engagements based on segment filter', function () {
+it('returns top engaged students engagements based on group filter', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
@@ -132,7 +132,7 @@ it('returns top engaged students engagements based on segment filter', function 
     ])->create();
 
     $filters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     livewire(MostEngagedStudentsTable::class, [

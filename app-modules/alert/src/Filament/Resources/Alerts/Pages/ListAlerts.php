@@ -140,7 +140,7 @@ class ListAlerts extends ListRecords
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
                 SelectFilter::make('all_groups')
                     ->label('All Population Groups')
                     ->options(
@@ -149,7 +149,7 @@ class ListAlerts extends ListRecords
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn(Builder $query, array $data) => $this->segmentFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
                 SelectFilter::make('status_id')
@@ -200,16 +200,16 @@ class ListAlerts extends ListRecords
         ];
     }
 
-    protected function segmentFilter(Builder $query, array $data): void
+    protected function groupFilter(Builder $query, array $data): void
     {
         if (blank($data['value'])) {
             return;
         }
 
-        $segment = GroupModel::find($data['value']);
+        $group = GroupModel::find($data['value']);
 
         /** @var Model $model */
-        $model = resolve($segment->model->class());
+        $model = resolve($group->model->class());
 
         $query->whereIn(
             'concern_id',

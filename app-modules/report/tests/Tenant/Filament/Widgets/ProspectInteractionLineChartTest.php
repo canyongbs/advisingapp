@@ -88,11 +88,11 @@ it('returns correct data for prospect interactions within the given date range',
     expect($widgetInstance->getData())->toMatchSnapshot();
 });
 
-it('returns correct data for prospect interactions based on segment filter', function () {
+it('returns correct data for prospect interactions based on group filter', function () {
     $interactionStartDate = now()->subDays(90);
     $interactionEndDate = now()->subDays(5);
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
@@ -136,7 +136,7 @@ it('returns correct data for prospect interactions based on segment filter', fun
     $widgetInstance = new ProspectInteractionLineChart();
     $widgetInstance->cacheTag = 'report-prospect-interaction';
     $widgetInstance->pageFilters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     expect($widgetInstance->getData())->toMatchSnapshot();

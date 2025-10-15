@@ -42,7 +42,7 @@ use AdvisingApp\Report\Filament\Widgets\StudentsStats;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 
-it('returns correct total student stats of students, alerts, segments and tasks within the given date range', function () {
+it('returns correct total student stats of students, alerts, groups and tasks within the given date range', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -99,10 +99,10 @@ it('returns correct total student stats of students, alerts, segments and tasks 
         ->and($stats[3]->getValue())->toEqual($count);
 });
 
-it('returns correct total student stats of students, alerts, cases and tasks based on segment filters', function () {
+it('returns correct total student stats of students, alerts, cases and tasks based on group filters', function () {
     $count = random_int(1, 5);
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
@@ -180,7 +180,7 @@ it('returns correct total student stats of students, alerts, cases and tasks bas
     $widget = new StudentsStats();
     $widget->cacheTag = 'report-student';
     $widget->pageFilters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widget->getStats();

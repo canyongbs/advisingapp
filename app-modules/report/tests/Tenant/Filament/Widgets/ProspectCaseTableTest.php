@@ -102,12 +102,12 @@ it('returns all cases information created for prospects in given time range', fu
         ->assertCanNotSeeTableRecords(collect([$otherCases]));
 });
 
-it('returns all cases information created for prospects based on segment filters', function () {
+it('returns all cases information created for prospects based on group filters', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
     $otherDate = now()->subDays(15);
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
@@ -163,10 +163,10 @@ it('returns all cases information created for prospects based on segment filters
     ])->create();
 
     $filters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
-    // with segment filter
+    // with group filter
     livewire(ProspectCaseTable::class, [
         'cacheTag' => 'report-prospect-case',
         'pageFilters' => $filters,

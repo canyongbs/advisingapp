@@ -91,12 +91,12 @@ it('returns correct total cases, recent cases, open cases and closed cases of pr
         ->and($stats[3]->getValue())->toEqual($count);
 });
 
-it('returns correct total cases, recent cases, open cases and closed cases of prospect based on segment filters', function () {
+it('returns correct total cases, recent cases, open cases and closed cases of prospect based on group filters', function () {
     $count = random_int(1, 5);
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
@@ -173,7 +173,7 @@ it('returns correct total cases, recent cases, open cases and closed cases of pr
     $widget = new ProspectCaseStats();
     $widget->cacheTag = 'report-prospect-case';
     $widget->pageFilters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),
     ];

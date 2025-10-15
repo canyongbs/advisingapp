@@ -88,16 +88,16 @@ trait InteractsWithPageFilters
      * @template TModel of \Illuminate\Database\Eloquent\Model
      *
      * @param Builder<TModel> $query
-     * @param string $segmentId
+     * @param string $groupId
      *
      * @return void
      */
-    public function segmentFilter(Builder $query, string $segmentId): void
+    public function groupFilter(Builder $query, string $groupId): void
     {
-        if (blank($segmentId)) {
+        if (blank($groupId)) {
             return;
         }
 
-        app(TranslateGroupFilters::class)->applyFilterToQuery($segmentId, $query);
+        app(TranslateGroupFilters::class)->applyFilterToQuery($groupId, $query);
     }
 }

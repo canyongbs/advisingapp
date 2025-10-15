@@ -128,14 +128,14 @@ it('returns correct interaction counts by status for students within the selecte
         ->and($interactionsCount)->not->toEqual($stats[2]);
 });
 
-it('returns correct interaction counts by status for students based on segment filter', function () {
+it('returns correct interaction counts by status for students based on group filter', function () {
     $interactionsCount = random_int(1, 10);
     $interactionsCountForDoe = random_int(1, 10);
 
     $interactionStatusFirst = InteractionStatus::factory()->create();
     $interactionStatusSecond = InteractionStatus::factory()->create();
 
-    $segment = Group::factory()->create([
+    $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
@@ -183,7 +183,7 @@ it('returns correct interaction counts by status for students based on segment f
     $widgetInstance = new StudentInteractionStatusPolarAreaChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
     $widgetInstance->pageFilters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widgetInstance->getData()['datasets'][0]['data'];

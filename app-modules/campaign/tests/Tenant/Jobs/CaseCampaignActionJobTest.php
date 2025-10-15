@@ -68,7 +68,7 @@ it('will execute appropriately on each educatable in the group', function (Educa
     ]);
 
     $campaign = Campaign::factory()
-        ->for($group, 'segment')
+        ->for($group, 'group')
         ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
         ->create();
 
@@ -136,7 +136,7 @@ it('will execute appropriately on each educatable in the group', function (Educa
 it('will create the proper assignment if provided', function (Educatable $educatable) {
     Bus::fake();
 
-    /** @var Segment $group */
+    /** @var Group $group */
     $group = Group::factory()->create([
         'type' => GroupType::Static,
         'model' => match ($educatable::class) {
@@ -147,7 +147,7 @@ it('will create the proper assignment if provided', function (Educatable $educat
     ]);
 
     $campaign = Campaign::factory()
-        ->for($group, 'segment')
+        ->for($group, 'group')
         ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
         ->create();
 

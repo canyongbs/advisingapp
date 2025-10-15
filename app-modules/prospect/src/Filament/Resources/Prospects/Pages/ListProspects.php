@@ -127,8 +127,8 @@ class ListProspects extends ListRecords
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
-                SelectFilter::make('all_segments')
+                    ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
+                SelectFilter::make('all_groups')
                     ->label('All Population Groups')
                     ->options(
                         Group::all()
@@ -137,7 +137,7 @@ class ListProspects extends ListRecords
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
                 Filter::make('subscribed')
                     ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
                 Filter::make('care_team')
@@ -284,7 +284,7 @@ class ListProspects extends ListRecords
             ]);
     }
 
-    protected function segmentFilter(Builder $query, array $data): void
+    protected function groupFilter(Builder $query, array $data): void
     {
         if (blank($data['value'])) {
             return;

@@ -57,9 +57,9 @@ class ProspectReportStats extends StatsOverviewReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedGroup();
+        $groupId = $this->getSelectedGroup();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($groupId);
 
         $prospectsCount = $shouldBypassCache
             ? Prospect::query()
@@ -68,8 +68,8 @@ class ProspectReportStats extends StatsOverviewReportWidget
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->when(
-                    $segmentId,
-                    fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    $groupId,
+                    fn (Builder $query) => $this->groupFilter($query, $groupId)
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
@@ -80,10 +80,10 @@ class ProspectReportStats extends StatsOverviewReportWidget
 
         $alertsCount = $shouldBypassCache
             ? Alert::query()
-                ->whereHasMorph('concern', Prospect::class, function (Builder $query) use ($segmentId) {
+                ->whereHasMorph('concern', Prospect::class, function (Builder $query) use ($groupId) {
                     $query->when(
-                        $segmentId,
-                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->when(
@@ -99,10 +99,10 @@ class ProspectReportStats extends StatsOverviewReportWidget
 
         $casesCount = $shouldBypassCache
             ? CaseModel::query()
-                ->whereHasMorph('respondent', Prospect::class, function (Builder $query) use ($segmentId) {
+                ->whereHasMorph('respondent', Prospect::class, function (Builder $query) use ($groupId) {
                     $query->when(
-                        $segmentId,
-                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->when(
@@ -120,10 +120,10 @@ class ProspectReportStats extends StatsOverviewReportWidget
 
         $tasksCount = $shouldBypassCache
             ? Task::query()
-                ->whereHasMorph('concern', Prospect::class, function (Builder $query) use ($segmentId) {
+                ->whereHasMorph('concern', Prospect::class, function (Builder $query) use ($groupId) {
                     $query->when(
-                        $segmentId,
-                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->when(

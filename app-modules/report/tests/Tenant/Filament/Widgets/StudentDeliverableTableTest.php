@@ -90,8 +90,8 @@ it('it returns deliverability data only for students created within the given da
         ->assertCanNotSeeTableRecords($optOutStartDateStudents->merge($optOutEndDateStudents));
 });
 
-it('it returns deliverability data only for students based on segment filters', function () {
-    $segment = Group::factory()->create([
+it('it returns deliverability data only for students based on group filters', function () {
+    $group = Group::factory()->create([
         'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
@@ -143,7 +143,7 @@ it('it returns deliverability data only for students based on segment filters', 
         ]);
 
     $filters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     livewire(StudentDeliverableTable::class, [

@@ -65,13 +65,13 @@ class GetGroupQuery extends EditRecord implements HasTable
 
     public function table(Table $table): Table
     {
-        $segment = $this->getRecord();
+        $group = $this->getRecord();
 
-        $table = $segment->model->table($table);
+        $table = $group->model->table($table);
 
-        if ($segment->type === GroupType::Static) {
+        if ($group->type === GroupType::Static) {
             // TODO: Look into changing this. It is inefficient and may break with large datasets.
-            $keys = $segment->subjects()->pluck('subject_id');
+            $keys = $group->subjects()->pluck('subject_id');
 
             $table->modifyQueryUsing(fn (Builder $query) => $query->whereKey($keys));
         }
@@ -90,11 +90,11 @@ class GetGroupQuery extends EditRecord implements HasTable
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $segment = $this->getRecord();
+        $group = $this->getRecord();
 
-        $data['model'] = $segment->model;
-        $data['type'] = $segment->type;
-        $data['user']['name'] = $segment->user->name;
+        $data['model'] = $group->model;
+        $data['type'] = $group->type;
+        $data['user']['name'] = $group->user->name;
 
         return $data;
     }

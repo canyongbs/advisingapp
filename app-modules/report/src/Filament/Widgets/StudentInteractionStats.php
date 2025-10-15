@@ -49,16 +49,16 @@ class StudentInteractionStats extends StatsOverviewReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedGroup();
+        $groupId = $this->getSelectedGroup();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($groupId);
 
         $interactionsCount = $shouldBypassCache
             ? Interaction::query()
-                ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($segmentId) {
+                ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId) {
                     $query->when(
-                        $segmentId,
-                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->when(
@@ -85,8 +85,8 @@ class StudentInteractionStats extends StatsOverviewReportWidget
                     );
                 })
                 ->when(
-                    $segmentId,
-                    fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    $groupId,
+                    fn (Builder $query) => $this->groupFilter($query, $groupId)
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(

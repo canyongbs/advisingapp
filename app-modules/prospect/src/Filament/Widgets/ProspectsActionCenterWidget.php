@@ -68,18 +68,18 @@ class ProspectsActionCenterWidget extends TableWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedGroup();
+        $groupId = $this->getSelectedGroup();
 
         return $table
             ->heading('Action Center Records')
-            ->query(function () use ($segmentId, $startDate, $endDate) {
+            ->query(function () use ($groupId, $startDate, $endDate) {
                 $query = Prospect::query()->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 );
 
-                if ($segmentId) {
-                    $this->segmentFilter($query, $segmentId);
+                if ($groupId) {
+                    $this->groupFilter($query, $groupId);
                 }
 
                 return $query;

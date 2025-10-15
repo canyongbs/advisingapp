@@ -63,11 +63,11 @@ class ProspectStats extends StatsOverviewWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedGroup();
+        $groupId = $this->getSelectedGroup();
 
-        $prospectQuery = function (Builder $query) use ($segmentId) {
-            if ($segmentId) {
-                $this->segmentFilter($query, $segmentId);
+        $prospectQuery = function (Builder $query) use ($groupId) {
+            if ($groupId) {
+                $this->groupFilter($query, $groupId);
             }
         };
 

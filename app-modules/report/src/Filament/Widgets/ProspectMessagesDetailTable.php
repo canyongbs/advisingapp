@@ -84,7 +84,7 @@ class ProspectMessagesDetailTable extends BaseWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedGroup();
+        $groupId = $this->getSelectedGroup();
 
         return $table
             ->recordTitleAttribute('record_id')
@@ -98,10 +98,10 @@ class ProspectMessagesDetailTable extends BaseWidget
                             return $query->whereBetween('record_sortable_date', [$startDate, $endDate]);
                         }
                     )
-                    ->whereHasMorph('concern', Prospect::class, function (Builder $query) use ($segmentId) {
+                    ->whereHasMorph('concern', Prospect::class, function (Builder $query) use ($groupId) {
                         $query->when(
-                            $segmentId,
-                            fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                            $groupId,
+                            fn (Builder $query) => $this->groupFilter($query, $groupId)
                         );
                     })
             )

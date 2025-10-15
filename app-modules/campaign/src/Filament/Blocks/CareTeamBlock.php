@@ -76,13 +76,13 @@ class CareTeamBlock extends CampaignActionBlock
                         ->label('User')
                         ->options(function (Get $get, $livewire, string $operation) {
                             if ($livewire instanceof CreateCampaign) {
-                                $segmentId = $get('../../../../../segment_id');
+                                $groupId = $get('../../../../../segment_id');
                             } else {
-                                $segmentId = $livewire->getOwnerRecord()->segment_id;
+                                $groupId = $livewire->getOwnerRecord()->segment_id;
                             }
-                            $segment = Group::find($segmentId);
+                            $group = Group::find($groupId);
 
-                            return User::query()->tap(new HasLicense(match ($segment->model->getLabel()) {
+                            return User::query()->tap(new HasLicense(match ($group->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => Student::getLicenseType(),
                                 CareTeamRoleType::Prospect->getLabel() => Prospect::getLicenseType(),
                                 default => null,
@@ -95,16 +95,16 @@ class CareTeamBlock extends CampaignActionBlock
                         ->label('Role')
                         ->relationship('careTeamRole', 'name', function (Builder $query, Get $get, $livewire, string $operation) {
                             if ($livewire instanceof CreateCampaign) {
-                                $segmentId = $get('../../../../../segment_id');
+                                $groupId = $get('../../../../../segment_id');
                             } else {
-                                $segmentId = $livewire->getOwnerRecord()->segment_id;
+                                $groupId = $livewire->getOwnerRecord()->segment_id;
                             }
-                            $segment = Group::find($segmentId);
+                            $group = Group::find($groupId);
 
-                            $query->where('type', match ($segment->model->getLabel()) {
+                            $query->where('type', match ($group->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => CareTeamRoleType::Student,
                                 CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::Prospect,
-                                default => throw new Exception('The segment population was not of a type that can have a care team role associated with it.'),
+                                default => throw new Exception('The group population was not of a type that can have a care team role associated with it.'),
                             })->orderByDesc('created_at');
                         })
                         ->preload()
@@ -112,31 +112,31 @@ class CareTeamBlock extends CampaignActionBlock
                         ->searchable()
                         ->default(function (Get $get, $livewire, string $operation) {
                             if ($livewire instanceof CreateCampaign) {
-                                $segmentId = $get('../../../../../segment_id');
+                                $groupId = $get('../../../../../segment_id');
                             } else {
-                                $segmentId = $livewire->getOwnerRecord()->segment_id;
+                                $groupId = $livewire->getOwnerRecord()->segment_id;
                             }
-                            $segment = Group::find($segmentId);
+                            $group = Group::find($groupId);
 
-                            return match ($segment->model->getLabel()) {
+                            return match ($group->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => CareTeamRoleType::studentDefault()?->getKey(),
                                 CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::prospectDefault()?->getKey(),
-                                default => throw new Exception('The segment population was not of a type that can have a care team role associated with it.'),
+                                default => throw new Exception('The group population was not of a type that can have a care team role associated with it.'),
                             };
                         })
                         ->model(CareTeam::class)
                         ->visible(function (Get $get, $livewire, string $operation) {
                             if ($livewire instanceof CreateCampaign) {
-                                $segmentId = $get('../../../../../segment_id');
+                                $groupId = $get('../../../../../segment_id');
                             } else {
-                                $segmentId = $livewire->getOwnerRecord()->segment_id;
+                                $groupId = $livewire->getOwnerRecord()->segment_id;
                             }
-                            $segment = Group::find($segmentId);
+                            $group = Group::find($groupId);
 
-                            return CareTeamRole::where('type', match ($segment->model->getLabel()) {
+                            return CareTeamRole::where('type', match ($group->model->getLabel()) {
                                 CareTeamRoleType::Student->getLabel() => CareTeamRoleType::Student,
                                 CareTeamRoleType::Prospect->getLabel() => CareTeamRoleType::Prospect,
-                                default => throw new Exception('The segment population was not of a type that can have a care team role associated with it.'),
+                                default => throw new Exception('The group population was not of a type that can have a care team role associated with it.'),
                             })->count() > 0;
                         }),
                 ])

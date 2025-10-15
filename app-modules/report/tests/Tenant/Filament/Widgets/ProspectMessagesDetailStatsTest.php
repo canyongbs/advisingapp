@@ -151,8 +151,8 @@ it('returns correct counts of emails and SMS sent/received within the given date
         ->and($stats[3]->getValue())->toEqual($smsReceivedCount);
 });
 
-it('returns correct counts of emails and SMS sent/received based on segment filters', function () {
-    $segment = Group::factory()->create([
+it('returns correct counts of emails and SMS sent/received based on group filters', function () {
+    $group = Group::factory()->create([
         'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
@@ -244,7 +244,7 @@ it('returns correct counts of emails and SMS sent/received based on segment filt
     $widget = new ProspectMessagesDetailStats();
     $widget->cacheTag = 'report-prospect-messages-detail';
     $widget->pageFilters = [
-        'populationGroup' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widget->getStats();
