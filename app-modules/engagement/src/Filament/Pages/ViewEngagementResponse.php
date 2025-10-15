@@ -70,6 +70,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Locked;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -153,6 +154,7 @@ class ViewEngagementResponse extends Page
                         TextEntry::make('subject')
                             ->columnSpanFull(),
                         TextEntry::make('content')
+                            ->state(fn (EngagementResponse $record): HtmlString => $record->getBody())
                             ->columnSpanFull(),
                     ]),
                     Section::make([
