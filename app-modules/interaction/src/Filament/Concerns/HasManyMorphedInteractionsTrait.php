@@ -71,17 +71,24 @@ trait HasManyMorphedInteractionsTrait
                 Fieldset::make('Details')
                     ->schema([
                         TextEntry::make('initiative.name')
+                            ->label('Initiative')
                             ->visible(fn () => $this->getSettings()->is_initiative_enabled),
                         TextEntry::make('driver.name')
+                            ->label('Driver')
                             ->visible(fn () => $this->getSettings()->is_driver_enabled),
-                        TextEntry::make('division.name'),
+                        TextEntry::make('division.name')
+                            ->label('Division'),
                         TextEntry::make('outcome.name')
+                            ->label('Outcome')
                             ->visible(fn () => $this->getSettings()->is_outcome_enabled),
                         TextEntry::make('relation.name')
+                            ->label('Relation')
                             ->visible(fn () => $this->getSettings()->is_relation_enabled),
                         TextEntry::make('status.name')
+                            ->label('Status')
                             ->visible(fn () => $this->getSettings()->is_status_enabled),
                         TextEntry::make('type.name')
+                            ->label('Type')
                             ->visible(fn () => $this->getSettings()->is_type_enabled),
                     ]),
                 Fieldset::make('Time')
