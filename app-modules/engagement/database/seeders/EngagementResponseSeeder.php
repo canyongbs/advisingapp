@@ -46,6 +46,7 @@ class EngagementResponseSeeder extends Seeder
      */
     public function run(): void
     {
-        EngagementResponse::factory()->count(10)->create();
+        EngagementResponse::factory()->email()->count(5)->create();
+        EngagementResponse::factory()->sms()->count(5)->create();
     }
 }
