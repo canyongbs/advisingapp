@@ -96,7 +96,7 @@ class UtilizationMetricsApiController extends Controller
                     'journey_steps_executed' => CampaignAction::whereNotNull('execution_finished_at')->count(),
                     'tasks' => Task::count(),
                     'alerts' => Alert::count(),
-                    'segments' => Group::count(),
+                    'groups' => Group::count(),
                     'resource_hub_articles' => ResourceHubArticle::count(),
                     'events_created' => Event::count(),
                     'forms_created' => Form::count(),
