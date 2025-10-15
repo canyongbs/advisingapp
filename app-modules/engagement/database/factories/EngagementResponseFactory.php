@@ -71,10 +71,10 @@ class EngagementResponseFactory extends Factory
             'content' => $this->faker->sentence(),
             'sent_at' => $this->faker->dateTimeBetween('-1 year', '-1 day'),
             'type' => $this->faker->randomElement(EngagementResponseType::cases()),
-            'subject' => function ($attributes) {
+            'subject' => function (array $attributes) {
                 return match ($attributes['type']) {
                     EngagementResponseType::Email => $this->faker->sentence(),
-                    EngagementResponseType::Sms => null,
+                    default => null,
                 };
             },
             // Bring in a raw value here for testing later
