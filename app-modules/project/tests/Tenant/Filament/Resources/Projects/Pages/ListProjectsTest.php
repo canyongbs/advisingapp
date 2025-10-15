@@ -74,7 +74,7 @@ it('can list records', function () {
 
     actingAs($user);
 
-    $records = Project::factory()->count(5)->create();
+    $records = Project::factory()->for($user)->count(5)->create();
 
     livewire(ListProjects::class)
         ->assertCountTableRecords(5)
