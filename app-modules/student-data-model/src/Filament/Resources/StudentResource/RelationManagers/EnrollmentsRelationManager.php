@@ -137,21 +137,29 @@ class EnrollmentsRelationManager extends RelationManager
             ])
             ->groupingSettingsHidden()
             ->columns([
-                TextColumn::make('name')
+                TextColumn::make(name: 'name')
                     ->label('Name')
-                    ->placeholder('N/A'),
+                    ->placeholder('N/A')
+                    // Ambiguous column name 'name' error
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereRaw('LOWER(enrollments.name) LIKE ?', ['%' . strtolower($search) . '%']);
+                    }),
                 TextColumn::make('class_nbr')
                     ->label('Course')
-                    ->placeholder('N/A'),
+                    ->placeholder('N/A')
+                    ->searchable(),
                 TextColumn::make('faculty_name')
                     ->label('Instructor')
-                    ->placeholder('N/A'),
+                    ->placeholder('N/A')
+                    ->searchable(),
                 TextColumn::make('section')
                     ->label('Section')
-                    ->placeholder('N/A'),
+                    ->placeholder('N/A')
+                    ->searchable(),
                 TextColumn::make('crse_grade_off')
                     ->label('Grade')
-                    ->placeholder('N/A'),
+                    ->placeholder('N/A')
+                    ->searchable(),
                 TextColumn::make('unt_taken')
                     ->label('Attempted')
                     ->placeholder('N/A'),
