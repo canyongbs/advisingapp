@@ -66,7 +66,6 @@ it('can render with proper permission.', function () {
         ->assertSuccessful();
 });
 
-// something
 it('can list records', function () {
     $user = User::factory()->create();
 
