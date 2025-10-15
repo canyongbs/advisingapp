@@ -78,7 +78,7 @@ it('can render with proper permission.', function () {
         'record' => $project->getRouteKey(),
     ]))
         ->assertSuccessful();
-})->only();
+});
 
 it('validates the inputs', function (EditProjectRequestFactory $data, array $errors) {
     asSuperAdmin();
