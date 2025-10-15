@@ -38,6 +38,7 @@ namespace AdvisingApp\Group\Actions;
 
 use AdvisingApp\Group\Filament\Resources\Groups\Pages\GetGroupQuery;
 use AdvisingApp\Group\Models\Group;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -72,18 +73,32 @@ class TranslateGroupFilters
      */
     public function applyFilterToQuery(Group | string $group, Builder $query): Builder
     {
-        // Create a fake Livewire component to replicate the table on the EditGroup page.
-        $page = app('livewire')->new(GetGroupQuery::class);
+        try {
+            // If string is passed, load the Group model
+            if (is_string($group)) {
+                $group = Group::query()->find($group);
 
-        if ($group instanceof Group) {
-            $group = $group->getKey();
+                if (! $group) {
+                    return $query;
+                }
+            }
+
+            // Create a fake Livewire component to replicate the table on the EditGroup page.
+            $page = app('livewire')->new(GetGroupQuery::class);
+
+            // Always pass the ID to maintain compatibility with segment_id references
+            $groupId = $group->getKey();
+
+            // Mount the fake Livewire component with the desired group.
+            trigger('mount', $page, [$groupId], null, null);
+
+            // Extract the filtered table query from the fake Livewire component,
+            // which already respects both dynamic and static populations.
+            return $page->filterTableQuery($query);
+        } catch (Exception $exception) {
+            report($exception);
+
+            return $query;
         }
-
-        // Mount the fake Livewire component with the desired group.
-        trigger('mount', $page, [$group], null, null);
-
-        // Extract the filtered table query from the fake Livewire component,
-        // which already respects both dynamic and static populations.
-        return $page->filterTableQuery($query);
     }
 }
