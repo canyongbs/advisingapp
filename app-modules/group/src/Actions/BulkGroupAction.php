@@ -52,7 +52,7 @@ class BulkGroupAction
 {
     public static function make(GroupModel $groupModel): BulkAction
     {
-        return BulkAction::make('segment')
+        return BulkAction::make('group')
             ->icon('heroicon-o-rectangle-group')
             ->label('Save Group')
             ->form(fn (Schema $schema) => $schema->components([

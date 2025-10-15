@@ -110,7 +110,7 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
     public function moveProspect(Pipeline $pipeline, string $educatableId, $fromStage = '', $toStage = ''): JsonResponse
     {
         try {
-            $educatableType = $pipeline->segment->model;
+            $educatableType = $pipeline->group->model;
 
             if ($educatableType === GroupModel::Prospect) {
                 $educatable = Prospect::where('id', $educatableId)->first();
