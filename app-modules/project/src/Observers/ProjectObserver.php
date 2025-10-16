@@ -42,7 +42,7 @@ class ProjectObserver
 {
     public function creating(Project $project): void
     {
-        // @phpstan-ignore-next-line
+        // @phpstan-ignore function.impossibleType
         if (is_null($project->createdBy)) {
             $user = auth()->user();
             $project->createdBy()->associate($user);
