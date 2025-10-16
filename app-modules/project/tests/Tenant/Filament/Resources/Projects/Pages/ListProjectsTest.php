@@ -157,10 +157,14 @@ it('does not list projects to unauthorized auditor users', function () {
         ->count(5)
         ->create();
 
-    actingAs($user);
-    $authorizedProjects = Project::factory()->count(5)->create();
+    $authorizedProjects = Project::factory()
+        ->for(User::factory(), 'createdBy')
+        ->count(5)
+        ->create();
 
     $authorizedProjects->each(fn ($project) => $project->auditorUsers()->attach($user));
+
+    actingAs($user);
 
     livewire(ListProjects::class)
         ->assertSuccessful()
@@ -188,12 +192,14 @@ it('does not list projects to unauthorized auditor teams', function () {
         ->count(5)
         ->create();
 
-    actingAs($user);
-
-    $authorizedProjects = Project::factory()->count(5)->create();
+    $authorizedProjects = Project::factory()
+        ->for(User::factory(), 'createdBy')
+        ->count(5)
+        ->create();
 
     $authorizedProjects->each(fn ($project) => $project->auditorTeams()->attach($authorizedTeam));
 
+    actingAs($user);
     livewire(ListProjects::class)
         ->assertSuccessful()
         ->assertCountTableRecords(5)
