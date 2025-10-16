@@ -214,7 +214,7 @@
             "@php-cs-format"
         ],
         "lint": [
-            "./vendor/bin/phpstan analyse --memory-limit=3G"
+            "./vendor/bin/phpstan analyse --memory-limit=2G"
         ],
         "checks": [
             "@format-dryrun",
