@@ -66,6 +66,8 @@ it('can render with proper permission.', function () {
     actingAs($user);
 
     $project = Project::factory()->create();
+    $project->createdBy()->associate($user);
+    $project->save();
 
     get(ViewProject::getUrl([
         'record' => $project->getRouteKey(),
