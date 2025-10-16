@@ -18,6 +18,7 @@ rules:
     - Orrison\MeliorStan\Rules\ShortVariable\ShortVariableRule
     - Orrison\MeliorStan\Rules\Superglobals\SuperglobalsRule
     - Orrison\MeliorStan\Rules\TraitConstantNamingConventions\TraitConstantNamingConventionsRule
+    - Orrison\MeliorStan\Rules\ForbidPestPhpOnly\ForbidPestPhpOnlyRule
 
 parameters:
     # This can be removed once we have fixed all errors in our baseline. But need to be here now, so we don't have to rebuild it in every new PR.
