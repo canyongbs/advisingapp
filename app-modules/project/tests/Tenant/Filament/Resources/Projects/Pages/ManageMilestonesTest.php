@@ -61,7 +61,7 @@ it('can render with proper permission.', function () {
     get(ManageMilestones::getUrl([
         'record' => $project->getRouteKey(),
     ]))
-        ->assertNotFound();
+        ->assertForbidden();
 
     $user->givePermissionTo('project.view-any');
     $user->givePermissionTo('project.*.view');

@@ -52,7 +52,7 @@ it('cannot render without proper permission.', function () {
     get(ViewProject::getUrl([
         'record' => $project->getRouteKey(),
     ]))
-        ->assertNotFound();
+        ->assertForbidden();
 });
 
 it('can render with proper permission.', function () {
@@ -65,9 +65,9 @@ it('can render with proper permission.', function () {
 
     actingAs($user);
 
-    $project = Project::factory()->create();
-    $project->createdBy()->associate($user);
-    $project->save();
+    $project = Project::factory()
+        ->for($user, 'createdBy')
+        ->create();
 
     get(ViewProject::getUrl([
         'record' => $project->getRouteKey(),

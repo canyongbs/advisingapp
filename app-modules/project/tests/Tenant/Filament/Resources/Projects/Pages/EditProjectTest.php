@@ -49,7 +49,9 @@ use function Tests\asSuperAdmin;
 
 it('cannot render without proper permission.', function () {
     $user = User::factory()->create();
-    $project = Project::factory()->create();
+    $project = Project::factory()
+        ->for(User::factory(), 'createdBy')
+        ->create();
 
     actingAs($user);
 

@@ -66,7 +66,7 @@ it('can render with proper permission.', function () {
     get(ManageFiles::getUrl([
         'record' => $project->getRouteKey(),
     ]))
-        ->assertNotFound();
+        ->assertForbidden();
 
     $user->givePermissionTo('project.view-any');
     $user->givePermissionTo('project.*.view');

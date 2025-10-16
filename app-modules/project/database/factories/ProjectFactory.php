@@ -37,7 +37,6 @@
 namespace AdvisingApp\Project\Database\Factories;
 
 use AdvisingApp\Project\Models\Project;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -53,18 +52,6 @@ class ProjectFactory extends Factory
         return [
             'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
             'description' => $this->faker->sentence(),
-            'created_by_id' => User::factory(),
         ];
-    }
-
-    public function configure(): static
-    {
-        return $this->afterMaking(function (Project $project) {
-            Project::unguarded(function () use ($project) {
-                if (blank($project->created_by_type)) {
-                    $project->created_by_type = new User()->getMorphClass();
-                }
-            });
-        });
     }
 }

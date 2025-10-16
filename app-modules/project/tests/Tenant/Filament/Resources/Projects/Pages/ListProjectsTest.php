@@ -74,9 +74,10 @@ it('can list records', function () {
 
     actingAs($user);
 
-    $records = Project::factory()->count(5)->create([
-        'created_by_id' => $user->id,
-    ]);
+    $records = Project::factory()
+        ->for($user, 'createdBy')
+        ->count(5)
+        ->create();
 
     livewire(ListProjects::class)
         ->assertCountTableRecords(5)
@@ -91,12 +92,17 @@ it('does not list projects to unauthorized manager users', function () {
     $user->givePermissionTo('project.*.view');
     $user->givePermissionTo('project.create');
 
-    $authorizedProjects = Project::factory()->count(5)->create();
+    $authorizedProjects = Project::factory()
+        ->for(User::factory(), 'createdBy')
+        ->count(5)
+        ->create();
 
     $authorizedProjects->each(fn ($project) => $project->managerUsers()->attach($user));
 
-    $unauthorizedProjects = Project::factory()->count(5)->create();
-
+    $unauthorizedProjects = Project::factory()
+        ->for(User::factory(), 'createdBy')
+        ->count(5)
+        ->create();
     actingAs($user);
 
     livewire(ListProjects::class)
@@ -117,16 +123,20 @@ it('does not list projects to unauthorized manager teams', function () {
 
     $user->team()->associate($authorizedTeam);
     $user->save();
-
     $user->refresh();
 
-    $authorizedProjects = Project::factory()->count(5)->create();
+    $unauthorizedProjects = Project::factory()
+        ->for(User::factory(), 'createdBy')
+        ->count(5)->create();
 
-    $authorizedProjects->each(fn ($project) => $project->managerTeams()->attach($authorizedTeam));
-
-    $unauthorizedProjects = Project::factory()->count(5)->create();
+    $authorizedProjects = Project::factory()
+        ->for(User::factory(), 'createdBy')
+        ->count(5)
+        ->create();
 
     actingAs($user);
+
+    $authorizedProjects->each(fn ($project) => $project->managerTeams()->attach($authorizedTeam));
 
     livewire(ListProjects::class)
         ->assertSuccessful()
@@ -142,13 +152,15 @@ it('does not list projects to unauthorized auditor users', function () {
     $user->givePermissionTo('project.*.view');
     $user->givePermissionTo('project.create');
 
+    $unauthorizedProjects = Project::factory()
+        ->for(User::factory(), 'createdBy')
+        ->count(5)
+        ->create();
+
+    actingAs($user);
     $authorizedProjects = Project::factory()->count(5)->create();
 
     $authorizedProjects->each(fn ($project) => $project->auditorUsers()->attach($user));
-
-    $unauthorizedProjects = Project::factory()->count(5)->create();
-
-    actingAs($user);
 
     livewire(ListProjects::class)
         ->assertSuccessful()
@@ -171,13 +183,16 @@ it('does not list projects to unauthorized auditor teams', function () {
     $user->save();
     $user->refresh();
 
+    $unauthorizedProjects = Project::factory()
+        ->for(User::factory(), 'createdBy')
+        ->count(5)
+        ->create();
+
+    actingAs($user);
+
     $authorizedProjects = Project::factory()->count(5)->create();
 
     $authorizedProjects->each(fn ($project) => $project->auditorTeams()->attach($authorizedTeam));
-
-    $unauthorizedProjects = Project::factory()->count(5)->create();
-
-    actingAs($user);
 
     livewire(ListProjects::class)
         ->assertSuccessful()
