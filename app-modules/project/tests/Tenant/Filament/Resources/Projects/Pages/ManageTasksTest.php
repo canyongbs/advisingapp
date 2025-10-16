@@ -55,6 +55,8 @@ it('can render with proper permission', function () {
     actingAs($user);
 
     $project = Project::factory()->create();
+    $project->createdBy()->associate($user);
+    $project->save();
 
     $user->givePermissionTo('project.view-any');
     $user->givePermissionTo('project.*.view');
@@ -64,7 +66,7 @@ it('can render with proper permission', function () {
     get(ManageTasks::getUrl([
         'record' => $project->getRouteKey(),
     ]))
-        ->assertNotFound();
+        ->assertForbidden();
 
     $user->revokePermissionTo('project.view-any');
     $user->revokePermissionTo('project.*.view');
@@ -76,7 +78,7 @@ it('can render with proper permission', function () {
     get(ManageTasks::getUrl([
         'record' => $project->getRouteKey(),
     ]))
-        ->assertNotFound();
+        ->assertForbidden();
 
     $user->givePermissionTo('project.view-any');
     $user->givePermissionTo('project.*.view');
