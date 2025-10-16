@@ -63,9 +63,6 @@ it('can render with proper permission.', function () {
 
     $project = Project::factory()->create();
 
-    $project->createdBy()->associate($user);
-    $project->save();
-
     get(ManageFiles::getUrl([
         'record' => $project->getRouteKey(),
     ]))
@@ -73,6 +70,9 @@ it('can render with proper permission.', function () {
 
     $user->givePermissionTo('project.view-any');
     $user->givePermissionTo('project.*.view');
+
+    $project->createdBy()->associate($user);
+    $project->save();
     $user->refresh();
 
     get(ManageFiles::getUrl([
