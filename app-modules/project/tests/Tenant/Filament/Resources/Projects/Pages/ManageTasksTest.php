@@ -102,6 +102,8 @@ it('shows the associate and dissociate actions with proper permissions', functio
     actingAs($user);
 
     $project = Project::factory()->create();
+    $project->createdBy()->associate($user);
+    $project->save();
 
     livewire(ManageTasks::class, [
         'record' => $project->getRouteKey(),

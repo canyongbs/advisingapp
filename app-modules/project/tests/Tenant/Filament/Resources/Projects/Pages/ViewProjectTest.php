@@ -84,6 +84,8 @@ it('can view a record', function () {
     actingAs($user);
 
     $project = Project::factory()->create();
+    $project->createdBy()->associate($user);
+    $project->save();
 
     livewire(ViewProject::class, [
         'record' => $project->getRouteKey(),
