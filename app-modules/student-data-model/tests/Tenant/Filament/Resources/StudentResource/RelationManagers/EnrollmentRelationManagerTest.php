@@ -65,5 +65,5 @@ it('can filter by name search', function (): void {
         ->assertCanSeeTableRecords($student->enrollments)
         ->searchTable('Unique')
         ->assertCanSeeTableRecords([$student->enrollments->where('name', 'Unique Course Name')->first()])
-        ->assertCanNotSeeTableRecords($student->enrollments->where('name', 'Regular Course Name')->first();
+        ->assertCanNotSeeTableRecords([$student->enrollments->where('name', 'Regular Course Name')->first()]);
 });
