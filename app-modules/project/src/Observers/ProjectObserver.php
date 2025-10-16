@@ -42,7 +42,7 @@ class ProjectObserver
 {
     public function creating(Project $project): void
     {
-        if (! $project->relationLoaded('createdBy')) {
+        if ($project->createdBy === null) {
             $user = auth()->user();
             $project->createdBy()->associate($user);
         }
