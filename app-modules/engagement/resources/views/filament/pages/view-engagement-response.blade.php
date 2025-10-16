@@ -34,6 +34,7 @@
 @use(AdvisingApp\Engagement\Models\Engagement)
 @use(AdvisingApp\Prospect\Models\Prospect)
 @use(AdvisingApp\StudentDataModel\Models\Student)
+@use(AdvisingApp\Engagement\Enums\EngagementResponseType)
 
 <x-filament-panels::page>
     <div>
@@ -87,6 +88,28 @@
                     </x-filament::button>
                 </div>
             </form>
+        </div>
+    @else
+        <div class="grid gap-6">
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-1">
+                    <x-filament::button
+                        icon="heroicon-s-arrow-uturn-left"
+                        disabled
+                    >
+                        Reply
+                    </x-filament::button>
+                    <x-filament::icon-button
+                        icon="heroicon-m-question-mark-circle"
+                        :tooltip="$this->record->type === EngagementResponseType::Sms
+                            ? 'The phone number this text message was sent from does not match any known student or prospect record. You may only reply to messages that have an associated prospect or student record.'
+                            : 'The email address this message was sent from does not match any known student or prospect record. You may only reply to messages that have an associated prospect or student record.'"
+                    />
+                </div>
+                <x-filament::button wire:click="changeStatus()">
+                    Mark as {{ $this->getInvertedStatus()->name }}
+                </x-filament::button>
+            </div>
         </div>
     @endif
 </x-filament-panels::page>
