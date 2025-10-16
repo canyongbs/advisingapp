@@ -39,21 +39,27 @@ namespace AdvisingApp\Project\Models;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Project\Database\Factories\ProjectFactory;
+use AdvisingApp\Project\Models\Scopes\ProjectVisibilityScope;
 use AdvisingApp\Project\Observers\ProjectObserver;
 use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
-#[ObservedBy([ProjectObserver::class])]
 /**
  * @mixin IdeHelperProject
  */
+#[ObservedBy(ProjectObserver::class)]
+#[ScopedBy(ProjectVisibilityScope::class)]
 class Project extends BaseModel implements Auditable
 {
     /** @use HasFactory<ProjectFactory> */
@@ -105,5 +111,49 @@ class Project extends BaseModel implements Auditable
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
+    }
+
+    /**
+     * @return BelongsToMany<User, $this, ProjectManagerUser>
+     */
+    public function managerUsers(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(User::class, 'project_manager_users', 'project_id', 'user_id')
+            ->using(ProjectManagerUser::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany<Team, $this, ProjectManagerTeam>
+     */
+    public function managerTeams(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(Team::class, 'project_manager_teams', 'project_id', 'team_id')
+            ->using(ProjectManagerTeam::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany<User, $this, ProjectAuditorUser>
+     */
+    public function auditorUsers(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(User::class, 'project_auditor_users', 'project_id', 'user_id')
+            ->using(ProjectAuditorUser::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany<Team, $this, ProjectAuditorTeam>
+     */
+    public function auditorTeams(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(Team::class, 'project_auditor_teams', 'project_id', 'team_id')
+            ->using(ProjectAuditorTeam::class)
+            ->withTimestamps();
     }
 }

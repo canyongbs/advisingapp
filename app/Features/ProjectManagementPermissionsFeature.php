@@ -34,18 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Observers;
+namespace App\Features;
 
-use AdvisingApp\Project\Models\Project;
+use App\Support\AbstractFeatureFlag;
 
-class ProjectObserver
+class ProjectManagementPermissionsFeature extends AbstractFeatureFlag
 {
-    public function creating(Project $project): void
+    public function resolve(mixed $scope): mixed
     {
-        // @phpstan-ignore function.impossibleType
-        if (is_null($project->createdBy)) {
-            $user = auth()->user();
-            $project->createdBy()->associate($user);
-        }
+        return false;
     }
 }

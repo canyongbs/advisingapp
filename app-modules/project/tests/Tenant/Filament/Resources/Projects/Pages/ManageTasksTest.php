@@ -55,6 +55,8 @@ it('can render with proper permission', function () {
     actingAs($user);
 
     $project = Project::factory()->create();
+    $project->createdBy()->associate($user);
+    $project->save();
 
     $user->givePermissionTo('project.view-any');
     $user->givePermissionTo('project.*.view');
@@ -102,6 +104,8 @@ it('shows the associate and dissociate actions with proper permissions', functio
     actingAs($user);
 
     $project = Project::factory()->create();
+    $project->createdBy()->associate($user);
+    $project->save();
 
     livewire(ManageTasks::class, [
         'record' => $project->getRouteKey(),

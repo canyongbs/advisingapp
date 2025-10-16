@@ -34,18 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Observers;
+namespace AdvisingApp\Project\Filament\Resources\Projects\RelationManagers;
 
-use AdvisingApp\Project\Models\Project;
+use Filament\Actions\AttachAction;
+use Filament\Actions\DetachAction;
+use Filament\Actions\DetachBulkAction;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-class ProjectObserver
+class ManagerUsersRelationManager extends RelationManager
 {
-    public function creating(Project $project): void
+    protected static string $relationship = 'managerUsers';
+
+    protected static ?string $title = 'Users';
+
+    public function table(Table $table): Table
     {
-        // @phpstan-ignore function.impossibleType
-        if (is_null($project->createdBy)) {
-            $user = auth()->user();
-            $project->createdBy()->associate($user);
-        }
+        return $table
+            ->recordTitleAttribute('name')
+            ->columns([
+                TextColumn::make('name'),
+            ])
+            ->headerActions([
+                AttachAction::make()
+                    ->authorize(function () {
+                        return auth()->user()->can('update', $this->ownerRecord);
+                    }),
+            ])
+            ->recordActions([
+                DetachAction::make()
+                    ->authorize(function () {
+                        return auth()->user()->can('update', $this->ownerRecord);
+                    }),
+            ])
+            ->toolbarActions([
+                DetachBulkAction::make()
+                    ->authorize(function () {
+                        return auth()->user()->can('update', $this->ownerRecord);
+                    }),
+            ])
+            ->inverseRelationship('managedProjects');
     }
 }
