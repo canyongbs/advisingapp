@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8d32dac71d7d57581154bbae3e45bd26",
+    "content-hash": "fe227994ed811f45f52f3b1907dbe9be",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -9649,16 +9649,16 @@
         },
         {
             "name": "orrison/meliorstan",
-            "version": "v0.2.2",
+            "version": "v0.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Orrison/MeliorStan.git",
-                "reference": "6938d827c75724e8bb98191a8c9bc94a7145106b"
+                "reference": "5ba2356be0a339e765cda9bc8feda665d3145ad6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Orrison/MeliorStan/zipball/6938d827c75724e8bb98191a8c9bc94a7145106b",
-                "reference": "6938d827c75724e8bb98191a8c9bc94a7145106b",
+                "url": "https://api.github.com/repos/Orrison/MeliorStan/zipball/5ba2356be0a339e765cda9bc8feda665d3145ad6",
+                "reference": "5ba2356be0a339e765cda9bc8feda665d3145ad6",
                 "shasum": ""
             },
             "require": {
@@ -9673,8 +9673,7 @@
             "type": "phpstan-extension",
             "autoload": {
                 "psr-4": {
-                    "Orrison\\MeliorStan\\": "src/",
-                    "Orrison\\MeliorStan\\Tests\\": "tests/"
+                    "Orrison\\MeliorStan\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -9695,9 +9694,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Orrison/MeliorStan/issues",
-                "source": "https://github.com/Orrison/MeliorStan/tree/v0.2.2"
+                "source": "https://github.com/Orrison/MeliorStan/tree/v0.3.2"
             },
-            "time": "2025-08-31T04:08:18+00:00"
+            "time": "2025-10-16T06:13:26+00:00"
         },
         {
             "name": "owen-it/laravel-auditing",
