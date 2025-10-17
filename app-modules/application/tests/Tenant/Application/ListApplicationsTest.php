@@ -38,6 +38,7 @@ use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 
 // TODO: Write ListApplications tests
