@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -36,53 +36,36 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
-use AdvisingApp\StudentDataModel\Enums\SisSystem;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use App\Filament\Clusters\ProductIntegrations;
-use App\Models\User;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Pages\SettingsPage;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Schema;
+use Filament\Pages\Page;
+use UnitEnum;
 
-class ManageStudentInformationSystemSettings extends SettingsPage
+class ManageSisDataPipeline extends Page
 {
-    protected static ?string $title = 'Student Information System';
+    protected static ?string $navigationLabel = 'SIS Data Pipeline';
 
-    protected static string $settings = StudentInformationSystemSettings::class;
+    protected static ?string $title = 'SIS Data Pipeline';
 
-    protected static ?string $cluster = ProductIntegrations::class;
+    protected static ?int $navigationSort = 20;
 
-    protected static ?int $navigationSort = 110;
+    protected static string | UnitEnum | null $navigationGroup = 'Data and Analytics';
+
+    protected string $view = 'student-data-model::filament.pages.manage-sis-data-pipeline';
+
+    protected static ?string $slug = 'sis-data-pipeline';
 
     public static function canAccess(): bool
     {
-        /** @var User $user */
-        $user = auth()->user();
+        $sisSettings = app(StudentInformationSystemSettings::class);
 
-        return $user->isSuperAdmin();
-    }
+        if (! $sisSettings->is_enabled) {
+            return false;
+        }
 
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->columns(1)
-            ->components([
-                Toggle::make('is_enabled')
-                    ->live(),
-                Section::make()
-                    ->schema([
-                        Select::make('sis_system')
-                            ->label('SIS System')
-                            ->options(SisSystem::class)
-                            ->enum(SisSystem::class)
-                            ->required()
-                            ->dehydrateStateUsing(fn (string|SisSystem $state) => SisSystem::parse($state)),
-                    ])
-                    ->visible(fn (Get $get) => $get('is_enabled')),
-                    ]);
-            // ->disabled();
+        if (! auth()->user()->can(['sis_data_pipeline.view-any', 'sis_data_pipeline.*.view'])) {
+            return false;
+        }
+
+        return parent::canAccess();
     }
 }

@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,34 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Pages;
+namespace AdvisingApp\StudentDataModel\Enums;
 
-use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use Filament\Pages\Page;
-use UnitEnum;
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Contracts\HasLabel;
 
-class ManageStudentSyncs extends Page
+enum SisPipelineStatus: string implements HasColor, HasIcon, HasLabel
 {
-    protected static ?string $navigationLabel = 'Sync History';
+    case Pending = 'pending';
 
-    protected static ?string $title = 'Records Sync';
+    case Processing = 'processing';
 
-    protected static ?int $navigationSort = 30;
+    case Completed = 'completed';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Data and Analytics';
+    case Canceled = 'canceled';
 
-    protected string $view = 'student-data-model::filament.pages.manage-student-syncs';
-
-    public static function canAccess(): bool
+    public function getLabel(): string
     {
-        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return false;
-        }
+        return match ($this) {
+            self::Pending => 'Pending',
+            self::Processing => 'Processing',
+            self::Completed => 'Completed',
+            self::Canceled => 'Canceled',
+        };
+    }
 
-        if (! auth()->user()->can('record_sync.view-any')) {
-            return false;
-        }
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::Pending => 'gray',
+            self::Processing => 'info',
+            self::Completed => 'success',
+            self::Canceled => 'danger',
+        };
+    }
 
-        return parent::canAccess();
+    public function getIcon(): string
+    {
+        return match ($this) {
+            self::Pending => 'heroicon-m-clock',
+            self::Processing => 'heroicon-m-arrow-path',
+            self::Completed => 'heroicon-m-check',
+            self::Canceled => 'heroicon-m-x-mark',
+        };
     }
 }
