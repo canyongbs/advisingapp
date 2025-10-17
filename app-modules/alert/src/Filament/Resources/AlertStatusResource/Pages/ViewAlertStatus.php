@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages;
+namespace AdvisingApp\Alert\Filament\Resources\AlertStatuses\Pages;
 
-use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
+use AdvisingApp\Alert\Filament\Resources\AlertStatuses\AlertStatusResource;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;

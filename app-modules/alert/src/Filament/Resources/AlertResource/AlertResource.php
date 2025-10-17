@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Filament\Resources;
+namespace AdvisingApp\Alert\Filament\Resources\Alerts;
 
-use AdvisingApp\Alert\Filament\Resources\AlertResource\Pages\ListAlerts;
+use AdvisingApp\Alert\Filament\Resources\Alerts\Pages\ListAlerts;
 use AdvisingApp\Alert\Models\Alert;
 use BackedEnum;
 use Filament\Resources\Resource;

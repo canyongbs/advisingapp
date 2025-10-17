@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages;
+namespace AdvisingApp\Alert\Filament\Resources\AlertStatuses\Pages;
 
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
-use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
+use AdvisingApp\Alert\Filament\Resources\AlertStatuses\AlertStatusResource;
 use AdvisingApp\Alert\Models\AlertStatus;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;

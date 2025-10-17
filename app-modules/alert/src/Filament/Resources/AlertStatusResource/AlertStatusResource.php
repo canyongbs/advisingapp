@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Filament\Resources;
+namespace AdvisingApp\Alert\Filament\Resources\AlertStatuses;
 
-use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\CreateAlertStatus;
-use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\EditAlertStatus;
-use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\ListAlertStatuses;
-use AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages\ViewAlertStatus;
+use AdvisingApp\Alert\Filament\Resources\AlertStatuses\Pages\CreateAlertStatus;
+use AdvisingApp\Alert\Filament\Resources\AlertStatuses\Pages\EditAlertStatus;
+use AdvisingApp\Alert\Filament\Resources\AlertStatuses\Pages\ListAlertStatuses;
+use AdvisingApp\Alert\Filament\Resources\AlertStatuses\Pages\ViewAlertStatus;
 use AdvisingApp\Alert\Models\AlertStatus;
 use App\Filament\Clusters\ConstituentManagement;
 use Filament\Resources\Resource;

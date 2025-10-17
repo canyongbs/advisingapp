@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Filament\Resources\AlertStatusResource\Pages;
+namespace AdvisingApp\Alert\Filament\Resources\AlertStatuses\Pages;
 
-use AdvisingApp\Alert\Filament\Resources\AlertStatusResource;
+use AdvisingApp\Alert\Filament\Resources\AlertStatuses\AlertStatusResource;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
