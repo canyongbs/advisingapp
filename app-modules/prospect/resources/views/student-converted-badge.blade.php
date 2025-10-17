@@ -31,7 +31,7 @@
 
 </COPYRIGHT>
 --}}
-@use('AdvisingApp\StudentDataModel\Filament\Resources\StudentResource')
+@use('AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource')
 
 @if ($this->getRecord()->student()->exists())
     <x-filament::badge
