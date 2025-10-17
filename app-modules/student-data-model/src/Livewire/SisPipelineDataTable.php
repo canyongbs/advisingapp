@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor's trademarks is subject
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -169,7 +169,7 @@ class SisDataPipelineTable extends Component implements HasActions, HasForms, Ha
             default => SisPipelineStatus::Pending,
         };
     }
-    
+
     /**
      * @param array<string, mixed> $record
      */
@@ -183,7 +183,7 @@ class SisDataPipelineTable extends Component implements HasActions, HasForms, Ha
                          ($record['processed_enrollments'] ?? 0) +
                          ($record['processed_programs'] ?? 0);
 
-        $successfulItems = ($record['successful_students'] ?? 0) + 
+        $successfulItems = ($record['successful_students'] ?? 0) +
                           ($record['successful_enrollments'] ?? 0) +
                           ($record['successful_programs'] ?? 0);
 
