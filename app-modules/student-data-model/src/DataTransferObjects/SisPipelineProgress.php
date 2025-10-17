@@ -34,34 +34,78 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Pages;
+namespace AdvisingApp\StudentDataModel\DataTransferObjects;
 
-use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use Filament\Pages\Page;
-use UnitEnum;
-
-class ManageStudentSyncs extends Page
+readonly class SisPipelineProgress
 {
-    protected static ?string $navigationLabel = 'Sync History';
+    public function __construct(
+        public int $processed,
+        public int $total,
+        public int $successful,
+    ) {}
 
-    protected static ?string $title = 'Records Sync';
-
-    protected static ?int $navigationSort = 30;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Data and Analytics';
-
-    protected string $view = 'student-data-model::filament.pages.manage-student-syncs';
-
-    public static function canAccess(): bool
+    public function getFailed(): int
     {
-        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return false;
+        return $this->processed - $this->successful;
+    }
+
+    public function getPercentage(): float
+    {
+        if ($this->total <= 0) {
+            return 0;
         }
 
-        if (! auth()->user()->can('record_sync.view-any')) {
-            return false;
+        $percentage = ($this->processed / $this->total) * 100;
+
+        if ($percentage > 100) {
+            return 100;
         }
 
-        return parent::canAccess();
+        return $percentage;
+    }
+
+    public function getProcessedPercentage(): float
+    {
+        if ($this->total <= 0) {
+            return 0;
+        }
+
+        $percentage = ($this->processed / $this->total) * 100;
+
+        if ($percentage > 100) {
+            return 100;
+        }
+
+        return $percentage;
+    }
+
+    public function getSuccessfulPercentage(): float
+    {
+        if ($this->total <= 0) {
+            return 0;
+        }
+
+        $percentage = ($this->successful / $this->total) * 100;
+
+        if ($percentage > 100) {
+            return 100;
+        }
+
+        return $percentage;
+    }
+
+    public function getFailedPercentage(): float
+    {
+        if ($this->total <= 0) {
+            return 0;
+        }
+
+        $percentage = (($this->processed - $this->successful) / $this->total) * 100;
+
+        if ($percentage > 100) {
+            return 100;
+        }
+
+        return $percentage;
     }
 }

@@ -49,7 +49,7 @@ class ReportResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = 'Data and Analytics';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 50;
 
     protected static ?string $navigationLabel = 'Custom Reports';
 

@@ -36,29 +36,33 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
-use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use Filament\Pages\Page;
 use UnitEnum;
 
-class ManageStudentSyncs extends Page
+class ManageSisDataPipeline extends Page
 {
-    protected static ?string $navigationLabel = 'Sync History';
+    protected static ?string $navigationLabel = 'SIS Data Pipeline';
 
-    protected static ?string $title = 'Records Sync';
+    protected static ?string $title = 'SIS Data Pipeline';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 20;
 
     protected static string | UnitEnum | null $navigationGroup = 'Data and Analytics';
 
-    protected string $view = 'student-data-model::filament.pages.manage-student-syncs';
+    protected string $view = 'student-data-model::filament.pages.manage-sis-data-pipeline';
+
+    protected static ?string $slug = 'sis-data-pipeline';
 
     public static function canAccess(): bool
     {
-        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+        $sisSettings = app(StudentInformationSystemSettings::class);
+
+        if (! $sisSettings->is_enabled) {
             return false;
         }
 
-        if (! auth()->user()->can('record_sync.view-any')) {
+        if (! auth()->user()->can(['sis_data_pipeline.view-any', 'sis_data_pipeline.*.view'])) {
             return false;
         }
 
