@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource\Pages\ViewQnaAdvisor;
+use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ViewQnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;

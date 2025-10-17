@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors;
 
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource\Pages\CreateQnaAdvisor;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource\Pages\EditQnaAdvisor;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource\Pages\EditQnaAdvisorLinks;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource\Pages\ListQnaAdvisors;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource\Pages\ManageCategories;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource\Pages\ManageQnaAdditionalKnowledge;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource\Pages\ManageQnaQuestions;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource\Pages\PreviewQnaAdvisor;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource\Pages\QnaAdvisorEmbed;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource\Pages\ViewQnaAdvisor;
+use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\CreateQnaAdvisor;
+use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\EditQnaAdvisor;
+use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\EditQnaAdvisorLinks;
+use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ListQnaAdvisors;
+use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ManageCategories;
+use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ManageQnaAdditionalKnowledge;
+use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ManageQnaQuestions;
+use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\PreviewQnaAdvisor;
+use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\QnaAdvisorEmbed;
+use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ViewQnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;

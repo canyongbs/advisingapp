@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource\Pages;
+namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 
 use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;

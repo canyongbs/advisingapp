@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource\Pages;
+namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
