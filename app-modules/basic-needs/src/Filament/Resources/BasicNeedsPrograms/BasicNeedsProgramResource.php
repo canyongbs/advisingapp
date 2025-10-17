@@ -57,6 +57,13 @@ class BasicNeedsProgramResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = 'Knowledge Management';
 
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'description'];
+    }
+
     public static function getPages(): array
     {
         return [
