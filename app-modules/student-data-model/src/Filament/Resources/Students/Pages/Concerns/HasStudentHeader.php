@@ -38,11 +38,11 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\Concern
 
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
-use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns\HasEducatableHeader;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Pages\Concerns\HasEducatableHeader;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Actions\StudentTagsAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Actions\SyncStudentSisAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use App\Settings\DisplaySettings;
 use Filament\Actions\DeleteAction;

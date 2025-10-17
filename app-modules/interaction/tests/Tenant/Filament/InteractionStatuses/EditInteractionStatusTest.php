@@ -38,6 +38,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\InteractionStatusResource;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use App\Models\User;
+
 use function Pest\Laravel\actingAs;
 
 test('EditInteractionStatus is gated with proper access control', function () {

@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages;
 
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\Concerns\HasStudentHeader;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas\StudentProfileInfolist;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Schemas\StudentProfileInfolist;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
 
@@ -48,7 +48,7 @@ class ViewStudent extends ViewRecord
 
     protected static string $resource = StudentResource::class;
 
-    protected string $view = 'student-data-model::filament.resources.student-resource.view-student';
+    protected string $view = 'student-data-model::filament.resources.students.view-student';
 
     protected static ?string $navigationLabel = 'View';
 

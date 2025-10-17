@@ -40,7 +40,7 @@ use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Notifications\Notification;

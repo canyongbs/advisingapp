@@ -38,7 +38,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Pages;
 
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\Concerns\HasProspectHeader;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns\HasEducatableActivityFeed;
+use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Pages\Concerns\HasEducatableActivityFeed;
 use Filament\Resources\Pages\Page;
 
 class ViewProspectActivityFeed extends Page

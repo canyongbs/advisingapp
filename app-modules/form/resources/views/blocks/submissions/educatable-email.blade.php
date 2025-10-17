@@ -33,7 +33,7 @@
 --}}
 @php
     use AdvisingApp\StudentDataModel\Models\Student;
-    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+    use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
     use AdvisingApp\Prospect\Models\Prospect;
     use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 @endphp

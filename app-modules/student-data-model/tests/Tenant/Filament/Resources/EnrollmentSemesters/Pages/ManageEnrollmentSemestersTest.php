@@ -36,6 +36,7 @@
 
 use AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters\EnrollmentSemesterResource;
 use App\Models\User;
+
 use function Pest\Laravel\actingAs;
 
 test('the page is gated with proper access control', function () {

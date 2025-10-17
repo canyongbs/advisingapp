@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages;
 
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\CasesRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\CasesRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use App\Enums\Feature;
 use App\Filament\Concerns\FiltersManagersFromGroups;
 use BackedEnum;

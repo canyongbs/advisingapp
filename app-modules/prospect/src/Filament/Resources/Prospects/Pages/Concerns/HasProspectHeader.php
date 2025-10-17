@@ -43,7 +43,7 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\Actions\ProspectTagsAction
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspect;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pages\Concerns\HasEducatableHeader;
+use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Pages\Concerns\HasEducatableHeader;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use App\Settings\DisplaySettings;
 use Illuminate\Contracts\View\View;

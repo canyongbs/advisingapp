@@ -37,6 +37,7 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomes\InteractionOutcomeResource;
 use App\Models\User;
+
 use function Pest\Laravel\actingAs;
 
 test('ListInteractionOutcomes is gated with proper access control', function () {

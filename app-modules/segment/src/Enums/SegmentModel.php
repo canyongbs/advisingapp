@@ -40,7 +40,7 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\Tables\ProspectsTable;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Segment\Importers\ProspectSegmentSubjectImporter;
 use AdvisingApp\Segment\Importers\StudentSegmentSubjectImporter;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Tables\StudentsTable;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Tables\StudentsTable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Support\Contracts\HasLabel;
 use Filament\Tables\Table;

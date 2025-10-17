@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Interaction\Filament\Concerns;
 
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Schemas\InteractionForm;
+use AdvisingApp\Interaction\Filament\Resources\Interactions\Schemas\InteractionForm;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;

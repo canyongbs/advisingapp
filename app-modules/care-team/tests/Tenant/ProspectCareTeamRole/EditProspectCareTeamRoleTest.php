@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource;
-use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource\Pages\EditProspectCareTeamRole;
+use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoles\Pages\EditProspectCareTeamRole;
+use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoles\ProspectCareTeamRoleResource;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\CareTeam\Tests\Tenant\RequestFactories\EditCareTeamRoleRequestFactory;
 use AdvisingApp\Prospect\Models\Prospect;

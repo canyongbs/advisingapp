@@ -33,8 +33,8 @@
 
 </COPYRIGHT>
 */
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EnrollmentsRelationManager;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;

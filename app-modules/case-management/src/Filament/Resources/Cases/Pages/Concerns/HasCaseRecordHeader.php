@@ -41,7 +41,7 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Pages\ProspectCaseReport;
 use AdvisingApp\Report\Filament\Pages\StudentCaseReport;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Url;
@@ -74,7 +74,7 @@ trait HasCaseRecordHeader
             }
         }
 
-        return view('case-management::filament.resources.case-resource.pages.record-header', [
+        return view('case-management::filament.resources.cases.pages.record-header', [
             'heading' => $this->getHeading(),
             'actions' => $this->getCachedHeaderActions(),
             'breadcrumbs' => $this->getBreadcrumbs(),

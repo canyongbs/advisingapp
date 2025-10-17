@@ -37,6 +37,7 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\InteractionStatusResource;
 use App\Models\User;
+
 use function Pest\Laravel\actingAs;
 
 test('CreateInteractionStatus is gated with proper access control', function () {

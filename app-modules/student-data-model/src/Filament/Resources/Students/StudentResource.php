@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\Students;
 
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\CreateStudent;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\EditStudent;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentCareTeam;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentSubscriptions;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentTasks;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudentActivityFeed;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\CreateStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\EditStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudentAlerts;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudentCareTeam;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudentSubscriptions;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudentTasks;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudentActivityFeed;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use Filament\Resources\Resource;

@@ -41,7 +41,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
-use AdvisingApp\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
+use AdvisingApp\Task\Filament\Resources\Tasks\Components\TaskViewAction;
 use AdvisingApp\Task\Models\Task;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;

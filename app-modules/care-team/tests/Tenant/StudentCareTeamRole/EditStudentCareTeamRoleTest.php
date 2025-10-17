@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource;
-use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource\Pages\EditStudentCareTeamRole;
+use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoles\Pages\EditStudentCareTeamRole;
+use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoles\StudentCareTeamRoleResource;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\CareTeam\Tests\Tenant\RequestFactories\EditCareTeamRoleRequestFactory;
 use AdvisingApp\StudentDataModel\Models\Student;

@@ -38,7 +38,7 @@ namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
 use AdvisingApp\Authorization\Enums\SocialiteProvider;
 use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ListCalendarEvents;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages\ListCalendarEvents;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

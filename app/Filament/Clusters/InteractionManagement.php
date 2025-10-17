@@ -36,12 +36,12 @@
 
 namespace App\Filament\Clusters;
 
-use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\InteractionDriverResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiatives\InteractionInitiativeResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomes\InteractionOutcomeResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionRelations\InteractionRelationResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\InteractionStatusResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionTypes\InteractionTypeResource;
 use Filament\Clusters\Cluster;
 use Filament\Resources\Resource;
 use UnitEnum;

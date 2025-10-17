@@ -38,6 +38,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\InteractionDriverResource;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use App\Models\User;
+
 use function Pest\Laravel\actingAs;
 
 test('EditInteractionDriver is gated with proper access control', function () {

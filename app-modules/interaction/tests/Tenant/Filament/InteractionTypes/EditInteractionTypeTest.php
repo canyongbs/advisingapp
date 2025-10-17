@@ -38,6 +38,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypes\InteractionTypeResource;
 use AdvisingApp\Interaction\Models\InteractionType;
 use App\Models\User;
+
 use function Pest\Laravel\actingAs;
 
 test('EditInteractionType is gated with proper access control', function () {
