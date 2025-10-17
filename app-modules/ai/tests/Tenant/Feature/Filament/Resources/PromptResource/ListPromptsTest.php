@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Filament\Resources\PromptResource;
-use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\ListPrompts;
+use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\ListPrompts;
+use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
 use AdvisingApp\Ai\Models\ConfidentialPromptTeam;
 use AdvisingApp\Ai\Models\ConfidentialPromptUser;
 use AdvisingApp\Ai\Models\Prompt;

@@ -34,73 +34,33 @@
 </COPYRIGHT>
 */
 
+namespace AdvisingApp\Ai\Filament\Resources\Prompts;
+
 use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\CreatePrompt;
-use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
+use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\EditPrompt;
+use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\ListPrompts;
+use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\ViewPrompt;
 use AdvisingApp\Ai\Models\Prompt;
-use AdvisingApp\Authorization\Enums\LicenseType;
+use Filament\Resources\Resource;
+use UnitEnum;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Laravel\assertDatabaseCount;
-use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
+class PromptResource extends Resource
+{
+    protected static ?string $model = Prompt::class;
 
-/** @var array<LicenseType> $licenses */
-$licenses = [
-    LicenseType::ConversationalAi,
-];
+    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
 
-$permissions = [
-    'prompt.view-any',
-    'prompt.create',
-    'prompt.*.view',
-];
+    protected static ?string $navigationLabel = 'Prompt Library';
 
-it('cannot render without a license', function () use ($permissions) {
-    actingAs(user(
-        permissions: $permissions
-    ));
+    protected static ?int $navigationSort = 50;
 
-    get(PromptResource::getUrl('create'))
-        ->assertForbidden();
-});
-
-it('cannot render without permissions', function () use ($licenses) {
-    actingAs(user(
-        licenses: $licenses
-    ));
-
-    get(PromptResource::getUrl('create'))
-        ->assertForbidden();
-});
-
-it('can render', function () use ($licenses, $permissions) {
-    actingAs(user(
-        licenses: $licenses,
-        permissions: $permissions
-    ));
-
-    get(PromptResource::getUrl('create'))
-        ->assertSuccessful();
-});
-
-it('can create a record', function () use ($licenses, $permissions) {
-    actingAs(user(
-        licenses: $licenses,
-        permissions: $permissions
-    ));
-
-    $record = Prompt::factory()->make();
-
-    assertDatabaseCount(Prompt::class, 0);
-
-    livewire(CreatePrompt::class)
-        ->assertSuccessful()
-        ->fillForm($record->toArray())
-        ->call('create')
-        ->assertHasNoFormErrors();
-
-    assertDatabaseCount(Prompt::class, 1);
-
-    assertDatabaseHas(Prompt::class, $record->toArray());
-});
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListPrompts::route('/'),
+            'create' => CreatePrompt::route('/create'),
+            'view' => ViewPrompt::route('/{record}'),
+            'edit' => EditPrompt::route('/{record}/edit'),
+        ];
+    }
+}

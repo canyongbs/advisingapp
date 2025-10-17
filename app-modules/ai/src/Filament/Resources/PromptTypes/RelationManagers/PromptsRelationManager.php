@@ -34,73 +34,51 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\CreatePrompt;
+namespace AdvisingApp\Ai\Filament\Resources\PromptTypes\RelationManagers;
+
+use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\EditPrompt;
+use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\ListPrompts;
+use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\ViewPrompt;
 use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
 use AdvisingApp\Ai\Models\Prompt;
-use AdvisingApp\Authorization\Enums\LicenseType;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
+use Filament\Tables\Table;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Laravel\assertDatabaseCount;
-use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
+class PromptsRelationManager extends RelationManager
+{
+    protected static string $relationship = 'prompts';
 
-/** @var array<LicenseType> $licenses */
-$licenses = [
-    LicenseType::ConversationalAi,
-];
+    public function infolist(Schema $schema): Schema
+    {
+        return (new ViewPrompt())->infolist($schema);
+    }
 
-$permissions = [
-    'prompt.view-any',
-    'prompt.create',
-    'prompt.*.view',
-];
+    public function form(Schema $schema): Schema
+    {
+        return (new EditPrompt())->form($schema);
+    }
 
-it('cannot render without a license', function () use ($permissions) {
-    actingAs(user(
-        permissions: $permissions
-    ));
-
-    get(PromptResource::getUrl('create'))
-        ->assertForbidden();
-});
-
-it('cannot render without permissions', function () use ($licenses) {
-    actingAs(user(
-        licenses: $licenses
-    ));
-
-    get(PromptResource::getUrl('create'))
-        ->assertForbidden();
-});
-
-it('can render', function () use ($licenses, $permissions) {
-    actingAs(user(
-        licenses: $licenses,
-        permissions: $permissions
-    ));
-
-    get(PromptResource::getUrl('create'))
-        ->assertSuccessful();
-});
-
-it('can create a record', function () use ($licenses, $permissions) {
-    actingAs(user(
-        licenses: $licenses,
-        permissions: $permissions
-    ));
-
-    $record = Prompt::factory()->make();
-
-    assertDatabaseCount(Prompt::class, 0);
-
-    livewire(CreatePrompt::class)
-        ->assertSuccessful()
-        ->fillForm($record->toArray())
-        ->call('create')
-        ->assertHasNoFormErrors();
-
-    assertDatabaseCount(Prompt::class, 1);
-
-    assertDatabaseHas(Prompt::class, $record->toArray());
-});
+    public function table(Table $table): Table
+    {
+        return (new ListPrompts())
+            ->table($table)
+            ->recordTitleAttribute('title')
+            ->inverseRelationship('type')
+            ->headerActions([
+                CreateAction::make()
+                    ->url(fn (): string => PromptResource::getUrl('create')),
+            ])
+            ->recordActions([
+                ViewAction::make()
+                    ->url(fn (Prompt $record): string => PromptResource::getUrl('view', ['record' => $record])),
+                EditAction::make()
+                    ->url(fn (Prompt $record): string => PromptResource::getUrl('edit', ['record' => $record])),
+                DeleteAction::make(),
+            ]);
+    }
+}

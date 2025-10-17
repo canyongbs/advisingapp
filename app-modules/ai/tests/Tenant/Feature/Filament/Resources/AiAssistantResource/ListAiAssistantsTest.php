@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\ListAiAssistants;
+use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ListAiAssistants;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Settings\LicenseSettings;

@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource\Pages\CreateAiAssistant;
+use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\CreateAiAssistant;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Tests\Tenant\Feature\Filament\Resources\AiAssistantResource\RequestFactories\CreateAiAssistantRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;

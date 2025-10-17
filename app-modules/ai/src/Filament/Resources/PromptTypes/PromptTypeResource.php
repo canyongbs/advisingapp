@@ -34,70 +34,39 @@
 </COPYRIGHT>
 */
 
+namespace AdvisingApp\Ai\Filament\Resources\PromptTypes;
+
+use AdvisingApp\Ai\Filament\Resources\PromptTypes\Pages\CreatePromptType;
+use AdvisingApp\Ai\Filament\Resources\PromptTypes\Pages\EditPromptType;
 use AdvisingApp\Ai\Filament\Resources\PromptTypes\Pages\ListPromptTypes;
-use AdvisingApp\Ai\Filament\Resources\PromptTypes\PromptTypeResource;
+use AdvisingApp\Ai\Filament\Resources\PromptTypes\Pages\ViewPromptType;
+use AdvisingApp\Ai\Filament\Resources\PromptTypes\RelationManagers\PromptsRelationManager;
 use AdvisingApp\Ai\Models\PromptType;
-use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Filament\Clusters\ArtificialIntelligence;
+use Filament\Resources\Resource;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Laravel\assertDatabaseCount;
-use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
+class PromptTypeResource extends Resource
+{
+    protected static ?string $model = PromptType::class;
 
-/** @var array<LicenseType> $licenses */
-$licenses = [
-    LicenseType::ConversationalAi,
-];
+    protected static ?int $navigationSort = 50;
 
-$permissions = [
-    'settings.view-any',
-    'settings.create',
-    'settings.*.view',
-];
+    protected static ?string $cluster = ArtificialIntelligence::class;
 
-it('cannot render without a license', function () use ($permissions) {
-    actingAs(user(
-        permissions: $permissions
-    ));
+    public static function getRelations(): array
+    {
+        return [
+            PromptsRelationManager::class,
+        ];
+    }
 
-    get(PromptTypeResource::getUrl())
-        ->assertForbidden();
-});
-
-it('cannot render without permissions', function () use ($licenses) {
-    actingAs(user(
-        licenses: $licenses,
-    ));
-
-    get(PromptTypeResource::getUrl())
-        ->assertForbidden();
-});
-
-it('can render', function () use ($licenses, $permissions) {
-    actingAs(user(
-        licenses: $licenses,
-        permissions: $permissions
-    ));
-
-    get(PromptTypeResource::getUrl())
-        ->assertSuccessful();
-});
-
-it('can list records', function () use ($licenses, $permissions) {
-    actingAs(user(
-        licenses: $licenses,
-        permissions: $permissions
-    ));
-
-    assertDatabaseCount(PromptType::class, 0);
-
-    $records = PromptType::factory()->count(10)->create();
-
-    assertDatabaseCount(PromptType::class, $records->count());
-
-    livewire(ListPromptTypes::class)
-        ->set('tableRecordsPerPage', 10)
-        ->assertSuccessful()
-        ->assertCountTableRecords($records->count())
-        ->assertCanSeeTableRecords($records);
-});
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListPromptTypes::route('/'),
+            'create' => CreatePromptType::route('/create'),
+            'view' => ViewPromptType::route('/{record}'),
+            'edit' => EditPromptType::route('/{record}/edit'),
+        ];
+    }
+}
