@@ -36,9 +36,9 @@
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentCaseTable;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Actions\ExportAction;
@@ -100,13 +100,13 @@ it('returns all cases information created for students in given time range', fun
         ->assertCanNotSeeTableRecords(collect([$otherCases]));
 });
 
-it('returns all cases information created for students based on segment filters', function () {
+it('returns all cases information created for students based on group filters', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
     $otherDate = now()->subDays(15);
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Student,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -161,10 +161,10 @@ it('returns all cases information created for students based on segment filters'
     ])->create();
 
     $filters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
-    // with segment filter
+    // with group filter
     livewire(StudentCaseTable::class, [
         'cacheTag' => 'report-student-case',
         'pageFilters' => $filters,

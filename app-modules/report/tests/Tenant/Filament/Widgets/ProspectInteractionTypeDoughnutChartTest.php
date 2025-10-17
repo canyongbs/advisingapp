@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionTypeDoughnutChart;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 
 it('checks prospect interaction types doughnut chart', function () {
     $interactionsCount = rand(1, 10);
@@ -128,15 +128,15 @@ it('returns correct interaction counts by type for prospects within the selected
         ->and($interactionsCount)->not->toEqual($stats[2]);
 });
 
-it('returns correct interaction counts by type for prospects based on segment filter', function () {
+it('returns correct interaction counts by type for prospects based on group filter', function () {
     $interactionsCount = random_int(1, 10);
     $interactionsCountForDoe = random_int(1, 10);
 
     $interactionTypeFirst = InteractionType::factory()->create();
     $interactionTypeSecond = InteractionType::factory()->create();
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Prospect,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -180,11 +180,11 @@ it('returns correct interaction counts by type for prospects based on segment fi
             'last_name' => 'Doe',
         ]);
 
-    //  with segment filter
+    //  with group filter
     $widgetInstance = new ProspectInteractionTypeDoughnutChart();
     $widgetInstance->cacheTag = 'report-prospect-interaction';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widgetInstance->getData()['datasets'][0]['data'];
@@ -192,7 +192,7 @@ it('returns correct interaction counts by type for prospects based on segment fi
     expect($interactionsCount)->toEqual($stats[0])
         ->and($interactionsCount)->not->toEqual($stats[1]);
 
-    //  with segment filter
+    //  with group filter
     $widgetInstance = new ProspectInteractionTypeDoughnutChart();
     $widgetInstance->cacheTag = 'report-prospect-interaction';
     $widgetInstance->pageFilters = [];

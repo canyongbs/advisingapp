@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentEmailOptInOptOutPieChart;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('it filters student email opt-in/out/null data accurately using start and end dates', function () {
@@ -80,14 +80,14 @@ it('it filters student email opt-in/out/null data accurately using start and end
         ->and($stats[2])->not->toEqual($emailNull->count());
 });
 
-it('it filters student email opt-in/out/null data accurately based on segment filters', function () {
+it('it filters student email opt-in/out/null data accurately based on group filters', function () {
     $count = random_int(1, 10);
 
     $startDate = now()->subDays(90);
     $endDate = now()->subDays(5);
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Student,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -153,11 +153,11 @@ it('it filters student email opt-in/out/null data accurately based on segment fi
             'last' => 'Doe',
         ])->create();
 
-    // with segment filter
+    // with group filter
     $widgetInstance = new StudentEmailOptInOptOutPieChart();
     $widgetInstance->cacheTag = 'report-student-deliverability';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widgetInstance->getData()['datasets'][0]['data'];
@@ -166,7 +166,7 @@ it('it filters student email opt-in/out/null data accurately based on segment fi
         ->and($stats[1])->toEqual($emailOptOutWithJoeName->count())
         ->and($stats[2])->toEqual($emailNullWithJoeName->count());
 
-    // without segment filter
+    // without group filter
     $widgetInstance = new StudentEmailOptInOptOutPieChart();
     $widgetInstance->cacheTag = 'report-student-deliverability';
     $widgetInstance->pageFilters = [];

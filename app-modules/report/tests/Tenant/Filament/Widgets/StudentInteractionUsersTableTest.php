@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionUsersTable;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
@@ -302,9 +302,9 @@ it('displays only users with student interactions within the selected date range
         ->assertCanNotSeeTableRecords(collect([$userWithoutInteractions]));
 });
 
-it('displays only users with student interactions based on segment filter', function () {
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Student,
+it('displays only users with student interactions based on group filter', function () {
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -351,10 +351,10 @@ it('displays only users with student interactions based on segment filter', func
         ->create();
 
     $filters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
-    // with segment filter
+    // with group filter
     livewire(StudentInteractionUsersTable::class, [
         'cacheTag' => 'report-student-interaction',
         'pageFilters' => $filters,
@@ -370,7 +370,8 @@ it('displays only users with student interactions based on segment filter', func
         'filters' => [],
     ])
         ->assertCanSeeTableRecords(collect([
-            $userWithOldInteractions, $userWithRecentAndOtherInteractions,
+            $userWithOldInteractions,
+            $userWithRecentAndOtherInteractions,
         ]))
         ->assertCanNotSeeTableRecords(collect([$userWithoutInteractions]));
 });

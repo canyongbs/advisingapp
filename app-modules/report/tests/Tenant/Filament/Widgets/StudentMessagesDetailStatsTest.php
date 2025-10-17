@@ -37,10 +37,10 @@
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Report\Filament\Widgets\StudentMessagesDetailStats;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('returns correct counts of emails and SMS sent/received with no filters', function () {
@@ -151,9 +151,9 @@ it('returns correct counts of emails and SMS sent/received within the given date
         ->and($stats[3]->getValue())->toEqual($smsReceivedCount);
 });
 
-it('returns correct counts of emails and SMS sent/received based on segment filters', function () {
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Student,
+it('returns correct counts of emails and SMS sent/received based on group filters', function () {
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -244,7 +244,7 @@ it('returns correct counts of emails and SMS sent/received based on segment filt
     $widget = new StudentMessagesDetailStats();
     $widget->cacheTag = 'report-student-messages';
     $widget->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widget->getStats();

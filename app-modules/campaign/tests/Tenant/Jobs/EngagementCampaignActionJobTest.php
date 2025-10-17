@@ -43,11 +43,11 @@ use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Enums\GroupType;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Enums\SegmentType;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
@@ -56,22 +56,22 @@ use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\assertDatabaseCount;
 
-it('will execute appropriately on each educatable in the segment', function (Educatable $educatable, NotificationChannel $channel) {
+it('will execute appropriately on each educatable in the group', function (Educatable $educatable, NotificationChannel $channel) {
     Bus::fake();
     Notification::fake();
 
-    /** @var Segment $segment */
-    $segment = Segment::factory()->create([
-        'type' => SegmentType::Static,
+    /** @var Group $group */
+    $group = Group::factory()->create([
+        'type' => GroupType::Static,
         'model' => match ($educatable::class) {
-            Student::class => SegmentModel::Student,
-            Prospect::class => SegmentModel::Prospect,
+            Student::class => GroupModel::Student,
+            Prospect::class => GroupModel::Prospect,
             default => throw new Exception('Invalid model type'),
         },
     ]);
 
     $campaign = Campaign::factory()
-        ->for($segment, 'segment')
+        ->for($group, 'group')
         ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
         ->create();
 
@@ -161,18 +161,18 @@ it('will throw an exception if a canRecieve check fails', function (Educatable $
 
     $educatable->refresh();
 
-    /** @var Segment $segment */
-    $segment = Segment::factory()->create([
-        'type' => SegmentType::Static,
+    /** @var Group $group */
+    $group = Group::factory()->create([
+        'type' => GroupType::Static,
         'model' => match ($educatable::class) {
-            Student::class => SegmentModel::Student,
-            Prospect::class => SegmentModel::Prospect,
+            Student::class => GroupModel::Student,
+            Prospect::class => GroupModel::Prospect,
             default => throw new Exception('Invalid model type'),
         },
     ]);
 
     $campaign = Campaign::factory()
-        ->for($segment, 'segment')
+        ->for($group, 'group')
         ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
         ->create();
 

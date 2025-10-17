@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentSmsOptInOptOutPieChart;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('it filters student SMS opt-in/out/null data accurately using start and end dates', function () {
@@ -80,11 +80,11 @@ it('it filters student SMS opt-in/out/null data accurately using start and end d
         ->and($stats[2])->not->toEqual($smsNull->count());
 });
 
-it('it filters student SMS opt-in/out/null data accurately based on segment filter', function () {
+it('it filters student SMS opt-in/out/null data accurately based on group filter', function () {
     $count = random_int(1, 10);
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Student,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -144,11 +144,11 @@ it('it filters student SMS opt-in/out/null data accurately based on segment filt
             'last' => 'Doe',
         ])->create();
 
-    // with segment filter
+    // with group filter
     $widgetInstance = new StudentSmsOptInOptOutPieChart();
     $widgetInstance->cacheTag = 'report-student-deliverability';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widgetInstance->getData()['datasets'][0]['data'];
@@ -157,7 +157,7 @@ it('it filters student SMS opt-in/out/null data accurately based on segment filt
         ->and($stats[1])->toEqual($smsOptOutWithNameJohn->count())
         ->and($stats[2])->toEqual($smsNullWithNameJohn->count());
 
-    // without segment filter
+    // without group filter
     $widgetInstance = new StudentSmsOptInOptOutPieChart();
     $widgetInstance->cacheTag = 'report-student-deliverability';
     $widgetInstance->pageFilters = [];

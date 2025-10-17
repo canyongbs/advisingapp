@@ -59,11 +59,11 @@ class StudentStats extends StatsOverviewWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedSegment();
+        $groupId = $this->getSelectedGroup();
 
-        $studentQuery = function (Builder $query) use ($segmentId) {
-            if ($segmentId) {
-                $this->segmentFilter($query, $segmentId);
+        $studentQuery = function (Builder $query) use ($groupId) {
+            if ($groupId) {
+                $this->groupFilter($query, $groupId);
             }
 
             return $query;

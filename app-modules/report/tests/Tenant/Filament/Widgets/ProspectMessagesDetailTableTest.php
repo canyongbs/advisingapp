@@ -40,11 +40,11 @@ use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\HolisticEngagement;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectMessagesDetailTable;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use App\Models\User;
 use Illuminate\Support\Str;
 
@@ -121,9 +121,9 @@ it('displays engagements and responses within the given date range', function ()
         ->assertCanNotSeeTableRecords(collect([$holisticEngagementOutOfRange]));
 });
 
-it('displays engagements and responses based on segment filters', function () {
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Prospect,
+it('displays engagements and responses based on group filters', function () {
+    $group = Group::factory()->create([
+        'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -164,7 +164,7 @@ it('displays engagements and responses based on segment filters', function () {
     $holisticEngagementDoe = HolisticEngagement::where('record_id', $engagementDoe->id)->where('record_type', new Engagement()->getMorphClass())->first();
 
     $filters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     livewire(ProspectMessagesDetailTable::class, [

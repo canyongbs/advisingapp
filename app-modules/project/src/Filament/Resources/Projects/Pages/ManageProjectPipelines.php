@@ -65,7 +65,7 @@ class ManageProjectPipelines extends ManageRelatedRecords
             ->recordTitleAttribute('name')
             ->columns([
                 TextColumn::make('name'),
-                TextColumn::make('segment.name'),
+                TextColumn::make('group.name'),
                 TextColumn::make('createdBy.name')->label('Created By'),
             ])
             ->filters([

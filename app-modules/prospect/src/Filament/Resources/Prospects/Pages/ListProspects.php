@@ -41,6 +41,10 @@ use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
 use AdvisingApp\CaseManagement\Filament\Actions\BulkCreateCaseAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEmailAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkTextAction;
+use AdvisingApp\Group\Actions\BulkGroupAction;
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Filament\Actions\BulkCreateInteractionAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
@@ -50,10 +54,6 @@ use AdvisingApp\Prospect\Imports\ProspectImporter;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Segment\Actions\BulkSegmentAction;
-use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use App\Enums\CareTeamRoleType;
 use App\Enums\TagType;
 use App\Filament\Tables\Columns\IdColumn;
@@ -118,26 +118,26 @@ class ListProspects extends ListRecords
                     ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('my_segments')
-                    ->label('My Population Segments')
+                SelectFilter::make('my_groups')
+                    ->label('My Population Groups')
                     ->options(
-                        auth()->user()->segments()
-                            ->where('model', SegmentModel::Prospect)
+                        auth()->user()->groups()
+                            ->where('model', GroupModel::Prospect)
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
-                SelectFilter::make('all_segments')
-                    ->label('All Population Segments')
+                    ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
+                SelectFilter::make('all_groups')
+                    ->label('All Population Groups')
                     ->options(
-                        Segment::all()
-                            ->where('model', SegmentModel::Prospect)
+                        Group::all()
+                            ->where('model', GroupModel::Prospect)
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
                 Filter::make('subscribed')
                     ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
                 Filter::make('care_team')
@@ -275,7 +275,7 @@ class ListProspects extends ListRecords
                             ->authorize(fn () => auth()->user()->can('prospect.*.update')),
                     ])->dropdown(false),
                     ActionGroup::make([
-                        BulkSegmentAction::make(segmentModel: SegmentModel::Prospect),
+                        BulkGroupAction::make(groupModel: GroupModel::Prospect),
                     ])->dropdown(false),
                     ActionGroup::make([
                         DeleteBulkAction::make()->label('Delete'),
@@ -284,14 +284,14 @@ class ListProspects extends ListRecords
             ]);
     }
 
-    protected function segmentFilter(Builder $query, array $data): void
+    protected function groupFilter(Builder $query, array $data): void
     {
         if (blank($data['value'])) {
             return;
         }
 
         $query->whereKey(
-            app(TranslateSegmentFilters::class)
+            app(TranslateGroupFilters::class)
                 ->execute($data['value'])
                 ->pluck($query->getModel()->getQualifiedKeyName()),
         );

@@ -71,7 +71,7 @@ class StudentDeliverableTable extends BaseWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedSegment();
+        $groupId = $this->getSelectedGroup();
 
         return $table
             ->query(
@@ -95,8 +95,8 @@ class StudentDeliverableTable extends BaseWidget
                         }
                     )
                     ->when(
-                        $segmentId,
-                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                     )
             )
             ->columns([

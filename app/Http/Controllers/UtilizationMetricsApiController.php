@@ -45,6 +45,7 @@ use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\SmsMessage;
@@ -52,7 +53,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Survey\Models\SurveySubmission;
@@ -96,7 +96,7 @@ class UtilizationMetricsApiController extends Controller
                     'journey_steps_executed' => CampaignAction::whereNotNull('execution_finished_at')->count(),
                     'tasks' => Task::count(),
                     'alerts' => Alert::count(),
-                    'segments' => Segment::count(),
+                    'groups' => Group::count(),
                     'resource_hub_articles' => ResourceHubArticle::count(),
                     'events_created' => Event::count(),
                     'forms_created' => Form::count(),

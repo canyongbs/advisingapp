@@ -35,10 +35,10 @@
 */
 
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Report\Filament\Widgets\StudentEngagementLineChart;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('returns correct monthly email and sms engagement data for students within the given date range', function () {
@@ -72,12 +72,12 @@ it('returns correct monthly email and sms engagement data for students within th
     expect($widgetInstance->getData())->toMatchSnapshot();
 });
 
-it('returns correct monthly email and sms engagement data for students based on segment filters', function () {
+it('returns correct monthly email and sms engagement data for students based on group filters', function () {
     $startDate = now()->subDays(90);
     $endDate = now()->subDays(5);
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Student,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -131,22 +131,22 @@ it('returns correct monthly email and sms engagement data for students based on 
     $widgetInstance = new StudentEngagementLineChart();
     $widgetInstance->cacheTag = 'report-student-engagement';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
-    $dataWithSegment = $widgetInstance->getData();
+    $dataWithGroup = $widgetInstance->getData();
 
-    expect($dataWithSegment)
+    expect($dataWithGroup)
         ->not->toBeEmpty()
-        ->and($dataWithSegment)->toMatchSnapshot();
+        ->and($dataWithGroup)->toMatchSnapshot();
 
     $widgetInstance = new StudentEngagementLineChart();
     $widgetInstance->cacheTag = 'report-student-engagement';
     $widgetInstance->pageFilters = [];
 
-    $dataWithoutSegment = $widgetInstance->getData();
+    $dataWithoutGroup = $widgetInstance->getData();
 
-    expect($dataWithoutSegment)
+    expect($dataWithoutGroup)
         ->not->toBeEmpty()
-        ->and($dataWithoutSegment)->toMatchSnapshot();
+        ->and($dataWithoutGroup)->toMatchSnapshot();
 });

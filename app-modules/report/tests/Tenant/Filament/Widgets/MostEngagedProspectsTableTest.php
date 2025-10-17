@@ -35,11 +35,11 @@
 */
 
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\MostEngagedProspectsTable;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 
 use function Pest\Livewire\livewire;
 
@@ -88,12 +88,12 @@ it('returns top engaged prospects based on engagements within the given date ran
         ->assertCanNotSeeTableRecords(collect([$prospect3]));
 });
 
-it('returns top engaged prospects engagements based on segment filter', function () {
+it('returns top engaged prospects engagements based on group filter', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Prospect,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -129,7 +129,7 @@ it('returns top engaged prospects engagements based on segment filter', function
     ])->create();
 
     $filters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     livewire(MostEngagedProspectsTable::class, [

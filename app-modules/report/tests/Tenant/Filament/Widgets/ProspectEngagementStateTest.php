@@ -35,11 +35,11 @@
 */
 
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectEngagementState;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use App\Models\User;
 
 it('returns correct counts of prospects, emails, texts, and staff based on the given date range', function () {
@@ -85,12 +85,12 @@ it('returns correct counts of prospects, emails, texts, and staff based on the g
         ->and($stats[3]->getValue())->toEqual(2);
 });
 
-it('returns correct counts of prospects, emails, texts, and staff engagements based on segment filters', function () {
+it('returns correct counts of prospects, emails, texts, and staff engagements based on group filters', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Prospect,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -157,7 +157,7 @@ it('returns correct counts of prospects, emails, texts, and staff engagements ba
     $widget = new ProspectEngagementState();
     $widget->cacheTag = 'report-prospect-engagement';
     $widget->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widget->getStats();

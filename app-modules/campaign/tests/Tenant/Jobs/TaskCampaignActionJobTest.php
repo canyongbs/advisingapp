@@ -41,30 +41,30 @@ use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Enums\GroupType;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Enums\SegmentType;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Support\Facades\Bus;
 
-it('will execute appropriately on each educatable in the segment', function (Educatable $educatable) {
+it('will execute appropriately on each educatable in the group', function (Educatable $educatable) {
     Bus::fake();
 
-    /** @var Segment $segment */
-    $segment = Segment::factory()->create([
-        'type' => SegmentType::Static,
+    /** @var Group $group */
+    $group = Group::factory()->create([
+        'type' => GroupType::Static,
         'model' => match ($educatable::class) {
-            Student::class => SegmentModel::Student,
-            Prospect::class => SegmentModel::Prospect,
+            Student::class => GroupModel::Student,
+            Prospect::class => GroupModel::Prospect,
             default => throw new Exception('Invalid model type'),
         },
     ]);
 
     $campaign = Campaign::factory()
-        ->for($segment, 'segment')
+        ->for($group, 'group')
         ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
         ->create();
 

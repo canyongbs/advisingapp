@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
-use AdvisingApp\Report\Abstract\Contracts\HasSegmentModel;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
 use AdvisingApp\Report\Abstract\RetentionCrmDashboardReport;
-use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentStats;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -48,7 +48,7 @@ use BackedEnum;
 use Symfony\Component\HttpFoundation\Response;
 use UnitEnum;
 
-class RetentionCrmDashboard extends RetentionCrmDashboardReport implements HasSegmentModel
+class RetentionCrmDashboard extends RetentionCrmDashboardReport implements HasGroupModel
 {
     protected static ?string $cluster = ReportLibrary::class;
 
@@ -96,8 +96,8 @@ class RetentionCrmDashboard extends RetentionCrmDashboardReport implements HasSe
         ];
     }
 
-    public function segmentModel(): ?SegmentModel
+    public function groupModel(): ?GroupModel
     {
-        return SegmentModel::Student;
+        return GroupModel::Student;
     }
 }

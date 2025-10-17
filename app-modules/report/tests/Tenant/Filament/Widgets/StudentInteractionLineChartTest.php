@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionLineChart;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('checks student interactions monthly line chart', function () {
@@ -88,12 +88,12 @@ it('returns correct data for student interactions within the given date range', 
     expect($widgetInstance->getData())->toMatchSnapshot();
 });
 
-it('returns correct data for student interactions based on segment filter', function () {
+it('returns correct data for student interactions based on group filter', function () {
     $interactionStartDate = now()->subDays(90);
     $interactionEndDate = now()->subDays(5);
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Student,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -136,7 +136,7 @@ it('returns correct data for student interactions based on segment filter', func
     $widgetInstance = new StudentInteractionLineChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     expect($widgetInstance->getData())->toMatchSnapshot();

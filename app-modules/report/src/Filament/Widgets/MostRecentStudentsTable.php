@@ -81,7 +81,7 @@ class MostRecentStudentsTable extends BaseWidget
 
                 $startDate = $this->getStartDate();
                 $endDate = $this->getEndDate();
-                $segmentId = $this->getSelectedSegment();
+                $groupId = $this->getSelectedGroup();
 
                 return Student::query()
                     ->whereNotNull('created_at_source')
@@ -93,9 +93,9 @@ class MostRecentStudentsTable extends BaseWidget
                         }
                     )
                     ->when(
-                        $segmentId,
-                        function (Builder $query) use ($segmentId): Builder {
-                            $this->segmentFilter($query, $segmentId);
+                        $groupId,
+                        function (Builder $query) use ($groupId): Builder {
+                            $this->groupFilter($query, $groupId);
 
                             return $query;
                         }

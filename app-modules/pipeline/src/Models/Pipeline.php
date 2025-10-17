@@ -37,10 +37,10 @@
 namespace AdvisingApp\Pipeline\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Pipeline\Database\Factories\PipelineFactory;
 use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
@@ -88,11 +88,11 @@ class Pipeline extends Model implements Auditable
     }
 
     /**
-     * @return BelongsTo<Segment, $this>
+     * @return BelongsTo<Group, $this>
      */
-    public function segment(): BelongsTo
+    public function group(): BelongsTo
     {
-        return $this->belongsTo(Segment::class, 'segment_id');
+        return $this->belongsTo(Group::class, 'segment_id');
     }
 
     /**

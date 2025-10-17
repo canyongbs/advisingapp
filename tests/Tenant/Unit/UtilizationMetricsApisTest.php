@@ -43,12 +43,12 @@ use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Survey\Models\SurveySubmission;
@@ -321,13 +321,13 @@ it('checks the API returns Alerts', function () {
     expect($data['alerts'])->toBe($randomRecords);
 });
 
-it('checks the API returns Segments', function () {
+it('checks the API returns Groups', function () {
     $randomRecords = random_int(1, 10);
 
-    Segment::factory()->count($randomRecords)->create();
+    Group::factory()->count($randomRecords)->create();
 
-    $softDeleteSegment = Segment::factory()->create();
-    $softDeleteSegment->delete();
+    $softDeleteGroup = Group::factory()->create();
+    $softDeleteGroup->delete();
 
     $response = get(route('utilization-metrics'));
 
@@ -335,7 +335,7 @@ it('checks the API returns Segments', function () {
 
     $response->assertStatus(200);
 
-    expect($data['segments'])->toBe($randomRecords);
+    expect($data['groups'])->toBe($randomRecords);
 });
 
 it('checks the API returns Resource Hub Articles', function () {

@@ -38,7 +38,7 @@ namespace AdvisingApp\Campaign\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Campaign\Observers\CampaignObserver;
-use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\Group\Models\Group;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -69,11 +69,11 @@ class Campaign extends BaseModel implements Auditable
     ];
 
     /**
-     * @return BelongsTo<Segment, $this>
+     * @return BelongsTo<Group, $this>
      */
-    public function segment(): BelongsTo
+    public function group(): BelongsTo
     {
-        return $this->belongsTo(Segment::class);
+        return $this->belongsTo(Group::class, 'segment_id');
     }
 
     /**
@@ -111,7 +111,7 @@ class Campaign extends BaseModel implements Auditable
                 return;
             }
 
-            $builder->whereHas('segment');
+            $builder->whereHas('group');
         });
     }
 }

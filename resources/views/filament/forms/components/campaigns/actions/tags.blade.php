@@ -35,12 +35,12 @@
     use Carbon\Carbon;
     use App\Models\User;
     use AdvisingApp\Campaign\Settings\CampaignSettings;
-    use AdvisingApp\Segment\Models\Segment;
+    use AdvisingApp\Group\Models\Group;
     use App\Models\Tag;
 
     $get = $evaluate(fn($get) => $get);
-    $segment_id = $get('segment_id');
-    $segment = Segment::find($segment_id);
+    $group_id = $get('segment_id');
+    $group = Group::find($group_id);
 @endphp
 
 <x-filament::fieldset>
@@ -50,14 +50,14 @@
 
     <dl class="max-w-md divide-y divide-gray-200 text-gray-900 dark:divide-gray-700 dark:text-white">
         <div class="flex flex-col pb-3">
-            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Tags to be assigned to the {{ $segment->model }}
+            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Tags to be assigned to the {{ $group->model }}
             </dt>
             <dd class="text-sm font-semibold">
                 {{ collect($action['tag_ids'])->map(fn(string $tagId): Tag => Tag::findOrFail($tagId))->implode('name', ', ') }}
             </dd>
         </div>
         <div class="flex flex-col pb-3">
-            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Remove all prior {{ $segment->model }} assignments
+            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Remove all prior {{ $group->model }} assignments
             </dt>
             <dd class="text-sm font-semibold">{{ $action['remove_prior'] ? 'True' : 'False' }}</dd>
         </div>

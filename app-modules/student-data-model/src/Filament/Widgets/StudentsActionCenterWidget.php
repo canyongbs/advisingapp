@@ -64,18 +64,18 @@ class StudentsActionCenterWidget extends TableWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedSegment();
+        $groupId = $this->getSelectedGroup();
 
         return $table
             ->heading('Action Center Records')
-            ->query(function () use ($segmentId, $startDate, $endDate) {
+            ->query(function () use ($groupId, $startDate, $endDate) {
                 $query = Student::query()->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 );
 
-                if ($segmentId) {
-                    $this->segmentFilter($query, $segmentId);
+                if ($groupId) {
+                    $this->groupFilter($query, $groupId);
                 }
 
                 return $query;

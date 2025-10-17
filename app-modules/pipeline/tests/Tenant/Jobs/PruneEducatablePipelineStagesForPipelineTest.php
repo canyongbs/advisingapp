@@ -34,25 +34,25 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Enums\GroupType;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Pipeline\Jobs\PruneEducatablePipelineStagesForPipeline;
 use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Pipeline\Models\PipelineStage;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Enums\SegmentType;
-use AdvisingApp\Segment\Models\Segment;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
-it('deletes educatable pipeline stages for prospects outside a segment', function () {
+it('deletes educatable pipeline stages for prospects outside a group', function () {
     $prospect = Prospect::factory()->create();
 
-    /** @var Segment $segment */
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Prospect,
-        'type' => SegmentType::Dynamic,
+    /** @var Group $group */
+    $group = Group::factory()->create([
+        'model' => GroupModel::Prospect,
+        'type' => GroupType::Dynamic,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -72,7 +72,7 @@ it('deletes educatable pipeline stages for prospects outside a segment', functio
 
     /** @var Pipeline $pipeline */
     $pipeline = Pipeline::factory()
-        ->for($segment)
+        ->for($group)
         ->create();
 
     /** @var PipelineStage $pipelineStage */
@@ -96,13 +96,13 @@ it('deletes educatable pipeline stages for prospects outside a segment', functio
     ]);
 });
 
-it('does not delete educatable pipeline stages for prospects inside a segment', function () {
+it('does not delete educatable pipeline stages for prospects inside a group', function () {
     $prospect = Prospect::factory()->create();
 
-    /** @var Segment $segment */
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Prospect,
-        'type' => SegmentType::Dynamic,
+    /** @var Group $group */
+    $group = Group::factory()->create([
+        'model' => GroupModel::Prospect,
+        'type' => GroupType::Dynamic,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -122,7 +122,7 @@ it('does not delete educatable pipeline stages for prospects inside a segment', 
 
     /** @var Pipeline $pipeline */
     $pipeline = Pipeline::factory()
-        ->for($segment)
+        ->for($group)
         ->create();
 
     /** @var PipelineStage $pipelineStage */
