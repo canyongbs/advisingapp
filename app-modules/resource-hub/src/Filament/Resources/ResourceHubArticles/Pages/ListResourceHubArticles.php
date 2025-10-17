@@ -109,16 +109,16 @@ class ListResourceHubArticles extends ListRecords
                     ->formatStateUsing(fn (ResourceHubArticle $record, int $state): string => ($record->my_upvotes_count ? 'Upvoted ' : 'Upvote ') . "({$state})"),
             ])
             ->filters([
+                SelectFilter::make('category')
+                    ->relationship('category', 'name')
+                    ->multiple()
+                    ->preload(),
                 SelectFilter::make('quality')
                     ->relationship('quality', 'name')
                     ->multiple()
                     ->preload(),
                 SelectFilter::make('status')
                     ->relationship('status', 'name')
-                    ->multiple()
-                    ->preload(),
-                SelectFilter::make('category')
-                    ->relationship('category', 'name')
                     ->multiple()
                     ->preload(),
                 TernaryFilter::make('public'),

@@ -66,7 +66,7 @@ class SegmentPolicy implements PerformsChecksBeforeAuthorization
 
     public function view(Authenticatable $authenticatable, Segment $segment): Response
     {
-        if (! $authenticatable->hasLicense($segment->model?->class()::getLicenseType())) {
+        if (! $authenticatable->hasLicense($segment->model->class()::getLicenseType())) {
             return Response::deny('You do not have permission to view this segment.');
         }
 
@@ -86,7 +86,7 @@ class SegmentPolicy implements PerformsChecksBeforeAuthorization
 
     public function update(Authenticatable $authenticatable, Segment $segment): Response
     {
-        if (! $authenticatable->hasLicense($segment->model?->class()::getLicenseType())) {
+        if (! $authenticatable->hasLicense($segment->model->class()::getLicenseType())) {
             return Response::deny('You do not have permission to update this segment.');
         }
 
@@ -98,7 +98,7 @@ class SegmentPolicy implements PerformsChecksBeforeAuthorization
 
     public function delete(Authenticatable $authenticatable, Segment $segment): Response
     {
-        if (! $authenticatable->hasLicense($segment->model?->class()::getLicenseType())) {
+        if (! $authenticatable->hasLicense($segment->model->class()::getLicenseType())) {
             return Response::deny('You do not have permission to delete this segment.');
         }
 
@@ -114,7 +114,7 @@ class SegmentPolicy implements PerformsChecksBeforeAuthorization
 
     public function restore(Authenticatable $authenticatable, Segment $segment): Response
     {
-        if (! $authenticatable->hasLicense($segment->model?->class()::getLicenseType())) {
+        if (! $authenticatable->hasLicense($segment->model->class()::getLicenseType())) {
             return Response::deny('You do not have permission to restore this segment.');
         }
 
@@ -126,7 +126,7 @@ class SegmentPolicy implements PerformsChecksBeforeAuthorization
 
     public function forceDelete(Authenticatable $authenticatable, Segment $segment): Response
     {
-        if (! $authenticatable->hasLicense($segment->model?->class()::getLicenseType())) {
+        if (! $authenticatable->hasLicense($segment->model->class()::getLicenseType())) {
             return Response::deny('You do not have permission to permanently delete this segment.');
         }
 
