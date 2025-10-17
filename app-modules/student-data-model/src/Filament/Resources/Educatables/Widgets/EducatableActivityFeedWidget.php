@@ -66,7 +66,7 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
     use InteractsWithForms;
     use InteractsWithInfolists;
 
-    protected string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-activity-feed-widget';
+    protected string $view = 'student-data-model::filament.resources.educatables.widgets.educatable-activity-feed-widget';
 
     #[Locked]
     public Educatable&Model $educatable;

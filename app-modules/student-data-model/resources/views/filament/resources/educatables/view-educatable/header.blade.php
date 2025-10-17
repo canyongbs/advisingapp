@@ -65,12 +65,12 @@
                             @foreach ($details as [$detail, $detailIcon])
                                 @if ($detail instanceof StudentPhoneNumber || $detail instanceof ProspectPhoneNumber)
                                     @include(
-                                        'student-data-model::components.filament.resources.educatable-resource.view-educatable.phone-number-detail',
+                                        'student-data-model::components.filament.resources.educatables.view-educatable.phone-number-detail',
                                         ['phoneNumber' => $detail]
                                     )
                                 @elseif ($detail instanceof StudentEmailAddress || $detail instanceof ProspectEmailAddress)
                                     @include(
-                                        'student-data-model::components.filament.resources.educatable-resource.view-educatable.email-address-detail',
+                                        'student-data-model::components.filament.resources.educatables.view-educatable.email-address-detail',
                                         ['emailAddress' => $detail]
                                     )
                                 @else

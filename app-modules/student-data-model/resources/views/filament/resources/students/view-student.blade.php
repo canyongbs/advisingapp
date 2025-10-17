@@ -69,7 +69,7 @@
 
         <div class="flex flex-col gap-8 lg:col-span-1 xl:col-span-2">
             @livewire(StudentAcademicStats::class, ['record' => $this->getRecord()])
-            <x-student-data-model::filament.resources.educatable-resource.view-educatable.relation-managers
+            <x-student-data-model::filament.resources.educatables.view-educatable.relation-managers
                 :managers="[
                     'programs' => ProgramsRelationManager::class,
                     'enrollments' => EnrollmentsRelationManager::class,
@@ -114,7 +114,7 @@
                 @endif
             </div>
 
-            <x-student-data-model::filament.resources.educatable-resource.view-educatable.relation-managers
+            <x-student-data-model::filament.resources.educatables.view-educatable.relation-managers
                 :managers="[
                     'forms' => FormSubmissionsRelationManager::class,
                     'events' => EventsRelationManager::class,

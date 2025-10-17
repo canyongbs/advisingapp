@@ -61,7 +61,7 @@ trait HasStudentHeader
             ? $student->full_name
             : "{$student->first} {$student->last}";
 
-        return view('student-data-model::filament.resources.educatable-resource.view-educatable.header', [
+        return view('student-data-model::filament.resources.educatables.view-educatable.header', [
             'actions' => $this->getCachedHeaderActions(),
             'backButtonLabel' => 'Back to student',
             'backButtonUrl' => $this instanceof ViewStudent
@@ -99,7 +99,7 @@ trait HasStudentHeader
             StudentTagsAction::make()->visible(fn (): bool => auth()->user()->can('student.*.update')),
             SyncStudentSisAction::make(),
             SubscribeHeaderAction::make()
-                ->view('student-data-model::filament.resources.educatable-resource.subscribe-header-action', ['record' => $this->getRecord()]),
+                ->view('student-data-model::filament.resources.educatables.subscribe-header-action', ['record' => $this->getRecord()]),
             DeleteAction::make()
                 ->modalDescription('Are you sure you wish to delete the student? By deleting a student record, you will remove any related enrollment and program data, along with any related interactions, notes, etc. This action cannot be reversed.')
                 ->using(function ($record) {

@@ -50,5 +50,5 @@ class ViewProspectActivityFeed extends Page
 
     protected static ?string $title = 'Activity Feed';
 
-    protected string $view = 'student-data-model::filament.resources.educatable-resource.view-educatable-activity-feed';
+    protected string $view = 'student-data-model::filament.resources.educatables.view-educatable-activity-feed';
 }

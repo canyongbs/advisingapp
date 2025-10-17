@@ -254,7 +254,7 @@ class EngagementsRelationManager extends RelationManager
                             default => ''
                         };
 
-                        return new HtmlString(view('student-data-model::components.filament.resources.educatable-resource.view-educatable.engagement-modal-header', ['record' => $record, 'status' => $status]));
+                        return new HtmlString(view('student-data-model::components.filament.resources.educatables.view-educatable.engagement-modal-header', ['record' => $record, 'status' => $status]));
                     })
                     ->extraModalFooterActions([
                         Action::make('updateStatus')

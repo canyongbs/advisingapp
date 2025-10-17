@@ -46,7 +46,7 @@ use Livewire\Attributes\Locked;
 
 class EducatableCareTeamWidget extends Widget
 {
-    protected string $view = 'student-data-model::filament.resources.educatable-resource.widgets.educatable-care-team-widget';
+    protected string $view = 'student-data-model::filament.resources.educatables.widgets.educatable-care-team-widget';
 
     #[Locked]
     public Educatable&Model $educatable;

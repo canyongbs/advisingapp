@@ -63,7 +63,7 @@ trait HasProspectHeader
             ? $prospect->full_name
             : "{$prospect->first_name} {$prospect->last_name}";
 
-        return view('student-data-model::filament.resources.educatable-resource.view-educatable.header', [
+        return view('student-data-model::filament.resources.educatables.view-educatable.header', [
             'actions' => $this->getCachedHeaderActions(),
             'backButtonLabel' => 'Back to prospect',
             'backButtonUrl' => $this instanceof ViewProspect
@@ -102,7 +102,7 @@ trait HasProspectHeader
             ConvertToStudent::make()->visible(fn (Prospect $record) => ! $record->student()->exists()),
             DisassociateStudent::make()->visible(fn (Prospect $record) => $record->student()->exists()),
             SubscribeHeaderAction::make()
-                ->view('student-data-model::filament.resources.educatable-resource.subscribe-header-action', ['record' => $this->getRecord()]),
+                ->view('student-data-model::filament.resources.educatables.subscribe-header-action', ['record' => $this->getRecord()]),
         ];
     }
 }
