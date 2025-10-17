@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources;
+namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates;
 
-use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages\CreateApplicationSubmissionState;
-use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages\EditApplicationSubmissionState;
-use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages\ListApplicationSubmissionStates;
-use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages\ViewApplicationSubmissionState;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages\CreateApplicationSubmissionState;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages\EditApplicationSubmissionState;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages\ListApplicationSubmissionStates;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages\ViewApplicationSubmissionState;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use App\Filament\Clusters\OnlineAdmissions;
 use Filament\Resources\Resource;

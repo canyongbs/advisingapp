@@ -736,88 +736,88 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/application/src/Exports/ApplicationSubmissionExport.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\ApplicationResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
+    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\Applications\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/ApplicationResource.php',
+    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\ApplicationResource\\\\Actions\\\\ApplicationAdmissionActions\\:\\:get\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\Applications\\\\Actions\\\\ApplicationAdmissionActions\\:\\:get\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/ApplicationResource/Actions/ApplicationAdmissionActions.php',
+    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Actions/ApplicationAdmissionActions.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\ApplicationResource\\\\Pages\\\\CreateApplication\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\Applications\\\\Pages\\\\CreateApplication\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/ApplicationResource/Pages/CreateApplication.php',
+    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/CreateApplication.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\ApplicationResource\\\\Pages\\\\CreateApplication\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\Applications\\\\Pages\\\\CreateApplication\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/ApplicationResource/Pages/CreateApplication.php',
+    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/CreateApplication.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\ApplicationResource\\\\Pages\\\\CreateApplication\\:\\:saveFieldsFromComponents\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\Applications\\\\Pages\\\\CreateApplication\\:\\:saveFieldsFromComponents\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/ApplicationResource/Pages/CreateApplication.php',
+    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/CreateApplication.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$application of method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\ApplicationResource\\\\Pages\\\\CreateApplication\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\Application\\\\Models\\\\Application, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
+    'message' => '#^Parameter \\#1 \\$application of method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\Applications\\\\Pages\\\\CreateApplication\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\Application\\\\Models\\\\Application, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/ApplicationResource/Pages/CreateApplication.php',
+    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/CreateApplication.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\ApplicationResource\\\\Pages\\\\EditApplication\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\Applications\\\\Pages\\\\EditApplication\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/ApplicationResource/Pages/EditApplication.php',
+    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/EditApplication.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\ApplicationResource\\\\Pages\\\\EditApplication\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\Applications\\\\Pages\\\\EditApplication\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/ApplicationResource/Pages/EditApplication.php',
+    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/EditApplication.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\ApplicationResource\\\\Pages\\\\EditApplication\\:\\:saveFieldsFromComponents\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\Applications\\\\Pages\\\\EditApplication\\:\\:saveFieldsFromComponents\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/ApplicationResource/Pages/EditApplication.php',
+    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/EditApplication.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$application of method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\ApplicationResource\\\\Pages\\\\EditApplication\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\Application\\\\Models\\\\Application, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
+    'message' => '#^Parameter \\#1 \\$application of method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\Applications\\\\Pages\\\\EditApplication\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\Application\\\\Models\\\\Application, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/ApplicationResource/Pages/EditApplication.php',
+    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/EditApplication.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$name\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/ApplicationResource/Pages/ListApplications.php',
+    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/ListApplications.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$name\\.$#',
     'identifier' => 'property.notFound',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/ApplicationResource/Pages/ManageApplicationSubmissions.php',
+    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/ManageApplicationSubmissions.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$submissions\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/ApplicationResource/Pages/ManageApplicationSubmissions.php',
+    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/ManageApplicationSubmissions.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$records of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/ApplicationResource/Pages/ManageApplicationSubmissions.php',
+    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/ManageApplicationSubmissions.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Application\\\\Livewire\\\\RenderApplication\\:\\:\\$data type has no value type specified in iterable type array\\.$#',

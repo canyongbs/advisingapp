@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages;
+namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Exports\ApplicationSubmissionExport;
-use AdvisingApp\Application\Filament\Resources\ApplicationResource;
-use AdvisingApp\Application\Filament\Resources\ApplicationResource\Actions\ApplicationAdmissionActions;
+use AdvisingApp\Application\Filament\Resources\Applications\Actions\ApplicationAdmissionActions;
+use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\Scopes\ClassifiedAs;
 use App\Filament\Tables\Columns\IdColumn;

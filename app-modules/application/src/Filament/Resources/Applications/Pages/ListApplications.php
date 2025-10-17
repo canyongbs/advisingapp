@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages;
+namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 
 use AdvisingApp\Application\Actions\DuplicateApplication;
-use AdvisingApp\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\Action;

@@ -34,45 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages;
+namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages;
 
-use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
-use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
-use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
-class CreateApplicationSubmissionState extends CreateRecord
+class ViewApplicationSubmissionState extends ViewRecord
 {
     protected static string $resource = ApplicationSubmissionStateResource::class;
 
-    public function form(Schema $schema): Schema
+    public function infolist(Schema $schema): Schema
     {
         return $schema
-            ->components([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                Select::make('classification')
-                    ->label('Classification')
-                    ->searchable()
-                    ->options(ApplicationSubmissionStateClassification::class)
-                    ->required()
-                    ->enum(ApplicationSubmissionStateClassification::class),
-                Select::make('color')
-                    ->label('Color')
-                    ->searchable()
-                    ->options(ApplicationSubmissionStateColorOptions::class)
-                    ->required()
-                    ->enum(ApplicationSubmissionStateColorOptions::class),
-                Textarea::make('description')
-                    ->label('Description')
-                    ->required()
-                    ->string(),
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name')
+                            ->label('Name'),
+                        TextEntry::make('classification')
+                            ->label('Classification'),
+                        TextEntry::make('color')
+                            ->label('Color')
+                            ->badge()
+                            ->color(fn (ApplicationSubmissionState $applicationState) => $applicationState->color->value),
+                        TextEntry::make('description')
+                            ->label('Description'),
+                    ])
+                    ->columns(),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            EditAction::make(),
+        ];
     }
 }

@@ -34,61 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages;
+namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages;
 
-use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
-class ListApplicationSubmissionStates extends ListRecords
+class CreateApplicationSubmissionState extends CreateRecord
 {
     protected static string $resource = ApplicationSubmissionStateResource::class;
 
-    public function table(Table $table): Table
+    public function form(Schema $schema): Schema
     {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->label('Name')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('classification')
+                    ->required()
+                    ->string(),
+                Select::make('classification')
                     ->label('Classification')
                     ->searchable()
-                    ->sortable(),
-                TextColumn::make('color')
+                    ->options(ApplicationSubmissionStateClassification::class)
+                    ->required()
+                    ->enum(ApplicationSubmissionStateClassification::class),
+                Select::make('color')
                     ->label('Color')
-                    ->badge()
-                    ->color(fn (ApplicationSubmissionState $applicationState) => $applicationState->color->value),
-                TextColumn::make('applications_count')
-                    ->label('# of Applications')
-                    ->counts('submissions')
-                    ->sortable(),
-            ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                    ->searchable()
+                    ->options(ApplicationSubmissionStateColorOptions::class)
+                    ->required()
+                    ->enum(ApplicationSubmissionStateColorOptions::class),
+                Textarea::make('description')
+                    ->label('Description')
+                    ->required()
+                    ->string(),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
     }
 }

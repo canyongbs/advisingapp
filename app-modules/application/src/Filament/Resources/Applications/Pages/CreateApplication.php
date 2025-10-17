@@ -34,45 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages;
+namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 
-use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use Filament\Actions\EditAction;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Components\Section;
+use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\Concerns\HasSharedFormConfiguration;
+use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
 
-class ViewApplicationSubmissionState extends ViewRecord
+class CreateApplication extends CreateRecord
 {
-    protected static string $resource = ApplicationSubmissionStateResource::class;
+    use HasSharedFormConfiguration;
 
-    public function infolist(Schema $schema): Schema
+    protected static string $resource = ApplicationResource::class;
+
+    public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('name')
-                            ->label('Name'),
-                        TextEntry::make('classification')
-                            ->label('Classification'),
-                        TextEntry::make('color')
-                            ->label('Color')
-                            ->badge()
-                            ->color(fn (ApplicationSubmissionState $applicationState) => $applicationState->color->value),
-                        TextEntry::make('description')
-                            ->label('Description'),
-                    ])
-                    ->columns(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            EditAction::make(),
-        ];
+            ->components($this->fields());
     }
 }

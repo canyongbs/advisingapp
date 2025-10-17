@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\Concerns;
+namespace AdvisingApp\Application\Filament\Resources\Applications\Pages\Concerns;
 
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationField;

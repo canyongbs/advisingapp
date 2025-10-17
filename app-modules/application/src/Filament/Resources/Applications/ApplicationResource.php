@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources;
+namespace AdvisingApp\Application\Filament\Resources\Applications;
 
-use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\CreateApplication;
-use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\EditApplication;
-use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\ListApplications;
-use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\ManageApplicationSubmissions;
-use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\ManageApplicationWorkflows;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\CreateApplication;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\EditApplication;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ListApplications;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationSubmissions;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationWorkflows;
 use AdvisingApp\Application\Models\Application;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;

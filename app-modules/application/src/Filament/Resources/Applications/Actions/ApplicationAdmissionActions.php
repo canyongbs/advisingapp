@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Actions;
+namespace AdvisingApp\Application\Filament\Resources\Applications\Actions;
 
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Models\ApplicationSubmission;

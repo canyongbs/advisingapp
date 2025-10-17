@@ -33,12 +33,12 @@
 
 </COPYRIGHT>
 */
-use AdvisingApp\Application\Filament\Resources\ApplicationResource;
-use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\CreateApplication;
+
+use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\CreateApplication;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
-
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 

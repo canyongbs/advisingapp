@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages;
+namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 
-use AdvisingApp\Application\Filament\Resources\ApplicationResource;
-use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\Concerns\HasSharedFormConfiguration;
+use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
