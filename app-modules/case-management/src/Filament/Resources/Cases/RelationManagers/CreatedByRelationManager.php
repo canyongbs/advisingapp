@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Resources\Cases\RelationManagers;
 
-use App\Filament\Resources\UserResource;
+use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
 use Filament\Actions\ViewAction;

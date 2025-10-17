@@ -31,7 +31,7 @@
 
 </COPYRIGHT>
 --}}
-@use('App\Filament\Resources\UserResource')
+@use('App\Filament\Resources\Users\UserResource')
 <div>
     <div class="flex flex-row justify-between">
         @if ($record->user)

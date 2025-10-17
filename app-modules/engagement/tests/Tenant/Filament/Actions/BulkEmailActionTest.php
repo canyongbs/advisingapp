@@ -39,7 +39,7 @@ use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ListProspects;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Facades\Queue;
 

@@ -37,7 +37,7 @@
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Filament\Pages\ManageAiSettings;
-use AdvisingApp\Ai\Filament\Resources\AiAssistantResource;
+use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;

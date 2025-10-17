@@ -38,7 +38,7 @@ namespace AdvisingApp\CaseManagement\Filament\Concerns;
 
 use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
 use AdvisingApp\CaseManagement\Models\CaseAssignment;
-use App\Filament\Resources\UserResource;
+use App\Filament\Resources\Users\UserResource;
 use Filament\Infolists\Components\TextEntry;
 
 // TODO Re-use this trait across other places where infolist is rendered

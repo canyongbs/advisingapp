@@ -71,7 +71,7 @@ class EditCaseTypeNotifications extends EditRecord
                     ->schema([
                         ViewField::make('settings')
                             ->rules(['array'])
-                            ->view('case-management::filament.resources.case-type-resource.pages.edit-case-type-notifications.matrix'),
+                            ->view('case-management::filament.resources.case-types.pages.edit-case-type-notifications.matrix'),
                     ])
                     ->extraAttributes(['class' => 'fi-section-no-content-padding']),
             ]);

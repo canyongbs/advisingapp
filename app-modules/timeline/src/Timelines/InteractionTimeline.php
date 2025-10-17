@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Timeline\Timelines;
 
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Components\InteractionViewAction;
+use AdvisingApp\Interaction\Filament\Resources\Interactions\Components\InteractionViewAction;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Timeline\Models\CustomTimeline;
 use Filament\Actions\ViewAction;

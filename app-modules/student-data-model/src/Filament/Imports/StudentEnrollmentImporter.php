@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Imports;
 
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns\ImportColumns;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\Concerns\ImportColumns;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;

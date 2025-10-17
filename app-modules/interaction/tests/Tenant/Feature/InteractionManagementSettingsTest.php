@@ -35,11 +35,11 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages\ListInteractionDrivers;
-use AdvisingApp\Interaction\Filament\Resources\InteractionInitiativeResource\Pages\ListInteractionInitiatives;
-use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource\Pages\ListInteractionRelations;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
-use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource\Pages\ListInteractionStatuses;
+use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\Pages\ListInteractionDrivers;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiatives\Pages\ListInteractionInitiatives;
+use AdvisingApp\Interaction\Filament\Resources\InteractionRelations\Pages\ListInteractionRelations;
+use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\CreateInteraction;
+use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\Pages\ListInteractionStatuses;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;

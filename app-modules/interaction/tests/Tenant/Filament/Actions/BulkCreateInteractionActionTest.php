@@ -38,7 +38,7 @@ use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Tests\Tenant\Filament\Actions\RequestFactories\BulkCreateInteractionActionRequestFactory;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ListProspects;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Str;
 

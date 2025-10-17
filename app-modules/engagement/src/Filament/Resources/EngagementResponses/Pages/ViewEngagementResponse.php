@@ -40,7 +40,7 @@ use AdvisingApp\Engagement\Filament\Resources\EngagementResponses\EngagementResp
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;

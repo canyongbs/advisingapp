@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Workflow\Filament\Resources\Workflows\Pages;
 
-use AdvisingApp\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Models\Form;

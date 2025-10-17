@@ -38,8 +38,8 @@ namespace AdvisingApp\Division\Filament\Resources\Divisions\Pages;
 
 use AdvisingApp\Division\Filament\Resources\Divisions\DivisionResource;
 use AdvisingApp\Division\Models\Division;
-use App\Filament\Resources\NotificationSettingResource;
-use App\Filament\Resources\UserResource;
+use App\Filament\Resources\NotificationSettings\NotificationSettingResource;
+use App\Filament\Resources\Users\UserResource;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;

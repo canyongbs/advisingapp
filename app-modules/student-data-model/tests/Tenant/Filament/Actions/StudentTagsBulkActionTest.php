@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\TagType;
 use App\Models\Tag;

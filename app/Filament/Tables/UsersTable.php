@@ -36,7 +36,7 @@
 
 namespace App\Filament\Tables;
 
-use App\Filament\Resources\UserResource;
+use App\Filament\Resources\Users\UserResource;
 use App\Models\User;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Enums\FiltersLayout;

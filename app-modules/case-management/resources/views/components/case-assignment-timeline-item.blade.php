@@ -33,7 +33,7 @@
 --}}
 
 @php
-    use App\Filament\Resources\UserResource;
+    use App\Filament\Resources\Users\UserResource;
 @endphp
 
 <div>

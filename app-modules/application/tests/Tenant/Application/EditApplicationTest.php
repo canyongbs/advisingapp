@@ -33,9 +33,10 @@
 
 </COPYRIGHT>
 */
+
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
-use AdvisingApp\Application\Filament\Resources\ApplicationResource;
-use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\EditApplication;
+use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\EditApplication;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;

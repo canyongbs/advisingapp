@@ -40,7 +40,7 @@ use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Notification\Events\SubscriptionCreated;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspect;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Notifications\DatabaseNotification;

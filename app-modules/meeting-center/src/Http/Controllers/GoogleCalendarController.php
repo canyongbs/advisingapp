@@ -37,7 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
 use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ListCalendarEvents;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages\ListCalendarEvents;
 use AdvisingApp\MeetingCenter\Managers\GoogleCalendarManager;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use App\Models\User;

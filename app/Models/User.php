@@ -71,7 +71,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
-use App\Filament\Resources\UserResource;
+use App\Filament\Resources\Users\UserResource;
 use App\Observers\UserObserver;
 use App\Support\HasAdvancedFilter;
 use Database\Factories\UserFactory;

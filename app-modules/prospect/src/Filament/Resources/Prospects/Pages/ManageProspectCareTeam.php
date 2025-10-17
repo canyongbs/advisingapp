@@ -43,7 +43,7 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\Concerns\HasProspect
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Enums\CareTeamRoleType;
-use App\Filament\Resources\UserResource;
+use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
 use App\Models\User;

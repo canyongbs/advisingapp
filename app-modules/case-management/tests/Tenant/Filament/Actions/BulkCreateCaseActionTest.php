@@ -40,7 +40,7 @@ use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Tests\Tenant\Filament\Actions\RequestFactories\BulkCreateCaseActionRequestFactory;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ListProspects;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Str;
 

@@ -42,7 +42,7 @@ use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\Concerns\HasCaseRe
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\CarbonInterval;
 use Filament\Infolists\Components\TextEntry;

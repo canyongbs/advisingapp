@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Widgets;
 
-use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\CalendarEventResource;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use App\Models\User;
 use Livewire\Attributes\On;

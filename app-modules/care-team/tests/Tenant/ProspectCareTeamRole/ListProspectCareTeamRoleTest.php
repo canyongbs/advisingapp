@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource;
-use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoleResource\Pages\ListProspectCareTeamRoles;
+use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoles\Pages\ListProspectCareTeamRoles;
+use AdvisingApp\CareTeam\Filament\Resources\ProspectCareTeamRoles\ProspectCareTeamRoleResource;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Enums\CareTeamRoleType;

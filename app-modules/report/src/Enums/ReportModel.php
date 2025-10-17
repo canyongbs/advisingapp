@@ -41,7 +41,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Exports\ProspectExporter;
 use AdvisingApp\Report\Filament\Exports\StudentExporter;
 use AdvisingApp\Report\Filament\Exports\UserExporter;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Tables\StudentsTable;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Tables\StudentsTable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Tables\UsersTable;
 use App\Models\Authenticatable;

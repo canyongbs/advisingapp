@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Filament\Resources\PromptResource;
-use AdvisingApp\Ai\Filament\Resources\PromptResource\Pages\CreatePrompt;
+use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\CreatePrompt;
+use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Authorization\Enums\LicenseType;
 

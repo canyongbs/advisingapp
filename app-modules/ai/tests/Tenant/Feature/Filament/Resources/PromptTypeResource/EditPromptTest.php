@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Filament\Resources\PromptTypeResource;
-use AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages\EditPromptType;
+use AdvisingApp\Ai\Filament\Resources\PromptTypes\Pages\EditPromptType;
+use AdvisingApp\Ai\Filament\Resources\PromptTypes\PromptTypeResource;
 use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use Filament\Actions\DeleteAction;

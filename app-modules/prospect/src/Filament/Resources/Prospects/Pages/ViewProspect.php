@@ -53,7 +53,7 @@ class ViewProspect extends ViewRecord
     // TODO: Automatically set from Filament
     protected static ?string $navigationLabel = 'View';
 
-    protected string $view = 'prospect::filament.resources.prospect-resource.view-prospect';
+    protected string $view = 'prospect::filament.resources.prospects.view-prospect';
 
     public function profile(Schema $schema): Schema
     {

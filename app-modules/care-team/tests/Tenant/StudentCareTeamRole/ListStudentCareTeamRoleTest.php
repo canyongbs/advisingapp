@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource;
-use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoleResource\Pages\ListStudentCareTeamRoles;
+use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoles\Pages\ListStudentCareTeamRoles;
+use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoles\StudentCareTeamRoleResource;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
