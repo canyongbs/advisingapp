@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ManageCategories;
+use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisorCategory;
 use AdvisingApp\Ai\Tests\RequestFactories\QnaAdvisorCategoryRequestFactory;
