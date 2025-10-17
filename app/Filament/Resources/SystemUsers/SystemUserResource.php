@@ -34,27 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Concerns;
+namespace App\Filament\Resources\SystemUsers;
 
-use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
-use AdvisingApp\CaseManagement\Models\CaseAssignment;
-use App\Filament\Resources\Users\UserResource;
-use Filament\Infolists\Components\TextEntry;
+use App\Filament\Resources\SystemUsers\Pages\CreateSystemUser;
+use App\Filament\Resources\SystemUsers\Pages\EditSystemUser;
+use App\Filament\Resources\SystemUsers\Pages\ListSystemUsers;
+use App\Filament\Resources\SystemUsers\RelationManagers\PermissionsRelationManager;
+use App\Models\SystemUser;
+use Filament\Resources\Resource;
+use UnitEnum;
 
-// TODO Re-use this trait across other places where infolist is rendered
-trait CaseAssignmentInfolist
+class SystemUserResource extends Resource
 {
-    public function caseAssignmentInfolist(): array
+    protected static ?string $model = SystemUser::class;
+
+    protected static string | UnitEnum | null $navigationGroup = 'User Management';
+
+    protected static ?string $navigationLabel = 'Programmatic Users';
+
+    protected static ?string $modelLabel = 'Programmatic User';
+
+    protected static ?string $breadcrumb = 'Programmatic Users';
+
+    protected static ?int $navigationSort = 40;
+
+    public static function getRelations(): array
     {
         return [
-            TextEntry::make('case.case_number')
-                ->label('Case')
-                ->url(fn (CaseAssignment $caseAssignment): string => CaseResource::getUrl('view', ['record' => $caseAssignment->case]))
-                ->color('primary'),
-            TextEntry::make('user.name')
-                ->label('Assigned To')
-                ->url(fn (CaseAssignment $caseAssignment): string => UserResource::getUrl('view', ['record' => $caseAssignment->user]))
-                ->color('primary'),
+            PermissionsRelationManager::class,
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListSystemUsers::route('/'),
+            'create' => CreateSystemUser::route('/create'),
+            'edit' => EditSystemUser::route('/{record}/edit'),
         ];
     }
 }

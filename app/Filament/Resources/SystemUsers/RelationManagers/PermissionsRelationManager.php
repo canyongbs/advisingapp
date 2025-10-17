@@ -34,21 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\Cases\RelationManagers;
+namespace App\Filament\Resources\SystemUsers\RelationManagers;
 
-use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
-use App\Models\User;
-use Filament\Actions\ViewAction;
+use App\Models\SystemUser;
+use Filament\Actions\AttachAction;
+use Filament\Actions\DetachAction;
+use Filament\Actions\DetachBulkAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
-class CreatedByRelationManager extends RelationManager
+class PermissionsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'createdBy';
+    protected static string $relationship = 'permissions';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -56,9 +59,12 @@ class CreatedByRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                TextInput::make('full')
+                TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(125),
+                TextInput::make('guard_name')
+                    ->required()
+                    ->maxLength(125),
             ]);
     }
 
@@ -67,13 +73,37 @@ class CreatedByRelationManager extends RelationManager
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('name')
-                    ->label('Name'),
+                TextColumn::make('group.name')
+                    ->sortable(),
+                TextColumn::make('name'),
             ])
-            ->paginated(false)
+            ->filters([
+                SelectFilter::make('group')
+                    ->relationship('group', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->multiple(),
+            ])
+            ->headerActions([
+                AttachAction::make()
+                    ->recordSelectOptionsQuery(
+                        function (Builder $query) {
+                            /** @var SystemUser $owner */
+                            $owner = $this->getOwnerRecord();
+
+                            return $query
+                                ->where('guard_name', 'api')
+                                ->whereNotIn('name', $owner->getPermissionNames());
+                        }
+                    )
+                    ->multiple()
+                    ->preloadRecordSelect(),
+            ])
             ->recordActions([
-                ViewAction::make()
-                    ->url(fn (User $user) => UserResource::getUrl('view', ['record' => $user])),
+                DetachAction::make(),
+            ])
+            ->toolbarActions([
+                DetachBulkAction::make(),
             ]);
     }
 }

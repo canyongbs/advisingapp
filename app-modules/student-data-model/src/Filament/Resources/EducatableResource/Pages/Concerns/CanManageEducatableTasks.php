@@ -43,7 +43,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 use AdvisingApp\Task\Models\Task;
-use App\Filament\Resources\UserResource;
+use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
 use Filament\Actions\BulkActionGroup;

@@ -34,27 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Concerns;
+namespace App\Filament\Resources\Pronouns\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
-use AdvisingApp\CaseManagement\Models\CaseAssignment;
-use App\Filament\Resources\Users\UserResource;
-use Filament\Infolists\Components\TextEntry;
+use App\Filament\Resources\Pronouns\PronounsResource;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ManageRecords;
 
-// TODO Re-use this trait across other places where infolist is rendered
-trait CaseAssignmentInfolist
+class ManagePronouns extends ManageRecords
 {
-    public function caseAssignmentInfolist(): array
+    protected static string $resource = PronounsResource::class;
+
+    protected static ?string $title = 'User Profile Pronoun';
+
+    protected function getHeaderActions(): array
     {
         return [
-            TextEntry::make('case.case_number')
-                ->label('Case')
-                ->url(fn (CaseAssignment $caseAssignment): string => CaseResource::getUrl('view', ['record' => $caseAssignment->case]))
-                ->color('primary'),
-            TextEntry::make('user.name')
-                ->label('Assigned To')
-                ->url(fn (CaseAssignment $caseAssignment): string => UserResource::getUrl('view', ['record' => $caseAssignment->user]))
-                ->color('primary'),
+            CreateAction::make()
+                ->modalWidth('md'),
         ];
     }
 }

@@ -38,7 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\EducatableResource\Pag
 
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Filament\Resources\UserResource;
+use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
 use App\Models\User;

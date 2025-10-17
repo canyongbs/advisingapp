@@ -42,7 +42,7 @@ use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\History;
 use AdvisingApp\Timeline\Timelines\TaskHistoryTimeline;
-use App\Filament\Resources\UserResource;
+use App\Filament\Resources\Users\UserResource;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;

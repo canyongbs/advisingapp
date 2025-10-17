@@ -35,8 +35,8 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Filament\Resources\UserResource\Actions\AssignLicensesBulkAction;
-use App\Filament\Resources\UserResource\Pages\ListUsers;
+use App\Filament\Resources\Users\Actions\AssignLicensesBulkAction;
+use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;

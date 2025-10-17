@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use App\Filament\Resources\UserResource\Pages\EditUser;
+use App\Filament\Resources\Users\Pages\EditUser;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 

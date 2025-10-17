@@ -34,27 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Concerns;
+namespace App\Filament\Resources\NotificationSettings;
 
-use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
-use AdvisingApp\CaseManagement\Models\CaseAssignment;
-use App\Filament\Resources\Users\UserResource;
-use Filament\Infolists\Components\TextEntry;
+use App\Filament\Clusters\Communication;
+use App\Filament\Resources\NotificationSettings\Pages\CreateNotificationSetting;
+use App\Filament\Resources\NotificationSettings\Pages\EditNotificationSetting;
+use App\Filament\Resources\NotificationSettings\Pages\ListNotificationSettings;
+use App\Models\NotificationSetting;
+use Filament\Resources\Resource;
 
-// TODO Re-use this trait across other places where infolist is rendered
-trait CaseAssignmentInfolist
+class NotificationSettingResource extends Resource
 {
-    public function caseAssignmentInfolist(): array
+    protected static ?string $model = NotificationSetting::class;
+
+    protected static ?int $navigationSort = 110;
+
+    protected static ?string $cluster = Communication::class;
+
+    public static function getRelations(): array
+    {
+        return [];
+    }
+
+    public static function getPages(): array
     {
         return [
-            TextEntry::make('case.case_number')
-                ->label('Case')
-                ->url(fn (CaseAssignment $caseAssignment): string => CaseResource::getUrl('view', ['record' => $caseAssignment->case]))
-                ->color('primary'),
-            TextEntry::make('user.name')
-                ->label('Assigned To')
-                ->url(fn (CaseAssignment $caseAssignment): string => UserResource::getUrl('view', ['record' => $caseAssignment->user]))
-                ->color('primary'),
+            'index' => ListNotificationSettings::route('/'),
+            'create' => CreateNotificationSetting::route('/create'),
+            'edit' => EditNotificationSetting::route('/{record}/edit'),
         ];
     }
 }

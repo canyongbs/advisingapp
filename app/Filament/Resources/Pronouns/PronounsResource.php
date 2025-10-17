@@ -34,53 +34,67 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Tables;
+namespace App\Filament\Resources\Pronouns;
 
-use App\Filament\Resources\Users\UserResource;
-use App\Models\User;
-use Filament\Actions\ViewAction;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\QueryBuilder;
-use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint;
-use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use App\Filament\Clusters\ProfileManagement;
+use App\Filament\Resources\Pronouns\Pages\ManagePronouns;
+use App\Models\Pronouns;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class UsersTable
+class PronounsResource extends Resource
 {
-    public function __invoke(Table $table): Table
+    protected static ?string $model = Pronouns::class;
+
+    protected static ?string $label = 'Profile Pronoun';
+
+    protected static ?string $navigationLabel = 'Personal Pronouns';
+
+    protected static ?int $navigationSort = 1;
+
+    protected static ?string $cluster = ProfileManagement::class;
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('label')
+                    ->placeholder('She/Her')
+                    ->required()
+                    ->maxLength(255),
+            ])
+            ->columns(1);
+    }
+
+    public static function table(Table $table): Table
     {
         return $table
-            ->query(fn () => User::query())
-            ->filters([
-                QueryBuilder::make()
-                    ->constraints([
-                        TextConstraint::make('name'),
-                        DateConstraint::make('created_at')
-                            ->icon('heroicon-m-calendar'),
-                        TextConstraint::make('email')
-                            ->label('Email Address')
-                            ->icon('heroicon-m-envelope'),
-                        TextConstraint::make('phone_number')
-                            ->icon('heroicon-m-phone'),
-                    ])
-                    ->constraintPickerColumns([
-                        'md' => 2,
-                        'lg' => 3,
-                        'xl' => 4,
-                    ])
-                    ->constraintPickerWidth('7xl'),
-            ], layout: FiltersLayout::AboveContent)
+            ->columns([
+                TextColumn::make('label'),
+            ])
             ->recordActions([
-                ViewAction::make()
-                    ->authorize('view')
-                    ->url(fn (User $record) => UserResource::getUrl('view', ['record' => $record])),
+                EditAction::make()
+                    ->modalWidth('md'),
+                DeleteAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
     }
 
-    public static function configure(Table $table): Table
+    public static function getPages(): array
     {
-        $instance = new self();
-
-        return $instance($table);
+        return [
+            'index' => ManagePronouns::route('/'),
+        ];
     }
 }

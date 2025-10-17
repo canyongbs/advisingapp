@@ -32,7 +32,7 @@
 </COPYRIGHT>
 --}}
 @php
-    use App\Filament\Resources\UserResource;
+    use App\Filament\Resources\Users\UserResource;
     use AdvisingApp\Notification\Enums\NotificationChannel;
 @endphp
 

@@ -34,27 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Concerns;
+namespace App\Filament\Resources\NotificationSettings\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
-use AdvisingApp\CaseManagement\Models\CaseAssignment;
-use App\Filament\Resources\Users\UserResource;
-use Filament\Infolists\Components\TextEntry;
+use App\Filament\Forms\Components\ColorSelect;
+use App\Filament\Resources\NotificationSettings\NotificationSettingResource;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
-// TODO Re-use this trait across other places where infolist is rendered
-trait CaseAssignmentInfolist
+class CreateNotificationSetting extends CreateRecord
 {
-    public function caseAssignmentInfolist(): array
+    protected static string $resource = NotificationSettingResource::class;
+
+    public function form(Schema $schema): Schema
     {
-        return [
-            TextEntry::make('case.case_number')
-                ->label('Case')
-                ->url(fn (CaseAssignment $caseAssignment): string => CaseResource::getUrl('view', ['record' => $caseAssignment->case]))
-                ->color('primary'),
-            TextEntry::make('user.name')
-                ->label('Assigned To')
-                ->url(fn (CaseAssignment $caseAssignment): string => UserResource::getUrl('view', ['record' => $caseAssignment->user]))
-                ->color('primary'),
-        ];
+        return $schema
+            ->columns(1)
+            ->components([
+                TextInput::make('name')
+                    ->string()
+                    ->required()
+                    ->autocomplete(false),
+                TextInput::make('from_name')
+                    ->string()
+                    ->maxLength(150)
+                    ->autocomplete(false),
+                Textarea::make('description')
+                    ->string(),
+                ColorSelect::make('primary_color'),
+                SpatieMediaLibraryFileUpload::make('logo')
+                    ->disk('s3')
+                    ->collection('logo')
+                    ->visibility('private')
+                    ->image(),
+            ]);
     }
 }

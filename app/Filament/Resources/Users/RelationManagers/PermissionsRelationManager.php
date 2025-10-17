@@ -34,53 +34,57 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Tables;
+namespace App\Filament\Resources\Users\RelationManagers;
 
-use App\Filament\Resources\Users\UserResource;
-use App\Models\User;
-use Filament\Actions\ViewAction;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\QueryBuilder;
-use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint;
-use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
-class UsersTable
+class PermissionsRelationManager extends RelationManager
 {
-    public function __invoke(Table $table): Table
+    protected static string $relationship = 'permissionsFromRoles';
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public function form(Schema $schema): Schema
     {
-        return $table
-            ->query(fn () => User::query())
-            ->filters([
-                QueryBuilder::make()
-                    ->constraints([
-                        TextConstraint::make('name'),
-                        DateConstraint::make('created_at')
-                            ->icon('heroicon-m-calendar'),
-                        TextConstraint::make('email')
-                            ->label('Email Address')
-                            ->icon('heroicon-m-envelope'),
-                        TextConstraint::make('phone_number')
-                            ->icon('heroicon-m-phone'),
-                    ])
-                    ->constraintPickerColumns([
-                        'md' => 2,
-                        'lg' => 3,
-                        'xl' => 4,
-                    ])
-                    ->constraintPickerWidth('7xl'),
-            ], layout: FiltersLayout::AboveContent)
-            ->recordActions([
-                ViewAction::make()
-                    ->authorize('view')
-                    ->url(fn (User $record) => UserResource::getUrl('view', ['record' => $record])),
+        return $schema
+            ->components([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('guard_name')
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 
-    public static function configure(Table $table): Table
+    public function table(Table $table): Table
     {
-        $instance = new self();
-
-        return $instance($table);
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('group.name')
+                    ->sortable(),
+                TextColumn::make('name'),
+                TextColumn::make('guard_name'),
+            ])
+            ->filters([
+                SelectFilter::make('group')
+                    ->relationship('group', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->multiple(),
+            ])
+            ->headerActions([
+            ])
+            ->recordActions([
+            ])
+            ->toolbarActions([
+            ]);
     }
 }

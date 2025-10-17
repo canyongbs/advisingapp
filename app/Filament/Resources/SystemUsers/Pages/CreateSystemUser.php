@@ -34,27 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Concerns;
+namespace App\Filament\Resources\SystemUsers\Pages;
 
-use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
-use AdvisingApp\CaseManagement\Models\CaseAssignment;
-use App\Filament\Resources\Users\UserResource;
-use Filament\Infolists\Components\TextEntry;
+use App\Filament\Resources\SystemUsers\SystemUserResource;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 
-// TODO Re-use this trait across other places where infolist is rendered
-trait CaseAssignmentInfolist
+class CreateSystemUser extends CreateRecord
 {
-    public function caseAssignmentInfolist(): array
+    protected static string $resource = SystemUserResource::class;
+
+    protected ?string $heading = 'Create Programmatic (API) User';
+
+    public function form(Schema $schema): Schema
     {
-        return [
-            TextEntry::make('case.case_number')
-                ->label('Case')
-                ->url(fn (CaseAssignment $caseAssignment): string => CaseResource::getUrl('view', ['record' => $caseAssignment->case]))
-                ->color('primary'),
-            TextEntry::make('user.name')
-                ->label('Assigned To')
-                ->url(fn (CaseAssignment $caseAssignment): string => UserResource::getUrl('view', ['record' => $caseAssignment->user]))
-                ->color('primary'),
-        ];
+        return $schema->components([
+            TextInput::make('name')
+                ->required()
+                ->string(),
+        ]);
     }
 }
