@@ -71,7 +71,7 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["segment.{$group->getKey()}.view"],
+            abilities: ['segment.*.view'],
             denyResponse: 'You do not have permission to view this group.'
         );
     }
@@ -91,7 +91,7 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["segment.{$group->getKey()}.update"],
+            abilities: ['segment.*.update'],
             denyResponse: 'You do not have permission to update this group.'
         );
     }
@@ -107,7 +107,7 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["segment.{$group->getKey()}.delete"],
+            abilities: ['segment.*.delete'],
             denyResponse: 'You do not have permission to delete this group.'
         );
     }
@@ -119,7 +119,7 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["segment.{$group->getKey()}.restore"],
+            abilities: ['segment.*.restore'],
             denyResponse: 'You do not have permission to restore this group.'
         );
     }
@@ -135,7 +135,7 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["segment.{$group->getKey()}.force-delete"],
+            abilities: ['segment.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this group.'
         );
     }

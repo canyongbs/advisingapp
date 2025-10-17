@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 declare(strict_types = 1);
 
 $ignoreErrors = [];
@@ -148,7 +114,7 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:isUpvoted\\(\\)\\.$#',
     'identifier' => 'method.notFound',
-    'count' => 3,
+    'count' => 2,
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/PromptResource/Pages/ViewPrompt.php',
 ];
 $ignoreErrors[] = [
@@ -492,6 +458,12 @@ $ignoreErrors[] = [
     'identifier' => 'MeliorStan.shortVariable',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/alert/src/Filament/Actions/BulkCreateAlertAction.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Group\\\\Models\\\\Group\\>\\:\\:\\$model\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/AlertResource/Pages/ListAlerts.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Alert\\\\Filament\\\\Resources\\\\AlertResource\\\\Pages\\\\ListAlerts\\:\\:groupFilter\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
@@ -1592,6 +1564,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/CampaignActionBlock.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Group\\\\Models\\\\Group\\>\\:\\:\\$model\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 4,
+    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/CareTeamBlock.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\CareTeamBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -1658,6 +1636,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/SubscriptionBlock.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Group\\\\Models\\\\Group\\>\\:\\:\\$model\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/TagsBlock.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Parameter \\#2 \\$livewire of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
@@ -1718,6 +1702,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Jobs/EventCampaignActionJob.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\:\\:\\$model\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/campaign/src/Jobs/ExecuteCampaignAction.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
     'identifier' => 'MeliorStan.shortVariable',
     'count' => 1,
@@ -1752,6 +1742,12 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/campaign/src/Models/Campaign.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\:\\:\\$model\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 3,
+    'path' => __DIR__ . '/app-modules/campaign/src/Notifications/CampaignActionFinished.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to function is_null\\(\\) with string will always evaluate to false\\.$#',
@@ -4364,6 +4360,24 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/group/src/Models/Group.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^PHPDoc tag @mixin contains unknown class AdvisingApp\\\\Group\\\\Models\\\\IdeHelperGroup\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Models/Group.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^PHPDoc tag @mixin contains unknown class AdvisingApp\\\\Group\\\\Models\\\\IdeHelperGroupSubject\\.$#',
+    'identifier' => 'class.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Models/GroupSubject.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\:\\:\\$model\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 5,
+    'path' => __DIR__ . '/app-modules/group/src/Policies/GroupPolicy.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Group\\\\Providers\\\\GroupServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -5750,6 +5764,24 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/notification/tests/Tenant/Notifications/Channels/MailChannelEmailMessageTest.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\:\\:\\$model\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 3,
+    'path' => __DIR__ . '/app-modules/pipeline/src/Filament/Resources/Pipelines/Pages/ManageEductables.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Match expression does not handle remaining value\\: mixed$#',
+    'identifier' => 'match.unhandled',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/pipeline/src/Filament/Resources/Pipelines/Pages/ManageEductables.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\:\\:\\$model\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/pipeline/src/Jobs/PruneEducatablePipelineStagesForPipeline.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Portal\\\\DataTransferObjects\\\\ResourceHubSearchData\\:\\:\\$articles with generic class Spatie\\\\LaravelData\\\\DataCollection does not specify its types\\: TKey, TValue$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -6072,12 +6104,6 @@ $ignoreErrors[] = [
     'identifier' => 'method.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/EditProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to undefined constant Filament\\\\Tables\\\\Enums\\\\FiltersLayout\\:\\:BeforeContent\\.$#',
-    'identifier' => 'classConstant.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ListProspects.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\Pages\\\\ListProspects\\:\\:groupFilter\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
@@ -6992,15 +7018,9 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/Pages/ListResourceHubArticles.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to undefined constant Filament\\\\Tables\\\\Enums\\\\FiltersLayout\\:\\:BeforeContent\\.$#',
-    'identifier' => 'classConstant.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/Pages/ListResourceHubArticles.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:isUpvoted\\(\\)\\.$#',
     'identifier' => 'method.notFound',
-    'count' => 3,
+    'count' => 2,
     'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/Pages/ViewResourceHubArticle.php',
 ];
 $ignoreErrors[] = [
@@ -7608,12 +7628,6 @@ $ignoreErrors[] = [
     'identifier' => 'return.unusedType',
     'count' => 3,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to undefined constant Filament\\\\Tables\\\\Enums\\\\FiltersLayout\\:\\:BeforeContent\\.$#',
-    'identifier' => 'classConstant.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentResource/Pages/ListStudents.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Comparison operation "\\>" between int\\<1, max\\> and 0 is always true\\.$#',
@@ -9470,6 +9484,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Http/Controllers/ViewPublicUserProfileController.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\:\\:\\$model\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method App\\\\Livewire\\\\ProspectPipelineKanban\\:\\:getPipelineSubjects\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -9503,6 +9523,18 @@ $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$relations of method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:with\\(\\) expects array\\<array\\|\\(Closure\\(Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\Relation\\<\\*, \\*, \\*\\>\\)\\: mixed\\)\\|string\\>\\|string, array\\{educatablePipelineStages\\: Closure\\(AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany\\)\\: AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany\\} given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
+    'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Variable \\$educatable might not be defined\\.$#',
+    'identifier' => 'variable.undefined',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Variable \\$educatablePipelineStages might not be defined\\.$#',
+    'identifier' => 'variable.undefined',
+    'count' => 2,
     'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
 ];
 $ignoreErrors[] = [
