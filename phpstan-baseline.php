@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 declare(strict_types = 1);
 
 $ignoreErrors = [];
@@ -5918,12 +5884,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/EditProspect.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of function view expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/EditProspect.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\Pages\\\\ListProspects\\:\\:segmentFilter\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -5948,54 +5908,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ManageProspectAlerts.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of function view expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ManageProspectAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of method Filament\\\\Support\\\\Components\\\\ViewComponent\\:\\:view\\(\\) expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ManageProspectAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of function view expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ManageProspectCareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of method Filament\\\\Support\\\\Components\\\\ViewComponent\\:\\:view\\(\\) expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ManageProspectCareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of function view expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ManageProspectTasks.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of method Filament\\\\Support\\\\Components\\\\ViewComponent\\:\\:view\\(\\) expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ManageProspectTasks.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of function view expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ViewProspect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of method Filament\\\\Support\\\\Components\\\\ViewComponent\\:\\:view\\(\\) expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ViewProspect.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:timeline\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
@@ -6016,18 +5928,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\Pages\\\\ViewProspectActivityFeed\\:\\:viewRecord\\(\\) has parameter \\$morphReference with no type specified\\.$#',
     'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ViewProspectActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of function view expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ViewProspectActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of method Filament\\\\Support\\\\Components\\\\ViewComponent\\:\\:view\\(\\) expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ViewProspectActivityFeed.php',
 ];
@@ -7148,12 +7048,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/segment/src/Models/Segment.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Using nullsafe method call on non\\-nullable type AdvisingApp\\\\Segment\\\\Enums\\\\SegmentModel\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 5,
-    'path' => __DIR__ . '/app-modules/segment/src/Policies/SegmentPolicy.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Segment\\\\Providers\\\\SegmentServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -7508,26 +7402,8 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableActivityFeedWidget.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Educatables\\\\Widgets\\\\EducatableActivityFeedWidget\\:\\:\\$view \\(view\\-string\\) does not accept default value of type string\\.$#',
-    'identifier' => 'property.defaultValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableActivityFeedWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Educatables\\\\Widgets\\\\EducatableAlertsWidget\\:\\:\\$view \\(view\\-string\\) does not accept default value of type string\\.$#',
-    'identifier' => 'property.defaultValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableAlertsWidget.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Educatables\\\\Widgets\\\\EducatableCareTeamWidget\\:\\:getCareTeam\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableCareTeamWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Educatables\\\\Widgets\\\\EducatableCareTeamWidget\\:\\:\\$view \\(view\\-string\\) does not accept default value of type string\\.$#',
-    'identifier' => 'property.defaultValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableCareTeamWidget.php',
 ];
@@ -7544,20 +7420,8 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableSubscriptionsWidget.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Educatables\\\\Widgets\\\\EducatableSubscriptionsWidget\\:\\:\\$view \\(view\\-string\\) does not accept default value of type string\\.$#',
-    'identifier' => 'property.defaultValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableSubscriptionsWidget.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Educatables\\\\Widgets\\\\EducatableTasksWidget\\:\\:getStatusCounts\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableTasksWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Educatables\\\\Widgets\\\\EducatableTasksWidget\\:\\:\\$view \\(view\\-string\\) does not accept default value of type string\\.$#',
-    'identifier' => 'property.defaultValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableTasksWidget.php',
 ];
@@ -7664,12 +7528,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/EditStudent.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of function view expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Comparison operation "\\>" between int\\<1, max\\> and 0 is always true\\.$#',
     'identifier' => 'greater.alwaysTrue',
     'count' => 1,
@@ -7760,18 +7618,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentAlerts.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of function view expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of method Filament\\\\Support\\\\Components\\\\ViewComponent\\:\\:view\\(\\) expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentAlerts.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dfw\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -7844,18 +7690,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentCareTeam.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of function view expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentCareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of method Filament\\\\Support\\\\Components\\\\ViewComponent\\:\\:view\\(\\) expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentCareTeam.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dfw\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -7924,18 +7758,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentSubscriptions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of function view expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentSubscriptions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of method Filament\\\\Support\\\\Components\\\\ViewComponent\\:\\:view\\(\\) expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentSubscriptions.php',
 ];
@@ -8026,18 +7848,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentTasks.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of function view expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentTasks.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of method Filament\\\\Support\\\\Components\\\\ViewComponent\\:\\:view\\(\\) expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentTasks.php',
 ];
@@ -8156,18 +7966,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudent.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of function view expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of method Filament\\\\Support\\\\Components\\\\ViewComponent\\:\\:view\\(\\) expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudent.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dfw\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -8260,18 +8058,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of function view expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$view of method Filament\\\\Support\\\\Components\\\\ViewComponent\\:\\:view\\(\\) expects view\\-string\\|null, string given\\.$#',
-    'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
 ];
