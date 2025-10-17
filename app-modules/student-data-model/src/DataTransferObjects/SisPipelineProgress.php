@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -36,51 +36,17 @@
 
 namespace AdvisingApp\StudentDataModel\DataTransferObjects;
 
-use Illuminate\Support\Facades\Log;
-use Spatie\LaravelData\Data;
-
-class StudentDataImportProgress extends Data
+readonly class SisPipelineProgress
 {
     public function __construct(
         public int $processed,
         public int $total,
         public int $successful,
-        public string $failedRowsCsvUrl,
     ) {}
-
-    public function getSuccessfulPercentage(): float
-    {
-        if ($this->total <= 0) {
-            return 0;
-        }
-
-        $percentage = ($this->successful / $this->total) * 100;
-
-        if ($percentage > 100) {
-            return 100;
-        }
-
-        return $percentage;
-    }
 
     public function getFailed(): int
     {
         return $this->processed - $this->successful;
-    }
-
-    public function getFailedPercentage(): float
-    {
-        if ($this->total <= 0) {
-            return 0;
-        }
-
-        $percentage = (($this->processed - $this->successful) / $this->total) * 100;
-
-        if ($percentage > 100) {
-            return 100;
-        }
-
-        return $percentage;
     }
 
     public function getPercentage(): float
@@ -89,15 +55,7 @@ class StudentDataImportProgress extends Data
             return 0;
         }
 
-        $percentage = ($this->successful / $this->total) * 100;
-
-        Log::info('StudentDataImportProgress Debug', [
-            'processed' => $this->processed,
-            'total' => $this->total,
-            'successful' => $this->successful,
-            'calculated_percentage' => $percentage,
-            'failed_count' => $this->getFailed(),
-        ]);
+        $percentage = ($this->processed / $this->total) * 100;
 
         if ($percentage > 100) {
             return 100;
@@ -114,6 +72,36 @@ class StudentDataImportProgress extends Data
 
         $percentage = ($this->processed / $this->total) * 100;
 
+        if ($percentage > 100) {
+            return 100;
+        }
+
+        return $percentage;
+    }
+
+    public function getSuccessfulPercentage(): float
+    {
+        if ($this->total <= 0) {
+            return 0;
+        }
+
+        $percentage = ($this->successful / $this->total) * 100;
+
+        if ($percentage > 100) {
+            return 100;
+        }
+
+        return $percentage;
+    }
+
+    public function getFailedPercentage(): float
+    {
+        if ($this->total <= 0) {
+            return 0;
+        }
+
+        $percentage = (($this->processed - $this->successful) / $this->total) * 100;
+        
         if ($percentage > 100) {
             return 100;
         }
