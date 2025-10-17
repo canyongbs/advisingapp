@@ -64,14 +64,12 @@
         </div>
 
         <div class="flex flex-col gap-8 lg:col-span-1 xl:col-span-2">
-            <x-student-data-model::filament.resources.educatables.view-educatable.relation-managers
-                :managers="[
-                    'messages' => EngagementsRelationManager::class,
-                    'interactions' => InteractionsRelationManager::class,
-                    'cases' => CasesRelationManager::class,
-                    'files' => EngagementFilesRelationManager::class,
-                ]"
-            />
+            <x-student-data-model::filament.resources.educatables.view-educatable.relation-managers :managers="[
+                'messages' => EngagementsRelationManager::class,
+                'interactions' => InteractionsRelationManager::class,
+                'cases' => CasesRelationManager::class,
+                'files' => EngagementFilesRelationManager::class,
+            ]" />
 
             <div class="grid grid-cols-1 gap-8 xl:grid-cols-2">
                 @if (EducatableAlertsWidget::canView())
@@ -107,13 +105,11 @@
                 @endif
             </div>
 
-            <x-student-data-model::filament.resources.educatables.view-educatable.relation-managers
-                :managers="[
-                    'forms' => FormSubmissionsRelationManager::class,
-                    'events' => EventsRelationManager::class,
-                    'applications' => ApplicationSubmissionsRelationManager::class,
-                ]"
-            />
+            <x-student-data-model::filament.resources.educatables.view-educatable.relation-managers :managers="[
+                'forms' => FormSubmissionsRelationManager::class,
+                'events' => EventsRelationManager::class,
+                'applications' => ApplicationSubmissionsRelationManager::class,
+            ]" />
         </div>
     </div>
 
