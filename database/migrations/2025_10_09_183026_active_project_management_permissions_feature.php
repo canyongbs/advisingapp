@@ -34,18 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Observers;
+use App\Features\ProjectManagementPermissionsFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Project\Models\Project;
-
-class ProjectObserver
-{
-    public function creating(Project $project): void
+return new class () extends Migration {
+    public function up(): void
     {
-        // @phpstan-ignore function.impossibleType
-        if (is_null($project->createdBy)) {
-            $user = auth()->user();
-            $project->createdBy()->associate($user);
-        }
+        ProjectManagementPermissionsFeature::activate();
     }
-}
+
+    public function down(): void
+    {
+        ProjectManagementPermissionsFeature::purge();
+    }
+};

@@ -65,6 +65,9 @@ it('can render with proper permission.', function () {
 
     $user->givePermissionTo('project.view-any');
     $user->givePermissionTo('project.*.view');
+
+    $project->createdBy()->associate($user);
+    $project->save();
     $user->refresh();
 
     get(ManageMilestones::getUrl([

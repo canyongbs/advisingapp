@@ -45,7 +45,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class ProjectFactory extends Factory
 {
     /**
-     *
      * @return array<string, mixed>
      */
     public function definition(): array

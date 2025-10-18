@@ -49,15 +49,16 @@ use function Tests\asSuperAdmin;
 
 it('cannot render without proper permission.', function () {
     $user = User::factory()->create();
+    $project = Project::factory()
+        ->for(User::factory(), 'createdBy')
+        ->create();
 
     actingAs($user);
-
-    $project = Project::factory()->create();
 
     get(EditProject::getUrl([
         'record' => $project->getRouteKey(),
     ]))
-        ->assertForbidden();
+        ->assertNotFound();
 });
 
 it('can render with proper permission.', function () {
@@ -71,6 +72,8 @@ it('can render with proper permission.', function () {
     actingAs($user);
 
     $project = Project::factory()->create();
+
+    $project->managerUsers()->attach($user);
 
     get(EditProject::getUrl([
         'record' => $project->getRouteKey(),

@@ -34,18 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Observers;
+namespace AdvisingApp\Project\Filament\Resources\Projects\Pages;
 
-use AdvisingApp\Project\Models\Project;
+use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
+use AdvisingApp\Project\Filament\Resources\Projects\RelationManagers\ManagerTeamsRelationManager;
+use AdvisingApp\Project\Filament\Resources\Projects\RelationManagers\ManagerUsersRelationManager;
+use Filament\Resources\Pages\ManageRelatedRecords;
 
-class ProjectObserver
+class ManageManagers extends ManageRelatedRecords
 {
-    public function creating(Project $project): void
+    protected static string $resource = ProjectResource::class;
+
+    protected static string $relationship = 'managerUsers';
+
+    public static function getNavigationLabel(): string
     {
-        // @phpstan-ignore function.impossibleType
-        if (is_null($project->createdBy)) {
-            $user = auth()->user();
-            $project->createdBy()->associate($user);
-        }
+        return 'Managers';
+    }
+
+    public function getRelationManagers(): array
+    {
+        return [
+            ManagerUsersRelationManager::class,
+            ManagerTeamsRelationManager::class,
+        ];
+    }
+
+    public static function canAccess(array $arguments = []): bool
+    {
+        $user = auth()->user();
+
+        return $user->can(['project.view-any', 'project.*.view']) && parent::canAccess($arguments);
     }
 }

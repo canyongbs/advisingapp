@@ -60,6 +60,9 @@ use AdvisingApp\MultifactorAuthentication\Traits\MultifactorAuthenticatable;
 use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\Project\Models\Project;
+use AdvisingApp\Project\Models\ProjectAuditorUser;
+use AdvisingApp\Project\Models\ProjectManagerUser;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Models\TrackedEvent;
@@ -398,6 +401,28 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function cases(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->caseAssignments(), (new CaseAssignment())->case());
+    }
+
+    /**
+     * @return BelongsToMany<Project, $this, ProjectManagerUser>
+     */
+    public function managedProjects(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(Project::class, 'project_manager_users', 'user_id', 'project_id')
+            ->using(ProjectManagerUser::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany<Project, $this, ProjectAuditorUser>
+     */
+    public function auditedProjects(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(Project::class, 'project_auditor_users', 'user_id', 'project_id')
+            ->using(ProjectAuditorUser::class)
+            ->withTimestamps();
     }
 
     public function getIsAdminAttribute(): bool

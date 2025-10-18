@@ -34,18 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Observers;
+namespace AdvisingApp\Project\Models;
 
-use AdvisingApp\Project\Models\Project;
+use AdvisingApp\Team\Models\Team;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class ProjectObserver
+/**
+ * @mixin IdeHelperProjectManagerTeam
+ */
+class ProjectManagerTeam extends Pivot
 {
-    public function creating(Project $project): void
+    use HasUuids;
+
+    protected $table = 'project_manager_teams';
+
+    /**
+     * @return BelongsTo<Project, $this>
+     */
+    public function project(): BelongsTo
     {
-        // @phpstan-ignore function.impossibleType
-        if (is_null($project->createdBy)) {
-            $user = auth()->user();
-            $project->createdBy()->associate($user);
-        }
+        return $this->belongsTo(Project::class, 'project_id', 'id', 'project');
+    }
+
+    /**
+     * @return BelongsTo<Team, $this>
+     */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class, 'team_id', 'id', 'team');
     }
 }
