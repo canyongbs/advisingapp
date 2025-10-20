@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,36 +30,7 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace AdvisingApp\StudentDataModel\Filament\Pages;
-
-use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use Filament\Pages\Page;
-use UnitEnum;
-
-class ManageStudentSyncs extends Page
-{
-    protected static ?string $navigationLabel = 'Sync History';
-
-    protected static ?string $title = 'Records Sync';
-
-    protected static ?int $navigationSort = 30;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Data and Analytics';
-
-    protected string $view = 'student-data-model::filament.pages.manage-student-syncs';
-
-    public static function canAccess(): bool
-    {
-        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return false;
-        }
-
-        if (! auth()->user()->can('record_sync.view-any')) {
-            return false;
-        }
-
-        return parent::canAccess();
-    }
-}
+--}}
+<div>
+    {{ $this->table }}
+</div>

@@ -34,34 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Pages;
+use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use Filament\Pages\Page;
-use UnitEnum;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-class ManageStudentSyncs extends Page
-{
-    protected static ?string $navigationLabel = 'Sync History';
+    /** @var array<string, string> */
+    private array $permissions = [
+        'sis_data_pipeline.view-any' => 'SIS Data Pipeline',
+        'sis_data_pipeline.*.view' => 'SIS Data Pipeline',
+    ];
 
-    protected static ?string $title = 'Records Sync';
+    /** @var array<string> */
+    private array $guards = [
+        'web',
+        'api',
+    ];
 
-    protected static ?int $navigationSort = 30;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Data and Analytics';
-
-    protected string $view = 'student-data-model::filament.pages.manage-student-syncs';
-
-    public static function canAccess(): bool
+    public function up(): void
     {
-        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return false;
+        foreach ($this->guards as $guard) {
+            $this->createPermissions($this->permissions, $guard);
         }
-
-        if (! auth()->user()->can('record_sync.view-any')) {
-            return false;
-        }
-
-        return parent::canAccess();
     }
-}
+
+    public function down(): void
+    {
+        foreach ($this->guards as $guard) {
+            $this->deletePermissions(array_keys($this->permissions), $guard);
+        }
+    }
+};

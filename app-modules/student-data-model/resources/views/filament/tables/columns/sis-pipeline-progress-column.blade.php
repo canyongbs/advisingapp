@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,36 +30,35 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<div class="flex items-start gap-3 px-3 py-4">
+    @if ($progress = $getState())
+        <div class="grid gap-1">
+            <div
+                class="ring-gray-950/10 flex h-6 w-56 items-center overflow-hidden rounded bg-gray-50 shadow-sm ring-1 dark:bg-gray-950 dark:ring-white/20">
+                <div
+                    class="bg-success-400 dark:bg-success-600 h-full"
+                    style="width: {{ $progress->getSuccessfulPercentage() }}%"
+                ></div>
+                <div
+                    class="bg-danger-400 dark:bg-danger-600 h-full"
+                    style="width: {{ $progress->getFailedPercentage() }}%"
+                >
+                </div>
+            </div>
 
-namespace AdvisingApp\StudentDataModel\Filament\Pages;
+            <p class="whitespace-normal text-xs text-gray-500 dark:text-gray-400">
+                {{ number_format($progress->successful) }} of {{ number_format($progress->total) }} synced
+                @if ($failed = $progress->getFailed())
+                    & {{ number_format($failed) }} failed
+                @endif
+            </p>
+        </div>
 
-use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use Filament\Pages\Page;
-use UnitEnum;
-
-class ManageStudentSyncs extends Page
-{
-    protected static ?string $navigationLabel = 'Sync History';
-
-    protected static ?string $title = 'Records Sync';
-
-    protected static ?int $navigationSort = 30;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Data and Analytics';
-
-    protected string $view = 'student-data-model::filament.pages.manage-student-syncs';
-
-    public static function canAccess(): bool
-    {
-        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return false;
-        }
-
-        if (! auth()->user()->can('record_sync.view-any')) {
-            return false;
-        }
-
-        return parent::canAccess();
-    }
-}
+        <div>
+            <div class="mt-0.5 w-16 text-sm">
+                {{ round($progress->getSuccessfulPercentage(), precision: 1) }}%
+            </div>
+        </div>
+    @endif
+</div>

@@ -34,34 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Tables\Columns;
 
-use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use Filament\Pages\Page;
-use UnitEnum;
+use Filament\Tables\Columns\Column;
 
-class ManageStudentSyncs extends Page
+class SisPipelineProgressColumn extends Column
 {
-    protected static ?string $navigationLabel = 'Sync History';
-
-    protected static ?string $title = 'Records Sync';
-
-    protected static ?int $navigationSort = 30;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Data and Analytics';
-
-    protected string $view = 'student-data-model::filament.pages.manage-student-syncs';
-
-    public static function canAccess(): bool
-    {
-        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return false;
-        }
-
-        if (! auth()->user()->can('record_sync.view-any')) {
-            return false;
-        }
-
-        return parent::canAccess();
-    }
+    protected string $view = 'student-data-model::filament.tables.columns.sis-pipeline-progress-column';
 }
