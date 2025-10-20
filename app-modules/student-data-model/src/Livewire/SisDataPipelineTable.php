@@ -117,34 +117,7 @@ class SisDataPipelineTable extends Component implements HasActions, HasForms, Ha
                 $responseData = $response->json();
                 $data = $responseData['data'] ?? [];
 
-                $records = [];
-
-                foreach ($data as $index => $item) {
-                    $baseId = $index + 1;
-
-                    if (isset($item['started_at'])) {
-                        $timestamp = strtotime($item['started_at']);
-
-                        if ($timestamp) {
-                            $uniqueKey = $timestamp . '_' . $index;
-                        } else {
-                            $uniqueKey = $baseId;
-                        }
-                    } else {
-                        $uniqueKey = $baseId;
-                    }
-
-                    $contentHash = md5(json_encode($item) . '_' . $index);
-                    $shortHash = substr($contentHash, 0, 8); // Use first 8 characters
-
-                    $records[] = array_merge($item, [
-                        'id' => $baseId,
-                        'key' => $uniqueKey . '_' . $shortHash,
-                        'record_index' => $index,
-                    ]);
-                }
-
-                return $records;
+                return $data;
             }
         } catch (Exception $exception) {
             report($exception);
@@ -165,7 +138,7 @@ class SisDataPipelineTable extends Component implements HasActions, HasForms, Ha
             default => SisPipelineStatus::Pending,
         };
     }
-    
+
     /**
      * @param array<string, mixed> $record
      */

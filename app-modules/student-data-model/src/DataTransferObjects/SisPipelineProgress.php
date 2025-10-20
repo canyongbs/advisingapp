@@ -101,7 +101,7 @@ readonly class SisPipelineProgress
         }
 
         $percentage = (($this->processed - $this->successful) / $this->total) * 100;
-        
+
         if ($percentage > 100) {
             return 100;
         }

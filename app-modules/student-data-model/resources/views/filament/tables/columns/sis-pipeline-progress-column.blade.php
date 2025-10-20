@@ -57,7 +57,7 @@
 
         <div>
             <div class="mt-0.5 w-16 text-sm">
-                {{ round($progress->getProcessedPercentage(), precision: 1) }}%
+                {{ round($progress->getSuccessfulPercentage(), precision: 1) }}%
             </div>
         </div>
     @endif
