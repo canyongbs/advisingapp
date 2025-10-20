@@ -71,7 +71,7 @@ jobs:
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@5cb8c74c1b1ecaec4c8ea82eff82c009333509ce #1.8.0
+        uses: aws-actions/amazon-ecs-render-task-definition@cbed19f1b86bbb18f59cfffde7107b93cc9b75da #1.8.1
         with:
           task-definition: "docker/devops/ecs/advisingapp/advisingapp-dev-task-definition.json"
           container-name: "app"
@@ -161,7 +161,7 @@ jobs:
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@5cb8c74c1b1ecaec4c8ea82eff82c009333509ce #1.8.0
+        uses: aws-actions/amazon-ecs-render-task-definition@cbed19f1b86bbb18f59cfffde7107b93cc9b75da #1.8.1
         with:
           task-definition: "docker/devops/ecs/advisingapp/advisingapp-worker-dev-task-definition.json"
           container-name: "worker"
@@ -251,7 +251,7 @@ jobs:
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@5cb8c74c1b1ecaec4c8ea82eff82c009333509ce #1.8.0
+        uses: aws-actions/amazon-ecs-render-task-definition@cbed19f1b86bbb18f59cfffde7107b93cc9b75da #1.8.1
         with:
           task-definition: "docker/devops/ecs/advisingapp/advisingapp-scheduler-dev-task-definition.json"
           container-name: "scheduler"
@@ -341,7 +341,7 @@ jobs:
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@5cb8c74c1b1ecaec4c8ea82eff82c009333509ce #1.8.0
+        uses: aws-actions/amazon-ecs-render-task-definition@cbed19f1b86bbb18f59cfffde7107b93cc9b75da #1.8.1
         with:
           task-definition: "docker/devops/ecs/advisingapp/advisingapp-release-automation-dev-task-definition.json"
           container-name: "release-automation"
