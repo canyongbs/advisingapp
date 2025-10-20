@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\StudentDataModel\DataTransferObjects;
 
-use Illuminate\Support\Facades\Log;
 use Spatie\LaravelData\Data;
 
 class StudentDataImportProgress extends Data
@@ -84,29 +83,6 @@ class StudentDataImportProgress extends Data
     }
 
     public function getPercentage(): float
-    {
-        if ($this->total <= 0) {
-            return 0;
-        }
-
-        $percentage = ($this->successful / $this->total) * 100;
-
-        Log::info('StudentDataImportProgress Debug', [
-            'processed' => $this->processed,
-            'total' => $this->total,
-            'successful' => $this->successful,
-            'calculated_percentage' => $percentage,
-            'failed_count' => $this->getFailed(),
-        ]);
-
-        if ($percentage > 100) {
-            return 100;
-        }
-
-        return $percentage;
-    }
-
-    public function getProcessedPercentage(): float
     {
         if ($this->total <= 0) {
             return 0;

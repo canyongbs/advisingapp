@@ -82,7 +82,7 @@ class ManageStudentInformationSystemSettings extends SettingsPage
                             ->dehydrateStateUsing(fn (string|SisSystem $state) => SisSystem::parse($state)),
                     ])
                     ->visible(fn (Get $get) => $get('is_enabled')),
-            ]);
-        // ->disabled();
+            ])
+            ->disabled();
     }
 }
