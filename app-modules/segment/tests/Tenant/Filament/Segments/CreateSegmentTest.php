@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Group\Filament\Resources\Segments\GroupResource;
+use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -48,8 +48,8 @@ test('CreateGroup is gated with proper access control', function () {
             GroupResource::getUrl('create')
         )->assertForbidden();
 
-    $user->givePermissionTo('segment.view-any');
-    $user->givePermissionTo('segment.create');
+    $user->givePermissionTo('group.view-any');
+    $user->givePermissionTo('group.create');
 
     actingAs($user)
         ->get(

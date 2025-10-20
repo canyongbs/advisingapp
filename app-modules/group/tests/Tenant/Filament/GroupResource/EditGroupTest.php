@@ -51,8 +51,8 @@ test('EditGroup is gated with proper access control', function () {
             GroupResource::getUrl('edit', ['record' => $group])
         )->assertForbidden();
 
-    $user->givePermissionTo('segment.view-any');
-    $user->givePermissionTo('segment.*.update');
+    $user->givePermissionTo('group.view-any');
+    $user->givePermissionTo('group.*.update');
 
     actingAs($user)
         ->get(

@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Group\Filament\Resources\Segments\GroupResource;
+use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -48,7 +48,7 @@ test('ListGroups is gated with proper access control', function () {
             GroupResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('segment.view-any');
+    $user->givePermissionTo('group.view-any');
 
     actingAs($user)
         ->get(

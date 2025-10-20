@@ -48,8 +48,8 @@ test('CreateGroup is gated with proper access control', function () {
             GroupResource::getUrl('create')
         )->assertForbidden();
 
-    $user->givePermissionTo('segment.view-any');
-    $user->givePermissionTo('segment.create');
+    $user->givePermissionTo('group.view-any');
+    $user->givePermissionTo('group.create');
 
     actingAs($user)
         ->get(

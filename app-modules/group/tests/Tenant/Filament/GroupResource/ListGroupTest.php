@@ -48,7 +48,7 @@ test('ListGroups is gated with proper access control', function () {
             GroupResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('segment.view-any');
+    $user->givePermissionTo('group.view-any');
 
     actingAs($user)
         ->get(

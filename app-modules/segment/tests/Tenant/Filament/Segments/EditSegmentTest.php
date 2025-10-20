@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Group\Filament\Resources\Segments\GroupResource;
+use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
 use AdvisingApp\Group\Models\Group;
 use App\Models\User;
 
@@ -51,8 +51,8 @@ test('EditGroup is gated with proper access control', function () {
             GroupResource::getUrl('edit', ['record' => $segment])
         )->assertForbidden();
 
-    $user->givePermissionTo('segment.view-any');
-    $user->givePermissionTo('segment.*.update');
+    $user->givePermissionTo('group.view-any');
+    $user->givePermissionTo('group.*.update');
 
     actingAs($user)
         ->get(
