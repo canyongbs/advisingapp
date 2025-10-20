@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor's trademarks is subject
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -44,7 +44,7 @@ test('The SIS data pipeline table can be rendered', function () {
     asSuperAdmin();
 
     Http::fake([
-        'integrations/*/sis-sync-pipeline-data' => Http::response(['data' => []], 200)
+        'integrations/*/sis-sync-pipeline-data' => Http::response(['data' => []], 200),
     ]);
 
     livewire(SisDataPipelineTable::class)
@@ -55,7 +55,7 @@ test('The SIS data pipeline table displays empty state when no pipeline data exi
     asSuperAdmin();
 
     Http::fake([
-        'integrations/*/sis-sync-pipeline-data' => Http::response(['data' => []], 200)
+        'integrations/*/sis-sync-pipeline-data' => Http::response(['data' => []], 200),
     ]);
 
     livewire(SisDataPipelineTable::class)
@@ -86,11 +86,11 @@ test('The SIS data pipeline table displays correct success and failure counts', 
             'total_enrollment' => $totalEnrollments,
             'processed_enrollments' => $totalEnrollments,
             'successful_enrollments' => $successfulEnrollments,
-        ]
+        ],
     ];
 
     Http::fake([
-        'integrations/*/sis-sync-pipeline-data' => Http::response(['data' => $mockData], 200)
+        'integrations/*/sis-sync-pipeline-data' => Http::response(['data' => $mockData], 200),
     ]);
 
     $component = livewire(SisDataPipelineTable::class);
@@ -104,7 +104,7 @@ test('The SIS data pipeline table displays correct success and failure counts', 
 
     $expectedStudentPercentage = round(($successfulStudents / $totalStudents) * 100, 1);
     $expectedEnrollmentPercentage = round(($successfulEnrollments / $totalEnrollments) * 100, 1);
-    
+
     expect($expectedStudentPercentage)->toBeLessThan(100.0);
     expect($expectedEnrollmentPercentage)->toBeLessThan(100.0);
 });
@@ -125,11 +125,11 @@ test('The SIS data pipeline table calculates percentages correctly for the origi
             'total_student' => $totalStudents,
             'processed_students' => $totalStudents,
             'successful_students' => $successfulStudents,
-        ]
+        ],
     ];
 
     Http::fake([
-        'integrations/*/sis-sync-pipeline-data' => Http::response(['data' => $mockData], 200)
+        'integrations/*/sis-sync-pipeline-data' => Http::response(['data' => $mockData], 200),
     ]);
 
     $component = livewire(SisDataPipelineTable::class);
@@ -140,7 +140,7 @@ test('The SIS data pipeline table calculates percentages correctly for the origi
         ->assertSee("{$failedStudents} failed");
 
     $expectedPercentage = ($successfulStudents / $totalStudents) * 100;
-    
+
     expect($expectedPercentage)->toBe(20.892857142857142);
     expect($expectedPercentage)->not->toBe(100.0);
 });
@@ -149,7 +149,7 @@ test('The SIS data pipeline table handles API errors gracefully', function () {
     asSuperAdmin();
 
     Http::fake([
-        'integrations/*/sis-sync-pipeline-data' => Http::response([], 500)
+        'integrations/*/sis-sync-pipeline-data' => Http::response([], 500),
     ]);
 
     livewire(SisDataPipelineTable::class)
@@ -162,7 +162,7 @@ test('The SIS data pipeline table displays different pipeline types and triggers
 
     $types = ['full', 'incremental'];
     $triggers = ['manual', 'scheduled'];
-    
+
     $selectedType = $types[array_rand($types)];
     $selectedTrigger = $triggers[array_rand($triggers)];
 
@@ -175,11 +175,11 @@ test('The SIS data pipeline table displays different pipeline types and triggers
             'total_student' => random_int(10, 100),
             'processed_students' => random_int(5, 50),
             'successful_students' => random_int(1, 25),
-        ]
+        ],
     ];
 
     Http::fake([
-        'integrations/*/sis-sync-pipeline-data' => Http::response(['data' => $mockData], 200)
+        'integrations/*/sis-sync-pipeline-data' => Http::response(['data' => $mockData], 200),
     ]);
 
     $component = livewire(SisDataPipelineTable::class);
@@ -188,7 +188,7 @@ test('The SIS data pipeline table displays different pipeline types and triggers
         ->assertSuccessful()
         ->assertSee(ucfirst($selectedType))
         ->assertSee(ucfirst($selectedTrigger));
-    
+
     expect($selectedType)->toBeIn($types);
     expect($selectedTrigger)->toBeIn($triggers);
 });
@@ -225,8 +225,8 @@ test('The SIS data pipeline table handles multiple pipeline records with differe
 
     Http::fake([
         'integrations/*/sis-sync-pipeline-data' => Http::response([
-            'data' => [$completedRecord, $processingRecord]
-        ], 200)
+            'data' => [$completedRecord, $processingRecord],
+        ], 200),
     ]);
 
     $component = livewire(SisDataPipelineTable::class);
