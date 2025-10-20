@@ -42,8 +42,8 @@ return new class () extends Migration {
 
     /** @var array<string, string> */
     private array $permissions = [
-        'sis_data_pipeline.view-any' => 'Sis Data Pipeline',
-        'sis_data_pipeline.*.view' => 'Sis Data Pipeline',
+        'sis_data_pipeline.view-any' => 'SIS Data Pipeline',
+        'sis_data_pipeline.*.view' => 'SIS Data Pipeline',
     ];
 
     /** @var array<string> */
