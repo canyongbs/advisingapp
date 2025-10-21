@@ -37,11 +37,15 @@
 namespace AdvisingApp\Ai\Policies;
 
 use AdvisingApp\Ai\Models\DataAdvisor;
+use App\Concerns\PerformsFeatureChecks;
+use App\Enums\Feature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
 class DataAdvisorPolicy
 {
+    use PerformsFeatureChecks;
+
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
@@ -96,5 +100,10 @@ class DataAdvisorPolicy
             abilities: ['ai-data-advisors.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this data advisor.'
         );
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [Feature::DataAdvisor];
     }
 }

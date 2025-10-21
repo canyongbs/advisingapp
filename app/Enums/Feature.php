@@ -67,6 +67,8 @@ enum Feature: string
 
     case QnAAdvisor = 'qna-advisor';
 
+    case DataAdvisor = 'data-advisor';
+
     public function generateGate(): void
     {
         // If features are added that are not based on a License Addon we will need to update this
