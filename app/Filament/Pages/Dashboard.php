@@ -36,11 +36,6 @@
 
 namespace App\Filament\Pages;
 
-use AdvisingApp\Authorization\Filament\Widgets\UnlicensedNotice;
-use App\Filament\Widgets\Features;
-use App\Filament\Widgets\Notifications;
-use App\Filament\Widgets\WelcomeWidget;
-use App\Models\User;
 use Filament\Pages\Dashboard as BasePage;
 
 class Dashboard extends BasePage
@@ -49,34 +44,5 @@ class Dashboard extends BasePage
 
     protected ?string $heading = 'Home';
 
-    public function getWidgets(): array
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        $widgets = [
-            WelcomeWidget::class,
-        ];
-
-        if (UnlicensedNotice::canView()) {
-            $widgets[] = UnlicensedNotice::class;
-
-            return $widgets;
-        }
-
-        return [
-            ...$widgets,
-            Features::class,
-            Notifications::class,
-        ];
-    }
-
-    public function getColumns(): int|array
-    {
-        return [
-            'sm' => 1,
-            'md' => 2,
-            'lg' => 4,
-        ];
-    }
+    protected string $view = 'filament.pages.dashboard';
 }
