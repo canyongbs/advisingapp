@@ -37,15 +37,27 @@
 namespace AdvisingApp\Project\Filament\Resources\Projects\Pages;
 
 use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 use AdvisingApp\Task\Models\Task;
-use Filament\Actions\AssociateAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DissociateAction;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DissociateBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\MorphToSelect\Type;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class ManageTasks extends ManageRelatedRecords
 {
@@ -70,20 +82,73 @@ class ManageTasks extends ManageRelatedRecords
                     ->tooltip(fn (Task $record) => $record->is_confidential ? 'Confidential' : null),
             ])
             ->headerActions([
-                AssociateAction::make()
-                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereNull('project_id'))
-                    ->preloadRecordSelect()
-                    ->authorize(fn () => auth()->user()->can('update', $this->getOwnerRecord())),
+                CreateAction::make()
+                    ->authorize(fn () => auth()->user()->can('create', Task::class))
+                    ->schema([
+                        Fieldset::make('Confidentiality')
+                            ->schema([
+                                Checkbox::make('is_confidential')
+                                    ->label('Confidential')
+                                    ->live()
+                                    ->columnSpanFull(),
+                                Select::make('confidential_task_users')
+                                    ->relationship('confidentialAccessUsers', 'name')
+                                    ->preload()
+                                    ->label('Users')
+                                    ->multiple()
+                                    ->exists('users', 'id')
+                                    ->visible(fn (Get $get) => $get('is_confidential')),
+                                Select::make('confidential_task_teams')
+                                    ->relationship('confidentialAccessTeams', 'name')
+                                    ->preload()
+                                    ->label('Teams')
+                                    ->multiple()
+                                    ->exists('teams', 'id')
+                                    ->visible(fn (Get $get) => $get('is_confidential')),
+                            ]),
+                        TextInput::make('title')
+                            ->required()
+                            ->maxLength(100)
+                            ->string(),
+                        Textarea::make('description')
+                            ->required()
+                            ->string(),
+                        DateTimePicker::make('due')
+                            ->label('Due Date')
+                            ->native(false),
+                        Select::make('assigned_to')
+                            ->label('Assigned To')
+                            ->relationship('assignedTo', 'name')
+                            ->nullable()
+                            ->searchable(['name', 'email'])
+                            ->default(auth()->id()),
+                        MorphToSelect::make('concern')
+                            ->label('Related To')
+                            ->types([
+                                Type::make(Student::class)
+                                    ->titleAttribute('full_name'),
+                                Type::make(Prospect::class)
+                                    ->titleAttribute('full_name'),
+                            ])
+                            ->searchable(),
+                    ])
+                    ->modalHeading('Create Task')
+                    ->modalSubmitActionLabel('Create Task'),
             ])
             ->recordActions([
-                DissociateAction::make()
-                    ->authorize(fn () => auth()->user()->can('update', $this->getOwnerRecord())),
+                TaskViewAction::make()
+                    ->authorize('view', Task::class),
+                // EditAction::make()
+                //     ->schema(fn () => $this->editFormFields())
+                //     ->authorize('update', Task::class),
+                DeleteAction::make()
+                    ->authorize('delete', Task::class),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DissociateBulkAction::make()
-                        ->authorize(fn () => auth()->user()->can('update', $this->getOwnerRecord())),
-                ]),
+                // BulkActionGroup::make([
+                //     DissociateBulkAction::make()
+                //         ->authorize(fn () => auth()->user()->can('update', $this->getOwnerRecord())),
+                // ]),
             ]);
     }
 }
