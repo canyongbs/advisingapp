@@ -47,6 +47,7 @@
                 <div class="text-3xl font-bold text-white">
                     Welcome,
                 </div>
+                
                 <div class="text-4xl font-bold text-white">
                     {{ auth()->user()->name }}!
                 </div>
@@ -54,6 +55,7 @@
                 <div class="text-xl text-gray-200">
                     <p id="current-date"></p>
                 </div>
+
                 <div class="text-xl text-gray-200">
                     <p id="current-time"></p>
                 </div>
