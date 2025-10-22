@@ -179,7 +179,7 @@ RUN apt-get update \
 
 COPY docker/etc/nginx/ /etc/nginx/
 
-COPY --from=ghcr.io/roadrunner-server/roadrunner:2025.1.3 --chown=$PUID:$PGID --chmod=0755 /usr/bin/rr /usr/local/bin/rr
+COPY --from=ghcr.io/roadrunner-server/roadrunner:2025.1.4 --chown=$PUID:$PGID --chmod=0755 /usr/bin/rr /usr/local/bin/rr
 
 COPY --chmod=755 ./docker/web/s6-overlay/ /etc/s6-overlay/
 
