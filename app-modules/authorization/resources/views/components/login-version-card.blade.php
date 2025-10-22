@@ -35,7 +35,7 @@
     <div class="flex flex-col items-center justify-center gap-6 md:flex-row">
         <div>
             <p class="text-sm font-semibold text-white">Version {{ app('current-version') }} is now available!</p>
-            <p class="my-4 text-sm text-white-500">Your instance of Advising App&#174; was automatically updated with our
+            <p class="my-4 text-sm text-white">Your instance of Advising App&#174; was automatically updated with our
                 latest available features.</p>
             <a
                 class="inline-block rounded-xl border-2 border-white px-4 py-2 text-sm font-semibold text-white"
