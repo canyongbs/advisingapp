@@ -47,7 +47,7 @@
                 <div class="text-3xl font-bold text-white">
                     Welcome,
                 </div>
-                
+
                 <div class="text-4xl font-bold text-white">
                     {{ auth()->user()->name }}!
                 </div>
