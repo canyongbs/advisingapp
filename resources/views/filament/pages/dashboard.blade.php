@@ -40,21 +40,21 @@
 <x-filament-panels::page>
     <div class="grid gap-6">
         <div
-            class="col-span-full flex h-64 flex-col items-center rounded-lg bg-black bg-cover bg-no-repeat px-16 py-8 lg:col-span-5"
+            class="col-span-full flex flex-col items-center rounded-lg bg-black bg-cover bg-no-repeat px-16 py-8 lg:col-span-5"
             style="background-image: url('{{ asset('images/banner.png') }}')"
         >
-            <div class="grid w-full gap-1 text-center text-xl md:text-start md:text-3xl">
-                <div class="text-2xl font-bold text-white">
+            <div class="grid w-full gap-1 text-center md:text-start md:text-3xl">
+                <div class="text-3xl font-bold text-white">
                     Welcome,
                 </div>
-                <div class="text-3xl font-bold text-white">
+                <div class="text-4xl font-bold text-white">
                     {{ auth()->user()->name }}!
                 </div>
 
-                <div class="text-lg text-gray-200">
+                <div class="text-xl text-gray-200">
                     <p id="current-date"></p>
                 </div>
-                <div class="text-lg text-gray-200">
+                <div class="text-xl text-gray-200">
                     <p id="current-time"></p>
                 </div>
             </div>
