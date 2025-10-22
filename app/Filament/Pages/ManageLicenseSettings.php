@@ -114,6 +114,12 @@ class ManageLicenseSettings extends SettingsPage
                                 ->minValue(0)
                                 ->required()
                                 ->disabled(fn (Get $get): bool => ! $get('data.addons.qnaAdvisor')),
+                            TextInput::make('data.limits.dataAdvisorsCount')
+                                ->label('Data Advisors')
+                                ->numeric()
+                                ->minValue(0)
+                                ->required()
+                                ->disabled(fn (Get $get): bool => ! $get('data.addons.dataAdvisor')),
                             TextInput::make('data.limits.retentionCrmSeats')
                                 ->label('Student Success / Retention Seats')
                                 ->numeric()
@@ -170,6 +176,9 @@ class ManageLicenseSettings extends SettingsPage
                                 ->label('Research Advisors'),
                             Toggle::make('data.addons.qnaAdvisor')
                                 ->label('QnA Advisors')
+                                ->live(),
+                            Toggle::make('data.addons.dataAdvisor')
+                                ->label('Data Advisors')
                                 ->live(),
                         ]
                     ),
