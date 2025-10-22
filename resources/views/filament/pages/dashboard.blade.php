@@ -70,7 +70,6 @@
 
                 @livewire(Notifications::class)
             @endif
-
         </div>
     </div>
 </x-filament-panels::page>
