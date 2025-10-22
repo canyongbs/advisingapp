@@ -187,6 +187,9 @@ EXPOSE 80 443
 
 FROM web-base AS web-development
 
+# Change the dialout group GID to avoid conflict with macOS 'staff' (GID 20)
+RUN groupmod -g 1200 dialout
+
 # Fix permission issues in development by setting the "webuser"
 # user to the same user and group that is running docker.
 COPY ./docker/set-id /set-id
@@ -227,6 +230,9 @@ COPY ./docker/worker/templates/ /tmp/s6-overlay-templates
 RUN chmod +x /generate-queues.sh
 
 FROM worker-base AS worker-development
+
+# Change the dialout group GID to avoid conflict with macOS 'staff' (GID 20)
+RUN groupmod -g 1200 dialout
 
 # Fix permission issues in development by setting the "webuser"
 # user to the same user and group that is running docker.
@@ -296,6 +302,9 @@ RUN apt-get update \
 
 FROM scheduler-base AS scheduler-development
 
+# Change the dialout group GID to avoid conflict with macOS 'staff' (GID 20)
+RUN groupmod -g 1200 dialout
+
 # Fix permission issues in development by setting the "webuser"
 # user to the same user and group that is running docker.
 COPY ./docker/set-id /set-id
@@ -346,3 +355,6 @@ RUN chown -R "$PUID":"$PGID" /var/www/html \
     && chmod -R ug+rwx /var/www/html/storage /var/www/html/bootstrap/cache
 
 FROM base AS cli-local-tooling
+
+# Change the dialout group GID to avoid conflict with macOS 'staff' (GID 20)
+RUN groupmod -g 1200 dialout

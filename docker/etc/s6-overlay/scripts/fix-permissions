@@ -11,9 +11,9 @@ fi
 if [ "${FIX_PERMISSIONS:="false"}" == "true" ]; then
   echo "Fixing ownership and permissions..."
 
-  chown -R "$PUID":"$PGID" /var/www/html
-  find /var/www/html -type d -print0 | xargs -0 chmod 755
-  find /var/www/html \( -path /var/www/html/docker -o -path /var/www/html/node_modules -o -path /var/www/html/vendor \) -prune -o -type f -print0 | xargs -0 chmod 644
+  find /var/www/html -path /var/www/html/.git -prune -o -path /var/www/html/public/storage -prune -o -print0 | xargs -0 chown "$PUID":"$PGID"
+  find /var/www/html -path /var/www/html/.git -prune -o -path /var/www/html/public/storage -prune -o -type d -print0 | xargs -0 chmod 755
+  find /var/www/html \( -path /var/www/html/docker -o -path /var/www/html/node_modules -o -path /var/www/html/vendor -o -path /var/www/html/.git -o -path /var/www/html/public/storage \) -prune -o -type f -print0 | xargs -0 chmod 644
   chmod -R ug+rwx /var/www/html/storage /var/www/html/bootstrap/cache
   if [ -e /var/www/html/rr ]; then
     chmod 0755 /var/www/html/rr

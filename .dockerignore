@@ -10,3 +10,4 @@ rr
 ./storage/logs/*
 stubs
 tests
+.git
