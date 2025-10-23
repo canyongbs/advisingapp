@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionStatusPolarAreaChart;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('checks student interaction status polar area chart', function () {
@@ -128,15 +128,15 @@ it('returns correct interaction counts by status for students within the selecte
         ->and($interactionsCount)->not->toEqual($stats[2]);
 });
 
-it('returns correct interaction counts by status for students based on segment filter', function () {
+it('returns correct interaction counts by status for students based on group filter', function () {
     $interactionsCount = random_int(1, 10);
     $interactionsCountForDoe = random_int(1, 10);
 
     $interactionStatusFirst = InteractionStatus::factory()->create();
     $interactionStatusSecond = InteractionStatus::factory()->create();
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Student,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -183,7 +183,7 @@ it('returns correct interaction counts by status for students based on segment f
     $widgetInstance = new StudentInteractionStatusPolarAreaChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widgetInstance->getData()['datasets'][0]['data'];

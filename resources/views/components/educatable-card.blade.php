@@ -54,7 +54,7 @@
             </small>
             <br>
             <small>
-                {{ str($pipeline?->segment?->name)->limit(50) }}
+                {{ str($pipeline?->group?->name)->limit(50) }}
             </small>
         </div>
         @if ($educatabletype === 'prospect')

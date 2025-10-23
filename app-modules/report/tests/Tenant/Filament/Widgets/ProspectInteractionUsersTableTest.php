@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionUsersTable;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
 use Carbon\Carbon;
@@ -299,9 +299,9 @@ it('displays only users with prospect interactions within the selected date rang
         ->assertCanNotSeeTableRecords(collect([$userWithoutInteractions]));
 });
 
-it('displays only users with prospect interactions based on segment filter', function () {
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Prospect,
+it('displays only users with prospect interactions based on group filter', function () {
+    $group = Group::factory()->create([
+        'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -348,10 +348,10 @@ it('displays only users with prospect interactions based on segment filter', fun
         ->create();
 
     $filters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
-    // with segment filter
+    // with group filter
     livewire(ProspectInteractionUsersTable::class, [
         'cacheTag' => 'report-prospect-interaction',
         'pageFilters' => $filters,

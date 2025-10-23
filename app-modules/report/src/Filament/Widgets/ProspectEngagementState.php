@@ -57,9 +57,9 @@ class ProspectEngagementState extends StatsOverviewReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedSegment();
+        $groupId = $this->getSelectedGroup();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($groupId);
 
         $prospectsCount = $shouldBypassCache
             ? Prospect::query()
@@ -68,8 +68,8 @@ class ProspectEngagementState extends StatsOverviewReportWidget
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->when(
-                    $segmentId,
-                    fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    $groupId,
+                    fn (Builder $query) => $this->groupFilter($query, $groupId)
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
@@ -80,10 +80,10 @@ class ProspectEngagementState extends StatsOverviewReportWidget
 
         $emailsCount = $shouldBypassCache
             ? Engagement::query()
-                ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($segmentId) {
+                ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId) {
                     $query->when(
-                        $segmentId,
-                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->where('channel', NotificationChannel::Email)
@@ -103,10 +103,10 @@ class ProspectEngagementState extends StatsOverviewReportWidget
 
         $textsCount = $shouldBypassCache
             ? Engagement::query()
-                ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($segmentId) {
+                ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId) {
                     $query->when(
-                        $segmentId,
-                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                 ->where('channel', NotificationChannel::Sms)
@@ -124,11 +124,11 @@ class ProspectEngagementState extends StatsOverviewReportWidget
                     ->count()
             );
 
-        $engagementFilter = function (Builder $query) use ($startDate, $endDate, $segmentId): void {
-            $query->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($segmentId) {
+        $engagementFilter = function (Builder $query) use ($startDate, $endDate, $groupId): void {
+            $query->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId) {
                 $query->when(
-                    $segmentId,
-                    fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    $groupId,
+                    fn (Builder $query) => $this->groupFilter($query, $groupId)
                 );
             })
                 ->when(

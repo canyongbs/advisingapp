@@ -56,8 +56,8 @@ class ViewCampaign extends ViewRecord
                 Section::make()
                     ->schema([
                         TextEntry::make('name'),
-                        TextEntry::make('segment.name')
-                            ->label('Population Segment'),
+                        TextEntry::make('group.name')
+                            ->label('Population Group'),
                         IconEntry::make('enabled')
                             ->boolean(),
                         IconEntry::make('execution_status')

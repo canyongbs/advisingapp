@@ -53,12 +53,12 @@ class ProspectEngagementLineChart extends LineChartReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedSegment();
+        $groupId = $this->getSelectedGroup();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($groupId);
 
         $runningTotalPerMonth = $shouldBypassCache
-           ? $this->getProspectEngagementData($startDate, $endDate, $segmentId)
+           ? $this->getProspectEngagementData($startDate, $endDate, $groupId)
            : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_engagements_line_chart', now()->addHours(24), function () {
                return $this->getProspectEngagementData();
            });
@@ -101,7 +101,7 @@ class ProspectEngagementLineChart extends LineChartReportWidget
     /**
      * @return array<string, array<string, int>>
      */
-    protected function getProspectEngagementData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $segmentId = null): array
+    protected function getProspectEngagementData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $groupId = null): array
     {
         $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
         $endDate = $endDate ?? Carbon::now()->endOfMonth();
@@ -112,10 +112,10 @@ class ProspectEngagementLineChart extends LineChartReportWidget
 
         $baseQuery = fn (string $channel) => Engagement::query()
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($segmentId) {
+            ->whereHasMorph('recipient', Prospect::class, function (Builder $query) use ($groupId) {
                 $query->when(
-                    $segmentId,
-                    fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                    $groupId,
+                    fn (Builder $query) => $this->groupFilter($query, $groupId)
                 );
             })
             ->where('channel', $channel)

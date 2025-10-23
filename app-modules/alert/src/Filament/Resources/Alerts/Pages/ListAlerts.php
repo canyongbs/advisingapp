@@ -40,10 +40,10 @@ use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Filament\Resources\Alerts\AlertResource;
 use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
+use AdvisingApp\Group\Models\Group as GroupModel;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectAlerts;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -132,24 +132,24 @@ class ListAlerts extends ListRecords
                             callback: fn (Builder $query) => $query->whereRelation('careTeam', 'user_id', auth()->id())
                         )
                     ),
-                SelectFilter::make('my_segments')
-                    ->label('My Population Segments')
+                SelectFilter::make('my_groups')
+                    ->label('My Population Groups')
                     ->options(
-                        auth()->user()->segments()
+                        auth()->user()->groups()
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
-                SelectFilter::make('all_segments')
-                    ->label('All Population Segments')
+                    ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
+                SelectFilter::make('all_groups')
+                    ->label('All Population Groups')
                     ->options(
-                        Segment::all()
+                        GroupModel::all()
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn (Builder $query, array $data) => $this->segmentFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
                 SelectFilter::make('status_id')
@@ -200,20 +200,20 @@ class ListAlerts extends ListRecords
         ];
     }
 
-    protected function segmentFilter(Builder $query, array $data): void
+    protected function groupFilter(Builder $query, array $data): void
     {
         if (blank($data['value'])) {
             return;
         }
 
-        $segment = Segment::find($data['value']);
+        $group = GroupModel::find($data['value']);
 
         /** @var Model $model */
-        $model = resolve($segment->model->class());
+        $model = resolve($group->model->class());
 
         $query->whereIn(
             'concern_id',
-            app(TranslateSegmentFilters::class)
+            app(TranslateGroupFilters::class)
                 ->execute($data['value'])
                 ->pluck($model->getQualifiedKeyName()),
         );

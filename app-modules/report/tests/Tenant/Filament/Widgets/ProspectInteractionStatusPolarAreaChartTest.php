@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionStatusPolarAreaChart;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 
 it('checks prospect interaction status polar area chart', function () {
     $interactionsCount = rand(1, 10);
@@ -128,15 +128,15 @@ it('returns correct interaction counts by status for prospects within the select
         ->and($interactionsCount)->not->toEqual($stats[2]);
 });
 
-it('returns correct interaction counts by status for prospects based on segment filter', function () {
+it('returns correct interaction counts by status for prospects based on group filter', function () {
     $interactionsCount = random_int(1, 10);
     $interactionsCountForDoe = random_int(1, 10);
 
     $interactionStatusFirst = InteractionStatus::factory()->create();
     $interactionStatusSecond = InteractionStatus::factory()->create();
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Prospect,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -183,7 +183,7 @@ it('returns correct interaction counts by status for prospects based on segment 
     $widgetInstance = new ProspectInteractionStatusPolarAreaChart();
     $widgetInstance->cacheTag = 'report-prospect-interaction';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widgetInstance->getData()['datasets'][0]['data'];

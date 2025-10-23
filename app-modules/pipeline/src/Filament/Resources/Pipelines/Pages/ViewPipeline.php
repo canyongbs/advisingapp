@@ -56,7 +56,7 @@ class ViewPipeline extends ViewRecord
             Section::make()->schema([
                 TextEntry::make('name'),
                 TextEntry::make('description'),
-                TextEntry::make('segment.name'),
+                TextEntry::make('group.name'),
                 TextEntry::make('default_stage')
                     ->label('Default Stage'),
                 RepeatableEntry::make('stages')

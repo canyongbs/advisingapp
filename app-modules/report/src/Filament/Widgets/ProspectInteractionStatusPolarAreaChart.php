@@ -73,12 +73,12 @@ class ProspectInteractionStatusPolarAreaChart extends ChartReportWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedSegment();
+        $groupId = $this->getSelectedGroup();
 
-        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($segmentId);
+        $shouldBypassCache = filled($startDate) || filled($endDate) || filled($groupId);
 
         $interactionsByStatus = $shouldBypassCache
-            ? $this->getInteractionStatusData($startDate, $endDate, $segmentId)
+            ? $this->getInteractionStatusData($startDate, $endDate, $groupId)
             : Cache::tags(["{{$this->cacheTag}}"])->remember('prospect_interactions_by_status', now()->addHours(24), function () {
                 return $this->getInteractionStatusData();
             });
@@ -126,14 +126,14 @@ class ProspectInteractionStatusPolarAreaChart extends ChartReportWidget
     /**
      * @return Collection<int, InteractionStatus>
      */
-    protected function getInteractionStatusData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $segmentId = null): Collection
+    protected function getInteractionStatusData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $groupId = null): Collection
     {
         return InteractionStatus::withCount([
-            'interactions' => function ($query) use ($startDate, $endDate, $segmentId) {
-                $query->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($segmentId) {
+            'interactions' => function ($query) use ($startDate, $endDate, $groupId) {
+                $query->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($groupId) {
                     $query->when(
-                        $segmentId,
-                        fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                        $groupId,
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                     );
                 })
                     ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {

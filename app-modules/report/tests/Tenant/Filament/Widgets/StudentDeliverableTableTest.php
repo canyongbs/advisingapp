@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentDeliverableTable;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 use function Pest\Livewire\livewire;
@@ -90,9 +90,9 @@ it('it returns deliverability data only for students created within the given da
         ->assertCanNotSeeTableRecords($optOutStartDateStudents->merge($optOutEndDateStudents));
 });
 
-it('it returns deliverability data only for students based on segment filters', function () {
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Student,
+it('it returns deliverability data only for students based on group filters', function () {
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -143,7 +143,7 @@ it('it returns deliverability data only for students based on segment filters', 
         ]);
 
     $filters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     livewire(StudentDeliverableTable::class, [

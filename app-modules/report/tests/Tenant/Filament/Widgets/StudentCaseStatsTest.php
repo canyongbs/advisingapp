@@ -37,9 +37,9 @@
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentCaseStats;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('returns correct total cases, recent cases, open cases and closed cases of student within the given date range', function () {
@@ -88,13 +88,13 @@ it('returns correct total cases, recent cases, open cases and closed cases of st
         ->and($stats[3]->getValue())->toEqual($count);
 });
 
-it('returns correct total cases, recent cases, open cases and closed cases of student based on segment filters', function () {
+it('returns correct total cases, recent cases, open cases and closed cases of student based on group filters', function () {
     $count = random_int(1, 5);
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Student,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -170,7 +170,7 @@ it('returns correct total cases, recent cases, open cases and closed cases of st
     $widget = new StudentCaseStats();
     $widget->cacheTag = 'report-student-case';
     $widget->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widget->getStats();

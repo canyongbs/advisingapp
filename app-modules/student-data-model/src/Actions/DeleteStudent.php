@@ -53,7 +53,7 @@ class DeleteStudent
             $student->formSubmissions()->delete();
             $student->applicationSubmissions()->delete();
             $student->eventAttendeeRecords()->delete();
-            $student->segmentSubjects()->delete();
+            $student->groupSubjects()->delete();
             $student->engagements()->delete();
             $student->delete();
         });

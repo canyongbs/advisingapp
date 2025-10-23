@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionLineChart;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 
 it('checks prospect interactions monthly line chart', function () {
     $prospectCount = 5;
@@ -88,12 +88,12 @@ it('returns correct data for prospect interactions within the given date range',
     expect($widgetInstance->getData())->toMatchSnapshot();
 });
 
-it('returns correct data for prospect interactions based on segment filter', function () {
+it('returns correct data for prospect interactions based on group filter', function () {
     $interactionStartDate = now()->subDays(90);
     $interactionEndDate = now()->subDays(5);
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Prospect,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -136,7 +136,7 @@ it('returns correct data for prospect interactions based on segment filter', fun
     $widgetInstance = new ProspectInteractionLineChart();
     $widgetInstance->cacheTag = 'report-prospect-interaction';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     expect($widgetInstance->getData())->toMatchSnapshot();

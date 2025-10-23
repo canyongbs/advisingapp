@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentCumulativeCountLineChart;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('returns correct cumulative student counts grouped by month within the given date range', function () {
@@ -61,12 +61,12 @@ it('returns correct cumulative student counts grouped by month within the given 
     expect($widgetInstance->getData())->toMatchSnapshot();
 });
 
-it('returns correct cumulative student counts grouped by month based on segment filters', function () {
+it('returns correct cumulative student counts grouped by month based on group filters', function () {
     $startDate = now()->subDays(90);
     $endDate = now()->subDays(5);
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Student,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -98,7 +98,7 @@ it('returns correct cumulative student counts grouped by month based on segment 
     $widgetInstance = new StudentCumulativeCountLineChart();
     $widgetInstance->cacheTag = 'report-student';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     expect($widgetInstance->getData())->toMatchSnapshot();

@@ -35,12 +35,12 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Pages\ProspectInteractionReport;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionStats;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -159,12 +159,12 @@ it('returns correct total and unique prospect interaction counts within the give
     expect($prospectsWithInteractionsStat->getValue())
         ->toEqual($prospectsWithStartDateInteractions + $prospectsWithEndDateInteractions + $prospectsWithEndDateInteractions);
 });
-it('returns correct total and unique prospect interaction counts based on segment filter', function () {
+it('returns correct total and unique prospect interaction counts based on group filter', function () {
     $prospectsWithJohnNameInteractions = random_int(1, 10);
     $prospectsWithDoeNameInteractions = random_int(1, 10);
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Prospect,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -201,7 +201,7 @@ it('returns correct total and unique prospect interaction counts based on segmen
     $widget = new ProspectInteractionStats();
     $widget->cacheTag = 'report-prospect-interaction';
     $widget->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widget->getStats();
@@ -216,7 +216,7 @@ it('returns correct total and unique prospect interaction counts based on segmen
     expect($prospectsWithInteractionsStat->getValue())
         ->toEqual($prospectsWithJohnNameInteractions);
 
-    // without segment filter
+    // without group filter
     $widget = new ProspectInteractionStats();
     $widget->cacheTag = 'report-prospect-interaction';
     $widget->pageFilters = [];

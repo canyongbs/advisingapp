@@ -35,11 +35,11 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Report\Filament\Pages\StudentInteractionReport;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionStats;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 use function Pest\Laravel\actingAs;
@@ -160,12 +160,12 @@ it('returns correct total and unique student interaction counts within the given
         ->toEqual($studentsWithStartDateInteractions + $studentsWithEndDateInteractions + $studentsWithEndDateInteractions);
 });
 
-it('returns correct total and unique student interaction counts based on segment filter', function () {
+it('returns correct total and unique student interaction counts based on group filter', function () {
     $studentsWithJohnNameInteractions = random_int(1, 10);
     $studentsWithDoeNameInteractions = random_int(1, 10);
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Student,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -202,7 +202,7 @@ it('returns correct total and unique student interaction counts based on segment
     $widget = new StudentInteractionStats();
     $widget->cacheTag = 'report-student';
     $widget->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widget->getStats();
@@ -217,7 +217,7 @@ it('returns correct total and unique student interaction counts based on segment
     expect($studentsWithInteractionsStat->getValue())
         ->toEqual($studentsWithJohnNameInteractions);
 
-    // without segment filter
+    // without group filter
     $widget = new StudentInteractionStats();
     $widget->cacheTag = 'report-student';
     $widget->pageFilters = [];

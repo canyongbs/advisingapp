@@ -48,10 +48,10 @@ use AdvisingApp\Campaign\Jobs\TaskCampaignActionJob;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Enums\GroupType;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Enums\SegmentType;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -61,23 +61,23 @@ use Illuminate\Support\Facades\Bus;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 
-it('dispatches the correct job based on the CampaignAction type into the batch', function (SegmentModel $segmentModel, Collection $educatables, CampaignActionType $actionType, string $jobClass) {
+it('dispatches the correct job based on the CampaignAction type into the batch', function (GroupModel $groupModel, Collection $educatables, CampaignActionType $actionType, string $jobClass) {
     Bus::fake();
 
-    $segment = Segment::factory()->create([
-        'type' => SegmentType::Static,
-        'model' => $segmentModel,
+    $group = Group::factory()->create([
+        'type' => GroupType::Static,
+        'model' => $groupModel,
     ]);
 
-    $educatables->each(function (Model $educatable) use ($segment) {
-        $segment->subjects()->create([
+    $educatables->each(function (Model $educatable) use ($group) {
+        $group->subjects()->create([
             'subject_id' => $educatable->getKey(),
             'subject_type' => $educatable->getMorphClass(),
         ]);
     });
 
     $campaign = Campaign::factory()
-        ->for($segment, 'segment')
+        ->for($group, 'group')
         ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
         ->create();
 
@@ -107,14 +107,14 @@ it('dispatches the correct job based on the CampaignAction type into the batch',
         ])
     );
 })
-    // TODO: Determine how to make a dynamic segment in tests and add a dataset between static and dynamic here
+    // TODO: Determine how to make a dynamic group in tests and add a dataset between static and dynamic here
     ->with([
         'prospects' => [
-            SegmentModel::Prospect,
+            GroupModel::Prospect,
             fn () => Prospect::factory()->count(rand(1, 10))->create(),
         ],
         'students' => [
-            SegmentModel::Student,
+            GroupModel::Student,
             fn () => Student::factory()->count(rand(1, 10))->create(),
         ],
     ])
@@ -160,27 +160,27 @@ it('dispatches the correct job based on the CampaignAction type into the batch',
 it('re-uses the same CampaignActionEducatable if it already exists', function () {
     Bus::fake();
 
-    $segmentModel = SegmentModel::cases()[array_rand(SegmentModel::cases())];
+    $groupModel = GroupModel::cases()[array_rand(GroupModel::cases())];
 
-    $segment = Segment::factory()->create([
-        'type' => SegmentType::Static,
-        'model' => $segmentModel,
+    $group = Group::factory()->create([
+        'type' => GroupType::Static,
+        'model' => $groupModel,
     ]);
 
-    $educatables = match ($segmentModel) {
-        SegmentModel::Student => Student::factory()->count(rand(1, 10))->create(),
-        SegmentModel::Prospect => Prospect::factory()->count(rand(1, 10))->create(),
+    $educatables = match ($groupModel) {
+        GroupModel::Student => Student::factory()->count(rand(1, 10))->create(),
+        GroupModel::Prospect => Prospect::factory()->count(rand(1, 10))->create(),
     };
 
-    $educatables->each(function (Model $educatable) use ($segment) {
-        $segment->subjects()->create([
+    $educatables->each(function (Model $educatable) use ($group) {
+        $group->subjects()->create([
             'subject_id' => $educatable->getKey(),
             'subject_type' => $educatable->getMorphClass(),
         ]);
     });
 
     $campaign = Campaign::factory()
-        ->for($segment, 'segment')
+        ->for($group, 'group')
         ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
         ->create();
 

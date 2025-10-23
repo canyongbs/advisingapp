@@ -82,16 +82,16 @@ class StudentCaseTable extends BaseWidget
     {
         $startDate = $this->getStartDate();
         $endDate = $this->getEndDate();
-        $segmentId = $this->getSelectedSegment();
+        $groupId = $this->getSelectedGroup();
 
         return $table
             ->query(
-                function () use ($startDate, $endDate, $segmentId): Builder {
+                function () use ($startDate, $endDate, $groupId): Builder {
                     return CaseModel::query()
-                        ->whereHasMorph('respondent', Student::class, function (Builder $query) use ($segmentId) {
+                        ->whereHasMorph('respondent', Student::class, function (Builder $query) use ($groupId) {
                             $query->when(
-                                $segmentId,
-                                fn (Builder $query) => $this->segmentFilter($query, $segmentId)
+                                $groupId,
+                                fn (Builder $query) => $this->groupFilter($query, $groupId)
                             );
                         })
                         ->when(

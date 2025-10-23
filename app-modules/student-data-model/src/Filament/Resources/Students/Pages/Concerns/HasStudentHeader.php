@@ -86,7 +86,7 @@ trait HasStudentHeader
             'educatableInitials' => str($studentName)
                 ->trim()
                 ->explode(' ')
-                ->map(fn (string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')
+                ->map(fn (string $group): string => filled($group) ? mb_substr($group, 0, 1) : '')
                 ->join(' '),
             'educatableName' => $studentName,
             'timezone' => app(DisplaySettings::class)->getTimezone(),

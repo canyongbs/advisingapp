@@ -35,10 +35,10 @@
 */
 
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Report\Filament\Widgets\MostEngagedStudentsTable;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\ExportAction;
 use Illuminate\Support\Facades\Storage;
@@ -91,12 +91,12 @@ it('returns top engaged students based on engagements within the given date rang
         ->assertCanNotSeeTableRecords(collect([$student3]));
 });
 
-it('returns top engaged students engagements based on segment filter', function () {
+it('returns top engaged students engagements based on group filter', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Student,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -132,7 +132,7 @@ it('returns top engaged students engagements based on segment filter', function 
     ])->create();
 
     $filters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     livewire(MostEngagedStudentsTable::class, [

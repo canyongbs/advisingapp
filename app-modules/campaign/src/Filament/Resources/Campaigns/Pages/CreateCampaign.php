@@ -40,7 +40,7 @@ use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Segment\Models\Segment;
+use AdvisingApp\Group\Models\Group;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Select;
@@ -102,9 +102,9 @@ class CreateCampaign extends CreateRecord
                         ->autocomplete(false)
                         ->required(),
                     Select::make('segment_id')
-                        ->label('Population Segment')
+                        ->label('Population Group')
                         ->options(function () {
-                            return Segment::query()
+                            return Group::query()
                                 ->whereHas('user', function ($query) {
                                     $query->whereKey(auth()->id())->orWhereRelation('team.users', 'id', auth()->id());
                                 })

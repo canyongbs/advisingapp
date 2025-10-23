@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages;
 
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
-use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
-use AdvisingApp\Segment\Enums\SegmentModel;
 use BackedEnum;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -60,7 +60,7 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
 
     public ?string $viewType = 'null';
 
-    public ?int $segmentCount = 0;
+    public ?int $groupCount = 0;
 
     protected static string $relationship = 'educatablePipelineStages';
 
@@ -74,11 +74,11 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
 
         assert($record instanceof Pipeline);
 
-        $model = $record->segment->model;
+        $model = $record->group->model;
 
         $label = match ($model) {
-            SegmentModel::Prospect => 'Prospects',
-            SegmentModel::Student => 'Students',
+            GroupModel::Prospect => 'Prospects',
+            GroupModel::Student => 'Students',
         };
 
         return "Manage {$label}";
@@ -92,11 +92,11 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
 
         assert($ownerRecord instanceof Pipeline);
 
-        $model = $ownerRecord->segment->model;
+        $model = $ownerRecord->group->model;
 
         $label = match ($model) {
-            SegmentModel::Prospect => 'Prospects',
-            SegmentModel::Student => 'Students',
+            GroupModel::Prospect => 'Prospects',
+            GroupModel::Student => 'Students',
         };
 
         $item->label($label);
@@ -112,9 +112,9 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
 
         assert($ownerRecord instanceof Pipeline);
 
-        $this->segmentCount = app(TranslateSegmentFilters::class)->execute($ownerRecord->segment)->count();
+        $this->groupCount = app(TranslateGroupFilters::class)->execute($ownerRecord->group)->count();
 
-        if ($this->segmentCount >= 100) {
+        if ($this->groupCount >= 100) {
             session(['pipeline-view-type' => 'table']);
         }
         $this->viewType = session('pipeline-view-type') ?? 'table';
@@ -170,10 +170,10 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
 
         assert($pipeline instanceof Pipeline);
 
-        $table = $pipeline->segment->model
+        $table = $pipeline->group->model
             ->table($table);
 
-        $table->query(fn () => app(TranslateSegmentFilters::class)->execute($pipeline->segment));
+        $table->query(fn () => app(TranslateGroupFilters::class)->execute($pipeline->group));
 
         return $table;
     }

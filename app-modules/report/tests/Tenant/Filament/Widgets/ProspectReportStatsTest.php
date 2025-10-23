@@ -36,10 +36,10 @@
 
 use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\Task\Models\Task;
 
 it('returns correct total prospect stats of prospects, alerts, cases and tasks within the given date range', function () {
@@ -94,11 +94,11 @@ it('returns correct total prospect stats of prospects, alerts, cases and tasks w
         ->and($stats[3]->getValue())->toEqual($taskCount);
 });
 
-it('returns correct total prospect stats of prospects, alerts, cases and tasks based on segment filter', function () {
+it('returns correct total prospect stats of prospects, alerts, cases and tasks based on group filter', function () {
     $count = random_int(1, 5);
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Prospect,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Prospect,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -183,7 +183,7 @@ it('returns correct total prospect stats of prospects, alerts, cases and tasks b
     $widget = new ProspectReportStats();
     $widget->cacheTag = 'prospect-report-cache';
     $widget->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widget->getStats();

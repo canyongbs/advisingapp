@@ -38,7 +38,7 @@ namespace AdvisingApp\Campaign\Jobs;
 
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
-use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use App\Models\Tenant;
 use App\Models\User;
@@ -85,18 +85,18 @@ class ExecuteCampaignAction implements ShouldQueue, ShouldBeUnique
             return;
         }
 
-        // Required as some segment filters apply based on the logged in User.
+        // Required as some group filters apply based on the logged in User.
         // The campaign creator is the one who will be logged in.
         if ($this->action->campaign->createdBy instanceof User) {
             Auth::setUser($this->action->campaign->createdBy);
         }
 
         try {
-            app(TranslateSegmentFilters::class)
-                ->execute($this->action->campaign->segment)
+            app(TranslateGroupFilters::class)
+                ->execute($this->action->campaign->group)
                 ->lazyById(
                     1000,
-                    $this->action->campaign->segment->model->instance()->getKeyName(),
+                    $this->action->campaign->group->model->instance()->getKeyName(),
                 )
                 ->each(function (Model $educatable) {
                     try {

@@ -85,7 +85,7 @@ class ProspectReportTableChart extends TableWidget
 
                     $startDate = $this->getStartDate();
                     $endDate = $this->getEndDate();
-                    $segmentId = $this->getSelectedSegment();
+                    $groupId = $this->getSelectedGroup();
 
                     return Prospect::query()
                         ->whereNotNull('created_at')
@@ -97,9 +97,9 @@ class ProspectReportTableChart extends TableWidget
                             }
                         )
                         ->when(
-                            $segmentId,
-                            function (Builder $query) use ($segmentId): Builder {
-                                $this->segmentFilter($query, $segmentId);
+                            $groupId,
+                            function (Builder $query) use ($groupId): Builder {
+                                $this->groupFilter($query, $groupId);
 
                                 return $query;
                             }

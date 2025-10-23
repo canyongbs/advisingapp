@@ -59,8 +59,8 @@
             </button>
             <button
                 type="button"
-                title="{{ $this->segmentCount >= 100 ? 'Kanban view is only available for fewer than 100 prospect records.' : '' }}"
-                @disabled($this->segmentCount >= 100)
+                title="{{ $this->groupCount >= 100 ? 'Kanban view is only available for fewer than 100 prospect records.' : '' }}"
+                @disabled($this->groupCount >= 100)
                 @class([
                     'px-5 py-1.5 text-xs font-medium rounded-lg',
                     'text-white bg-gray-900 dark:bg-gray-300 dark:text-gray-900' =>

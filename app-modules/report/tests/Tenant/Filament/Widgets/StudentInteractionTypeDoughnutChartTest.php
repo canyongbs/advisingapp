@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionTypeDoughnutChart;
-use AdvisingApp\Segment\Enums\SegmentModel;
-use AdvisingApp\Segment\Models\Segment;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('checks student interaction types doughnut chart', function () {
@@ -128,15 +128,15 @@ it('returns correct interaction counts by type for students within the selected 
         ->and($interactionsCount)->not->toEqual($stats[2]);
 });
 
-it('returns correct interaction counts by type for students based on segment filter', function () {
+it('returns correct interaction counts by type for students based on group filter', function () {
     $interactionsCount = random_int(1, 10);
     $interactionsCountForDoe = random_int(1, 10);
 
     $interactionTypeFirst = InteractionType::factory()->create();
     $interactionTypeSecond = InteractionType::factory()->create();
 
-    $segment = Segment::factory()->create([
-        'model' => SegmentModel::Student,
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
@@ -180,11 +180,11 @@ it('returns correct interaction counts by type for students based on segment fil
             'last' => 'Doe',
         ]);
 
-    //  with segment filter
+    //  with group filter
     $widgetInstance = new StudentInteractionTypeDoughnutChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
     $widgetInstance->pageFilters = [
-        'populationSegment' => $segment->getKey(),
+        'populationGroup' => $group->getKey(),
     ];
 
     $stats = $widgetInstance->getData()['datasets'][0]['data'];
@@ -192,7 +192,7 @@ it('returns correct interaction counts by type for students based on segment fil
     expect($interactionsCount)->toEqual($stats[0])
         ->and($interactionsCount)->not->toEqual($stats[1]);
 
-    //  with segment filter
+    //  with group filter
     $widgetInstance = new StudentInteractionTypeDoughnutChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
     $widgetInstance->pageFilters = [];
