@@ -39,10 +39,9 @@ use AdvisingApp\Project\Models\Project;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use App\Models\User;
-use Filament\Actions\AssociateAction;
-use Filament\Actions\DissociateAction;
-use Filament\Actions\DissociateBulkAction;
-use Filament\Forms\Components\Select;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -91,7 +90,7 @@ it('can render with proper permission', function () {
         ->assertSuccessful();
 });
 
-it('shows the associate and dissociate actions with proper permissions', function () {
+it('shows the edit and delete actions with proper permissions', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('project.view-any');
@@ -107,21 +106,29 @@ it('shows the associate and dissociate actions with proper permissions', functio
     $project->createdBy()->associate($user);
     $project->save();
 
+    $task = Task::factory()->for($project)->concerningStudent(Student::factory()->create())->create([
+        'is_confidential' => false,
+        'assigned_to' => $user->id,
+        'created_by' => $user->id,
+    ]);
+
     livewire(ManageTasks::class, [
         'record' => $project->getRouteKey(),
     ])
-        ->assertTableActionHidden(AssociateAction::class)
-        ->assertTableActionHidden(DissociateAction::class)
-        ->assertTableActionHidden(DissociateBulkAction::class);
+        ->assertTableActionHidden(EditAction::class)
+        ->assertTableActionHidden(DeleteAction::class, $task)
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
 
     $user->givePermissionTo('project.*.update');
+    $user->givePermissionTo('task.*.update');
+    $user->givePermissionTo('task.*.delete');
 
     livewire(ManageTasks::class, [
         'record' => $project->getRouteKey(),
     ])
-        ->assertTableActionVisible(AssociateAction::class)
-        ->assertTableActionVisible(DissociateAction::class)
-        ->assertTableActionVisible(DissociateBulkAction::class);
+        ->assertTableActionVisible(EditAction::class)
+        ->assertTableActionVisible(DeleteAction::class, $task)
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
 it('can list tasks', function () {
@@ -135,35 +142,4 @@ it('can list tasks', function () {
         'record' => $project->getRouteKey(),
     ])
         ->assertCanSeeTableRecords($project->tasks);
-});
-
-it('does not list tasks already associated with a project in task search', function () {
-    asSuperAdmin();
-
-    $projectOne = Project::factory()->create();
-    $projectTwo = Project::factory()->create();
-
-    $task = Task::factory()->for($projectOne)->concerningStudent(Student::factory()->create())->create();
-
-    livewire(ManageTasks::class, [
-        'record' => $projectOne->getRouteKey(),
-    ])
-        ->mountTableAction(AssociateAction::class)
-        ->assertFormFieldExists('recordId', checkFieldUsing: function (Select $select) use ($task) {
-            $options = $select->getSearchResults($task->title);
-
-            return empty($options);
-        })
-        ->assertSuccessful();
-
-    livewire(ManageTasks::class, [
-        'record' => $projectTwo->getRouteKey(),
-    ])
-        ->mountTableAction(AssociateAction::class)
-        ->assertFormFieldExists('recordId', checkFieldUsing: function (Select $select) use ($task) {
-            $options = $select->getSearchResults($task->title);
-
-            return empty($options);
-        })
-        ->assertSuccessful();
 });
