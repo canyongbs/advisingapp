@@ -50,8 +50,6 @@ abstract class ChartReportWidget extends ChartWidget
 
     protected ?string $pollingInterval = null;
 
-    protected ?string $maxHeight = '200px';
-
     protected static bool $isLazy = false;
 
     public function mount($cacheTag = null): void

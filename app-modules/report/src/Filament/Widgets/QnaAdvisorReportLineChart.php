@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Models\QnaAdvisorMessage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
-class QnaAdvisorReportLineChart extends ChartReportWidget
+class QnaAdvisorReportLineChart extends LineChartReportWidget
 {
     protected ?string $heading = 'Exchanges by Month';
 
@@ -94,11 +94,6 @@ class QnaAdvisorReportLineChart extends ChartReportWidget
                 ],
             ],
         ];
-    }
-
-    protected function getType(): string
-    {
-        return 'line';
     }
 
     /**
