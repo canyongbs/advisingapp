@@ -12708,16 +12708,16 @@
         },
         {
             "name": "shuvroroy/filament-spatie-laravel-health",
-            "version": "v3.1.0",
+            "version": "v3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shuvroroy/filament-spatie-laravel-health.git",
-                "reference": "3c66e249f33b1b6b30c28b7f4f9cc8d9ebd0226f"
+                "reference": "3ad5b8a6ea1272c02d598310a46617610315827a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shuvroroy/filament-spatie-laravel-health/zipball/3c66e249f33b1b6b30c28b7f4f9cc8d9ebd0226f",
-                "reference": "3c66e249f33b1b6b30c28b7f4f9cc8d9ebd0226f",
+                "url": "https://api.github.com/repos/shuvroroy/filament-spatie-laravel-health/zipball/3ad5b8a6ea1272c02d598310a46617610315827a",
+                "reference": "3ad5b8a6ea1272c02d598310a46617610315827a",
                 "shasum": ""
             },
             "require": {
@@ -12772,7 +12772,7 @@
             ],
             "support": {
                 "issues": "https://github.com/shuvroroy/filament-spatie-laravel-health/issues",
-                "source": "https://github.com/shuvroroy/filament-spatie-laravel-health/tree/v3.1.0"
+                "source": "https://github.com/shuvroroy/filament-spatie-laravel-health/tree/v3.1.2"
             },
             "funding": [
                 {
@@ -12780,7 +12780,7 @@
                     "type": "buy_me_a_coffee"
                 }
             ],
-            "time": "2025-10-04T16:00:15+00:00"
+            "time": "2025-10-22T05:43:08+00:00"
         },
         {
             "name": "socialiteproviders/google",
