@@ -41,7 +41,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
-class ProspectReportLineChart extends ChartReportWidget
+class ProspectReportLineChart extends LineChartReportWidget
 {
     protected ?string $heading = 'Prospects (Cumulative)';
 
@@ -90,11 +90,6 @@ class ProspectReportLineChart extends ChartReportWidget
                 ],
             ],
         ];
-    }
-
-    protected function getType(): string
-    {
-        return 'line';
     }
 
     /**
