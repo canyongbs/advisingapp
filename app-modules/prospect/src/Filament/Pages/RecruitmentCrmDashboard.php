@@ -39,7 +39,7 @@ namespace AdvisingApp\Prospect\Filament\Pages;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectsActionCenterWidget;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectStats;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Abstract\RecruitmentCrmDashboardReport;
+use AdvisingApp\Report\Abstract\ProspectReport;
 use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use App\Filament\Clusters\ReportLibrary;
 use App\Filament\Widgets\ProspectGrowthChart;
@@ -49,7 +49,7 @@ use Livewire\Attributes\Url;
 use Symfony\Component\HttpFoundation\Response;
 use UnitEnum;
 
-class RecruitmentCrmDashboard extends RecruitmentCrmDashboardReport
+class RecruitmentCrmDashboard extends ProspectReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
@@ -68,7 +68,7 @@ class RecruitmentCrmDashboard extends RecruitmentCrmDashboardReport
     #[Url]
     public string $activeTab = ActionCenterTab::Subscribed->value;
 
-    protected string $view = 'student-data-model::filament.pages.dashboard';
+    protected string $cacheTag = 'report-prospect-action-center';
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -93,15 +93,16 @@ class RecruitmentCrmDashboard extends RecruitmentCrmDashboardReport
     public function getWidgets(): array
     {
         return [
-            ProspectStats::class,
-            ProspectsActionCenterWidget::class,
-            ProspectGrowthChart::class,
+            ProspectStats::make(),
+            ProspectsActionCenterWidget::make(),
+            ProspectGrowthChart::make(),
         ];
     }
 
     public function getWidgetData(): array
     {
         return [
+            'filters' => $this->filters,
             'activeTab' => $this->activeTab,
         ];
     }
