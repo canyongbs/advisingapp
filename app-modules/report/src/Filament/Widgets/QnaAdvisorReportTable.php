@@ -150,6 +150,8 @@ class QnaAdvisorReportTable extends TableWidget
                     ->badge()
                     ->color(fn (QnaAdvisorThread $record): string => filled($record->interaction_id) ? 'info' : 'warning')
                     ->getStateUsing(fn (QnaAdvisorThread $record) => filled($record->interaction_id) ? 'Yes' : 'No'),
+                TextColumn::make('created_at')
+                    ->label('Initiated'),
             ])
             ->paginated([10]);
     }
