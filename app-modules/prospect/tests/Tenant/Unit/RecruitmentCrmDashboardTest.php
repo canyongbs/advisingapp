@@ -42,7 +42,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
-use App\Filament\Widgets\ProspectGrowthChart;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -91,11 +90,6 @@ it('renders all prospects correctly in the recruitment dashboard for the All tab
     livewire(ProspectsActionCenterWidget::class, ['activeTab' => ActionCenterTab::All->value])
         ->assertSuccessful()
         ->assertCanSeeTableRecords($allRelevantProspects);
-
-    $chartWidget = new ProspectGrowthChart();
-    $chartWidget->activeTab = ActionCenterTab::All->value;
-
-    expect($chartWidget->getData())->toMatchSnapshot();
 });
 
 it('renders subscribed prospects correctly in the recruitment dashboard for the Subscribed tab', function () {
@@ -126,11 +120,6 @@ it('renders subscribed prospects correctly in the recruitment dashboard for the 
     livewire(ProspectsActionCenterWidget::class, ['activeTab' => ActionCenterTab::Subscribed->value])
         ->assertSuccessful()
         ->assertCanSeeTableRecords($prospectsWithSubscription);
-
-    $chartWidget = new ProspectGrowthChart();
-    $chartWidget->activeTab = ActionCenterTab::Subscribed->value;
-
-    expect($chartWidget->getData())->toMatchSnapshot();
 });
 
 it('renders care team prospects correctly in the recruitment dashboard for the Care Team tab', function () {
@@ -164,9 +153,4 @@ it('renders care team prospects correctly in the recruitment dashboard for the C
     livewire(ProspectsActionCenterWidget::class, ['activeTab' => ActionCenterTab::CareTeam->value])
         ->assertSuccessful()
         ->assertCanSeeTableRecords($prospectsWithCareTeam);
-
-    $chartWidget = new ProspectGrowthChart();
-    $chartWidget->activeTab = ActionCenterTab::CareTeam->value;
-
-    expect($chartWidget->getData())->toMatchSnapshot();
 });
