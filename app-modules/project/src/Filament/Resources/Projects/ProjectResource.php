@@ -71,12 +71,12 @@ class ProjectResource extends Resource
         return $page->generateNavigationItems([
             ViewProject::class,
             EditProject::class,
+            ManageTasks::class,
             ManageManagers::class,
             ManageAuditors::class,
             ManageFiles::class,
             ManageProjectPipelines::class,
             ManageMilestones::class,
-            ManageTasks::class,
         ]);
     }
 
