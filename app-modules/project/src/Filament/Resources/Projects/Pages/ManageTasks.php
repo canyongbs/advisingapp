@@ -61,7 +61,9 @@ use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -163,60 +165,65 @@ class ManageTasks extends ManageRelatedRecords
                             ->hidden(fn (Task $record) => $record->getStateMachine('status')->getStateTransitions()->doesntContain(TaskStatus::Canceled->value) || auth()->user()?->cannot("task.{$record->id}.update")),
                     ])
                     ->schema([
-                        Grid::make()
-                            ->schema([
+                        Flex::make([
+                            Section::make([
                                 TextEntry::make('is_confidential')
-                                    ->label('')
+                                    ->hiddenLabel()
                                     ->badge()
                                     ->formatStateUsing(fn ($state): string => $state ? 'Confidential' : '')
                                     ->visible(fn ($record): bool => $record->is_confidential),
                                 TextEntry::make('title'),
                                 TextEntry::make('description'),
-                                TextEntry::make('assignedTo.name')
-                                    ->label('Assigned To')
-                                    ->url(
-                                        fn (Task $record) => $record->assignedTo
-                                        ? UserResource::getUrl('view', ['record' => $record->assignedTo])
-                                        : null
-                                    )
-                                    ->default('Unassigned'),
-                                TextEntry::make('concern.full_name')
-                                    ->label('Related To')
-                                    ->getStateUsing(
-                                        fn (Task $record): ?string => match ($record->concern->getMorphClass()) {
-                                            Student::class => $record->concern->full_name,
-                                            Prospect::class => $record->concern->full_name,
-                                            default => null,
-                                        }
-                                    )
-                                    ->url(
-                                        fn (Task $record): string|null => match ($record->concern->getMorphClass()) {
-                                            Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
-                                            Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
-                                            default => null,
-                                        }
-                                    )
-                                    ->default('Unrelated'),
-                                Fieldset::make('metadata')
-                                    ->columnSpan(1)
-                                    ->label('Metadata')
+                                Grid::make(2)
                                     ->schema([
-                                        TextEntry::make('status')
-                                            ->formatStateUsing(fn (TaskStatus $state): string => str($state->value)->title()->headline())
-                                            ->badge(),
-                                        TextEntry::make('due')
-                                            ->label('Due Date')
-                                            ->default('N/A'),
-                                        TextEntry::make('createdBy.name')
-                                            ->label('Created By')
-                                            ->default('N/A')
+                                        TextEntry::make('assignedTo.name')
+                                            ->label('Assigned To')
                                             ->url(
-                                                fn (Task $record) => $record->createdBy
-                                                ? UserResource::getUrl('view', ['record' => $record->createdBy])
+                                                fn (Task $record) => $record->assignedTo
+                                                ? UserResource::getUrl('view', ['record' => $record->assignedTo])
                                                 : null
-                                            ),
+                                            )
+                                            ->default('Unassigned'),
+                                        TextEntry::make('concern.full_name')
+                                            ->label('Related To')
+                                            ->getStateUsing(
+                                                fn (Task $record): ?string => match ($record->concern->getMorphClass()) {
+                                                    Student::class => $record->concern->full_name,
+                                                    Prospect::class => $record->concern->full_name,
+                                                    default => null,
+                                                }
+                                            )
+                                            ->url(
+                                                fn (Task $record): string|null => match ($record->concern->getMorphClass()) {
+                                                    Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
+                                                    Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
+                                                    default => null,
+                                                }
+                                            )
+                                            ->default('Unrelated'),
                                     ]),
-                            ]),
+                            ])->contained(false),
+
+                            Fieldset::make('metadata')
+                                ->columnSpan(1)
+                                ->label('Metadata')
+                                ->schema([
+                                    TextEntry::make('status')
+                                        ->formatStateUsing(fn (TaskStatus $state): string => str($state->value)->title()->headline())
+                                        ->badge(),
+                                    TextEntry::make('due')
+                                        ->label('Due Date')
+                                        ->default('N/A'),
+                                    TextEntry::make('createdBy.name')
+                                        ->label('Created By')
+                                        ->default('N/A')
+                                        ->url(
+                                            fn (Task $record) => $record->createdBy
+                                            ? UserResource::getUrl('view', ['record' => $record->createdBy])
+                                            : null
+                                        ),
+                                ]),
+                        ]),
                     ]),
                 EditAction::make()
                     ->schema([
