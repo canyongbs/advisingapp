@@ -36,9 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
-use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
-use AdvisingApp\Report\Abstract\RetentionCrmDashboardReport;
+use AdvisingApp\Report\Abstract\StudentReport;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentStats;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -48,7 +46,7 @@ use BackedEnum;
 use Symfony\Component\HttpFoundation\Response;
 use UnitEnum;
 
-class RetentionCrmDashboard extends RetentionCrmDashboardReport implements HasGroupModel
+class RetentionCrmDashboard extends StudentReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
@@ -64,7 +62,7 @@ class RetentionCrmDashboard extends RetentionCrmDashboardReport implements HasGr
 
     protected static string | BackedEnum | null $navigationIcon = '';
 
-    protected string $view = 'student-data-model::filament.pages.dashboard';
+    protected string $cacheTag = 'report-student-action-center';
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -85,19 +83,15 @@ class RetentionCrmDashboard extends RetentionCrmDashboardReport implements HasGr
     public function getWidgets(): array
     {
         return [
-            StudentStats::class,
-            StudentsActionCenterWidget::class,
+            StudentStats::make(),
+            StudentsActionCenterWidget::make(),
         ];
     }
 
     public function getWidgetData(): array
     {
         return [
+            'filters' => $this->filters,
         ];
-    }
-
-    public function groupModel(): ?GroupModel
-    {
-        return GroupModel::Student;
     }
 }

@@ -108,7 +108,7 @@ trait HasFiltersForm
             ->where('model', $model)
             ->when($search, fn (Builder $query) => $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%']))
             ->orderByDesc('created_at')
-            ->limit(15)
+            ->limit(20)
             ->pluck('name', 'id')
             ->all();
     }
