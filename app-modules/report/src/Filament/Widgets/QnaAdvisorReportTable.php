@@ -43,6 +43,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
@@ -152,6 +153,25 @@ class QnaAdvisorReportTable extends TableWidget
                     ->getStateUsing(fn (QnaAdvisorThread $record) => filled($record->interaction_id) ? 'Yes' : 'No'),
                 TextColumn::make('created_at')
                     ->label('Initiated'),
+            ])
+            ->recordActions([
+                Action::make('view_transcript')
+                    ->label('View Transcript')
+                    ->icon('heroicon-o-chat-bubble-left-right')
+                    ->modalHeading(fn (QnaAdvisorThread $record): string => 'Chat Transcript - ' . $record->advisor->name)
+                    ->modalWidth('6xl')
+                    ->modalContent(function (QnaAdvisorThread $record) {
+                        $messages = $record->messages()
+                            ->orderBy('created_at', 'asc')
+                            ->get();
+
+                        return view('ai::filament.widgets.qna-advisor-transcript-modal', [
+                            'messages' => $messages,
+                            'advisor' => $record->advisor,
+                        ]);
+                    })
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close'),
             ])
             ->paginated([10]);
     }
