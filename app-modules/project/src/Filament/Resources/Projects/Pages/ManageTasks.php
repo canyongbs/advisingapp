@@ -37,15 +37,36 @@
 namespace AdvisingApp\Project\Filament\Resources\Projects\Pages;
 
 use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
-use Filament\Actions\AssociateAction;
+use App\Filament\Resources\Users\UserResource;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DissociateAction;
-use Filament\Actions\DissociateBulkAction;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\MorphToSelect\Type;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class ManageTasks extends ManageRelatedRecords
 {
@@ -70,18 +91,196 @@ class ManageTasks extends ManageRelatedRecords
                     ->tooltip(fn (Task $record) => $record->is_confidential ? 'Confidential' : null),
             ])
             ->headerActions([
-                AssociateAction::make()
-                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereNull('project_id'))
-                    ->preloadRecordSelect()
-                    ->authorize(fn () => auth()->user()->can('update', $this->getOwnerRecord())),
+                CreateAction::make()
+                    ->authorize(fn () => auth()->user()->can('create', [Task::class, null]))
+                    ->schema([
+                        Fieldset::make('Confidentiality')
+                            ->schema([
+                                Checkbox::make('is_confidential')
+                                    ->label('Confidential')
+                                    ->live()
+                                    ->columnSpanFull(),
+                                Select::make('confidential_task_users')
+                                    ->relationship('confidentialAccessUsers', 'name')
+                                    ->preload()
+                                    ->label('Users')
+                                    ->multiple()
+                                    ->exists('users', 'id')
+                                    ->visible(fn (Get $get) => $get('is_confidential')),
+                                Select::make('confidential_task_teams')
+                                    ->relationship('confidentialAccessTeams', 'name')
+                                    ->preload()
+                                    ->label('Teams')
+                                    ->multiple()
+                                    ->exists('teams', 'id')
+                                    ->visible(fn (Get $get) => $get('is_confidential')),
+                            ]),
+                        TextInput::make('title')
+                            ->required()
+                            ->maxLength(100)
+                            ->string(),
+                        Textarea::make('description')
+                            ->required()
+                            ->string(),
+                        DateTimePicker::make('due')
+                            ->label('Due Date')
+                            ->native(false),
+                        Select::make('assigned_to')
+                            ->label('Assigned To')
+                            ->relationship('assignedTo', 'name')
+                            ->nullable()
+                            ->searchable(['name', 'email'])
+                            ->default(auth()->id()),
+                        MorphToSelect::make('concern')
+                            ->label('Related To')
+                            ->types([
+                                Type::make(Student::class)
+                                    ->titleAttribute('full_name'),
+                                Type::make(Prospect::class)
+                                    ->titleAttribute('full_name'),
+                            ])
+                            ->searchable(),
+                    ])
+                    ->modalHeading('Create Task')
+                    ->modalSubmitActionLabel('Create Task'),
             ])
             ->recordActions([
-                DissociateAction::make()
-                    ->authorize(fn () => auth()->user()->can('update', $this->getOwnerRecord())),
+                ViewAction::make()
+                    ->authorize('view', Task::class)
+                    ->extraModalFooterActions([
+                        Action::make('mark_as_in_progress')
+                            ->label('Mark as In Progress')
+                            ->action(fn (Task $record) => $record->getStateMachine('status')->transitionTo(TaskStatus::InProgress))
+                            ->cancelParentActions()
+                            ->hidden(fn (Task $record) => $record->getStateMachine('status')->getStateTransitions()->doesntContain(TaskStatus::InProgress->value) || auth()->user()?->cannot("task.{$record->id}.update")),
+                        Action::make('mark_as_completed')
+                            ->label('Mark as Completed')
+                            ->action(fn (Task $record) => $record->getStateMachine('status')->transitionTo(TaskStatus::Completed))
+                            ->cancelParentActions()
+                            ->hidden(fn (Task $record) => $record->getStateMachine('status')->getStateTransitions()->doesntContain(TaskStatus::Completed->value) || auth()->user()?->cannot("task.{$record->id}.update")),
+                        Action::make('mark_as_canceled')
+                            ->label('Mark as Canceled')
+                            ->action(fn (Task $record) => $record->getStateMachine('status')->transitionTo(TaskStatus::Canceled))
+                            ->cancelParentActions()
+                            ->hidden(fn (Task $record) => $record->getStateMachine('status')->getStateTransitions()->doesntContain(TaskStatus::Canceled->value) || auth()->user()?->cannot("task.{$record->id}.update")),
+                    ])
+                    ->schema([
+                        Flex::make([
+                            Section::make([
+                                TextEntry::make('is_confidential')
+                                    ->hiddenLabel()
+                                    ->badge()
+                                    ->formatStateUsing(fn ($state): string => $state ? 'Confidential' : '')
+                                    ->visible(fn ($record): bool => $record->is_confidential),
+                                TextEntry::make('title'),
+                                TextEntry::make('description'),
+                                Grid::make(2)
+                                    ->schema([
+                                        TextEntry::make('assignedTo.name')
+                                            ->label('Assigned To')
+                                            ->url(
+                                                fn (Task $record) => $record->assignedTo
+                                                ? UserResource::getUrl('view', ['record' => $record->assignedTo])
+                                                : null
+                                            )
+                                            ->default('Unassigned'),
+                                        TextEntry::make('concern.full_name')
+                                            ->label('Related To')
+                                            ->getStateUsing(
+                                                fn (Task $record): ?string => match ($record->concern->getMorphClass()) {
+                                                    Student::class => $record->concern->full_name,
+                                                    Prospect::class => $record->concern->full_name,
+                                                    default => null,
+                                                }
+                                            )
+                                            ->url(
+                                                fn (Task $record): string|null => match ($record->concern->getMorphClass()) {
+                                                    Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
+                                                    Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
+                                                    default => null,
+                                                }
+                                            )
+                                            ->default('Unrelated'),
+                                    ]),
+                            ])->contained(false),
+
+                            Fieldset::make('metadata')
+                                ->columnSpan(1)
+                                ->label('Metadata')
+                                ->schema([
+                                    TextEntry::make('status')
+                                        ->formatStateUsing(fn (TaskStatus $state): string => str($state->value)->title()->headline())
+                                        ->badge(),
+                                    TextEntry::make('due')
+                                        ->label('Due Date')
+                                        ->default('N/A'),
+                                    TextEntry::make('createdBy.name')
+                                        ->label('Created By')
+                                        ->default('N/A')
+                                        ->url(
+                                            fn (Task $record) => $record->createdBy
+                                            ? UserResource::getUrl('view', ['record' => $record->createdBy])
+                                            : null
+                                        ),
+                                ]),
+                        ])->from('md'),
+                    ]),
+                EditAction::make()
+                    ->schema([
+                        Fieldset::make('Confidentiality')
+                            ->schema([
+                                Checkbox::make('is_confidential')
+                                    ->label('Confidential')
+                                    ->live()
+                                    ->columnSpanFull(),
+                                Select::make('confidential_task_users')
+                                    ->relationship('confidentialAccessUsers', 'name')
+                                    ->preload()
+                                    ->label('Users')
+                                    ->multiple()
+                                    ->exists('users', 'id')
+                                    ->visible(fn (Get $get) => $get('is_confidential')),
+                                Select::make('confidential_task_teams')
+                                    ->relationship('confidentialAccessTeams', 'name')
+                                    ->preload()
+                                    ->label('Teams')
+                                    ->multiple()
+                                    ->exists('teams', 'id')
+                                    ->visible(fn (Get $get) => $get('is_confidential')),
+                            ]),
+                        TextInput::make('title')
+                            ->required()
+                            ->maxLength(100)
+                            ->string(),
+                        Textarea::make('description')
+                            ->required()
+                            ->string(),
+                        DateTimePicker::make('due')
+                            ->label('Due Date')
+                            ->native(false),
+                        Select::make('assigned_to')
+                            ->label('Assigned To')
+                            ->relationship('assignedTo', 'name')
+                            ->nullable()
+                            ->searchable(['name', 'email'])
+                            ->default(auth()->id()),
+                        MorphToSelect::make('concern')
+                            ->label('Related To')
+                            ->types([
+                                Type::make(Student::class)
+                                    ->titleAttribute('full_name'),
+                                Type::make(Prospect::class)
+                                    ->titleAttribute('full_name'),
+                            ])
+                            ->searchable(),
+                    ])
+                    ->authorize('update', Task::class),
+                DeleteAction::make()
+                    ->authorize('delete', Task::class),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DissociateBulkAction::make()
+                    DeleteBulkAction::make()
                         ->authorize(fn () => auth()->user()->can('update', $this->getOwnerRecord())),
                 ]),
             ]);
