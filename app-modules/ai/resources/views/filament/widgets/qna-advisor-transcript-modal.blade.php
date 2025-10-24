@@ -1,27 +1,25 @@
 <div class="max-h-[600px] overflow-y-auto p-6 space-y-4">
     @forelse($messages as $message)
         @php
-            $timestamp = $message->created_at->format('M j, Y g:i A');
             $author = $message->is_advisor 
                 ? $advisor->name 
                 : ($message->author ? $message->author->full_name : 'User');
-            $isAdvisor = $message->is_advisor;
         @endphp
 
-        <div class="flex {{ $isAdvisor ? 'justify-start' : 'justify-end' }}">
+        <div class="flex {{ $message->is_advisor ? 'justify-start' : 'justify-end' }}">
             <div class="max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl">
-                <div class="px-5 py-4 rounded-lg {{ $isAdvisor 
+                <div class="px-5 py-4 rounded-lg {{ $message->is_advisor 
                     ? 'bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700' 
                     : 'bg-primary-500 text-white' }}">
                     
-                    <div class="mb-3 {{ $isAdvisor 
+                    <div class="mb-3 {{ $message->is_advisor 
                         ? 'text-gray-600 dark:text-gray-300' 
                         : 'text-primary-100' }}">
                         <span class="text-sm font-semibold">{{ $author }}</span>
-                        <span class="text-xs opacity-75 ml-2">{{ $timestamp }}</span>
+                        <span class="text-xs opacity-75 ml-2">{{ $message->created_at->format('M j, Y g:i A') }}</span>
                     </div>
                     
-                    <div class="prose prose-sm max-w-none leading-relaxed {{ $isAdvisor 
+                    <div class="prose prose-sm max-w-none leading-relaxed {{ $message->is_advisor 
                         ? 'text-gray-900 dark:text-gray-100 dark:prose-invert prose-p:mb-3 prose-p:leading-relaxed' 
                         : 'text-white prose-invert prose-p:mb-3 prose-p:leading-relaxed' }}">
                         {!! str($message->content)->markdown() !!}
