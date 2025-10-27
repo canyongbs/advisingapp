@@ -48,6 +48,11 @@ abstract class StudentReport extends Dashboard implements HasGroupModel
 
     protected string $view = 'report::filament.pages.report';
 
+    public function persistsFiltersInSession(): bool
+    {
+        return false;
+    }
+
     public static function canAccess(): bool
     {
         /** @var User $user */
