@@ -42,7 +42,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Abstract\ProspectReport;
 use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use App\Filament\Clusters\ReportLibrary;
-use App\Filament\Widgets\ProspectGrowthChart;
 use App\Models\User;
 use BackedEnum;
 use Livewire\Attributes\Url;
@@ -95,7 +94,6 @@ class RecruitmentCrmDashboard extends ProspectReport
         return [
             ProspectStats::make(),
             ProspectsActionCenterWidget::make(),
-            ProspectGrowthChart::make(),
         ];
     }
 
