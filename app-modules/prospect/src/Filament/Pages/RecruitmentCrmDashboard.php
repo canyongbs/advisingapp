@@ -94,7 +94,6 @@ class RecruitmentCrmDashboard extends ProspectReport
         return [
             ProspectStats::make(),
             ProspectsActionCenterWidget::make(),
-            ProspectGrowthChart::make(),
         ];
     }
 
