@@ -275,6 +275,7 @@ class ListStudents extends ListRecords
         if (blank($data['value'])) {
             return;
         }
+        dd($query->getModel());
 
         $query->whereKey(
             app(TranslateGroupFilters::class)
