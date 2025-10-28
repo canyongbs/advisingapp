@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Engagement\Filament\Pages;
 
+use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Filament\Actions\BulkChangeStatusAction;
@@ -47,7 +48,6 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Alert\Models\AlertStatus;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
 use Filament\Actions\BulkActionGroup;
@@ -105,7 +105,7 @@ class Inbox extends Page implements HasTable
                     ->badge(),
                 TextColumn::make('sender_type')
                     ->label('Relation')
-                    ->formatStateUsing(fn(EngagementResponse $record) => ucwords($record->sender_type))
+                    ->formatStateUsing(fn (EngagementResponse $record) => ucwords($record->sender_type))
                     ->sortable(),
                 TextColumn::make('from')
                     ->state(function (EngagementResponse $record): ?string {
@@ -129,14 +129,14 @@ class Inbox extends Page implements HasTable
                         return null;
                     }),
                 TextColumn::make('type')
-                    ->formatStateUsing(fn(EngagementResponse $record) => match ($record->type) {
+                    ->formatStateUsing(fn (EngagementResponse $record) => match ($record->type) {
                         EngagementResponseType::Email => 'Email',
                         EngagementResponseType::Sms => 'Text',
                     })
                     ->sortable(),
                 TextColumn::make('subject')
                     ->description(
-                        fn(EngagementResponse $record): ?string => filled($body = $record->getBodyMarkdown())
+                        fn (EngagementResponse $record): ?string => filled($body = $record->getBodyMarkdown())
                             ? Str::limit(strip_tags($body), 50)
                             : null
                     )
@@ -148,11 +148,11 @@ class Inbox extends Page implements HasTable
             ])
             ->recordActions([
                 ViewAction::make()
-                    ->url(fn(EngagementResponse $record): string => ViewEngagementResponse::getUrl(['record' => $record])),
+                    ->url(fn (EngagementResponse $record): string => ViewEngagementResponse::getUrl(['record' => $record])),
             ])
             ->filters([
                 Filter::make('subscribed')
-                    ->query(fn(Builder $query): Builder => $query->whereRelation('sender.subscriptions.user', 'id', auth()->id())),
+                    ->query(fn (Builder $query): Builder => $query->whereRelation('sender.subscriptions.user', 'id', auth()->id())),
                 Filter::make('care_team')
                     ->label('Care Team')
                     ->query(
@@ -170,7 +170,7 @@ class Inbox extends Page implements HasTable
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn(Builder $query, array $data) => $this->groupFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
                 // SelectFilter::make('all_groups')
                 //     ->label('All Population Groups')
                 //     ->options(
@@ -215,7 +215,7 @@ class Inbox extends Page implements HasTable
                         EngagementResponseType::Sms->value => 'Text',
                     ]),
             ])
-            ->recordUrl(fn(EngagementResponse $record): string => ViewEngagementResponse::getUrl(['record' => $record]))
+            ->recordUrl(fn (EngagementResponse $record): string => ViewEngagementResponse::getUrl(['record' => $record]))
             ->defaultSort('sent_at', 'desc')
             ->emptyStateHeading('No Engagements yet.')
             ->toolbarActions([
@@ -232,7 +232,7 @@ class Inbox extends Page implements HasTable
     {
         return [
             parent::getNavigationItems()[0]
-                ->isActiveWhen(fn(): bool => request()->routeIs(static::getNavigationItemActiveRoutePattern(), ViewEngagementResponse::getNavigationItemActiveRoutePattern())),
+                ->isActiveWhen(fn (): bool => request()->routeIs(static::getNavigationItemActiveRoutePattern(), ViewEngagementResponse::getNavigationItemActiveRoutePattern())),
         ];
     }
 
