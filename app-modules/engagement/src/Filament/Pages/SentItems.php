@@ -128,7 +128,7 @@ class SentItems extends Page implements HasTable
             ->emptyStateHeading('No Engagements yet.')
             ->filters([
                 Filter::make('subscribed')
-                    ->query(fn(Builder $query): Builder => $query->whereRelation('recipient.subscriptions.user', 'id', auth()->id())),
+                    ->query(fn (Builder $query): Builder => $query->whereRelation('recipient.subscriptions.user', 'id', auth()->id())),
                 Filter::make('care_team')
                     ->label('Care Team')
                     ->query(
@@ -146,7 +146,7 @@ class SentItems extends Page implements HasTable
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn(Builder $query, array $data) => $this->groupFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
                 SelectFilter::make('all_groups')
                     ->label('All Population Groups')
                     ->options(
@@ -155,7 +155,7 @@ class SentItems extends Page implements HasTable
                     )
                     ->searchable()
                     ->optionsLimit(20)
-                    ->query(fn(Builder $query, array $data) => $this->groupFilter($query, $data)),
+                    ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
                 SelectFilter::make('status')
                     ->multiple()
                     ->label('Status')
@@ -164,7 +164,7 @@ class SentItems extends Page implements HasTable
                         if (empty($data['values'])) {
                             return $query;
                         }
-                        
+
                         return $query->where(function (Builder $query) use ($data) {
                             foreach ($data['values'] as $status) {
                                 $query->orWhere(function (Builder $subQuery) use ($status) {
@@ -174,16 +174,17 @@ class SentItems extends Page implements HasTable
                                         ->get()
                                         ->filter(fn (Engagement $engagement) => EngagementDisplayStatus::getStatus($engagement) === $status)
                                         ->pluck('id');
-                                    
+
                                     $subQuery->whereIn('id', $engagements);
                                 });
                             }
+
                             return $query;
                         });
                     })
                     ->searchable()
-                    ->preload()
-                ]);
+                    ->preload(),
+            ]);
     }
 
     /**
@@ -206,10 +207,10 @@ class SentItems extends Page implements HasTable
         ];
     }
 
-     /**
-     * @param Builder<Engagement> $query
-     * @param array<string, mixed> $data
-     */
+    /**
+    * @param Builder<Engagement> $query
+    * @param array<string, mixed> $data
+    */
     protected function groupFilter(Builder $query, array $data): void
     {
         if (blank($data['value'])) {
