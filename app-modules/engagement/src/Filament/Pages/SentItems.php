@@ -40,6 +40,11 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
 use Filament\Actions\ViewAction;
@@ -48,7 +53,10 @@ use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class SentItems extends Page implements HasTable
@@ -117,7 +125,65 @@ class SentItems extends Page implements HasTable
             ])
             ->recordUrl(fn (Engagement $record): string => ViewEngagement::getUrl(['record' => $record]))
             ->defaultSort('dispatched_at', 'desc')
-            ->emptyStateHeading('No Engagements yet.');
+            ->emptyStateHeading('No Engagements yet.')
+            ->filters([
+                Filter::make('subscribed')
+                    ->query(fn(Builder $query): Builder => $query->whereRelation('recipient.subscriptions.user', 'id', auth()->id())),
+                Filter::make('care_team')
+                    ->label('Care Team')
+                    ->query(
+                        function (Builder $query) {
+                            return $query
+                                ->whereRelation('recipient.careTeam', 'user_id', '=', auth()->id())
+                                ->get();
+                        }
+                    ),
+                SelectFilter::make('my_groups')
+                    ->label('My Population Groups')
+                    ->options(
+                        auth()->user()->groups()
+                            ->pluck('name', 'id'),
+                    )
+                    ->searchable()
+                    ->optionsLimit(20)
+                    ->query(fn(Builder $query, array $data) => $this->groupFilter($query, $data)),
+                SelectFilter::make('all_groups')
+                    ->label('All Population Groups')
+                    ->options(
+                        Group::all()
+                            ->pluck('name', 'id'),
+                    )
+                    ->searchable()
+                    ->optionsLimit(20)
+                    ->query(fn(Builder $query, array $data) => $this->groupFilter($query, $data)),
+                SelectFilter::make('status')
+                    ->multiple()
+                    ->label('Status')
+                    ->options(collect(EngagementDisplayStatus::cases())->mapWithKeys(fn ($status) => [$status->name => $status->getLabel()]))
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (empty($data['values'])) {
+                            return $query;
+                        }
+                        
+                        return $query->where(function (Builder $query) use ($data) {
+                            foreach ($data['values'] as $status) {
+                                $query->orWhere(function (Builder $subQuery) use ($status) {
+                                    $status = constant(EngagementDisplayStatus::class . '::' . $status);
+                                    $engagements = Engagement::query()
+                                        ->whereHas('recipient')
+                                        ->get()
+                                        ->filter(fn (Engagement $engagement) => EngagementDisplayStatus::getStatus($engagement) === $status)
+                                        ->pluck('id');
+                                    
+                                    $subQuery->whereIn('id', $engagements);
+                                });
+                            }
+                            return $query;
+                        });
+                    })
+                    ->searchable()
+                    ->preload()
+                ]);
     }
 
     /**
@@ -138,5 +204,40 @@ class SentItems extends Page implements HasTable
                 ->label('New')
                 ->icon(null),
         ];
+    }
+
+     /**
+     * @param Builder<Engagement> $query
+     * @param array<string, mixed> $data
+     */
+    protected function groupFilter(Builder $query, array $data): void
+    {
+        if (blank($data['value'])) {
+            return;
+        }
+
+        $modelType = Group::find($data['value'])?->model;
+
+        $query->whereHasMorph(
+            'recipient',
+            [
+                Student::class,
+                Prospect::class,
+            ],
+            function (Builder $query, string $type) use ($data, $modelType): void {
+                $shouldApplyFilter = match ($type) {
+                    Student::class => $modelType === GroupModel::Student,
+                    Prospect::class => $modelType === GroupModel::Prospect,
+                    default => false,
+                };
+
+                if ($shouldApplyFilter) {
+                    app(TranslateGroupFilters::class)
+                        ->applyFilterToQuery($data['value'], $query);
+                } else {
+                    $query->whereRaw('1 = 0');
+                }
+            }
+        );
     }
 }
