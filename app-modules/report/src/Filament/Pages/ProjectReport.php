@@ -55,7 +55,7 @@ class ProjectReport extends ProjectManagementReport
 
     protected static string $routePath = 'project-report';
 
-    protected $cacheTag = 'project-management-report-cache';
+    protected string $cacheTag = 'project-management-report-cache';
 
     public function getWidgets(): array
     {
