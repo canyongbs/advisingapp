@@ -83,4 +83,3 @@ it('dispatches websocket event when it automatically finishes a thread', functio
 
     Event::assertDispatched(EndQnaAdvisorThread::class);
 });
-
