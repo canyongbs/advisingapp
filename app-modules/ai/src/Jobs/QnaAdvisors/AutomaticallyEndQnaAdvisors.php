@@ -48,9 +48,9 @@ use Throwable;
 
 class AutomaticallyEndQnaAdvisors implements ShouldQueue
 {
-  use Dispatchable;
-  use InteractsWithQueue;
-  use Queueable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public function handle(): void
     {
@@ -63,20 +63,20 @@ class AutomaticallyEndQnaAdvisors implements ShouldQueue
             ->get();
 
         $threads->each(function (QnaAdvisorThread $thread) {
-          try {
-            DB::beginTransaction();
+            try {
+                DB::beginTransaction();
 
-            $thread->finished_at = now();
-            $thread->save();
+                $thread->finished_at = now();
+                $thread->save();
 
-            event(new EndQnaAdvisorThread($thread));
+                event(new EndQnaAdvisorThread($thread));
 
-            DB::commit();
-          } catch (Throwable $error) {
-            DB::rollBack();
+                DB::commit();
+            } catch (Throwable $error) {
+                DB::rollBack();
 
-            report($error);
-          }
+                report($error);
+            }
         });
     }
 }

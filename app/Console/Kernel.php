@@ -133,7 +133,7 @@ class Kernel extends ConsoleKernel
                         ->name("Dispatch ExecuteWorkflowActionStepsJob | Tenant {$tenant->domain}")
                         ->monitorName("Dispatch ExecuteWorkflowActionStepsJob | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
-                    
+
                     $schedule->call(function () use ($tenant) {
                         $tenant->execute(function () {
                             dispatch(new AutomaticallyEndQnaAdvisors());
