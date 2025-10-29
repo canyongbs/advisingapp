@@ -73,7 +73,7 @@ class QnaAdvisorThread extends BaseModel
      */
     public function latestMessage(): HasOne
     {
-      return $this->hasOne(QnaAdvisorMessage::class, 'thread_id')->latestOfMany();
+        return $this->hasOne(QnaAdvisorMessage::class, 'thread_id')->latestOfMany();
     }
 
     /**
