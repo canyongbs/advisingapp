@@ -34,23 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Abstract;
-
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
+use AdvisingApp\Project\Models\Project;
+use AdvisingApp\Report\Filament\Widgets\ProjectManagementTable;
 use App\Models\User;
-use Filament\Pages\Dashboard;
 
-abstract class ProjectManagementReport extends Dashboard
-{
-    use HasFiltersForm;
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
-    protected string $view = 'report::filament.pages.report';
+it('returns projects created within the given date range', function () {
+    $startDate = now()->subDays(10);
+    $endDate = now()->subDays(5);
 
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
+    $user = User::factory()->create();
+    actingAs($user);
 
-        return $user->can('report-library.view-any');
-    }
-}
+    $project1 = Project::factory()->create([
+        'created_at' => $startDate,
+    ]);
+
+    $project2 = Project::factory()->create([
+        'created_at' => $endDate,
+    ]);
+    $project3 = Project::factory()->create([
+        'created_at' => now()->subDays(20),
+    ]);
+
+    $filters = [
+        'startDate' => $startDate->toDateString(),
+        'endDate' => $endDate->toDateString(),
+    ];
+
+    livewire(ProjectManagementTable::class, [
+        'cacheTag' => 'project-management-report-cache',
+        'pageFilters' => $filters,
+    ])
+        ->assertCanSeeTableRecords(collect([
+            $project1,
+            $project2,
+        ]))
+        ->assertCanNotSeeTableRecords(collect([$project3]));
+});

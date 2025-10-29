@@ -37,6 +37,7 @@
 namespace AdvisingApp\Report\Filament\Pages;
 
 use AdvisingApp\Report\Abstract\ProjectManagementReport;
+use AdvisingApp\Report\Filament\Widgets\ProjectManagementTable;
 use App\Filament\Clusters\ReportLibrary;
 use UnitEnum;
 
@@ -53,4 +54,13 @@ class ProjectReport extends ProjectManagementReport
     protected static ?int $navigationSort = 210;
 
     protected static string $routePath = 'project-report';
+
+    protected string $cacheTag = 'project-management-report-cache';
+
+    public function getWidgets(): array
+    {
+        return [
+            ProjectManagementTable::make(['cacheTag' => $this->cacheTag]),
+        ];
+    }
 }
