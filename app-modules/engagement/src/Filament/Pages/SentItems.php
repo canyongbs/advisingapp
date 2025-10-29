@@ -43,6 +43,9 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Group\Actions\TranslateGroupFilters;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Enums\SmsMessageEventType;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\UnifiedInbox;
@@ -167,15 +170,47 @@ class SentItems extends Page implements HasTable
 
                         return $query->where(function (Builder $query) use ($data) {
                             foreach ($data['values'] as $status) {
+                                $status = constant(EngagementDisplayStatus::class . '::' . $status);
                                 $query->orWhere(function (Builder $subQuery) use ($status) {
-                                    $status = constant(EngagementDisplayStatus::class . '::' . $status);
-                                    $engagements = Engagement::query()
-                                        ->whereHas('recipient')
-                                        ->get()
-                                        ->filter(fn (Engagement $engagement) => EngagementDisplayStatus::getStatus($engagement) === $status)
-                                        ->pluck('id');
+                                    if ($status === EngagementDisplayStatus::Scheduled) {
+                                        $subQuery->whereNotNull('scheduled_at');
 
-                                    $subQuery->whereIn('id', $engagements);
+                                        return;
+                                    }
+
+                                    // For Email channel
+                                    $subQuery->where(function (Builder $channelQuery) use ($status) {
+                                        $channelQuery->where('channel', NotificationChannel::Email)
+                                            ->whereHas('latestEmailMessage.events', function (Builder $query) use ($status) {
+                                                match ($status) {
+                                                    EngagementDisplayStatus::Pending => $query->where('type', EmailMessageEventType::Dispatched),
+                                                    EngagementDisplayStatus::Sent => $query->where('type', EmailMessageEventType::Send),
+                                                    EngagementDisplayStatus::Delivered => $query->where('type', EmailMessageEventType::Delivery),
+                                                    EngagementDisplayStatus::Read => $query->where('type', EmailMessageEventType::Open),
+                                                    EngagementDisplayStatus::Failed => $query->whereIn('type', [
+                                                        EmailMessageEventType::FailedDispatch,
+                                                        EmailMessageEventType::RateLimited,
+                                                        EmailMessageEventType::Reject,
+                                                    ]),
+                                                    EngagementDisplayStatus::Bounced => $query->where('type', EmailMessageEventType::Bounce),
+                                                    EngagementDisplayStatus::Complaint => $query->where('type', EmailMessageEventType::Complaint),
+                                                    default => $query
+                                                };
+                                            });
+
+                                        // For SMS channel
+                                        $channelQuery->orWhere('channel', NotificationChannel::Sms)
+                                            ->whereHas('latestSmsMessage.events', function (Builder $query) use ($status) {
+                                                match ($status) {
+                                                    EngagementDisplayStatus::Pending => $query->where('type', SmsMessageEventType::Dispatched),
+                                                    EngagementDisplayStatus::Sent => $query->where('type', SmsMessageEventType::Sent),
+                                                    EngagementDisplayStatus::Delivered => $query->where('type', SmsMessageEventType::Delivered),
+                                                    EngagementDisplayStatus::Read => $query->where('type', SmsMessageEventType::Read),
+                                                    EngagementDisplayStatus::Failed => $query->where('type', SmsMessageEventType::Undelivered),
+                                                    default => $query
+                                                };
+                                            });
+                                    });
                                 });
                             }
 
@@ -208,9 +243,9 @@ class SentItems extends Page implements HasTable
     }
 
     /**
-    * @param Builder<Engagement> $query
-    * @param array<string, mixed> $data
-    */
+     * @param Builder<Engagement> $query
+     * @param array<string, mixed> $data
+     */
     protected function groupFilter(Builder $query, array $data): void
     {
         if (blank($data['value'])) {
