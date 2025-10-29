@@ -45,10 +45,10 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 
 class StudentsActionCenterWidget extends TableWidget
@@ -174,16 +174,7 @@ class StudentsActionCenterWidget extends TableWidget
                     ->label('Go to Student')
                     ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record]), shouldOpenInNewTab: true)
                     ->icon('heroicon-m-arrow-top-right-on-square'),
-            ]);
-    }
-
-    /**
-     * @param Builder<Student> $query
-     *
-     * @return Paginator<int, Student>
-     */
-    protected function paginateTableQuery(Builder $query): Paginator
-    {
-        return $query->paginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
+            ])
+            ->paginationMode(PaginationMode::Default);
     }
 }
