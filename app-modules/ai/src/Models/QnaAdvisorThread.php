@@ -41,6 +41,7 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
@@ -65,6 +66,14 @@ class QnaAdvisorThread extends BaseModel
     public function messages(): HasMany
     {
         return $this->hasMany(QnaAdvisorMessage::class, 'thread_id');
+    }
+
+    /**
+     * @return HasOne<QnaAdvisorMessage, $this>
+     */
+    public function latestMessage(): HasOne
+    {
+      return $this->hasOne(QnaAdvisorMessage::class, 'thread_id')->latestOfMany();
     }
 
     /**
