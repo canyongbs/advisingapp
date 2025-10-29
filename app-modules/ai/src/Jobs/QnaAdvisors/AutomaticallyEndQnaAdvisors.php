@@ -40,27 +40,43 @@ use AdvisingApp\Ai\Events\QnaAdvisors\EndQnaAdvisorThread;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class AutomaticallyEndQnaAdvisors implements ShouldQueue
 {
+  use Dispatchable;
+  use InteractsWithQueue;
+  use Queueable;
+
     public function handle(): void
     {
-        //dispatch websocket event
-        $threads = QnaAdvisorThread::whereNotNull('finished_at')
+        $threads = QnaAdvisorThread::query()
+            ->whereNull('finished_at')
             ->whereHas(
                 'latestMessage',
-                fn (Builder $query) => $query->where('created_at', '<=', now()->subHour())
+                fn (Builder $query) => $query->where('created_at', '<=', now()->subMinute())
             )
             ->get();
 
-        DB::transaction(function () use ($threads) {
-            $threads->each(function (QnaAdvisorThread $thread) {
-                $thread->finished_at = now();
-                $thread->save();
+        $threads->each(function (QnaAdvisorThread $thread) {
+          try {
+            DB::beginTransaction();
 
-                event(new EndQnaAdvisorThread($thread));
-            });
+            $thread->finished_at = now();
+            $thread->save();
+
+            event(new EndQnaAdvisorThread($thread));
+
+            DB::commit();
+          } catch (Throwable $error) {
+            DB::rollBack();
+
+            report($error);
+          }
         });
     }
 }
