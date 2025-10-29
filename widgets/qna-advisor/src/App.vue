@@ -119,6 +119,14 @@ onMounted(async () => {
                 authentication.value.promptToAuthenticate = false;
                 setupWebsockets(json.websockets_config);
             }
+
+            websocketChannel = requiresAuthentication.value
+                ? window.Echo.private(channelName)
+                : window.Echo.channel(channelName);
+
+            websocketChannel.listen('.qna-advisor.automatic-end', () => {
+                finishThread();
+            });
         })
         .catch((error) => {
             if (error.response && error.response.data.error) {
