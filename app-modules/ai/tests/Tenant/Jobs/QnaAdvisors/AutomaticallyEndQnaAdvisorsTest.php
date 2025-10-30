@@ -44,7 +44,15 @@ use Illuminate\Support\Facades\Queue;
 it('will only run for advisors that have had no activity in over an hour', function () {
     Queue::fake();
 
-    $thread = QnaAdvisorThread::factory()->has(QnaAdvisorMessage::factory()->state(['created_at' => now()->subMinutes(61)]), 'messages')->create();
+    $message = QnaAdvisorMessage::factory()->create();
+
+    $message->created_at = now()->subMinutes(61);
+
+    $message->save();
+
+    $thread = QnaAdvisorThread::factory()->create();
+
+    $message->thread()->associate($thread)->save();
 
     expect($thread->finished_at)->toBeNull();
 
@@ -58,7 +66,15 @@ it('will only run for advisors that have had no activity in over an hour', funct
 it('will not run for advisors that have had activity within the last hour', function () {
     Queue::fake();
 
-    $thread = QnaAdvisorThread::factory()->has(QnaAdvisorMessage::factory()->state(['created_at' => now()->subMinutes(59)]), 'messages')->create();
+    $message = QnaAdvisorMessage::factory()->create();
+
+    $message->created_at = now()->subMinutes(59);
+
+    $message->save();
+
+    $thread = QnaAdvisorThread::factory()->create();
+
+    $message->thread()->associate($thread)->save();
 
     expect($thread->finished_at)->toBeNull();
 
@@ -73,7 +89,15 @@ it('dispatches websocket event when it automatically finishes a thread', functio
     Queue::fake();
     Event::fake();
 
-    QnaAdvisorThread::factory()->has(QnaAdvisorMessage::factory()->state(['created_at' => now()->subMinutes(61)]), 'messages')->create();
+    $message = QnaAdvisorMessage::factory()->create();
+
+    $message->created_at = now()->subMinutes(61);
+
+    $message->save();
+
+    $thread = QnaAdvisorThread::factory()->create();
+
+    $message->thread()->associate($thread)->save();
 
     (new AutomaticallyEndQnaAdvisors())->handle();
 
