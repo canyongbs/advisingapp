@@ -39,7 +39,6 @@ use AdvisingApp\Ai\Jobs\QnaAdvisors\AutomaticallyEndQnaAdvisors;
 use AdvisingApp\Ai\Models\QnaAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Queue;
 
 it('will only run for advisors that have had no activity in over an hour', function () {
     $message = QnaAdvisorMessage::factory()->create();
