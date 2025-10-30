@@ -41,8 +41,6 @@ use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 
-use function Pest\Laravel\travelTo;
-
 it('will only run for advisors that have had no activity in over an hour', function () {
     Queue::fake();
 
