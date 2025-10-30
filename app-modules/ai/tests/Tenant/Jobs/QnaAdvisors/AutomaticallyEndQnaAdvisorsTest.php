@@ -42,8 +42,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 
 it('will only run for advisors that have had no activity in over an hour', function () {
-    Queue::fake();
-
     $message = QnaAdvisorMessage::factory()->create();
 
     $message->created_at = now()->subMinutes(61);
@@ -64,8 +62,6 @@ it('will only run for advisors that have had no activity in over an hour', funct
 });
 
 it('will not run for advisors that have had activity within the last hour', function () {
-    Queue::fake();
-
     $message = QnaAdvisorMessage::factory()->create();
 
     $message->created_at = now()->subMinutes(59);
@@ -86,7 +82,6 @@ it('will not run for advisors that have had activity within the last hour', func
 });
 
 it('dispatches websocket event when it automatically finishes a thread', function () {
-    Queue::fake();
     Event::fake();
 
     $message = QnaAdvisorMessage::factory()->create();
