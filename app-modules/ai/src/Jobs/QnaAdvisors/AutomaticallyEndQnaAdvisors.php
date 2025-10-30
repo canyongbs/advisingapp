@@ -58,7 +58,7 @@ class AutomaticallyEndQnaAdvisors implements ShouldQueue
             ->whereNull('finished_at')
             ->whereHas(
                 'latestMessage',
-                fn (Builder $query) => $query->where('created_at', '<=', now()->subMinute())
+                fn (Builder $query) => $query->where('created_at', '<=', now()->subHour())
             )
             ->get();
 
