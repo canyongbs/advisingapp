@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Project\Models\Scopes;
 
-use App\Features\ProjectManagementPermissionsFeature;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -46,10 +45,6 @@ class ProjectVisibilityScope implements Scope
 {
     public function apply(Builder $builder, Model $model): void
     {
-        if (! ProjectManagementPermissionsFeature::active()) {
-            return;
-        }
-
         $user = auth()->user();
 
         if (! $user instanceof User) {
