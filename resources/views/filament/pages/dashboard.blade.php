@@ -9,22 +9,22 @@
     Notice:
 
     - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
+    service, where the service provides users with access to any substantial set of
+    the features or functionality of the software.
     - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
+    in the software, and you may not remove or obscure any functionality in the
+    software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
+    of the licensor in the software. Any use of the licensor’s trademarks is subject
+    to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
+    same in return. Canyon GBS™ and Advising App™ are registered trademarks of
+    Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+    Software as a Service (SaaS) by Canyon GBS LLC.
     - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
+    in the Elastic License 2.0.
 
     For more information or inquiries please visit our website at
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
@@ -35,14 +35,14 @@
     use AdvisingApp\Authorization\Filament\Widgets\UnlicensedNotice;
     use App\Filament\Widgets\Features;
     use App\Filament\Widgets\Notifications;
-@endphp
+    use App\Settings\DisplaySettings;
 
+    $timezone = json_encode((new DisplaySettings())->getTimezone());
+@endphp
 <x-filament-panels::page>
     <div class="grid gap-6">
-        <div
-            class="col-span-full flex flex-col items-center rounded-lg bg-black bg-cover bg-no-repeat px-16 py-8 lg:col-span-5"
-            style="background-image: url('{{ asset('images/banner.png') }}')"
-        >
+        <div class="col-span-full flex flex-col items-center rounded-lg bg-black bg-cover bg-no-repeat px-16 py-8 lg:col-span-5"
+            style="background-image: url('{{ asset('images/banner.png') }}')">
             <div class="grid w-full gap-1 text-center md:text-start md:text-3xl">
                 <div class="text-3xl font-bold text-white">
                     Welcome,
@@ -75,7 +75,10 @@
 </x-filament-panels::page>
 
 <script>
+    const timezone = {!! $timezone !!}
+
     document.getElementById('current-date').textContent = (new Date()).toLocaleDateString('en-US', {
+        timeZone: timezone,
         weekday: 'long',
         year: 'numeric',
         month: 'long',
@@ -83,6 +86,7 @@
     });
 
     document.getElementById('current-time').textContent = (new Date()).toLocaleTimeString('en-US', {
+        timeZone: timezone,
         hour: 'numeric',
         minute: '2-digit',
         hour12: true
