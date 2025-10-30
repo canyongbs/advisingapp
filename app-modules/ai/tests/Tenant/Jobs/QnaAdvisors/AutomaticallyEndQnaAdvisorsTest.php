@@ -46,11 +46,9 @@ use function Pest\Laravel\travelTo;
 it('will only run for advisors that have had no activity in over an hour', function () {
     Queue::fake();
 
-    $thread = QnaAdvisorThread::factory()->has(QnaAdvisorMessage::factory(), 'messages')->create();
+    $thread = QnaAdvisorThread::factory()->has(QnaAdvisorMessage::factory()->state(['created_at' => now()->subMinutes(61)]), 'messages')->create();
 
     expect($thread->finished_at)->toBeNull();
-
-    travelTo(now()->addMinutes(61));
 
     (new AutomaticallyEndQnaAdvisors())->handle();
 
@@ -62,11 +60,9 @@ it('will only run for advisors that have had no activity in over an hour', funct
 it('will not run for advisors that have had activity within the last hour', function () {
     Queue::fake();
 
-    $thread = QnaAdvisorThread::factory()->has(QnaAdvisorMessage::factory(), 'messages')->create();
+    $thread = QnaAdvisorThread::factory()->has(QnaAdvisorMessage::factory()->state(['created_at' => now()->subMinutes(59)]), 'messages')->create();
 
     expect($thread->finished_at)->toBeNull();
-
-    travelTo(now()->addMinutes(59));
 
     (new AutomaticallyEndQnaAdvisors())->handle();
 
@@ -79,9 +75,7 @@ it('dispatches websocket event when it automatically finishes a thread', functio
     Queue::fake();
     Event::fake();
 
-    QnaAdvisorThread::factory()->has(QnaAdvisorMessage::factory(), 'messages')->create();
-
-    travelTo(now()->addMinutes(61));
+    QnaAdvisorThread::factory()->has(QnaAdvisorMessage::factory()->state(['created_at' => now()->subMinutes(61)]), 'messages')->create();
 
     (new AutomaticallyEndQnaAdvisors())->handle();
 
