@@ -62,6 +62,8 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class Inbox extends Page implements HasTable
@@ -166,10 +168,16 @@ class Inbox extends Page implements HasTable
                     ->label('My Population Groups')
                     ->options(
                         auth()->user()->groups()
+                            ->limit(20)
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
-                    ->optionsLimit(20)
+                    ->getSearchResultsUsing(
+                        fn (string $search): Collection => auth()->user()->groups()
+                            ->where(new Expression('lower(name)'), 'like', '%' . Str::lower($search) . '%')
+                            ->limit(20)
+                            ->pluck('name', 'id')
+                    )
                     ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
                 SelectFilter::make('all_groups')
                     ->label('All Population Groups')
@@ -178,7 +186,12 @@ class Inbox extends Page implements HasTable
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
-                    ->optionsLimit(20)
+                    ->getSearchResultsUsing(
+                        fn (string $search): Collection => Group::query()
+                            ->where(new Expression('lower(name)'), 'like', '%' . Str::lower($search) . '%')
+                            ->limit(20)
+                            ->pluck('name', 'id')
+                    )
                     ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
                 SelectFilter::make('status')
                     ->multiple()
