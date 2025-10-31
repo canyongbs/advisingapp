@@ -43,7 +43,7 @@ use Illuminate\Support\Facades\Event;
 it('will only run for advisors that have had no activity in over an hour', function () {
     $message = QnaAdvisorMessage::factory()->create();
 
-    $message->created_at = now()->subMinutes(61);
+    $message->created_at = now()->subHours(2);
 
     $message->save();
 
