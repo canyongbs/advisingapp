@@ -41,7 +41,7 @@ use AdvisingApp\Ai\Models\PromptUse;
 use AdvisingApp\Report\Filament\Widgets\InstitutionalAdvisorLineChart;
 
 it('returns correct monthly institutional advisor usage data within the given date range', function () {
-    $startDate = now()->subDays(90);
+    $startDate = now()->subMonths(3);
     $endDate = now()->subDays(5);
 
     // Create institutional (default) advisor
@@ -96,12 +96,12 @@ it('returns correct monthly institutional advisor usage data within the given da
     // Create uses outside date range (should be excluded)
     AiAssistantUse::factory()->count(2)->create([
         'assistant_id' => $institutionalAdvisor->id,
-        'created_at' => now()->subDays(120),
+        'created_at' => now()->subMonths(4),
     ]);
 
     PromptUse::factory()->count(3)->create([
         'prompt_id' => $customPrompt->id,
-        'created_at' => now()->subDays(120),
+        'created_at' => now()->subMonths(4),
     ]);
 
     $widgetInstance = new InstitutionalAdvisorLineChart();
@@ -148,19 +148,19 @@ it('returns correct monthly institutional advisor usage data without date filter
     // Create assistant uses for custom advisor (should be excluded)
     AiAssistantUse::factory()->count(4)->create([
         'assistant_id' => $customAdvisor->id,
-        'created_at' => now()->subDays(30),
+        'created_at' => now()->subMonth(),
     ]);
 
     // Create custom prompt uses
     PromptUse::factory()->count(9)->create([
         'prompt_id' => $customPrompt->id,
-        'created_at' => now()->subDays(60),
+        'created_at' => now()->subMonths(2),
     ]);
 
     // Create smart prompt uses
     PromptUse::factory()->count(5)->create([
         'prompt_id' => $smartPrompt->id,
-        'created_at' => now()->subDays(30),
+        'created_at' => now()->subMonth(),
     ]);
 
     $widgetInstance = new InstitutionalAdvisorLineChart();
@@ -191,7 +191,7 @@ it('returns empty data when no institutional advisor usage exists', function () 
     // Create assistant uses only for custom advisor
     AiAssistantUse::factory()->count(3)->create([
         'assistant_id' => $customAdvisor->id,
-        'created_at' => now()->subDays(30),
+        'created_at' => now()->subMonth(),
     ]);
 
     $widgetInstance = new InstitutionalAdvisorLineChart();
@@ -217,7 +217,7 @@ it('separates smart and custom prompt usage correctly', function () {
     $customPrompt1 = Prompt::factory()->create(['is_smart' => false]);
     $customPrompt2 = Prompt::factory()->create(['is_smart' => false]);
 
-    $startDate = now()->subDays(30);
+    $startDate = now()->subMonth();
 
     // Create smart prompt uses
     PromptUse::factory()->count(3)->create([

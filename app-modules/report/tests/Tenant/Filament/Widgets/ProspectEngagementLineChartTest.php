@@ -42,7 +42,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectEngagementLineChart;
 
 it('returns correct monthly email and sms engagement data for prospects within the given date range', function () {
-    $startDate = now()->subDays(90);
+    $startDate = now()->subMonths(3);
     $endDate = now()->subDays(5);
 
     $prospect1 = Prospect::factory()->state(['created_at' => $startDate])->create();
@@ -73,7 +73,7 @@ it('returns correct monthly email and sms engagement data for prospects within t
 });
 
 it('returns correct monthly email and sms engagement data for prospects based on group filters', function () {
-    $startDate = now()->subDays(90);
+    $startDate = now()->subMonths(3);
     $endDate = now()->subDays(5);
 
     $group = Group::factory()->create([
