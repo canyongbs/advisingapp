@@ -36,11 +36,10 @@
     use App\Filament\Widgets\Features;
     use App\Filament\Widgets\Notifications;
 @endphp
-
 <x-filament-panels::page>
     <div class="grid gap-6">
         <div
-            class="col-span-full flex flex-col items-center rounded-lg bg-black bg-cover bg-no-repeat px-16 py-8 lg:col-span-5"
+            class="col-span-full flex flex-col rounded-lg bg-black bg-cover bg-no-repeat px-16 py-8 lg:col-span-5"
             style="background-image: url('{{ asset('images/banner.png') }}')"
         >
             <div class="grid w-full gap-1 text-center md:text-start md:text-3xl">
@@ -76,6 +75,7 @@
 
 <script>
     document.getElementById('current-date').textContent = (new Date()).toLocaleDateString('en-US', {
+        timeZone: @json($timezone),
         weekday: 'long',
         year: 'numeric',
         month: 'long',
@@ -83,6 +83,7 @@
     });
 
     document.getElementById('current-time').textContent = (new Date()).toLocaleTimeString('en-US', {
+        timeZone: @json($timezone),
         hour: 'numeric',
         minute: '2-digit',
         hour12: true
