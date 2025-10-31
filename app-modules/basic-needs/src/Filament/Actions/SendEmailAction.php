@@ -38,8 +38,6 @@ namespace AdvisingApp\BasicNeeds\Filament\Actions;
 
 use AdvisingApp\Engagement\Actions\CreateEngagement;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
-use AdvisingApp\Engagement\Filament\Actions\DraftWithAiAction;
-use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -47,12 +45,10 @@ use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
@@ -60,8 +56,6 @@ use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use FilamentTiptapEditor\TiptapEditor;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -132,6 +126,13 @@ class SendEmailAction extends Action
                                     default => null,
                                 };
 
+                                $defaultBody = view('basic-needs::components.default-email-body', [
+                                    'recipient' => $educatable,
+                                    'record' => $this->getRecord(),
+                                ])->render();
+
+                                $set('body', $defaultBody);
+
                                 $set('recipient_route_id', $educatable?->primaryEmailAddress?->getKey() ?? $educatable?->emailAddresses()->first()?->getKey());
                             })
                             ->live()
@@ -149,7 +150,7 @@ class SendEmailAction extends Action
                                 return [
                                     Select::make('recipient_route_id')
                                         ->label('Email address')
-                                        ->options(function (Get $get) use ($educatable) {
+                                        ->options(function () use ($educatable) {
                                             return $educatable?->emailAddresses
                                                 ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
                                                     $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
@@ -181,70 +182,14 @@ class SendEmailAction extends Action
                                 ->disk('s3-public')
                                 ->label('Body')
                                 ->profile('email')
-                                // ->default(fn (Get $get) => view('advising-app::email-templates.default-body', [
-                                //     'recipient' => match ($get('recipient_type')) {
-                                //         'student' => Student::find($get('recipient_id')),
-                                //         'prospect' => Prospect::find($get('recipient_id')),
-                                //         default => null,
-                                //     },
-                                // ])->render())
+                                ->default(function () use ($educatable) {
+                                    return view('basic-needs::components.default-email-body', [
+                                        'recipient' => $educatable,
+                                        'record' => $this->getRecord(),
+                                    ])->render();
+                                })
                                 ->required()
-                                ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
-                                    ->schema([
-                                        Select::make('emailTemplate')
-                                            ->searchable()
-                                            ->options(function (Get $get): array {
-                                                return EmailTemplate::query()
-                                                    ->when(
-                                                        $get('onlyMyTemplates'),
-                                                        fn (Builder $query) => $query->whereBelongsTo(auth()->user())
-                                                    )
-                                                    ->orderBy('name')
-                                                    ->limit(50)
-                                                    ->pluck('name', 'id')
-                                                    ->toArray();
-                                            })
-                                            ->getSearchResultsUsing(function (Get $get, string $search): array {
-                                                return EmailTemplate::query()
-                                                    ->when(
-                                                        $get('onlyMyTemplates'),
-                                                        fn (Builder $query) => $query->whereBelongsTo(auth()->user())
-                                                    )
-                                                    ->when(
-                                                        $get('onlyMyTeamTemplates'),
-                                                        fn (Builder $query) => $query->whereIn('user_id', auth()->user()->team->users()->pluck('id'))
-                                                    )
-                                                    ->where(new Expression('lower(name)'), 'like', "%{$search}%")
-                                                    ->orderBy('name')
-                                                    ->limit(50)
-                                                    ->pluck('name', 'id')
-                                                    ->toArray();
-                                            }),
-                                        Checkbox::make('onlyMyTemplates')
-                                            ->label('Only show my templates')
-                                            ->live()
-                                            ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
-                                        Checkbox::make('onlyMyTeamTemplates')
-                                            ->label("Only show my team's templates")
-                                            ->live()
-                                            ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
-                                    ])
-                                    ->action(function (array $data) use ($component) {
-                                        $template = EmailTemplate::find($data['emailTemplate']);
-
-                                        if (! $template) {
-                                            return;
-                                        }
-
-                                        $component->state(
-                                            $component->generateImageUrls($template->content),
-                                        );
-                                    }))
                                 ->columnSpanFull(),
-                            ...$educatable ? [Actions::make([
-                                DraftWithAiAction::make()
-                                    ->educatable($educatable),
-                            ])] : [],
                         ];
                     }),
                 Step::make('Email Signature')
@@ -300,12 +245,9 @@ class SendEmailAction extends Action
                 /** @var ?TiptapEditor $signatureField */
                 $signatureField = $formFields['signature'] ?? null;
 
-                $channel = NotificationChannel::parse($data['channel']);
+                $channel = NotificationChannel::parse(NotificationChannel::Email->value);
 
-                $recipientRoute = match ($channel) {
-                    NotificationChannel::Email => $recipient->emailAddresses()->find($data['recipient_route_id'] ?? null)?->address,
-                    default => null,
-                };
+                $recipientRoute = $recipient->emailAddresses()->find($data['recipient_route_id'] ?? null)?->address;
 
                 $engagement = app(CreateEngagement::class)->execute(new EngagementCreationData(
                     user: auth()->user(),
