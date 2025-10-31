@@ -103,7 +103,7 @@ class StudentEngagementLineChart extends LineChartReportWidget
      */
     protected function getStudentEngagementData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $groupId = null): array
     {
-        $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
+        $startDate = $startDate ?? Carbon::now()->startOfMonth()->subMonths(11);
         $endDate = $endDate ?? Carbon::now()->endOfMonth();
 
         $months = $this->getMonthRange($startDate, $endDate);

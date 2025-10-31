@@ -42,7 +42,7 @@ use AdvisingApp\Report\Filament\Widgets\StudentEngagementLineChart;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('returns correct monthly email and sms engagement data for students within the given date range', function () {
-    $startDate = now()->subDays(90);
+    $startDate = now()->subMonths(3);
     $endDate = now()->subDays(5);
 
     $student1 = Student::factory()->state(['created_at_source' => $startDate])->create();
@@ -73,7 +73,7 @@ it('returns correct monthly email and sms engagement data for students within th
 });
 
 it('returns correct monthly email and sms engagement data for students based on group filters', function () {
-    $startDate = now()->subDays(90);
+    $startDate = now()->subMonths(3);
     $endDate = now()->subDays(5);
 
     $group = Group::factory()->create([

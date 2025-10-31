@@ -57,7 +57,7 @@ it('checks student interactions monthly line chart', function () {
 });
 
 it('returns correct data for student interactions within the given date range', function () {
-    $interactionStartDate = now()->subDays(90);
+    $interactionStartDate = now()->subMonths(3);
     $interactionEndDate = now()->subDays(5);
 
     Student::factory()->count(5)->has(
@@ -89,7 +89,7 @@ it('returns correct data for student interactions within the given date range', 
 });
 
 it('returns correct data for student interactions based on group filter', function () {
-    $interactionStartDate = now()->subDays(90);
+    $interactionStartDate = now()->subMonths(3);
     $interactionEndDate = now()->subDays(5);
 
     $group = Group::factory()->create([

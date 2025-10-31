@@ -81,8 +81,8 @@ class UserUniqueLoginCountLineChart extends LineChartReportWidget
             $runningTotalPerMonth = [];
 
             foreach (range(11, 0) as $month) {
-                $month = Carbon::now()->subMonths($month);
-                $runningTotalPerMonth[$month->format('M Y')] = $totalCreatedPerMonth[$month->startOfMonth()->toDateTimeString()] ?? 0;
+                $month = Carbon::now()->startOfMonth()->subMonths($month);
+                $runningTotalPerMonth[$month->format('M Y')] = $totalCreatedPerMonth[$month->toDateTimeString()] ?? 0;
             }
 
             return $runningTotalPerMonth;

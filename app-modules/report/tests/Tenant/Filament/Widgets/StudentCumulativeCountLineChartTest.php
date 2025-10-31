@@ -40,7 +40,7 @@ use AdvisingApp\Report\Filament\Widgets\StudentCumulativeCountLineChart;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('returns correct cumulative student counts grouped by month within the given date range', function () {
-    $startDate = now()->subDays(90);
+    $startDate = now()->subMonths(3);
     $endDate = now()->subDays(5);
 
     Student::factory()->count(5)->state([
@@ -62,7 +62,7 @@ it('returns correct cumulative student counts grouped by month within the given 
 });
 
 it('returns correct cumulative student counts grouped by month based on group filters', function () {
-    $startDate = now()->subDays(90);
+    $startDate = now()->subMonths(3);
     $endDate = now()->subDays(5);
 
     $group = Group::factory()->create([

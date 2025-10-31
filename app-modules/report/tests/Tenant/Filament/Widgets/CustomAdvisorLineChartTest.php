@@ -39,7 +39,7 @@ use AdvisingApp\Ai\Models\AiAssistantUse;
 use AdvisingApp\Report\Filament\Widgets\CustomAdvisorLineChart;
 
 it('returns correct monthly custom advisor exchanges data within the given date range', function () {
-    $startDate = now()->subDays(90);
+    $startDate = now()->subMonths(3);
     $endDate = now()->subDays(5);
 
     // Create custom advisors
@@ -69,7 +69,7 @@ it('returns correct monthly custom advisor exchanges data within the given date 
     // Create assistant uses outside date range (should be excluded)
     AiAssistantUse::factory()->count(2)->create([
         'assistant_id' => $customAdvisor1->id,
-        'created_at' => now()->subDays(120),
+        'created_at' => now()->subMonths(4),
     ]);
 
     $widgetInstance = new CustomAdvisorLineChart();
@@ -102,12 +102,12 @@ it('returns correct monthly custom advisor exchanges data without date filters',
     // Create assistant uses for custom advisors
     AiAssistantUse::factory()->count(7)->create([
         'assistant_id' => $customAdvisor1->id,
-        'created_at' => now()->subDays(30),
+        'created_at' => now()->subMonth(),
     ]);
 
     AiAssistantUse::factory()->count(4)->create([
         'assistant_id' => $customAdvisor2->id,
-        'created_at' => now()->subDays(60),
+        'created_at' => now()->subMonths(2),
     ]);
 
     // Create assistant uses for default advisor (should be excluded)
@@ -137,7 +137,7 @@ it('returns empty data when no custom advisor exchanges exist', function () {
     // Create assistant uses only for default advisor
     AiAssistantUse::factory()->count(3)->create([
         'assistant_id' => $defaultAdvisor->id,
-        'created_at' => now()->subDays(30),
+        'created_at' => now()->subMonth(),
     ]);
 
     $widgetInstance = new CustomAdvisorLineChart();

@@ -38,7 +38,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportLineChart;
 
 it('returns correct cumulative prospect counts grouped by month within the given date range', function () {
-    $startDate = now()->subDays(90);
+    $startDate = now()->subMonths(3);
     $endDate = now()->subDays(5);
 
     Prospect::factory()->count(5)->state([

@@ -57,7 +57,7 @@ it('checks prospect interactions monthly line chart', function () {
 });
 
 it('returns correct data for prospect interactions within the given date range', function () {
-    $interactionStartDate = now()->subDays(90);
+    $interactionStartDate = now()->subMonths(3);
     $interactionEndDate = now()->subDays(5);
 
     Prospect::factory()->count(5)->has(
@@ -89,7 +89,7 @@ it('returns correct data for prospect interactions within the given date range',
 });
 
 it('returns correct data for prospect interactions based on group filter', function () {
-    $interactionStartDate = now()->subDays(90);
+    $interactionStartDate = now()->subMonths(3);
     $interactionEndDate = now()->subDays(5);
 
     $group = Group::factory()->create([
