@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages;
 
+use AdvisingApp\BasicNeeds\Filament\Actions\SendEmailAction;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\BasicNeedsProgramResource;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
@@ -83,6 +84,8 @@ class ViewBasicNeedsProgram extends ViewRecord
     {
         return [
             EditAction::make(),
+            SendEmailAction::make()
+                ->label('Email Details'),
         ];
     }
 }
