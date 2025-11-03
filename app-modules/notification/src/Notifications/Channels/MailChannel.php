@@ -117,7 +117,7 @@ class MailChannel extends BaseMailChannel
             return;
         }
 
-        if ($recipientAddress && $this->isAddressBounced($notifiable, $recipientAddress)) {
+        if ($recipientAddress && is_string($recipientAddress) && $this->isAddressBounced($notifiable, $recipientAddress)) {
             $emailMessage->events()->create([
                 'type' => EmailMessageEventType::FailedDispatch,
                 'payload' => [
