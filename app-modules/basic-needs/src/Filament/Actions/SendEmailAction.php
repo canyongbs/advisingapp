@@ -73,19 +73,6 @@ class SendEmailAction extends Action
             ->authorize(function () {
                 return auth()->user()->can('create', Engagement::class);
             })
-            ->mountUsing(function (array $arguments, Schema $schema, Page $livewire) {
-                $livewire->dispatch('engage-action-finished-loading');
-
-                if (filled($arguments['route'] ?? null)) {
-                    $schema->fill([
-                        'channel' => $arguments['channel'] ?? 'email',
-                        'recipient_route_id' => $arguments['route'],
-                        'signature' => auth()->user()->signature,
-                    ]);
-                } else {
-                    $schema->fill();
-                }
-            })
             ->steps(fn (): array => [
                 Step::make('Contact Information')
                     ->schema([
@@ -101,23 +88,35 @@ class SendEmailAction extends Action
                         Select::make('recipient_id')
                             ->label('Recipient')
                             ->options(function (Get $get): array {
-                                return match ($get('recipient_type')) {
-                                    'student' => Student::query()
-                                        ->limit(15)
-                                        ->pluck(
-                                            Student::displayNameKey(),
-                                            'sisid',
-                                        )
-                                        ->toArray(),
-                                    'prospect' => Prospect::query()
-                                        ->limit(15)
-                                        ->pluck(
-                                            Prospect::displayNameKey(),
-                                            'id',
-                                        )
-                                        ->toArray(),
-                                    default => [],
-                                };
+                                $recipientType = $get('recipient_type');
+
+                                if ($recipientType === 'student') {
+                                    return Student::query()
+                                        ->with('primaryEmailAddress')
+                                        ->limit(50)
+                                        ->get()
+                                        ->mapWithKeys(function (Student $student) {
+                                            $label = "{$student->display_name} (Student) - {$student->primaryEmailAddress?->address} - {$student->sisid}";
+
+                                            return [$student->sisid => $label];
+                                        })
+                                        ->toArray();
+                                }
+
+                                if ($recipientType === 'prospect') {
+                                    return Prospect::query()
+                                        ->with('primaryEmailAddress')
+                                        ->limit(50)
+                                        ->get()
+                                        ->mapWithKeys(function (Prospect $prospect) {
+                                            $label = "{$prospect->display_name} (Prospect) - {$prospect->primaryEmailAddress?->address}";
+
+                                            return [$prospect->id => $label];
+                                        })
+                                        ->toArray();
+                                }
+
+                                return [];
                             })
                             ->afterStateUpdated(function (Get $get, Set $set) {
                                 $educatable = match ($get('recipient_type')) {
@@ -288,17 +287,5 @@ class SendEmailAction extends Action
     public static function getDefaultName(): ?string
     {
         return 'engage';
-    }
-
-    public function educatable(Student | Prospect | null $educatable): static
-    {
-        $this->educatable = $educatable;
-
-        return $this;
-    }
-
-    public function getEducatable(): Student | Prospect | null
-    {
-        return $this->educatable;
     }
 }
