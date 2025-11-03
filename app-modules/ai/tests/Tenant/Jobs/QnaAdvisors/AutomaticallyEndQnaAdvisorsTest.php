@@ -38,10 +38,8 @@ use AdvisingApp\Ai\Events\QnaAdvisors\EndQnaAdvisorThread;
 use AdvisingApp\Ai\Jobs\QnaAdvisors\AutomaticallyEndQnaAdvisors;
 use AdvisingApp\Ai\Models\QnaAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Queue;
 
 it('will only run for advisors that have had no activity in over an hour', function () {
     Bus::fake();
@@ -66,7 +64,7 @@ it('will only run for advisors that have had no activity in over an hour', funct
 
 it('will not run for advisors that have had activity within the last hour', function () {
     Bus::fake();
-    
+
     $thread = QnaAdvisorThread::factory()
         ->has(
             QnaAdvisorMessage::factory()->state([
