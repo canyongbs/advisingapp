@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-use function Pest\Faker\fake;
-use function Tests\asSuperAdmin;
-use function Pest\Livewire\livewire;
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
+use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Facades\Queue;
 
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
-use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
+use function Pest\Faker\fake;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 it('can create an Email Engagement properly', function () {
     Queue::fake();
