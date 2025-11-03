@@ -41,7 +41,6 @@ use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use Illuminate\Support\Facades\Event;
 
 it('will only run for advisors that have had no activity in over an hour', function () {
-
     $thread = QnaAdvisorThread::factory()
         ->has(
             QnaAdvisorMessage::factory()->state([
@@ -61,7 +60,6 @@ it('will only run for advisors that have had no activity in over an hour', funct
 });
 
 it('will not run for advisors that have had activity within the last hour', function () {
-
     $thread = QnaAdvisorThread::factory()
         ->has(
             QnaAdvisorMessage::factory()->state([
