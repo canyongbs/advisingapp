@@ -38,10 +38,12 @@ namespace AdvisingApp\Prospect\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Prospect\Observers\ProspectPhoneNumberObserver;
+use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -72,5 +74,13 @@ class ProspectPhoneNumber extends BaseModel implements Auditable
     public function prospect(): BelongsTo
     {
         return $this->belongsTo(Prospect::class);
+    }
+
+    /**
+     * @return HasOne<SmsOptOutPhoneNumber, $this>
+     */
+    public function smsOptOut(): HasOne
+    {
+        return $this->hasOne(SmsOptOutPhoneNumber::class, 'number', 'number');
     }
 }
