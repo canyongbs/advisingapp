@@ -38,14 +38,9 @@ use AdvisingApp\Ai\Events\QnaAdvisors\EndQnaAdvisorThread;
 use AdvisingApp\Ai\Jobs\QnaAdvisors\AutomaticallyEndQnaAdvisors;
 use AdvisingApp\Ai\Models\QnaAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 
-use function Pest\Laravel\withoutExceptionHandling;
-
 it('will only run for advisors that have had no activity in over an hour', function () {
-    withoutExceptionHandling();
-    //Bus::fake();
 
     $thread = QnaAdvisorThread::factory()
         ->has(
@@ -66,8 +61,6 @@ it('will only run for advisors that have had no activity in over an hour', funct
 });
 
 it('will not run for advisors that have had activity within the last hour', function () {
-    withoutExceptionHandling();
-    //Bus::fake();
 
     $thread = QnaAdvisorThread::factory()
         ->has(
@@ -88,11 +81,9 @@ it('will not run for advisors that have had activity within the last hour', func
 });
 
 it('dispatches websocket event when it automatically finishes a thread', function () {
-    withoutExceptionHandling();
-    //Bus::fake();
     Event::fake();
 
-    $thread = QnaAdvisorThread::factory()
+    QnaAdvisorThread::factory()
         ->has(
             QnaAdvisorMessage::factory()->state([
                 'created_at' => now()->subHours(2),
