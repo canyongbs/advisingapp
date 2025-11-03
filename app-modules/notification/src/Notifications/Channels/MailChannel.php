@@ -52,6 +52,7 @@ use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\BouncedEmailAddressFeature;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -286,6 +287,10 @@ class MailChannel extends BaseMailChannel
     protected function isAddressBounced(object $notifiable, string $recipientAddress): bool
     {
         if ((! $notifiable instanceof Student) && (! $notifiable instanceof Prospect)) {
+            return false;
+        }
+
+        if (! BouncedEmailAddressFeature::active()) {
             return false;
         }
 

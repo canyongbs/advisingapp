@@ -48,6 +48,7 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use App\Features\BouncedEmailAddressFeature;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
@@ -92,7 +93,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                             ->default(function (RelationManager $livewire): ?string {
                                 assert($livewire->getOwnerRecord() instanceof Educatable);
 
-                                return $livewire->getOwnerRecord()->emailAddresses()->whereDoesntHave('bounced')->exists()
+                                return $livewire->getOwnerRecord()->emailAddresses()->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))->exists()
                                     ? NotificationChannel::Email->value
                                     : ($livewire->getOwnerRecord()->phoneNumbers()
                                         ->where('can_receive_sms', true)
@@ -110,7 +111,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                     if (($value == NotificationChannel::Email->value)) {
                                         return ! $livewire->getOwnerRecord()
                                             ->emailAddresses()
-                                            ->whereDoesntHave('bounced')
+                                            ->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))
                                             ->exists();
                                     }
 
@@ -135,7 +136,7 @@ class RelationManagerSendEngagementAction extends CreateAction
 
                                 $route = match ($channel) {
                                     NotificationChannel::Email => $educatable->primaryEmailAddress()
-                                        ->whereDoesntHave('bounced')
+                                        ->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))
                                         ->first()?->getKey(),
                                     NotificationChannel::Sms => $educatable->primaryPhoneNumber()
                                         ->where('can_receive_sms', true)
@@ -144,7 +145,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                     default => null,
                                 } ?? match ($channel) {
                                     NotificationChannel::Email => $educatable->emailAddresses()
-                                        ->whereDoesntHave('bounced')
+                                        ->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))
                                         ->first()?->getKey(),
                                     NotificationChannel::Sms => $educatable->phoneNumbers()
                                         ->where('can_receive_sms', true)
@@ -165,7 +166,7 @@ class RelationManagerSendEngagementAction extends CreateAction
 
                                 return match (NotificationChannel::parse($get('channel'))) {
                                     NotificationChannel::Email => $livewire->getOwnerRecord()->emailAddresses()
-                                        ->whereDoesntHave('bounced')
+                                        ->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))
                                         ->get()
                                         ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
                                             $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
@@ -185,7 +186,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                 assert($livewire->getOwnerRecord() instanceof Educatable);
 
                                 return $livewire->getOwnerRecord()->emailAddresses()
-                                    ->whereDoesntHave('bounced')
+                                    ->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))
                                     ->orderBy('order')
                                     ->first()
                                     ?->getKey()

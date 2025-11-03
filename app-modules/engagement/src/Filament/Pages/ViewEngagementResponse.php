@@ -53,6 +53,7 @@ use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use App\Features\BouncedEmailAddressFeature;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
 use Filament\Forms\Components\DateTimePicker;
@@ -69,6 +70,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use FilamentTiptapEditor\TiptapEditor;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Locked;
@@ -98,7 +100,7 @@ class ViewEngagementResponse extends Page
         if (($this->record->sender instanceof Prospect || $this->record->sender instanceof Student) && auth()->user()->can('create', [Engagement::class, $this->record->sender instanceof Prospect ? $this->record->sender : null])) {
             $this->replyForm->fill([
                 'recipient_route_id' => match ($this->record->type) {
-                    EngagementResponseType::Email => $this->record->sender->emailAddresses()->whereDoesntHave('bounced')->orderBy('order')->first()?->getKey(),
+                    EngagementResponseType::Email => $this->record->sender->emailAddresses()->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))->orderBy('order')->first()?->getKey(),
                     EngagementResponseType::Sms => $this->record->sender->phoneNumbers()->where('can_receive_sms', true)->orderBy('order')->first()?->getKey(),
                 },
                 'subject' => ($this->record->type === EngagementResponseType::Email) ? "RE: {$this->record->subject}" : '',
