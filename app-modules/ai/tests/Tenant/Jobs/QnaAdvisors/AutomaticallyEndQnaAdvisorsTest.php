@@ -40,8 +40,10 @@ use AdvisingApp\Ai\Models\QnaAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 
 it('will only run for advisors that have had no activity in over an hour', function () {
+    Queue::fake();
     Carbon::setTestNow();
 
     $thread = QnaAdvisorThread::factory()
