@@ -45,8 +45,6 @@ use Illuminate\Support\Facades\Queue;
 
 it('will only run for advisors that have had no activity in over an hour', function () {
     Bus::fake();
-    Queue::fake();
-    Carbon::setTestNow();
 
     $thread = QnaAdvisorThread::factory()
         ->has(
@@ -67,6 +65,8 @@ it('will only run for advisors that have had no activity in over an hour', funct
 });
 
 it('will not run for advisors that have had activity within the last hour', function () {
+    Bus::fake();
+    
     $thread = QnaAdvisorThread::factory()
         ->has(
             QnaAdvisorMessage::factory()->state([
@@ -86,6 +86,7 @@ it('will not run for advisors that have had activity within the last hour', func
 });
 
 it('dispatches websocket event when it automatically finishes a thread', function () {
+    Bus::fake();
     Event::fake();
 
     $thread = QnaAdvisorThread::factory()
