@@ -73,13 +73,6 @@ class CreateAiAssistant extends CreateRecord
         }
         $record->save();
 
-        if (filled($data['uploaded_files'] ?? null)) {
-            $this->uploadFilesToAssistant(
-                assistant: $record,
-                files: $data['uploaded_files']
-            );
-        }
-
         return $record;
     }
 }

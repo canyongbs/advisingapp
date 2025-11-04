@@ -39,7 +39,9 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistants;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\CreateAiAssistant;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\EditAiAssistant;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ListAiAssistants;
+use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ManageAiAssistantAdditionalKnowledge;
 use AdvisingApp\Ai\Models\AiAssistant;
+use Filament\Pages\Page;
 use Filament\Resources\Resource;
 use UnitEnum;
 
@@ -61,6 +63,15 @@ class AiAssistantResource extends Resource
             'index' => ListAiAssistants::route('/'),
             'create' => CreateAiAssistant::route('/create'),
             'edit' => EditAiAssistant::route('/{record}/edit'),
+            'manage-additional-knowledge' => ManageAiAssistantAdditionalKnowledge::route('/{record}/additional-knowledge'),
         ];
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            EditAiAssistant::class,
+            ManageAiAssistantAdditionalKnowledge::class,
+        ]);
     }
 }
