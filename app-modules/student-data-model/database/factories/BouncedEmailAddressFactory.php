@@ -50,7 +50,7 @@ class BouncedEmailAddressFactory extends Factory
     public function definition(): array
     {
         return [
-            'address' => $this->faker->email(),
+            'address' => $this->faker->unique()->email(),
         ];
     }
 }
