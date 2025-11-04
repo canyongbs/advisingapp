@@ -34,69 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
 
-use AdvisingApp\Interaction\Models\Interaction;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use AdvisingApp\Ai\Events\QnaAdvisors\EndQnaAdvisorThread;
+use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Collection;
+use Throwable;
 
-/**
- * @mixin IdeHelperQnaAdvisorThread
- */
-class QnaAdvisorThread extends BaseModel
+class AutomaticallyEndQnaAdvisors implements ShouldQueue
 {
-    public $fillable = [
-        'advisor_id',
-        'author_type',
-        'author_id',
-        'finished_at',
-    ];
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
-    protected $casts = [
-        'finished_at' => 'datetime',
-    ];
-
-    /**
-     * @return HasMany<QnaAdvisorMessage, $this>
-     */
-    public function messages(): HasMany
+    public function handle(): void
     {
-        return $this->hasMany(QnaAdvisorMessage::class, 'thread_id');
-    }
+        QnaAdvisorThread::query()
+            ->whereNull('finished_at')
+            ->whereHas(
+                'latestMessage',
+                fn (Builder $query) => $query->where('created_at', '<=', now()->subHour())
+            )
+            ->chunkById(100, function (Collection $threads) {
+                foreach ($threads as $thread) {
+                    try {
+                        $thread->finished_at = now();
+                        $thread->save();
 
-    /**
-     * @return HasOne<QnaAdvisorMessage, $this>
-     */
-    public function latestMessage(): HasOne
-    {
-        return $this->messages()->one()->latestOfMany();
-    }
-
-    /**
-     * @return BelongsTo<QnaAdvisor, $this>
-     */
-    public function advisor(): BelongsTo
-    {
-        return $this->belongsTo(QnaAdvisor::class, 'advisor_id');
-    }
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function author(): MorphTo
-    {
-        return $this->morphTo('author');
-    }
-
-    /**
-     * @return BelongsTo<Interaction, $this>
-     */
-    public function interaction(): BelongsTo
-    {
-        return $this->belongsTo(Interaction::class);
+                        event(new EndQnaAdvisorThread($thread));
+                    } catch (Throwable $error) {
+                        report($error);
+                    }
+                }
+            });
     }
 }

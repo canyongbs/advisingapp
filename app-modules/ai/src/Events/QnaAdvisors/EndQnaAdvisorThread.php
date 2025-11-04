@@ -34,69 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+namespace AdvisingApp\Ai\Events\QnaAdvisors;
 
-use AdvisingApp\Interaction\Models\Interaction;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Foundation\Events\Dispatchable;
 
-/**
- * @mixin IdeHelperQnaAdvisorThread
- */
-class QnaAdvisorThread extends BaseModel
+class EndQnaAdvisorThread implements ShouldBroadcastNow
 {
-    public $fillable = [
-        'advisor_id',
-        'author_type',
-        'author_id',
-        'finished_at',
-    ];
+    use Dispatchable;
+    use InteractsWithSockets;
 
-    protected $casts = [
-        'finished_at' => 'datetime',
-    ];
+    public function __construct(public QnaAdvisorThread $thread) {}
 
-    /**
-     * @return HasMany<QnaAdvisorMessage, $this>
-     */
-    public function messages(): HasMany
+    public function broadcastAs(): string
     {
-        return $this->hasMany(QnaAdvisorMessage::class, 'thread_id');
+        return 'qna-advisor.automatic-end';
     }
 
     /**
-     * @return HasOne<QnaAdvisorMessage, $this>
+     * @return array<int, Channel>
      */
-    public function latestMessage(): HasOne
+    public function broadcastOn(): array
     {
-        return $this->messages()->one()->latestOfMany();
-    }
+        $channelName = "qna-advisor-thread-{$this->thread->getKey()}";
 
-    /**
-     * @return BelongsTo<QnaAdvisor, $this>
-     */
-    public function advisor(): BelongsTo
-    {
-        return $this->belongsTo(QnaAdvisor::class, 'advisor_id');
-    }
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function author(): MorphTo
-    {
-        return $this->morphTo('author');
-    }
-
-    /**
-     * @return BelongsTo<Interaction, $this>
-     */
-    public function interaction(): BelongsTo
-    {
-        return $this->belongsTo(Interaction::class);
+        return [
+            $this->thread->advisor->is_requires_authentication_enabled
+                ? new PrivateChannel($channelName)
+                : new Channel($channelName),
+        ];
     }
 }
