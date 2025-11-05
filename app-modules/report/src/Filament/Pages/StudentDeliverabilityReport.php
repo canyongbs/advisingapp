@@ -39,46 +39,44 @@ namespace AdvisingApp\Report\Filament\Pages;
 use AdvisingApp\Report\Abstract\StudentReport;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\StudentDeliverableTable;
-use AdvisingApp\Report\Filament\Widgets\StudentEmailOptInOptOutPieChart;
-use AdvisingApp\Report\Filament\Widgets\StudentSmsOptInOptOutPieChart;
 use App\Filament\Clusters\ReportLibrary;
 use UnitEnum;
 
 class StudentDeliverabilityReport extends StudentReport
 {
-  protected static ?string $title = 'Deliverability';
+    protected static ?string $title = 'Deliverability';
 
-  protected static ?string $cluster = ReportLibrary::class;
+    protected static ?string $cluster = ReportLibrary::class;
 
-  protected static string $routePath = 'student-deliverability-report';
+    protected static string $routePath = 'student-deliverability-report';
 
-  protected static string | UnitEnum | null $navigationGroup = 'Students';
+    protected static string | UnitEnum | null $navigationGroup = 'Students';
 
-  protected $cacheTag = 'report-student-deliverability';
+    protected $cacheTag = 'report-student-deliverability';
 
-  protected static ?int $navigationSort = 60;
+    protected static ?int $navigationSort = 60;
 
-  public function getColumns(): int|array
-  {
-    return [
-      'sm' => 12,
-      'md' => 12,
-      'lg' => 12,
-    ];
-  }
+    public function getColumns(): int|array
+    {
+        return [
+            'sm' => 12,
+            'md' => 12,
+            'lg' => 12,
+        ];
+    }
 
-  public function getWidgets(): array
-  {
-    return [
-      RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-      StudentDeliverableTable::make(['cacheTag' => $this->cacheTag]),
-    ];
-  }
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            StudentDeliverableTable::make(['cacheTag' => $this->cacheTag]),
+        ];
+    }
 
-  public function getWidgetData(): array
-  {
-    return [
-      'filters' => $this->filters,
-    ];
-  }
+    public function getWidgetData(): array
+    {
+        return [
+            'filters' => $this->filters,
+        ];
+    }
 }

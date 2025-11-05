@@ -38,7 +38,6 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -97,7 +96,7 @@ class StudentDeliverableTable extends BaseWidget
                     )
                     ->when(
                         $groupId,
-                        fn(Builder $query) => $this->groupFilter($query, $groupId)
+                        fn (Builder $query) => $this->groupFilter($query, $groupId)
                     )
             )
             ->columns([
@@ -108,15 +107,15 @@ class StudentDeliverableTable extends BaseWidget
                 TextColumn::make('email_bounce')
                     ->label('Email Status')
                     ->badge()
-                    ->color(fn(Student $record) => $record->email_bounce ? 'warning' : 'info')
-                    ->state(fn(Student $record) => $record->email_bounce ? 'Bounced' : 'Healthy'),
+                    ->color(fn (Student $record) => $record->email_bounce ? 'warning' : 'info')
+                    ->state(fn (Student $record) => $record->email_bounce ? 'Bounced' : 'Healthy'),
                 TextColumn::make('primaryPhoneNumber.number')
                     ->label('Primary Phone Number'),
                 TextColumn::make('sms_opt_out')
                     ->label('Phone Status')
                     ->badge()
-                    ->color(fn(Student $record) => $record->sms_opt_out ? 'warning' : 'info')
-                    ->state(fn(Student $record) => $record->sms_opt_out ? 'Opt Out' : 'Healthy'),
+                    ->color(fn (Student $record) => $record->sms_opt_out ? 'warning' : 'info')
+                    ->state(fn (Student $record) => $record->sms_opt_out ? 'Opt Out' : 'Healthy'),
             ]);
     }
 }
