@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\CreateAiAssistant;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\EditAiAssistant;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ListAiAssistants;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ManageAiAssistantAdditionalKnowledge;
+use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ManageAiAssistantLinks;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
@@ -64,6 +65,7 @@ class AiAssistantResource extends Resource
             'create' => CreateAiAssistant::route('/create'),
             'edit' => EditAiAssistant::route('/{record}/edit'),
             'manage-additional-knowledge' => ManageAiAssistantAdditionalKnowledge::route('/{record}/additional-knowledge'),
+            'manage-links' => ManageAiAssistantLinks::route('/{record}/links'),
         ];
     }
 
@@ -72,6 +74,7 @@ class AiAssistantResource extends Resource
         return $page->generateNavigationItems([
             EditAiAssistant::class,
             ManageAiAssistantAdditionalKnowledge::class,
+            ManageAiAssistantLinks::class,
         ]);
     }
 }
