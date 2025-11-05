@@ -37,7 +37,6 @@
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
-use AdvisingApp\Ai\Filament\Resources\AiAssistants\Concerns\HandlesFileUploads;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Forms\AiAssistantForm;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
@@ -48,8 +47,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class CreateAiAssistant extends CreateRecord
 {
-    use HandlesFileUploads;
-
     protected static string $resource = AiAssistantResource::class;
 
     public function form(Schema $schema): Schema
@@ -72,13 +69,6 @@ class CreateAiAssistant extends CreateRecord
             $record->model = $settings->preselected_model ?? $record->model;
         }
         $record->save();
-
-        if (filled($data['uploaded_files'] ?? null)) {
-            $this->uploadFilesToAssistant(
-                assistant: $record,
-                files: $data['uploaded_files']
-            );
-        }
 
         return $record;
     }

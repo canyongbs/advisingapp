@@ -39,13 +39,9 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistants\Forms;
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
-use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
 use App\Models\User;
-use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
@@ -135,66 +131,6 @@ class AiAssistantForm
                             ->reactive()
                             ->required()
                             ->maxLength(fn (Get $get): int => (AiModel::parse($get('model')) ?? AiModel::OpenAiGpt4o)->getService()->getMaxAssistantInstructionsLength()),
-                    ]),
-                Section::make('Additional Knowledge')
-                    ->description('Add additional knowledge to your custom advisor to improve its responses.')
-                    ->reactive()
-                    ->columns([
-                        'sm' => 1,
-                        'md' => 2,
-                    ])
-                    ->schema([
-                        Repeater::make('files')
-                            ->relationship()
-                            ->hiddenLabel()
-                            ->when(
-                                $user->isSuperAdmin(),
-                                fn (Repeater $repeater) => $repeater->schema([
-                                    TextInput::make('name')
-                                        ->disabled(),
-                                    Textarea::make('parsing_results')
-                                        ->placeholder('Not parsed yet')
-                                        ->disabled()
-                                        ->visible($user->isSuperAdmin()),
-                                ]),
-                                fn (Repeater $repeater) => $repeater->simple(
-                                    TextInput::make('name')
-                                        ->disabled(),
-                                ),
-                            )
-                            ->addable(false)
-                            ->visible(fn (?AiAssistant $record): bool => $record?->files->isNotEmpty() ?? false)
-                            ->deleteAction(
-                                fn (Action $action) => $action->requiresConfirmation()
-                                    ->modalHeading('Are you sure you want to delete this file?')
-                                    ->modalDescription('This file will be permanently removed from your custom advisor, and cannot be restored.')
-                            ),
-                        FileUpload::make('uploaded_files')
-                            ->hiddenLabel()
-                            ->multiple()
-                            ->reactive()
-                            ->maxFiles(fn (?AiAssistant $record): int => 5 - $record?->files->count() ?? 0)
-                            ->disabled(fn (?AiAssistant $record): int => $record?->files->count() >= 5)
-                            ->acceptedFileTypes(config('ai.supported_file_types'))
-                            ->storeFiles(false)
-                            ->helperText(function (?AiAssistant $record): string {
-                                if ($record?->files->count() < 5) {
-                                    return 'You may upload a total of 5 files to your custom advisor. Files must be less than 20MB.';
-                                }
-
-                                return "You've reached the maximum file upload limit of 5 for your custom advisor. Please delete a file if you wish to upload another.";
-                            })
-                            ->maxSize(20000)
-                            ->columnSpan(function (Get $get) {
-                                $files = $get('files');
-                                $firstFile = reset($files);
-
-                                if (! $firstFile || blank($firstFile['name'])) {
-                                    return 'full';
-                                }
-
-                                return 1;
-                            }),
                     ]),
                 Section::make('Confidentiality')
                     ->columns([
