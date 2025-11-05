@@ -55,7 +55,7 @@ class StudentDeliverableTable extends BaseWidget
 
     protected static bool $isLazy = false;
 
-    protected static ?string $heading = 'Student Communication Preferences';
+    protected static ?string $heading = 'Student Engagement Deliberability';
 
     protected int | string | array $columnSpan = 'full';
 
@@ -75,7 +75,8 @@ class StudentDeliverableTable extends BaseWidget
 
         return $table
             ->query(
-                Student::select('sisid', 'full_name', 'email_bounce', 'sms_opt_out')
+                Student::select('sisid', 'full_name', 'email_bounce', 'sms_opt_out', 'primary_email_id', 'primary_phone_id')
+                    ->with('primaryEmailAddress')
                     ->when(
                         $startDate && $endDate,
                         function (Builder $query) use ($startDate, $endDate): Builder {
@@ -96,20 +97,26 @@ class StudentDeliverableTable extends BaseWidget
                     )
                     ->when(
                         $groupId,
-                        fn (Builder $query) => $this->groupFilter($query, $groupId)
+                        fn(Builder $query) => $this->groupFilter($query, $groupId)
                     )
             )
             ->columns([
                 TextColumn::make('full_name')
                     ->label('Name'),
-                IconColumn::make('email_bounce')
-                    ->label('Email Eligibility')
-                    ->boolean()
-                    ->state(fn (Student $record): bool => ! $record->email_bounce),
-                IconColumn::make('sms_opt_out')
-                    ->label('SMS Eligibility')
-                    ->boolean()
-                    ->state(fn (Student $record): bool => ! $record->sms_opt_out),
+                TextColumn::make('primaryEmailAddress.address')
+                    ->label('Email Address'),
+                TextColumn::make('email_bounce')
+                    ->label('Email Status')
+                    ->badge()
+                    ->color(fn(Student $record) => $record->email_bounce ? 'warning' : 'info')
+                    ->state(fn(Student $record) => $record->email_bounce ? 'Bounced' : 'Healthy'),
+                TextColumn::make('primaryPhoneNumber.number')
+                    ->label('Primary Phone Number'),
+                TextColumn::make('sms_opt_out')
+                    ->label('Phone Status')
+                    ->badge()
+                    ->color(fn(Student $record) => $record->sms_opt_out ? 'warning' : 'info')
+                    ->state(fn(Student $record) => $record->sms_opt_out ? 'Opt Out' : 'Healthy'),
             ]);
     }
 }
