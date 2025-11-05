@@ -50,6 +50,7 @@ use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -317,7 +318,7 @@ class SmsChannel
 
     protected function isRecipientOptedOut(object $notifiable, string $recipientNumber): bool
     {
-        if (! $notifiable instanceof Student) {
+        if ((! $notifiable instanceof Student) && (! $notifiable instanceof Prospect)) {
             return false;
         }
 

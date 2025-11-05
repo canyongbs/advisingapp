@@ -34,47 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Models;
+namespace AdvisingApp\StudentDataModel\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Prospect\Observers\ProspectEmailAddressObserver;
-use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use AdvisingApp\StudentDataModel\Database\Factories\BouncedEmailAddressFactory;
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @mixin IdeHelperProspectEmailAddress
+ * @mixin IdeHelperBouncedEmailAddress
  */
-#[ObservedBy(ProspectEmailAddressObserver::class)]
-class ProspectEmailAddress extends BaseModel implements Auditable
+class BouncedEmailAddress extends BaseModel implements Auditable
 {
-    use AuditableTrait;
     use HasUuids;
+    use AuditableTrait;
+
+    /** @use HasFactory<BouncedEmailAddressFactory> */
+    use HasFactory;
 
     protected $fillable = [
-        'prospect_id',
         'address',
-        'type',
-        'order',
     ];
 
     /**
-     * @return BelongsTo<Prospect, $this>
+     * @return BelongsTo<StudentEmailAddress, $this>
      */
-    public function prospect(): BelongsTo
+    public function studentEmailAddress(): BelongsTo
     {
-        return $this->belongsTo(Prospect::class);
+        return $this->belongsTo(StudentEmailAddress::class, 'address', 'address');
     }
 
     /**
-     * @return HasOne<BouncedEmailAddress, $this>
+     * @return BelongsTo<ProspectEmailAddress, $this>
      */
-    public function bounced(): HasOne
+    public function prospectEmailAddress(): BelongsTo
     {
-        return $this->hasOne(BouncedEmailAddress::class, 'address', 'address');
+        return $this->belongsTo(ProspectEmailAddress::class, 'address', 'address');
     }
 }

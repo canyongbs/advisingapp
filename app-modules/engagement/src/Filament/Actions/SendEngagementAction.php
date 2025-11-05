@@ -44,10 +44,10 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
-use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use App\Features\BouncedEmailAddressFeature;
 use App\Filament\Forms\Components\EducatableSelect;
 use Exception;
 use Filament\Actions\Action;
@@ -124,23 +124,19 @@ class SendEngagementAction extends Action
                                         default => null,
                                     };
 
-                                    $hasAvailablePhones = false;
-
-                                    if ($educatable instanceof Student) {
-                                        $phoneQuery = $educatable->phoneNumbers()->where('can_receive_sms', true);
-
-                                        $hasAvailablePhones = $phoneQuery->whereDoesntHave('smsOptOut')->exists();
-                                    } elseif ($educatable instanceof Prospect) {
-                                        $hasAvailablePhones = $educatable->phoneNumbers()
-                                            ->where('can_receive_sms', true)
-                                            ->exists();
-                                    }
-
-                                    if (! $hasAvailablePhones) {
+                                    if ($educatable->emailAddresses()->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))->exists()) {
                                         $set('channel', 'email');
+                                        $set('recipient_route_id', $educatable?->emailAddresses()->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))->orderBy('order')->first()?->getKey());
+
+                                        return;
                                     }
 
-                                    $set('recipient_route_id', $educatable?->primaryEmailAddress?->getKey() ?? $educatable?->emailAddresses()->first()?->getKey());
+                                    if ($educatable->phoneNumbers()->where('can_receive_sms', true)->whereDoesntHave('smsOptOut')->exists()) {
+                                        $set('channel', 'sms');
+                                        $set('recipient_route_id', $educatable?->phoneNumbers()->where('can_receive_sms', true)->whereDoesntHave('smsOptOut')->orderBy('order')->first()?->getKey());
+
+                                        return;
+                                    }
                                 }),
                         ],
                         Grid::make(2)
@@ -158,26 +154,25 @@ class SendEngagementAction extends Action
                                         ->default(NotificationChannel::Email->value)
                                         ->disableOptionWhen(
                                             function (string $value) use ($educatable): bool {
-                                                if ($value == NotificationChannel::Sms->value) {
-                                                    if ($educatable instanceof Student) {
-                                                        $phoneQuery = $educatable->phoneNumbers()
-                                                            ->where('can_receive_sms', true);
-
-                                                        $hasAvailablePhones = $phoneQuery
-                                                            ->whereDoesntHave('smsOptOut')
-                                                            ->exists();
-
-                                                        return ! $hasAvailablePhones;
-                                                    } elseif ($educatable instanceof Prospect) {
-                                                        return ! $educatable->phoneNumbers()
-                                                            ->where('can_receive_sms', true)
-                                                            ->exists();
-                                                    }
-
+                                                if (NotificationChannel::tryFrom($value)?->getCaseDisabled() ?? false) {
                                                     return true;
                                                 }
 
-                                                return NotificationChannel::tryFrom($value)?->getCaseDisabled() ?? false;
+                                                if ($value == NotificationChannel::Email->value) {
+                                                    return ! $educatable
+                                                        ->emailAddresses()
+                                                        ->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))
+                                                        ->exists();
+                                                }
+
+                                                if ($value == NotificationChannel::Sms->value) {
+                                                    return ! $educatable->phoneNumbers()
+                                                        ->where('can_receive_sms', true)
+                                                        ->whereDoesntHave('smsOptOut')
+                                                        ->exists();
+                                                }
+
+                                                return true;
                                             }
                                         )
                                         ->selectablePlaceholder(false)
@@ -186,31 +181,22 @@ class SendEngagementAction extends Action
                                             $channel = NotificationChannel::parse($state);
 
                                             $route = match ($channel) {
-                                                NotificationChannel::Email => $educatable?->primaryEmailAddress?->getKey(),
-                                                NotificationChannel::Sms => $educatable instanceof Student
-                                                    ? $educatable->primaryPhoneNumber()
-                                                        ->where('can_receive_sms', true)
-                                                        ->whereDoesntHave('smsOptOut')
-                                                        ->first()?->getKey()
-                                                    : ($educatable instanceof Prospect
-                                                        ? $educatable->primaryPhoneNumber()
-                                                            ->where('can_receive_sms', true)
-                                                            ->first()?->getKey()
-                                                        : null),
+                                                NotificationChannel::Email => $educatable->primaryEmailAddress()
+                                                    ->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))
+                                                    ->first()?->getKey(),
+                                                NotificationChannel::Sms => $educatable->primaryPhoneNumber()
+                                                    ->where('can_receive_sms', true)
+                                                    ->whereDoesntHave('smsOptOut')
+                                                    ->first()?->getKey(),
                                                 default => null,
                                             } ?? match ($channel) {
-                                                NotificationChannel::Email => $educatable?->emailAddresses()
+                                                NotificationChannel::Email => $educatable->emailAddresses()
+                                                    ->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))
                                                     ->first()?->getKey(),
-                                                NotificationChannel::Sms => $educatable instanceof Student
-                                                    ? $educatable->phoneNumbers()
-                                                        ->where('can_receive_sms', true)
-                                                        ->whereDoesntHave('smsOptOut')
-                                                        ->first()?->getKey()
-                                                    : ($educatable instanceof Prospect
-                                                        ? $educatable->phoneNumbers()
-                                                            ->where('can_receive_sms', true)
-                                                            ->first()?->getKey()
-                                                        : null),
+                                                NotificationChannel::Sms => $educatable->phoneNumbers()
+                                                    ->where('can_receive_sms', true)
+                                                    ->whereDoesntHave('smsOptOut')
+                                                    ->first()?->getKey(),
                                                 default => null,
                                             };
 
@@ -223,29 +209,21 @@ class SendEngagementAction extends Action
                                             default => throw new Exception('Invalid channel.'),
                                         })
                                         ->options(fn (Get $get): array => match (NotificationChannel::parse($get('channel'))) {
-                                            NotificationChannel::Email => $educatable?->emailAddresses
+                                            NotificationChannel::Email => $educatable->emailAddresses()
+                                                ->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))
+                                                ->get()
                                                 ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
                                                     $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
                                                 ])
-                                                ->all() ?? [],
-                                            NotificationChannel::Sms => $educatable instanceof Student
-                                                ? $educatable->phoneNumbers()
-                                                    ->where('can_receive_sms', true)
-                                                    ->whereDoesntHave('smsOptOut')
-                                                    ->get()
-                                                    ->mapWithKeys(fn (StudentPhoneNumber $phoneNumber): array => [
-                                                        $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
-                                                    ])
-                                                    ->all()
-                                                : ($educatable instanceof Prospect
-                                                    ? $educatable->phoneNumbers()
-                                                        ->where('can_receive_sms', true)
-                                                        ->get()
-                                                        ->mapWithKeys(fn (ProspectPhoneNumber $phoneNumber): array => [
-                                                            $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
-                                                        ])
-                                                        ->all()
-                                                    : []),
+                                                ->all(),
+                                            NotificationChannel::Sms => $educatable->phoneNumbers()
+                                                ->where('can_receive_sms', true)
+                                                ->whereDoesntHave('smsOptOut')
+                                                ->get()
+                                                ->mapWithKeys(fn (StudentPhoneNumber $phoneNumber): array => [
+                                                    $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
+                                                ])
+                                                ->all(),
                                             default => [],
                                         })
                                         ->disabled(blank($educatable))

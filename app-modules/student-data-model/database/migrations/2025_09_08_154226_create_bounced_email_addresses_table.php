@@ -34,47 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Models;
+use App\Features\BouncedEmailAddressFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Prospect\Observers\ProspectEmailAddressObserver;
-use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use OwenIt\Auditing\Contracts\Auditable;
-
-/**
- * @mixin IdeHelperProspectEmailAddress
- */
-#[ObservedBy(ProspectEmailAddressObserver::class)]
-class ProspectEmailAddress extends BaseModel implements Auditable
-{
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'prospect_id',
-        'address',
-        'type',
-        'order',
-    ];
-
-    /**
-     * @return BelongsTo<Prospect, $this>
-     */
-    public function prospect(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(Prospect::class);
+        DB::transaction(function () {
+            Schema::create('bounced_email_addresses', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->string('address')->unique();
+                $table->timestamps();
+
+                $table->index('address');
+            });
+
+            BouncedEmailAddressFeature::activate();
+        });
     }
 
-    /**
-     * @return HasOne<BouncedEmailAddress, $this>
-     */
-    public function bounced(): HasOne
+    public function down(): void
     {
-        return $this->hasOne(BouncedEmailAddress::class, 'address', 'address');
+        DB::transaction(function () {
+            BouncedEmailAddressFeature::deactivate();
+
+            Schema::dropIfExists('bounced_email_addresses');
+        });
     }
-}
+};

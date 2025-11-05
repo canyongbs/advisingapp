@@ -32,8 +32,12 @@
 </COPYRIGHT>
 --}}
 @php
+    use App\Features\BouncedEmailAddressFeature;
     use AdvisingApp\Engagement\Models\Engagement;
     use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+    use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+
+    $isBounced = ($emailAddress instanceof StudentEmailAddress || $emailAddress instanceof ProspectEmailAddress) && (BouncedEmailAddressFeature::active() ? $emailAddress->bounced()->exists() : false);
 @endphp
 
 <button
@@ -42,13 +46,12 @@
     x-data="{ isLoading: false }"
     x-on:engage-action-finished-loading.window="isLoading = false"
     x-on:click="isLoading = true; $dispatch('send-email', { emailAddressKey: @js($emailAddress->getKey()) })"
-    x-tooltip.raw="Click to send an email"
-    @disabled(
-        !auth()->user()->can('create', [
-                Engagement::class,
-                $emailAddress instanceof ProspectEmailAddress ? $emailAddress->prospect : null,
-            ]))
->
+    @if (!$isBounced) x-tooltip.raw="Click to send an email" @endif @disabled(
+        $isBounced ||
+            !auth()->user()->can('create', [
+                    Engagement::class,
+                    $emailAddress instanceof ProspectEmailAddress ? $emailAddress->prospect : null,
+                ]))>
     <div class="mt-1">
         @svg('heroicon-m-envelope', 'size-5', ['x-show' => '! isLoading'])
     </div>
@@ -63,5 +66,13 @@
 
     @if (filled($emailAddress->type))
         ({{ $emailAddress->type }})
+    @endif
+
+    @if ($isBounced)
+        <x-filament::icon
+            class="text-danger-500 ml-1 h-6 w-6"
+            icon="heroicon-s-x-circle"
+            x-tooltip.raw="Email Bounced"
+        />
     @endif
 </button>

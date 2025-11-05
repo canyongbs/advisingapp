@@ -34,47 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Models;
+namespace AdvisingApp\StudentDataModel\Listeners;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Prospect\Observers\ProspectEmailAddressObserver;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesEvent;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use OwenIt\Auditing\Contracts\Auditable;
+use App\Features\BouncedEmailAddressFeature;
 
-/**
- * @mixin IdeHelperProspectEmailAddress
- */
-#[ObservedBy(ProspectEmailAddressObserver::class)]
-class ProspectEmailAddress extends BaseModel implements Auditable
+class SaveBouncedEmailAddress extends HandleSesEvent
 {
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'prospect_id',
-        'address',
-        'type',
-        'order',
-    ];
-
-    /**
-     * @return BelongsTo<Prospect, $this>
-     */
-    public function prospect(): BelongsTo
+    public function handle(SesEvent $event): void
     {
-        return $this->belongsTo(Prospect::class);
-    }
+        if (! BouncedEmailAddressFeature::active()) {
+            return;
+        }
 
-    /**
-     * @return HasOne<BouncedEmailAddress, $this>
-     */
-    public function bounced(): HasOne
-    {
-        return $this->hasOne(BouncedEmailAddress::class, 'address', 'address');
+        if ($event->data->bounce->bounceType !== 'Permanent') {
+            return;
+        }
+
+        foreach ($event->data->bounce->bouncedRecipients as $bouncedRecipient) {
+            BouncedEmailAddress::firstOrCreate([
+                'address' => $bouncedRecipient->emailAddress,
+            ]);
+        }
     }
 }

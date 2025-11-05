@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EngagementsRelationManager;
@@ -81,6 +82,12 @@ it('can create an SMS Engagement properly', function () {
     Queue::fake();
 
     asSuperAdmin();
+
+    $settings = app(TwilioSettings::class);
+    $settings->account_sid = 'abc123';
+    $settings->auth_token = 'abc123';
+    $settings->from_number = '+11231231234';
+    $settings->save();
 
     /** @var Student $student */
     $student = Student::factory()->create();

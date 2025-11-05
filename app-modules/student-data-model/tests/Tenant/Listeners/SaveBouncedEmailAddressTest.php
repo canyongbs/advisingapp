@@ -33,50 +33,61 @@
 
 </COPYRIGHT>
 */
-
-namespace AdvisingApp\StudentDataModel\Providers;
-
+use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
 use AdvisingApp\StudentDataModel\Listeners\SaveBouncedEmailAddress;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
-use AdvisingApp\StudentDataModel\Models\Enrollment;
-use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
-use AdvisingApp\StudentDataModel\Models\Program;
-use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\StudentAddress;
-use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
-use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\ServiceProvider;
 
-class StudentDataModelServiceProvider extends ServiceProvider
-{
-    public function register(): void
-    {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new StudentDataModelPlugin()));
-    }
+use function Pest\Laravel\assertDatabaseCount;
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
+use function Tests\loadFixtureFromModule;
 
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'student' => Student::class,
-            'enrollment' => Enrollment::class,
-            'program' => Program::class,
-            'student_phone_number' => StudentPhoneNumber::class,
-            'student_address' => StudentAddress::class,
-            'student_email_address' => StudentEmailAddress::class,
-            'sms_opt_out_phone_number' => SmsOptOutPhoneNumber::class,
-            'enrollment_semester' => EnrollmentSemester::class,
-            'bounced_email_address' => BouncedEmailAddress::class,
-        ]);
+it('saves a new bounced email address from SES event', function () {
+    $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Bounce');
 
-        Event::listen(
-            SesBounceEvent::class,
-            SaveBouncedEmailAddress::class
-        );
-    }
-}
+    assertDatabaseMissing(BouncedEmailAddress::class, [
+        'address' => 'recipient@example.com',
+    ]);
+
+    $listener = new SaveBouncedEmailAddress();
+    $listener->handle(new SesBounceEvent(
+        data: SesEventData::from($messageContent),
+    ));
+
+    assertDatabaseHas(BouncedEmailAddress::class, [
+        'address' => 'recipient@example.com',
+    ]);
+});
+
+it('does not save an existing bounced email address again from SES event', function () {
+    $messageContent = loadFixtureFromModule('integration-aws-ses-event-handling', 'Bounce');
+
+    assertDatabaseMissing(BouncedEmailAddress::class, [
+        'address' => 'recipient@example.com',
+    ]);
+
+    assertDatabaseCount(BouncedEmailAddress::class, 0);
+
+    $listener = new SaveBouncedEmailAddress();
+    $listener->handle(new SesBounceEvent(
+        data: SesEventData::from($messageContent),
+    ));
+
+    assertDatabaseHas(BouncedEmailAddress::class, [
+        'address' => 'recipient@example.com',
+    ]);
+
+    assertDatabaseCount(BouncedEmailAddress::class, 1);
+
+    $listener = new SaveBouncedEmailAddress();
+    $listener->handle(new SesBounceEvent(
+        data: SesEventData::from($messageContent),
+    ));
+
+    assertDatabaseHas(BouncedEmailAddress::class, [
+        'address' => 'recipient@example.com',
+    ]);
+
+    assertDatabaseCount(BouncedEmailAddress::class, 1);
+});
