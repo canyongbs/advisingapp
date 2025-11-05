@@ -36,10 +36,9 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages;
 
-use AdvisingApp\Ai\Actions\UploadFileForParsing;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
+use AdvisingApp\Ai\Filament\Resources\AiAssistants\Concerns\HandlesFileUploads;
 use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiAssistantFile;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -47,18 +46,17 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use UnitEnum;
 
 class ManageAiAssistantAdditionalKnowledge extends EditRecord
 {
+    use HandlesFileUploads;
     use EditPageRedirection;
 
     protected static string $resource = AiAssistantResource::class;
@@ -175,38 +173,10 @@ class ManageAiAssistantAdditionalKnowledge extends EditRecord
         assert($record instanceof AiAssistant);
 
         if (filled($data['uploaded_files'] ?? null)) {
-            foreach ($data['uploaded_files'] as $attachment) {
-                if (! ($attachment instanceof TemporaryUploadedFile)) {
-                    continue;
-                }
-
-                $file = new AiAssistantFile();
-                $file->assistant()->associate($record);
-                $file->name = $attachment->getClientOriginalName();
-                $file->mime_type = $attachment->getMimeType();
-                $file->temporary_url = $attachment->temporaryUrl();
-
-                $fileId = app(UploadFileForParsing::class)->execute(
-                    path: $attachment->getRealPath(),
-                    name: $file->name,
-                    mimeType: $file->mime_type,
-                );
-
-                if (blank($fileId)) {
-                    Notification::make()
-                        ->title('File Upload Failed')
-                        ->body('There was an error uploading the file. Please try again later.')
-                        ->danger()
-                        ->send();
-
-                    continue;
-                }
-
-                $file->file_id = $fileId;
-                $file->save();
-
-                $file->addMediaFromUrl($file->temporary_url)->toMediaCollection('file');
-            }
+            $this->uploadFilesToAssistant(
+                assistant: $record,
+                files: $data['uploaded_files']
+            );
         }
 
         $this->fillForm();
