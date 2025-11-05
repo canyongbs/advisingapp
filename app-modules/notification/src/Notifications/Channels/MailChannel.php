@@ -50,8 +50,7 @@ use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
 use App\Features\BouncedEmailAddressFeature;
 use App\Models\Tenant;
 use App\Models\User;
@@ -117,7 +116,7 @@ class MailChannel extends BaseMailChannel
             return;
         }
 
-        if ($recipientAddress && is_string($recipientAddress) && $this->isAddressBounced($notifiable, $recipientAddress)) {
+        if ($recipientAddress && is_string($recipientAddress) && $this->isAddressBounced($recipientAddress)) {
             $emailMessage->events()->create([
                 'type' => EmailMessageEventType::FailedDispatch,
                 'payload' => [
@@ -284,19 +283,14 @@ class MailChannel extends BaseMailChannel
         return parent::getRecipients($notifiable, $notification, $message);
     }
 
-    protected function isAddressBounced(object $notifiable, string $recipientAddress): bool
+    protected function isAddressBounced(string $recipientAddress): bool
     {
-        if ((! $notifiable instanceof Student) && (! $notifiable instanceof Prospect)) {
-            return false;
-        }
-
         if (! BouncedEmailAddressFeature::active()) {
             return false;
         }
 
-        return $notifiable->emailAddresses()
+        return BouncedEmailAddress::query()
             ->where('address', $recipientAddress)
-            ->whereHas('bounced')
             ->exists();
     }
 }
