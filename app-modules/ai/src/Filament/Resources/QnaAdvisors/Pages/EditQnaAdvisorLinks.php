@@ -99,7 +99,7 @@ class EditQnaAdvisorLinks extends EditRecord
                     ->hiddenLabel()
                     ->addActionLabel('Add website')
                     ->addActionAlignment(Alignment::Start)
-                    ->maxItems(5)
+                    ->maxItems(25)
                     ->columnSpanFull(),
             ]);
     }
