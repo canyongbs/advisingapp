@@ -54,7 +54,7 @@ it('it returns deliverability data only for students created within the given da
             'sms_opt_out' => false,
             'created_at_source' => $startDate,
         ]);
-    
+
     $optOutStartDateStudents->each(function (Student $student) {
         BouncedEmailAddress::factory()->create([
             'address' => $student->primaryEmailAddress->address,
@@ -206,7 +206,6 @@ it('can filter table based on email bounce status', function () {
         ->assertCanNotSeeTableRecords($bouncedStudents);
 });
 
-
 it('can filter table based on phone sms opt-out status', function () {
     $bouncedStudents = Student::factory()
         ->count(2)
@@ -215,11 +214,11 @@ it('can filter table based on phone sms opt-out status', function () {
             'sms_opt_out' => true,
         ]);
 
-        $bouncedStudents->each(function (Student $student) {
+    $bouncedStudents->each(function (Student $student) {
         SmsOptOutPhoneNumber::factory()->create([
-                'number' => $student->primaryPhoneNumber->number,
-            ]);
-        });
+            'number' => $student->primaryPhoneNumber->number,
+        ]);
+    });
 
     $healthyStudents = Student::factory()
         ->count(2)
