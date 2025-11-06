@@ -210,7 +210,6 @@
         ],
         "generate-helper-files": [
             "@php artisan app:generate-helper-files",
-            "./vendor/bin/rector",
             "@php-cs-format"
         ],
         "lint": [
