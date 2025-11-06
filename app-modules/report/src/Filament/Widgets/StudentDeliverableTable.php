@@ -38,7 +38,10 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\BouncedEmailAddressFeature;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\PaginationMode;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
@@ -74,8 +77,7 @@ class StudentDeliverableTable extends BaseWidget
 
         return $table
             ->query(
-                Student::select('sisid', 'full_name', 'email_bounce', 'sms_opt_out', 'primary_email_id', 'primary_phone_id')
-                    ->with('primaryEmailAddress')
+                Student::select('sisid', 'full_name', 'primary_email_id', 'primary_phone_id')
                     ->when(
                         $startDate && $endDate,
                         function (Builder $query) use ($startDate, $endDate): Builder {
@@ -101,21 +103,62 @@ class StudentDeliverableTable extends BaseWidget
             )
             ->columns([
                 TextColumn::make('full_name')
-                    ->label('Name'),
+                    ->label('Name')
+                    ->searchable(),
                 TextColumn::make('primaryEmailAddress.address')
-                    ->label('Email Address'),
+                    ->label('Email Address')
+                    ->searchable(),
                 TextColumn::make('email_bounce')
                     ->label('Email Status')
                     ->badge()
-                    ->color(fn (Student $record) => $record->email_bounce ? 'warning' : 'info')
-                    ->state(fn (Student $record) => $record->email_bounce ? 'Bounced' : 'Healthy'),
+                    ->color(fn (Student $record) => (BouncedEmailAddressFeature::active() && $record->primaryEmailAddress?->bounced()->exists()) ? 'warning' : 'info')
+                    ->state(fn (Student $record) => (BouncedEmailAddressFeature::active() && $record->primaryEmailAddress?->bounced()->exists()) ? 'Bounced' : 'Healthy'),
                 TextColumn::make('primaryPhoneNumber.number')
-                    ->label('Primary Phone Number'),
+                    ->label('Primary Phone Number')
+                    ->searchable(),
                 TextColumn::make('sms_opt_out')
                     ->label('Phone Status')
                     ->badge()
-                    ->color(fn (Student $record) => $record->sms_opt_out ? 'warning' : 'info')
-                    ->state(fn (Student $record) => $record->sms_opt_out ? 'Opt Out' : 'Healthy'),
-            ]);
+                    ->color(fn (Student $record) => ($record->primaryPhoneNumber?->smsOptOut()->exists()) ? 'warning' : 'info')
+                    ->state(fn (Student $record) => ($record->primaryPhoneNumber?->smsOptOut()->exists()) ? 'Bounced' : 'Healthy'),
+            ])
+            ->filters([
+                SelectFilter::make('email_status')
+                    ->label('Email Status')
+                    ->options([
+                        'bounced' => 'Bounced',
+                        'healthy' => 'Healthy',
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (($data['value']) === 'bounced') {
+                            return $query->whereHas('primaryEmailAddress.bounced');
+                        }
+
+                        if (($data['value']) === 'healthy') {
+                            return $query->whereDoesntHave('primaryEmailAddress.bounced');
+                        }
+
+                        return $query;
+                    })
+                    ->visible(BouncedEmailAddressFeature::active()),
+                SelectFilter::make('phone_status')
+                    ->label('Phone Status')
+                    ->options([
+                        'bounced' => 'Bounced',
+                        'healthy' => 'Healthy',
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (($data['value'] ?? null) === 'bounced') {
+                            return $query->whereHas('primaryPhoneNumber.smsOptOut');
+                        }
+
+                        if (($data['value'] ?? null) === 'healthy') {
+                            return $query->whereDoesntHave('primaryPhoneNumber.smsOptOut');
+                        }
+
+                        return $query;
+                    }),
+            ])
+            ->paginationMode(PaginationMode::Default);
     }
 }
