@@ -42,7 +42,7 @@ return new class () extends Migration {
     {
         $aiThreads = DB::table('ai_threads')->whereNotNull('name')->whereNull('saved_at')->get();
 
-        $aiThreads->each(function ($thread, $key) {
+        $aiThreads->each(function (stdClass $thread, int $key): void {
             DB::table('ai_threads')->where('id', $thread->id)->update(['saved_at' => $thread->updated_at]);
         });
     }
@@ -51,7 +51,7 @@ return new class () extends Migration {
     {
         $aiThreads = DB::table('ai_threads')->whereNotNull('name')->whereNotNull('saved_at')->get();
 
-        $aiThreads->each(function ($thread, $key) {
+        $aiThreads->each(function (stdClass $thread, int $key): void {
             DB::table('ai_threads')->where('id', $thread->id)->update(['saved_at' => null]);
         });
     }

@@ -49,7 +49,7 @@ class MorphServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::enforceMorphMap(
-            resolve(ApplicationModels::class)->all()->mapWithKeys(function ($modelClass) {
+            resolve(ApplicationModels::class)->all()->mapWithKeys(function (string $modelClass) {
                 $reflection = new ReflectionClass($modelClass);
 
                 return [

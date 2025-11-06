@@ -46,7 +46,7 @@ enum AiMaxTokens: string implements HasLabel
 
     case Long = 'long';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return $this->name;
     }
