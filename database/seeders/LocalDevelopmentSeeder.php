@@ -66,7 +66,7 @@ class LocalDevelopmentSeeder extends Seeder
 
         /** @var array<string> $emails */
         $emails = config('local_development.internal_users.emails');
-        collect($emails)->each(function (string $email) use ($superAdminRole) {
+        collect($emails)->each(function ($email) use ($superAdminRole) {
             $user = User::where('email', $email)->first();
 
             if (is_null($user)) {

@@ -36,15 +36,14 @@
 
 namespace App\Support;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class FilterQueryBuilder
 {
-    protected Model $model;
+    protected $model;
 
-    protected string $table;
+    protected $table;
 
     public function apply($query, $data)
     {

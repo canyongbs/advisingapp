@@ -40,9 +40,6 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\Role;
 use App\Actions\Paths\ModulePath;
 use App\Models\User;
-use Illuminate\Foundation\Testing\TestCase;
-
-use function Pest\Laravel\actingAs;
 
 function asSuperAdmin(?User $user = null): TestCase
 {
@@ -54,7 +51,7 @@ function asSuperAdmin(?User $user = null): TestCase
 
     $superAdmin->assignRole($superAdminRoles);
 
-    return actingAs($superAdmin);
+    return test()->actingAs($superAdmin);
 }
 
 function loadFixtureFromModule(string $module, string $file): mixed
