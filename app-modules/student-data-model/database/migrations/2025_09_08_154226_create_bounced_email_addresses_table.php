@@ -35,28 +35,23 @@
 */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::create('bounced_email_addresses', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->string('address')->unique();
-                $table->timestamps();
+        Schema::create('bounced_email_addresses', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('address')->unique();
+            $table->timestamps();
 
-                $table->index('address');
-            });
+            $table->index('address');
         });
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::dropIfExists('bounced_email_addresses');
-        });
+        Schema::dropIfExists('bounced_email_addresses');
     }
 };
