@@ -64,7 +64,7 @@ class ExistingValuesSelectConstraint extends SelectConstraint
                 ->visible(fn (): bool => $this->isNullable()),
         ]);
 
-        $this->options(fn (SelectConstraint $constraint): array => $constraint->getFilter()->getTable()->getQuery()
+        $this->options(fn (SelectConstraint $constraint): array => $constraint->getModel()::query()
             ->distinct(new Expression("lower({$constraint->getAttribute()})"))
             ->orderBy(new Expression("lower({$constraint->getAttribute()})"))
             ->pluck($constraint->getAttribute())

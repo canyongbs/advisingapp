@@ -210,7 +210,6 @@
         ],
         "generate-helper-files": [
             "@php artisan app:generate-helper-files",
-            "./vendor/bin/rector",
             "@php-cs-format"
         ],
         "lint": [
@@ -241,6 +240,7 @@
         ]
     },
     "config": {
+        "process-timeout": 7200,
         "preferred-install": "dist",
         "sort-packages": true,
         "cache-dir": ".composer/cache",

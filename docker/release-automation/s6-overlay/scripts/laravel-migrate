@@ -9,26 +9,41 @@ cd "$WEBUSER_HOME" || exit 0
 
 USERNAME=$(id -nu "$PUID")
 
-echo "Starting landlord migrations..."
+if [ "${LANDLORD_MIGRATE:="true"}" == "true" ]; then
+  echo "Processing landlord migrations..."
 
-{
-s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" migrate --database=landlord --path=database/landlord --force --isolated \
-&& echo "Landlord migrations completed!"
-} || {
-echo "Landlord migrations failed!"
+  {
+    s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" migrate --database=landlord --path=database/landlord --force --isolated \
+    && echo "Landlord migrations finished!"
+  } || {
+    echo "Landlord migrations failed!"
 
-# TODO: Do something to send an alert that landlord migrations failed. Currently this will NOT stop the container.
-}
+    # TODO: Do something to send an alert that migration failed. Currently this will NOT stop the container.
+  }
+else
+    echo "Skipping landlord migrations because it was specifically disabled..."
+fi
 
-echo "Starting tenant migrations..."
+if [ "${TENANT_MIGRATE:="true"}" == "true" ]; then
+  output=$(s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" tenants:artisan "migrate --database=tenant --force --isolated" 2>&1)
 
-{
-s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" tenants:artisan "migrate --database=tenant --force --isolated" \
-&& echo "Tenant migrations completed!"
-} || {
-echo "Tenant migrations failed!"
+  output=$(s6-setuidgid webuser php "$WEBUSER_HOME/artisan" tenants:artisan "migrate --database=tenant --force --isolated" 2>&1)
+  exit_code=$?
 
-# TODO: Do something to send an alert that tenant migration failed. Currently this will NOT stop the container.
-}
+  echo "$output"
+
+  if [ $exit_code -eq 0 ]; then
+    echo "Tenant migrations finished!"
+  elif echo "$output" | grep -q "No tenant(s) found"; then
+    # No additional message needed - the command already outputs "No tenant(s) found."
+    :
+  else
+    echo "Tenant migrations failed!"
+
+    # TODO: Do something to send an alert that migration failed. Currently this will NOT stop the container.
+  fi
+else
+    echo "Skipping tenant migrations because it was specifically disabled..."
+fi
 
 exit 0

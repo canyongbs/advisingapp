@@ -11,12 +11,27 @@ echo "Purging any unregistered Feature Flags..."
 
 USERNAME=$(id -nu "$PUID")
 
-{
-s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" pennant:purge --except-registered \
-&& s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" tenants:artisan "pennant:purge --except-registered" \
-&& echo "Unregistered Feature Flags purged!"
-} || {
-echo "Feature Flag purge failed!"
-}
+# Run landlord pennant purge
+if s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" pennant:purge --except-registered; then
+  echo "Landlord Feature Flags purged!"
+else
+  echo "Landlord Feature Flag purge failed!"
+  exit 0
+fi
+
+# Run tenant pennant purge
+output=$(s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" tenants:artisan "pennant:purge --except-registered" 2>&1)
+exit_code=$?
+
+echo "$output"
+
+if [ $exit_code -eq 0 ]; then
+  echo "Tenant Feature Flags purged!"
+elif echo "$output" | grep -q "No tenant(s) found"; then
+  # No additional message needed - the command already outputs "No tenant(s) found."
+  :
+else
+  echo "Tenant Feature Flag purge failed!"
+fi
 
 exit 0
