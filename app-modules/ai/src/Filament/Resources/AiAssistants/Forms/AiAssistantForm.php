@@ -41,13 +41,13 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
+use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
@@ -66,18 +66,7 @@ class AiAssistantForm
 
         return $form
             ->schema([
-                SpatieMediaLibraryFileUpload::make('avatar')
-                    ->label('Avatar')
-                    ->disk('s3')
-                    ->collection('avatar')
-                    ->visibility('private')
-                    ->avatar()
-                    ->columnSpanFull()
-                    ->acceptedFileTypes([
-                        'image/png',
-                        'image/jpeg',
-                        'image/gif',
-                    ]),
+                AvatarUploadOrAiGenerator::make(),
                 TextInput::make('name')
                     ->required()
                     ->string()
