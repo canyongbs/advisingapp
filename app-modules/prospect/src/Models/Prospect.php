@@ -441,7 +441,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
 
     public function canReceiveEmail(): bool
     {
-        return filled($this->primaryEmailAddress?->address) && (! $this->primaryEmailAddress?->bounced()->exists());
+        return filled($this->primaryEmailAddress?->address) && (! $this->primaryEmailAddress->bounced()->exists());
     }
 
     public function canReceiveSms(): bool
