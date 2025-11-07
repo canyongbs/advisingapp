@@ -41,10 +41,10 @@ use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
+use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -94,18 +94,7 @@ class EditQnaAdvisor extends EditRecord
         return $schema
             ->components([
                 Section::make()->schema([
-                    SpatieMediaLibraryFileUpload::make('avatar')
-                        ->label('Avatar')
-                        ->disk('s3')
-                        ->collection('avatar')
-                        ->visibility('private')
-                        ->avatar()
-                        ->columnSpanFull()
-                        ->acceptedFileTypes([
-                            'image/png',
-                            'image/jpeg',
-                            'image/gif',
-                        ]),
+                    AvatarUploadOrAiGenerator::make(),
                     Grid::make()->schema([
                         TextInput::make('name')
                             ->required()

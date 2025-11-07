@@ -40,8 +40,8 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
+use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
@@ -56,18 +56,7 @@ class CreateQnaAdvisor extends CreateRecord
     {
         return $schema
             ->components([
-                SpatieMediaLibraryFileUpload::make('avatar')
-                    ->label('Avatar')
-                    ->disk('s3')
-                    ->collection('avatar')
-                    ->visibility('private')
-                    ->avatar()
-                    ->columnSpanFull()
-                    ->acceptedFileTypes([
-                        'image/png',
-                        'image/jpeg',
-                        'image/gif',
-                    ]),
+                AvatarUploadOrAiGenerator::make(),
                 TextInput::make('name')
                     ->required()
                     ->string()
