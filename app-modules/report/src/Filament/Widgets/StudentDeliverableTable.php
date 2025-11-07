@@ -111,8 +111,8 @@ class StudentDeliverableTable extends BaseWidget
                 TextColumn::make('email_bounce')
                     ->label('Email Status')
                     ->badge()
-                    ->color(fn (Student $record) => (BouncedEmailAddressFeature::active() && $record->primaryEmailAddress?->bounced()->exists()) ? 'warning' : 'info')
-                    ->state(fn (Student $record) => (BouncedEmailAddressFeature::active() && $record->primaryEmailAddress?->bounced()->exists()) ? 'Bounced' : 'Healthy'),
+                    ->color(fn (Student $record) => ($record->primaryEmailAddress?->bounced()->exists()) ? 'warning' : 'info')
+                    ->state(fn (Student $record) => ($record->primaryEmailAddress?->bounced()->exists()) ? 'Bounced' : 'Healthy'),
                 TextColumn::make('primaryPhoneNumber.number')
                     ->label('Primary Phone')
                     ->searchable(),
@@ -139,8 +139,7 @@ class StudentDeliverableTable extends BaseWidget
                         }
 
                         return $query;
-                    })
-                    ->visible(BouncedEmailAddressFeature::active()),
+                    }),
                 SelectFilter::make('phone_status')
                     ->label('Phone Status')
                     ->options([
