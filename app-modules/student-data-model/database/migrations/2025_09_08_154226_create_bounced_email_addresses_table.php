@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\BouncedEmailAddressFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
@@ -51,16 +50,12 @@ return new class () extends Migration {
 
                 $table->index('address');
             });
-
-            BouncedEmailAddressFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            BouncedEmailAddressFeature::deactivate();
-
             Schema::dropIfExists('bounced_email_addresses');
         });
     }

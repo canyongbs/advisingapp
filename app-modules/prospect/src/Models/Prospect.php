@@ -66,7 +66,6 @@ use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Timeline\Models\Timeline;
 use App\Enums\TagType;
-use App\Features\BouncedEmailAddressFeature;
 use App\Models\Authenticatable;
 use App\Models\Scopes\HasLicense;
 use App\Models\Tag;
@@ -442,7 +441,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
 
     public function canReceiveEmail(): bool
     {
-        return filled($this->primaryEmailAddress?->address) && (BouncedEmailAddressFeature::active() ? (! $this->primaryEmailAddress->bounced()->exists()) : true);
+        return filled($this->primaryEmailAddress?->address) && (! $this->primaryEmailAddress?->bounced()->exists());
     }
 
     public function canReceiveSms(): bool

@@ -32,12 +32,11 @@
 </COPYRIGHT>
 --}}
 @php
-    use App\Features\BouncedEmailAddressFeature;
     use AdvisingApp\Engagement\Models\Engagement;
     use AdvisingApp\Prospect\Models\ProspectEmailAddress;
     use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 
-    $isBounced = ($emailAddress instanceof StudentEmailAddress || $emailAddress instanceof ProspectEmailAddress) && (BouncedEmailAddressFeature::active() ? $emailAddress->bounced()->exists() : false);
+    $isBounced = ($emailAddress instanceof StudentEmailAddress || $emailAddress instanceof ProspectEmailAddress) && $emailAddress->bounced()->exists();
 @endphp
 
 <button
