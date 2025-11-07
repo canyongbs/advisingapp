@@ -160,7 +160,6 @@ it('it returns deliverability data only for students based on group filters', fu
         ->assertCanSeeTableRecords($optInStudentWithJoeName)
         ->assertCanNotSeeTableRecords($optOutStudentWithJoeName->merge($optOutStudentWithDoeName)->merge($optInStudentWithDoeName));
 
-    // without filter
     livewire(StudentDeliverableTable::class, [
         'cacheTag' => 'report-student-deliverability',
         'filters' => [],
@@ -174,7 +173,7 @@ it('can filter table based on email bounce status', function () {
         ->count(2)
         ->create([
             'email_bounce' => true,
-            'sms_opt_out' => true,
+            'sms_opt_out' => false,
         ]);
 
     $bouncedStudents->each(function (Student $student) {
@@ -187,7 +186,7 @@ it('can filter table based on email bounce status', function () {
         ->count(2)
         ->create([
             'email_bounce' => true,
-            'sms_opt_out' => true,
+            'sms_opt_out' => false,
         ]);
 
     livewire(StudentDeliverableTable::class, [
@@ -210,7 +209,7 @@ it('can filter table based on phone sms opt-out status', function () {
     $bouncedStudents = Student::factory()
         ->count(2)
         ->create([
-            'email_bounce' => true,
+            'email_bounce' => false,
             'sms_opt_out' => true,
         ]);
 
@@ -223,7 +222,7 @@ it('can filter table based on phone sms opt-out status', function () {
     $healthyStudents = Student::factory()
         ->count(2)
         ->create([
-            'email_bounce' => true,
+            'email_bounce' => false,
             'sms_opt_out' => true,
         ]);
 
