@@ -45,7 +45,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
-it('is gated with proper access control', function() {
+it('is gated with proper access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->projectManagement = false;

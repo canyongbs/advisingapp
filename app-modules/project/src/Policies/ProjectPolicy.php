@@ -48,7 +48,7 @@ class ProjectPolicy
 
     public function before(Authenticatable $authenticatable): ?Response
     {
-        if(!is_null($response = $this->hasFeatures())) {
+        if (! is_null($response = $this->hasFeatures())) {
             return $response;
         }
 
