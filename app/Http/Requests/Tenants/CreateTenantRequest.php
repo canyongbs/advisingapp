@@ -75,6 +75,7 @@ class CreateTenantRequest extends FormRequest
             'addons.researchAdvisor' => ['required', 'boolean'],
             'addons.qnaAdvisor' => ['required', 'boolean'],
             'addons.dataAdvisor' => ['required', 'boolean'],
+            'addons.projectManagement' => ['required', 'boolean'],
             'subscription' => ['required', 'array'],
             'subscription.clientName' => ['required', 'string'],
             'subscription.partnerName' => ['required', 'string'],

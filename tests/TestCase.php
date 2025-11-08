@@ -137,6 +137,7 @@ abstract class TestCase extends BaseTestCase
                         realtimeChat: true,
                         mobileApps: true,
                         scheduleAndAppointments: true,
+                        projectManagement: true,
                     )
                 )
             ));
@@ -237,6 +238,7 @@ abstract class TestCase extends BaseTestCase
                     realtimeChat: true,
                     mobileApps: true,
                     scheduleAndAppointments: true,
+                    projectManagement: true,
                 ),
             ),
             null,
