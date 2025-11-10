@@ -42,6 +42,7 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -66,5 +67,13 @@ class StudentEmailAddress extends BaseModel implements Auditable
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'sisid', 'sisid');
+    }
+
+    /**
+     * @return HasOne<BouncedEmailAddress, $this>
+     */
+    public function bounced(): HasOne
+    {
+        return $this->hasOne(BouncedEmailAddress::class, 'address', 'address');
     }
 }

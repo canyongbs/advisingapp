@@ -55,7 +55,7 @@ class InstitutionalAdvisorLineChart extends LineChartReportWidget
         $shouldBypassCache = filled($startDate) || filled($endDate);
 
         $buildData = function (?Carbon $startDate = null, ?Carbon $endDate = null): array {
-            $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
+            $startDate = $startDate ?? Carbon::now()->startOfMonth()->subMonths(11);
             $endDate = $endDate ?? Carbon::now()->endOfMonth();
 
             $months = $this->getMonthRange($startDate, $endDate);

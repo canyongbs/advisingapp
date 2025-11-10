@@ -43,5 +43,9 @@
 @endphp
 
 <div class="prose max-w-none dark:prose-invert">
-    {!! tiptap_converter()->blocks($blocks)->asHTML($content) !!}
+    @if (!empty($content['content']))
+        {!! tiptap_converter()->blocks($blocks)->asHTML($content) !!}
+    @else
+        This submission has no content.
+    @endif
 </div>

@@ -37,10 +37,14 @@
 namespace AdvisingApp\Engagement\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Filament\Actions\BulkChangeStatusAction;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
@@ -54,8 +58,12 @@ use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class Inbox extends Page implements HasTable
@@ -146,6 +154,51 @@ class Inbox extends Page implements HasTable
                     ->url(fn (EngagementResponse $record): string => ViewEngagementResponse::getUrl(['record' => $record])),
             ])
             ->filters([
+                Filter::make('subscribed')
+                    ->query(fn (Builder $query): Builder => $query->whereRelation('sender.subscriptions.user', 'id', auth()->id())),
+                Filter::make('care_team')
+                    ->label('Care Team')
+                    ->query(
+                        function (Builder $query) {
+                            return $query
+                                ->whereRelation('sender.careTeam', 'user_id', auth()->id());
+                        }
+                    ),
+                SelectFilter::make('my_groups')
+                    ->label('My Population Groups')
+                    ->options(
+                        auth()->user()->groups()
+                            ->limit(20)
+                            ->pluck('name', 'id'),
+                    )
+                    ->searchable()
+                    ->getSearchResultsUsing(
+                        fn (string $search): Collection => auth()->user()->groups()
+                            ->where(new Expression('lower(name)'), 'like', '%' . Str::lower($search) . '%')
+                            ->limit(20)
+                            ->pluck('name', 'id')
+                    )
+                    ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
+                SelectFilter::make('all_groups')
+                    ->label('All Population Groups')
+                    ->options(
+                        Group::all()
+                            ->pluck('name', 'id'),
+                    )
+                    ->searchable()
+                    ->getSearchResultsUsing(
+                        fn (string $search): Collection => Group::query()
+                            ->where(new Expression('lower(name)'), 'like', '%' . Str::lower($search) . '%')
+                            ->limit(20)
+                            ->pluck('name', 'id')
+                    )
+                    ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
+                SelectFilter::make('status')
+                    ->multiple()
+                    ->label('Status')
+                    ->options(EngagementResponseStatus::class)
+                    ->searchable()
+                    ->preload(),
                 SelectFilter::make('sender_type')
                     ->label('Relation')
                     ->options([
@@ -186,5 +239,40 @@ class Inbox extends Page implements HasTable
                 ->label('New')
                 ->icon(null),
         ];
+    }
+
+    /**
+     * @param Builder<EngagementResponse> $query
+     * @param array<string, mixed> $data
+     */
+    protected function groupFilter(Builder $query, array $data): void
+    {
+        if (blank($data['value'])) {
+            return;
+        }
+
+        $modelType = Group::find($data['value'])?->model;
+
+        $query->whereHasMorph(
+            'sender',
+            [
+                Student::class,
+                Prospect::class,
+            ],
+            function (Builder $query, string $type) use ($data, $modelType): void {
+                $shouldApplyFilter = match ($type) {
+                    Student::class => $modelType === GroupModel::Student,
+                    Prospect::class => $modelType === GroupModel::Prospect,
+                    default => false,
+                };
+
+                if ($shouldApplyFilter) {
+                    app(TranslateGroupFilters::class)
+                        ->applyFilterToQuery($data['value'], $query);
+                } else {
+                    $query->whereRaw('1 = 0');
+                }
+            }
+        );
     }
 }

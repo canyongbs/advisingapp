@@ -38,10 +38,12 @@ namespace AdvisingApp\Prospect\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Prospect\Observers\ProspectEmailAddressObserver;
+use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -66,5 +68,13 @@ class ProspectEmailAddress extends BaseModel implements Auditable
     public function prospect(): BelongsTo
     {
         return $this->belongsTo(Prospect::class);
+    }
+
+    /**
+     * @return HasOne<BouncedEmailAddress, $this>
+     */
+    public function bounced(): HasOne
+    {
+        return $this->hasOne(BouncedEmailAddress::class, 'address', 'address');
     }
 }

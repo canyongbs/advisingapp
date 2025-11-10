@@ -137,16 +137,16 @@ class ManageQnaAdditionalKnowledge extends EditRecord
                             ->hiddenLabel()
                             ->multiple()
                             ->reactive()
-                            ->maxFiles(fn (QnaAdvisor $record): int => 5 - $record->files->count())
-                            ->disabled(fn (QnaAdvisor $record): bool => $record->files->count() >= 5)
+                            ->maxFiles(fn (QnaAdvisor $record): int => 25 - $record->files->count())
+                            ->disabled(fn (QnaAdvisor $record): bool => $record->files->count() >= 25)
                             ->acceptedFileTypes(config('ai.supported_file_types'))
                             ->storeFiles(false)
                             ->helperText(function (QnaAdvisor $record): string {
-                                if ($record->files->count() < 5) {
-                                    return 'You may upload a total of 5 files to this QnA Advisor. Files must be less than 20MB.';
+                                if ($record->files->count() < 25) {
+                                    return 'You may upload a total of 25 files to this QnA Advisor. Files must be less than 20MB.';
                                 }
 
-                                return "You've reached the maximum file upload limit of 5 for this QnA Advisor. Please delete a file if you wish to upload another.";
+                                return "You've reached the maximum file upload limit of 25 for this QnA Advisor. Please delete a file if you wish to upload another.";
                             })
                             ->maxSize(20000)
                             ->columnSpan(function (Get $get) {

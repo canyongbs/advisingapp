@@ -482,12 +482,12 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function canReceiveEmail(): bool
     {
-        return filled($this->primaryEmailAddress?->address);
+        return filled($this->primaryEmailAddress?->address) && (! $this->primaryEmailAddress->bounced()->exists());
     }
 
     public function canReceiveSms(): bool
     {
-        return filled($this->primaryPhoneNumber?->number) && $this->primaryPhoneNumber->can_receive_sms;
+        return filled($this->primaryPhoneNumber?->number) && $this->primaryPhoneNumber->can_receive_sms && (! $this->primaryPhoneNumber->smsOptOut()->exists());
     }
 
     /**

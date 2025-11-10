@@ -36,13 +36,21 @@
 
 namespace App\Filament\Pages;
 
+use App\Settings\DisplaySettings;
 use Filament\Pages\Dashboard as BasePage;
 
 class Dashboard extends BasePage
 {
+    public string $timezone;
+
     protected static ?string $navigationLabel = 'Home';
 
     protected ?string $heading = 'Home';
 
     protected string $view = 'filament.pages.dashboard';
+
+    public function mount(): void
+    {
+        $this->timezone = app(DisplaySettings::class)->getTimezone();
+    }
 }

@@ -101,7 +101,7 @@ class QnaAdvisorReportLineChart extends LineChartReportWidget
      */
     protected function getQnaAdvisorTotalData(?Carbon $startDate = null, ?Carbon $endDate = null): array
     {
-        $startDate = $startDate ?? Carbon::now()->subMonths(11)->startOfMonth();
+        $startDate = $startDate ?? Carbon::now()->startOfMonth()->subMonths(11);
         $endDate = $endDate ?? Carbon::now()->endOfMonth();
 
         $months = $this->getMonthRange($startDate, $endDate);

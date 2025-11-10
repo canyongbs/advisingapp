@@ -40,6 +40,7 @@ use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Notification\Exceptions\BouncedEmailException;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\EmailMessage;
@@ -49,6 +50,7 @@ use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -111,6 +113,18 @@ class MailChannel extends BaseMailChannel
             ]);
 
             return;
+        }
+
+        if ($recipientAddress && is_string($recipientAddress) && $this->isAddressBounced($recipientAddress)) {
+            $emailMessage->events()->create([
+                'type' => EmailMessageEventType::FailedDispatch,
+                'payload' => [
+                    'error' => 'Recipient email address has bounced previously.',
+                ],
+                'occurred_at' => now(),
+            ]);
+
+            throw new BouncedEmailException($recipientAddress);
         }
 
         $tenant = Tenant::current();
@@ -266,5 +280,12 @@ class MailChannel extends BaseMailChannel
         }
 
         return parent::getRecipients($notifiable, $notification, $message);
+    }
+
+    protected function isAddressBounced(string $recipientAddress): bool
+    {
+        return BouncedEmailAddress::query()
+            ->where('address', $recipientAddress)
+            ->exists();
     }
 }

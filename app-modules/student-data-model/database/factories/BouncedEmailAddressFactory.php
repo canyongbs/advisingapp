@@ -34,14 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\StudentDataModel\Database\Factories;
 
-use App\Support\AbstractFeatureFlag;
+use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ProjectManagementPermissionsFeature extends AbstractFeatureFlag
+/**
+ * @extends Factory<BouncedEmailAddress>
+ */
+class BouncedEmailAddressFactory extends Factory
 {
-    public function resolve(mixed $scope): mixed
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        return false;
+        return [
+            'address' => $this->faker->unique()->email(),
+        ];
     }
 }

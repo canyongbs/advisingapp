@@ -34,17 +34,14 @@
 </COPYRIGHT>
 */
 
-use App\Features\ProjectManagementPermissionsFeature;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\Notification\Exceptions;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        ProjectManagementPermissionsFeature::activate();
-    }
+use Exception;
 
-    public function down(): void
+class BouncedEmailException extends Exception
+{
+    public function __construct(string $emailAddress)
     {
-        ProjectManagementPermissionsFeature::purge();
+        parent::__construct("Cannot send email to bounced email address: {$emailAddress}");
     }
-};
+}

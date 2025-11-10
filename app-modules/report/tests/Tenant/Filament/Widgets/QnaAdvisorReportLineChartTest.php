@@ -36,27 +36,39 @@
 
 use AdvisingApp\Ai\Models\QnaAdvisorMessage;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportLineChart;
+use Illuminate\Support\Carbon;
+
+use function Pest\Laravel\travelBack;
+use function Pest\Laravel\travelTo;
 
 it('returns correct QnaAdvisorMessage counts grouped by month within the given date range', function () {
-    $startDate = now()->subDays(90);
-    $endDate = now()->subDays(5);
+    // Freeze now to a fixed date so the snapshot is deterministic and not flaky.
+    $fixedNow = Carbon::parse('2025-10-15 12:00:00');
+    travelTo($fixedNow);
 
-    QnaAdvisorMessage::factory()->count(5)->state([
-        'created_at' => $startDate,
-        'is_advisor' => false,
-    ])->create();
+    try {
+        $startDate = now()->subMonths(3);
+        $endDate = now()->subDays(5);
 
-    QnaAdvisorMessage::factory()->count(5)->state([
-        'created_at' => $endDate,
-        'is_advisor' => false,
-    ])->create();
+        QnaAdvisorMessage::factory()->count(5)->state([
+            'created_at' => $startDate,
+            'is_advisor' => false,
+        ])->create();
 
-    $widgetInstance = new QnaAdvisorReportLineChart();
-    $widgetInstance->cacheTag = 'qna-advisor-report-cache';
-    $widgetInstance->pageFilters = [
-        'startDate' => $startDate->toDateString(),
-        'endDate' => $endDate->toDateString(),
-    ];
+        QnaAdvisorMessage::factory()->count(5)->state([
+            'created_at' => $endDate,
+            'is_advisor' => false,
+        ])->create();
 
-    expect($widgetInstance->getData())->toMatchSnapshot();
+        $widgetInstance = new QnaAdvisorReportLineChart();
+        $widgetInstance->cacheTag = 'qna-advisor-report-cache';
+        $widgetInstance->pageFilters = [
+            'startDate' => $startDate->toDateString(),
+            'endDate' => $endDate->toDateString(),
+        ];
+
+        expect($widgetInstance->getData())->toMatchSnapshot();
+    } finally {
+        travelBack();
+    }
 });

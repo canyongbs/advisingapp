@@ -98,8 +98,8 @@ class ViewEngagementResponse extends Page
         if (($this->record->sender instanceof Prospect || $this->record->sender instanceof Student) && auth()->user()->can('create', [Engagement::class, $this->record->sender instanceof Prospect ? $this->record->sender : null])) {
             $this->replyForm->fill([
                 'recipient_route_id' => match ($this->record->type) {
-                    EngagementResponseType::Email => $this->record->sender->primaryEmailAddress?->getKey(),
-                    EngagementResponseType::Sms => $this->record->sender->phoneNumbers()->where('can_receive_sms', true)->first()?->getKey(),
+                    EngagementResponseType::Email => $this->record->sender->emailAddresses()->whereDoesntHave('bounced')->orderBy('order')->first()?->getKey(),
+                    EngagementResponseType::Sms => $this->record->sender->phoneNumbers()->where('can_receive_sms', true)->orderBy('order')->first()?->getKey(),
                 },
                 'subject' => ($this->record->type === EngagementResponseType::Email) ? "RE: {$this->record->subject}" : '',
                 'body' => ($this->record->type === EngagementResponseType::Email) ? $this->generateEmailReplyBody() : '',

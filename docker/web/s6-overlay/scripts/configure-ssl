@@ -3,7 +3,9 @@ generate_ssl() {
     if [ ! -f /etc/ssl/web/ssl.key ]; then
         echo "An SSL key was not detected, generating a self-signed SSL certificate pair..."
         mkdir -p /etc/ssl/web/
-        openssl req -x509 -subj "/C=US/ST=Arizona/L=Phoenix/O=IT/CN=canyon.test" -nodes -newkey rsa:2048 -keyout /etc/ssl/web/ssl.key -out /etc/ssl/web/ssl.crt -days 365
+        # The output is silenced to avoid cluttering the logs with OpenSSL info messages.
+        # If this has issues, remove the redirection "> /dev/null 2>&1" to see the error messages.
+        openssl req -x509 -subj "/C=US/ST=Arizona/L=Phoenix/O=IT/CN=canyon.test" -nodes -newkey rsa:2048 -keyout /etc/ssl/web/ssl.key -out /etc/ssl/web/ssl.crt -days 365 > /dev/null 2>&1
     fi
 }
 
