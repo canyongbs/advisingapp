@@ -71,5 +71,19 @@ Route::middleware([
                     ->name('assets');
 
                 // all other existing routes
+                Route::get('entry', [FormWidgetController::class, 'view'])
+                    ->name('entry');
+                Route::post('authenticate/request', [FormWidgetController::class, 'requestAuthentication'])
+                    ->middleware(['signed:relative'])
+                    ->name('request-authentication');
+                Route::post('authenticate/{authentication}', [FormWidgetController::class, 'authenticate'])
+                    ->middleware(['signed:relative'])
+                    ->name('authenticate');
+                Route::post('submit', [FormWidgetController::class, 'store'])
+                    ->middleware(['signed:relative'])
+                    ->name('submit');
+                Route::post('register', [FormWidgetController::class, 'registerProspect'])
+                    ->middleware(['signed:relative'])
+                    ->name('register-prospect');
             });
     });

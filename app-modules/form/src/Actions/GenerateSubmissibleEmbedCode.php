@@ -43,6 +43,7 @@ use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\Survey\Models\Survey;
 use Exception;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
 class GenerateSubmissibleEmbedCode
@@ -51,18 +52,22 @@ class GenerateSubmissibleEmbedCode
     {
         return match ($submissible::class) {
             Form::class => (function () use ($submissible) {
-                $scriptUrl = url('js/widgets/form/advising-app-form-widget.js?');
-                $formDefinitionUrl = URL::to(
-                    URL::signedRoute(
-                        name: 'forms.define',
-                        parameters: ['form' => $submissible],
-                        absolute: false,
-                    )
-                );
+                $manifestPath = Storage::disk('public')->get('widgets/forms/.vite/manifest.json');
+
+                if (is_null($manifestPath)) {
+                    throw new Exception('Vite manifest file not found.');
+                }
+
+                /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+                $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
+
+                $loaderScriptUrl = url("widgets/forms/{$manifest['src/loader.js']['file']}");
+
+                $assetsUrl = route(name: 'widgets.forms.api.assets', parameters: ['form' => $submissible]);
 
                 return <<<EOD
-                <form-embed url="{$formDefinitionUrl}"></form-embed>
-                <script src="{$scriptUrl}"></script>
+                <form-embed url="{$assetsUrl}"></form-embed>
+                <script src="{$loaderScriptUrl}"></script>
                 EOD;
             })(),
             Application::class => (function () use ($submissible) {

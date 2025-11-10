@@ -53,9 +53,9 @@ Route::prefix('api')
             ->group(function () {
                 // Route::get('form-upload-url', [FormWidgetController::class, 'uploadFormFiles'])
                 //     ->name('form-upload-url');
-                Route::get('/{form}', [FormWidgetController::class, 'view'])
-                    ->middleware(['signed:relative'])
-                    ->name('define');
+                // Route::get('/{form}', [FormWidgetController::class, 'view'])
+                //     ->middleware(['signed:relative'])
+                //     ->name('define');
                 Route::post('/{form}/authenticate/request', [FormWidgetController::class, 'requestAuthentication'])
                     ->middleware(['signed:relative'])
                     ->name('request-authentication');
