@@ -87,7 +87,9 @@ class ProspectsActionCenterWidget extends TableWidget
             ->columns([
                 TextColumn::make('full_name')
                     ->label('Prospect Name')
-                    ->searchable(),
+                    ->searchable()
+                    ->url(fn (Prospect $record): string => ProspectResource::getUrl('view', ['record' => $record]))
+                    ->openUrlInNewTab(),
                 TextColumn::make('engagement_responses_count')
                     ->label('New Messages')
                     ->counts(['engagementResponses' => fn (Builder $query) => $query->where('status', EngagementResponseStatus::New)])
