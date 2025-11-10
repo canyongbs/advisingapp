@@ -67,7 +67,6 @@ Route::middleware([
                 Route::get('/', [FormWidgetController::class, 'assets'])
                     ->name('assets');
 
-                // all other existing routes
                 Route::get('entry', [FormWidgetController::class, 'view'])
                     ->name('entry');
                 Route::post('authenticate/request', [FormWidgetController::class, 'requestAuthentication'])
