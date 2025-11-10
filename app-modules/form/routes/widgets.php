@@ -52,7 +52,6 @@ Route::middleware([
     ->prefix('widgets/forms')
     ->name('widgets.forms.')
     ->group(function () {
-        // TODO: This can maybe be moved down to the API section
         Route::get('form-upload-url', [FormWidgetController::class, 'uploadFormFiles'])
             ->name('form-upload-url');
 
