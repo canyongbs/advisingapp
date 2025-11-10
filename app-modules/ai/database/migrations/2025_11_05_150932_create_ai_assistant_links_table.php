@@ -43,8 +43,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-            AiAssistantLinkFeature::activate();
-
             Schema::create('ai_assistant_links', function (Blueprint $table) {
                 $table->uuid('id')->primary();
                 $table->foreignUuid('ai_assistant_id')
@@ -56,6 +54,8 @@ return new class () extends Migration {
                 $table->timestamps();
                 $table->softDeletes();
             });
+
+            AiAssistantLinkFeature::activate();
         });
     }
 
