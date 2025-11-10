@@ -69,7 +69,10 @@ class FormServiceProvider extends ServiceProvider
             'form_email_auto_reply' => FormEmailAutoReply::class,
             'form_field_submission' => FormFieldSubmission::class,
         ]);
+
         $this->registerEvents();
+
+        $this->loadRoutesFrom(__DIR__ . '/../../routes/widgets.php');
     }
 
     public function registerEvents(): void

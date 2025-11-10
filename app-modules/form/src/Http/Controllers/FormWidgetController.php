@@ -56,6 +56,7 @@ use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -63,10 +64,51 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
 class FormWidgetController extends Controller
 {
+    public function assets(Request $request, Form $form): JsonResponse
+    {
+        // Read the Vite manifest to determine the correct asset paths
+        $manifestPath = public_path('storage/widgets/forms/.vite/manifest.json');
+        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+        $manifest = json_decode(File::get($manifestPath), true, 512, JSON_THROW_ON_ERROR);
+
+        $widgetEntry = $manifest['src/widget.js'];
+
+        return response()->json([
+            'asset_url' => route('widgets.forms.asset'),
+            'entry' => route('widgets.forms.entry', ['form' => $form]),
+            'js' => route('widgets.forms.asset', ['file' => $widgetEntry['file']]),
+        ]);
+    }
+
+    public function asset(Request $request, string $file): StreamedResponse
+    {
+        $path = "widgets/forms/{$file}";
+
+        $disk = Storage::disk('public');
+
+        abort_if(! $disk->exists($path), 404, 'File not found.');
+
+        $mimeType = $disk->mimeType($path);
+
+        $stream = $disk->readStream($path);
+
+        abort_if(is_null($stream), 404, 'File not found.');
+
+        return response()->streamDownload(
+            function () use ($stream) {
+                fpassthru($stream);
+                fclose($stream);
+            },
+            $file,
+            ['Content-Type' => $mimeType]
+        );
+    }
+
     public function view(GenerateFormKitSchema $generateSchema, Form $form): JsonResponse
     {
         return response()->json([

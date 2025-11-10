@@ -37,47 +37,39 @@
 use AdvisingApp\Form\Http\Controllers\FormWidgetController;
 use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
+use AdvisingApp\Form\Http\Middleware\FormsWidgetCors;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
-Route::prefix('api')
-    ->middleware([
-        EnsureFrontendRequestsAreStateful::class,
-        'api',
-        // EnsureFormsFeatureIsActive::class,
-        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':form',
-    ])
+Route::middleware([
+    'api',
+    EnsureFormsFeatureIsActive::class,
+    FormsWidgetCors::class,
+])
+    ->prefix('widgets/forms')
+    ->name('widgets.forms.')
     ->group(function () {
-        Route::prefix('forms')
-            ->name('forms.')
-            ->group(function () {
-                // Route::get('form-upload-url', [FormWidgetController::class, 'uploadFormFiles'])
-                //     ->name('form-upload-url');
-                Route::get('/{form}', [FormWidgetController::class, 'view'])
-                    ->middleware(['signed:relative'])
-                    ->name('define');
-                Route::post('/{form}/authenticate/request', [FormWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed:relative'])
-                    ->name('request-authentication');
-                Route::post('/{form}/authenticate/{authentication}', [FormWidgetController::class, 'authenticate'])
-                    ->middleware(['signed:relative'])
-                    ->name('authenticate');
-                Route::post('/{form}/submit', [FormWidgetController::class, 'store'])
-                    ->middleware(['signed:relative'])
-                    ->name('submit');
-                Route::post('/{form}/register', [FormWidgetController::class, 'registerProspect'])
-                    ->middleware(['signed:relative'])
-                    ->name('register-prospect');
-            });
-    });
+        // TODO: This can maybe be moved down to the API section
+        Route::get('form-upload-url', [FormWidgetController::class, 'uploadFormFiles'])
+            ->name('form-upload-url');
 
-Route::prefix('api')
-    ->middleware([
-        'web',
-        'auth',
-        EnsureFormsFeatureIsActive::class,
-    ])
-    ->group(function () {
-        Route::get('/forms/{form}/preview', [FormWidgetController::class, 'preview'])
-            ->name('forms.api.preview');
+        // This route MUST remain at /widgets/... in order to catch requests to asset files and return the correct headers
+        // NGINX has been configured to route all requests for assets under /widgets to the application
+        Route::get('{file?}', [FormWidgetController::class, 'asset'])
+            ->where('file', '(.*)')
+            ->name('asset');
+
+        Route::prefix('api/{form}')
+            ->name('api.')
+            ->middleware([
+                // TODO: Determine if this stateful middleware is needed
+                EnsureFrontendRequestsAreStateful::class,
+                EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':form',
+            ])
+            ->group(function () {
+                Route::get('/', [FormWidgetController::class, 'assets'])
+                    ->name('assets');
+
+                // all other existing routes
+            });
     });
