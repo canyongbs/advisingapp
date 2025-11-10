@@ -64,8 +64,8 @@ class AiAssistantResource extends Resource
             'index' => ListAiAssistants::route('/'),
             'create' => CreateAiAssistant::route('/create'),
             'edit' => EditAiAssistant::route('/{record}/edit'),
-            'manage-additional-knowledge' => ManageAiAssistantAdditionalKnowledge::route('/{record}/additional-knowledge'),
             'manage-links' => ManageAiAssistantLinks::route('/{record}/links'),
+            'manage-additional-knowledge' => ManageAiAssistantAdditionalKnowledge::route('/{record}/additional-knowledge'),
         ];
     }
 
@@ -73,8 +73,8 @@ class AiAssistantResource extends Resource
     {
         return $page->generateNavigationItems([
             EditAiAssistant::class,
-            ManageAiAssistantAdditionalKnowledge::class,
             ManageAiAssistantLinks::class,
+            ManageAiAssistantAdditionalKnowledge::class,
         ]);
     }
 }
