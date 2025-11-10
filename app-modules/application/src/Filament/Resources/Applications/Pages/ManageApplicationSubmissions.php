@@ -103,7 +103,8 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                 IdColumn::make(),
                 TextColumn::make('created_at')
                     ->sortable(),
-                TextColumn::make('author.email')
+                TextColumn::make('author.primaryEmailAddress.address')
+                    ->label('Author')
                     ->searchable(),
                 TextColumn::make('author_type')
                     ->badge()
@@ -159,7 +160,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                             ->schema([
                                 TextEntry::make('author.' . $record->author::displayNameKey())
                                     ->label('Name'),
-                                TextEntry::make('author.email')
+                                TextEntry::make('author.primaryEmailAddress.address')
                                     ->label('Email address'),
                             ])
                             ->columns(2),

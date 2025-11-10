@@ -86,7 +86,7 @@ class UploadFormFieldBlock extends FormFieldBlock
             'accept' => static::getExtensionsFull(),
             'limit' => $field->config['limit'] ?? 1,
             'size' => $field->config['size'] ?? null,
-            'uploadUrl' => route('forms.form-upload-url'),
+            'uploadUrl' => route('widgets.forms.form-upload-url'),
         ];
     }
 

@@ -1,196 +1,207 @@
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: web-development
-      args:
-        PUID: '${PLS_USER_ID:-9999}'
-        PGID: '${PLS_GROUP_ID:-9999}'
-    environment:
-      SERVICE: "web"
-      SSL_MODE: "mixed"
-      LARAVEL_OCTANE_WATCH: '${LARAVEL_OCTANE_WATCH:-false}'
-      CACHE_MODULES: '${CACHE_MODULES:-false}'
-      CACHE_CONFIG: '${CACHE_CONFIG:-false}'
-      CACHE_ROUTES: '${CACHE_ROUTES:-false}'
-      CACHE_VIEWS: '${CACHE_VIEWS:-false}'
-      CACHE_EVENTS: '${CACHE_EVENTS:-false}'
-      CACHE_ICONS: '${CACHE_ICONS:-false}'
-      CACHE_FILAMENT_COMPONENTS: '${CACHE_FILAMENT_COMPONENTS:-false}'
-      PUID: '${PLS_USER_ID:-9999}'
-      PGID: '${PLS_GROUP_ID:-9999}'
-      FIX_PERMISSIONS: '${FIX_PERMISSIONS:-true}'
-      PHP_MEMORY_LIMIT: '${PHP_MEMORY_LIMIT:-512M}'
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.advisingapp-app.rule=HostRegexp(`advisingapp.local`, `{subdomain:[a-z0-9]+}.advisingapp.local`)"
-      - "traefik.http.routers.advisingapp-app.entrypoints=websecure"
-      - "traefik.http.routers.advisingapp-app.tls=true"
-      - "traefik.http.services.advisingapp-app.loadbalancer.server.port=443"
-      - "traefik.http.services.advisingapp-app.loadbalancer.server.scheme=https"
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
-    volumes:
-      - '.:/var/www/html'
-      # - '../common:/var/www/common'
-      # - '../filament-tiptap-editor:/var/www/filament-tiptap-editor'
-    networks:
-      cgbs-development:
-        ipv4_address: 172.16.1.3
-        aliases:
-          - advisingapp.local
-    dns:
-      - 172.16.1.1
-    depends_on:
-      - advisingapp-redis
-      - advisingapp-mailpit
-      - advisingapp-pgsql
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: web-development
+            args:
+                PUID: "${PLS_USER_ID:-9999}"
+                PGID: "${PLS_GROUP_ID:-9999}"
+        environment:
+            SERVICE: "web"
+            SSL_MODE: "mixed"
+            LARAVEL_OCTANE_WATCH: "${LARAVEL_OCTANE_WATCH:-false}"
+            CACHE_MODULES: "${CACHE_MODULES:-false}"
+            CACHE_CONFIG: "${CACHE_CONFIG:-false}"
+            CACHE_ROUTES: "${CACHE_ROUTES:-false}"
+            CACHE_VIEWS: "${CACHE_VIEWS:-false}"
+            CACHE_EVENTS: "${CACHE_EVENTS:-false}"
+            CACHE_ICONS: "${CACHE_ICONS:-false}"
+            CACHE_FILAMENT_COMPONENTS: "${CACHE_FILAMENT_COMPONENTS:-false}"
+            PUID: "${PLS_USER_ID:-9999}"
+            PGID: "${PLS_GROUP_ID:-9999}"
+            FIX_PERMISSIONS: "${FIX_PERMISSIONS:-true}"
+            PHP_MEMORY_LIMIT: "${PHP_MEMORY_LIMIT:-512M}"
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.advisingapp-app.rule=HostRegexp(`advisingapp.local`, `{subdomain:[a-z0-9]+}.advisingapp.local`)"
+            - "traefik.http.routers.advisingapp-app.entrypoints=websecure"
+            - "traefik.http.routers.advisingapp-app.tls=true"
+            - "traefik.http.services.advisingapp-app.loadbalancer.server.port=443"
+            - "traefik.http.services.advisingapp-app.loadbalancer.server.scheme=https"
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        volumes:
+            - ".:/var/www/html"
+            # - '../common:/var/www/common'
+            # - '../filament-tiptap-editor:/var/www/filament-tiptap-editor'
+        networks:
+            cgbs-development:
+                ipv4_address: 172.16.1.3
+                aliases:
+                    - advisingapp.local
+        dns:
+            - 172.16.1.1
+        depends_on:
+            - advisingapp-redis
+            - advisingapp-mailpit
+            - advisingapp-pgsql
 
-  worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: worker-development
-      args:
-        TOTAL_QUEUE_WORKERS: '${TOTAL_QUEUE_WORKERS:-1}'
-        MULTIPLE_DEVELOPMENT_QUEUES: '${MULTIPLE_DEVELOPMENT_QUEUES:-false}'
-        USER_ID: '${PLS_USER_ID:-9999}'
-        GROUP_ID: '${PLS_GROUP_ID:-9999}'
-    environment:
-      SERVICE: "worker"
-      CACHE_MODULES: false
-      CACHE_CONFIG: false
-      CACHE_ROUTES: false
-      CACHE_VIEWS: false
-      CACHE_EVENTS: false
-      CACHE_ICONS: false
-      CACHE_FILAMENT_COMPONENTS: false
-      PUID: '${PLS_USER_ID:-9999}'
-      PGID: '${PLS_GROUP_ID:-9999}'
-      SQS_QUEUE: '${SQS_QUEUE:-default}'
-      LANDLORD_SQS_QUEUE: '${LANDLORD_SQS_QUEUE:-landlord}'
-      OUTBOUND_COMMUNICATION_QUEUE: '${OUTBOUND_COMMUNICATION_QUEUE:-outbound-communication}'
-      AUDIT_QUEUE_QUEUE: '${AUDIT_QUEUE_QUEUE:-audit}'
-      MEETING_CENTER_QUEUE: '${MEETING_CENTER_QUEUE:-meeting-center}'
-      IMPORT_EXPORT_QUEUE: '${IMPORT_EXPORT_QUEUE:-import-export}'
-      FIX_PERMISSIONS: '${FIX_PERMISSIONS:-false}'
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
-    volumes:
-      - '.:/var/www/html'
-      # - '../common:/var/www/common'
-      # - '../filament-tiptap-editor:/var/www/filament-tiptap-editor'
-    networks:
-      - cgbs-development
-    depends_on:
-      - advisingapp-redis
-      - advisingapp-mailpit
-      - advisingapp-pgsql
+    worker:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: worker-development
+            args:
+                TOTAL_QUEUE_WORKERS: "${TOTAL_QUEUE_WORKERS:-1}"
+                MULTIPLE_DEVELOPMENT_QUEUES: "${MULTIPLE_DEVELOPMENT_QUEUES:-false}"
+                USER_ID: "${PLS_USER_ID:-9999}"
+                GROUP_ID: "${PLS_GROUP_ID:-9999}"
+        environment:
+            SERVICE: "worker"
+            CACHE_MODULES: false
+            CACHE_CONFIG: false
+            CACHE_ROUTES: false
+            CACHE_VIEWS: false
+            CACHE_EVENTS: false
+            CACHE_ICONS: false
+            CACHE_FILAMENT_COMPONENTS: false
+            PUID: "${PLS_USER_ID:-9999}"
+            PGID: "${PLS_GROUP_ID:-9999}"
+            SQS_QUEUE: "${SQS_QUEUE:-default}"
+            LANDLORD_SQS_QUEUE: "${LANDLORD_SQS_QUEUE:-landlord}"
+            OUTBOUND_COMMUNICATION_QUEUE: "${OUTBOUND_COMMUNICATION_QUEUE:-outbound-communication}"
+            AUDIT_QUEUE_QUEUE: "${AUDIT_QUEUE_QUEUE:-audit}"
+            MEETING_CENTER_QUEUE: "${MEETING_CENTER_QUEUE:-meeting-center}"
+            IMPORT_EXPORT_QUEUE: "${IMPORT_EXPORT_QUEUE:-import-export}"
+            FIX_PERMISSIONS: "${FIX_PERMISSIONS:-false}"
+            CREATE_STORAGE_SYMLINK: "${WORKER_CREATE_STORAGE_SYMLINK:-false}"
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        volumes:
+            - ".:/var/www/html"
+            # - '../common:/var/www/common'
+            # - '../filament-tiptap-editor:/var/www/filament-tiptap-editor'
+        networks:
+            - cgbs-development
+        depends_on:
+            - advisingapp-redis
+            - advisingapp-mailpit
+            - advisingapp-pgsql
 
-  scheduler:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: scheduler-development
-      args:
-        USER_ID: '${PLS_USER_ID:-9999}'
-        GROUP_ID: '${PLS_GROUP_ID:-9999}'
-    environment:
-      SERVICE: "scheduler"
-      CACHE_MODULES: false
-      CACHE_CONFIG: false
-      CACHE_ROUTES: false
-      CACHE_VIEWS: false
-      CACHE_EVENTS: false
-      CACHE_ICONS: false
-      CACHE_FILAMENT_COMPONENTS: false
-      PUID: '${PLS_USER_ID:-9999}'
-      PGID: '${PLS_GROUP_ID:-9999}'
-      FIX_PERMISSIONS: '${FIX_PERMISSIONS:-false}'
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
-    volumes:
-      - '.:/var/www/html'
-      # - '../common:/var/www/common'
-      # - '../filament-tiptap-editor:/var/www/filament-tiptap-editor'
-    networks:
-      - cgbs-development
-    depends_on:
-      - advisingapp-redis
-      - advisingapp-mailpit
-      - advisingapp-pgsql
+    scheduler:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: scheduler-development
+            args:
+                USER_ID: "${PLS_USER_ID:-9999}"
+                GROUP_ID: "${PLS_GROUP_ID:-9999}"
+        environment:
+            SERVICE: "scheduler"
+            CACHE_MODULES: false
+            CACHE_CONFIG: false
+            CACHE_ROUTES: false
+            CACHE_VIEWS: false
+            CACHE_EVENTS: false
+            CACHE_ICONS: false
+            CACHE_FILAMENT_COMPONENTS: false
+            PUID: "${PLS_USER_ID:-9999}"
+            PGID: "${PLS_GROUP_ID:-9999}"
+            FIX_PERMISSIONS: "${FIX_PERMISSIONS:-false}"
+            CREATE_STORAGE_SYMLINK: "${SCHEDULER_CREATE_STORAGE_SYMLINK:-false}"
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        volumes:
+            - ".:/var/www/html"
+            # - '../common:/var/www/common'
+            # - '../filament-tiptap-editor:/var/www/filament-tiptap-editor'
+        networks:
+            - cgbs-development
+        depends_on:
+            - advisingapp-redis
+            - advisingapp-mailpit
+            - advisingapp-pgsql
 
-  advisingapp-redis:
-    image: 'redis:alpine'
-    ports:
-      - '${FORWARD_REDIS_PORT:-63791}:6379'
-    volumes:
-      - 'advisingapp-redis:/data'
-    networks:
-      - cgbs-development
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-      retries: 3
-      timeout: 5s
+    advisingapp-redis:
+        image: "redis:alpine"
+        ports:
+            - "${FORWARD_REDIS_PORT:-63791}:6379"
+        volumes:
+            - "advisingapp-redis:/data"
+        networks:
+            - cgbs-development
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            retries: 3
+            timeout: 5s
 
-  advisingapp-mailpit:
-    image: 'axllent/mailpit:latest'
-    networks:
-      - cgbs-development
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.advisingapp-mailpit.rule=Host(`mail.tools.advisingapp.local`)"
-      - "traefik.http.routers.advisingapp-mailpit.entrypoints=websecure"
-      - "traefik.http.routers.advisingapp-mailpit.tls=true"
-      - "traefik.http.services.advisingapp-mailpit.loadbalancer.server.port=8025"
-      - "traefik.http.services.advisingapp-mailpit.loadbalancer.server.scheme=http"
+    advisingapp-mailpit:
+        image: "axllent/mailpit:latest"
+        networks:
+            - cgbs-development
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.advisingapp-mailpit.rule=Host(`mail.tools.advisingapp.local`)"
+            - "traefik.http.routers.advisingapp-mailpit.entrypoints=websecure"
+            - "traefik.http.routers.advisingapp-mailpit.tls=true"
+            - "traefik.http.services.advisingapp-mailpit.loadbalancer.server.port=8025"
+            - "traefik.http.services.advisingapp-mailpit.loadbalancer.server.scheme=http"
 
-  advisingapp-pgsql:
-    image: 'postgres:15'
-    ports:
-      - '${FORWARD_DB_PORT:-5432}:5432'
-    environment:
-      PGPASSWORD: '${DB_PASSWORD:-secret}'
-      POSTGRES_DB: '${DB_DATABASE}'
-      POSTGRES_USER: '${DB_USERNAME}'
-      POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
-    volumes:
-      - 'advisingapp-pgsql:/var/lib/postgresql/data'
-      - './docker/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
-    networks:
-      - cgbs-development
-    healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}" ]
-      retries: 3
-      timeout: 5s
+    advisingapp-pgsql:
+        image: "postgres:15"
+        ports:
+            - "${FORWARD_DB_PORT:-5432}:5432"
+        environment:
+            PGPASSWORD: "${DB_PASSWORD:-secret}"
+            POSTGRES_DB: "${DB_DATABASE}"
+            POSTGRES_USER: "${DB_USERNAME}"
+            POSTGRES_PASSWORD: "${DB_PASSWORD:-secret}"
+        volumes:
+            - "advisingapp-pgsql:/var/lib/postgresql/data"
+            - "./docker/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql"
+        networks:
+            - cgbs-development
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "pg_isready",
+                    "-q",
+                    "-d",
+                    "${DB_DATABASE}",
+                    "-U",
+                    "${DB_USERNAME}",
+                ]
+            retries: 3
+            timeout: 5s
 
-  local-cli:
-    profiles:
-      - local-cli
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: cli-local-tooling
-      args:
-        PUID: '${PLS_USER_ID:-9999}'
-        PGID: '${PLS_GROUP_ID:-9999}'
-    environment:
-      PUID: '${PLS_USER_ID:-9999}'
-      PGID: '${PLS_GROUP_ID:-9999}'
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
-    volumes:
-      - '.:/var/www/html'
-    networks:
-      - cgbs-development
+    local-cli:
+        profiles:
+            - local-cli
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: cli-local-tooling
+            args:
+                PUID: "${PLS_USER_ID:-9999}"
+                PGID: "${PLS_GROUP_ID:-9999}"
+        environment:
+            PUID: "${PLS_USER_ID:-9999}"
+            PGID: "${PLS_GROUP_ID:-9999}"
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        volumes:
+            - ".:/var/www/html"
+        networks:
+            - cgbs-development
 
 networks:
-  cgbs-development:
-    external: true
+    cgbs-development:
+        external: true
 
 volumes:
-  advisingapp-redis:
-    driver: local
-  advisingapp-pgsql:
-    driver: local
+    advisingapp-redis:
+        driver: local
+    advisingapp-pgsql:
+        driver: local

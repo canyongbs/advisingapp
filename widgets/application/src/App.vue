@@ -37,7 +37,16 @@ import asteriskPlugin from '../../form/src/FormKit/asterisk.js';
 import wizard from '../../form/src/FormKit/wizard';
 let { steps, visitedSteps, activeStep, setStep, wizardPlugin } = wizard();
 
-const props = defineProps(['url', 'preview']);
+const props = defineProps({
+    entryUrl: {
+        type: String,
+        required: true,
+    },
+    preview: {
+        type: Boolean,
+        default: false,
+    },
+});
 
 const data = reactive({
     steps,
@@ -94,16 +103,6 @@ const data = reactive({
 });
 
 const submittedSuccess = ref(false);
-
-const scriptUrl = document.currentScript
-    ? new URL(document.currentScript.getAttribute('src'))
-    : new URL(window.location.href);
-const protocol = scriptUrl.protocol;
-const scriptHostname = scriptUrl.hostname;
-const scriptQuery = document.currentScript ? Object.fromEntries(scriptUrl.searchParams) : {};
-
-const hostUrl = `${protocol}//${scriptHostname}`;
-
 const display = ref(false);
 const applicationName = ref('');
 const applicationDescription = ref('');
@@ -122,7 +121,7 @@ const authentication = ref({
     registrationAllowed: false,
 });
 
-fetch(props.url)
+fetch(props.entryUrl)
     .then((response) => response.json())
     .then((json) => {
         if (json.error) {
@@ -353,8 +352,6 @@ async function authenticate(applicationData, node) {
         class="font-sans"
     >
         <div class="prose max-w-none" v-if="display && !submittedSuccess">
-            <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/application/style.css'" />
-
             <div
                 v-if="props.preview === 'true' || props.preview === true"
                 style="

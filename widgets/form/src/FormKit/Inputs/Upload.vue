@@ -42,8 +42,8 @@ import vueFilePond from 'vue-filepond';
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 
-import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
-import 'filepond/dist/filepond.min.css';
+// import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
+// import 'filepond/dist/filepond.min.css';
 
 const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginFileValidateSize);
 

@@ -62,9 +62,8 @@ test('define is protected with proper feature access control', function () {
     $application = Application::factory()->create();
 
     get(URL::signedRoute(
-        name: 'applications.define',
+        name: 'widgets.applications.api.entry',
         parameters: ['application' => $application],
-        absolute: false,
     ))
         ->assertForbidden()
         ->assertJson([
@@ -76,9 +75,8 @@ test('define is protected with proper feature access control', function () {
     $settings->save();
 
     get(URL::signedRoute(
-        name: 'applications.define',
+        name: 'widgets.applications.api.entry',
         parameters: ['application' => $application],
-        absolute: false,
     ))
         ->assertSuccessful();
 });
@@ -99,9 +97,8 @@ test('request-authentication is protected with proper feature access control', f
     $prospect = Prospect::factory()->create();
 
     post(URL::signedRoute(
-        name: 'applications.request-authentication',
+        name: 'widgets.applications.api.request-authentication',
         parameters: ['application' => $application, 'email' => $prospect->primaryEmailAddress->address],
-        absolute: false,
     ))
         ->assertForbidden()
         ->assertJson([
@@ -113,9 +110,8 @@ test('request-authentication is protected with proper feature access control', f
     $settings->save();
 
     post(URL::signedRoute(
-        name: 'applications.request-authentication',
+        name: 'widgets.applications.api.request-authentication',
         parameters: ['application' => $application, 'email' => $prospect->primaryEmailAddress->address],
-        absolute: false,
     ))
         ->assertSuccessful();
 });
@@ -141,9 +137,8 @@ test('authenticate is protected with proper feature access control', function ()
     ]);
 
     post(URL::signedRoute(
-        name: 'applications.authenticate',
+        name: 'widgets.applications.api.authenticate',
         parameters: ['application' => $application, 'authentication' => $authorization,  'code' => $code],
-        absolute: false,
     ))
         ->assertForbidden()
         ->assertJson([
@@ -155,9 +150,8 @@ test('authenticate is protected with proper feature access control', function ()
     $settings->save();
 
     post(URL::signedRoute(
-        name: 'applications.authenticate',
+        name: 'widgets.applications.api.authenticate',
         parameters: ['application' => $application, 'authentication' => $authorization, 'code' => $code],
-        absolute: false,
     ))
         ->assertSuccessful();
 });
@@ -186,9 +180,8 @@ test('submit is protected with proper feature access control', function () {
     ]);
 
     post(URL::signedRoute(
-        name: 'applications.submit',
+        name: 'widgets.applications.api.submit',
         parameters: ['application' => $application, 'authentication' => $authorization],
-        absolute: false,
     ))
         ->assertForbidden()
         ->assertJson([
@@ -200,9 +193,8 @@ test('submit is protected with proper feature access control', function () {
     $settings->save();
 
     post(URL::signedRoute(
-        name: 'applications.submit',
+        name: 'widgets.applications.api.submit',
         parameters: ['application' => $application, 'authentication' => $authorization],
-        absolute: false,
     ))
         ->assertSuccessful();
 });
