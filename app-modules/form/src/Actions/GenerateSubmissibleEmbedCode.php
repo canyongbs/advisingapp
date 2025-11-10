@@ -82,7 +82,7 @@ class GenerateSubmissibleEmbedCode
 
                 $loaderScriptUrl = url("widgets/applications/{$manifest['src/loader.js']['file']}");
 
-                $assetsUrl = route(name: 'widgets.applications.api.assets', parameters: ['form' => $submissible]);
+                $assetsUrl = route(name: 'widgets.applications.api.assets', parameters: ['application' => $submissible]);
 
                 return <<<EOD
                 <application-embed url="{$assetsUrl}"></application-embed>
