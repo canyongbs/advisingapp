@@ -38,6 +38,7 @@ use AdvisingApp\Form\Http\Controllers\FormWidgetController;
 use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use AdvisingApp\Form\Http\Middleware\FormsWidgetCors;
+use AdvisingApp\Form\Models\Form;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
@@ -81,6 +82,14 @@ Route::middleware([
                 Route::post('register', [FormWidgetController::class, 'registerProspect'])
                     ->middleware(['signed'])
                     ->name('register-prospect');
+
+                // Handle preflight CORS requests for all routes in this group
+                // MUST remain the last route in this group
+                Route::options('/{any}', function (Request $request, Form $form) {
+                    return response()->noContent();
+                })
+                    ->where('any', '.*')
+                    ->name('preflight');
             });
 
         // This route MUST remain at /widgets/... in order to catch requests to asset files and return the correct headers
