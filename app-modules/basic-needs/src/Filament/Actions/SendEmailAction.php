@@ -93,6 +93,7 @@ class SendEmailAction extends Action
                                 if ($recipientType === 'student') {
                                     return Student::query()
                                         ->with('primaryEmailAddress')
+                                        ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
                                         ->limit(50)
                                         ->get()
                                         ->mapWithKeys(function (Student $student) {
@@ -106,6 +107,7 @@ class SendEmailAction extends Action
                                 if ($recipientType === 'prospect') {
                                     return Prospect::query()
                                         ->with('primaryEmailAddress')
+                                        ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
                                         ->limit(50)
                                         ->get()
                                         ->mapWithKeys(function (Prospect $prospect) {
