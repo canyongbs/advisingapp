@@ -48,7 +48,6 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Timeline\Models\Timeline;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
 use Filament\Actions\ViewAction;
