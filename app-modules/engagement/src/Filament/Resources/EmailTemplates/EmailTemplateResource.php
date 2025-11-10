@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages\ListEmailTemp
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use App\Filament\Clusters\Communication;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class EmailTemplateResource extends Resource
 {
@@ -50,6 +51,8 @@ class EmailTemplateResource extends Resource
     protected static ?int $navigationSort = 120;
 
     protected static ?string $cluster = Communication::class;
+
+    protected static string | UnitEnum | null $navigationGroup = 'Templates';
 
     public static function getPages(): array
     {

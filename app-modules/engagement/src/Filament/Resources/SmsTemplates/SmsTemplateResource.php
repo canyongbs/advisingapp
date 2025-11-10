@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages\ListSmsTemplate
 use AdvisingApp\Engagement\Models\SmsTemplate;
 use App\Filament\Clusters\Communication;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class SmsTemplateResource extends Resource
 {
@@ -54,6 +55,8 @@ class SmsTemplateResource extends Resource
     protected static ?int $navigationSort = 130;
 
     protected static ?string $cluster = Communication::class;
+
+    protected static string | UnitEnum | null $navigationGroup = 'Templates';
 
     public static function getPages(): array
     {

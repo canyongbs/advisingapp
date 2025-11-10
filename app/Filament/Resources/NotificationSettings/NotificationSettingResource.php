@@ -42,6 +42,7 @@ use App\Filament\Resources\NotificationSettings\Pages\EditNotificationSetting;
 use App\Filament\Resources\NotificationSettings\Pages\ListNotificationSettings;
 use App\Models\NotificationSetting;
 use Filament\Resources\Resource;
+use UnitEnum;
 
 class NotificationSettingResource extends Resource
 {
@@ -50,6 +51,8 @@ class NotificationSettingResource extends Resource
     protected static ?int $navigationSort = 110;
 
     protected static ?string $cluster = Communication::class;
+
+    protected static string | UnitEnum | null $navigationGroup = 'Settings';
 
     public static function getRelations(): array
     {
