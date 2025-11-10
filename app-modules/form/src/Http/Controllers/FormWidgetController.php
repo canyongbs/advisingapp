@@ -80,7 +80,7 @@ class FormWidgetController extends Controller
 
         return response()->json([
             'asset_url' => route('widgets.forms.asset'),
-            'entry' => route('widgets.forms.entry', ['form' => $form]),
+            'entry' => route('widgets.forms.api.entry', ['form' => $form]),
             'js' => route('widgets.forms.asset', ['file' => $widgetEntry['file']]),
         ]);
     }

@@ -56,18 +56,18 @@ Route::prefix('api')
                 // Route::get('/{form}', [FormWidgetController::class, 'view'])
                 //     ->middleware(['signed:relative'])
                 //     ->name('define');
-                Route::post('/{form}/authenticate/request', [FormWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed:relative'])
-                    ->name('request-authentication');
-                Route::post('/{form}/authenticate/{authentication}', [FormWidgetController::class, 'authenticate'])
-                    ->middleware(['signed:relative'])
-                    ->name('authenticate');
-                Route::post('/{form}/submit', [FormWidgetController::class, 'store'])
-                    ->middleware(['signed:relative'])
-                    ->name('submit');
-                Route::post('/{form}/register', [FormWidgetController::class, 'registerProspect'])
-                    ->middleware(['signed:relative'])
-                    ->name('register-prospect');
+                // Route::post('/{form}/authenticate/request', [FormWidgetController::class, 'requestAuthentication'])
+                //     ->middleware(['signed:relative'])
+                //     ->name('request-authentication');
+                // Route::post('/{form}/authenticate/{authentication}', [FormWidgetController::class, 'authenticate'])
+                //     ->middleware(['signed:relative'])
+                //     ->name('authenticate');
+                // Route::post('/{form}/submit', [FormWidgetController::class, 'store'])
+                //     ->middleware(['signed:relative'])
+                //     ->name('submit');
+                // Route::post('/{form}/register', [FormWidgetController::class, 'registerProspect'])
+                //     ->middleware(['signed:relative'])
+                //     ->name('register-prospect');
             });
     });
 
