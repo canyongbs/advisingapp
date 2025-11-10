@@ -71,18 +71,22 @@ class GenerateSubmissibleEmbedCode
                 EOD;
             })(),
             Application::class => (function () use ($submissible) {
-                $scriptUrl = url('js/widgets/application/advising-app-application-widget.js?');
-                $applicationDefinitionUrl = URL::to(
-                    URL::signedRoute(
-                        name: 'applications.define',
-                        parameters: ['application' => $submissible],
-                        absolute: false,
-                    )
-                );
+                $manifestPath = Storage::disk('public')->get('widgets/applications/.vite/manifest.json');
+
+                if (is_null($manifestPath)) {
+                    throw new Exception('Vite manifest file not found.');
+                }
+
+                /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+                $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
+
+                $loaderScriptUrl = url("widgets/applications/{$manifest['src/loader.js']['file']}");
+
+                $assetsUrl = route(name: 'widgets.applications.api.assets', parameters: ['form' => $submissible]);
 
                 return <<<EOD
-                <application-embed url="{$applicationDefinitionUrl}"></application-embed>
-                <script src="{$scriptUrl}"></script>
+                <application-embed url="{$assetsUrl}"></application-embed>
+                <script src="{$loaderScriptUrl}"></script>
                 EOD;
             })(),
             Survey::class => (function () use ($submissible) {
