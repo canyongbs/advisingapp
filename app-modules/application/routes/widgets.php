@@ -35,9 +35,9 @@
 */
 
 use AdvisingApp\Application\Http\Controllers\ApplicationWidgetController;
+use AdvisingApp\Application\Http\Middleware\ApplicationsWidgetCors;
 use AdvisingApp\Application\Http\Middleware\EnsureOnlineAdmissionsFeatureIsActive;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
-use AdvisingApp\Form\Http\Middleware\FormsWidgetCors;
 use AdvisingApp\Form\Models\Form;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Support\Facades\Route;
@@ -47,8 +47,7 @@ Route::middleware([
     'api',
     EncryptCookies::class,
     EnsureOnlineAdmissionsFeatureIsActive::class,
-    // TODO: Make cors for applications
-    FormsWidgetCors::class,
+    ApplicationsWidgetCors::class,
 ])
     ->prefix('widgets/applications')
     ->name('widgets.applications.')
