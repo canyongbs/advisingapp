@@ -53,12 +53,6 @@ Route::middleware([
         Route::get('form-upload-url', [FormWidgetController::class, 'uploadFormFiles'])
             ->name('form-upload-url');
 
-        // This route MUST remain at /widgets/... in order to catch requests to asset files and return the correct headers
-        // NGINX has been configured to route all requests for assets under /widgets to the application
-        Route::get('{file?}', [FormWidgetController::class, 'asset'])
-            ->where('file', '(.*)')
-            ->name('asset');
-
         Route::prefix('api/{form}')
             ->name('api.')
             ->middleware([
@@ -86,4 +80,10 @@ Route::middleware([
                     ->middleware(['signed:relative'])
                     ->name('register-prospect');
             });
+
+        // This route MUST remain at /widgets/... in order to catch requests to asset files and return the correct headers
+        // NGINX has been configured to route all requests for assets under /widgets to the application
+        Route::get('{file?}', [FormWidgetController::class, 'asset'])
+            ->where('file', '(.*)')
+            ->name('asset');
     });
