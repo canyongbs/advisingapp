@@ -48,7 +48,7 @@ class DeleteUnsavedAiThreads extends Command
 
     protected $description = 'Finds unsaved AiThreads older than 3 days and marks them for deletion.';
 
-    public function handle()
+    public function handle(): void
     {
         AiThread::query()
             ->whereNull('saved_at')

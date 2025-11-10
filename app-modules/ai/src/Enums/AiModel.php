@@ -80,7 +80,7 @@ enum AiModel: string implements HasLabel
 
     case Test = 'test';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         $aiIntegrationSettings = app(AiIntegrationsSettings::class);
 

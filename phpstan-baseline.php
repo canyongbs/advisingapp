@@ -32,53 +32,9 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-declare(strict_types = 1);
+*/ declare(strict_types = 1);
 
 $ignoreErrors = [];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$thread of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/ai/database/migrations/2024_06_26_095418_data_update_value_of_saved_at_field_in_ai_threads_table.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$key of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/ai/database/migrations/2024_06_26_095418_data_update_value_of_saved_at_field_in_ai_threads_table.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/ai/database/migrations/2024_07_31_185847_seed_permissions_add_ai_integrated_assistant_settings\\.php\\:40\\:\\:\\$guards type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/database/migrations/2024_07_31_185847_seed_permissions_add_ai_integrated_assistant_settings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/ai/database/migrations/2024_07_31_185847_seed_permissions_add_ai_integrated_assistant_settings\\.php\\:40\\:\\:\\$permissions type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/database/migrations/2024_07_31_185847_seed_permissions_add_ai_integrated_assistant_settings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Console\\\\Commands\\\\DeleteUnsavedAiThreads\\:\\:handle\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Console/Commands/DeleteUnsavedAiThreads.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Enums\\\\AiMaxTokens\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
-    'identifier' => 'return.unusedType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Enums/AiMaxTokens.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Enums\\\\AiModel\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
-    'identifier' => 'return.unusedType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Enums/AiModel.php',
-];
 $ignoreErrors[] = [
     'message' => '#^Trait AdvisingApp\\\\Ai\\\\Filament\\\\Pages\\\\Assistant\\\\Concerns\\\\CanManageThreads has PHPDoc tag @property\\-read for property \\$customAssistants with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
@@ -114,18 +70,6 @@ $ignoreErrors[] = [
     'identifier' => 'nullsafe.neverNull',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Pages/ManageAiSettings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Anonymous function should return int but returns bool\\.$#',
-    'identifier' => 'return.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistants/Forms/AiAssistantForm.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Expression on left side of \\?\\? is not nullable\\.$#',
-    'identifier' => 'nullCoalesce.expr',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistants/Forms/AiAssistantForm.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$archived_at\\.$#',
@@ -516,12 +460,6 @@ $ignoreErrors[] = [
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/AlertStatuses/Pages/EditAlertStatus.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Group\\\\Models\\\\Group\\>\\:\\:\\$model\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/Alerts/Pages/ListAlerts.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Alert\\\\Filament\\\\Resources\\\\Alerts\\\\Pages\\\\ListAlerts\\:\\:groupFilter\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
@@ -1598,12 +1536,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/CampaignActionBlock.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Group\\\\Models\\\\Group\\>\\:\\:\\$model\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 4,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/CareTeamBlock.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\CareTeamBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -1670,12 +1602,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/SubscriptionBlock.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Group\\\\Models\\\\Group\\>\\:\\:\\$model\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/TagsBlock.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#2 \\$livewire of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
@@ -1736,12 +1662,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Jobs/EventCampaignActionJob.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\:\\:\\$model\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Jobs/ExecuteCampaignAction.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
     'identifier' => 'MeliorStan.shortVariable',
     'count' => 1,
@@ -1776,12 +1696,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/campaign/src/Models/Campaign.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\:\\:\\$model\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/campaign/src/Notifications/CampaignActionFinished.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to function is_null\\(\\) with string will always evaluate to false\\.$#',
@@ -4394,24 +4308,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/group/src/Models/Group.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @mixin contains unknown class AdvisingApp\\\\Group\\\\Models\\\\IdeHelperGroup\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Models/Group.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @mixin contains unknown class AdvisingApp\\\\Group\\\\Models\\\\IdeHelperGroupSubject\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Models/GroupSubject.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\:\\:\\$model\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 5,
-    'path' => __DIR__ . '/app-modules/group/src/Policies/GroupPolicy.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Group\\\\Providers\\\\GroupServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -5798,24 +5694,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/notification/tests/Tenant/Notifications/Channels/MailChannelEmailMessageTest.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\:\\:\\$model\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/pipeline/src/Filament/Resources/Pipelines/Pages/ManageEductables.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Match expression does not handle remaining value\\: mixed$#',
-    'identifier' => 'match.unhandled',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/pipeline/src/Filament/Resources/Pipelines/Pages/ManageEductables.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\:\\:\\$model\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/pipeline/src/Jobs/PruneEducatablePipelineStagesForPipeline.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Portal\\\\DataTransferObjects\\\\ResourceHubSearchData\\:\\:\\$articles with generic class Spatie\\\\LaravelData\\\\DataCollection does not specify its types\\: TKey, TValue$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -5922,30 +5800,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/portal/src/Settings/PortalSettings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @mixin contains unknown class AdvisingApp\\\\Project\\\\Models\\\\IdeHelperProjectAuditorTeam\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/project/src/Models/ProjectAuditorTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @mixin contains unknown class AdvisingApp\\\\Project\\\\Models\\\\IdeHelperProjectAuditorUser\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/project/src/Models/ProjectAuditorUser.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @mixin contains unknown class AdvisingApp\\\\Project\\\\Models\\\\IdeHelperProjectManagerTeam\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/project/src/Models/ProjectManagerTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @mixin contains unknown class AdvisingApp\\\\Project\\\\Models\\\\IdeHelperProjectManagerUser\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/project/src/Models/ProjectManagerUser.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Faker\\\\Generator\\:\\:state\\(\\)\\.$#',
@@ -9542,12 +9396,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Http/Controllers/ViewPublicUserProfileController.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Group\\\\Models\\\\Group\\:\\:\\$model\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Livewire\\\\ProspectPipelineKanban\\:\\:getPipelineSubjects\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -9581,18 +9429,6 @@ $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$relations of method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:with\\(\\) expects array\\<array\\|\\(Closure\\(Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\Relation\\<\\*, \\*, \\*\\>\\)\\: mixed\\)\\|string\\>\\|string, array\\{educatablePipelineStages\\: Closure\\(AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany\\)\\: AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany\\} given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable \\$educatable might not be defined\\.$#',
-    'identifier' => 'variable.undefined',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable \\$educatablePipelineStages might not be defined\\.$#',
-    'identifier' => 'variable.undefined',
-    'count' => 2,
     'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
 ];
 $ignoreErrors[] = [
@@ -9868,32 +9704,8 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 3,
+    'count' => 2,
     'path' => __DIR__ . '/app/Providers/FilamentServiceProvider.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$modelClass of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Providers/MorphServiceProvider.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$connection of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Providers/MultiConnectionParallelTestingServiceProvider.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$database of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 3,
-    'path' => __DIR__ . '/app/Providers/MultiConnectionParallelTestingServiceProvider.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$i" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Support/ChunkIterator.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Support\\\\FilterQueryBuilder\\:\\:apply\\(\\) has no return type specified\\.$#',
@@ -10002,30 +9814,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.property',
     'count' => 1,
     'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$email of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/database/seeders/LocalDevelopmentSeeder.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$user of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/routes/channels.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$id of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/routes/channels.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Pest\\\\PendingCalls\\\\TestCall\\|Pest\\\\Support\\\\HigherOrderTapProxy\\:\\:actingAs\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/tests/Helpers.php',
 ];
 
 return ['parameters' => ['ignoreErrors' => $ignoreErrors]];

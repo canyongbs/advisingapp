@@ -234,7 +234,7 @@ class FilamentServiceProvider extends ServiceProvider
 
                     return null;
                 })
-                ->tooltip(function (TextColumn $column, $state) use ($timezoneLabel): ?string {
+                ->tooltip(function (TextColumn $column, mixed $state) use ($timezoneLabel): ?string {
                     if ($column->isDateTime() && ! blank($state)) {
                         return "This time is set in {$timezoneLabel}.";
                     }
