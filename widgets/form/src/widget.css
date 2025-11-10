@@ -32,6 +32,8 @@
 </COPYRIGHT>
 */
 @import './FormKit/index.css';
+
+/* TODO: Look into moving this back into the upload Vue component, or something else */
 @import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
 @import 'filepond/dist/filepond.min.css';
 
