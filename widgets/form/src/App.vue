@@ -58,7 +58,7 @@ const props = defineProps({
     preview: {
         type: Boolean,
         default: false,
-    }
+    },
 });
 
 const data = reactive({
