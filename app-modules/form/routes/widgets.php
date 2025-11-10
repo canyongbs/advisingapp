@@ -68,16 +68,16 @@ Route::middleware([
                 Route::get('entry', [FormWidgetController::class, 'view'])
                     ->name('entry');
                 Route::post('authenticate/request', [FormWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed:relative'])
+                    ->middleware(['signed'])
                     ->name('request-authentication');
                 Route::post('authenticate/{authentication}', [FormWidgetController::class, 'authenticate'])
-                    ->middleware(['signed:relative'])
+                    ->middleware(['signed'])
                     ->name('authenticate');
                 Route::post('submit', [FormWidgetController::class, 'store'])
-                    ->middleware(['signed:relative'])
+                    ->middleware(['signed'])
                     ->name('submit');
                 Route::post('register', [FormWidgetController::class, 'registerProspect'])
-                    ->middleware(['signed:relative'])
+                    ->middleware(['signed'])
                     ->name('register-prospect');
             });
 
@@ -86,4 +86,15 @@ Route::middleware([
         Route::get('{file?}', [FormWidgetController::class, 'asset'])
             ->where('file', '(.*)')
             ->name('asset');
+    });
+
+Route::prefix('api')
+    ->middleware([
+        'web',
+        'auth',
+        EnsureFormsFeatureIsActive::class,
+    ])
+    ->group(function () {
+        Route::get('/forms/{form}/preview', [FormWidgetController::class, 'preview'])
+            ->name('forms.api.preview');
     });

@@ -117,15 +117,13 @@ class FormWidgetController extends Controller
             'is_authenticated' => $form->is_authenticated,
             ...($form->is_authenticated ? [
                 'authentication_url' => URL::signedRoute(
-                    name: 'forms.request-authentication',
+                    name: 'widgets.forms.api.request-authentication',
                     parameters: ['form' => $form],
-                    absolute: false,
                 ),
             ] : [
                 'submission_url' => URL::signedRoute(
-                    name: 'forms.submit',
+                    name: 'widgets.forms.api.submit',
                     parameters: ['form' => $form],
-                    absolute: false,
                 ),
             ]),
             'recaptcha_enabled' => $form->recaptcha_enabled,
@@ -179,9 +177,8 @@ class FormWidgetController extends Controller
             return response()->json([
                 'registrationAllowed' => true,
                 'authentication_url' => URL::signedRoute(
-                    name: 'forms.register-prospect',
+                    name: 'widgets.forms.api.register-prospect',
                     parameters: ['form' => $form],
-                    absolute: false,
                 ),
             ], 404);
         }
@@ -201,12 +198,11 @@ class FormWidgetController extends Controller
         return response()->json([
             'message' => "We've sent an authentication code to {$data['email']}.",
             'authentication_url' => URL::signedRoute(
-                name: 'forms.authenticate',
+                name: 'widgets.forms.api.authenticate',
                 parameters: [
                     'form' => $form,
                     'authentication' => $authentication,
                 ],
-                absolute: false,
             ),
         ]);
     }
@@ -231,12 +227,11 @@ class FormWidgetController extends Controller
 
         return response()->json([
             'submission_url' => URL::signedRoute(
-                name: 'forms.submit',
+                name: 'widgets.forms.api.submit',
                 parameters: [
                     'authentication' => $authentication,
                     'form' => $authentication->submissible,
                 ],
-                absolute: false,
             ),
         ]);
     }
@@ -412,12 +407,11 @@ class FormWidgetController extends Controller
         return response()->json([
             'message' => "We've sent an authentication code to {$request->get('email')}.",
             'authentication_url' => URL::signedRoute(
-                name: 'forms.authenticate',
+                name: 'widgets.forms.api.authenticate',
                 parameters: [
                     'form' => $form,
                     'authentication' => $authentication,
                 ],
-                absolute: false,
             ),
         ]);
     }

@@ -71,13 +71,13 @@ Route::prefix('api')
             });
     });
 
-Route::prefix('api')
-    ->middleware([
-        'web',
-        'auth',
-        EnsureFormsFeatureIsActive::class,
-    ])
-    ->group(function () {
-        Route::get('/forms/{form}/preview', [FormWidgetController::class, 'preview'])
-            ->name('forms.api.preview');
-    });
+// Route::prefix('api')
+//     ->middleware([
+//         'web',
+//         'auth',
+//         EnsureFormsFeatureIsActive::class,
+//     ])
+//     ->group(function () {
+//         Route::get('/forms/{form}/preview', [FormWidgetController::class, 'preview'])
+//             ->name('forms.api.preview');
+//     });
