@@ -46,6 +46,15 @@ class DataAdvisorPolicy
 {
     use PerformsFeatureChecks;
 
+    public function before(Authenticatable $authenticatable): ?Response
+    {
+        if (! is_null($response = $this->hasFeatures())) {
+            return $response;
+        }
+
+        return null;
+    }
+
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
