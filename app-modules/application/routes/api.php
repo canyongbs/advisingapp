@@ -48,25 +48,25 @@ Route::prefix('api')
         EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':application',
     ])
     ->group(function () {
-        Route::prefix('applications')
-            ->name('applications.')
-            ->group(function () {
-                Route::get('/{application}', [ApplicationWidgetController::class, 'view'])
-                    ->middleware(['signed:relative'])
-                    ->name('define');
-                Route::post('/{application}/authenticate/request', [ApplicationWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed:relative'])
-                    ->name('request-authentication');
-                Route::post('/{application}/authenticate/{authentication}', [ApplicationWidgetController::class, 'authenticate'])
-                    ->middleware(['signed:relative'])
-                    ->name('authenticate');
-                Route::post('/{application}/submit', [ApplicationWidgetController::class, 'store'])
-                    ->middleware(['signed:relative'])
-                    ->name('submit');
-                Route::post('/{application}/register', [ApplicationWidgetController::class, 'registerProspect'])
-                    ->middleware(['signed:relative'])
-                    ->name('register-prospect');
-            });
+        // Route::prefix('applications')
+        //     ->name('applications.')
+        //     ->group(function () {
+        //         Route::get('/{application}', [ApplicationWidgetController::class, 'view'])
+        //             ->middleware(['signed:relative'])
+        //             ->name('define');
+        //         Route::post('/{application}/authenticate/request', [ApplicationWidgetController::class, 'requestAuthentication'])
+        //             ->middleware(['signed:relative'])
+        //             ->name('request-authentication');
+        //         Route::post('/{application}/authenticate/{authentication}', [ApplicationWidgetController::class, 'authenticate'])
+        //             ->middleware(['signed:relative'])
+        //             ->name('authenticate');
+        //         Route::post('/{application}/submit', [ApplicationWidgetController::class, 'store'])
+        //             ->middleware(['signed:relative'])
+        //             ->name('submit');
+        //         Route::post('/{application}/register', [ApplicationWidgetController::class, 'registerProspect'])
+        //             ->middleware(['signed:relative'])
+        //             ->name('register-prospect');
+        //     });
     });
 
 // Route::prefix('api')
