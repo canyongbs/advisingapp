@@ -51,7 +51,6 @@ use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
-use App\Features\BouncedEmailAddressFeature;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -285,10 +284,6 @@ class MailChannel extends BaseMailChannel
 
     protected function isAddressBounced(string $recipientAddress): bool
     {
-        if (! BouncedEmailAddressFeature::active()) {
-            return false;
-        }
-
         return BouncedEmailAddress::query()
             ->where('address', $recipientAddress)
             ->exists();

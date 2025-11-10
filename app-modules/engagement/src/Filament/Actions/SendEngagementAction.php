@@ -47,7 +47,6 @@ use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use App\Features\BouncedEmailAddressFeature;
 use App\Filament\Forms\Components\EducatableSelect;
 use Exception;
 use Filament\Actions\Action;
@@ -124,9 +123,9 @@ class SendEngagementAction extends Action
                                         default => null,
                                     };
 
-                                    if ($educatable->emailAddresses()->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))->exists()) {
+                                    if ($educatable->emailAddresses()->whereDoesntHave('bounced')->exists()) {
                                         $set('channel', 'email');
-                                        $set('recipient_route_id', $educatable?->emailAddresses()->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))->orderBy('order')->first()?->getKey());
+                                        $set('recipient_route_id', $educatable?->emailAddresses()->whereDoesntHave('bounced')->orderBy('order')->first()?->getKey());
 
                                         return;
                                     }
@@ -161,7 +160,7 @@ class SendEngagementAction extends Action
                                                 if ($value == NotificationChannel::Email->value) {
                                                     return ! $educatable
                                                         ->emailAddresses()
-                                                        ->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))
+                                                        ->whereDoesntHave('bounced')
                                                         ->exists();
                                                 }
 
@@ -182,7 +181,7 @@ class SendEngagementAction extends Action
 
                                             $route = match ($channel) {
                                                 NotificationChannel::Email => $educatable->primaryEmailAddress()
-                                                    ->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))
+                                                    ->whereDoesntHave('bounced')
                                                     ->first()?->getKey(),
                                                 NotificationChannel::Sms => $educatable->primaryPhoneNumber()
                                                     ->where('can_receive_sms', true)
@@ -191,7 +190,7 @@ class SendEngagementAction extends Action
                                                 default => null,
                                             } ?? match ($channel) {
                                                 NotificationChannel::Email => $educatable->emailAddresses()
-                                                    ->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))
+                                                    ->whereDoesntHave('bounced')
                                                     ->first()?->getKey(),
                                                 NotificationChannel::Sms => $educatable->phoneNumbers()
                                                     ->where('can_receive_sms', true)
@@ -210,7 +209,7 @@ class SendEngagementAction extends Action
                                         })
                                         ->options(fn (Get $get): array => match (NotificationChannel::parse($get('channel'))) {
                                             NotificationChannel::Email => $educatable->emailAddresses()
-                                                ->when(BouncedEmailAddressFeature::active(), fn (Builder $query) => $query->whereDoesntHave('bounced'))
+                                                ->whereDoesntHave('bounced')
                                                 ->get()
                                                 ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
                                                     $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
