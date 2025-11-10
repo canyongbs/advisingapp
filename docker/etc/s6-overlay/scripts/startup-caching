@@ -10,6 +10,17 @@ fi
 
 USERNAME=$(id -nu "$PUID")
 
+# Symlink storage
+if [ "${CREATE_STORAGE_SYMLINK:="true"}" == "true" ]; then
+    echo "Creating storage symlink..."
+
+    s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" storage:link --force
+
+    echo "Storage symlink created!"
+else
+    echo "Skipping storage symlink creation because it was specifically disabled..."
+fi
+
 # Modules caching
 
 if [ "${CACHE_MODULES:="false"}" == "true" ]; then

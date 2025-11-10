@@ -38,11 +38,13 @@ use AdvisingApp\Form\Http\Controllers\FormWidgetController;
 use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use AdvisingApp\Form\Http\Middleware\FormsWidgetCors;
+use App\Http\Middleware\EncryptCookies;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 Route::middleware([
     'api',
+    EncryptCookies::class,
     EnsureFormsFeatureIsActive::class,
     FormsWidgetCors::class,
 ])
@@ -57,7 +59,7 @@ Route::middleware([
             ->name('api.')
             ->middleware([
                 // TODO: Determine if this stateful middleware is needed
-                EnsureFrontendRequestsAreStateful::class,
+                // EnsureFrontendRequestsAreStateful::class,
                 EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':form',
             ])
             ->group(function () {

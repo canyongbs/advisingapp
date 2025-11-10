@@ -50,7 +50,16 @@ onMounted(async () => {
 
 let { steps, visitedSteps, activeStep, setStep, wizardPlugin } = wizard();
 
-const props = defineProps(['url', 'preview']);
+const props = defineProps({
+    entryUrl: {
+        type: String,
+        required: true,
+    },
+    preview: {
+        type: Boolean,
+        default: false,
+    }
+});
 
 const data = reactive({
     steps,
@@ -150,7 +159,7 @@ const authentication = ref({
 });
 
 async function getForm() {
-    await fetch(props.url)
+    await fetch(props.entryUrl)
         .then((response) => response.json())
         .then((json) => {
             if (json.error) {
