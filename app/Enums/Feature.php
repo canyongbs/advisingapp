@@ -69,6 +69,8 @@ enum Feature: string
 
     case DataAdvisor = 'data-advisor';
 
+    case ProjectManagement = 'project-management';
+
     public function generateGate(): void
     {
         // If features are added that are not based on a License Addon we will need to update this

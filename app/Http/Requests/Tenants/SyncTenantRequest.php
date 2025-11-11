@@ -71,6 +71,7 @@ class SyncTenantRequest extends FormRequest
             'addons.researchAdvisor' => ['required', 'boolean'],
             'addons.qnaAdvisor' => ['required', 'boolean'],
             'addons.dataAdvisor' => ['required', 'boolean'],
+            'addons.projectManagement' => ['required', 'boolean'],
             'smartPrompts' => ['nullable', 'array'],
             'smartPrompts.*.title' => ['required', 'string'],
             'smartPrompts.*.description' => ['nullable', 'string'],

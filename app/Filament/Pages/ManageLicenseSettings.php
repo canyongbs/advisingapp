@@ -180,6 +180,8 @@ class ManageLicenseSettings extends SettingsPage
                             Toggle::make('data.addons.dataAdvisor')
                                 ->label('Data Advisors')
                                 ->live(),
+                            Toggle::make('data.addons.projectManagement')
+                                ->label('Project Management'),
                         ]
                     ),
             ])
