@@ -31,7 +31,7 @@
 
 </COPYRIGHT>
 --}}
-<div class="rounded-xl bg-turkish-300 p-6 text-white">
+<div class="min-h-56 rounded-xl bg-turkish-300 p-6 text-white">
     <div class="flex flex-col items-center justify-center gap-6 md:flex-row">
         <div>
             <p class="text-sm font-semibold text-gray-800">Resource Portal</p>
@@ -44,6 +44,7 @@
             >Visit Resource Portal</a>
         </div>
         <img
+            alt=""
             class="block max-h-32"
             src="{{ Vite::asset('resources/images/changelog_image.svg') }}"
         />
