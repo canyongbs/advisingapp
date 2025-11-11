@@ -109,6 +109,10 @@ class SentItems extends Page implements HasTable
                     ->label('From'),
                 TextColumn::make('recipient.full_name')
                     ->label('To'),
+                TextColumn::make('channel')
+                    ->label('Type')
+                    ->state(fn (Engagement $record): string => $record->channel->getLabel())
+                    ->icon(fn (Engagement $record): string => $record->channel->getIcon()),
                 TextColumn::make('subject')
                     ->description(
                         fn (Engagement $record): ?string => filled($body = $record->getBodyMarkdown())
