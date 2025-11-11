@@ -83,7 +83,9 @@ class StudentsActionCenterWidget extends TableWidget
             ->columns([
                 TextColumn::make('full_name')
                     ->label('Student Name')
-                    ->searchable(),
+                    ->searchable()
+                    ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record]))
+                    ->openUrlInNewTab(),
                 TextColumn::make('engagement_responses_count')
                     ->label('New Messages')
                     ->counts(['engagementResponses' => fn (Builder $query) => $query->where('status', EngagementResponseStatus::New)])
