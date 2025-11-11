@@ -44,9 +44,9 @@
             >Visit Resource Portal</a>
         </div>
         <img
-            alt=""
             class="block max-h-32"
             src="{{ Vite::asset('resources/images/changelog_image.svg') }}"
+            alt=""
         />
     </div>
 </div>
