@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Jobs;
 
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Queue\Queueable;
@@ -56,6 +57,7 @@ class GenerateAvatar implements ShouldQueue
     public function __construct(
         public Model $record,
         public string $instructions,
+        public string $mediaCollection,
     ) {}
 
     public function handle(): void
@@ -71,19 +73,19 @@ class GenerateAvatar implements ShouldQueue
         assert($record instanceof HasMedia);
 
         if (! method_exists($record, 'addMediaFromBase64')) {
-            return;
+            throw new Exception('The provided model does not support media uploads.');
         }
 
         try {
             $image = $service->image(
-                prompt: Str::limit($this->instructions, limit: 1000) . PHP_EOL . PHP_EOL . ' Create an avatar image for using these instructions. The image should be square and professionally appropriate for use as a profile picture.',
+                prompt: Str::limit($this->instructions, limit: 1000) . PHP_EOL . PHP_EOL . ' Create an avatar image using these instructions. The image should be square and professionally appropriate for use as a profile picture.',
             );
 
             DB::transaction(function () use ($image, $record) {
-                $record->clearMediaCollection('avatar');
+                $record->clearMediaCollection($this->mediaCollection);
                 $record->addMediaFromBase64($image)
                     ->usingFileName(Str::random() . '.jpg')
-                    ->toMediaCollection('avatar');
+                    ->toMediaCollection($this->mediaCollection);
             });
         } catch (Throwable $exception) {
             report($exception);

@@ -85,7 +85,7 @@ class AvatarUploadOrAiGenerator
                             return;
                         }
 
-                        dispatch(new GenerateAvatar($record, $state));
+                        dispatch(new GenerateAvatar($record, instructions: $state, mediaCollection: 'avatar'));
 
                         Notification::make()
                             ->title('Avatar generation started')
