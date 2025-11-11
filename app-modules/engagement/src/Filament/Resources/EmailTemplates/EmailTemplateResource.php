@@ -54,6 +54,8 @@ class EmailTemplateResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = 'Templates';
 
+    protected static string | null $navigationLabel = 'Email';
+
     public static function getPages(): array
     {
         return [

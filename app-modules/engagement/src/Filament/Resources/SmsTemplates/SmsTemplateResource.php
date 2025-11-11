@@ -48,7 +48,7 @@ class SmsTemplateResource extends Resource
 {
     protected static ?string $model = SmsTemplate::class;
 
-    protected static ?string $navigationLabel = 'Text Message Templates';
+    protected static ?string $navigationLabel = 'Text';
 
     protected static ?string $modelLabel = 'text message template';
 

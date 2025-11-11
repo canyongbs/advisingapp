@@ -54,6 +54,8 @@ class NotificationSettingResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = 'Settings';
 
+    protected static string | null $navigationLabel = 'Notifications';
+
     public static function getRelations(): array
     {
         return [];
