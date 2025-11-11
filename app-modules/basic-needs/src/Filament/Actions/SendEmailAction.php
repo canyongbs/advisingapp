@@ -56,12 +56,14 @@ use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use FilamentTiptapEditor\TiptapEditor;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class SendEmailAction extends Action
 {
-    protected Student | Prospect | null $educatable = null;
+    protected Student|Prospect|null $educatable = null;
 
     protected function setUp(): void
     {
@@ -87,6 +89,7 @@ class SendEmailAction extends Action
                             ->required(),
                         Select::make('recipient_id')
                             ->label('Recipient')
+                            ->searchable()
                             ->options(function (Get $get): array {
                                 $recipientType = $get('recipient_type');
 
@@ -120,6 +123,70 @@ class SendEmailAction extends Action
 
                                 return [];
                             })
+                            ->getSearchResultsUsing(function (string $search, Get $get): array {
+                                $recipientType = $get('recipient_type');
+
+                                if ($recipientType === 'student') {
+                                    return Student::query()
+                                        ->with('primaryEmailAddress')
+                                        ->when($search, function (Builder $query) use ($search) {
+                                            $query->where(new Expression('lower(full_name)'), 'like', "%{$search}%");
+                                        })
+                                        ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
+                                        ->limit(50)
+                                        ->get()
+                                        ->mapWithKeys(function (Student $student) {
+                                            $label = "{$student->display_name} (Student) - {$student->primaryEmailAddress?->address} - {$student->sisid}";
+
+                                            return [$student->sisid => $label];
+                                        })
+                                        ->toArray();
+                                }
+
+                                if ($recipientType === 'prospect') {
+                                    return Prospect::query()
+                                        ->with('primaryEmailAddress')
+                                        ->when($search, function (Builder $query) use ($search) {
+                                            $query->where(new Expression('lower(full_name)'), 'like', "%{$search}%");
+                                        })
+                                        ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
+                                        ->limit(50)
+                                        ->get()
+                                        ->mapWithKeys(function (Prospect $prospect) {
+                                            $label = "{$prospect->display_name} (Prospect) - {$prospect->primaryEmailAddress?->address}";
+
+                                            return [$prospect->id => $label];
+                                        })
+                                        ->toArray();
+                                }
+
+                                return [];
+                            })
+                            ->getOptionLabelUsing(function (string $value, Get $get): string {
+                                $recipientType = $get('recipient_type');
+
+                                if ($recipientType === 'student') {
+                                    $student = Student::query()->find($value);
+
+                                    if (! $student) {
+                                        return '';
+                                    }
+
+                                    return "{$student->display_name} (Student) - {$student->primaryEmailAddress?->address} - {$student->sisid}";
+                                }
+
+                                if ($recipientType === 'prospect') {
+                                    $prospect = Prospect::query()->find($value);
+
+                                    if (! $prospect) {
+                                        return '';
+                                    }
+
+                                    return "{$prospect->display_name} (Prospect) - {$prospect->primaryEmailAddress?->address}";
+                                }
+
+                                return '';
+                            })
                             ->afterStateUpdated(function (Get $get, Set $set) {
                                 $educatable = match ($get('recipient_type')) {
                                     'student' => Student::find($get('recipient_id')),
@@ -137,8 +204,7 @@ class SendEmailAction extends Action
                                 $set('recipient_route_id', $educatable?->primaryEmailAddress?->getKey() ?? $educatable?->emailAddresses()->first()?->getKey());
                             })
                             ->live()
-                            ->required()
-                            ->searchable(),
+                            ->required(),
 
                         Grid::make(1)
                             ->schema(function (Get $get): array {
@@ -153,7 +219,7 @@ class SendEmailAction extends Action
                                         ->label('Email address')
                                         ->options(function () use ($educatable) {
                                             return $educatable?->emailAddresses
-                                                ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
+                                                ->mapWithKeys(fn (StudentEmailAddress|ProspectEmailAddress $emailAddress): array => [
                                                     $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
                                                 ])
                                                 ->all() ?? [];
