@@ -58,6 +58,7 @@ use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -66,9 +67,50 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ApplicationWidgetController extends Controller
 {
+    public function assets(Request $request, Application $application): JsonResponse
+    {
+        // Read the Vite manifest to determine the correct asset paths
+        $manifestPath = public_path('storage/widgets/applications/.vite/manifest.json');
+        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+        $manifest = json_decode(File::get($manifestPath), true, 512, JSON_THROW_ON_ERROR);
+
+        $widgetEntry = $manifest['src/widget.js'];
+
+        return response()->json([
+            'asset_url' => route('widgets.applications.asset'),
+            'entry' => route('widgets.applications.api.entry', ['application' => $application]),
+            'js' => route('widgets.applications.asset', ['file' => $widgetEntry['file']]),
+        ]);
+    }
+
+    public function asset(Request $request, string $file): StreamedResponse
+    {
+        $path = "widgets/applications/{$file}";
+
+        $disk = Storage::disk('public');
+
+        abort_if(! $disk->exists($path), 404, 'File not found.');
+
+        $mimeType = $disk->mimeType($path);
+
+        $stream = $disk->readStream($path);
+
+        abort_if(is_null($stream), 404, 'File not found.');
+
+        return response()->streamDownload(
+            function () use ($stream) {
+                fpassthru($stream);
+                fclose($stream);
+            },
+            $file,
+            ['Content-Type' => $mimeType]
+        );
+    }
+
     public function view(GenerateFormKitSchema $generateSchema, Application $application): JsonResponse
     {
         return response()->json(
@@ -76,9 +118,8 @@ class ApplicationWidgetController extends Controller
                 'name' => $application->name,
                 'description' => $application->description,
                 'authentication_url' => URL::signedRoute(
-                    name: 'applications.request-authentication',
+                    name: 'widgets.applications.api.request-authentication',
                     parameters: ['application' => $application],
-                    absolute: false,
                 ),
                 'schema' => $generateSchema($application),
                 'primary_color' => collect(Color::all()[$application->primary_color ?? 'blue'])
@@ -125,9 +166,8 @@ class ApplicationWidgetController extends Controller
             return response()->json([
                 'registrationAllowed' => true,
                 'authentication_url' => URL::signedRoute(
-                    name: 'applications.register-prospect',
+                    name: 'widgets.applications.api.register-prospect',
                     parameters: ['application' => $application],
-                    absolute: false,
                 ),
             ], 404);
         }
@@ -147,12 +187,11 @@ class ApplicationWidgetController extends Controller
         return response()->json([
             'message' => "We've sent an authentication code to {$data['email']}.",
             'authentication_url' => URL::signedRoute(
-                name: 'applications.authenticate',
+                name: 'widgets.applications.api.authenticate',
                 parameters: [
                     'application' => $application,
                     'authentication' => $authentication,
                 ],
-                absolute: false,
             ),
         ]);
     }
@@ -177,12 +216,11 @@ class ApplicationWidgetController extends Controller
 
         return response()->json([
             'submission_url' => URL::signedRoute(
-                name: 'applications.submit',
+                name: 'widgets.applications.api.submit',
                 parameters: [
                     'authentication' => $authentication,
                     'application' => $authentication->submissible,
                 ],
-                absolute: false,
             ),
         ]);
     }
@@ -386,12 +424,11 @@ class ApplicationWidgetController extends Controller
         return response()->json([
             'message' => "We've sent an authentication code to {$data['email']}.",
             'authentication_url' => URL::signedRoute(
-                name: 'applications.authenticate',
+                name: 'widgets.applications.api.authenticate',
                 parameters: [
                     'application' => $application,
                     'authentication' => $authentication,
                 ],
-                absolute: false,
             ),
         ]);
     }

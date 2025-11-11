@@ -50,7 +50,16 @@ onMounted(async () => {
 
 let { steps, visitedSteps, activeStep, setStep, wizardPlugin } = wizard();
 
-const props = defineProps(['url', 'preview']);
+const props = defineProps({
+    entryUrl: {
+        type: String,
+        required: true,
+    },
+    preview: {
+        type: Boolean,
+        default: false,
+    },
+});
 
 const data = reactive({
     steps,
@@ -118,15 +127,6 @@ const data = reactive({
 
 const submittedSuccess = ref(false);
 
-const scriptUrl = document.currentScript
-    ? new URL(document.currentScript.getAttribute('src'))
-    : new URL(window.location.href);
-const protocol = scriptUrl.protocol;
-const scriptHostname = scriptUrl.hostname;
-const scriptQuery = document.currentScript ? Object.fromEntries(scriptUrl.searchParams) : {};
-
-const hostUrl = `${protocol}//${scriptHostname}`;
-
 const display = ref(false);
 const formName = ref('');
 const formIsAuthenticated = ref(false);
@@ -150,7 +150,7 @@ const authentication = ref({
 });
 
 async function getForm() {
-    await fetch(props.url)
+    await fetch(props.entryUrl)
         .then((response) => response.json())
         .then((json) => {
             if (json.error) {
@@ -388,8 +388,6 @@ async function authenticate(formData, node) {
         class="font-sans"
     >
         <div class="prose max-w-none" v-if="display && !submittedSuccess">
-            <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/form/style.css'" />
-
             <div
                 v-if="props.preview === 'true' || props.preview === true"
                 style="

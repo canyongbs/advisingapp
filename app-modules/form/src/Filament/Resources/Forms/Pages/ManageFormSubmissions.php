@@ -81,7 +81,8 @@ class ManageFormSubmissions extends ManageRelatedRecords
                 TextColumn::make('submitted_at')
                     ->dateTime()
                     ->sortable(),
-                TextColumn::make('author.email')
+                TextColumn::make('author.primaryEmailAddress.address')
+                    ->label('Author')
                     ->searchable(),
                 TextColumn::make('author_type')
                     ->badge()
@@ -120,7 +121,7 @@ class ManageFormSubmissions extends ManageRelatedRecords
                             ->schema([
                                 TextEntry::make('author.' . $record->author::displayNameKey())
                                     ->label('Name'),
-                                TextEntry::make('author.email')
+                                TextEntry::make('author.primaryEmailAddress.address')
                                     ->label('Email address'),
                             ])
                             ->columns(2),

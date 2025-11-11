@@ -31,47 +31,34 @@
 
 </COPYRIGHT>
 */
-import vue from '@vitejs/plugin-vue';
-import { resolve } from 'path';
-import { defineConfig } from 'vite';
+(function () {
+    // Get the embed element
+    const embedElement = document.querySelector('form-embed');
+    if (!embedElement) throw new Error('Embed not found');
 
-export default defineConfig({
-    plugins: [vue()],
-    experimental: {
-        renderBuiltUrl(filename) {
-            return {
-                runtime: `window.__VITE_APPLICATIONS_ASSET_URL__ + ${JSON.stringify(filename)}`,
-            };
-        },
-    },
-    build: {
-        manifest: true,
-        rollupOptions: {
-            input: {
-                widget: resolve(__dirname, './src/widget.js'),
-                loader: resolve(__dirname, './src/loader.js'),
-            },
-            output: {
-                entryFileNames: (chunkInfo) => {
-                    return chunkInfo.name === 'loader'
-                        ? 'advising-app-application-widget.js'
-                        : 'advising-app-application-widget-app-[hash].js';
-                },
-                assetFileNames: (assetInfo) => {
-                    return '[name]-[hash][extname]';
-                },
-                // Place chunks directly in the root
-                chunkFileNames: '[name]-[hash].js',
-            },
-        },
-        outDir: resolve(__dirname, '../../storage/app/public/widgets/applications'),
-        emptyOutDir: true,
-        sourcemap: true,
-    },
-    resolve: {
-        alias: {
-            '@': resolve(__dirname, 'src'),
-        },
-    },
-    define: { 'process.env.NODE_ENV': '"production"' },
-});
+    // Get the assets URL from the element
+    const assetsUrl = embedElement.getAttribute('url');
+    if (!assetsUrl) throw new Error('Assets URL not found');
+
+    // Fetch the latest assets URLs
+    fetch(assetsUrl)
+        .then((response) => response.json())
+        .then((assets) => {
+            if (!assets || !assets.asset_url || !assets.entry || !assets.js) {
+                throw Error('Assets are missing or incomplete.');
+            }
+
+            embedElement.setAttribute('entry-url', assets.entry);
+
+            // Set up the global variable for Vite's dynamic imports using the asset endpoint
+            window.__VITE_FORMS_ASSET_URL__ = assets.asset_url;
+
+            const scriptElement = document.createElement('script');
+            scriptElement.src = assets.js;
+            scriptElement.type = 'module';
+            document.body.appendChild(scriptElement);
+        })
+        .catch((error) => {
+            console.error('Failed to load widget assets:', error);
+        });
+})();

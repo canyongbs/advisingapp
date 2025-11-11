@@ -71,7 +71,10 @@ class ApplicationServiceProvider extends ServiceProvider
             'application_submission_state' => ApplicationSubmissionState::class,
             'application_field_submission' => ApplicationFieldSubmission::class,
         ]);
+
         $this->registerEvents();
+
+        $this->loadRoutesFrom(__DIR__ . '/../../routes/widgets.php');
     }
 
     public function registerEvents(): void

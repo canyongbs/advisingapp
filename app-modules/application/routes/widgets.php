@@ -35,38 +35,63 @@
 */
 
 use AdvisingApp\Application\Http\Controllers\ApplicationWidgetController;
+use AdvisingApp\Application\Http\Middleware\ApplicationsWidgetCors;
 use AdvisingApp\Application\Http\Middleware\EnsureOnlineAdmissionsFeatureIsActive;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
+use AdvisingApp\Form\Models\Form;
+use App\Http\Middleware\EncryptCookies;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
-Route::prefix('api')
-    ->middleware([
-        EnsureFrontendRequestsAreStateful::class,
-        'api',
-        EnsureOnlineAdmissionsFeatureIsActive::class,
-        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':application',
-    ])
+Route::middleware([
+    'api',
+    EncryptCookies::class,
+    EnsureOnlineAdmissionsFeatureIsActive::class,
+    ApplicationsWidgetCors::class,
+])
+    ->prefix('widgets/applications')
+    ->name('widgets.applications.')
     ->group(function () {
-        Route::prefix('applications')
-            ->name('applications.')
+        Route::prefix('api/{application}')
+            ->name('api.')
+            ->middleware([
+                // TODO: Determine if this stateful middleware is needed
+                // EnsureFrontendRequestsAreStateful::class,
+                EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':application',
+            ])
             ->group(function () {
-                Route::get('/{application}', [ApplicationWidgetController::class, 'view'])
-                    ->middleware(['signed:relative'])
-                    ->name('define');
-                Route::post('/{application}/authenticate/request', [ApplicationWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed:relative'])
+                Route::get('/', [ApplicationWidgetController::class, 'assets'])
+                    ->name('assets');
+
+                Route::get('entry', [ApplicationWidgetController::class, 'view'])
+                    ->name('entry');
+                Route::post('authenticate/request', [ApplicationWidgetController::class, 'requestAuthentication'])
+                    ->middleware(['signed'])
                     ->name('request-authentication');
-                Route::post('/{application}/authenticate/{authentication}', [ApplicationWidgetController::class, 'authenticate'])
-                    ->middleware(['signed:relative'])
+                Route::post('authenticate/{authentication}', [ApplicationWidgetController::class, 'authenticate'])
+                    ->middleware(['signed'])
                     ->name('authenticate');
-                Route::post('/{application}/submit', [ApplicationWidgetController::class, 'store'])
-                    ->middleware(['signed:relative'])
+                Route::post('submit', [ApplicationWidgetController::class, 'store'])
+                    ->middleware(['signed'])
                     ->name('submit');
-                Route::post('/{application}/register', [ApplicationWidgetController::class, 'registerProspect'])
-                    ->middleware(['signed:relative'])
+                Route::post('register', [ApplicationWidgetController::class, 'registerProspect'])
+                    ->middleware(['signed'])
                     ->name('register-prospect');
+
+                // Handle preflight CORS requests for all routes in this group
+                // MUST remain the last route in this group
+                Route::options('/{any}', function (Request $request, Form $form) {
+                    return response()->noContent();
+                })
+                    ->where('any', '.*')
+                    ->name('preflight');
             });
+
+        // This route MUST remain at /widgets/... in order to catch requests to asset files and return the correct headers
+        // NGINX has been configured to route all requests for assets under /widgets to the application
+        Route::get('{file?}', [ApplicationWidgetController::class, 'asset'])
+            ->where('file', '(.*)')
+            ->name('asset');
     });
 
 Route::prefix('api')
