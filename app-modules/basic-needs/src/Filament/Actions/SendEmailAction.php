@@ -90,6 +90,7 @@ class SendEmailAction extends Action
                         Select::make('recipient_id')
                             ->label('Recipient')
                             ->searchable()
+                            ->hidden(fn (Get $get) => ! filled($get('recipient_type')))
                             ->options(function (Get $get): array {
                                 $recipientType = $get('recipient_type');
 
@@ -230,7 +231,8 @@ class SendEmailAction extends Action
                                         ->disabled(blank($educatable))
                                         ->required(),
                                 ];
-                            }),
+                            })
+                            ->hidden(fn (Get $get) => ! filled($get('recipient_type'))),
                     ]),
                 Step::make('Content')
                     ->schema(function (Get $get): array {
