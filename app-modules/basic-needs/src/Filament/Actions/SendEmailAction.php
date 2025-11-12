@@ -130,7 +130,9 @@ class SendEmailAction extends Action
                                     return Student::query()
                                         ->with('primaryEmailAddress')
                                         ->when($search, function (Builder $query) use ($search) {
-                                            $query->where(new Expression('lower(full_name)'), 'like', "%{$search}%");
+                                            $query->where(new Expression('lower(full_name)'), 'like', "%{$search}%")
+                                                ->orWhere(new Expression('lower(sisid)'), 'like', "%{$search}%")
+                                                ->orWhereHas('primaryEmailAddress', fn (Builder $query) => $query->where(new Expression('lower(address)'), 'like', "%{$search}%"));
                                         })
                                         ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
                                         ->limit(50)
@@ -147,7 +149,8 @@ class SendEmailAction extends Action
                                     return Prospect::query()
                                         ->with('primaryEmailAddress')
                                         ->when($search, function (Builder $query) use ($search) {
-                                            $query->where(new Expression('lower(full_name)'), 'like', "%{$search}%");
+                                            $query->where(new Expression('lower(full_name)'), 'like', "%{$search}%")
+                                                ->orWhereHas('primaryEmailAddress', fn (Builder $query) => $query->where(new Expression('lower(address)'), 'like', "%{$search}%"));
                                         })
                                         ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
                                         ->limit(50)
