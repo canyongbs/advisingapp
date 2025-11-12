@@ -12,7 +12,8 @@
         "build:qna-advisor": "(cd qna-advisor && vite build)",
         "build:case-feedback-form": "(cd case-feedback-form && vite build)",
         "dev:application": "(cd application && vite)",
-        "dev:form": "(cd form && vite)"
+        "dev:form": "(cd form && vite)",
+        "postinstall": "node ../npm-postinstall.cjs"
     },
     "dependencies": {
         "@tailwindcss/forms": "^0.5.4",
@@ -58,7 +59,7 @@
         "cross-env": "^7.0.3",
         "dompurify": "^3.2.4",
         "dropzone": "^5.9.2",
-        "esbuild": "^0.25.9",
+        "esbuild": "^0.27.0",
         "esbuild-plugin-polyfill-node": "^0.3.0",
         "github-slugger": "^2.0.0",
         "marked": "^12.0.0",
