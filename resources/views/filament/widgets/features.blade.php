@@ -36,98 +36,19 @@
     use AdvisingApp\Authorization\Enums\LicenseType;
     use AdvisingApp\Prospect\Filament\Pages\RecruitmentCrmDashboard;
     use AdvisingApp\StudentDataModel\Filament\Pages\RetentionCrmDashboard;
+    use AdvisingApp\Theme\Settings\ThemeSettings;
 @endphp
 
 <x-filament-widgets::widget>
-    <div class="grid gap-6 md:grid-cols-3">
+    <div class="grid w-full gap-2 md:grid-cols-2">
         @php
-            $hasFeature = auth()
-                ->user()
-                ->hasLicense(LicenseType::RecruitmentCrm);
+            $themeSettings = app(ThemeSettings::class);
+
+            $themeChangelogUrl = !empty($themeSettings->changelog_url) ? $themeSettings->changelog_url : 'https://advising.app/changelog/';
+
+            $productResourcehubUrl = !empty($themeSettings->product_resource_hub_url) ? $themeSettings->product_resource_hub_url : 'https://canyongbs.aiding.app/portal/categories/9bcc47d1-05be-40d2-bf95-9bd719209b06';
         @endphp
-        <x-filament::section @class([
-            'opacity-50 pointer-events-none' => !$hasFeature,
-        ])>
-            <div class="flex flex-col gap-3">
-                <div class="text-center text-lg font-bold">
-                    {{ $hasFeature ? 'Available' : 'Unavailable' }}
-                </div>
-
-                <div class="flex items-center justify-center">
-                    <x-filament::button
-                        :href="$hasFeature ? RecruitmentCrmDashboard::getUrl() : null"
-                        size="xl"
-                        tag="a"
-                        color="gray"
-                    >
-                        Start now
-                    </x-filament::button>
-                </div>
-
-                <div class="text-center font-medium text-gray-700 dark:text-gray-300">
-                    Recruitment CRM
-                </div>
-            </div>
-        </x-filament::section>
-
-        @php
-            $hasFeature = auth()
-                ->user()
-                ->hasLicense(LicenseType::RetentionCrm);
-        @endphp
-        <x-filament::section @class([
-            'opacity-50 pointer-events-none' => !$hasFeature,
-        ])>
-            <div class="flex flex-col gap-3">
-                <div class="text-center text-lg font-bold">
-                    {{ $hasFeature ? 'Available' : 'Unavailable' }}
-                </div>
-
-                <div class="flex items-center justify-center">
-                    <x-filament::button
-                        :href="$hasFeature ? RetentionCrmDashboard::getUrl() : null"
-                        size="xl"
-                        tag="a"
-                        color="gray"
-                    >
-                        Start now
-                    </x-filament::button>
-                </div>
-
-                <div class="text-center font-medium text-gray-700 dark:text-gray-300">
-                    Student Success Suite
-                </div>
-            </div>
-        </x-filament::section>
-
-        @php
-            $hasFeature = auth()
-                ->user()
-                ->hasLicense(LicenseType::ConversationalAi);
-        @endphp
-        <x-filament::section @class([
-            'opacity-50 pointer-events-none' => !$hasFeature,
-        ])>
-            <div class="flex flex-col gap-3">
-                <div class="text-center text-lg font-bold">
-                    {{ $hasFeature ? 'Available' : 'Unavailable' }}
-                </div>
-
-                <div class="flex items-center justify-center">
-                    <x-filament::button
-                        :href="$hasFeature ? InstitutionalAdvisor::getUrl() : null"
-                        size="xl"
-                        tag="a"
-                        color="gray"
-                    >
-                        Start now
-                    </x-filament::button>
-                </div>
-
-                <div class="text-center font-medium text-gray-700 dark:text-gray-300">
-                    Enterprise AI Assistant
-                </div>
-            </div>
-        </x-filament::section>
+        <x-authorization::login-version-card :themeChangelogUrl="$themeChangelogUrl" />
+        <x-authorization::login-resource-portal-card :productResourcehubUrl="$productResourcehubUrl" />
     </div>
 </x-filament-widgets::widget>

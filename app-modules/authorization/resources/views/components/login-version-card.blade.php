@@ -31,7 +31,7 @@
 
 </COPYRIGHT>
 --}}
-<div class="mb-6 rounded-xl bg-turkish-500 p-6 text-white">
+<div class="min-h-56 rounded-xl bg-turkish-500 p-6 text-white">
     <div class="flex flex-col items-center justify-center gap-6 md:flex-row">
         <div>
             <p class="text-sm font-semibold text-white">Version {{ app('current-version') }} is now available!</p>
@@ -46,6 +46,7 @@
         <img
             class="block max-h-32"
             src="{{ Vite::asset('resources/images/version_image.svg') }}"
+            alt=""
         />
     </div>
 </div>

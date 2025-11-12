@@ -84,7 +84,7 @@
         @endif
     </div>
 
-    <div class="w-full lg:w-1/2">
+    <div class="flex w-full flex-col gap-6 lg:w-1/2">
         <x-authorization::login-version-card :themeChangelogUrl="$themeChangelogUrl" />
         <x-authorization::login-resource-portal-card :productResourcehubUrl="$productResourcehubUrl" />
     </div>
