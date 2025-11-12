@@ -65,7 +65,7 @@ class GenerateAvatar implements ShouldQueue
         $service = app(AiIntegratedAssistantSettings::class)->getDefaultModel()->getService();
 
         if (! $service->hasImageGeneration()) {
-            return;
+            throw new Exception('Image generation is not enabled.');
         }
 
         $record = $this->record;
