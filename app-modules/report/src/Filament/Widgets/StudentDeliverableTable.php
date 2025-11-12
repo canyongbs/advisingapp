@@ -80,20 +80,8 @@ class StudentDeliverableTable extends BaseWidget
                     ->when(
                         $startDate && $endDate,
                         function (Builder $query) use ($startDate, $endDate): Builder {
-                            return $query->whereBetween('created_at_source', [$startDate, $endDate])
-                                ->where(function (Builder $communicationFilter): Builder {
-                                    return $communicationFilter
-                                        ->where('sms_opt_out', true)
-                                        ->orWhere('email_bounce', true);
-                                });
+                            return $query->whereBetween('created_at_source', [$startDate, $endDate]);
                         },
-                        function (Builder $query): Builder {
-                            return $query->where(function (Builder $communicationFilter): Builder {
-                                return $communicationFilter
-                                    ->where('sms_opt_out', true)
-                                    ->orWhere('email_bounce', true);
-                            });
-                        }
                     )
                     ->when(
                         $groupId,
@@ -119,7 +107,7 @@ class StudentDeliverableTable extends BaseWidget
                     ->label('Phone Status')
                     ->badge()
                     ->color(fn (Student $record) => ($record->primaryPhoneNumber?->smsOptOut()->exists()) ? 'warning' : 'info')
-                    ->state(fn (Student $record) => ($record->primaryPhoneNumber?->smsOptOut()->exists()) ? 'Bounced' : 'Healthy'),
+                    ->state(fn (Student $record) => ($record->primaryPhoneNumber?->smsOptOut()->exists()) ? 'Opt Out' : 'Healthy'),
             ])
             ->filters([
                 SelectFilter::make('email_status')
@@ -129,11 +117,11 @@ class StudentDeliverableTable extends BaseWidget
                         'healthy' => 'Healthy',
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        if (($data['value']) === 'bounced') {
+                        if (($data['value'] ?? null) === 'bounced') {
                             return $query->whereHas('primaryEmailAddress.bounced');
                         }
 
-                        if (($data['value']) === 'healthy') {
+                        if (($data['value'] ?? null) === 'healthy') {
                             return $query->whereDoesntHave('primaryEmailAddress.bounced');
                         }
 
@@ -142,11 +130,11 @@ class StudentDeliverableTable extends BaseWidget
                 SelectFilter::make('phone_status')
                     ->label('Phone Status')
                     ->options([
-                        'bounced' => 'Bounced',
+                        'opt-out' => 'Opt Out',
                         'healthy' => 'Healthy',
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        if (($data['value'] ?? null) === 'bounced') {
+                        if (($data['value'] ?? null) === 'opt-out') {
                             return $query->whereHas('primaryPhoneNumber.smsOptOut');
                         }
 
