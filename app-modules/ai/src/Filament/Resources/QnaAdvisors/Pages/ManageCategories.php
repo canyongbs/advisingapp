@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use App\Features\CorrectQnaAdvisorCategoryDescriptionLengthFeature;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
@@ -107,7 +106,7 @@ class ManageCategories extends ManageRelatedRecords
                 Textarea::make('description')
                     ->required()
                     ->string()
-                    ->maxLength(CorrectQnaAdvisorCategoryDescriptionLengthFeature::active() ? 65535 : 255)
+                    ->maxLength(65535)
                     ->columnSpanFull(),
             ]);
     }
