@@ -12,7 +12,8 @@
         "build:qna-advisor": "(cd qna-advisor && vite build)",
         "build:case-feedback-form": "(cd case-feedback-form && vite build)",
         "dev:application": "(cd application && vite)",
-        "dev:form": "(cd form && vite)"
+        "dev:form": "(cd form && vite)",
+        "postinstall": "node ../npm-postinstall.cjs"
     },
     "dependencies": {
         "@tailwindcss/forms": "^0.5.4",
