@@ -45,7 +45,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
-use Illuminate\Support\Str;
 use UnitEnum;
 
 class EditAiAssistantLinks extends EditRecord
@@ -69,7 +68,6 @@ class EditAiAssistantLinks extends EditRecord
         /** @var array<string, string> $breadcrumbs */
         $breadcrumbs = [
             $resource::getUrl() => $resource::getBreadcrumb(),
-            //            $resource::getUrl('view', ['record' => $record]) => Str::limit($record->name, 16),
             ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
         ];
 
