@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
 use AdvisingApp\Ai\Models\AiAssistantLink;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use App\Features\AiAssistantLinkFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
@@ -62,8 +62,6 @@ class EditAiAssistantLinks extends EditRecord
     public function getBreadcrumbs(): array
     {
         $resource = static::getResource();
-        /** @var QnaAdvisor $record */
-        $record = $this->getRecord();
 
         /** @var array<string, string> $breadcrumbs */
         $breadcrumbs = [
@@ -102,5 +100,10 @@ class EditAiAssistantLinks extends EditRecord
     public function getRedirectUrl(): ?string
     {
         return null;
+    }
+
+    public static function canAccess(array $parameters = []): bool
+    {
+        return AiAssistantLinkFeature::active() && parent::canAccess($parameters);
     }
 }
