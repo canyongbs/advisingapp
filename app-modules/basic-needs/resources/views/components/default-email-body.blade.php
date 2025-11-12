@@ -34,53 +34,73 @@
 <div>
     <p>Hi {{ $recipient?->full_name }},</p>
 
-    <p>
-        <strong>Program Name:</strong><br>
-        {{ $record->name }}
-    </p>
+    @if (filled($record->name))
+        <p>
+            <strong>Program Name:</strong><br>
+            {{ $record->name }}
+        </p>
+    @endif
 
-    <p>
-        <strong>Description:</strong><br>
-        {{ $record->description }}
-    </p>
+    @if (filled($record->description))
+        <p>
+            <strong>Description:</strong><br>
+            {{ $record->description }}
+        </p>
+    @endif
 
-    <p>
-        <strong>Program Category:</strong><br>
-        {{ $record->basicNeedsCategories?->name }}
-    </p>
+    @if (filled($record->basicNeedsCategories?->name))
+        <p>
+            <strong>Program Category:</strong><br>
+            {{ $record->basicNeedsCategories?->name }}
+        </p>
+    @endif
 
-    <p>
-        <strong>Contact Person:</strong><br>
-        {{ $record->contact_person }}
-    </p>
+    @if (filled($record->contact_person))
+        <p>
+            <strong>Contact Person:</strong><br>
+            {{ $record->contact_person }}
+        </p>
+    @endif
 
-    <p>
-        <strong>Email Address:</strong><br>
-        {{ $record->contact_email }}
-    </p>
+    @if (filled($record->contact_email))
+        <p>
+            <strong>Email Address:</strong><br>
+            {{ $record->contact_email }}
+        </p>
+    @endif
 
-    <p>
-        <strong>Contact Phone:</strong><br>
-        {{ $record->contact_phone }}
-    </p>
+    @if (filled($record->contact_phone))
+        <p>
+            <strong>Contact Phone:</strong><br>
+            {{ $record->contact_phone }}
+        </p>
+    @endif
 
-    <p>
-        <strong>Location:</strong><br>
-        {{ $record->location }}
-    </p>
+    @if (filled($record->location))
+        <p>
+            <strong>Location:</strong><br>
+            {{ $record->location }}
+        </p>
+    @endif
 
-    <p>
-        <strong>Availability:</strong><br>
-        {{ $record->availability }}
-    </p>
+    @if (filled($record->availability))
+        <p>
+            <strong>Availability:</strong><br>
+            {{ $record->availability }}
+        </p>
+    @endif
 
-    <p>
-        <strong>Eligibility Criteria:</strong><br>
-        {{ $record->eligibility_criteria }}
-    </p>
+    @if (filled($record->eligibility_criteria))
+        <p>
+            <strong>Eligibility Criteria:</strong><br>
+            {{ $record->eligibility_criteria }}
+        </p>
+    @endif
 
-    <p>
-        <strong>Application Process:</strong><br>
-        {{ $record->application_process }}
-    </p>
+    @if (filled($record->application_process))
+        <p>
+            <strong>Application Process:</strong><br>
+            {{ $record->application_process }}
+        </p>
+    @endif
 </div>
