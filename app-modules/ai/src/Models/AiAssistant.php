@@ -210,6 +210,9 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
         return $this->hasMany(AiAssistantUse::class, 'assistant_id');
     }
 
+    /**
+     * @return HasMany<AiAssistantLink, $this>
+     */
     public function links(): HasMany
     {
         return $this->hasMany(AiAssistantLink::class, 'ai_assistant_id');

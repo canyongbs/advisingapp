@@ -42,6 +42,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 
+/**
+ * @mixin IdeHelperAiAssistantLink
+ */
 class AiAssistantLink extends BaseModel implements Auditable
 {
     use SoftDeletes;
@@ -53,6 +56,9 @@ class AiAssistantLink extends BaseModel implements Auditable
         'url',
     ];
 
+    /**
+     * @return BelongsTo<AiAssistant, $this>
+     */
     public function assistant(): BelongsTo
     {
         return $this->belongsTo(AiAssistant::class);
