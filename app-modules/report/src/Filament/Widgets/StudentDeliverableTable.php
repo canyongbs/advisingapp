@@ -38,8 +38,9 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\PaginationMode;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
@@ -55,7 +56,7 @@ class StudentDeliverableTable extends BaseWidget
 
     protected static bool $isLazy = false;
 
-    protected static ?string $heading = 'Student Communication Preferences';
+    protected static ?string $heading = 'Student Engagement Deliberability';
 
     protected int | string | array $columnSpan = 'full';
 
@@ -75,24 +76,12 @@ class StudentDeliverableTable extends BaseWidget
 
         return $table
             ->query(
-                Student::select('sisid', 'full_name', 'email_bounce', 'sms_opt_out')
+                Student::select('sisid', 'full_name', 'primary_email_id', 'primary_phone_id')
                     ->when(
                         $startDate && $endDate,
                         function (Builder $query) use ($startDate, $endDate): Builder {
-                            return $query->whereBetween('created_at_source', [$startDate, $endDate])
-                                ->where(function (Builder $communicationFilter): Builder {
-                                    return $communicationFilter
-                                        ->where('sms_opt_out', true)
-                                        ->orWhere('email_bounce', true);
-                                });
+                            return $query->whereBetween('created_at_source', [$startDate, $endDate]);
                         },
-                        function (Builder $query): Builder {
-                            return $query->where(function (Builder $communicationFilter): Builder {
-                                return $communicationFilter
-                                    ->where('sms_opt_out', true)
-                                    ->orWhere('email_bounce', true);
-                            });
-                        }
                     )
                     ->when(
                         $groupId,
@@ -101,15 +90,61 @@ class StudentDeliverableTable extends BaseWidget
             )
             ->columns([
                 TextColumn::make('full_name')
-                    ->label('Name'),
-                IconColumn::make('email_bounce')
-                    ->label('Email Eligibility')
-                    ->boolean()
-                    ->state(fn (Student $record): bool => ! $record->email_bounce),
-                IconColumn::make('sms_opt_out')
-                    ->label('SMS Eligibility')
-                    ->boolean()
-                    ->state(fn (Student $record): bool => ! $record->sms_opt_out),
-            ]);
+                    ->label('Name')
+                    ->searchable(),
+                TextColumn::make('primaryEmailAddress.address')
+                    ->label('Primary Email')
+                    ->searchable(),
+                TextColumn::make('email_bounce')
+                    ->label('Email Status')
+                    ->badge()
+                    ->color(fn (Student $record) => ($record->primaryEmailAddress?->bounced()->exists()) ? 'warning' : 'info')
+                    ->state(fn (Student $record) => ($record->primaryEmailAddress?->bounced()->exists()) ? 'Bounced' : 'Healthy'),
+                TextColumn::make('primaryPhoneNumber.number')
+                    ->label('Primary Phone')
+                    ->searchable(),
+                TextColumn::make('sms_opt_out')
+                    ->label('Phone Status')
+                    ->badge()
+                    ->color(fn (Student $record) => ($record->primaryPhoneNumber?->smsOptOut()->exists()) ? 'warning' : 'info')
+                    ->state(fn (Student $record) => ($record->primaryPhoneNumber?->smsOptOut()->exists()) ? 'Opt Out' : 'Healthy'),
+            ])
+            ->filters([
+                SelectFilter::make('email_status')
+                    ->label('Email Status')
+                    ->options([
+                        'bounced' => 'Bounced',
+                        'healthy' => 'Healthy',
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (($data['value'] ?? null) === 'bounced') {
+                            return $query->whereHas('primaryEmailAddress.bounced');
+                        }
+
+                        if (($data['value'] ?? null) === 'healthy') {
+                            return $query->whereDoesntHave('primaryEmailAddress.bounced');
+                        }
+
+                        return $query;
+                    }),
+                SelectFilter::make('phone_status')
+                    ->label('Phone Status')
+                    ->options([
+                        'opt-out' => 'Opt Out',
+                        'healthy' => 'Healthy',
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (($data['value'] ?? null) === 'opt-out') {
+                            return $query->whereHas('primaryPhoneNumber.smsOptOut');
+                        }
+
+                        if (($data['value'] ?? null) === 'healthy') {
+                            return $query->whereDoesntHave('primaryPhoneNumber.smsOptOut');
+                        }
+
+                        return $query;
+                    }),
+            ])
+            ->paginationMode(PaginationMode::Default);
     }
 }

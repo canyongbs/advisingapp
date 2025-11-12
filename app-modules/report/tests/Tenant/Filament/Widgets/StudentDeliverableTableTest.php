@@ -37,6 +37,8 @@
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentDeliverableTable;
+use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
+use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 use function Pest\Livewire\livewire;
@@ -48,33 +50,30 @@ it('it returns deliverability data only for students created within the given da
     $optOutStartDateStudents = Student::factory()
         ->count(2)
         ->create([
-            'email_bounce' => false,
-            'sms_opt_out' => false,
             'created_at_source' => $startDate,
         ]);
 
+    $optOutStartDateStudents->each(function (Student $student) {
+        BouncedEmailAddress::factory()->create([
+            'address' => $student->primaryEmailAddress->address,
+        ]);
+    });
     $optOutEndDateStudents = Student::factory()
         ->count(2)
         ->create([
-            'email_bounce' => false,
-            'sms_opt_out' => false,
             'created_at_source' => $endDate,
         ]);
 
     $optInStartDateStudents = Student::factory()
         ->count(2)
         ->create([
-            'email_bounce' => true,
-            'sms_opt_out' => false,
-            'created_at_source' => $startDate,
+            'created_at_source' => $startDate->addDay(),
         ]);
 
     $optInEndDateStudents = Student::factory()
         ->count(2)
         ->create([
-            'email_bounce' => false,
-            'sms_opt_out' => true,
-            'created_at_source' => $endDate,
+            'created_at_source' => $endDate->subDay(),
         ]);
 
     $filters = [
@@ -110,35 +109,15 @@ it('it returns deliverability data only for students based on group filters', fu
         ],
     ]);
 
-    $optOutStudentWithJoeName = Student::factory()
+    $studentWithJoeName = Student::factory()
         ->count(2)
         ->create([
-            'email_bounce' => false,
-            'sms_opt_out' => false,
             'last' => 'John',
         ]);
 
-    $optOutStudentWithDoeName = Student::factory()
+    $studentWithDoeName = Student::factory()
         ->count(2)
         ->create([
-            'email_bounce' => false,
-            'sms_opt_out' => false,
-            'last' => 'Doe',
-        ]);
-
-    $optInStudentWithJoeName = Student::factory()
-        ->count(2)
-        ->create([
-            'email_bounce' => true,
-            'sms_opt_out' => false,
-            'last' => 'John',
-        ]);
-
-    $optInStudentWithDoeName = Student::factory()
-        ->count(2)
-        ->create([
-            'email_bounce' => false,
-            'sms_opt_out' => true,
             'last' => 'Doe',
         ]);
 
@@ -150,14 +129,74 @@ it('it returns deliverability data only for students based on group filters', fu
         'cacheTag' => 'report-student-deliverability',
         'pageFilters' => $filters,
     ])
-        ->assertCanSeeTableRecords($optInStudentWithJoeName)
-        ->assertCanNotSeeTableRecords($optOutStudentWithJoeName->merge($optOutStudentWithDoeName)->merge($optInStudentWithDoeName));
+        ->assertCanSeeTableRecords($studentWithJoeName)
+        ->assertCanNotSeeTableRecords($studentWithDoeName);
 
-    // without filter
     livewire(StudentDeliverableTable::class, [
         'cacheTag' => 'report-student-deliverability',
         'filters' => [],
     ])
-        ->assertCanSeeTableRecords($optInStudentWithJoeName->merge($optInStudentWithDoeName))
-        ->assertCanNotSeeTableRecords($optOutStudentWithJoeName->merge($optOutStudentWithDoeName));
+        ->assertCanSeeTableRecords($studentWithJoeName->merge($studentWithDoeName));
+});
+
+it('can filter table based on email bounce status', function () {
+    $bouncedStudents = Student::factory()
+        ->count(2)
+        ->create();
+
+    $bouncedStudents->each(function (Student $student) {
+        BouncedEmailAddress::factory()->create([
+            'address' => $student->primaryEmailAddress->address,
+        ]);
+    });
+
+    $healthyStudents = Student::factory()
+        ->count(2)
+        ->create();
+
+    livewire(StudentDeliverableTable::class, [
+        'cacheTag' => 'report-student-deliverability',
+    ])
+        ->assertCanSeeTableRecords($healthyStudents->merge($bouncedStudents));
+
+    livewire(StudentDeliverableTable::class, [
+        'cacheTag' => 'report-student-deliverability',
+    ])
+        ->filterTable('email_status', 'bounced')
+        ->assertCanSeeTableRecords($bouncedStudents)
+        ->assertCanNotSeeTableRecords($healthyStudents)
+        ->filterTable('email_status', 'healthy')
+        ->assertCanSeeTableRecords($healthyStudents)
+        ->assertCanNotSeeTableRecords($bouncedStudents);
+});
+
+it('can filter table based on phone sms opt-out status', function () {
+    $bouncedStudents = Student::factory()
+        ->count(2)
+        ->create();
+
+    $bouncedStudents->each(function (Student $student) {
+        SmsOptOutPhoneNumber::factory()->create([
+            'number' => $student->primaryPhoneNumber->number,
+        ]);
+    });
+
+    $healthyStudents = Student::factory()
+        ->count(2)
+        ->create();
+
+    livewire(StudentDeliverableTable::class, [
+        'cacheTag' => 'report-student-deliverability',
+    ])
+        ->assertCanSeeTableRecords($healthyStudents->merge($bouncedStudents));
+
+    livewire(StudentDeliverableTable::class, [
+        'cacheTag' => 'report-student-deliverability',
+    ])
+        ->filterTable('phone_status', 'opt-out')
+        ->assertCanSeeTableRecords($bouncedStudents)
+        ->assertCanNotSeeTableRecords($healthyStudents)
+        ->filterTable('phone_status', 'healthy')
+        ->assertCanSeeTableRecords($healthyStudents)
+        ->assertCanNotSeeTableRecords($bouncedStudents);
 });
