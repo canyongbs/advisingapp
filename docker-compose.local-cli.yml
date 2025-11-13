@@ -1,15 +1,17 @@
 services:
-  local-cli:
-    build:
-      context: .
-      target: cli-local-tooling
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
-    volumes:
-      - '.:/var/www/html'
-    networks:
-      - cgbs-development
+    local-cli:
+        build:
+            context: .
+            target: cli-local-tooling
+        environment:
+            CREATE_STORAGE_SYMLINK: false
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        volumes:
+            - ".:/var/www/html"
+        networks:
+            - cgbs-development
 
 networks:
-  cgbs-development:
-    external: true
+    cgbs-development:
+        external: true
