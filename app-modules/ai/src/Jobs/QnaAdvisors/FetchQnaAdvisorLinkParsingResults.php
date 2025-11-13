@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
 
+use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Models\QnaAdvisorLink;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use Illuminate\Bus\Batchable;
@@ -61,7 +62,7 @@ class FetchQnaAdvisorLinkParsingResults implements ShouldQueue, TenantAware, Sho
     public int $tries = 60;
 
     public function __construct(
-        protected QnaAdvisorLink $link,
+        protected QnaAdvisorLink | AiAssistantLink $link,
     ) {}
 
     public function handle(): void

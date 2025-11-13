@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Ai\Database\Factories\AiAssistantLinkFactory;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable as AuditableTrait;
@@ -49,6 +51,9 @@ class AiAssistantLink extends BaseModel implements Auditable
 {
     use SoftDeletes;
     use AuditableTrait;
+
+    /** @use HasFactory<AiAssistantLinkFactory> */
+    use HasFactory;
 
     protected $fillable = [
         'ai_assistant_id',
