@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
+use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiAssistantLink;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,6 +19,9 @@ class AiAssistantLinkFactory extends Factory
     public function definition(): array
     {
         return [
+            'ai_assistant_id' => AiAssistant::factory(),
+            'parsing_results' => $this->faker->paragraph,
+            'url' => $this->faker->url,
         ];
     }
 }
