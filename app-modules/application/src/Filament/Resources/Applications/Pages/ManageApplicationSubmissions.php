@@ -104,9 +104,10 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                 TextColumn::make('created_at')
                     ->sortable(),
                 TextColumn::make('author.primaryEmailAddress.address')
-                    ->label('Author')
+                    ->label('Submitter')
                     ->searchable(),
                 TextColumn::make('author_type')
+                    ->label('Submitter Type')
                     ->badge()
                     ->formatStateUsing(fn (?string $state): ?string => filled($state) ? ucfirst($state) : null)
                     ->color('success'),
@@ -126,6 +127,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
             ])
             ->filters([
                 SelectFilter::make('author_type')
+                    ->label('Submitter Type')
                     ->options([
                         'student' => 'Student',
                         'prospect' => 'Prospect',
@@ -156,7 +158,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                             ->color(function (ApplicationSubmission $record) {
                                 return $record->state->color->value;
                             }),
-                        Section::make('Authenticated author')
+                        Section::make('Authenticated Submitter')
                             ->schema([
                                 TextEntry::make('author.' . $record->author::displayNameKey())
                                     ->label('Name'),

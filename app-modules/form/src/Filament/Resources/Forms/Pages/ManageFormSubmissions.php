@@ -82,9 +82,10 @@ class ManageFormSubmissions extends ManageRelatedRecords
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('author.primaryEmailAddress.address')
-                    ->label('Author')
+                    ->label('Submitter')
                     ->searchable(),
                 TextColumn::make('author_type')
+                    ->label('Submitter Type')
                     ->badge()
                     ->formatStateUsing(fn (?string $state): ?string => filled($state) ? ucfirst($state) : null)
                     ->color('success'),
@@ -96,6 +97,7 @@ class ManageFormSubmissions extends ManageRelatedRecords
             ->filters([
                 FormSubmissionStatusFilter::make(),
                 SelectFilter::make('author_type')
+                    ->label('Submitter Type')
                     ->options([
                         'student' => 'Student',
                         'prospect' => 'Prospect',
@@ -117,7 +119,7 @@ class ManageFormSubmissions extends ManageRelatedRecords
                 ViewAction::make()
                     ->modalHeading(fn (FormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
                     ->schema(fn (FormSubmission $record): ?array => ($record->author && $record->submissible->is_authenticated) ? [
-                        Section::make('Authenticated author')
+                        Section::make('Authenticated Submitter')
                             ->schema([
                                 TextEntry::make('author.' . $record->author::displayNameKey())
                                     ->label('Name'),
