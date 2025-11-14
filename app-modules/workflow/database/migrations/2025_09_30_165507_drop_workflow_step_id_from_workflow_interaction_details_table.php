@@ -34,57 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Filament\Blocks\InteractionBlock;
-use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
-use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
-use AdvisingApp\Workflow\Jobs\InteractionWorkflowActionJob;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
-
-/**
- * @mixin IdeHelperWorkflowInteractionDetails
- */
-class WorkflowInteractionDetails extends WorkflowDetails implements Auditable
-{
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'interaction_initiative_id',
-        'interaction_driver_id',
-        'division_id',
-        'interaction_outcome_id',
-        'interaction_relation_id',
-        'interaction_status_id',
-        'interaction_type_id',
-        'start_datetime',
-        'end_datetime',
-        'subject',
-        'description',
-    ];
-
-    protected $casts = [
-        'start_datetime' => 'datetime',
-        'end_datetime' => 'datetime',
-    ];
-
-    public function getLabel(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'Interaction';
+        Schema::table('workflow_interaction_details', function (Blueprint $table) {
+            $table->dropColumn('workflow_step_id');
+        });
     }
 
-    public function getBlock(): WorkflowActionBlock
+    public function down(): void
     {
-        return InteractionBlock::make();
+        Schema::table('workflow_interaction_details', function (Blueprint $table) {
+            $table->foreignUuid('workflow_run_id')->constrained('workflow_runs');
+        });
     }
-
-    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
-    {
-        return new InteractionWorkflowActionJob($workflowRunStep);
-    }
-}
+};

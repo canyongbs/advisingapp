@@ -70,7 +70,7 @@ abstract class WorkflowDetails extends BaseModel
             //            CareTeamBlock::make(),
             EngagementEmailBlock::make(),
             EngagementSmsBlock::make(),
-            //            InteractionBlock::make(),
+            InteractionBlock::make(),
             ProactiveAlertBlock::make(),
             SubscriptionBlock::make(),
             //            TagsBlock::make(),

@@ -42,6 +42,7 @@ use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
+use AdvisingApp\Workflow\Models\WorkflowInteractionDetails;
 use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowSubscriptionDetails;
@@ -256,6 +257,19 @@ class WorkflowStepsRelationManager extends RelationManager
             'workflow_subscription_block' => WorkflowSubscriptionDetails::create([
                 'user_ids' => $transformedData['user_ids'],
                 'remove_prior' => $transformedData['remove_prior'],
+            ]),
+            'workflow_interaction_block' => WorkflowInteractionDetails::create([
+                'interaction_initiative_id' => $transformedData['interaction_initiative_id'],
+                'interaction_driver_id' => $transformedData['interaction_driver_id'],
+                'division_id' => $transformedData['division_id'],
+                'interaction_outcome_id' => $transformedData['interaction_outcome_id'],
+                'interaction_relation_id' => $transformedData['interaction_relation_id'],
+                'interaction_status_id' => $transformedData['interaction_status_id'],
+                'interaction_type_id' => $transformedData['interaction_type_id'],
+                'start_datetime' => $transformedData['start_datetime'],
+                'end_datetime' => $transformedData['end_datetime'],
+                'subject' => $transformedData['subject'],
+                'description' => $transformedData['description'],
             ]),
             default => null,
         };
