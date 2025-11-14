@@ -34,61 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
+use App\Features\AiAssistantLinkFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Ai\Models\AiAssistantLink;
-use AdvisingApp\Ai\Models\QnaAdvisorLink;
-use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Http;
-use Spatie\Multitenancy\Jobs\TenantAware;
-
-class FetchQnaAdvisorLinkParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
-{
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public int $timeout = 600;
-
-    public int $tries = 60;
-
-    public function __construct(
-        protected QnaAdvisorLink | AiAssistantLink $link,
-    ) {}
-
-    public function handle(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (filled($this->link->parsing_results)) {
-            return;
-        }
-
-        $response = Http::withToken(app(AiIntegrationsSettings::class)->jina_deepsearch_v1_api_key)
-            ->withHeaders([
-                'X-Retain-Images' => 'none',
-            ])
-            ->get("https://r.jina.ai/{$this->link->url}");
-
-        if (! $response->successful()) {
-            $this->release();
-
-            return;
-        }
-
-        $this->link->parsing_results = $response->body();
-        $this->link->save();
+        AiAssistantLinkFeature::activate();
     }
 
-    public function uniqueId(): string
+    public function down(): void
     {
-        return $this->link->id;
+        AiAssistantLinkFeature::deactivate();
     }
-}
+};
