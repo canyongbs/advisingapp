@@ -36,7 +36,10 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
+use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
@@ -75,7 +78,7 @@ class UploadFormFieldBlock extends FormFieldBlock
     /**
      * @return array<string, mixed>
      */
-    public static function getFormKitSchema(SubmissibleField $field): array
+    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
         return [
             '$formkit' => 'upload',

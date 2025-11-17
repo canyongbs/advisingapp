@@ -36,11 +36,14 @@
 
 namespace AdvisingApp\Form\Actions;
 
+use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\UploadFormFieldBlock;
+use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormField;
 use AdvisingApp\Form\Models\FormFieldSubmission;
 use AdvisingApp\Form\Models\Submission;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -83,20 +86,58 @@ class ProcessSubmissionField
             }
         }
 
-        if ($submission->author) {
+        if ($fields[$fieldId] === EducatableEmailFormFieldBlock::type()) {
+            $this->handleEducatableEmailField($submission, $response);
+        }
+    }
+
+    protected function handleEducatableEmailField(Submission $submission, mixed $response): void
+    {
+        $submissible = $submission->submissible;
+
+        if ($submission->author && $submission->author instanceof Prospect) {
+            if (in_array($submissible::class, [Form::class, Application::class])) {
+                $this->updateProspectEmail($submission->author, $response);
+            }
+
             return;
         }
 
-        if ($fields[$fieldId] !== EducatableEmailFormFieldBlock::type()) {
+        if ($submission->author) {
             return;
         }
 
         $author = ($this->resolveSubmissionAuthorFromEmail)($response);
 
-        if (! $author) {
+        if ($author) {
+            $submission->author()->associate($author);
+        }
+    }
+
+    protected function updateProspectEmail(Prospect $prospect, ?string $newEmail): void
+    {
+        if (blank($newEmail)) {
             return;
         }
 
-        $submission->author()->associate($author);
+        $currentEmail = $prospect->primaryEmailAddress?->address;
+
+        if ($currentEmail === $newEmail) {
+            return;
+        }
+
+        if ($prospect->primaryEmailAddress) {
+            $prospect->primaryEmailAddress->update([
+                'address' => $newEmail,
+            ]);
+        } else {
+            $emailAddress = $prospect->emailAddresses()->create([
+                'address' => $newEmail,
+                'order' => 1,
+            ]);
+
+            $prospect->primaryEmailAddress()->associate($emailAddress);
+            $prospect->save();
+        }
     }
 }

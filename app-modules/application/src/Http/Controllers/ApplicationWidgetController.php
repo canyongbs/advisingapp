@@ -111,7 +111,7 @@ class ApplicationWidgetController extends Controller
         );
     }
 
-    public function view(GenerateFormKitSchema $generateSchema, Application $application): JsonResponse
+    public function view(Application $application): JsonResponse
     {
         return response()->json(
             [
@@ -121,7 +121,6 @@ class ApplicationWidgetController extends Controller
                     name: 'widgets.applications.api.request-authentication',
                     parameters: ['application' => $application],
                 ),
-                'schema' => $generateSchema($application),
                 'primary_color' => collect(Color::all()[$application->primary_color ?? 'blue'])
                     ->map(Color::convertToRgb(...))
                     ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
@@ -196,7 +195,7 @@ class ApplicationWidgetController extends Controller
         ]);
     }
 
-    public function authenticate(Request $request, Application $application, ApplicationAuthentication $authentication): JsonResponse
+    public function authenticate(Request $request, GenerateFormKitSchema $generateSchema, Application $application, ApplicationAuthentication $authentication): JsonResponse
     {
         if ($authentication->isExpired()) {
             return response()->json([
@@ -222,6 +221,7 @@ class ApplicationWidgetController extends Controller
                     'application' => $authentication->submissible,
                 ],
             ),
+            'schema' => $generateSchema->withAuthor($authentication->author)($application),
         ]);
     }
 

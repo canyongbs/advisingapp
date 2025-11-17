@@ -67,9 +67,12 @@ class DefaultFieldBlockRegistry
      */
     public static function keyByType(): array
     {
-        /** @var FormFieldBlock $block */
         return collect(static::get())
-            ->mapWithKeys(fn (string $block): array => [$block::type() => $block])
+            ->mapWithKeys(function (string $block): array {
+                /** @var class-string<FormFieldBlock> $block */
+
+                return [$block::type() => $block];
+            })
             ->all();
     }
 }

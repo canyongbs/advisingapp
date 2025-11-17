@@ -38,11 +38,27 @@ namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleStep;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Collection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class GenerateFormKitSchema
 {
+    protected Student | Prospect | null $author = null;
+
+    public function withAuthor(Student | Prospect | null $author): static
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
+    public function getAuthor(): Student | Prospect | null
+    {
+        return $this->author;
+    }
+
     public function __invoke(Submissible $submissible): array
     {
         return [
@@ -73,7 +89,7 @@ class GenerateFormKitSchema
                 'small' => ['$el' => 'small', 'children' => $this->content($blocks, $component['content'] ?? [], $submissible, $fields)],
                 'text' => $this->text($component),
                 'image' => $this->getImageSrc($component, $submissible),
-                'tiptapBlock' => ($field = ($fields[$component['attrs']['id']] ?? null)) ? $blocks[$component['attrs']['type']]::getFormKitSchema($field) : [],
+                'tiptapBlock' => ($field = ($fields[$component['attrs']['id']] ?? null)) ? $blocks[$component['attrs']['type']]::getFormKitSchema($field, $submissible, $this->author) : [],
                 default => [],
             },
             $content,

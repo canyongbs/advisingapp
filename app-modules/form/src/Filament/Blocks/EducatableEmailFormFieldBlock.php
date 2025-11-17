@@ -36,8 +36,13 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
+use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
+use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput as FilamentTextInput;
 
@@ -68,14 +73,27 @@ class EducatableEmailFormFieldBlock extends FormFieldBlock
         ];
     }
 
-    public static function getFormKitSchema(SubmissibleField $field): array
+    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
-        return [
+        $schema = [
             '$formkit' => 'email',
             'label' => $field->label,
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
         ];
+
+        if ($author && $submissible && in_array($submissible::class, [Form::class, Application::class])) {
+            $schema['value'] = $author->primaryEmailAddress?->address ?? '';
+
+            if ($author instanceof Student) {
+                $schema['disabled'] = true;
+                $schema['help'] = 'This data is synchronized from your college\'s student information system. To update this data, please update your information in the source system and wait 24 hours for it to be reflected here.';
+            } elseif ($author instanceof Prospect) {
+                $schema['help'] = 'This field has been pre-populated with the information we have on file. Please feel free to update it and we will update our records accordingly.';
+            }
+        }
+
+        return $schema;
     }
 
     public static function getValidationRules(SubmissibleField $field): array

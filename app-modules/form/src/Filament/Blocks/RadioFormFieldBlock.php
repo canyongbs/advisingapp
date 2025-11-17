@@ -36,7 +36,10 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
+use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Forms\Components\KeyValue;
 
 class RadioFormFieldBlock extends FormFieldBlock
@@ -61,7 +64,7 @@ class RadioFormFieldBlock extends FormFieldBlock
         ];
     }
 
-    public static function getFormKitSchema(SubmissibleField $field): array
+    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
         return [
             '$formkit' => 'radio',
