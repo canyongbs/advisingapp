@@ -54,7 +54,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
@@ -96,8 +95,9 @@ trait HasSharedFormConfiguration
             Toggle::make('is_authenticated')
                 ->label('Requires authentication')
                 ->helperText('If enabled, only students and prospects can submit this form, and they must verify their email address first.')
-                ->live()
-                ->afterStateUpdated(fn (Set $set, $state) => ! $state ? $set('generate_prospects', false) : null),
+                ->default((bool) request()->query('is_authenticated'))
+                ->disabled()
+                ->dehydrated(),
             Toggle::make('generate_prospects')
                 ->label('Generate Prospects')
                 ->helperText('If enabled, a request to submit by an unknown prospect will result in a new prospect being created.')
@@ -156,7 +156,7 @@ trait HasSharedFormConfiguration
     public function fieldBuilder(): TiptapEditor
     {
         return TiptapEditor::make('content')
-            ->blocks(FormFieldBlockRegistry::get())
+            ->blocks(fn (Get $get): array => FormFieldBlockRegistry::get($get('is_authenticated')))
             ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
             ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()

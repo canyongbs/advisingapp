@@ -36,39 +36,15 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
-class FormFieldBlockRegistry
+class DefaultFieldBlockRegistry
 {
-    /**
-     * @return array<class-string<FormFieldBlock> | array<class-string<FormFieldBlock>>>
-     */
-    public static function get(bool $isAuthenticated = true): array
-    {
-        if (! $isAuthenticated) {
-            return static::getUnmappedBlocks();
-        }
-
-        return [
-            'Mapped Blocks' => static::getMappedBlocks(),
-            'Unmapped Blocks' => static::getUnmappedBlocks(),
-        ];
-    }
-
     /**
      * @return array<class-string<FormFieldBlock>>
      */
-    public static function getMappedBlocks(): array
+    public static function get(): array
     {
         return [
             EducatableEmailFormFieldBlock::class,
-        ];
-    }
-
-    /**
-     * @return array<class-string<FormFieldBlock>>
-     */
-    public static function getUnmappedBlocks(): array
-    {
-        return [
             TextInputFormFieldBlock::class,
             TextAreaFormFieldBlock::class,
             SelectFormFieldBlock::class,
@@ -93,7 +69,6 @@ class FormFieldBlockRegistry
     {
         /** @var FormFieldBlock $block */
         return collect(static::get())
-            ->flatten()
             ->mapWithKeys(fn (string $block): array => [$block::type() => $block])
             ->all();
     }

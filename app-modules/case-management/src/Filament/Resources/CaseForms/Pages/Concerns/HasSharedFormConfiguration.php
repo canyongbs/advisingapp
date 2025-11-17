@@ -40,7 +40,7 @@ use AdvisingApp\CaseManagement\Models\CaseForm;
 use AdvisingApp\CaseManagement\Models\CaseFormField;
 use AdvisingApp\CaseManagement\Models\CaseFormStep;
 use AdvisingApp\Form\Enums\Rounding;
-use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\Form\Filament\Blocks\DefaultFieldBlockRegistry;
 use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use App\Filament\Forms\Components\ColorSelect;
@@ -148,7 +148,7 @@ trait HasSharedFormConfiguration
     public function fieldBuilder(): TiptapEditor
     {
         return TiptapEditor::make('content')
-            ->blocks(FormFieldBlockRegistry::get())
+            ->blocks(DefaultFieldBlockRegistry::get())
             ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
             ->placeholder('Drag blocks here to build your case form')
             ->hiddenLabel()

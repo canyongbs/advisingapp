@@ -43,7 +43,7 @@ use Filament\Forms\Components\TextInput as FilamentTextInput;
 
 class EducatableEmailFormFieldBlock extends FormFieldBlock
 {
-    public ?string $label = 'Filler email address';
+    public ?string $label = 'Primary Email Address';
 
     public string $rendered = 'form::blocks.submissions.educatable-email';
 
