@@ -37,16 +37,25 @@
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Division\Models\Division;
 use AdvisingApp\ResourceHub\Filament\Actions\DraftResourceHubArticleWithAiAction;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
+use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action as BaseAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Model;
@@ -61,47 +70,93 @@ class EditResourceHubArticle extends EditRecord
     {
         return $schema
             ->components([
-                Section::make()
-                    ->schema([
-                        TextInput::make('title')
-                            ->label('Article Title')
-                            ->required()
-                            ->string()
-                            ->suffixAction(
-                                BaseAction::make('saveArticleTitle')
-                                    ->icon('heroicon-o-check')
-                                    ->action(function (Model $record, $state) {
-                                        if ($record->title === $state) {
-                                            return;
-                                        }
+                Tabs::make()
+                    ->tabs([
+                        Tab::make('Content')
+                            ->schema([
+                                TiptapEditor::make('article_details')
+                                    ->label('Article Details')
+                                    ->columnSpanFull()
+                                    ->extraInputAttributes([
+                                        'style' => 'min-height: 32rem;',
+                                        'class' => 'text-gray-900 dark:bg-gray-800 dark:text-gray-100 border-2 dark:border-0 border-gray-200 rounded-none mx-4 my-2 px-8 py-4',
+                                    ]),
+                                Actions::make([
+                                    DraftResourceHubArticleWithAiAction::make(),
+                                ])
+                                    ->visible(
+                                        auth()->user()->hasLicense(LicenseType::ConversationalAi)
+                                    ),
+                            ]),
+                        Tab::make('Properties')
+                            ->schema([
+                                TextInput::make('title')
+                                    ->label('Article Title')
+                                    ->required()
+                                    ->string()
+                                    ->suffixAction(
+                                        BaseAction::make('saveArticleTitle')
+                                            ->icon('heroicon-o-check')
+                                            ->action(function (Model $record, $state) {
+                                                if ($record->title === $state) {
+                                                    return;
+                                                }
 
-                                        $record->update([
-                                            'title' => $state,
-                                        ]);
+                                                $record->update([
+                                                    'title' => $state,
+                                                ]);
 
-                                        if ($record->wasChanged('title')) {
-                                            Notification::make()
-                                                ->title("Title successfully updated to '{$record->title}'")
-                                                ->success()
-                                                ->duration(3000)
-                                                ->send();
-                                        }
-                                    }),
-                            ),
-                    ]),
-                TiptapEditor::make('article_details')
-                    ->label('Article Details')
-                    ->columnSpanFull()
-                    ->extraInputAttributes([
-                        'style' => 'min-height: 32rem;',
-                        'class' => 'text-gray-900 dark:bg-gray-800 dark:text-gray-100 border-2 dark:border-0 border-gray-200 rounded-none mx-4 my-2 px-8 py-4',
-                    ]),
-                Actions::make([
-                    DraftResourceHubArticleWithAiAction::make(),
-                ])
-                    ->visible(
-                        auth()->user()->hasLicense(LicenseType::ConversationalAi)
-                    ),
+                                                if ($record->wasChanged('title')) {
+                                                    Notification::make()
+                                                        ->title("Title successfully updated to '{$record->title}'")
+                                                        ->success()
+                                                        ->duration(3000)
+                                                        ->send();
+                                                }
+                                            }),
+                                    )
+                                    ->columnSpanFull(),
+                                Textarea::make('notes')
+                                    ->label('Notes')
+                                    ->columnSpanFull()
+                                    ->extraInputAttributes(['style' => 'min-height: 12rem;']),
+                                Toggle::make('public')
+                                    ->label('Public')
+                                    ->default(false)
+                                    ->onColor('success')
+                                    ->offColor('gray'),
+                            ])
+                            ->columns(2),
+                        Tab::make('Metadata')
+                            ->schema([
+                                Select::make('status_id')
+                                    ->label('Status')
+                                    ->relationship('status', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->exists((new ResourceHubStatus())->getTable(), (new ResourceHubStatus())->getKeyName()),
+                                Select::make('quality_id')
+                                    ->label('Quality')
+                                    ->relationship('quality', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->exists((new ResourceHubQuality())->getTable(), (new ResourceHubQuality())->getKeyName()),
+                                Select::make('category_id')
+                                    ->label('Category')
+                                    ->relationship('category', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->exists((new ResourceHubCategory())->getTable(), (new ResourceHubCategory())->getKeyName()),
+                                Select::make('division')
+                                    ->label('Division')
+                                    ->multiple()
+                                    ->relationship('division', 'name')
+                                    ->searchable(['name', 'code'])
+                                    ->preload()
+                                    ->exists((new Division())->getTable(), (new Division())->getKeyName()),
+                            ]),
+                    ])
+                    ->columnSpanFull(),                
             ]);
     }
 
@@ -125,13 +180,6 @@ class EditResourceHubArticle extends EditRecord
                 ->button()
                 ->color('primary')
                 ->label('Save'),
-            EditAction::make()
-                ->label('Edit Properties')
-                ->button()
-                ->outlined()
-                ->record($this->record)
-                ->schema(resolve(EditResourceHubArticleMetadata::class)->form())
-                ->successNotificationTitle('Article metadata successfully updated'),
         ];
     }
 }
