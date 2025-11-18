@@ -59,7 +59,14 @@ class FormFieldBlockRegistry
     public static function getMappedBlocks(): array
     {
         return [
+            EducatableFirstNameFormFieldBlock::class,
+            EducatableLastNameFormFieldBlock::class,
+            EducatablePreferredNameFormFieldBlock::class,
+            EducatableBirthdateFormFieldBlock::class,
+            EducatableAddressFormFieldBlock::class,
             EducatableEmailFormFieldBlock::class,
+            EducatablePhoneNumberFormFieldBlock::class,
+            EducatableUploadFormFieldBlock::class,
         ];
     }
 

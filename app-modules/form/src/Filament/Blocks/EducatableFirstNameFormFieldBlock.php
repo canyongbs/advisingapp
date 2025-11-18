@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -36,73 +36,69 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\TextInput;
-use FilamentTiptapEditor\TiptapBlock;
+use Filament\Forms\Components\TextInput as FilamentTextInput;
 
-abstract class FormFieldBlock extends TiptapBlock
+class EducatableFirstNameFormFieldBlock extends FormFieldBlock
 {
+    public ?string $label = 'First Name';
+
     public string $preview = 'form::blocks.previews.default';
 
     public string $rendered = 'form::blocks.submissions.default';
 
-    public ?string $icon = 'heroicon-m-cube';
+    public ?string $icon = 'heroicon-m-user';
+
+    public static function type(): string
+    {
+        return 'educatable_first_name';
+    }
 
     public function getFormSchema(): array
     {
         return [
-            TextInput::make('label')
+            FilamentTextInput::make('label')
                 ->required()
                 ->string()
-                ->maxLength(255),
+                ->maxLength(255)
+                ->default('First Name'),
             Checkbox::make('isRequired')
-                ->label('Required'),
-            ...$this->fields(),
+                ->label('Required')
+                ->default(true),
         ];
     }
 
-    public function getLabel(): string
+    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
-        return $this->label ?? (string) str(static::type())
-            ->afterLast('.')
-            ->kebab()
-            ->replace(['-', '_'], ' ')
-            ->ucfirst();
+        $schema = [
+            '$formkit' => 'text',
+            'label' => $field->label,
+            'name' => $field->getKey(),
+            ...($field->is_required ? ['validation' => 'required'] : []),
+        ];
+
+        if ($author && $submissible && in_array($submissible::class, [Form::class, Application::class])) {
+            if ($author instanceof Student) {
+                $schema['value'] = $author->first ?? '';
+                $schema['disabled'] = true;
+                $schema['help'] = 'This data is synchronized from your college\'s student information system. To update this data, please update your information in the source system and wait 24 hours for it to be reflected here.';
+            } elseif ($author instanceof Prospect) {
+                $schema['value'] = $author->first_name ?? '';
+                $schema['help'] = 'This field has been pre-populated with the information we have on file. Please feel free to update it and we will update our records accordingly.';
+            }
+        }
+
+        return $schema;
     }
-
-    public function getIdentifier(): string
-    {
-        return static::type();
-    }
-
-    public function fields(): array
-    {
-        return [];
-    }
-
-    abstract public static function type(): string;
-
-    abstract public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array;
 
     public static function getValidationRules(SubmissibleField $field): array
     {
-        return [];
-    }
-
-    public static function getNestedValidationRules(SubmissibleField $field): array
-    {
-        return [];
-    }
-
-    public static function getSubmissionState(SubmissibleField $field, mixed $response): array
-    {
-        return [
-            'field' => $field,
-            'response' => $response,
-        ];
+        return ['string', 'max:255'];
     }
 }
