@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages;
 
+use AdvisingApp\ResourceHub\Filament\Actions\CreateConcernAction;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use Filament\Actions\Action;
@@ -127,6 +128,7 @@ class ViewResourceHubArticle extends ViewRecord
                 ->color(fn (): string => $resourceHubArticle->isUpvoted() ? 'success' : 'gray')
                 ->icon('heroicon-m-hand-thumb-up')
                 ->action(fn () => $resourceHubArticle->toggleUpvote()),
+            CreateConcernAction::make(),
             EditAction::make(),
             DeleteAction::make(),
         ];
