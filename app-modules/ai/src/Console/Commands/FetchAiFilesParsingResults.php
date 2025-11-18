@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Console\Commands;
 
 use AdvisingApp\Ai\Jobs\Advisors\FetchAiAssistantFileParsingResults;
+use AdvisingApp\Ai\Jobs\AiAssistants\FetchAiAssistantLinkParsingResults;
 use AdvisingApp\Ai\Jobs\QnaAdvisors\FetchQnaAdvisorFileParsingResults;
 use AdvisingApp\Ai\Jobs\QnaAdvisors\FetchQnaAdvisorLinkParsingResults;
 use AdvisingApp\Ai\Models\AiAssistantFile;
@@ -76,7 +77,7 @@ class FetchAiFilesParsingResults extends Command
             AiAssistantLink::query()
                 ->whereNull('parsing_results')
                 ->where('created_at', '>=', now()->subHour())
-                ->eachById(fn (AiAssistantLink $link) => dispatch(new FetchQnaAdvisorLinkParsingResults($link)));
+                ->eachById(fn (AiAssistantLink $link) => dispatch(new FetchAiAssistantLinkParsingResults($link)));
         }
     }
 }
