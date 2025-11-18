@@ -1,0 +1,26 @@
+{
+    "name": "canyon-gbs/group-appointment",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\GroupAppointment\\": "src/",
+            "AdvisingApp\\GroupAppointment\\Tests\\": "tests/",
+            "AdvisingApp\\GroupAppointment\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\GroupAppointment\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\GroupAppointment\\Providers\\GroupAppointmentServiceProvider"
+            ]
+        }
+    }
+}
