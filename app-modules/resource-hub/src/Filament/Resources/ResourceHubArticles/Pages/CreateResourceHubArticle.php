@@ -101,17 +101,11 @@ class CreateResourceHubArticle extends CreateRecord
                             ->default(
                                 fn () => [auth()->user()->team?->division?->getKey()
                                     ?? Division::query()
-                                        ->where('is_default', true)
                                         ->first()
                                         ?->getKey()]
                             )
                             ->saveRelationshipsWhenHidden()
-                            ->visible(function (): bool {
-                                $divisionCount = Division::count();
-                                $hasDefault = Division::where('is_default', true)->exists();
-
-                                return $divisionCount > 1 && ! $hasDefault;
-                            })
+                            ->visible(fn (): bool => Division::count() > 1)
                             ->exists((new Division())->getTable(), (new Division())->getKeyName()),
                     ]),
             ]);
