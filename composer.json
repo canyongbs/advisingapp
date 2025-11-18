@@ -60,7 +60,7 @@
         "canyon-gbs/group": "*",
         "canyon-gbs/stock-media": "*",
         "canyon-gbs/workflow": "*",
-        "canyongbs/common": "^2.0",
+        "canyongbs/common": "^2.2.1",
         "canyongbs/filament-tiptap-editor": "^2.0.1",
         "canyongbs/model-state-machine": "^2.0.2",
         "cknow/laravel-money": "^8.1",
