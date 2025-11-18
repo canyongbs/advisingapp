@@ -78,7 +78,7 @@ class ProcessSubmissionField
         $field = $submission->fields()->find($fieldId);
 
         if ($field && $field->type === UploadFormFieldBlock::type() && is_array($response)) {
-            $fieldSubmission = $field->pivot;
+            $fieldSubmission = $field->pivot; /** @phpstan-ignore property.notFound */
             assert($fieldSubmission instanceof FormFieldSubmission || $fieldSubmission instanceof ApplicationFieldSubmission);
 
             foreach ($response as $file) {
