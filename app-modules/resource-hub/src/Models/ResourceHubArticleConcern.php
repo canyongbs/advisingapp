@@ -70,7 +70,7 @@ class ResourceHubArticleConcern extends BaseModel implements Auditable
      */
     public function createdBy(): BelongsTo
     {
-      return $this->belongsTo(User::class, 'created_by_id');
+        return $this->belongsTo(User::class, 'created_by_id');
     }
 
     /**
@@ -78,6 +78,6 @@ class ResourceHubArticleConcern extends BaseModel implements Auditable
      */
     public function resourceHubArticle(): BelongsTo
     {
-      return $this->belongsTo(ResourceHubArticle::class);
+        return $this->belongsTo(ResourceHubArticle::class);
     }
 }
