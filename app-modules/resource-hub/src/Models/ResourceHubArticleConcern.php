@@ -66,7 +66,7 @@ class ResourceHubArticleConcern extends BaseModel implements Auditable
     ];
 
     /**
-     * @return BelongsTo<ResourceHubArticle, $this>
+     * @return BelongsTo<User, $this>
      */
     public function createdBy(): BelongsTo
     {
