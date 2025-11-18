@@ -38,6 +38,7 @@ namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
+use App\Features\AiAssistantLinkFeature;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -74,7 +75,7 @@ class UploadAssistantFilesToVectorStore implements ShouldQueue, TenantAware, Sho
         }
 
         $parsedFiles = $this->assistant->files()->whereNotNull('parsing_results')->get()->all();
-        $parsedLinks = $this->assistant->links()->whereNotNull('parsing_results')->get()->all();
+        $parsedLinks = AiAssistantLinkFeature::active() ? $this->assistant->links()->whereNotNull('parsing_results')->get()->all() : [];
 
         $parsedData = [...$parsedFiles, ...$parsedLinks];
 
