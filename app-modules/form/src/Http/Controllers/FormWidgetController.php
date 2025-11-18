@@ -50,6 +50,7 @@ use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Http\Controllers\Controller;
 use Closure;
 use Filament\Support\Colors\Color;
@@ -225,6 +226,10 @@ class FormWidgetController extends Controller
             }],
         ]);
 
+        $author = $authentication->author;
+
+        assert($author instanceof Prospect || $author instanceof Student || $author === null);
+
         return response()->json([
             'submission_url' => URL::signedRoute(
                 name: 'widgets.forms.api.submit',
@@ -233,7 +238,7 @@ class FormWidgetController extends Controller
                     'form' => $authentication->submissible,
                 ],
             ),
-            'schema' => $generateSchema->withAuthor($authentication->author)($form),
+            'schema' => $generateSchema->withAuthor($author)($form),
         ]);
     }
 

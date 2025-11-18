@@ -37,6 +37,7 @@
 namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationFieldSubmission;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Form\Filament\Blocks\EducatableAddressFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableBirthdateFormFieldBlock;
@@ -48,6 +49,7 @@ use AdvisingApp\Form\Filament\Blocks\EducatablePreferredNameFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableUploadFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\UploadFormFieldBlock;
 use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Form\Models\FormFieldSubmission;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Form\Models\Submission;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -69,25 +71,26 @@ class ProcessSubmissionField
     {
         $submission->fields()->attach($fieldId, [
             'id' => Str::orderedUuid(),
-            'response' => $response,
+            'response' => $response ?? '',
         ]);
 
         /** @var SubmissibleField|null $field */
         $field = $submission->fields()->find($fieldId);
 
         if ($field && $field->type === UploadFormFieldBlock::type() && is_array($response)) {
-            $formFieldSubmission = $field->pivot;
+            $fieldSubmission = $field->pivot;
+            assert($fieldSubmission instanceof FormFieldSubmission || $fieldSubmission instanceof ApplicationFieldSubmission);
 
             foreach ($response as $file) {
                 $key = ltrim($file['path'], '/');
 
-                $media = $formFieldSubmission
+                $media = $fieldSubmission
                     ->addMediaFromDisk($key, 's3')
                     ->usingFileName($file['originalFileName'] ?? basename($key))
                     ->toMediaCollection('files', 's3');
 
                 Storage::disk('s3')->delete($key);
-                $formFieldSubmission->update([
+                $fieldSubmission->update([
                     'response' => [
                         'media_id' => $media->id,
                         'file_name' => $media->file_name,
@@ -114,7 +117,7 @@ class ProcessSubmissionField
         }
 
         if ($fields[$fieldId] === EducatablePreferredNameFormFieldBlock::type()) {
-            $this->handleEducatableField($submission, $response, 'preferred');
+            $this->handleEducatablePreferredNameField($submission, $response);
         }
 
         if ($fields[$fieldId] === EducatableBirthdateFormFieldBlock::type()) {
@@ -209,6 +212,37 @@ class ProcessSubmissionField
 
         $prospect->update([
             $attribute => $value,
+        ]);
+    }
+
+    protected function handleEducatablePreferredNameField(Submission $submission, mixed $response): void
+    {
+        $submissible = $submission->submissible;
+
+        if (! $submission->author instanceof Prospect) {
+            return;
+        }
+
+        if (! in_array($submissible::class, [Form::class, Application::class])) {
+            return;
+        }
+
+        $this->updateProspectPreferredName($submission->author, $response);
+    }
+
+    protected function updateProspectPreferredName(Prospect $prospect, ?string $value): void
+    {
+        // Treat empty string as null (clear the field)
+        $value = blank($value) ? null : $value;
+
+        $currentValue = $prospect->preferred;
+
+        if ($currentValue === $value) {
+            return;
+        }
+
+        $prospect->update([
+            'preferred' => $value,
         ]);
     }
 
@@ -339,6 +373,9 @@ class ProcessSubmissionField
         }
     }
 
+    /**
+     * @param array<int, array{path: string, originalFileName?: string}> $response
+     */
     protected function handleEducatableUploadField(Submission $submission, SubmissibleField $field, array $response): void
     {
         $submissible = $submission->submissible;
@@ -353,17 +390,18 @@ class ProcessSubmissionField
             return;
         }
 
-        $formFieldSubmission = $field->pivot;
+        $fieldSubmission = $field->pivot; /** @phpstan-ignore property.notFound */
+        assert($fieldSubmission instanceof FormFieldSubmission);
 
         foreach ($response as $file) {
             $key = ltrim($file['path'], '/');
 
-            $media = $formFieldSubmission
+            $media = $fieldSubmission
                 ->addMediaFromDisk($key, 's3')
                 ->usingFileName($file['originalFileName'] ?? basename($key))
                 ->toMediaCollection('files', 's3');
 
-            $formFieldSubmission->update([
+            $fieldSubmission->update([
                 'response' => [
                     'media_id' => $media->id,
                     'file_name' => $media->file_name,

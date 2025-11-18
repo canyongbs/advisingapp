@@ -64,6 +64,9 @@ class EducatablePhoneNumberFormFieldBlock extends FormFieldBlock
         return 'educatable_phone_number';
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getFormSchema(): array
     {
         return [
@@ -78,6 +81,9 @@ class EducatablePhoneNumberFormFieldBlock extends FormFieldBlock
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
         $schema = [
@@ -88,7 +94,7 @@ class EducatablePhoneNumberFormFieldBlock extends FormFieldBlock
         ];
 
         if ($author && $submissible && in_array($submissible::class, [Form::class, Application::class])) {
-            $schema['value'] = $author->primaryPhoneNumber?->number ?? '';
+            $schema['value'] = $author->primaryPhoneNumber->number ?? '';
 
             if ($author instanceof Student) {
                 $schema['disabled'] = true;
@@ -101,6 +107,9 @@ class EducatablePhoneNumberFormFieldBlock extends FormFieldBlock
         return $schema;
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public static function getValidationRules(SubmissibleField $field): array
     {
         return [

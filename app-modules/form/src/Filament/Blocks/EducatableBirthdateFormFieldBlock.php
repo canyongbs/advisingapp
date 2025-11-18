@@ -58,6 +58,9 @@ class EducatableBirthdateFormFieldBlock extends FormFieldBlock
         return 'educatable_birthdate';
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getFormSchema(): array
     {
         return [
@@ -72,6 +75,9 @@ class EducatableBirthdateFormFieldBlock extends FormFieldBlock
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
         $schema = [
@@ -96,6 +102,9 @@ class EducatableBirthdateFormFieldBlock extends FormFieldBlock
         return $schema;
     }
 
+    /**
+     * @return array<int, string>
+     */
     public static function getValidationRules(SubmissibleField $field): array
     {
         return ['date', 'nullable'];

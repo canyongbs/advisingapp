@@ -61,6 +61,12 @@ class GenerateSubmissibleValidation
         return array_merge($rules, $this->fields($blocks, $submissible->fields));
     }
 
+    /**
+     * @param array<string, class-string> $blocks
+     * @param Collection<int, SubmissibleField> $fields
+     *
+     * @return array<string, mixed>
+     */
     public function fields(array $blocks, Collection $fields): array
     {
         return $fields

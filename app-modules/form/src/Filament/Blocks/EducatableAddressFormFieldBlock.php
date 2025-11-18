@@ -60,6 +60,9 @@ class EducatableAddressFormFieldBlock extends FormFieldBlock
         return 'educatable_address';
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getFormSchema(): array
     {
         return [
@@ -74,6 +77,9 @@ class EducatableAddressFormFieldBlock extends FormFieldBlock
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
         $baseKey = $field->getKey();
@@ -101,7 +107,7 @@ class EducatableAddressFormFieldBlock extends FormFieldBlock
                     '$formkit' => 'text',
                     'name' => 'line_1',
                     'label' => 'Address Line 1',
-                    'value' => $address?->line_1 ?? '',
+                    'value' => $address->line_1 ?? '',
                     ...($disabled ? ['disabled' => true] : []),
                     ...($field->is_required ? ['validation' => 'required'] : []),
                 ],
@@ -109,21 +115,21 @@ class EducatableAddressFormFieldBlock extends FormFieldBlock
                     '$formkit' => 'text',
                     'name' => 'line_2',
                     'label' => 'Address Line 2',
-                    'value' => $address?->line_2 ?? '',
+                    'value' => $address->line_2 ?? '',
                     ...($disabled ? ['disabled' => true] : []),
                 ],
                 [
                     '$formkit' => 'text',
                     'name' => 'line_3',
                     'label' => 'Address Line 3',
-                    'value' => $address?->line_3 ?? '',
+                    'value' => $address->line_3 ?? '',
                     ...($disabled ? ['disabled' => true] : []),
                 ],
                 [
                     '$formkit' => 'text',
                     'name' => 'city',
                     'label' => 'City',
-                    'value' => $address?->city ?? '',
+                    'value' => $address->city ?? '',
                     ...($disabled ? ['disabled' => true] : []),
                     ...($field->is_required ? ['validation' => 'required'] : []),
                 ],
@@ -131,32 +137,38 @@ class EducatableAddressFormFieldBlock extends FormFieldBlock
                     '$formkit' => 'text',
                     'name' => 'state',
                     'label' => 'State',
-                    'value' => $address?->state ?? '',
+                    'value' => $address->state ?? '',
                     ...($disabled ? ['disabled' => true] : []),
                 ],
                 [
                     '$formkit' => 'text',
                     'name' => 'postal',
                     'label' => 'Postal Code',
-                    'value' => $address?->postal ?? '',
+                    'value' => $address->postal ?? '',
                     ...($disabled ? ['disabled' => true] : []),
                 ],
                 [
                     '$formkit' => 'text',
                     'name' => 'country',
                     'label' => 'Country',
-                    'value' => $address?->country ?? '',
+                    'value' => $address->country ?? '',
                     ...($disabled ? ['disabled' => true] : []),
                 ],
             ],
         ];
     }
 
+    /**
+     * @return array<int, string>
+     */
     public static function getValidationRules(SubmissibleField $field): array
     {
         return ['array', 'nullable'];
     }
 
+    /**
+     * @return array<string, array<int, string>>
+     */
     public static function getNestedValidationRules(SubmissibleField $field): array
     {
         $nestedRules = [];

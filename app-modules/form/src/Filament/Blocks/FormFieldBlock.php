@@ -93,6 +93,9 @@ abstract class FormFieldBlock extends TiptapBlock
         return [];
     }
 
+    /**
+     * @return array<string, array<int, string>>
+     */
     public static function getNestedValidationRules(SubmissibleField $field): array
     {
         return [];

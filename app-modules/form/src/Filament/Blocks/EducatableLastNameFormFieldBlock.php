@@ -60,6 +60,9 @@ class EducatableLastNameFormFieldBlock extends FormFieldBlock
         return 'educatable_last_name';
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getFormSchema(): array
     {
         return [
@@ -74,6 +77,9 @@ class EducatableLastNameFormFieldBlock extends FormFieldBlock
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
         $schema = [
@@ -97,6 +103,9 @@ class EducatableLastNameFormFieldBlock extends FormFieldBlock
         return $schema;
     }
 
+    /**
+     * @return array<int, string>
+     */
     public static function getValidationRules(SubmissibleField $field): array
     {
         return ['string', 'max:255'];
