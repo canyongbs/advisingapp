@@ -168,7 +168,7 @@ class ManageLicenseSettings extends SettingsPage
                             Toggle::make('data.addons.mobileApps')
                                 ->label('Mobile Apps'),
                             Toggle::make('data.addons.scheduleAndAppointments')
-                                ->label('Schedule & Appointments'),
+                                ->label('My Appointments'),
                             Toggle::make('data.addons.customAiAssistants')
                                 ->label('Custom AI Assistants')
                                 ->live(),
