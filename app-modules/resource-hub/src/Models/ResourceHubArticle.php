@@ -131,6 +131,14 @@ class ResourceHubArticle extends BaseModel implements Auditable, HasMedia
     {
         return $this->hasMany(ResourceHubArticleView::class, 'resource_hub_item_id');
     }
+    
+    /**
+     * @return HasMany<ResourceHubArticleConcern, $this>
+     */
+    public function concerns(): HasMany
+    {
+        return $this->hasMany(ResourceHubArticleConcern::class);
+    }
 
     /**
      * @return HasMany<ResourceHubArticleUpvote, $this>
