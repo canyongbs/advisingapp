@@ -74,15 +74,15 @@ class GenerateSubmissibleValidation
                 $blockClass = $blocks[$field->type];
                 $blockRules = $blockClass::getValidationRules($field);
                 $nestedRules = $blockClass::getNestedValidationRules($field);
-                
+
                 $result = [
                     $field->getKey() => $rules->merge($blockRules)->all(),
                 ];
-                
+
                 foreach ($nestedRules as $nestedKey => $nestedRule) {
                     $result[$field->getKey() . '.' . $nestedKey] = $nestedRule;
                 }
-                
+
                 return $result;
             })
             ->all();

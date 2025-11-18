@@ -43,13 +43,13 @@ use AdvisingApp\Form\Filament\Blocks\EducatableBirthdateFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableFirstNameFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableLastNameFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\EducatablePreferredNameFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatablePhoneNumberFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\EducatablePreferredNameFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableUploadFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\UploadFormFieldBlock;
 use AdvisingApp\Form\Models\Form;
-use AdvisingApp\Form\Models\Submission;
 use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Models\Submission;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Settings\ImportSettings;
@@ -348,6 +348,7 @@ class ProcessSubmissionField
         }
 
         $author = $submission->author;
+
         if (! $author instanceof Student && ! $author instanceof Prospect) {
             return;
         }
