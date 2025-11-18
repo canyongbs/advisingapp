@@ -38,6 +38,7 @@ namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages;
 
 use AdvisingApp\ResourceHub\Filament\Actions\CreateConcernAction;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
+use AdvisingApp\ResourceHub\Filament\Widgets\ResourceHubArticleConcernsTable;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -45,6 +46,7 @@ use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
@@ -112,6 +114,11 @@ class ViewResourceHubArticle extends ViewRecord
                                     ->label('Category'),
                                 TextEntry::make('division.name')
                                     ->label('Division'),
+                            ]),
+                        Tab::make('Concerns')
+                            ->schema([
+                                Livewire::make(ResourceHubArticleConcernsTable::class, ['resourceHubArticleId' => $this->getRecord()->getKey()]),
+                                
                             ]),
                     ])
                     ->columnSpanFull(),
