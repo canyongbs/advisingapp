@@ -39,7 +39,9 @@ namespace AdvisingApp\ResourceHub\Models;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\ResourceHub\Enums\ConcernStatus;
 use App\Models\BaseModel;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -62,4 +64,20 @@ class ResourceHubArticleConcern extends BaseModel implements Auditable
     protected $casts = [
         'status' => ConcernStatus::class,
     ];
+
+    /**
+     * @return BelongsTo<ResourceHubArticle, $this>
+     */
+    public function createdBy(): BelongsTo
+    {
+      return $this->belongsTo(User::class, 'created_by_id');
+    }
+
+    /**
+     * @return BelongsTo<ResourceHubArticle, $this>
+     */
+    public function resourceHubArticle(): BelongsTo
+    {
+      return $this->belongsTo(ResourceHubArticle::class);
+    }
 }
