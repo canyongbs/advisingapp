@@ -38,13 +38,7 @@
 >
     @php
         $addressData = is_array($response ?? null) ? $response : json_decode($response ?? '{}', true);
-        $hasAddress = filled($addressData['line_1'] ?? null) 
-            || filled($addressData['line_2'] ?? null)
-            || filled($addressData['line_3'] ?? null)
-            || filled($addressData['city'] ?? null)
-            || filled($addressData['state'] ?? null)
-            || filled($addressData['postal'] ?? null)
-            || filled($addressData['country'] ?? null);
+        $hasAddress = filled($addressData['line_1'] ?? null) || filled($addressData['line_2'] ?? null) || filled($addressData['line_3'] ?? null) || filled($addressData['city'] ?? null) || filled($addressData['state'] ?? null) || filled($addressData['postal'] ?? null) || filled($addressData['country'] ?? null);
     @endphp
 
     @if ($hasAddress)
@@ -58,7 +52,9 @@
             @if (filled($addressData['line_3'] ?? null))
                 <div>{{ $addressData['line_3'] }}</div>
             @endif
-            @if (filled($addressData['city'] ?? null) || filled($addressData['state'] ?? null) || filled($addressData['postal'] ?? null))
+            @if (filled($addressData['city'] ?? null) ||
+                    filled($addressData['state'] ?? null) ||
+                    filled($addressData['postal'] ?? null))
                 <div>
                     {{ collect([$addressData['city'] ?? null, $addressData['state'] ?? null, $addressData['postal'] ?? null])->filter()->implode(', ') }}
                 </div>
