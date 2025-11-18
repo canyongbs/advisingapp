@@ -98,6 +98,14 @@ class CreateResourceHubArticle extends CreateRecord
                             ->relationship('division', 'name')
                             ->searchable(['name', 'code'])
                             ->preload()
+                            ->default(
+                                fn () => [auth()->user()->team?->division?->getKey()
+                                    ?? Division::query()
+                                        ->first()
+                                        ?->getKey()]
+                            )
+                            ->saveRelationshipsWhenHidden()
+                            ->visible(fn (): bool => Division::count() > 1)
                             ->exists((new Division())->getTable(), (new Division())->getKeyName()),
                     ]),
             ]);

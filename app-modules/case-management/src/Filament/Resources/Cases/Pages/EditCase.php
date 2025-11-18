@@ -83,12 +83,7 @@ class EditCase extends EditRecord
                                 ?->getKey()
                     )
                     ->label('Division')
-                    ->visible(function () {
-                        $divisionCount = Division::count();
-                        $hasDefault = Division::where('is_default', true)->exists();
-
-                        return $divisionCount > 1 && ! $hasDefault;
-                    })
+                    ->visible(fn (): bool => Division::count() > 1)
                     ->required()
                     ->exists((new Division())->getTable(), 'id'),
                 Select::make('status_id')
