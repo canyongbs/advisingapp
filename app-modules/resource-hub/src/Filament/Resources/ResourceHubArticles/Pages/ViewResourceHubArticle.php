@@ -118,7 +118,6 @@ class ViewResourceHubArticle extends ViewRecord
                         Tab::make('Concerns')
                             ->schema([
                                 Livewire::make(ResourceHubArticleConcernsTable::class, ['resourceHubArticleId' => $this->getRecord()->getKey()]),
-                                
                             ]),
                     ])
                     ->columnSpanFull(),
