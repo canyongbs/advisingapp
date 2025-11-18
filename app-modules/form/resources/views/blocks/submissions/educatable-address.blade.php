@@ -42,7 +42,7 @@
     @endphp
 
     @if ($hasAddress)
-        <div class="space-y-1 text-sm">
+        <div class="space-y-1">
             @if (filled($addressData['line_1'] ?? null))
                 <div>{{ $addressData['line_1'] }}</div>
             @endif
