@@ -38,6 +38,7 @@ namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
+use App\Features\AiAssistantLinkFeature;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -74,8 +75,11 @@ class UploadAssistantFilesToVectorStore implements ShouldQueue, TenantAware, Sho
         }
 
         $parsedFiles = $this->assistant->files()->whereNotNull('parsing_results')->get()->all();
+        $parsedLinks = AiAssistantLinkFeature::active() ? $this->assistant->links()->whereNotNull('parsing_results')->get()->all() : [];
 
-        if ($parsedFiles && (! $service->areFilesReady($parsedFiles))) {
+        $parsedData = [...$parsedFiles, ...$parsedLinks];
+
+        if ($parsedData && (! $service->areFilesReady($parsedData))) {
             Log::info("The AI assistant [{$this->assistant->getKey()}] files are not ready for use yet.");
 
             $this->release(now()->addMinute());
@@ -87,6 +91,16 @@ class UploadAssistantFilesToVectorStore implements ShouldQueue, TenantAware, Sho
             Log::info("The AI assistant [{$this->assistant->getKey()}] has files that are not parsed yet.");
 
             $this->release(now()->addMinute());
+
+            return;
+        }
+
+        if (AiAssistantLinkFeature::active() && $this->assistant->links()->whereNull('parsing_results')->where('created_at', '<=', now()->subMinutes(15))->exists()) {
+            Log::info("The AI assistant [{$this->assistant->getKey()}] has links that are not parsed yet.");
+
+            $this->release(now()->addMinute());
+
+            return;
         }
     }
 

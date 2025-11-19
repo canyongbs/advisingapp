@@ -34,46 +34,60 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Console\Commands;
+namespace AdvisingApp\Ai\Jobs\AiAssistants;
 
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\IntegrationOpenAi\Jobs\UploadAssistantFilesToVectorStore;
-use AdvisingApp\IntegrationOpenAi\Jobs\UploadQnaAdvisorFilesToVectorStore;
-use App\Features\AiAssistantLinkFeature;
-use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Builder;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
-use Throwable;
+use AdvisingApp\Ai\Models\AiAssistantLink;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Http;
+use Spatie\Multitenancy\Jobs\TenantAware;
 
-class UploadFilesToVectorStores extends Command
+class FetchAiAssistantLinkParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
 {
-    use TenantAware;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    protected $signature = 'integration-open-ai:upload-files-to-vector-stores {--tenant=*}';
+    public int $timeout = 600;
 
-    protected $description = 'Uploads AI files to a vector stores once they have been parsed.';
+    public int $tries = 60;
+
+    public function __construct(
+        protected AiAssistantLink $link,
+    ) {}
 
     public function handle(): void
     {
-        AiAssistant::query()
-            ->where(fn (Builder $query) => $query->whereHas('files')->when(AiAssistantLinkFeature::active(), fn (Builder $query) => $query->orWhereHas('links')))
-            ->eachById(function (AiAssistant $assistant) {
-                try {
-                    dispatch(new UploadAssistantFilesToVectorStore($assistant));
-                } catch (Throwable $exception) {
-                    report($exception);
-                }
-            });
+        if (filled($this->link->parsing_results)) {
+            return;
+        }
 
-        QnaAdvisor::query()
-            ->where(fn (Builder $query) => $query->whereHas('files')->orWhereHas('links'))
-            ->eachById(function (QnaAdvisor $advisor) {
-                try {
-                    dispatch(new UploadQnaAdvisorFilesToVectorStore($advisor));
-                } catch (Throwable $exception) {
-                    report($exception);
-                }
-            });
+        $response = Http::withToken(app(AiIntegrationsSettings::class)->jina_deepsearch_v1_api_key)
+            ->withHeaders([
+                'X-Retain-Images' => 'none',
+            ])
+            ->get("https://r.jina.ai/{$this->link->url}");
+
+        if (! $response->successful()) {
+            $this->release();
+
+            return;
+        }
+
+        $this->link->parsing_results = $response->body();
+        $this->link->save();
+    }
+
+    public function uniqueId(): string
+    {
+        return $this->link->id;
     }
 }

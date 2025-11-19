@@ -34,46 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Console\Commands;
+namespace AdvisingApp\Ai\Database\Factories;
 
 use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\IntegrationOpenAi\Jobs\UploadAssistantFilesToVectorStore;
-use AdvisingApp\IntegrationOpenAi\Jobs\UploadQnaAdvisorFilesToVectorStore;
-use App\Features\AiAssistantLinkFeature;
-use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Builder;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
-use Throwable;
+use AdvisingApp\Ai\Models\AiAssistantLink;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class UploadFilesToVectorStores extends Command
+/**
+ * @extends Factory<AiAssistantLink>
+ */
+class AiAssistantLinkFactory extends Factory
 {
-    use TenantAware;
-
-    protected $signature = 'integration-open-ai:upload-files-to-vector-stores {--tenant=*}';
-
-    protected $description = 'Uploads AI files to a vector stores once they have been parsed.';
-
-    public function handle(): void
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        AiAssistant::query()
-            ->where(fn (Builder $query) => $query->whereHas('files')->when(AiAssistantLinkFeature::active(), fn (Builder $query) => $query->orWhereHas('links')))
-            ->eachById(function (AiAssistant $assistant) {
-                try {
-                    dispatch(new UploadAssistantFilesToVectorStore($assistant));
-                } catch (Throwable $exception) {
-                    report($exception);
-                }
-            });
-
-        QnaAdvisor::query()
-            ->where(fn (Builder $query) => $query->whereHas('files')->orWhereHas('links'))
-            ->eachById(function (QnaAdvisor $advisor) {
-                try {
-                    dispatch(new UploadQnaAdvisorFilesToVectorStore($advisor));
-                } catch (Throwable $exception) {
-                    report($exception);
-                }
-            });
+        return [
+            'ai_assistant_id' => AiAssistant::factory(),
+            'parsing_results' => $this->faker->paragraph,
+            'url' => $this->faker->url,
+        ];
     }
 }
