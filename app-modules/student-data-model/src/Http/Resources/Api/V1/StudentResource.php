@@ -60,7 +60,7 @@ class StudentResource extends JsonResource
             'full_name' => $this->resource->full_name,
             'preferred' => $this->resource->preferred,
             'birthdate' => $this->resource->birthdate ? $this->resource->birthdate->format('Y-m-d') : null,
-            'hsgrad' => $this->resource->hsgrad,
+            'hsgrad' => $this->resource->hsgrad ? $this->resource->hsgrad->format('Y-m-d') : null,
             'gender' => $this->resource->gender,
             'sms_opt_out' => $this->resource->sms_opt_out,
             'email_bounce' => $this->resource->email_bounce,

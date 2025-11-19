@@ -120,10 +120,12 @@ class EditStudent extends EditRecord
                             ->format('Y-m-d')
                             ->displayFormat('Y-m-d')
                             ->maxDate(now()),
-                        TextInput::make('hsgrad')
+                        DatePicker::make('hsgrad')
                             ->label('High School Graduation Year')
-                            ->nullable()
-                            ->numeric(),
+                            ->native(false)
+                            ->closeOnDateSelection()
+                            ->format('Y-m-d')
+                            ->displayFormat('Y-m-d'),
                         TextInput::make('gender')
                             ->nullable()
                             ->maxLength(255),

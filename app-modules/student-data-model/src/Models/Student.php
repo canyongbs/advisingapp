@@ -159,6 +159,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         'created_at_source' => 'datetime',
         'updated_at_source' => 'datetime',
         'birthdate' => 'date',
+        'hsgrad' => 'date',
         'dfw' => 'date',
         'sms_opt_out' => 'boolean',
         'email_bounce' => 'boolean',

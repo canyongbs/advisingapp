@@ -110,6 +110,7 @@ class StudentProfileInfolist
                                 ->placeholder('-'),
                             TextEntry::make('hsgrad')
                                 ->label('High School Graduation')
+                                ->date()
                                 ->placeholder('-'),
                         ]),
                         Subsection::make([

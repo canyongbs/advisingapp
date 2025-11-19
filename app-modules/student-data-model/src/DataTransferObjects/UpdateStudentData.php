@@ -51,7 +51,7 @@ class UpdateStudentData extends Data
         public string | Optional | null $fullName,
         public string | Optional | null $preferred,
         public string | Optional | null $birthdate,
-        public int | Optional | null $hsgrad,
+        public string | Optional | null $hsgrad,
         public string | Optional | null $gender,
         public bool | Optional | null $smsOptOut,
         public bool | Optional | null $emailBounce,

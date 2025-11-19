@@ -111,7 +111,7 @@ class StudentImporter extends Importer
                 ->example('1920')
                 ->rules([
                     'nullable',
-                    'integer',
+                    'date',
                 ]),
             ImportColumn::make('gender')
                 ->example('Male')
