@@ -46,6 +46,10 @@ use FilamentTiptapEditor\TiptapBlock;
 
 abstract class FormFieldBlock extends TiptapBlock
 {
+    public const MAPPED_STUDENT_FIELD_HELP_TEXT = 'This data is synchronized from your college\'s student information system. To update this data, please update your information in the source system and wait 24 hours for it to be reflected here.';
+
+    public const MAPPED_PROSPECT_FIELD_HELP_TEXT = 'This field has been pre-populated with the information we have on file. Please feel free to update it and we will update our records accordingly.';
+
     public string $preview = 'form::blocks.previews.default';
 
     public string $rendered = 'form::blocks.submissions.default';

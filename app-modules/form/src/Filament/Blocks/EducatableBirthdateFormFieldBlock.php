@@ -93,9 +93,9 @@ class EducatableBirthdateFormFieldBlock extends FormFieldBlock
 
             if ($author instanceof Student) {
                 $schema['disabled'] = true;
-                $schema['help'] = 'This data is synchronized from your college\'s student information system. To update this data, please update your information in the source system and wait 24 hours for it to be reflected here.';
+                $schema['help'] = self::MAPPED_STUDENT_FIELD_HELP_TEXT;
             } elseif ($author instanceof Prospect) {
-                $schema['help'] = 'This field has been pre-populated with the information we have on file. Please feel free to update it and we will update our records accordingly.';
+                $schema['help'] = self::MAPPED_PROSPECT_FIELD_HELP_TEXT;
             }
         }
 

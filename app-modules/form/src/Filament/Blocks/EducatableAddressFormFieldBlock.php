@@ -89,9 +89,9 @@ class EducatableAddressFormFieldBlock extends FormFieldBlock
         if ($author && $submissible && in_array($submissible::class, [Form::class, Application::class])) {
             if ($author instanceof Student) {
                 $disabled = true;
-                $helpText = 'This data is synchronized from your college\'s student information system. To update this data, please update your information in the source system and wait 24 hours for it to be reflected here.';
+                $helpText = self::MAPPED_STUDENT_FIELD_HELP_TEXT;
             } elseif ($author instanceof Prospect) {
-                $helpText = 'This field has been pre-populated with the information we have on file. Please feel free to update it and we will update our records accordingly.';
+                $helpText = self::MAPPED_PROSPECT_FIELD_HELP_TEXT;
             }
         }
 
