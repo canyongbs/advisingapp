@@ -1960,6 +1960,41 @@
             }
         },
         {
+            "name": "canyon-gbs/group-appointment",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/group-appointment",
+                "reference": "e93dc4d47816143139adb71d949d4b857b97da89"
+            },
+            "require": {
+                "filament/filament": "^4.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\GroupAppointment\\Providers\\GroupAppointmentServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\GroupAppointment\\": "src/",
+                    "AdvisingApp\\GroupAppointment\\Tests\\": "tests/",
+                    "AdvisingApp\\GroupAppointment\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\GroupAppointment\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "canyon-gbs/integration-open-ai",
             "version": "1.0",
             "dist": {
