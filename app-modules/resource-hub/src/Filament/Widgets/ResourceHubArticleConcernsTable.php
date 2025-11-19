@@ -60,15 +60,20 @@ class ResourceHubArticleConcernsTable extends TableWidget
         return $table
             ->query(fn (): Builder => ResourceHubArticleConcern::where('resource_hub_article_id', $this->resourceHubArticleId))
             ->columns([
-                TextColumn::make('createdBy.name'),
-                TextColumn::make('description'),
+                TextColumn::make('createdBy.name')
+                    ->label('Name'),
+                TextColumn::make('description')
+                    ->label('Concern'),
                 TextColumn::make('created_at')
+                    ->label('Date')
                     ->date(),
                 TextColumn::make('status'),
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options(ConcernStatus::class),
+                    ->multiple()
+                    ->options(ConcernStatus::class)
+                    ->default([ConcernStatus::New->value]),
             ]);
     }
 }
