@@ -525,7 +525,7 @@
                     @if (!$this->thread->assistant->is_default && !$this->thread->assistant->archived_at)
                         <x-filament::link
                             :color="$this->thread->assistant->isUpvoted() ? 'success' : 'gray'"
-                            icon="'heroicon-m-hand-thumb-up'"
+                            icon="heroicon-m-hand-thumb-up"
                             tag="button"
                             wire:click="toggleAssistantUpvote"
                         >

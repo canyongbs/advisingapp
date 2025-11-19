@@ -43,6 +43,7 @@ use AdvisingApp\Ai\Events\AiThreadTrashed;
 use AdvisingApp\Ai\Listeners\ClearQnaAdvisorInstructionsCacheOnGlobalSettingsUpdate;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiAssistantFile;
+use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
@@ -87,6 +88,7 @@ class AiServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'ai_assistant_file' => AiAssistantFile::class,
+            'ai_assistant_link' => AiAssistantLink::class,
             'ai_assistant' => AiAssistant::class,
             'ai_message_file' => AiMessageFile::class,
             'ai_message' => AiMessage::class,

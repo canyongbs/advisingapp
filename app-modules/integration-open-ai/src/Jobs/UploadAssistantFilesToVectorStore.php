@@ -91,12 +91,16 @@ class UploadAssistantFilesToVectorStore implements ShouldQueue, TenantAware, Sho
             Log::info("The AI assistant [{$this->assistant->getKey()}] has files that are not parsed yet.");
 
             $this->release(now()->addMinute());
+
+            return;
         }
 
         if (AiAssistantLinkFeature::active() && $this->assistant->links()->whereNull('parsing_results')->where('created_at', '<=', now()->subMinutes(15))->exists()) {
             Log::info("The AI assistant [{$this->assistant->getKey()}] has links that are not parsed yet.");
 
             $this->release(now()->addMinute());
+
+            return;
         }
     }
 
