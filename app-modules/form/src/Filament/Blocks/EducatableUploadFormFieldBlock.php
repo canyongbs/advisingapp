@@ -46,15 +46,17 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\Facades\Storage;
 
-class UploadFormFieldBlock extends FormFieldBlock
+class EducatableUploadFormFieldBlock extends FormFieldBlock
 {
+    public ?string $label = 'Upload';
+
     public ?string $icon = 'heroicon-m-document-arrow-up';
 
     public string $rendered = 'form::blocks.submissions.upload';
 
     public static function type(): string
     {
-        return 'upload';
+        return 'educatable_upload';
     }
 
     /**
@@ -86,7 +88,7 @@ class UploadFormFieldBlock extends FormFieldBlock
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
             'multiple' => $field->config['multiple'] ?? false,
-            'accept' => static::getExtensionsFull(),
+            'accept' => UploadFormFieldBlock::getExtensionsFull(),
             'limit' => $field->config['limit'] ?? 1,
             'size' => $field->config['size'] ?? null,
             'uploadUrl' => route('widgets.forms.form-upload-url'),
@@ -146,6 +148,7 @@ class UploadFormFieldBlock extends FormFieldBlock
         $media = (isset($field->pivot) && $field->pivot->hasMedia('files')) ? $field->pivot->getMedia('files')->map(fn ($media) => [
             'id' => $media->id,
             'name' => $media->file_name,
+            // @phpstan-ignore-next-line
             'temporary_url' => Storage::disk($media->disk)->temporaryUrl(
                 $media->getPathRelativeToRoot(),
                 now()->addDay(),

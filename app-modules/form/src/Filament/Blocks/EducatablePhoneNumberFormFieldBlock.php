@@ -37,28 +37,36 @@
 namespace AdvisingApp\Form\Filament\Blocks;
 
 use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Settings\ImportSettings;
+use Closure;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput as FilamentTextInput;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberUtil;
 
-class EducatableEmailFormFieldBlock extends FormFieldBlock
+class EducatablePhoneNumberFormFieldBlock extends FormFieldBlock
 {
-    public ?string $label = 'Primary Email Address';
+    public ?string $label = 'Primary Phone Number';
 
-    public string $rendered = 'form::blocks.submissions.educatable-email';
+    public string $preview = 'form::blocks.previews.default';
 
-    public ?string $icon = 'heroicon-m-user';
+    public string $rendered = 'form::blocks.submissions.default';
+
+    public ?string $icon = 'heroicon-m-phone';
 
     public static function type(): string
     {
-        return 'educatable_email';
+        return 'educatable_phone_number';
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getFormSchema(): array
     {
         return [
@@ -66,24 +74,27 @@ class EducatableEmailFormFieldBlock extends FormFieldBlock
                 ->required()
                 ->string()
                 ->maxLength(255)
-                ->default('Your email address'),
+                ->default('Phone Number'),
             Checkbox::make('isRequired')
                 ->label('Required')
-                ->default(true),
+                ->default(false),
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
         $schema = [
-            '$formkit' => 'email',
+            '$formkit' => 'tel',
             'label' => $field->label,
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
         ];
 
         if ($author && $submissible && in_array($submissible::class, [Form::class, Application::class])) {
-            $schema['value'] = $author->primaryEmailAddress->address ?? '';
+            $schema['value'] = $author->primaryPhoneNumber->number ?? '';
 
             if ($author instanceof Student) {
                 $schema['disabled'] = true;
@@ -96,19 +107,39 @@ class EducatableEmailFormFieldBlock extends FormFieldBlock
         return $schema;
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public static function getValidationRules(SubmissibleField $field): array
     {
-        return ['string', 'email', 'max:255'];
-    }
-
-    public static function getSubmissionState(SubmissibleField $field, mixed $response): array
-    {
-        $author = app(ResolveSubmissionAuthorFromEmail::class)($response);
-
         return [
-            ...parent::getSubmissionState($field, $response),
-            'authorKey' => $author ? $author->getKey() : null,
-            'authorType' => $author ? $author::class : null,
+            'string',
+            'max:255',
+            'nullable',
+            function (string $attribute, mixed $value, Closure $fail) {
+                if (blank($value)) {
+                    return;
+                }
+
+                $phoneNumberUtil = PhoneNumberUtil::getInstance();
+
+                // Try to parse the number without a region, which will only work if the phone number is in E164 format already.
+                try {
+                    $phoneNumberUtil->parse($value);
+
+                    return;
+                } catch (NumberParseException) {
+                    // Continue to try with default country
+                }
+
+                $defaultCountry = app(ImportSettings::class)->default_country;
+
+                try {
+                    $phoneNumberUtil->parse($value, $defaultCountry);
+                } catch (NumberParseException $exception) {
+                    $fail("The phone number format is invalid. {$exception->getMessage()}");
+                }
+            },
         ];
     }
 }

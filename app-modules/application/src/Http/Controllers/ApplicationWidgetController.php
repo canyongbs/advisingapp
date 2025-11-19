@@ -38,20 +38,18 @@ namespace AdvisingApp\Application\Http\Controllers;
 
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
-use AdvisingApp\Application\Models\ApplicationField;
-use AdvisingApp\Application\Models\ApplicationFieldSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
+use AdvisingApp\Form\Actions\ProcessSubmissionField;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
-use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\UploadFormFieldBlock;
 use AdvisingApp\Form\Http\Requests\RegisterProspectRequestForApplication;
 use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Http\Controllers\Controller;
 use Closure;
 use Filament\Support\Colors\Color;
@@ -64,7 +62,6 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -111,7 +108,7 @@ class ApplicationWidgetController extends Controller
         );
     }
 
-    public function view(GenerateFormKitSchema $generateSchema, Application $application): JsonResponse
+    public function view(Application $application): JsonResponse
     {
         return response()->json(
             [
@@ -121,7 +118,6 @@ class ApplicationWidgetController extends Controller
                     name: 'widgets.applications.api.request-authentication',
                     parameters: ['application' => $application],
                 ),
-                'schema' => $generateSchema($application),
                 'primary_color' => collect(Color::all()[$application->primary_color ?? 'blue'])
                     ->map(Color::convertToRgb(...))
                     ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
@@ -196,7 +192,7 @@ class ApplicationWidgetController extends Controller
         ]);
     }
 
-    public function authenticate(Request $request, Application $application, ApplicationAuthentication $authentication): JsonResponse
+    public function authenticate(Request $request, GenerateFormKitSchema $generateSchema, Application $application, ApplicationAuthentication $authentication): JsonResponse
     {
         if ($authentication->isExpired()) {
             return response()->json([
@@ -214,6 +210,10 @@ class ApplicationWidgetController extends Controller
             }],
         ]);
 
+        $author = $authentication->author;
+
+        assert($author instanceof Prospect || $author instanceof Student || $author === null);
+
         return response()->json([
             'submission_url' => URL::signedRoute(
                 name: 'widgets.applications.api.submit',
@@ -222,13 +222,14 @@ class ApplicationWidgetController extends Controller
                     'application' => $authentication->submissible,
                 ],
             ),
+            'schema' => $generateSchema->withAuthor($author)($application),
         ]);
     }
 
     public function store(
         Request $request,
         GenerateSubmissibleValidation $generateValidation,
-        ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail,
+        ProcessSubmissionField $processSubmissionField,
         Application $application,
     ): JsonResponse {
         $authentication = $request->query('authentication');
@@ -276,60 +277,24 @@ class ApplicationWidgetController extends Controller
                 $stepFields = $step->fields()->pluck('type', 'id')->all();
 
                 foreach ($data[$step->label] as $fieldId => $response) {
-                    $submission->fields()->attach(
+                    $processSubmissionField(
+                        $submission,
                         $fieldId,
-                        ['id' => Str::orderedUuid(), 'response' => $response],
+                        $response,
+                        $stepFields,
                     );
-
-                    if ($stepFields[$fieldId] === UploadFormFieldBlock::type()) {
-                        $this->uploadApplicationFiles($submission, $fieldId, $response);
-                    }
-
-                    if ($submission->author) {
-                        continue;
-                    }
-
-                    if ($stepFields[$fieldId] !== EducatableEmailFormFieldBlock::type()) {
-                        continue;
-                    }
-
-                    $author = $resolveSubmissionAuthorFromEmail($response);
-
-                    if (! $author) {
-                        continue;
-                    }
-
-                    $submission->author()->associate($author);
                 }
             }
         } else {
             $applicationFields = $application->fields()->pluck('type', 'id')->all();
 
             foreach ($data as $fieldId => $response) {
-                $submission->fields()->attach(
+                $processSubmissionField(
+                    $submission,
                     $fieldId,
-                    ['id' => Str::orderedUuid(), 'response' => $response],
+                    $response,
+                    $applicationFields,
                 );
-
-                if ($applicationFields[$fieldId] === UploadFormFieldBlock::type()) {
-                    $this->uploadApplicationFiles($submission, $fieldId, $response);
-                }
-
-                if ($submission->author) {
-                    continue;
-                }
-
-                if ($applicationFields[$fieldId] !== EducatableEmailFormFieldBlock::type() || $applicationFields[$fieldId] !== UploadFormFieldBlock::type()) {
-                    continue;
-                }
-
-                $author = $resolveSubmissionAuthorFromEmail($response);
-
-                if (! $author) {
-                    continue;
-                }
-
-                $submission->author()->associate($author);
             }
         }
 
@@ -431,34 +396,5 @@ class ApplicationWidgetController extends Controller
                 ],
             ),
         ]);
-    }
-
-    public function uploadApplicationFiles(ApplicationSubmission $submission, string $fieldId, mixed $response): void
-    {
-        /** @var ApplicationField|null $field */
-        $field = $submission->fields()->find($fieldId);
-
-        if ($field && $field->type === UploadFormFieldBlock::type() && is_array($response)) {
-            /** @var ApplicationFieldSubmission $applicationFieldSubmission */
-            $applicationFieldSubmission = $field->pivot;
-
-            foreach ($response as $file) {
-                $key = ltrim($file['path'], '/');
-
-                $media = $applicationFieldSubmission
-                    ->addMediaFromDisk($key, 's3')
-                    ->usingFileName($file['originalFileName'] ?? basename($key))
-                    ->toMediaCollection('files', 's3');
-
-                Storage::disk('s3')->delete($key);
-                $applicationFieldSubmission->update([
-                    'response' => [
-                        'media_id' => $media->id,
-                        'file_name' => $media->file_name,
-                        'original_name' => $file['originalFileName'] ?? $media->file_name,
-                    ],
-                ]);
-            }
-        }
     }
 }

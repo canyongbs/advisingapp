@@ -37,7 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\Concerns;
 
 use AdvisingApp\Form\Enums\Rounding;
-use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\Form\Filament\Blocks\DefaultFieldBlockRegistry;
 use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
@@ -167,7 +167,7 @@ trait HasSharedEventFormConfiguration
     public function fieldBuilder(): TiptapEditor
     {
         return TiptapEditor::make('content')
-            ->blocks(FormFieldBlockRegistry::get())
+            ->blocks(DefaultFieldBlockRegistry::get())
             ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
             ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()

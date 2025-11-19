@@ -36,46 +36,15 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
-class FormFieldBlockRegistry
+class DefaultFieldBlockRegistry
 {
     /**
-     * @return array<class-string<FormFieldBlock> | array<class-string<FormFieldBlock>>>
-     */
-    public static function get(bool $isAuthenticated = true): array
-    {
-        if (! $isAuthenticated) {
-            return static::getUnmappedBlocks();
-        }
-
-        return [
-            'Mapped Blocks' => static::getMappedBlocks(),
-            'Unmapped Blocks' => static::getUnmappedBlocks(),
-        ];
-    }
-
-    /**
      * @return array<class-string<FormFieldBlock>>
      */
-    public static function getMappedBlocks(): array
+    public static function get(): array
     {
         return [
-            EducatableFirstNameFormFieldBlock::class,
-            EducatableLastNameFormFieldBlock::class,
-            EducatablePreferredNameFormFieldBlock::class,
-            EducatableBirthdateFormFieldBlock::class,
-            EducatableAddressFormFieldBlock::class,
             EducatableEmailFormFieldBlock::class,
-            EducatablePhoneNumberFormFieldBlock::class,
-            EducatableUploadFormFieldBlock::class,
-        ];
-    }
-
-    /**
-     * @return array<class-string<FormFieldBlock>>
-     */
-    public static function getUnmappedBlocks(): array
-    {
-        return [
             TextInputFormFieldBlock::class,
             TextAreaFormFieldBlock::class,
             SelectFormFieldBlock::class,
@@ -98,10 +67,12 @@ class FormFieldBlockRegistry
      */
     public static function keyByType(): array
     {
-        /** @var FormFieldBlock $block */
         return collect(static::get())
-            ->flatten()
-            ->mapWithKeys(fn (string $block): array => [$block::type() => $block])
+            ->mapWithKeys(function (string $block): array {
+                /** @var class-string<FormFieldBlock> $block */
+
+                return [$block::type() => $block];
+            })
             ->all();
     }
 }

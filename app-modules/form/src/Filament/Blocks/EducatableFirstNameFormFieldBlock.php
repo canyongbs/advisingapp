@@ -36,80 +36,78 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\TextInput;
-use FilamentTiptapEditor\TiptapBlock;
+use Filament\Forms\Components\TextInput as FilamentTextInput;
 
-abstract class FormFieldBlock extends TiptapBlock
+class EducatableFirstNameFormFieldBlock extends FormFieldBlock
 {
-    public const MAPPED_STUDENT_FIELD_HELP_TEXT = 'This data is synchronized from your college\'s student information system. To update this data, please update your information in the source system and wait 24 hours for it to be reflected here.';
-
-    public const MAPPED_PROSPECT_FIELD_HELP_TEXT = 'This field has been pre-populated with the information we have on file. Please feel free to update it and we will update our records accordingly.';
+    public ?string $label = 'First Name';
 
     public string $preview = 'form::blocks.previews.default';
 
     public string $rendered = 'form::blocks.submissions.default';
 
-    public ?string $icon = 'heroicon-m-cube';
+    public ?string $icon = 'heroicon-m-user';
 
-    public function getFormSchema(): array
+    public static function type(): string
     {
-        return [
-            TextInput::make('label')
-                ->required()
-                ->string()
-                ->maxLength(255),
-            Checkbox::make('isRequired')
-                ->label('Required'),
-            ...$this->fields(),
-        ];
-    }
-
-    public function getLabel(): string
-    {
-        return $this->label ?? (string) str(static::type())
-            ->afterLast('.')
-            ->kebab()
-            ->replace(['-', '_'], ' ')
-            ->ucfirst();
-    }
-
-    public function getIdentifier(): string
-    {
-        return static::type();
-    }
-
-    public function fields(): array
-    {
-        return [];
-    }
-
-    abstract public static function type(): string;
-
-    abstract public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array;
-
-    public static function getValidationRules(SubmissibleField $field): array
-    {
-        return [];
+        return 'educatable_first_name';
     }
 
     /**
-     * @return array<string, array<int, string>>
+     * @return array<int, mixed>
      */
-    public static function getNestedValidationRules(SubmissibleField $field): array
-    {
-        return [];
-    }
-
-    public static function getSubmissionState(SubmissibleField $field, mixed $response): array
+    public function getFormSchema(): array
     {
         return [
-            'field' => $field,
-            'response' => $response,
+            FilamentTextInput::make('label')
+                ->required()
+                ->string()
+                ->maxLength(255)
+                ->default('First Name'),
+            Checkbox::make('isRequired')
+                ->label('Required')
+                ->default(true),
         ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
+    {
+        $schema = [
+            '$formkit' => 'text',
+            'label' => $field->label,
+            'name' => $field->getKey(),
+            ...($field->is_required ? ['validation' => 'required'] : []),
+        ];
+
+        if ($author && $submissible && in_array($submissible::class, [Form::class, Application::class])) {
+            if ($author instanceof Student) {
+                $schema['value'] = $author->first ?? '';
+                $schema['disabled'] = true;
+                $schema['help'] = self::MAPPED_STUDENT_FIELD_HELP_TEXT;
+            } elseif ($author instanceof Prospect) {
+                $schema['value'] = $author->first_name ?? '';
+                $schema['help'] = self::MAPPED_PROSPECT_FIELD_HELP_TEXT;
+            }
+        }
+
+        return $schema;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function getValidationRules(SubmissibleField $field): array
+    {
+        return ['string', 'max:255'];
     }
 }

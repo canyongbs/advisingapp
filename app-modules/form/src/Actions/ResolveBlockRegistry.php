@@ -38,6 +38,7 @@ namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\CaseManagement\Models\CaseForm;
+use AdvisingApp\Form\Filament\Blocks\DefaultFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\Submissible;
@@ -50,8 +51,9 @@ class ResolveBlockRegistry
     public function __invoke(Submissible $submissible): array
     {
         return match ($submissible::class) {
-            Form::class, Application::class, EventRegistrationForm::class, CaseForm::class => FormFieldBlockRegistry::keyByType(),
+            Form::class, Application::class => FormFieldBlockRegistry::keyByType(),
             Survey::class => SurveyFieldBlockRegistry::keyByType(),
+            EventRegistrationForm::class, CaseForm::class => DefaultFieldBlockRegistry::keyByType(),
         };
     }
 }

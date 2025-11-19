@@ -130,7 +130,6 @@ fetch(props.entryUrl)
 
         applicationName.value = json.name;
         applicationDescription.value = json.description;
-        schema.value = json.schema;
         applicationPrimaryColor.value = json.primary_color;
         authentication.value.requestUrl = json.authentication_url;
 
@@ -239,6 +238,7 @@ async function authenticate(applicationData, node) {
                 }
 
                 applicationSubmissionUrl.value = json.submission_url;
+                schema.value = json.schema;
             })
             .catch((error) => {
                 node.setErrors([error]);

@@ -50,6 +50,7 @@ use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Http\Controllers\Controller;
 use Closure;
 use Filament\Support\Colors\Color;
@@ -130,7 +131,7 @@ class FormWidgetController extends Controller
             ...($form->recaptcha_enabled ? [
                 'recaptcha_site_key' => app(GoogleRecaptchaSettings::class)->site_key,
             ] : []),
-            'schema' => $generateSchema($form),
+            'schema' => $form->is_authenticated ? [] : $generateSchema($form),
             'primary_color' => collect(Color::all()[$form->primary_color ?? 'blue'])
                 ->map(Color::convertToRgb(...))
                 ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
@@ -207,7 +208,7 @@ class FormWidgetController extends Controller
         ]);
     }
 
-    public function authenticate(Request $request, Form $form, FormAuthentication $authentication): JsonResponse
+    public function authenticate(Request $request, GenerateFormKitSchema $generateSchema, Form $form, FormAuthentication $authentication): JsonResponse
     {
         if ($authentication->isExpired()) {
             return response()->json([
@@ -225,6 +226,10 @@ class FormWidgetController extends Controller
             }],
         ]);
 
+        $author = $authentication->author;
+
+        assert($author instanceof Prospect || $author instanceof Student || $author === null);
+
         return response()->json([
             'submission_url' => URL::signedRoute(
                 name: 'widgets.forms.api.submit',
@@ -233,6 +238,7 @@ class FormWidgetController extends Controller
                     'form' => $authentication->submissible,
                 ],
             ),
+            'schema' => $generateSchema->withAuthor($author)($form),
         ]);
     }
 

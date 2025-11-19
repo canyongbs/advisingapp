@@ -42,11 +42,11 @@ use AdvisingApp\Form\Models\Form;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
@@ -106,7 +106,18 @@ class ListForms extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            Action::make('create')
+                ->label('New')
+                ->requiresConfirmation()
+                ->modalHeading('New form')
+                ->modalDescription('Before creating the form, please specify whether it requires authentication. This setting cannot be changed later.')
+                ->modalSubmitActionLabel('New form')
+                ->schema([
+                    Toggle::make('is_authenticated')
+                        ->label('Requires authentication')
+                        ->helperText('If enabled, only students and prospects can submit this form, and they must verify their email address first.'),
+                ])
+                ->action(fn (array $data) => redirect(FormResource::getUrl('create', ['is_authenticated' => $data['is_authenticated']]))),
         ];
     }
 }

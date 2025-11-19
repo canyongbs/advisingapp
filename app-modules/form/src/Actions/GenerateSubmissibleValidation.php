@@ -61,6 +61,12 @@ class GenerateSubmissibleValidation
         return array_merge($rules, $this->fields($blocks, $submissible->fields));
     }
 
+    /**
+     * @param array<string, class-string> $blocks
+     * @param Collection<int, SubmissibleField> $fields
+     *
+     * @return array<string, mixed>
+     */
     public function fields(array $blocks, Collection $fields): array
     {
         return $fields
@@ -71,11 +77,19 @@ class GenerateSubmissibleValidation
                     $rules->push('required');
                 }
 
-                return [
-                    $field->getKey() => $rules
-                        ->merge($blocks[$field->type]::getValidationRules($field))
-                        ->all(),
+                $blockClass = $blocks[$field->type];
+                $blockRules = $blockClass::getValidationRules($field);
+                $nestedRules = $blockClass::getNestedValidationRules($field);
+
+                $result = [
+                    $field->getKey() => $rules->merge($blockRules)->all(),
                 ];
+
+                foreach ($nestedRules as $nestedKey => $nestedRule) {
+                    $result[$field->getKey() . '.' . $nestedKey] = $nestedRule;
+                }
+
+                return $result;
             })
             ->all();
     }

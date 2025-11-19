@@ -276,6 +276,10 @@ async function authenticate(formData, node) {
                 }
 
                 formSubmissionUrl.value = json.submission_url;
+
+                if (json.schema) {
+                    schema.value = json.schema;
+                }
             })
             .catch((error) => {
                 node.setErrors([error]);

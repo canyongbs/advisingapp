@@ -36,13 +36,30 @@
 
 namespace AdvisingApp\Form\Actions;
 
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationFieldSubmission;
+use AdvisingApp\Engagement\Models\EngagementFile;
+use AdvisingApp\Form\Filament\Blocks\EducatableAddressFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\EducatableBirthdateFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\EducatableFirstNameFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\EducatableLastNameFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\EducatablePhoneNumberFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\EducatablePreferredNameFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\EducatableUploadFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\UploadFormFieldBlock;
-use AdvisingApp\Form\Models\FormField;
+use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormFieldSubmission;
+use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Form\Models\Submission;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Settings\ImportSettings;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberUtil;
 
 class ProcessSubmissionField
 {
@@ -54,26 +71,26 @@ class ProcessSubmissionField
     {
         $submission->fields()->attach($fieldId, [
             'id' => Str::orderedUuid(),
-            'response' => $response,
+            'response' => $response ?? '',
         ]);
 
-        /** @var FormField|null $field */
+        /** @var SubmissibleField|null $field */
         $field = $submission->fields()->find($fieldId);
 
         if ($field && $field->type === UploadFormFieldBlock::type() && is_array($response)) {
-            /** @var FormFieldSubmission $formFieldSubmission */
-            $formFieldSubmission = $field->pivot;
+            $fieldSubmission = $field->pivot; /** @phpstan-ignore property.notFound */
+            assert($fieldSubmission instanceof FormFieldSubmission || $fieldSubmission instanceof ApplicationFieldSubmission);
 
             foreach ($response as $file) {
                 $key = ltrim($file['path'], '/');
 
-                $media = $formFieldSubmission
+                $media = $fieldSubmission
                     ->addMediaFromDisk($key, 's3')
                     ->usingFileName($file['originalFileName'] ?? basename($key))
                     ->toMediaCollection('files', 's3');
 
                 Storage::disk('s3')->delete($key);
-                $formFieldSubmission->update([
+                $fieldSubmission->update([
                     'response' => [
                         'media_id' => $media->id,
                         'file_name' => $media->file_name,
@@ -83,20 +100,328 @@ class ProcessSubmissionField
             }
         }
 
-        if ($submission->author) {
+        if ($field && $field->type === EducatableUploadFormFieldBlock::type() && is_array($response)) {
+            $this->handleEducatableUploadField($submission, $field, $response);
+        }
+
+        if ($fields[$fieldId] === EducatableEmailFormFieldBlock::type()) {
+            $this->handleEducatableEmailField($submission, $response);
+        }
+
+        if ($fields[$fieldId] === EducatableFirstNameFormFieldBlock::type()) {
+            $this->handleEducatableField($submission, $response, 'first_name');
+        }
+
+        if ($fields[$fieldId] === EducatableLastNameFormFieldBlock::type()) {
+            $this->handleEducatableField($submission, $response, 'last_name');
+        }
+
+        if ($fields[$fieldId] === EducatablePreferredNameFormFieldBlock::type()) {
+            $this->handleEducatablePreferredNameField($submission, $response);
+        }
+
+        if ($fields[$fieldId] === EducatableBirthdateFormFieldBlock::type()) {
+            $this->handleEducatableField($submission, $response, 'birthdate');
+        }
+
+        if ($fields[$fieldId] === EducatablePhoneNumberFormFieldBlock::type()) {
+            $this->handleEducatablePhoneNumberField($submission, $response);
+        }
+
+        if ($fields[$fieldId] === EducatableAddressFormFieldBlock::type()) {
+            $this->handleEducatableAddressField($submission, $response);
+        }
+    }
+
+    protected function handleEducatableEmailField(Submission $submission, mixed $response): void
+    {
+        $submissible = $submission->submissible;
+
+        if ($submission->author && $submission->author instanceof Prospect) {
+            if (in_array($submissible::class, [Form::class, Application::class])) {
+                $this->updateProspectEmail($submission->author, $response);
+            }
+
             return;
         }
 
-        if ($fields[$fieldId] !== EducatableEmailFormFieldBlock::type()) {
+        if ($submission->author) {
             return;
         }
 
         $author = ($this->resolveSubmissionAuthorFromEmail)($response);
 
-        if (! $author) {
+        if ($author) {
+            $submission->author()->associate($author);
+        }
+    }
+
+    protected function updateProspectEmail(Prospect $prospect, ?string $newEmail): void
+    {
+        if (blank($newEmail)) {
             return;
         }
 
-        $submission->author()->associate($author);
+        $currentEmail = $prospect->primaryEmailAddress?->address;
+
+        if ($currentEmail === $newEmail) {
+            return;
+        }
+
+        if ($prospect->primaryEmailAddress) {
+            $prospect->primaryEmailAddress->update([
+                'address' => $newEmail,
+            ]);
+        } else {
+            $emailAddress = $prospect->emailAddresses()->create([
+                'address' => $newEmail,
+                'order' => 1,
+            ]);
+
+            $prospect->primaryEmailAddress()->associate($emailAddress);
+            $prospect->save();
+        }
+    }
+
+    protected function handleEducatableField(Submission $submission, mixed $response, string $attribute): void
+    {
+        $submissible = $submission->submissible;
+
+        if (! $submission->author instanceof Prospect) {
+            return;
+        }
+
+        if (! in_array($submissible::class, [Form::class, Application::class])) {
+            return;
+        }
+
+        $this->updateProspectAttribute($submission->author, $attribute, $response);
+    }
+
+    protected function updateProspectAttribute(Prospect $prospect, string $attribute, mixed $value): void
+    {
+        if (blank($value)) {
+            return;
+        }
+
+        $currentValue = $prospect->{$attribute};
+
+        if ($currentValue == $value) {
+            return;
+        }
+
+        $prospect->update([
+            $attribute => $value,
+        ]);
+    }
+
+    protected function handleEducatablePreferredNameField(Submission $submission, mixed $response): void
+    {
+        $submissible = $submission->submissible;
+
+        if (! $submission->author instanceof Prospect) {
+            return;
+        }
+
+        if (! in_array($submissible::class, [Form::class, Application::class])) {
+            return;
+        }
+
+        $this->updateProspectPreferredName($submission->author, $response);
+    }
+
+    protected function updateProspectPreferredName(Prospect $prospect, ?string $value): void
+    {
+        // Treat empty string as null (clear the field)
+        $value = blank($value) ? null : $value;
+
+        $currentValue = $prospect->preferred;
+
+        if ($currentValue === $value) {
+            return;
+        }
+
+        $prospect->update([
+            'preferred' => $value,
+        ]);
+    }
+
+    protected function handleEducatablePhoneNumberField(Submission $submission, mixed $response): void
+    {
+        $submissible = $submission->submissible;
+
+        if (! $submission->author instanceof Prospect) {
+            return;
+        }
+
+        if (! in_array($submissible::class, [Form::class, Application::class])) {
+            return;
+        }
+
+        $this->updateProspectPhoneNumber($submission->author, $response);
+    }
+
+    protected function updateProspectPhoneNumber(Prospect $prospect, ?string $newNumber): void
+    {
+        if (blank($newNumber)) {
+            return;
+        }
+
+        // Parse and format the phone number to E164 format
+        $phoneNumberUtil = PhoneNumberUtil::getInstance();
+        $formattedNumber = null;
+
+        // Try to parse the number without a region, which will only work if the phone number is in E164 format already.
+        try {
+            $formattedNumber = $phoneNumberUtil->format(
+                $phoneNumberUtil->parse($newNumber),
+                PhoneNumberFormat::E164,
+            );
+        } catch (NumberParseException) {
+            // Try with default country
+            $defaultCountry = app(ImportSettings::class)->default_country;
+
+            try {
+                $formattedNumber = $phoneNumberUtil->format(
+                    $phoneNumberUtil->parse($newNumber, $defaultCountry),
+                    PhoneNumberFormat::E164,
+                );
+            } catch (NumberParseException) {
+                // If parsing fails, don't update the phone number
+                return;
+            }
+        }
+
+        $currentNumber = $prospect->primaryPhoneNumber?->number;
+
+        if ($currentNumber === $formattedNumber) {
+            return;
+        }
+
+        if ($prospect->primaryPhoneNumber) {
+            $prospect->primaryPhoneNumber->update([
+                'number' => $formattedNumber,
+            ]);
+        } else {
+            $phoneNumber = $prospect->phoneNumbers()->create([
+                'number' => $formattedNumber,
+                'order' => 1,
+            ]);
+
+            $prospect->primaryPhoneNumber()->associate($phoneNumber);
+            $prospect->save();
+        }
+    }
+
+    protected function handleEducatableAddressField(Submission $submission, mixed $response): void
+    {
+        $submissible = $submission->submissible;
+
+        if (! $submission->author instanceof Prospect) {
+            return;
+        }
+
+        if (! in_array($submissible::class, [Form::class, Application::class])) {
+            return;
+        }
+
+        $this->updateProspectAddress($submission->author, $response);
+    }
+
+    protected function updateProspectAddress(Prospect $prospect, mixed $addressData): void
+    {
+        if (! is_array($addressData)) {
+            $addressData = json_decode($addressData ?? '{}', true);
+        }
+
+        if (blank($addressData)) {
+            return;
+        }
+
+        $hasData = filled($addressData['line_1'] ?? null)
+            || filled($addressData['line_2'] ?? null)
+            || filled($addressData['line_3'] ?? null)
+            || filled($addressData['city'] ?? null)
+            || filled($addressData['state'] ?? null)
+            || filled($addressData['postal'] ?? null)
+            || filled($addressData['country'] ?? null);
+
+        if (! $hasData) {
+            return;
+        }
+
+        $addressAttributes = [
+            'line_1' => $addressData['line_1'] ?? null,
+            'line_2' => $addressData['line_2'] ?? null,
+            'line_3' => $addressData['line_3'] ?? null,
+            'city' => $addressData['city'] ?? null,
+            'state' => $addressData['state'] ?? null,
+            'postal' => $addressData['postal'] ?? null,
+            'country' => $addressData['country'] ?? null,
+        ];
+
+        if ($prospect->primaryAddress) {
+            $prospect->primaryAddress->update($addressAttributes);
+        } else {
+            $address = $prospect->addresses()->create([
+                ...$addressAttributes,
+                'order' => 1,
+            ]);
+
+            $prospect->primaryAddress()->associate($address);
+            $prospect->save();
+        }
+    }
+
+    /**
+     * @param array<int, array{path: string, originalFileName?: string}> $response
+     */
+    protected function handleEducatableUploadField(Submission $submission, SubmissibleField $field, array $response): void
+    {
+        $submissible = $submission->submissible;
+
+        if (! in_array($submissible::class, [Form::class, Application::class])) {
+            return;
+        }
+
+        $author = $submission->author;
+
+        if (! $author instanceof Student && ! $author instanceof Prospect) {
+            return;
+        }
+
+        $fieldSubmission = $field->pivot; /** @phpstan-ignore property.notFound */
+        assert($fieldSubmission instanceof FormFieldSubmission);
+
+        foreach ($response as $file) {
+            $key = ltrim($file['path'], '/');
+
+            $media = $fieldSubmission
+                ->addMediaFromDisk($key, 's3')
+                ->usingFileName($file['originalFileName'] ?? basename($key))
+                ->toMediaCollection('files', 's3');
+
+            $fieldSubmission->update([
+                'response' => [
+                    'media_id' => $media->id,
+                    'file_name' => $media->file_name,
+                    'original_name' => $file['originalFileName'] ?? $media->file_name,
+                ],
+            ]);
+
+            $engagementFile = EngagementFile::create([
+                'description' => "Uploaded via form: {$submissible->name} - {$field->label}",
+            ]);
+
+            $engagementFile
+                ->addMediaFromDisk($media->getPathRelativeToRoot(), $media->disk)
+                ->usingFileName($media->file_name)
+                ->preservingOriginal()
+                ->toMediaCollection('file', 's3');
+
+            $author->engagementFiles()->attach($engagementFile);
+
+            Storage::disk('s3')->delete($key);
+        }
     }
 }

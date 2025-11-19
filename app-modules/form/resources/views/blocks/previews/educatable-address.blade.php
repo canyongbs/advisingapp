@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,41 +30,22 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace AdvisingApp\Form\Filament\Blocks;
-
-use AdvisingApp\Form\Models\Submissible;
-use AdvisingApp\Form\Models\SubmissibleField;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-
-class TextInputFormFieldBlock extends FormFieldBlock
-{
-    public ?string $icon = 'heroicon-m-minus';
-
-    public static function type(): string
-    {
-        return 'text_input';
-    }
-
-    public function fields(): array
-    {
-        return [];
-    }
-
-    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
-    {
-        return [
-            '$formkit' => 'text',
-            'label' => $field->label,
-            'name' => $field->getKey(),
-            ...($field->is_required ? ['validation' => 'required'] : []),
-        ];
-    }
-
-    public static function getValidationRules(SubmissibleField $field): array
-    {
-        return ['string', 'max:255'];
-    }
-}
+--}}
+<x-form::blocks.field-wrapper
+    :$label
+    :$isRequired
+>
+    <div class="space-y-2">
+        <x-form::blocks.previews.field />
+        <x-form::blocks.previews.field />
+        <x-form::blocks.previews.field />
+        <div class="grid grid-cols-2 gap-2">
+            <x-form::blocks.previews.field />
+            <x-form::blocks.previews.field />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+            <x-form::blocks.previews.field />
+            <x-form::blocks.previews.field />
+        </div>
+    </div>
+</x-form::blocks.field-wrapper>
