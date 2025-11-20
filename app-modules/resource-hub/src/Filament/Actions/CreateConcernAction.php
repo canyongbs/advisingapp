@@ -37,11 +37,15 @@
 namespace AdvisingApp\ResourceHub\Filament\Actions;
 
 use AdvisingApp\ResourceHub\Enums\ConcernStatus;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
+use AdvisingApp\ResourceHub\Notifications\ResourceHubArticleConcernCreated;
 use App\Features\ResourceHubArticleConcernFeature;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
+use Filament\Notifications\Notification;
+use Illuminate\Support\HtmlString;
 
 class CreateConcernAction extends Action
 {
@@ -60,12 +64,14 @@ class CreateConcernAction extends Action
                     ->required(),
             ])
             ->action(function (array $data, ResourceHubArticle $record): void {
-                ResourceHubArticleConcern::create([
+                $concern = ResourceHubArticleConcern::create([
                     'description' => $data['description'],
                     'created_by_id' => auth()->id(),
                     'status' => ConcernStatus::New,
                     'resource_hub_article_id' => $record->getKey(),
                 ]);
+
+                $concern->createdBy->notifyNow(new ResourceHubArticleConcernCreated($concern));
             })
             ->visible(ResourceHubArticleConcernFeature::active());
     }
