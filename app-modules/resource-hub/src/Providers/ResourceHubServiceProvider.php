@@ -37,6 +37,7 @@
 namespace AdvisingApp\ResourceHub\Providers;
 
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
@@ -59,6 +60,7 @@ class ResourceHubServiceProvider extends ServiceProvider
             'resource_hub_category' => ResourceHubCategory::class,
             'resource_hub_quality' => ResourceHubQuality::class,
             'resource_hub_status' => ResourceHubStatus::class,
+            'resource_hub_article_concern' => ResourceHubArticleConcern::class,
         ]);
     }
 }
