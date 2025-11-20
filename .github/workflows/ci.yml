@@ -1,352 +1,352 @@
 name: CI
 
 on:
-  workflow_call:
-    secrets:
-      pat-token:
-        required: true
-  workflow_dispatch:
+    workflow_call:
+        secrets:
+            pat-token:
+                required: true
+    workflow_dispatch:
 
 jobs:
-  prep-and-code-consistency:
-    runs-on: ubuntu-22.04
+    prep-and-code-consistency:
+        runs-on: ubuntu-22.04
 
-    timeout-minutes: 15
+        timeout-minutes: 15
 
-    env:
-      php-extensions: gd, gmp, redis, mailparse
-      php-extensions-key: ext-cache-20250820
-      php-version: "8.4"
-
-    outputs:
-      php-extensions: ${{ env.php-extensions }}
-      php-extensions-key: ${{ env.php-extensions-key }}
-      php-version: ${{ env.php-version }}
-
-    steps:
-      - name: Checkout code | Internal
-        if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
-        with:
-          ref: ${{ github.head_ref }}
-          token: ${{ secrets.pat-token }}
-
-      - name: Checkout code | External
-        if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
-        with:
-          ref: ${{ github.head_ref }}
-
-      - name: Setup cache environment
-        id: extcache
-        uses: shivammathur/cache-extensions@4595bea7d6630821b0a3a4894f816402faaf324c #1.13.0
-        with:
-          php-version: ${{ env.php-version }}
-          extensions: ${{ env.php-extensions }}
-          key: ${{ env.php-extensions-key }}
-
-      - name: Cache extensions
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
-        with:
-          path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
-          restore-keys: ${{ runner.os }}-phpext-${{ env.php-version }}
-
-      - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f #2.35.5
-        with:
-          php-version: ${{ env.php-version }}
-          coverage: none
-          extensions: ${{ env.php-extensions }}
-
-      - name: Cache dependencies
-        id: cache-composer
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
-        with:
-          path: vendor
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
-
-      - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
-        name: Install Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
-        shell: bash
-
-      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 #6.0.0
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-      - run: npm install
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@d5126b9b3579e429dd52e51e68624dda2e05be25 #1.267.0
-
-      - name: Run Ruby Script
-        run: ruby ./copyright.rb
-
-      - name: Cache PHP CS Fixer
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
-        with:
-          path: .php-cs-fixer.cache
-          key: ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-
-
-      - name: Cache Prettier
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
-        with:
-          path: ./node_modules/.cache/prettier/.prettier-cache
-          key: ${{ runner.OS }}-${{ github.repository }}-prettier-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.OS }}-${{ github.repository }}-prettier-
-
-      - name: Run Formatters
-        run: composer format
-
-      - name: Commit changes
-        if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-        uses: stefanzweifel/git-auto-commit-action@28e16e81777b558cc906c8750092100bbb34c5e3 #7.0.0
-        with:
-          commit_message: >
-            Update code formatting and copyright headers
-
-      - name: Check for changes
-        if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
-        uses: tj-actions/verify-changed-files@a1c6acee9df209257a246f2cc6ae8cb6581c1edf #20.0.4
-        with:
-          fail-if-changed: "true"
-
-  test:
-    strategy:
-      matrix:
-        testsuite: [ Landlord, Tenant ]
-
-    runs-on: ubuntu-22.04
-
-    needs: [ prep-and-code-consistency ]
-
-    env:
-      DB_PORT: 5432
-      DB_HOST: 127.0.0.1
-      DB_USERNAME: root
-      DB_PASSWORD: root
-      DB_DATABASE: testing_landlord
-      REDIS_HOST: 127.0.0.1
-
-    timeout-minutes: 15
-
-    services:
-      postgres:
-        # Docker Hub image
-        image: postgres:15
-        ports:
-          - 5432:5432
-        # Provide the password for postgres
         env:
-          PGPASSWORD: ${{ env.DB_PASSWORD }}
-          POSTGRES_DB: ${{ env.DB_DATABASE }}
-          POSTGRES_USER: ${{ env.DB_USERNAME }}
-          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+            php-extensions: gd, gmp, redis, mailparse
+            php-extensions-key: ext-cache-20250820
+            php-version: '8.4'
 
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
-        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        outputs:
+            php-extensions: ${{ env.php-extensions }}
+            php-extensions-key: ${{ env.php-extensions-key }}
+            php-version: ${{ env.php-version }}
 
-    steps:
-      - name: Create tenant database
-        run: psql -h 127.0.0.1 -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
+        steps:
+            - name: Checkout code | Internal
+              if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
+              uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
+              with:
+                  ref: ${{ github.head_ref }}
+                  token: ${{ secrets.pat-token }}
+
+            - name: Checkout code | External
+              if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
+              uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
+              with:
+                  ref: ${{ github.head_ref }}
+
+            - name: Setup cache environment
+              id: extcache
+              uses: shivammathur/cache-extensions@4595bea7d6630821b0a3a4894f816402faaf324c #1.13.0
+              with:
+                  php-version: ${{ env.php-version }}
+                  extensions: ${{ env.php-extensions }}
+                  key: ${{ env.php-extensions-key }}
+
+            - name: Cache extensions
+              uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
+              with:
+                  path: ${{ steps.extcache.outputs.dir }}
+                  key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
+                  restore-keys: ${{ runner.os }}-phpext-${{ env.php-version }}
+
+            - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f #2.35.5
+              with:
+                  php-version: ${{ env.php-version }}
+                  coverage: none
+                  extensions: ${{ env.php-extensions }}
+
+            - name: Cache dependencies
+              id: cache-composer
+              uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
+              with:
+                  path: vendor
+                  key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
+
+            - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
+              name: Install Dependencies
+              run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+              shell: bash
+
+            - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 #6.0.0
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'npm'
+            - run: npm install
+
+            - name: Set up Ruby
+              uses: ruby/setup-ruby@d5126b9b3579e429dd52e51e68624dda2e05be25 #1.267.0
+
+            - name: Run Ruby Script
+              run: ruby ./copyright.rb
+
+            - name: Cache PHP CS Fixer
+              uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
+              with:
+                  path: .php-cs-fixer.cache
+                  key: ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-${{ github.run_id }}
+                  restore-keys: |
+                      ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-
+
+            - name: Cache Prettier
+              uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
+              with:
+                  path: ./node_modules/.cache/prettier/.prettier-cache
+                  key: ${{ runner.OS }}-${{ github.repository }}-prettier-${{ github.run_id }}
+                  restore-keys: |
+                      ${{ runner.OS }}-${{ github.repository }}-prettier-
+
+            - name: Run Formatters
+              run: composer format
+
+            - name: Commit changes
+              if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
+              uses: stefanzweifel/git-auto-commit-action@28e16e81777b558cc906c8750092100bbb34c5e3 #7.0.0
+              with:
+                  commit_message: >
+                      Update code formatting and copyright headers
+
+            - name: Check for changes
+              if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
+              uses: tj-actions/verify-changed-files@a1c6acee9df209257a246f2cc6ae8cb6581c1edf #20.0.4
+              with:
+                  fail-if-changed: 'true'
+
+    test:
+        strategy:
+            matrix:
+                testsuite: [Landlord, Tenant]
+
+        runs-on: ubuntu-22.04
+
+        needs: [prep-and-code-consistency]
+
         env:
-          PGPASSWORD: root
+            DB_PORT: 5432
+            DB_HOST: 127.0.0.1
+            DB_USERNAME: root
+            DB_PASSWORD: root
+            DB_DATABASE: testing_landlord
+            REDIS_HOST: 127.0.0.1
 
-      - name: Setup cache environment
-        id: extcache
-        uses: shivammathur/cache-extensions@4595bea7d6630821b0a3a4894f816402faaf324c #1.13.0
-        with:
-          php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
-          extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
-          key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
+        timeout-minutes: 15
 
-      - name: Cache extensions
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
-        with:
-          path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
-          restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
+        services:
+            postgres:
+                # Docker Hub image
+                image: postgres:15
+                ports:
+                    - 5432:5432
+                # Provide the password for postgres
+                env:
+                    PGPASSWORD: ${{ env.DB_PASSWORD }}
+                    POSTGRES_DB: ${{ env.DB_DATABASE }}
+                    POSTGRES_USER: ${{ env.DB_USERNAME }}
+                    POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
+                # Set health checks to wait until postgres has started
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
 
-      - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f #2.35.5
-        with:
-          php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
-          coverage: none
-          extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+            redis:
+                image: redis
+                ports:
+                    - 6379:6379
+                options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
-        with:
-          fetch-depth: 0
-          fetch-tags: true
+        steps:
+            - name: Create tenant database
+              run: psql -h 127.0.0.1 -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
+              env:
+                  PGPASSWORD: root
 
-      - name: Copy .env
-        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+            - name: Setup cache environment
+              id: extcache
+              uses: shivammathur/cache-extensions@4595bea7d6630821b0a3a4894f816402faaf324c #1.13.0
+              with:
+                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+                  key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
 
-      - name: Cache dependencies
-        id: cache-composer
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
-        with:
-          path: vendor
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
+            - name: Cache extensions
+              uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
+              with:
+                  path: ${{ steps.extcache.outputs.dir }}
+                  key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
+                  restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
 
-      - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
-        name: Install Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
-        shell: bash
+            - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f #2.35.5
+              with:
+                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+                  coverage: none
+                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
 
-      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 #6.0.0
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-      - run: npm install
+            - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
+              with:
+                  fetch-depth: 0
+                  fetch-tags: true
 
-      - name: Build Assets
-        run: npm run build
+            - name: Copy .env
+              run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      - name: Generate key
-        run: php artisan key:generate
+            - name: Cache dependencies
+              id: cache-composer
+              uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
+              with:
+                  path: vendor
+                  key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
 
-      - name: Cache Modular Modules
-        run: php artisan modules:cache --env=testing
+            - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
+              name: Install Dependencies
+              run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+              shell: bash
 
-      - name: Cache Routes
-        run: php artisan route:cache --env=testing
+            - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 #6.0.0
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'npm'
+            - run: npm install
 
-      - name: Cache Views
-        run: php artisan view:cache --env=testing
+            - name: Build Assets
+              run: npm run build
 
-      - name: Cache Events
-        run: php artisan event:cache --env=testing
+            - name: Generate key
+              run: php artisan key:generate
 
-      - name: Cache Icons
-        run: php artisan icons:cache --env=testing
+            - name: Cache Modular Modules
+              run: php artisan modules:cache --env=testing
 
-      - name: Cache Filament Components
-        run: php artisan filament:cache-components --env=testing
+            - name: Cache Routes
+              run: php artisan route:cache --env=testing
 
-      - name: Check route integrity
-        run: php artisan route:list
+            - name: Cache Views
+              run: php artisan view:cache --env=testing
 
-      - name: Execute tests (Unit and Feature tests) via PHPUnit
-        run: php artisan test --configuration phpunit-ci.xml --parallel --testsuite=${{ matrix.testsuite }}
+            - name: Cache Events
+              run: php artisan event:cache --env=testing
 
-  lint:
-    runs-on: ubuntu-22.04
+            - name: Cache Icons
+              run: php artisan icons:cache --env=testing
 
-    needs: [ prep-and-code-consistency ]
+            - name: Cache Filament Components
+              run: php artisan filament:cache-components --env=testing
 
-    env:
-      DB_PORT: 5432
-      DB_HOST: 127.0.0.1
-      DB_USERNAME: root
-      DB_PASSWORD: root
-      DB_DATABASE: testing_landlord
-      PENNANT_STORE: array
-      CACHE_DRIVER: array
-      QUEUE_CONNECTION: sync
-      AUDIT_QUEUE_CONNECTION: sync
-      SESSION_DRIVER: array
+            - name: Check route integrity
+              run: php artisan route:list
 
-    timeout-minutes: 15
+            - name: Execute tests (Unit and Feature tests) via PHPUnit
+              run: php artisan test --configuration phpunit-ci.xml --parallel --testsuite=${{ matrix.testsuite }}
 
-    services:
-      postgres:
-        # Docker Hub image
-        image: postgres:15
-        ports:
-          - 5432:5432
-        # Provide the password for postgres
+    lint:
+        runs-on: ubuntu-22.04
+
+        needs: [prep-and-code-consistency]
+
         env:
-          PGPASSWORD: ${{ env.DB_PASSWORD }}
-          POSTGRES_DB: ${{ env.DB_DATABASE }}
-          POSTGRES_USER: ${{ env.DB_USERNAME }}
-          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+            DB_PORT: 5432
+            DB_HOST: 127.0.0.1
+            DB_USERNAME: root
+            DB_PASSWORD: root
+            DB_DATABASE: testing_landlord
+            PENNANT_STORE: array
+            CACHE_DRIVER: array
+            QUEUE_CONNECTION: sync
+            AUDIT_QUEUE_CONNECTION: sync
+            SESSION_DRIVER: array
 
-    steps:
-      - name: Setup cache environment
-        id: extcache
-        uses: shivammathur/cache-extensions@4595bea7d6630821b0a3a4894f816402faaf324c #1.13.0
-        with:
-          php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
-          extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
-          key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
+        timeout-minutes: 15
 
-      - name: Cache extensions
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
-        with:
-          path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
-          restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
+        services:
+            postgres:
+                # Docker Hub image
+                image: postgres:15
+                ports:
+                    - 5432:5432
+                # Provide the password for postgres
+                env:
+                    PGPASSWORD: ${{ env.DB_PASSWORD }}
+                    POSTGRES_DB: ${{ env.DB_DATABASE }}
+                    POSTGRES_USER: ${{ env.DB_USERNAME }}
+                    POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
+                # Set health checks to wait until postgres has started
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
 
-      - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f #2.35.5
-        with:
-          php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
-          coverage: none
-          extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+        steps:
+            - name: Setup cache environment
+              id: extcache
+              uses: shivammathur/cache-extensions@4595bea7d6630821b0a3a4894f816402faaf324c #1.13.0
+              with:
+                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+                  key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
 
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
-        with:
-          fetch-depth: 0
-          fetch-tags: true
+            - name: Cache extensions
+              uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
+              with:
+                  path: ${{ steps.extcache.outputs.dir }}
+                  key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
+                  restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
 
-      - name: Copy .env
-        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+            - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f #2.35.5
+              with:
+                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+                  coverage: none
+                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
 
-      - name: Cache dependencies
-        id: cache-composer
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
-        with:
-          path: vendor
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
+            - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
+              with:
+                  fetch-depth: 0
+                  fetch-tags: true
 
-      - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
-        name: Install Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
-        shell: bash
+            - name: Copy .env
+              run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      - name: Generate key
-        run: php artisan key:generate
+            - name: Cache dependencies
+              id: cache-composer
+              uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
+              with:
+                  path: vendor
+                  key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
 
-      - name: Migrate Landlord Database
-        run: php artisan migrate --database=landlord --path=database/landlord --force
+            - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
+              name: Install Dependencies
+              run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+              shell: bash
 
-      - name: Set up Tenant
-        run: php artisan tenants:create test test.advisingapp.local -y
+            - name: Generate key
+              run: php artisan key:generate
 
-      - name: Generate Helper Files
-        run: php artisan app:generate-helper-files
+            - name: Migrate Landlord Database
+              run: php artisan migrate --database=landlord --path=database/landlord --force
 
-      - name: "Restore result cache"
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
-        with:
-          path: tmp
-          key: "linting-result-cache-${{ github.run_id }}"
-          restore-keys: |
-            linting-result-cache-
+            - name: Set up Tenant
+              run: php artisan tenants:create test test.advisingapp.local -y
 
-      - name: Run PHPStan
-        run: ./vendor/bin/phpstan analyse --configuration phpstan-ci.neon --no-progress
+            - name: Generate Helper Files
+              run: php artisan app:generate-helper-files
 
-      - name: "Save result cache"
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
-        if: ${{ !cancelled() }}
-        with:
-          path: tmp
-          key: "linting-result-cache-${{ github.run_id }}"
+            - name: 'Restore result cache'
+              uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
+              with:
+                  path: tmp
+                  key: 'linting-result-cache-${{ github.run_id }}'
+                  restore-keys: |
+                      linting-result-cache-
+
+            - name: Run PHPStan
+              run: ./vendor/bin/phpstan analyse --configuration phpstan-ci.neon --no-progress
+
+            - name: 'Save result cache'
+              uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 #4.3.0
+              if: ${{ !cancelled() }}
+              with:
+                  path: tmp
+                  key: 'linting-result-cache-${{ github.run_id }}'

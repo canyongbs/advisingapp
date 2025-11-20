@@ -23,6 +23,6 @@
 > If yes to Data Migrations, please list the full relative file path of the added Data Migration/s.
 > If no, please replace this block with "No".
 
-_______________________________________________
+---
 
 #### Before contributing and submitting this PR, make sure you have Read, agree, and are compliant with the [contributing guidelines](https://github.com/canyongbs/advisingapp/blob/main/README.md#contributing).

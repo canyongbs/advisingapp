@@ -32,37 +32,37 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { consumer } from '@/Services/Consumer.js';
-import { useAuthStore } from '@/Stores/auth.js';
-import { useTokenStore } from '@/Stores/token.js';
-import { defineProps } from 'vue';
+    import { consumer } from '@/Services/Consumer.js';
+    import { useAuthStore } from '@/Stores/auth.js';
+    import { useTokenStore } from '@/Stores/token.js';
+    import { defineProps } from 'vue';
 
-const props = defineProps({
-    categories: {
-        type: Object,
-        default: {},
-    },
-    apiUrl: {
-        type: String,
-        required: true,
-    },
-});
-
-const { removeToken } = useTokenStore();
-const { portalRequiresAuthentication } = useAuthStore();
-
-const logout = () => {
-    const { post } = consumer();
-
-    post(props.apiUrl + '/authenticate/logout').then((response) => {
-        if (!response.data.success) {
-            return;
-        }
-
-        removeToken();
-        window.location.href = response.data.redirect_url;
+    const props = defineProps({
+        categories: {
+            type: Object,
+            default: {},
+        },
+        apiUrl: {
+            type: String,
+            required: true,
+        },
     });
-};
+
+    const { removeToken } = useTokenStore();
+    const { portalRequiresAuthentication } = useAuthStore();
+
+    const logout = () => {
+        const { post } = consumer();
+
+        post(props.apiUrl + '/authenticate/logout').then((response) => {
+            if (!response.data.success) {
+                return;
+            }
+
+            removeToken();
+            window.location.href = response.data.redirect_url;
+        });
+    };
 </script>
 
 <template>

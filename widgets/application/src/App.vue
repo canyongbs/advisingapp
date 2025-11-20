@@ -32,223 +32,262 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { defineProps, reactive, ref } from 'vue';
-import asteriskPlugin from '../../form/src/FormKit/asterisk.js';
-import wizard from '../../form/src/FormKit/wizard';
-let { steps, visitedSteps, activeStep, setStep, wizardPlugin } = wizard();
+    import { defineProps, reactive, ref } from 'vue';
+    import asteriskPlugin from '../../form/src/FormKit/asterisk.js';
+    import wizard from '../../form/src/FormKit/wizard';
+    let { steps, visitedSteps, activeStep, setStep, wizardPlugin } = wizard();
 
-const props = defineProps({
-    entryUrl: {
-        type: String,
-        required: true,
-    },
-    preview: {
-        type: Boolean,
-        default: false,
-    },
-});
+    const props = defineProps({
+        entryUrl: {
+            type: String,
+            required: true,
+        },
+        preview: {
+            type: Boolean,
+            default: false,
+        },
+    });
 
-const data = reactive({
-    steps,
-    visitedSteps,
-    activeStep,
-    plugins: [wizardPlugin, asteriskPlugin],
-    setStep: (target) => () => {
-        setStep(target);
-    },
-    setActiveStep: (stepName) => () => {
-        data.activeStep = stepName;
-    },
-    showStepErrors: (stepName) => {
-        return (
-            (steps[stepName].errorCount > 0 || steps[stepName].blockingCount > 0) &&
-            visitedSteps.value &&
-            visitedSteps.value.includes(stepName)
-        );
-    },
-    stepIsValid: (stepName) => {
-        return steps[stepName].valid && steps[stepName].errorCount === 0;
-    },
-    stringify: (value) => JSON.stringify(value, null, 2),
-    submitForm: async (data, node) => {
+    const data = reactive({
+        steps,
+        visitedSteps,
+        activeStep,
+        plugins: [wizardPlugin, asteriskPlugin],
+        setStep: (target) => () => {
+            setStep(target);
+        },
+        setActiveStep: (stepName) => () => {
+            data.activeStep = stepName;
+        },
+        showStepErrors: (stepName) => {
+            return (
+                (steps[stepName].errorCount > 0 || steps[stepName].blockingCount > 0) &&
+                visitedSteps.value &&
+                visitedSteps.value.includes(stepName)
+            );
+        },
+        stepIsValid: (stepName) => {
+            return steps[stepName].valid && steps[stepName].errorCount === 0;
+        },
+        stringify: (value) => JSON.stringify(value, null, 2),
+        submitForm: async (data, node) => {
+            node.clearErrors();
+
+            if (props.preview === 'true' || props.preview === true) {
+                submittedSuccess.value = true;
+                return;
+            }
+
+            fetch(applicationSubmissionUrl.value, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => response.json())
+                .then((json) => {
+                    if (json.errors) {
+                        node.setErrors([], json.errors);
+
+                        return;
+                    }
+
+                    submittedSuccess.value = true;
+                })
+                .catch((error) => {
+                    node.setErrors([error]);
+                });
+        },
+    });
+
+    const submittedSuccess = ref(false);
+    const display = ref(false);
+    const applicationName = ref('');
+    const applicationDescription = ref('');
+    const applicationSubmissionUrl = ref('');
+    const applicationPrimaryColor = ref('');
+    const applicationRounding = ref('');
+    const schema = ref([]);
+
+    const authentication = ref({
+        code: null,
+        email: null,
+        isRequested: false,
+        requestedMessage: null,
+        requestUrl: null,
+        url: null,
+        registrationAllowed: false,
+    });
+
+    fetch(props.entryUrl)
+        .then((response) => response.json())
+        .then((json) => {
+            if (json.error) {
+                throw new Error(json.error);
+            }
+
+            applicationName.value = json.name;
+            applicationDescription.value = json.description;
+            applicationPrimaryColor.value = json.primary_color;
+            authentication.value.requestUrl = json.authentication_url;
+
+            if (props.preview === 'true' || props.preview === true) {
+                visitedSteps.value = [];
+                activeStep.value = '';
+
+                Object.keys(steps).forEach((stepName) => {
+                    if (steps[stepName]) {
+                        steps[stepName].errorCount = 0;
+                        steps[stepName].blockingCount = 0;
+                        steps[stepName].valid = true;
+                    }
+                });
+            }
+
+            if ((props.preview === 'true' || props.preview === true) && !json.authentication_url) {
+                applicationSubmissionUrl.value = 'preview-mode';
+            }
+
+            applicationRounding.value = {
+                none: {
+                    sm: '0px',
+                    default: '0px',
+                    md: '0px',
+                    lg: '0px',
+                    full: '0px',
+                },
+                sm: {
+                    sm: '0.125rem',
+                    default: '0.25rem',
+                    md: '0.375rem',
+                    lg: '0.5rem',
+                    full: '9999px',
+                },
+                md: {
+                    sm: '0.25rem',
+                    default: '0.375rem',
+                    md: '0.5rem',
+                    lg: '0.75rem',
+                    full: '9999px',
+                },
+                lg: {
+                    sm: '0.375rem',
+                    default: '0.5rem',
+                    md: '0.75rem',
+                    lg: '1rem',
+                    full: '9999px',
+                },
+                full: {
+                    sm: '9999px',
+                    default: '9999px',
+                    md: '9999px',
+                    lg: '9999px',
+                    full: '9999px',
+                },
+            }[json.rounding ?? 'md'];
+
+            display.value = true;
+        })
+        .catch((error) => {
+            console.error(`Advising App Embed Application ${error}`);
+        });
+
+    async function authenticate(applicationData, node) {
         node.clearErrors();
 
         if (props.preview === 'true' || props.preview === true) {
-            submittedSuccess.value = true;
+            applicationSubmissionUrl.value = 'preview-mode';
             return;
         }
 
-        fetch(applicationSubmissionUrl.value, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                if (json.errors) {
-                    node.setErrors([], json.errors);
-
-                    return;
-                }
-
-                submittedSuccess.value = true;
+        if (authentication.value.isRequested) {
+            fetch(authentication.value.url, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    code: applicationData.code,
+                }),
             })
-            .catch((error) => {
-                node.setErrors([error]);
-            });
-    },
-});
+                .then((response) => response.json())
+                .then((json) => {
+                    if (json.errors) {
+                        node.setErrors([], json.errors);
 
-const submittedSuccess = ref(false);
-const display = ref(false);
-const applicationName = ref('');
-const applicationDescription = ref('');
-const applicationSubmissionUrl = ref('');
-const applicationPrimaryColor = ref('');
-const applicationRounding = ref('');
-const schema = ref([]);
+                        return;
+                    }
 
-const authentication = ref({
-    code: null,
-    email: null,
-    isRequested: false,
-    requestedMessage: null,
-    requestUrl: null,
-    url: null,
-    registrationAllowed: false,
-});
+                    if (json.is_expired) {
+                        node.setErrors(['The authentication code expires after 24 hours. Please authenticate again.']);
 
-fetch(props.entryUrl)
-    .then((response) => response.json())
-    .then((json) => {
-        if (json.error) {
-            throw new Error(json.error);
+                        authentication.value.isRequested = false;
+                        authentication.value.requestedMessage = null;
+                        authentication.value.registrationAllowed = false;
+
+                        return;
+                    }
+
+                    if (!json.submission_url) {
+                        node.setErrors([json.message]);
+
+                        return;
+                    }
+
+                    applicationSubmissionUrl.value = json.submission_url;
+                    schema.value = json.schema;
+                })
+                .catch((error) => {
+                    node.setErrors([error]);
+                });
+
+            return;
         }
 
-        applicationName.value = json.name;
-        applicationDescription.value = json.description;
-        applicationPrimaryColor.value = json.primary_color;
-        authentication.value.requestUrl = json.authentication_url;
-
-        if (props.preview === 'true' || props.preview === true) {
-            visitedSteps.value = [];
-            activeStep.value = '';
-
-            Object.keys(steps).forEach((stepName) => {
-                if (steps[stepName]) {
-                    steps[stepName].errorCount = 0;
-                    steps[stepName].blockingCount = 0;
-                    steps[stepName].valid = true;
-                }
-            });
-        }
-
-        if ((props.preview === 'true' || props.preview === true) && !json.authentication_url) {
-            applicationSubmissionUrl.value = 'preview-mode';
-        }
-
-        applicationRounding.value = {
-            none: {
-                sm: '0px',
-                default: '0px',
-                md: '0px',
-                lg: '0px',
-                full: '0px',
-            },
-            sm: {
-                sm: '0.125rem',
-                default: '0.25rem',
-                md: '0.375rem',
-                lg: '0.5rem',
-                full: '9999px',
-            },
-            md: {
-                sm: '0.25rem',
-                default: '0.375rem',
-                md: '0.5rem',
-                lg: '0.75rem',
-                full: '9999px',
-            },
-            lg: {
-                sm: '0.375rem',
-                default: '0.5rem',
-                md: '0.75rem',
-                lg: '1rem',
-                full: '9999px',
-            },
-            full: {
-                sm: '9999px',
-                default: '9999px',
-                md: '9999px',
-                lg: '9999px',
-                full: '9999px',
-            },
-        }[json.rounding ?? 'md'];
-
-        display.value = true;
-    })
-    .catch((error) => {
-        console.error(`Advising App Embed Application ${error}`);
-    });
-
-async function authenticate(applicationData, node) {
-    node.clearErrors();
-
-    if (props.preview === 'true' || props.preview === true) {
-        applicationSubmissionUrl.value = 'preview-mode';
-        return;
-    }
-
-    if (authentication.value.isRequested) {
-        fetch(authentication.value.url, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                code: applicationData.code,
-            }),
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                if (json.errors) {
-                    node.setErrors([], json.errors);
-
-                    return;
-                }
-
-                if (json.is_expired) {
-                    node.setErrors(['The authentication code expires after 24 hours. Please authenticate again.']);
-
-                    authentication.value.isRequested = false;
-                    authentication.value.requestedMessage = null;
-                    authentication.value.registrationAllowed = false;
-
-                    return;
-                }
-
-                if (!json.submission_url) {
-                    node.setErrors([json.message]);
-
-                    return;
-                }
-
-                applicationSubmissionUrl.value = json.submission_url;
-                schema.value = json.schema;
+        if (authentication.value.registrationAllowed) {
+            fetch(authentication.value.url, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: applicationData.email,
+                    first_name: applicationData.first_name,
+                    last_name: applicationData.last_name,
+                    preferred: applicationData.preferred,
+                    mobile: applicationData.mobile,
+                    birthdate: applicationData.birthdate,
+                    address: applicationData.address,
+                    address_2: applicationData.address_2,
+                    city: applicationData.city,
+                    state: applicationData.state,
+                    postal: applicationData.postal,
+                }),
             })
-            .catch((error) => {
-                node.setErrors([error]);
-            });
+                .then((response) => response.json())
+                .then((json) => {
+                    if (json.errors) {
+                        node.setErrors([], json.errors);
 
-        return;
-    }
+                        return;
+                    }
 
-    if (authentication.value.registrationAllowed) {
-        fetch(authentication.value.url, {
+                    authentication.value.isRequested = true;
+                    authentication.value.requestedMessage = json.message;
+                    authentication.value.url = json.authentication_url;
+                })
+                .catch((error) => {
+                    node.setErrors([error]);
+                });
+
+            return;
+        }
+
+        fetch(authentication.value.requestUrl, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -256,22 +295,27 @@ async function authenticate(applicationData, node) {
             },
             body: JSON.stringify({
                 email: applicationData.email,
-                first_name: applicationData.first_name,
-                last_name: applicationData.last_name,
-                preferred: applicationData.preferred,
-                mobile: applicationData.mobile,
-                birthdate: applicationData.birthdate,
-                address: applicationData.address,
-                address_2: applicationData.address_2,
-                city: applicationData.city,
-                state: applicationData.state,
-                postal: applicationData.postal,
             }),
         })
             .then((response) => response.json())
             .then((json) => {
                 if (json.errors) {
                     node.setErrors([], json.errors);
+
+                    return;
+                }
+
+                if (!json.authentication_url) {
+                    node.setErrors([json.message]);
+
+                    return;
+                }
+
+                if (json.registrationAllowed) {
+                    authentication.value.registrationAllowed = true;
+                    authentication.value.isRequested = false;
+                    authentication.value.requestedMessage = json.message;
+                    authentication.value.url = json.authentication_url;
 
                     return;
                 }
@@ -283,51 +327,7 @@ async function authenticate(applicationData, node) {
             .catch((error) => {
                 node.setErrors([error]);
             });
-
-        return;
     }
-
-    fetch(authentication.value.requestUrl, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            email: applicationData.email,
-        }),
-    })
-        .then((response) => response.json())
-        .then((json) => {
-            if (json.errors) {
-                node.setErrors([], json.errors);
-
-                return;
-            }
-
-            if (!json.authentication_url) {
-                node.setErrors([json.message]);
-
-                return;
-            }
-
-            if (json.registrationAllowed) {
-                authentication.value.registrationAllowed = true;
-                authentication.value.isRequested = false;
-                authentication.value.requestedMessage = json.message;
-                authentication.value.url = json.authentication_url;
-
-                return;
-            }
-
-            authentication.value.isRequested = true;
-            authentication.value.requestedMessage = json.message;
-            authentication.value.url = json.authentication_url;
-        })
-        .catch((error) => {
-            node.setErrors([error]);
-        });
-}
 </script>
 
 <template>

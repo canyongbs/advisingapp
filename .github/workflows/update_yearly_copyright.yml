@@ -1,38 +1,38 @@
 name: Update Yearly Copyright
 
 on:
-  workflow_dispatch:
-  schedule: # Run every year on January 1st
-    - cron: "0 0 1 1 *" # UTC time
+    workflow_dispatch:
+    schedule: # Run every year on January 1st
+        - cron: '0 0 1 1 *' # UTC time
 
 jobs:
-  update-copyright:
-    runs-on: ubuntu-22.04
+    update-copyright:
+        runs-on: ubuntu-22.04
 
-    timeout-minutes: 10
+        timeout-minutes: 10
 
-    steps:
-      - name: Checkout `main` Branch
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
-        with:
-          token: ${{ secrets.PAT }}
+        steps:
+            - name: Checkout `main` Branch
+              uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #5.0.0
+              with:
+                  token: ${{ secrets.PAT }}
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@d5126b9b3579e429dd52e51e68624dda2e05be25 #1.267.0
+            - name: Set up Ruby
+              uses: ruby/setup-ruby@d5126b9b3579e429dd52e51e68624dda2e05be25 #1.267.0
 
-      - name: Run copyright script
-        run: ruby ./copyright.rb
+            - name: Run copyright script
+              run: ruby ./copyright.rb
 
-      - name: Create Pull Request
-        # SHA of release v6.1.0
-        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e #7.0.8
-        with:
-          token: ${{ secrets.PAT }}
-          commit-message: >
-            chore: update yearly copyright
-          title: Update yearly copyright
-          body: >
-            This is an automated pull request to update the yearly copyright.
-          branch: update-yearly-copyright-
-          branch-suffix: timestamp
-          team-reviewers: canyon-gbs-lead-developers
+            - name: Create Pull Request
+              # SHA of release v6.1.0
+              uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e #7.0.8
+              with:
+                  token: ${{ secrets.PAT }}
+                  commit-message: >
+                      chore: update yearly copyright
+                  title: Update yearly copyright
+                  body: >
+                      This is an automated pull request to update the yearly copyright.
+                  branch: update-yearly-copyright-
+                  branch-suffix: timestamp
+                  team-reviewers: canyon-gbs-lead-developers

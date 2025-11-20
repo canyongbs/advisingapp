@@ -30,12 +30,12 @@ When creating data migrations it is important to adhere to the following rules:
     - Any Feature Flag class located within the `App\Features` namespace extending `App\Support\AbstractFeatureFlag`
         - To interact with feature flagging.
 2. As mentioned above, ensure all possible SQL errors are captured and handled, such as `UniqueConstraintExeception`. Also ensure that any database change is surrounded by a transaction to prevent corruption of the query connection.
-2. Ensure that the migration is idempotent. This means that the migration can be run multiple times without causing any issues. Tables and columns should be checked for the existence, SQL errors should be caught and properly handled, and data should be checked if it is in the expected state before it is changed, etc.
-3. You **MUST** include a `down` method in the migration.
+3. Ensure that the migration is idempotent. This means that the migration can be run multiple times without causing any issues. Tables and columns should be checked for the existence, SQL errors should be caught and properly handled, and data should be checked if it is in the expected state before it is changed, etc.
+4. You **MUST** include a `down` method in the migration.
     - In production, Data migrations are intended to be run once and not rolled back. If you need to fix a data migration that has been run in Production already, you should create a new data migration to do so.
     - The reason we add a `down` to our data migrations is to facilitate testing of these data migrations in special cases.
-4. Do **NOT** include schema changes in data migrations. Schema changes should be done in schema migrations. Data migrations should only be used to manipulate data.
-5. If you are adding permissions to the application, that is a special type of data migration which can be read about in the [Roles and Permisisons](/docs/roles-and-permissions.md) documentation.
+5. Do **NOT** include schema changes in data migrations. Schema changes should be done in schema migrations. Data migrations should only be used to manipulate data.
+6. If you are adding permissions to the application, that is a special type of data migration which can be read about in the [Roles and Permisisons](/docs/roles-and-permissions.md) documentation.
 
 ### Running Data Migrations
 

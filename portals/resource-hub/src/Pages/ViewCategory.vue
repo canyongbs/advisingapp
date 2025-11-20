@@ -32,89 +32,89 @@
 </COPYRIGHT>
 -->
 <script setup>
-import AppLoading from '@/Components/AppLoading.vue';
-import Breadcrumbs from '@/Components/Breadcrumbs.vue';
-import { consumer } from '@/Services/Consumer.js';
-import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/vue/20/solid/index.js';
-import { Bars3Icon } from '@heroicons/vue/24/outline/index.js';
-import { defineProps, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+    import AppLoading from '@/Components/AppLoading.vue';
+    import Breadcrumbs from '@/Components/Breadcrumbs.vue';
+    import { consumer } from '@/Services/Consumer.js';
+    import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/vue/20/solid/index.js';
+    import { Bars3Icon } from '@heroicons/vue/24/outline/index.js';
+    import { defineProps, ref, watch } from 'vue';
+    import { useRoute } from 'vue-router';
 
-const route = useRoute();
+    const route = useRoute();
 
-const props = defineProps({
-    searchUrl: {
-        type: String,
-        required: true,
-    },
-    apiUrl: {
-        type: String,
-        required: true,
-    },
-    categories: {
-        type: Object,
-        required: true,
-    },
-});
-
-const loadingResults = ref(true);
-const category = ref(null);
-const articles = ref(null);
-const currentPage = ref(1);
-const nextPageUrl = ref(null);
-const prevPageUrl = ref(null);
-const lastPage = ref(null);
-const totalArticles = ref(0);
-const fromArticle = ref(0);
-const toArticle = ref(0);
-
-watch(
-    route,
-    async function (newRouteValue) {
-        await getData();
-    },
-    {
-        immediate: true,
-    },
-);
-
-const fetchNextPage = () => {
-    currentPage.value = currentPage.value !== lastPage.value ? currentPage.value + 1 : lastPage.value;
-    getData(currentPage.value);
-};
-const fetchPreviousPage = () => {
-    currentPage.value = currentPage.value !== 1 ? currentPage.value - 1 : 1;
-    getData(currentPage.value);
-};
-const fetchPage = (page) => {
-    currentPage.value = page;
-    getData(currentPage.value);
-};
-const visiblePages = () => {
-    const range = 2;
-    const start = Math.max(currentPage.value - range, 1);
-    const end = Math.min(currentPage.value + range, lastPage.value);
-    return Array.from({ length: end - start + 1 }, (_, i) => i + start);
-};
-
-async function getData(page = 1) {
-    loadingResults.value = true;
-
-    const { get } = consumer();
-
-    await get(props.apiUrl + '/categories/' + route.params.categoryId, { page: page }).then((response) => {
-        category.value = response.data.category;
-        articles.value = response.data.articles.data;
-        currentPage.value = response.data.articles.current_page;
-        prevPageUrl.value = response.data.articles.prev_page_url;
-        nextPageUrl.value = response.data.articles.next_page_url;
-        lastPage.value = response.data.articles.last_page;
-        totalArticles.value = response.data.articles.total;
-        fromArticle.value = response.data.articles.from;
-        toArticle.value = response.data.articles.to;
-        loadingResults.value = false;
+    const props = defineProps({
+        searchUrl: {
+            type: String,
+            required: true,
+        },
+        apiUrl: {
+            type: String,
+            required: true,
+        },
+        categories: {
+            type: Object,
+            required: true,
+        },
     });
-}
+
+    const loadingResults = ref(true);
+    const category = ref(null);
+    const articles = ref(null);
+    const currentPage = ref(1);
+    const nextPageUrl = ref(null);
+    const prevPageUrl = ref(null);
+    const lastPage = ref(null);
+    const totalArticles = ref(0);
+    const fromArticle = ref(0);
+    const toArticle = ref(0);
+
+    watch(
+        route,
+        async function (newRouteValue) {
+            await getData();
+        },
+        {
+            immediate: true,
+        },
+    );
+
+    const fetchNextPage = () => {
+        currentPage.value = currentPage.value !== lastPage.value ? currentPage.value + 1 : lastPage.value;
+        getData(currentPage.value);
+    };
+    const fetchPreviousPage = () => {
+        currentPage.value = currentPage.value !== 1 ? currentPage.value - 1 : 1;
+        getData(currentPage.value);
+    };
+    const fetchPage = (page) => {
+        currentPage.value = page;
+        getData(currentPage.value);
+    };
+    const visiblePages = () => {
+        const range = 2;
+        const start = Math.max(currentPage.value - range, 1);
+        const end = Math.min(currentPage.value + range, lastPage.value);
+        return Array.from({ length: end - start + 1 }, (_, i) => i + start);
+    };
+
+    async function getData(page = 1) {
+        loadingResults.value = true;
+
+        const { get } = consumer();
+
+        await get(props.apiUrl + '/categories/' + route.params.categoryId, { page: page }).then((response) => {
+            category.value = response.data.category;
+            articles.value = response.data.articles.data;
+            currentPage.value = response.data.articles.current_page;
+            prevPageUrl.value = response.data.articles.prev_page_url;
+            nextPageUrl.value = response.data.articles.next_page_url;
+            lastPage.value = response.data.articles.last_page;
+            totalArticles.value = response.data.articles.total;
+            fromArticle.value = response.data.articles.from;
+            toArticle.value = response.data.articles.to;
+            loadingResults.value = false;
+        });
+    }
 </script>
 
 <template>

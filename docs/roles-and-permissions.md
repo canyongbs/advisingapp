@@ -1,4 +1,5 @@
 # Roles and Permissions
+
 Roles and permissions in the application have been setup in a flexible and maintainable manner, making it easy for application owners to make adjustments to configuration, and ensure that the custom roles and permissions they will need are in place.
 
 This application uses the [Spatie Laravel-permission](https://spatie.be/docs/laravel-permission/v5/introduction) package in order to facilitate the usage of roles and permissions.
@@ -6,12 +7,15 @@ This application uses the [Spatie Laravel-permission](https://spatie.be/docs/lar
 The application uses a dedicated convention in order to define and populate roles and permissions, leaving little in the way of thinking when it comes time to stand up the application locally or in a live environment.
 
 ### Local Setup
+
 In order to get your local environment correctly set up, you won't have to do anything beyond running the setup process defined in the documentation. Permissions are created in data migrations and roles are created by seeders when a Tenant is created.
 
 ## Permissions
+
 Permissions in the application are created and managed through special Data Migrations called Permission Migrations. Details on Data Migrations can be found in the [Data Migrations](/docs/data-migrations.md) documentation.
 
 ### Permission Migrations
+
 Permission Migrations operate much the same as regular Data Migrations but adhere to a few slightly different or additional rules:
 
 1. Prepend the name of the migration with `seed_permissions_` to differentiate it from schema migrations and Data Migrations.
@@ -21,6 +25,7 @@ Permission Migrations operate much the same as regular Data Migrations but adher
 ### What permissions to create
 
 #### Models
+
 Typically new Models added to the application should have the following default permissions created for them:
 
 - `your-model.view-any`
@@ -36,11 +41,13 @@ But, for Models, there may be special cases where either additional permissions 
 What permissions should or should not be created should be decided on prior to creation. But if details are not provided before hand, it is the developers resonsobility to ensure discussion on deciding the permissions takes place.
 
 #### Custom Permissions
+
 Sometimes we have a need for permissions that are not neccarily related to Models. We call these "custom permissions". For example, if we are gating access to a certain page or feature based on a custom RBAC setup.
 
 The name of this permission can be virtually anything and should be decided upon by the developer with feedback from the team and Product.
 
 #### Permission Groups
+
 Permission Groups are a labelling system applied to permissions to put them into a grouping for better management and organization in the UI. As such all permissions **MUST** be related to a `PermissionGroup`.
 
 Many `PermissionGroup`s currently exist, so new permissions can be created and added to them. Or when creating a permission an new `PermissionGroup` can be created. What group to assign a permission to should be decided by the developer and/or decided upon by the team and Product.
@@ -50,7 +57,7 @@ Many `PermissionGroup`s currently exist, so new permissions can be created and a
 This application has a command, virtually the same as the default `make:migration` command to create Permission Migrations.
 
 ```bash
-php artisan make:permission-migration 
+php artisan make:permission-migration
 ```
 
 Example usage:
@@ -62,11 +69,13 @@ php artisan make:permission-migration seed_permissions_add_foo_permissions
 This command works with the `--module` flag.
 
 ## Roles
+
 Roles are also configurable at the module level. Within configuration files in a module, you can define a Role and the Permissions that it will have.
 
 Roles will inherit their name from the name of their config file, and should be structured like so:
 
-*Directory Structure Example*
+_Directory Structure Example_
+
 ```
 - my-module
   - config
@@ -77,7 +86,8 @@ Roles will inherit their name from the name of their config file, and should be 
 
 Within the role file definition, you can specify the `custom` and `model` permissions that the Role should have:
 
-*some_role.php*
+_some_role.php_
+
 ```
 <?php
 
@@ -98,6 +108,7 @@ return [
 ```
 
 ## Registering Roles and Permissions
+
 In order to register Roles and Permissions, the `authorization` module exposes registries that every other module can interact with. The Advising App platform expects that your Roles and Permissions are defined within configuration files.
 
 The two registries available are:

@@ -32,21 +32,21 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { ref, watch } from 'vue';
+    import { ref, watch } from 'vue';
 
-const props = defineProps({
-    context: Object,
-});
+    const props = defineProps({
+        context: Object,
+    });
 
-const min = ref(1);
-const max = ref(5);
-const value = ref(Math.ceil(max.value / 2));
+    const min = ref(1);
+    const max = ref(5);
+    const value = ref(Math.ceil(max.value / 2));
 
-props.context.node.input(value.value);
+    props.context.node.input(value.value);
 
-watch(value, (value) => {
-    props.context.node.input(value);
-});
+    watch(value, (value) => {
+        props.context.node.input(value);
+    });
 </script>
 
 <template>

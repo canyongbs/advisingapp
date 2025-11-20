@@ -3,20 +3,23 @@
 <!-- PROJECT SHIELDS -->
 <!--[![Forks][forks-shield]][forks-url]-->
 <!--[![Issues][issues-shield]][issues-url]-->
+
 [![Contributors][contributors-shield]][contributors-url]
 [![Stargazers][stars-shield]][stars-url]
 
 <!-- PROJECT LOGO -->
-[![Canyon GBS GitHub Header Image!](https://s3.us-west-2.amazonaws.com/canyongbs.com/LinkedIn-CompanyCoverImage.png "Canyyon GBS GitHub Header Image")](https://canyongbs.com)\
+
+[![Canyon GBS GitHub Header Image!](https://s3.us-west-2.amazonaws.com/canyongbs.com/LinkedIn-CompanyCoverImage.png 'Canyyon GBS GitHub Header Image')](https://canyongbs.com)\
 \
 [Click here to visit the Canyon GBS Website](https://canyongbs.com/)
 
 <!-- ABOUT THE PROJECT -->
+
 ## About The Project
 
 👋 Welcome!\
 \
-This repository includes the software solution known as __Advising App™__ created by Canyon GBS™. \
+This repository includes the software solution known as **Advising App™** created by Canyon GBS™. \
 \
 The software in this repository is offerred as a fully managed and supported, SOC 2 compliant and ISO 27001:2022 certified, SaaS offerring to colleges and universities through Canyon GBS LLC. Additionally, the software is released as open-source under the Elastic License 2.0 (see the [license file](./LICENSE) for more details.)\
 \
@@ -28,71 +31,76 @@ _Note: This software is developed, under copyright, and trademarked by Canyon GB
 
 Our robust personal assistant is designed to support your student service professionals in their day-to-day roles. Some key capabilities the assistant can help with includes:
 
-* Research Tasks
-* Draft Communication
-* Language Translation
-* Content Creation
-* Student Profile Analysis
-* Project Planning
-* Ideation
-* And Much More...
+- Research Tasks
+- Draft Communication
+- Language Translation
+- Content Creation
+- Student Profile Analysis
+- Project Planning
+- Ideation
+- And Much More...
 
 ### Student Service CRM
 
 Our student service CRM is designed to support the management of prospective and enrolled students. Some key features include:
 
-* Record Mangement
-* Email and SMS
-* Service Management
-* Population Segmentation
-* Task Management
-* Interaction Tracking
-* Files and Documents
-* And Much More...
+- Record Mangement
+- Email and SMS
+- Service Management
+- Population Segmentation
+- Task Management
+- Interaction Tracking
+- Files and Documents
+- And Much More...
 
 ## Technology
+
 ### Proudly Built With
 
 [Filament - Accelerated Laravel Development.](https://filamentphp.com/)
 
 ### Stack
+
 A [PHP](https://php.net) TALL Stack is used to create our software:
 
-* [Tailwind CSS](https://tailwindcss.com/)
-* [Alpine.js](https://alpinejs.dev)
-* [Laravel](https://laravel.com/)
-* [Livewire](https://laravel-livewire.com/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Alpine.js](https://alpinejs.dev)
+- [Laravel](https://laravel.com/)
+- [Livewire](https://laravel-livewire.com/)
 
 ### Dependences for AI + CRM (800+)
 
-* [GitHub Insights: Dependencies](https://github.com/canyongbs/advisingapp/network/dependencies)
+- [GitHub Insights: Dependencies](https://github.com/canyongbs/advisingapp/network/dependencies)
 
 ### Recommended Cloud Infrastructure
 
 Cloudflare DNS<br>
 Amazon Web Services (AWS):
-* AWS WAF
-* AWS ALB
-* AWS EC2 (Multi-AZ)
-* AWS SQS
-* AWS ElastiCache Redis Instance
-* AWS RDS Aurora PostgreSQL w/ FDW Configuration (Serverless)
-* AWS RDS ElastiCache Redis Instance
-* AWS S3
+
+- AWS WAF
+- AWS ALB
+- AWS EC2 (Multi-AZ)
+- AWS SQS
+- AWS ElastiCache Redis Instance
+- AWS RDS Aurora PostgreSQL w/ FDW Configuration (Serverless)
+- AWS RDS ElastiCache Redis Instance
+- AWS S3
 
 Microsoft Azure
-* Azure Cognitive Services
+
+- Azure Cognitive Services
 
 ## Additional Project Details
+
 ### Documentation
 
-* [Inbound-Webhooks](./docs/inbound-webhooks.md)
-* [Local Setup](./docs/local-setup.md)
-* [Roles and Permissions](./docs/roles-and-permissions.md)
-* [Inbound Webhooks](./docs/inbound-webhooks.md)
-* [Integrations: Twilio](./docs/integrations/twilio.md)
-* [Integrations: Azure OpenAI](./docs/integrations/azure_open_ai.md)
-* [Custom Metadata](./docs/custom-metadata.md)
+- [Inbound-Webhooks](./docs/inbound-webhooks.md)
+- [Local Setup](./docs/local-setup.md)
+- [Roles and Permissions](./docs/roles-and-permissions.md)
+- [Inbound Webhooks](./docs/inbound-webhooks.md)
+- [Integrations: Twilio](./docs/integrations/twilio.md)
+- [Integrations: Azure OpenAI](./docs/integrations/azure_open_ai.md)
+- [Custom Metadata](./docs/custom-metadata.md)
 
 _Note: More documentation coming soon._
 
@@ -116,10 +124,10 @@ All contributions to the project must be pre-approved in order to ensure product
 
 When opening your Pull Request please ensure you are compliant with the following requirements:
 
-* Title the PR with the ticket/issue number and a short description of the changes made. Or if no ticket/issue exists, title the PR with a detailed description of the changes made
-* Linked a relevant ticket or issue or describe the issue/feature which this PR resolves/implements.
-* Resolved all conflicts, if any.
-* Before opening your PR make sure to rebase your branch PR on top of the latest upstream `main` branch.
+- Title the PR with the ticket/issue number and a short description of the changes made. Or if no ticket/issue exists, title the PR with a detailed description of the changes made
+- Linked a relevant ticket or issue or describe the issue/feature which this PR resolves/implements.
+- Resolved all conflicts, if any.
+- Before opening your PR make sure to rebase your branch PR on top of the latest upstream `main` branch.
 
 _Don't forget to ⭐ the project to show your support! Thanks again!_
 
@@ -131,14 +139,14 @@ This software is developed by Canyon GBS LLC who is the copyright and trademark 
 
 ### Customers & Employees
 
-* [Become a Canyon GBS Customer](https://canyongbs.com/work-with-us)
-* [Become a Canyon GBS Employee](https://canyongbs.com/our-mission/work-culture/)
+- [Become a Canyon GBS Customer](https://canyongbs.com/work-with-us)
+- [Become a Canyon GBS Employee](https://canyongbs.com/our-mission/work-culture/)
 
 ### Web & Social Media
 
-* [Canyon GBS on the Web](https://canyongbs.com)
-* [Canyon GBS on Twitter](https://twitter.com/canyongbs)
-* [Canyon GBS on LinkedIn](https://linkedin.com/company/canyongbs)
+- [Canyon GBS on the Web](https://canyongbs.com)
+- [Canyon GBS on Twitter](https://twitter.com/canyongbs)
+- [Canyon GBS on LinkedIn](https://linkedin.com/company/canyongbs)
 
 ## Acknowledgments
 
@@ -151,6 +159,7 @@ The creation and successful release of this ambitious project would not have bee
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
 [contributors-shield]: https://img.shields.io/github/contributors/canyongbs/advisingapp.svg?style=for-the-badge
 [contributors-url]: https://github.com/canyongbs/advisingapp/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/canyongbs/advisingapp.svg?style=for-the-badge
@@ -159,7 +168,9 @@ The creation and successful release of this ambitious project would not have bee
 [stars-url]: https://github.com/canyongbs/advisingapp/stargazers
 [issues-shield]: https://img.shields.io/github/issues/canyongbs/advisingapp.svg?style=for-the-badge
 [issues-url]: https://github.com/canyongbs/advisingapp/issues
+
 <!-- [license-shield]: https://img.shields.io/github/license/canyongbs/advisingapp.svg?style=for-the-badge -->
+
 [license-url]: https://github.com/canyongbs/advisingapp/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/company/canyongbs

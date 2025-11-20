@@ -32,19 +32,19 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { ChevronRightIcon, HomeIcon } from '@heroicons/vue/24/outline';
-import { defineProps } from 'vue';
+    import { ChevronRightIcon, HomeIcon } from '@heroicons/vue/24/outline';
+    import { defineProps } from 'vue';
 
-defineProps({
-    currentCrumb: {
-        type: String,
-        required: true,
-    },
-    breadcrumbs: {
-        type: Object,
-        default: {},
-    },
-});
+    defineProps({
+        currentCrumb: {
+            type: String,
+            required: true,
+        },
+        breadcrumbs: {
+            type: Object,
+            default: {},
+        },
+    });
 </script>
 
 <template>
