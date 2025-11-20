@@ -1,3 +1,11 @@
+.env
+.npm/
+.vscode/
+docker/devops/
+public/
+storage/
+bootstrap/cache/
+.composer/
 resources/views/vendor/mail/**/*.blade.php
 resources/views/mail/**/*.blade.php
 resources/lang/**/*.php

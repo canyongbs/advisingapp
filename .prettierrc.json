@@ -1,44 +1,22 @@
 {
-    "plugins": [
-        "@shufo/prettier-plugin-blade",
-        "prettier-plugin-organize-imports"
-    ],
+    "tabWidth": 4,
+    "printWidth": 120,
+    "singleQuote": true,
+    "wrapAttributes": "force-expand-multiline",
+    "sortTailwindcssClasses": true,
+    "sortHtmlAttributes": "code-guide",
+    "plugins": ["@shufo/prettier-plugin-blade", "prettier-plugin-organize-imports"],
     "overrides": [
         {
-            "files": [
-                "*.blade.php"
-            ],
+            "files": ["*.blade.php"],
             "options": {
-                "printWidth": 120,
-                "tabWidth": 4,
-                "singleQuote": true,
-                "wrapAttributes": "force-expand-multiline",
-                "sortTailwindcssClasses": true,
-                "sortHtmlAttributes": "code-guide",
                 "parser": "blade"
             }
         },
         {
-            "files": [
-                "*.js",
-                "*.css",
-                "*.vue"
-            ],
+            "files": ["*.js", "*.css", "*.vue"],
             "options": {
-                "printWidth": 120,
-                "tabWidth": 4,
-                "singleQuote": true,
-                "wrapAttributes": "force-expand-multiline",
-                "sortTailwindcssClasses": true,
-                "sortHtmlAttributes": "code-guide"
-            }
-        },
-        {
-            "files": [
-                "*.json"
-            ],
-            "options": {
-                "tabWidth": 4
+                "vueIndentScriptAndStyle": true
             }
         }
     ]
