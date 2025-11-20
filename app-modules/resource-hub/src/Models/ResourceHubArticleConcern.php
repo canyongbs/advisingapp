@@ -54,6 +54,7 @@ class ResourceHubArticleConcern extends BaseModel implements Auditable
 {
     /** @use HasFactory<ResourceHubArticleConcernFactory> */
     use HasFactory;
+
     use SoftDeletes;
     use AuditableTrait;
     use HasUuids;
