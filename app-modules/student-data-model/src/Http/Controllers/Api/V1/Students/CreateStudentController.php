@@ -40,6 +40,7 @@ use AdvisingApp\StudentDataModel\Actions\CreateStudent;
 use AdvisingApp\StudentDataModel\DataTransferObjects\CreateStudentData;
 use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\HsGradeTypeChangeFeature;
 use App\Http\Controllers\Api\Concerns\CanIncludeRelationships;
 use Dedoc\Scramble\Attributes\Example;
 use Dedoc\Scramble\Attributes\Group;
@@ -76,7 +77,7 @@ class CreateStudentController
             'full_name' => ['required', 'max:255'],
             'preferred' => ['sometimes', 'max:255'],
             'birthdate' => ['sometimes', 'date', 'date_format:Y-m-d'],
-            'hsgrad' => ['sometimes', 'date', 'date_format:Y-m-d'],
+            'hsgrad' => [HsGradeTypeChangeFeature::active() ? ['sometimes', 'date', 'date_format:Y-m-d'] : ['sometimes', 'numeric']],
             'gender' => ['sometimes', 'max:255'],
             'sms_opt_out' => ['sometimes', 'boolean'],
             'email_bounce' => ['sometimes', 'boolean'],
