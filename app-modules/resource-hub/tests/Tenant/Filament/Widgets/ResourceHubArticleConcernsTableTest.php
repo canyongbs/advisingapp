@@ -43,7 +43,7 @@ use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('returns all new concerns for a given resource hub article by default', function () {
-  asSuperAdmin();
+    asSuperAdmin();
 
     $resourceHubArticle = ResourceHubArticle::factory()->create();
 
@@ -71,8 +71,8 @@ it('returns all new concerns for a given resource hub article by default', funct
 });
 
 it('can filter concerns by status', function () {
-  asSuperAdmin();
-  
+    asSuperAdmin();
+
     $resourceHubArticle = ResourceHubArticle::factory()->create();
 
     $newConcerns = ResourceHubArticleConcern::factory()
