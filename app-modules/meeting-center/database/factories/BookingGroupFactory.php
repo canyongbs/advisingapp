@@ -34,38 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages;
+namespace AdvisingApp\MeetingCenter\Database\Factories;
 
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\BookingGroupResource;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\CreateAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ListBookingGroups extends ListRecords
+/**
+ * @extends Factory<BookingGroup>
+ */
+class BookingGroupFactory extends Factory
 {
-    protected static string $resource = BookingGroupResource::class;
-
-    public function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name'),
-            ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
         return [
-            CreateAction::make(),
+            'name' => $this->faker->word(),
+            'description' => $this->faker->optional()->sentence(),
+            'is_confidential' => $this->faker->boolean(30),
         ];
     }
 }

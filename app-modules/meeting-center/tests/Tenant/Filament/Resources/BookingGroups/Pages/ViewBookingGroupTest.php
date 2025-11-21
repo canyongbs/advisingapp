@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages\ViewBookingGroup;
-use AdvisingApp\GroupAppointment\Models\BookingGroup;
+use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ViewBookingGroup;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
 

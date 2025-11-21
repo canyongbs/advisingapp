@@ -54,7 +54,6 @@
         "canyon-gbs/ai": "*",
         "canyon-gbs/basic-needs": "*",
         "canyon-gbs/group": "*",
-        "canyon-gbs/group-appointment": "*",
         "canyon-gbs/integration-open-ai": "*",
         "canyon-gbs/multifactor-authentication": "*",
         "canyon-gbs/pipeline": "*",

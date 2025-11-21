@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages\EditBookingGroup;
-use AdvisingApp\GroupAppointment\Models\BookingGroup;
-use AdvisingApp\GroupAppointment\Tests\Tenant\Filament\Resources\Pages\RequestFactory\EditBookingGroupRequestFactory;
+use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\EditBookingGroup;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory\EditBookingGroupRequestFactory;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
 
