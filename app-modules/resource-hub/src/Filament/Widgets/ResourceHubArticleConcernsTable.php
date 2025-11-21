@@ -43,6 +43,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\On;
 
 class ResourceHubArticleConcernsTable extends TableWidget
 {
@@ -54,6 +55,9 @@ class ResourceHubArticleConcernsTable extends TableWidget
     {
         $this->resourceHubArticleId = $resourceHubArticleId;
     }
+
+    #[On('concern-created')]
+    public function refreshWidget(): void {}
 
     public function table(Table $table): Table
     {
@@ -73,7 +77,7 @@ class ResourceHubArticleConcernsTable extends TableWidget
                 SelectFilter::make('status')
                     ->multiple()
                     ->options(ConcernStatus::class)
-                    ->default([ConcernStatus::New->value]),
+                    // ->default([ConcernStatus::New->value]),
             ]);
     }
 }

@@ -43,6 +43,7 @@ use AdvisingApp\ResourceHub\Notifications\ResourceHubArticleConcernCreated;
 use App\Features\ResourceHubArticleConcernFeature;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
+use Filament\Pages\Page;
 
 class CreateConcernAction extends Action
 {
@@ -60,7 +61,7 @@ class CreateConcernAction extends Action
                     ->maxLength(100)
                     ->required(),
             ])
-            ->action(function (array $data, ResourceHubArticle $record): void {
+            ->action(function (array $data, ResourceHubArticle $record, Page $livewire): void {
                 $concern = ResourceHubArticleConcern::create([
                     'description' => $data['description'],
                     'created_by_id' => auth()->id(),
@@ -69,6 +70,8 @@ class CreateConcernAction extends Action
                 ]);
 
                 $concern->createdBy->notifyNow(new ResourceHubArticleConcernCreated($concern));
+                
+                $livewire->dispatch('concern-created');
             })
             ->visible(ResourceHubArticleConcernFeature::active());
     }
