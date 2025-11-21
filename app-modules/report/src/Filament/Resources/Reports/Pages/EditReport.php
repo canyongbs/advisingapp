@@ -147,7 +147,7 @@ class EditReport extends EditRecord implements HasTable
         $report = $this->getRecord();
 
         $data['model'] = $report->model;
-        $data['user']['name'] = $report->user->name;
+        $data['user']['name'] = $report->user ? $report->user->name : 'N/A';
 
         return $data;
     }
