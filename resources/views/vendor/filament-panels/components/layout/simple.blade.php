@@ -32,7 +32,7 @@
 </COPYRIGHT>
 --}}
 <x-filament-panels::layout.base :livewire="$livewire">
-    <div class="fi-layout flex h-screen w-full flex-col lg:flex-row-reverse">
+    <div class="fi-layout flex min-h-screen w-full flex-col lg:flex-row-reverse">
         <div class="fi-main-ctn w-full flex flex-col h-full">
             <div class="flex justify-center items-center w-full border-b border-gray-200 mb-4 flex-shrink-0 p-4">
                 <x-filament-panels::logo />
