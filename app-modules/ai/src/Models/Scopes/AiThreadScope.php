@@ -48,7 +48,7 @@ class AiThreadScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        if (! Auth::check() || Auth::user()?->isAdmin) {
+        if (! Auth::check() || Auth::user()?->isAdmin()) {
             return;
         }
 

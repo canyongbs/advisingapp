@@ -84,7 +84,6 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -423,23 +422,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->belongsToMany(Project::class, 'project_auditor_users', 'user_id', 'project_id')
             ->using(ProjectAuditorUser::class)
             ->withTimestamps();
-    }
-
-    public function getIsAdminAttribute(): bool
-    {
-        return $this->roles()->whereIn('name', [Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE])->exists();
-    }
-
-    /**
-     * @param Builder<User> $query
-     *
-     * TODO: This most likely can be deleted
-     *
-     * @return Builder<User>
-     */
-    public function scopeAdmins(Builder $query): Builder
-    {
-        return $query->whereHas('roles', fn ($q) => $q->where('title', 'Admin'));
     }
 
     /**
