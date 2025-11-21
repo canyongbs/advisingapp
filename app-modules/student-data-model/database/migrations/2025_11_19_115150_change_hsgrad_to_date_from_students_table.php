@@ -40,25 +40,15 @@ use Illuminate\Support\Facades\DB;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::statement('UPDATE students SET hsgrad = NULL');
-
-        DB::statement('
-            ALTER TABLE students
-            ALTER COLUMN hsgrad TYPE date
-            USING (NULL)
-        ');
-
-        DB::statement('
-            ALTER TABLE students
-            ALTER COLUMN hsgrad DROP NOT NULL
-        ');
+        DB::transaction(function () {
+            DB::statement('ALTER TABLE students ALTER COLUMN hsgrad DROP NOT NULL, ALTER COLUMN hsgrad TYPE date USING (NULL) ');
+        });
     }
 
     public function down(): void
     {
-        DB::statement('
-            ALTER TABLE students
-            ALTER COLUMN hsgrad TYPE integer
-        ');
+        DB::transaction(function () {
+            DB::statement('ALTER TABLE students ALTER COLUMN hsgrad DROP NOT NULL, ALTER COLUMN hsgrad TYPE integer USING (NULL) ');
+        });
     }
 };
