@@ -70,7 +70,7 @@ class CreateConcernAction extends Action
                 ]);
 
                 $concern->createdBy->notifyNow(new ResourceHubArticleConcernCreated($concern));
-                
+
                 $livewire->dispatch('concern-created');
             })
             ->visible(ResourceHubArticleConcernFeature::active());
