@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\GroupAppointment\Providers;
 
+use AdvisingApp\GroupAppointment\GroupAppointmentPlugin;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\GroupAppointment\GroupAppointmentPlugin;
 
 class GroupAppointmentServiceProvider extends ServiceProvider
 {
