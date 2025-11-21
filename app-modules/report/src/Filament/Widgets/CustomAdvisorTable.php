@@ -52,8 +52,6 @@ class CustomAdvisorTable extends BaseWidget
 
     protected static ?string $heading = 'Custom Advisors';
 
-    protected static bool $isLazy = false;
-
     protected static ?string $pollingInterval = null;
 
     protected int | string | array $columnSpan = 'full';

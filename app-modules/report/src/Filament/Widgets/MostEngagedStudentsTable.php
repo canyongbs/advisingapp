@@ -55,8 +55,6 @@ class MostEngagedStudentsTable extends BaseWidget
 
     protected static ?string $pollingInterval = null;
 
-    protected static bool $isLazy = false;
-
     protected static ?string $heading = 'Most Actively Engaged Students';
 
     protected int | string | array $columnSpan = 'full';

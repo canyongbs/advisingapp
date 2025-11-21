@@ -68,8 +68,6 @@ class QnaAdvisorReportTable extends TableWidget
 
     protected static ?string $pollingInterval = null;
 
-    protected static bool $isLazy = false;
-
     public function mount(string $cacheTag): void
     {
         $this->cacheTag = $cacheTag;

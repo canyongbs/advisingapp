@@ -55,8 +55,6 @@ class ProjectManagementTable extends BaseWidget
 
     protected static ?string $heading = 'Projects';
 
-    protected static bool $isLazy = false;
-
     protected static ?string $pollingInterval = null;
 
     protected int | string | array $columnSpan = [

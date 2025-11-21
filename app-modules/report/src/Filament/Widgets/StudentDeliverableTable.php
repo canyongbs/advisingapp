@@ -54,8 +54,6 @@ class StudentDeliverableTable extends BaseWidget
 
     protected static ?string $pollingInterval = null;
 
-    protected static bool $isLazy = false;
-
     protected static ?string $heading = 'Student Engagement Deliberability';
 
     protected int | string | array $columnSpan = 'full';
