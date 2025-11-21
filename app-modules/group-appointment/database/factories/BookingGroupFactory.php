@@ -44,14 +44,17 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class BookingGroupFactory extends Factory
 {
-    protected $model = BookingGroup::class;
-
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */ 
     public function definition(): array
     {
         return [
-            'name' => fake()->words(3, true),
-            'description' => fake()->optional()->sentence(),
-            'is_confidential' => fake()->boolean(30),
+            'name' => $this->faker->word(),
+            'description' => $this->faker->optional()->sentence(),
+            'is_confidential' => $this->faker->boolean(30),
         ];
     }
 }
