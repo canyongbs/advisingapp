@@ -34,27 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\GroupAppointment\Database\Factories;
+namespace AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory;
 
-use AdvisingApp\GroupAppointment\Models\BookingGroup;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Worksome\RequestFactories\RequestFactory;
 
-/**
- * @extends Factory<BookingGroup>
- */
-class BookingGroupFactory extends Factory
+class EditBookingGroupRequestFactory extends RequestFactory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word(),
-            'description' => $this->faker->optional()->sentence(),
-            'is_confidential' => $this->faker->boolean(30),
+            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
+            'description' => $this->faker->paragraph(),
+            'is_confidential' => $this->faker->boolean(),
         ];
     }
 }

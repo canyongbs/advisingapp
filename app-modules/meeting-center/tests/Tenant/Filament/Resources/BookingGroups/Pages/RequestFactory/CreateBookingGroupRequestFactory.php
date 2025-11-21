@@ -34,65 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\GroupAppointment\Models;
+namespace AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory;
 
-use AdvisingApp\GroupAppointment\Database\Factories\BookingGroupFactory;
-use AdvisingApp\Team\Models\Team;
-use App\Models\BaseModel;
-use App\Models\User;
-use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Worksome\RequestFactories\RequestFactory;
 
-/**
- * @mixin IdeHelperBookingGroup
- */
-class BookingGroup extends BaseModel
+class CreateBookingGroupRequestFactory extends RequestFactory
 {
-    /** @use HasFactory<BookingGroupFactory> */
-    use HasFactory;
-
-    use HasUserSaveTracking;
-
-    protected $fillable = [
-        'name',
-        'description',
-        'is_confidential',
-        'created_by_id',
-        'last_updated_by_id',
-    ];
-
-    protected $casts = [
-        'is_confidential' => 'bool',
-    ];
-
-    /**
-    * @return MorphToMany<User, $this, covariant BookingGroupPivot>
-    */
-    public function users(): MorphToMany
+    public function definition(): array
     {
-        return $this->morphedByMany(
-            related: User::class,
-            name: 'related_to',
-            table: 'booking_groups_pivot'
-        )
-            ->using(BookingGroupPivot::class)
-            ->withPivot('id')
-            ->withTimestamps();
-    }
-
-    /**
-     * @return MorphToMany<Team, $this, covariant BookingGroupPivot>
-     */
-    public function teams(): MorphToMany
-    {
-        return $this->morphedByMany(
-            related: Team::class,
-            name: 'related_to',
-            table: 'booking_groups_pivot'
-        )
-            ->using(BookingGroupPivot::class)
-            ->withPivot('id')
-            ->withTimestamps();
+        return [
+            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
+            'description' => $this->faker->paragraph(),
+            'is_confidential' => $this->faker->boolean(),
+        ];
     }
 }

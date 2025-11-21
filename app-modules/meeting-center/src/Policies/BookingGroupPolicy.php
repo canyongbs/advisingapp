@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\GroupAppointment\Policies;
+namespace AdvisingApp\MeetingCenter\Policies;
 
-use AdvisingApp\GroupAppointment\Models\BookingGroup;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 

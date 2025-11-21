@@ -34,41 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups;
-
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages\CreateBookingGroup;
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages\EditBookingGroup;
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages\ViewBookingGroup;
-use AdvisingApp\GroupAppointment\Models\BookingGroup;
-use App\Features\BookingGroupFeature;
-use App\Filament\Clusters\GroupAppointment;
+use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
+use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use App\Models\User;
-use Filament\Resources\Resource;
 
-class BookingGroupResource extends Resource
-{
-    protected static ?int $navigationSort = 20;
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
-    protected static ?string $model = BookingGroup::class;
+test('The correct details are displayed on the ListBookingGroups page', function () {
+    $bookingGroups = BookingGroup::factory()
+        ->count(10)
+        ->create();
 
-    protected static ?string $cluster = GroupAppointment::class;
+    asSuperAdmin();
 
-    public static function canAccess(): bool
-    {
-        $user = auth()->user();
-        assert($user instanceof User);
+    livewire(ListBookingGroups::class)
+        ->assertSuccessful()
+        ->assertCountTableRecords(10)
+        ->assertTableColumnExists('name');
+});
 
-        return BookingGroupFeature::active() && $user->can(['group_appointment.view-any']) && parent::canAccess();
-    }
+test('ListBookingGroups is gated with proper access control', function () {
+    $user = User::factory()->create();
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListBookingGroups::route('/'),
-            'create' => CreateBookingGroup::route('/create'),
-            'view' => ViewBookingGroup::route('/{record}'),
-            'edit' => EditBookingGroup::route('/{record}/edit'),
-        ];
-    }
-}
+    actingAs($user)
+        ->get(
+            BookingGroupResource::getUrl('index')
+        )->assertForbidden();
+
+    $user->givePermissionTo('group_appointment.view-any');
+
+    actingAs($user)
+        ->get(
+            BookingGroupResource::getUrl('index')
+        )->assertSuccessful();
+});

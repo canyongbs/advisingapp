@@ -34,24 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages;
+namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\BookingGroupResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
+use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
-class EditBookingGroup extends EditRecord
+class CreateBookingGroup extends CreateRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = BookingGroupResource::class;
 
     public function form(Schema $schema): Schema
@@ -86,13 +81,5 @@ class EditBookingGroup extends EditRecord
                 ->preload()
                 ->visible(fn (Get $get) => $get('is_confidential')),
         ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
     }
 }

@@ -34,30 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\GroupAppointment;
+namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups;
 
-use AdvisingApp\GroupAppointment\Filament\Resources\SharedCalendars\Pages\SharedCalendar;
-use Filament\Contracts\Plugin;
-use Filament\Panel;
+use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\CreateBookingGroup;
+use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\EditBookingGroup;
+use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
+use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ViewBookingGroup;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use App\Features\BookingGroupFeature;
+use App\Filament\Clusters\GroupAppointment;
+use App\Models\User;
+use Filament\Resources\Resource;
 
-class GroupAppointmentPlugin implements Plugin
+class BookingGroupResource extends Resource
 {
-    public function getId(): string
+    protected static ?int $navigationSort = 20;
+
+    protected static ?string $model = BookingGroup::class;
+
+    protected static ?string $cluster = GroupAppointment::class;
+
+    public static function canAccess(): bool
     {
-        return 'group-appointment';
+        $user = auth()->user();
+        assert($user instanceof User);
+
+        return BookingGroupFeature::active() && $user->can(['group_appointment.view-any']) && parent::canAccess();
     }
 
-    public function register(Panel $panel): void
+    public static function getPages(): array
     {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\GroupAppointment\\Filament\\Resources'
-            )
-            ->pages([
-                SharedCalendar::class,
-            ]);
+        return [
+            'index' => ListBookingGroups::route('/'),
+            'create' => CreateBookingGroup::route('/create'),
+            'view' => ViewBookingGroup::route('/{record}'),
+            'edit' => EditBookingGroup::route('/{record}/edit'),
+        ];
     }
-
-    public function boot(Panel $panel): void {}
 }

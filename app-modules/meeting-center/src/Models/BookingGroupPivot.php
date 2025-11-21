@@ -34,40 +34,30 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\BookingGroupResource;
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
-use AdvisingApp\GroupAppointment\Models\BookingGroup;
-use App\Models\User;
+namespace AdvisingApp\MeetingCenter\Models;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-use function Tests\asSuperAdmin;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-test('The correct details are displayed on the ListBookingGroups page', function () {
-    $bookingGroups = BookingGroup::factory()
-        ->count(10)
-        ->create();
+/**
+ * @mixin IdeHelperBookingGroupPivot
+ */
+class BookingGroupPivot extends MorphPivot
+{
+    use HasUuids;
 
-    asSuperAdmin();
+    protected $fillable = [
+        'booking_group_id',
+        'user_id',
+    ];
 
-    livewire(ListBookingGroups::class)
-        ->assertSuccessful()
-        ->assertCountTableRecords(10)
-        ->assertTableColumnExists('name');
-});
-
-test('ListBookingGroups is gated with proper access control', function () {
-    $user = User::factory()->create();
-
-    actingAs($user)
-        ->get(
-            BookingGroupResource::getUrl('index')
-        )->assertForbidden();
-
-    $user->givePermissionTo('group_appointment.view-any');
-
-    actingAs($user)
-        ->get(
-            BookingGroupResource::getUrl('index')
-        )->assertSuccessful();
-});
+    /**
+     * @return MorphTo<Model, $this>
+     */
+    public function relatedTo(): MorphTo
+    {
+        return $this->morphTo();
+    }
+}

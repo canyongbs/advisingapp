@@ -34,18 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\GroupAppointment\Tests\Tenant\Filament\Resources\Pages\RequestFactory;
+namespace AdvisingApp\MeetingCenter\Filament\Pages;
 
-use Worksome\RequestFactories\RequestFactory;
+use App\Filament\Clusters\GroupAppointment;
+use App\Models\User;
+use Filament\Pages\Page;
 
-class EditBookingGroupRequestFactory extends RequestFactory
+class SharedCalendar extends Page
 {
-    public function definition(): array
+    protected static ?int $navigationSort = 10;
+
+    protected string $view = 'filament.pages.coming-soon';
+
+    protected static ?string $cluster = GroupAppointment::class;
+
+    protected static ?string $navigationLabel = 'Shared Calendar';
+
+    public static function canAccess(): bool
     {
-        return [
-            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
-            'description' => $this->faker->paragraph(),
-            'is_confidential' => $this->faker->boolean(),
-        ];
+        $user = auth()->user();
+        assert($user instanceof User);
+
+        return $user->can(['group_appointment.view-any']);
     }
 }
