@@ -54,6 +54,10 @@ class ConsentAgreementPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
+        if ($authenticatable->isAiAdmin()) {
+            return Response::allow();
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['settings.view-any'],
             denyResponse: 'You do not have permission to view consent agreements.'
@@ -62,6 +66,10 @@ class ConsentAgreementPolicy
 
     public function view(Authenticatable $authenticatable, ConsentAgreement $agreement): Response
     {
+        if ($authenticatable->isAiAdmin()) {
+            return Response::allow();
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['settings.*.view'],
             denyResponse: 'You do not have permission to view this consent agreement.'
@@ -75,6 +83,10 @@ class ConsentAgreementPolicy
 
     public function update(Authenticatable $authenticatable, ConsentAgreement $agreement): Response
     {
+        if ($authenticatable->isAiAdmin()) {
+            return Response::allow();
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['settings.*.update'],
             denyResponse: 'You do not have permission to update this consent agreement.'

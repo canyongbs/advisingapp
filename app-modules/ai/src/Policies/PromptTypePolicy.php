@@ -58,6 +58,10 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
+        if ($authenticatable->isAiAdmin()) {
+            return Response::allow();
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'settings.view-any',
             denyResponse: 'You do not have permission to view prompt types.'
@@ -66,6 +70,10 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
 
     public function view(Authenticatable $authenticatable, PromptType $promptType): Response
     {
+        if ($authenticatable->isAiAdmin()) {
+            return Response::allow();
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['settings.*.view'],
             denyResponse: 'You do not have permission to view this prompt type.'
@@ -74,6 +82,10 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
 
     public function create(Authenticatable $authenticatable): Response
     {
+        if ($authenticatable->isAiAdmin()) {
+            return Response::allow();
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'settings.create',
             denyResponse: 'You do not have permission to create prompt types.'
@@ -84,6 +96,10 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
     {
         if ($promptType->prompts()->where('is_smart', true)->exists()) {
             return Response::deny('The prompt type cannot be updated because it has a smart prompt.');
+        }
+
+        if ($authenticatable->isAiAdmin()) {
+            return Response::allow();
         }
 
         return $authenticatable->canOrElse(
@@ -98,6 +114,10 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
             return Response::deny('The prompt type cannot be deleted because it is associated with a prompt.');
         }
 
+        if ($authenticatable->isAiAdmin()) {
+            return Response::allow();
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['settings.*.delete'],
             denyResponse: 'You do not have permission to delete this prompt type.'
@@ -106,6 +126,10 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
 
     public function restore(Authenticatable $authenticatable, PromptType $promptType): Response
     {
+        if ($authenticatable->isAiAdmin()) {
+            return Response::allow();
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['settings.*.restore'],
             denyResponse: 'You do not have permission to restore this prompt type.'
@@ -116,6 +140,10 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
     {
         if ($promptType->prompts()->exists()) {
             return Response::deny('The prompt type cannot be deleted because it is associated with a prompt.');
+        }
+
+        if ($authenticatable->isAiAdmin()) {
+            return Response::allow();
         }
 
         return $authenticatable->canOrElse(
