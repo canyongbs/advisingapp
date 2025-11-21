@@ -171,6 +171,7 @@ it('can edit a booking group to remove users and teams while staying confidentia
     $bookingGroup->teams()->attach($teams);
 
     $request = EditBookingGroupRequestFactory::new()->state([
+        'is_confidential' => true,
         'users' => [],
         'teams' => [],
     ])->create();
