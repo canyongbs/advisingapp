@@ -51,13 +51,13 @@ class GroupResource extends Resource
 
     protected static ?int $navigationSort = 50;
 
-    protected static ?string $navigationLabel = 'Groups';
+    protected static ?string $navigationLabel = 'Student/Prospect Groups';
 
-    protected static ?string $breadcrumb = 'Groups';
+    protected static ?string $breadcrumb = 'Student/Prospect Groups';
 
-    protected static ?string $modelLabel = 'Group';
+    protected static ?string $modelLabel = 'Student/Prospect Group';
 
-    protected static ?string $pluralModelLabel = 'Groups';
+    protected static ?string $pluralModelLabel = 'Student/Prospect Groups';
 
     protected static ?string $slug = 'groups';
 

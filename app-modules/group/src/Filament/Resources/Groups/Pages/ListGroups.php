@@ -52,7 +52,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 
 class ListGroups extends ListRecords
 {
-    protected ?string $heading = 'Groups';
+    protected ?string $heading = 'Student/Prospect Groups';
 
     protected static string $resource = GroupResource::class;
 
