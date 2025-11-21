@@ -43,7 +43,7 @@ use Filament\Support\Concerns\CanBeContained;
 class SecondsDurationInput extends Field
 {
     use CanBeContained;
-    
+
     /**
      * @var view-string
      */
