@@ -65,6 +65,7 @@ class Application extends Submissible implements HasMedia
         'rounding',
         'content',
         'should_generate_prospects',
+        'title',
     ];
 
     protected $casts = [

@@ -55,6 +55,7 @@ class FormFactory extends Factory
             'description' => $this->faker->sentences(asText: true),
             'embed_enabled' => $this->faker->boolean(),
             'allowed_domains' => [$this->faker->domainName()],
+            'title' => $this->faker->sentence(),
         ];
     }
 
