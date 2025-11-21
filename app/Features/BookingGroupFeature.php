@@ -34,37 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups;
+namespace App\Features;
 
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages\CreateBookingGroup;
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages\EditBookingGroup;
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages\ViewBookingGroup;
-use AdvisingApp\GroupAppointment\Models\BookingGroup;
-use App\Features\BookingGroupFeature;
-use App\Filament\Clusters\GroupAppointment;
-use Filament\Resources\Resource;
+use App\Support\AbstractFeatureFlag;
 
-class BookingGroupResource extends Resource
+class BookingGroupFeature extends AbstractFeatureFlag
 {
-    protected static ?int $navigationSort = 20;
-
-    protected static ?string $model = BookingGroup::class;
-
-    protected static ?string $cluster = GroupAppointment::class;
-
-    public static function canAccess(): bool
+    public function resolve(mixed $scope): mixed
     {
-        return BookingGroupFeature::active() && parent::canAccess();
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListBookingGroups::route('/'),
-            'create' => CreateBookingGroup::route('/create'),
-            'view' => ViewBookingGroup::route('/{record}'),
-            'edit' => EditBookingGroup::route('/{record}/edit'),
-        ];
+        return false;
     }
 }
