@@ -31,8 +31,8 @@
 
 </COPYRIGHT>
 --}}
-<div class="min-h-56 rounded-xl bg-turkish-300 p-6 text-white">
-    <div class="flex flex-col items-center justify-center gap-6 md:flex-row">
+<div class="@container flex h-full items-center rounded-xl bg-turkish-300 p-6 text-white">
+    <div class="@sm:flex-row flex flex-1 flex-col items-center justify-between gap-x-4 gap-y-6">
         <div>
             <p class="text-sm font-semibold text-gray-800">Resource Portal</p>
             <p class="my-4 text-sm text-gray-700">Visit our resource portal for answers to frequently asked product and
@@ -44,9 +44,9 @@
             >Visit Resource Portal</a>
         </div>
         <img
-            class="block max-h-32"
+            class="block max-h-28"
             src="{{ Vite::asset('resources/images/changelog_image.svg') }}"
-            alt=""
+            alt="Drawing of a man aside an open book"
         />
     </div>
 </div>

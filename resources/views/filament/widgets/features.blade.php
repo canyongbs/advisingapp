@@ -39,8 +39,8 @@
     use AdvisingApp\Theme\Settings\ThemeSettings;
 @endphp
 
-<x-filament-widgets::widget>
-    <div class="grid w-full gap-2 md:grid-cols-2">
+<x-filament-widgets::widget class="@container">
+    <div class="@5xl:grid-cols-2 grid w-full gap-2">
         @php
             $themeSettings = app(ThemeSettings::class);
 
