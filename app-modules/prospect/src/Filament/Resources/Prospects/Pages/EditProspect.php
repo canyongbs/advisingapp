@@ -111,6 +111,8 @@ class EditProspect extends EditRecord
                         TextInput::make(Prospect::displayNameKey())
                             ->label('Full Name')
                             ->required()
+                            ->disabled()
+                            ->dehydrated()
                             ->maxLength(255),
                         TextInput::make('preferred')
                             ->label('Preferred Name')
