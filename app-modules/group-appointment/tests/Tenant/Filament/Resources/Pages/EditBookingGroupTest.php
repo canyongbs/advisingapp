@@ -60,8 +60,8 @@ it('can render with proper permission', function () {
     ]))
         ->assertForbidden();
 
-    $user->givePermissionTo('booking_group.view-any');
-    $user->givePermissionTo('booking_group.*.update');
+    $user->givePermissionTo('group_appointment.view-any');
+    $user->givePermissionTo('group_appointment.*.update');
 
     $user->refresh();
 
@@ -119,8 +119,8 @@ it('validates the inputs', function (EditBookingGroupRequestFactory $data, array
 it('can edit a booking group to add users and teams when confidential', function () {
     $user = User::factory()->create();
 
-    $user->givePermissionTo('booking_group.view-any');
-    $user->givePermissionTo('booking_group.*.update');
+    $user->givePermissionTo('group_appointment.view-any');
+    $user->givePermissionTo('group_appointment.*.update');
 
     actingAs($user);
 
@@ -155,8 +155,8 @@ it('can edit a booking group to add users and teams when confidential', function
 it('can edit a booking group to remove users and teams while staying confidential', function () {
     $user = User::factory()->create();
 
-    $user->givePermissionTo('booking_group.view-any');
-    $user->givePermissionTo('booking_group.*.update');
+    $user->givePermissionTo('group_appointment.view-any');
+    $user->givePermissionTo('group_appointment.*.update');
 
     actingAs($user);
 
@@ -194,8 +194,8 @@ it('tracks last_updated_by user correctly', function () {
     $creator = User::factory()->create();
     $editor = User::factory()->create();
 
-    $editor->givePermissionTo('booking_group.view-any');
-    $editor->givePermissionTo('booking_group.*.update');
+    $editor->givePermissionTo('group_appointment.view-any');
+    $editor->givePermissionTo('group_appointment.*.update');
 
     $bookingGroup = BookingGroup::factory()->for($creator, 'createdBy')->create();
 

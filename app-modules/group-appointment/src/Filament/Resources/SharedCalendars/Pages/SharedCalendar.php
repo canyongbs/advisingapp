@@ -37,6 +37,7 @@
 namespace AdvisingApp\GroupAppointment\Filament\Resources\SharedCalendars\Pages;
 
 use App\Filament\Clusters\GroupAppointment;
+use App\Models\User;
 use Filament\Pages\Page;
 
 class SharedCalendar extends Page
@@ -48,4 +49,12 @@ class SharedCalendar extends Page
     protected static ?string $cluster = GroupAppointment::class;
 
     protected static ?string $navigationLabel = 'Shared Calendar';
+
+    public static function canAccess(): bool
+    {
+        $user = auth()->user();
+        assert($user instanceof User);
+
+        return $user->can(['group_appointment.view-any']);
+    }
 }

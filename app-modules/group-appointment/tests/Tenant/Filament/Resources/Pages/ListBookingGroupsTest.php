@@ -52,7 +52,6 @@ test('The correct details are displayed on the ListBookingGroups page', function
 
     livewire(ListBookingGroups::class)
         ->assertSuccessful()
-        // ->assertCanSeeTableRecords($bookingGroups)
         ->assertCountTableRecords(10)
         ->assertTableColumnExists('name');
 });

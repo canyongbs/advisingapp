@@ -54,8 +54,8 @@ it('can render with proper permission', function () {
     ]))
         ->assertForbidden();
 
-    $user->givePermissionTo('booking_group.view-any');
-    $user->givePermissionTo('booking_group.*.view');
+    $user->givePermissionTo('group_appointment.view-any');
+    $user->givePermissionTo('group_appointment.*.view');
 
     $user->refresh();
 
@@ -74,8 +74,8 @@ it('can render with proper permission', function () {
 it('displays booking group basic information', function () {
     $user = User::factory()->create();
 
-    $user->givePermissionTo('booking_group.view-any');
-    $user->givePermissionTo('booking_group.*.view');
+    $user->givePermissionTo('group_appointment.view-any');
+    $user->givePermissionTo('group_appointment.*.view');
 
     actingAs($user);
 
@@ -96,8 +96,8 @@ it('displays booking group basic information', function () {
 it('displays users for confidential booking groups', function () {
     $user = User::factory()->create();
 
-    $user->givePermissionTo('booking_group.view-any');
-    $user->givePermissionTo('booking_group.*.view');
+    $user->givePermissionTo('group_appointment.view-any');
+    $user->givePermissionTo('group_appointment.*.view');
 
     actingAs($user);
 
@@ -121,8 +121,8 @@ it('displays users for confidential booking groups', function () {
 it('displays teams for confidential booking groups', function () {
     $user = User::factory()->create();
 
-    $user->givePermissionTo('booking_group.view-any');
-    $user->givePermissionTo('booking_group.*.view');
+    $user->givePermissionTo('group_appointment.view-any');
+    $user->givePermissionTo('group_appointment.*.view');
 
     actingAs($user);
 
@@ -145,8 +145,8 @@ it('displays teams for confidential booking groups', function () {
 it('displays N/A for confidential booking groups without users', function () {
     $user = User::factory()->create();
 
-    $user->givePermissionTo('booking_group.view-any');
-    $user->givePermissionTo('booking_group.*.view');
+    $user->givePermissionTo('group_appointment.view-any');
+    $user->givePermissionTo('group_appointment.*.view');
 
     actingAs($user);
 
@@ -164,8 +164,8 @@ it('displays N/A for confidential booking groups without users', function () {
 it('displays booking group with both users and teams', function () {
     $user = User::factory()->create();
 
-    $user->givePermissionTo('booking_group.view-any');
-    $user->givePermissionTo('booking_group.*.view');
+    $user->givePermissionTo('group_appointment.view-any');
+    $user->givePermissionTo('group_appointment.*.view');
 
     actingAs($user);
 

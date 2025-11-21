@@ -45,7 +45,7 @@ class BookingGroupPolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['booking_group.view-any'],
+            abilities: ['group_appointment.view-any'],
             denyResponse: 'You do not have permissions to view booking groups.'
         );
     }
@@ -53,7 +53,7 @@ class BookingGroupPolicy
     public function view(Authenticatable $authenticatable, BookingGroup $bookingGroup): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['booking_group.*.view'],
+            abilities: ['group_appointment.*.view'],
             denyResponse: 'You do not have permissions to view this booking group.'
         );
     }
@@ -61,7 +61,7 @@ class BookingGroupPolicy
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['booking_group.create'],
+            abilities: ['group_appointment.create'],
             denyResponse: 'You do not have permissions to create booking groups.'
         );
     }
@@ -69,7 +69,7 @@ class BookingGroupPolicy
     public function update(Authenticatable $authenticatable, BookingGroup $bookingGroup): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['booking_group.*.update'],
+            abilities: ['group_appointment.*.update'],
             denyResponse: 'You do not have permissions to update this booking group.'
         );
     }
@@ -77,7 +77,7 @@ class BookingGroupPolicy
     public function delete(Authenticatable $authenticatable, BookingGroup $bookingGroup): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['booking_group.*.delete'],
+            abilities: ['group_appointment.*.delete'],
             denyResponse: 'You do not have permissions to delete this booking group.'
         );
     }
@@ -85,7 +85,7 @@ class BookingGroupPolicy
     public function restore(Authenticatable $authenticatable, BookingGroup $bookingGroup): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['booking_group.*.restore'],
+            abilities: ['group_appointment.*.restore'],
             denyResponse: 'You do not have permissions to restore this booking group.'
         );
     }
@@ -93,7 +93,7 @@ class BookingGroupPolicy
     public function forceDelete(Authenticatable $authenticatable, BookingGroup $bookingGroup): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['booking_group.*.force-delete'],
+            abilities: ['group_appointment.*.force-delete'],
             denyResponse: 'You do not have permissions to force delete this booking group.'
         );
     }
