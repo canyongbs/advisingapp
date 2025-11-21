@@ -94,7 +94,7 @@ class GetGroupQuery extends EditRecord implements HasTable
 
         $data['model'] = $group->model;
         $data['type'] = $group->type;
-        $data['user']['name'] = $group->user->name;
+        $data['user']['name'] = $group->user ? $group->user->name : 'N/A';
 
         return $data;
     }
