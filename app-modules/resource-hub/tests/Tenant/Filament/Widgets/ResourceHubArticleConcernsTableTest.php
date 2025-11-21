@@ -40,8 +40,11 @@ use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
 
 use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 it('returns all new concerns for a given resource hub article by default', function () {
+  asSuperAdmin();
+
     $resourceHubArticle = ResourceHubArticle::factory()->create();
 
     $newConcerns = ResourceHubArticleConcern::factory()
@@ -68,6 +71,8 @@ it('returns all new concerns for a given resource hub article by default', funct
 });
 
 it('can filter concerns by status', function () {
+  asSuperAdmin();
+  
     $resourceHubArticle = ResourceHubArticle::factory()->create();
 
     $newConcerns = ResourceHubArticleConcern::factory()
