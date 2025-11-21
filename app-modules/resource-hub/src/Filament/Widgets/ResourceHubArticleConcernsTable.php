@@ -75,7 +75,7 @@ class ResourceHubArticleConcernsTable extends TableWidget
                 TextColumn::make('status'),
             ])
             ->recordActions([
-              ChangeConcernStatusAction::make(),
+                ChangeConcernStatusAction::make(),
             ])
             ->filters([
                 SelectFilter::make('status')
