@@ -37,6 +37,7 @@
 namespace AdvisingApp\ResourceHub\Filament\Widgets;
 
 use AdvisingApp\ResourceHub\Enums\ConcernStatus;
+use AdvisingApp\ResourceHub\Filament\Actions\ChangeConcernStatusAction;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -57,7 +58,7 @@ class ResourceHubArticleConcernsTable extends TableWidget
     }
 
     #[On('concern-created')]
-    public function refreshWidget(): void {}
+    public function concernCreated(): void {}
 
     public function table(Table $table): Table
     {
@@ -73,11 +74,14 @@ class ResourceHubArticleConcernsTable extends TableWidget
                     ->date(),
                 TextColumn::make('status'),
             ])
+            ->recordActions([
+              ChangeConcernStatusAction::make(),
+            ])
             ->filters([
                 SelectFilter::make('status')
                     ->multiple()
-                    ->options(ConcernStatus::class),
-                // ->default([ConcernStatus::New->value]),
+                    ->options(ConcernStatus::class)
+                    ->default([ConcernStatus::New->value]),
             ]);
     }
 }
