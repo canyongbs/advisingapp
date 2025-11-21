@@ -172,12 +172,12 @@ export default {
                     950: '#4b0c2f',
                 },
                 turkish: {
-                    300 : '#c0d7d8',
-                    500 : '#43b7b2',
-                }
+                    300: '#c0d7d8',
+                    500: '#43b7b2',
+                },
             },
             fontSize: {
-                'xxs': ['.5rem'],
+                xxs: ['.5rem'],
             },
         },
     },

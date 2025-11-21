@@ -1,28 +1,28 @@
 {
-  "name": "canyon-gbs/advising-app-theme",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^4.0",
-    "filament/spatie-laravel-settings-plugin": "^4.0",
-    "spatie/laravel-settings": "^3.2"
-  },
-  "autoload": {
-    "psr-4": {
-      "AdvisingApp\\Theme\\": "src/",
-      "AdvisingApp\\Theme\\Tests\\": "tests/",
-      "AdvisingApp\\Theme\\Database\\Factories\\": "database/factories/",
-      "AdvisingApp\\Theme\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/advising-app-theme",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^4.0",
+        "filament/spatie-laravel-settings-plugin": "^4.0",
+        "spatie/laravel-settings": "^3.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\Theme\\": "src/",
+            "AdvisingApp\\Theme\\Tests\\": "tests/",
+            "AdvisingApp\\Theme\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\Theme\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\Theme\\Providers\\ThemeServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "stable",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "AdvisingApp\\Theme\\Providers\\ThemeServiceProvider"
-      ]
-    }
-  }
 }

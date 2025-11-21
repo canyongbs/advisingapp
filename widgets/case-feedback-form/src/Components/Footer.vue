@@ -32,14 +32,14 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { defineProps } from 'vue';
+    import { defineProps } from 'vue';
 
-const props = defineProps({
-    logo: {
-        type: String,
-        required: true,
-    },
-});
+    const props = defineProps({
+        logo: {
+            type: String,
+            required: true,
+        },
+    });
 </script>
 
 <template>

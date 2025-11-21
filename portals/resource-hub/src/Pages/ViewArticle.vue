@@ -32,60 +32,60 @@
 </COPYRIGHT>
 -->
 <script setup>
-import AppLoading from '@/Components/AppLoading.vue';
-import Breadcrumbs from '@/Components/Breadcrumbs.vue';
-import { consumer } from '@/Services/Consumer.js';
-import { Bars3Icon, ClockIcon, EyeIcon } from '@heroicons/vue/24/outline/index.js';
-import DOMPurify from 'dompurify';
-import { defineProps, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+    import AppLoading from '@/Components/AppLoading.vue';
+    import Breadcrumbs from '@/Components/Breadcrumbs.vue';
+    import { consumer } from '@/Services/Consumer.js';
+    import { Bars3Icon, ClockIcon, EyeIcon } from '@heroicons/vue/24/outline/index.js';
+    import DOMPurify from 'dompurify';
+    import { defineProps, ref, watch } from 'vue';
+    import { useRoute } from 'vue-router';
 
-const route = useRoute();
+    const route = useRoute();
 
-const props = defineProps({
-    searchUrl: {
-        type: String,
-        required: true,
-    },
-    apiUrl: {
-        type: String,
-        required: true,
-    },
-    categories: {
-        type: Object,
-        required: true,
-    },
-});
+    const props = defineProps({
+        searchUrl: {
+            type: String,
+            required: true,
+        },
+        apiUrl: {
+            type: String,
+            required: true,
+        },
+        categories: {
+            type: Object,
+            required: true,
+        },
+    });
 
-const loading = ref(true);
-const category = ref(null);
-const article = ref(null);
-const portalViewCount = ref(0);
+    const loading = ref(true);
+    const category = ref(null);
+    const article = ref(null);
+    const portalViewCount = ref(0);
 
-watch(
-    route,
-    function (newRouteValue) {
-        getData();
-    },
-    {
-        immediate: true,
-    },
-);
-
-function getData() {
-    loading.value = true;
-
-    const { get } = consumer();
-
-    get(props.apiUrl + '/categories/' + route.params.categoryId + '/articles/' + route.params.articleId).then(
-        (response) => {
-            category.value = response.data.category;
-            article.value = response.data.article;
-            loading.value = false;
-            portalViewCount.value = response.data.portal_view_count;
+    watch(
+        route,
+        function (newRouteValue) {
+            getData();
+        },
+        {
+            immediate: true,
         },
     );
-}
+
+    function getData() {
+        loading.value = true;
+
+        const { get } = consumer();
+
+        get(props.apiUrl + '/categories/' + route.params.categoryId + '/articles/' + route.params.articleId).then(
+            (response) => {
+                category.value = response.data.category;
+                article.value = response.data.article;
+                loading.value = false;
+                portalViewCount.value = response.data.portal_view_count;
+            },
+        );
+    }
 </script>
 
 <template>

@@ -4,30 +4,20 @@
         "ipAddress": "192.0.2.1",
         "link": "http://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-email-smtp.html",
         "linkTags": {
-            "samplekey0": [
-                "samplevalue0"
-            ],
-            "samplekey1": [
-                "samplevalue1"
-            ]
+            "samplekey0": ["samplevalue0"],
+            "samplekey1": ["samplevalue1"]
         },
         "timestamp": "2017-08-09T23:51:25.570Z",
         "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36"
     },
     "mail": {
         "commonHeaders": {
-            "from": [
-                "sender@example.com"
-            ],
+            "from": ["sender@example.com"],
             "messageId": "EXAMPLE7c191be45-e9aedb9a-02f9-4d12-a87d-dd0099a07f8a-000000",
             "subject": "Message sent from Amazon SES",
-            "to": [
-                "recipient@example.com"
-            ]
+            "to": ["recipient@example.com"]
         },
-        "destination": [
-            "recipient@example.com"
-        ],
+        "destination": ["recipient@example.com"],
         "headers": [
             {
                 "name": "X-SES-CONFIGURATION-SET",
@@ -67,24 +57,12 @@
         "sendingAccountId": "123456789012",
         "source": "sender@example.com",
         "tags": {
-            "ses:caller-identity": [
-                "ses_user"
-            ],
-            "ses:configuration-set": [
-                "ConfigSet"
-            ],
-            "ses:from-domain": [
-                "example.com"
-            ],
-            "ses:source-ip": [
-                "192.0.2.0"
-            ],
-            "app_message_id": [
-                "xxx"
-            ],
-            "tenant_id": [
-                "xxx"
-            ]
+            "ses:caller-identity": ["ses_user"],
+            "ses:configuration-set": ["ConfigSet"],
+            "ses:from-domain": ["example.com"],
+            "ses:source-ip": ["192.0.2.0"],
+            "app_message_id": ["xxx"],
+            "tenant_id": ["xxx"]
         },
         "timestamp": "2017-08-09T23:50:05.795Z"
     }

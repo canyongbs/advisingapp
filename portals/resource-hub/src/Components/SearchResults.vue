@@ -32,24 +32,24 @@
 </COPYRIGHT>
 -->
 <script setup>
-import SearchLoading from '@/Components/SearchLoading.vue';
-import { ChevronRightIcon, XMarkIcon } from '@heroicons/vue/20/solid';
-import { defineProps } from 'vue';
+    import SearchLoading from '@/Components/SearchLoading.vue';
+    import { ChevronRightIcon, XMarkIcon } from '@heroicons/vue/20/solid';
+    import { defineProps } from 'vue';
 
-defineProps({
-    searchQuery: {
-        type: String,
-        required: true,
-    },
-    searchResults: {
-        type: Object,
-        required: true,
-    },
-    loadingResults: {
-        type: Boolean,
-        required: true,
-    },
-});
+    defineProps({
+        searchQuery: {
+            type: String,
+            required: true,
+        },
+        searchResults: {
+            type: Object,
+            required: true,
+        },
+        loadingResults: {
+            type: Boolean,
+            required: true,
+        },
+    });
 </script>
 
 <template>

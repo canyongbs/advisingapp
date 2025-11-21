@@ -7,8 +7,11 @@ Within this configuration file is the agreed upon standards for the team.
 When setting up the project you should set up your IDE to automatically apply these rules to the current file you are working in on save. Common IDE configurations on how to do that are listed below.
 
 ## IDE Configuration
+
 ### PHPStorm / Jetbrains Products
+
 ##### Inspections (fixer does not run, only highlights violations)
+
 1. Set the correct php cs fixer binary in:
     - Language & Frameworks -> PHP -> Quality tools
 2. Within phpstorm, go to:
@@ -16,10 +19,13 @@ When setting up the project you should set up your IDE to automatically apply th
     - Make sure PHP CS Fixer validation is checked
     - In the right-hand pane, after selecting this option, click the browse (`...`) button and select the php-cs-fixer.php file previously saved in your home directory
     - Click Apply and OK
+
 ##### File Watcher (fixer runs on save action)
+
 1. In PHPStorm, create a file watcher (under "Preferences->Tools")
 2. Uncheck all the "Advanced Options"
 3. Edit the following settings:
+
 ```
 Name: PHP Style fixer
 File type: PHP
@@ -27,7 +33,9 @@ Scope: Current File
 Path: $ProjectFileDir$/vendor/friendsofphp/php-cs-fixer/php-cs-fixer
 Arguments: fix $FileDir$/$FileName$ --verbose --config=$ProjectFileDir$/php-cs-fixer.php
 ```
+
 ### VS Code
+
 1. Install [PHP CS Fixer](https://marketplace.visualstudio.com/items?itemName=fterrag.vscode-php-cs-fixer) extension
 2. Configure Extension, in `Settings as JSON`
     ```
@@ -37,7 +45,9 @@ Arguments: fix $FileDir$/$FileName$ --verbose --config=$ProjectFileDir$/php-cs-f
         "editor.defaultFormatter": "fterrag.vscode-php-cs-fixer"
     },
     ```
+
 ### Sublime Text 3
+
 1. Find `PHP CS Fixer` using Package Control: Install Package (cmd-shift-p)
 2. Under Preferences -> Package Settings -> PHP CS Fixer -> Settings - User, configure the extension using the following JSON
     ```
@@ -49,7 +59,7 @@ Arguments: fix $FileDir$/$FileName$ --verbose --config=$ProjectFileDir$/php-cs-f
 
 ---
 
-# Prettier (CSS, JS, and *.blade.php Files)
+# Prettier (CSS, JS, and \*.blade.php Files)
 
 This application comes with [Prettier](https://www.npmjs.com/package/prettier) and the [Prettier Blade Plugin](https://www.npmjs.com/package/@shufo/prettier-plugin-blade) to be used in order to set and automatically apply code formatting rules to our code-base blade files.
 
@@ -64,6 +74,7 @@ When setting up the project you should set up your IDE to automatically apply th
 ## IDE Configuration
 
 ### PHPStorm / Jetbrains Products
+
 You can use Prettier Plugin for JetBrains IDE.
 
 Add extension setting `blade.php` to `File | Settings | Languages & Frameworks | JavaScript | Prettier | Run for files:`
@@ -75,6 +86,7 @@ e.g.
 and turn on checkbox `On 'Reformat Code' action`
 
 ### VSCode
+
 You can use [Prettier extension for VSCode](https://github.com/prettier/prettier-vscode) to format blade within VSCode. You must install this plugin as local dependencies. see [https://github.com/prettier/prettier-vscode#prettier-resolution](https://github.com/prettier/prettier-vscode#prettier-resolution)
 
 If you want to use formatter without Prettier, please consider using [vscode-blade-formatter](https://github.com/shufo/vscode-blade-formatter)
@@ -97,7 +109,7 @@ Configuration is set in the [phpstan.neon.dist](../phpstan.neon.dist) file. If a
 
 Example `phpstan.neon` file:
 
-```neon 
+```neon
 includes:
     - phpstan.neon.dist
 

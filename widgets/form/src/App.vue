@@ -32,264 +32,303 @@
 </COPYRIGHT>
 -->
 <script setup>
-import DOMPurify from 'dompurify';
-import { marked } from 'marked';
-import { defineProps, onMounted, reactive, ref } from 'vue';
-import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
-import getRecaptchaToken from '../../../app-modules/integration-google-recaptcha/resources/js/Services/GetRecaptchaToken.js';
-import asteriskPlugin from './FormKit/asterisk.js';
-import wizard from './FormKit/wizard';
+    import DOMPurify from 'dompurify';
+    import { marked } from 'marked';
+    import { defineProps, onMounted, reactive, ref } from 'vue';
+    import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
+    import getRecaptchaToken from '../../../app-modules/integration-google-recaptcha/resources/js/Services/GetRecaptchaToken.js';
+    import asteriskPlugin from './FormKit/asterisk.js';
+    import wizard from './FormKit/wizard';
 
-onMounted(async () => {
-    await getForm().then(function () {
-        if (formRecaptchaEnabled.value === true) {
-            attachRecaptchaScript(formRecaptchaKey.value);
-        }
+    onMounted(async () => {
+        await getForm().then(function () {
+            if (formRecaptchaEnabled.value === true) {
+                attachRecaptchaScript(formRecaptchaKey.value);
+            }
+        });
     });
-});
 
-let { steps, visitedSteps, activeStep, setStep, wizardPlugin } = wizard();
+    let { steps, visitedSteps, activeStep, setStep, wizardPlugin } = wizard();
 
-const props = defineProps({
-    entryUrl: {
-        type: String,
-        required: true,
-    },
-    preview: {
-        type: Boolean,
-        default: false,
-    },
-});
+    const props = defineProps({
+        entryUrl: {
+            type: String,
+            required: true,
+        },
+        preview: {
+            type: Boolean,
+            default: false,
+        },
+    });
 
-const data = reactive({
-    steps,
-    visitedSteps,
-    activeStep,
-    plugins: [wizardPlugin, asteriskPlugin],
-    setStep: (target) => () => {
-        setStep(target);
-    },
-    setActiveStep: (stepName) => () => {
-        data.activeStep = stepName;
-    },
-    showStepErrors: (stepName) => {
-        return (
-            (steps[stepName].errorCount > 0 || steps[stepName].blockingCount > 0) &&
-            visitedSteps.value &&
-            visitedSteps.value.includes(stepName)
-        );
-    },
-    stepIsValid: (stepName) => {
-        return steps[stepName].valid && steps[stepName].errorCount === 0;
-    },
-    stringify: (value) => JSON.stringify(value, null, 2),
-    submitForm: async (data, node) => {
+    const data = reactive({
+        steps,
+        visitedSteps,
+        activeStep,
+        plugins: [wizardPlugin, asteriskPlugin],
+        setStep: (target) => () => {
+            setStep(target);
+        },
+        setActiveStep: (stepName) => () => {
+            data.activeStep = stepName;
+        },
+        showStepErrors: (stepName) => {
+            return (
+                (steps[stepName].errorCount > 0 || steps[stepName].blockingCount > 0) &&
+                visitedSteps.value &&
+                visitedSteps.value.includes(stepName)
+            );
+        },
+        stepIsValid: (stepName) => {
+            return steps[stepName].valid && steps[stepName].errorCount === 0;
+        },
+        stringify: (value) => JSON.stringify(value, null, 2),
+        submitForm: async (data, node) => {
+            node.clearErrors();
+
+            if (props.preview === 'true' || props.preview === true) {
+                submittedSuccess.value = true;
+                return;
+            }
+
+            let recaptchaToken = null;
+
+            if (formRecaptchaEnabled.value === true) {
+                recaptchaToken = await getRecaptchaToken(formRecaptchaKey.value);
+            }
+
+            if (recaptchaToken !== null) {
+                data['recaptcha-token'] = recaptchaToken;
+            }
+
+            fetch(formSubmissionUrl.value, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => response.json())
+                .then((json) => {
+                    if (json.errors) {
+                        node.setErrors([], json.errors);
+
+                        return;
+                    }
+
+                    submittedSuccess.value = true;
+                })
+                .catch((error) => {
+                    node.setErrors([error]);
+                });
+        },
+    });
+
+    const submittedSuccess = ref(false);
+
+    const display = ref(false);
+    const formName = ref('');
+    const formIsAuthenticated = ref(false);
+    const formDescription = ref('');
+    const formSubmissionUrl = ref('');
+    const formPrimaryColor = ref('');
+    const formRounding = ref('');
+    const formRecaptchaEnabled = ref(false);
+    const formRecaptchaKey = ref(null);
+    const onScreenResponse = ref(null);
+    const schema = ref([]);
+
+    const authentication = ref({
+        code: null,
+        email: null,
+        isRequested: false,
+        requestedMessage: null,
+        requestUrl: null,
+        url: null,
+        registrationAllowed: false,
+    });
+
+    async function getForm() {
+        await fetch(props.entryUrl)
+            .then((response) => response.json())
+            .then((json) => {
+                if (json.error) {
+                    throw new Error(json.error);
+                }
+
+                formName.value = json.name;
+                formDescription.value = json.description;
+                schema.value = json.schema;
+                formIsAuthenticated.value = json.is_authenticated ?? false;
+                formSubmissionUrl.value = json.submission_url ?? null;
+                formPrimaryColor.value = json.primary_color;
+                authentication.value.requestUrl = json.authentication_url ?? null;
+
+                formRecaptchaEnabled.value = json.recaptcha_enabled ?? false;
+                formRecaptchaKey.value = json.recaptcha_site_key ?? null;
+
+                if (props.preview === 'true' || props.preview === true) {
+                    visitedSteps.value = [];
+                    activeStep.value = '';
+
+                    Object.keys(steps).forEach((stepName) => {
+                        if (steps[stepName]) {
+                            steps[stepName].errorCount = 0;
+                            steps[stepName].blockingCount = 0;
+                            steps[stepName].valid = true;
+                        }
+                    });
+                }
+
+                if ((props.preview === 'true' || props.preview === true) && !json.authentication_url) {
+                    formSubmissionUrl.value = 'preview-mode';
+                }
+
+                formRounding.value = {
+                    none: {
+                        sm: '0px',
+                        default: '0px',
+                        md: '0px',
+                        lg: '0px',
+                        full: '0px',
+                    },
+                    sm: {
+                        sm: '0.125rem',
+                        default: '0.25rem',
+                        md: '0.375rem',
+                        lg: '0.5rem',
+                        full: '9999px',
+                    },
+                    md: {
+                        sm: '0.25rem',
+                        default: '0.375rem',
+                        md: '0.5rem',
+                        lg: '0.75rem',
+                        full: '9999px',
+                    },
+                    lg: {
+                        sm: '0.375rem',
+                        default: '0.5rem',
+                        md: '0.75rem',
+                        lg: '1rem',
+                        full: '9999px',
+                    },
+                    full: {
+                        sm: '9999px',
+                        default: '9999px',
+                        md: '9999px',
+                        lg: '9999px',
+                        full: '9999px',
+                    },
+                }[json.rounding ?? 'md'];
+
+                onScreenResponse.value = json.on_screen_response ?? null;
+
+                display.value = true;
+            })
+            .catch((error) => {
+                console.error(`Advising App Embed Form ${error}`);
+            });
+    }
+
+    async function authenticate(formData, node) {
         node.clearErrors();
 
         if (props.preview === 'true' || props.preview === true) {
-            submittedSuccess.value = true;
+            formSubmissionUrl.value = 'preview-mode';
             return;
         }
 
-        let recaptchaToken = null;
-
-        if (formRecaptchaEnabled.value === true) {
-            recaptchaToken = await getRecaptchaToken(formRecaptchaKey.value);
-        }
-
-        if (recaptchaToken !== null) {
-            data['recaptcha-token'] = recaptchaToken;
-        }
-
-        fetch(formSubmissionUrl.value, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                if (json.errors) {
-                    node.setErrors([], json.errors);
-
-                    return;
-                }
-
-                submittedSuccess.value = true;
+        if (authentication.value.isRequested) {
+            fetch(authentication.value.url, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    code: formData.code,
+                }),
             })
-            .catch((error) => {
-                node.setErrors([error]);
-            });
-    },
-});
+                .then((response) => response.json())
+                .then((json) => {
+                    if (json.errors) {
+                        node.setErrors([], json.errors);
 
-const submittedSuccess = ref(false);
-
-const display = ref(false);
-const formName = ref('');
-const formIsAuthenticated = ref(false);
-const formDescription = ref('');
-const formSubmissionUrl = ref('');
-const formPrimaryColor = ref('');
-const formRounding = ref('');
-const formRecaptchaEnabled = ref(false);
-const formRecaptchaKey = ref(null);
-const onScreenResponse = ref(null);
-const schema = ref([]);
-
-const authentication = ref({
-    code: null,
-    email: null,
-    isRequested: false,
-    requestedMessage: null,
-    requestUrl: null,
-    url: null,
-    registrationAllowed: false,
-});
-
-async function getForm() {
-    await fetch(props.entryUrl)
-        .then((response) => response.json())
-        .then((json) => {
-            if (json.error) {
-                throw new Error(json.error);
-            }
-
-            formName.value = json.name;
-            formDescription.value = json.description;
-            schema.value = json.schema;
-            formIsAuthenticated.value = json.is_authenticated ?? false;
-            formSubmissionUrl.value = json.submission_url ?? null;
-            formPrimaryColor.value = json.primary_color;
-            authentication.value.requestUrl = json.authentication_url ?? null;
-
-            formRecaptchaEnabled.value = json.recaptcha_enabled ?? false;
-            formRecaptchaKey.value = json.recaptcha_site_key ?? null;
-
-            if (props.preview === 'true' || props.preview === true) {
-                visitedSteps.value = [];
-                activeStep.value = '';
-
-                Object.keys(steps).forEach((stepName) => {
-                    if (steps[stepName]) {
-                        steps[stepName].errorCount = 0;
-                        steps[stepName].blockingCount = 0;
-                        steps[stepName].valid = true;
+                        return;
                     }
+
+                    if (json.is_expired) {
+                        node.setErrors(['The authentication code expires after 24 hours. Please authenticate again.']);
+
+                        authentication.value.isRequested = false;
+                        authentication.value.requestedMessage = null;
+                        authentication.value.registrationAllowed = false;
+
+                        return;
+                    }
+
+                    if (!json.submission_url) {
+                        node.setErrors([json.message]);
+
+                        return;
+                    }
+
+                    formSubmissionUrl.value = json.submission_url;
+
+                    if (json.schema) {
+                        schema.value = json.schema;
+                    }
+                })
+                .catch((error) => {
+                    node.setErrors([error]);
                 });
-            }
 
-            if ((props.preview === 'true' || props.preview === true) && !json.authentication_url) {
-                formSubmissionUrl.value = 'preview-mode';
-            }
+            return;
+        }
 
-            formRounding.value = {
-                none: {
-                    sm: '0px',
-                    default: '0px',
-                    md: '0px',
-                    lg: '0px',
-                    full: '0px',
+        if (authentication.value.registrationAllowed) {
+            fetch(authentication.value.url, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
                 },
-                sm: {
-                    sm: '0.125rem',
-                    default: '0.25rem',
-                    md: '0.375rem',
-                    lg: '0.5rem',
-                    full: '9999px',
-                },
-                md: {
-                    sm: '0.25rem',
-                    default: '0.375rem',
-                    md: '0.5rem',
-                    lg: '0.75rem',
-                    full: '9999px',
-                },
-                lg: {
-                    sm: '0.375rem',
-                    default: '0.5rem',
-                    md: '0.75rem',
-                    lg: '1rem',
-                    full: '9999px',
-                },
-                full: {
-                    sm: '9999px',
-                    default: '9999px',
-                    md: '9999px',
-                    lg: '9999px',
-                    full: '9999px',
-                },
-            }[json.rounding ?? 'md'];
-
-            onScreenResponse.value = json.on_screen_response ?? null;
-
-            display.value = true;
-        })
-        .catch((error) => {
-            console.error(`Advising App Embed Form ${error}`);
-        });
-}
-
-async function authenticate(formData, node) {
-    node.clearErrors();
-
-    if (props.preview === 'true' || props.preview === true) {
-        formSubmissionUrl.value = 'preview-mode';
-        return;
-    }
-
-    if (authentication.value.isRequested) {
-        fetch(authentication.value.url, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                code: formData.code,
-            }),
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                if (json.errors) {
-                    node.setErrors([], json.errors);
-
-                    return;
-                }
-
-                if (json.is_expired) {
-                    node.setErrors(['The authentication code expires after 24 hours. Please authenticate again.']);
-
-                    authentication.value.isRequested = false;
-                    authentication.value.requestedMessage = null;
-                    authentication.value.registrationAllowed = false;
-
-                    return;
-                }
-
-                if (!json.submission_url) {
-                    node.setErrors([json.message]);
-
-                    return;
-                }
-
-                formSubmissionUrl.value = json.submission_url;
-
-                if (json.schema) {
-                    schema.value = json.schema;
-                }
+                body: JSON.stringify({
+                    email: formData.email,
+                    first_name: formData.first_name,
+                    last_name: formData.last_name,
+                    preferred: formData.preferred,
+                    mobile: formData.mobile,
+                    birthdate: formData.birthdate,
+                    address: formData.address,
+                    address_2: formData.address_2,
+                    city: formData.city,
+                    state: formData.state,
+                    postal: formData.postal,
+                }),
             })
-            .catch((error) => {
-                node.setErrors([error]);
-            });
+                .then((response) => response.json())
+                .then((json) => {
+                    if (json.errors) {
+                        node.setErrors([], json.errors);
 
-        return;
-    }
+                        return;
+                    }
 
-    if (authentication.value.registrationAllowed) {
-        fetch(authentication.value.url, {
+                    authentication.value.isRequested = true;
+                    authentication.value.requestedMessage = json.message;
+                    authentication.value.url = json.authentication_url;
+                })
+                .catch((error) => {
+                    node.setErrors([error]);
+                });
+
+            return;
+        }
+
+        fetch(authentication.value.requestUrl, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -297,22 +336,26 @@ async function authenticate(formData, node) {
             },
             body: JSON.stringify({
                 email: formData.email,
-                first_name: formData.first_name,
-                last_name: formData.last_name,
-                preferred: formData.preferred,
-                mobile: formData.mobile,
-                birthdate: formData.birthdate,
-                address: formData.address,
-                address_2: formData.address_2,
-                city: formData.city,
-                state: formData.state,
-                postal: formData.postal,
             }),
         })
             .then((response) => response.json())
             .then((json) => {
                 if (json.errors) {
                     node.setErrors([], json.errors);
+
+                    return;
+                }
+
+                if (!json.authentication_url) {
+                    node.setErrors([json.message]);
+
+                    return;
+                }
+                if (json.registrationAllowed) {
+                    authentication.value.registrationAllowed = true;
+                    authentication.value.isRequested = false;
+                    authentication.value.requestedMessage = json.message;
+                    authentication.value.url = json.authentication_url;
 
                     return;
                 }
@@ -324,50 +367,7 @@ async function authenticate(formData, node) {
             .catch((error) => {
                 node.setErrors([error]);
             });
-
-        return;
     }
-
-    fetch(authentication.value.requestUrl, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            email: formData.email,
-        }),
-    })
-        .then((response) => response.json())
-        .then((json) => {
-            if (json.errors) {
-                node.setErrors([], json.errors);
-
-                return;
-            }
-
-            if (!json.authentication_url) {
-                node.setErrors([json.message]);
-
-                return;
-            }
-            if (json.registrationAllowed) {
-                authentication.value.registrationAllowed = true;
-                authentication.value.isRequested = false;
-                authentication.value.requestedMessage = json.message;
-                authentication.value.url = json.authentication_url;
-
-                return;
-            }
-
-            authentication.value.isRequested = true;
-            authentication.value.requestedMessage = json.message;
-            authentication.value.url = json.authentication_url;
-        })
-        .catch((error) => {
-            node.setErrors([error]);
-        });
-}
 </script>
 
 <template>

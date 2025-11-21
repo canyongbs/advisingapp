@@ -6,9 +6,9 @@ services:
         environment:
             CREATE_STORAGE_SYMLINK: false
         extra_hosts:
-            - "host.docker.internal:host-gateway"
+            - 'host.docker.internal:host-gateway'
         volumes:
-            - ".:/var/www/html"
+            - '.:/var/www/html'
         networks:
             - cgbs-development
 

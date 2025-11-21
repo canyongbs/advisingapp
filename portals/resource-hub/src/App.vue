@@ -32,195 +32,231 @@
 </COPYRIGHT>
 -->
 <script setup>
-import AppLoading from '@/Components/AppLoading.vue';
-import DesktopSidebar from '@/Components/DesktopSidebar.vue';
-import MobileSidebar from '@/Components/MobileSidebar.vue';
-import axios from '@/Globals/Axios.js';
-import { consumer } from '@/Services/Consumer.js';
-import determineIfUserIsAuthenticated from '@/Services/DetermineIfUserIsAuthenticated.js';
-import getAppContext from '@/Services/GetAppContext.js';
-import { useAuthStore } from '@/Stores/auth.js';
-import { useTokenStore } from '@/Stores/token.js';
-import { defineProps, onMounted, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+    import AppLoading from '@/Components/AppLoading.vue';
+    import DesktopSidebar from '@/Components/DesktopSidebar.vue';
+    import MobileSidebar from '@/Components/MobileSidebar.vue';
+    import axios from '@/Globals/Axios.js';
+    import { consumer } from '@/Services/Consumer.js';
+    import determineIfUserIsAuthenticated from '@/Services/DetermineIfUserIsAuthenticated.js';
+    import getAppContext from '@/Services/GetAppContext.js';
+    import { useAuthStore } from '@/Stores/auth.js';
+    import { useTokenStore } from '@/Stores/token.js';
+    import { defineProps, onMounted, ref, watch } from 'vue';
+    import { useRoute } from 'vue-router';
 
-const errorLoading = ref(false);
-const loading = ref(true);
-const showMobileMenu = ref(false);
+    const errorLoading = ref(false);
+    const loading = ref(true);
+    const showMobileMenu = ref(false);
 
-const userIsAuthenticated = ref(false);
+    const userIsAuthenticated = ref(false);
 
-onMounted(async () => {
-    const { isEmbeddedInAdvisingApp } = getAppContext(props.accessUrl);
+    onMounted(async () => {
+        const { isEmbeddedInAdvisingApp } = getAppContext(props.accessUrl);
 
-    if (isEmbeddedInAdvisingApp) {
-        await axios.get(props.appUrl + '/sanctum/csrf-cookie');
-    }
+        if (isEmbeddedInAdvisingApp) {
+            await axios.get(props.appUrl + '/sanctum/csrf-cookie');
+        }
 
-    await determineIfUserIsAuthenticated(props.userAuthenticationUrl).then((response) => {
-        userIsAuthenticated.value = response;
+        await determineIfUserIsAuthenticated(props.userAuthenticationUrl).then((response) => {
+            userIsAuthenticated.value = response;
+        });
+
+        await getResourceHubPortal().then(async () => {
+            if (userIsAuthenticated.value || !portalRequiresAuthentication.value) {
+                await getResourceHubPortalCategories().then(() => {
+                    loading.value = false;
+                });
+
+                return;
+            }
+
+            loading.value = false;
+        });
     });
 
-    await getResourceHubPortal().then(async () => {
-        if (userIsAuthenticated.value || !portalRequiresAuthentication.value) {
-            await getResourceHubPortalCategories().then(() => {
-                loading.value = false;
+    const props = defineProps({
+        url: {
+            type: String,
+            required: true,
+        },
+        searchUrl: {
+            type: String,
+            required: true,
+        },
+        apiUrl: {
+            type: String,
+            required: true,
+        },
+        accessUrl: {
+            type: String,
+            required: true,
+        },
+        userAuthenticationUrl: {
+            type: String,
+            required: true,
+        },
+        appUrl: {
+            type: String,
+            required: true,
+        },
+    });
+
+    const scriptUrl = new URL(document.currentScript.getAttribute('src'));
+    const protocol = scriptUrl.protocol;
+    const scriptHostname = scriptUrl.hostname;
+    const scriptQuery = Object.fromEntries(scriptUrl.searchParams);
+
+    const hostUrl = `${protocol}//${scriptHostname}`;
+
+    const portalRequiresAuthentication = ref(true);
+    const portalPrimaryColor = ref('');
+    const portalRounding = ref('');
+    const categories = ref({});
+    const route = useRoute();
+
+    const authentication = ref({
+        code: null,
+        email: null,
+        isRequested: false,
+        requestedMessage: null,
+        requestUrl: null,
+        url: null,
+    });
+
+    async function getResourceHubPortal() {
+        await axios
+            .get(props.url)
+            .then((response) => {
+                errorLoading.value = false;
+
+                if (response.error) {
+                    throw new Error(response.error);
+                }
+
+                const { setPortalRequiresAuthentication } = useAuthStore();
+
+                portalPrimaryColor.value = response.data.primary_color;
+
+                setPortalRequiresAuthentication(
+                    (portalRequiresAuthentication.value = response.data.requires_authentication),
+                );
+
+                authentication.value.requestUrl = response.data.authentication_url ?? null;
+
+                portalRounding.value = {
+                    none: {
+                        sm: '0px',
+                        default: '0px',
+                        md: '0px',
+                        lg: '0px',
+                        full: '0px',
+                    },
+                    sm: {
+                        sm: '0.125rem',
+                        default: '0.25rem',
+                        md: '0.375rem',
+                        lg: '0.5rem',
+                        full: '9999px',
+                    },
+                    md: {
+                        sm: '0.25rem',
+                        default: '0.375rem',
+                        md: '0.5rem',
+                        lg: '0.75rem',
+                        full: '9999px',
+                    },
+                    lg: {
+                        sm: '0.375rem',
+                        default: '0.5rem',
+                        md: '0.75rem',
+                        lg: '1rem',
+                        full: '9999px',
+                    },
+                    full: {
+                        sm: '9999px',
+                        default: '9999px',
+                        md: '9999px',
+                        lg: '9999px',
+                        full: '9999px',
+                    },
+                }[response.data.rounding ?? 'md'];
+            })
+            .catch((error) => {
+                errorLoading.value = true;
+                console.error(`Help Center Embed ${error}`);
             });
+    }
+
+    async function getResourceHubPortalCategories() {
+        const { get } = consumer();
+
+        get(`${props.apiUrl}/categories`)
+            .then((response) => {
+                errorLoading.value = false;
+
+                if (response.error) {
+                    throw new Error(response.error);
+                }
+
+                categories.value = response.data;
+            })
+            .catch((error) => {
+                errorLoading.value = true;
+                console.error(`Help Center Embed ${error}`);
+            });
+    }
+
+    async function authenticate(formData, node) {
+        node.clearErrors();
+
+        const { setToken } = useTokenStore();
+
+        const { isEmbeddedInAdvisingApp } = getAppContext(props.accessUrl);
+
+        if (isEmbeddedInAdvisingApp) {
+            await axios.get(props.appUrl + '/sanctum/csrf-cookie');
+        }
+
+        if (authentication.value.isRequested) {
+            axios
+                .post(authentication.value.url, {
+                    code: formData.code,
+                })
+                .then((response) => {
+                    if (response.errors) {
+                        node.setErrors([], response.errors);
+
+                        return;
+                    }
+
+                    if (response.data.is_expired) {
+                        node.setErrors(['The authentication code expires after 24 hours. Please authenticate again.']);
+
+                        authentication.value.isRequested = false;
+                        authentication.value.requestedMessage = null;
+
+                        return;
+                    }
+
+                    if (response.data.success === true) {
+                        setToken(response.data.token);
+
+                        userIsAuthenticated.value = true;
+
+                        getResourceHubPortalCategories();
+                    }
+                })
+                .catch((error) => {
+                    node.setErrors([error]);
+                });
 
             return;
         }
 
-        loading.value = false;
-    });
-});
-
-const props = defineProps({
-    url: {
-        type: String,
-        required: true,
-    },
-    searchUrl: {
-        type: String,
-        required: true,
-    },
-    apiUrl: {
-        type: String,
-        required: true,
-    },
-    accessUrl: {
-        type: String,
-        required: true,
-    },
-    userAuthenticationUrl: {
-        type: String,
-        required: true,
-    },
-    appUrl: {
-        type: String,
-        required: true,
-    },
-});
-
-const scriptUrl = new URL(document.currentScript.getAttribute('src'));
-const protocol = scriptUrl.protocol;
-const scriptHostname = scriptUrl.hostname;
-const scriptQuery = Object.fromEntries(scriptUrl.searchParams);
-
-const hostUrl = `${protocol}//${scriptHostname}`;
-
-const portalRequiresAuthentication = ref(true);
-const portalPrimaryColor = ref('');
-const portalRounding = ref('');
-const categories = ref({});
-const route = useRoute();
-
-const authentication = ref({
-    code: null,
-    email: null,
-    isRequested: false,
-    requestedMessage: null,
-    requestUrl: null,
-    url: null,
-});
-
-async function getResourceHubPortal() {
-    await axios
-        .get(props.url)
-        .then((response) => {
-            errorLoading.value = false;
-
-            if (response.error) {
-                throw new Error(response.error);
-            }
-
-            const { setPortalRequiresAuthentication } = useAuthStore();
-
-            portalPrimaryColor.value = response.data.primary_color;
-
-            setPortalRequiresAuthentication(
-                (portalRequiresAuthentication.value = response.data.requires_authentication),
-            );
-
-            authentication.value.requestUrl = response.data.authentication_url ?? null;
-
-            portalRounding.value = {
-                none: {
-                    sm: '0px',
-                    default: '0px',
-                    md: '0px',
-                    lg: '0px',
-                    full: '0px',
-                },
-                sm: {
-                    sm: '0.125rem',
-                    default: '0.25rem',
-                    md: '0.375rem',
-                    lg: '0.5rem',
-                    full: '9999px',
-                },
-                md: {
-                    sm: '0.25rem',
-                    default: '0.375rem',
-                    md: '0.5rem',
-                    lg: '0.75rem',
-                    full: '9999px',
-                },
-                lg: {
-                    sm: '0.375rem',
-                    default: '0.5rem',
-                    md: '0.75rem',
-                    lg: '1rem',
-                    full: '9999px',
-                },
-                full: {
-                    sm: '9999px',
-                    default: '9999px',
-                    md: '9999px',
-                    lg: '9999px',
-                    full: '9999px',
-                },
-            }[response.data.rounding ?? 'md'];
-        })
-        .catch((error) => {
-            errorLoading.value = true;
-            console.error(`Help Center Embed ${error}`);
-        });
-}
-
-async function getResourceHubPortalCategories() {
-    const { get } = consumer();
-
-    get(`${props.apiUrl}/categories`)
-        .then((response) => {
-            errorLoading.value = false;
-
-            if (response.error) {
-                throw new Error(response.error);
-            }
-
-            categories.value = response.data;
-        })
-        .catch((error) => {
-            errorLoading.value = true;
-            console.error(`Help Center Embed ${error}`);
-        });
-}
-
-async function authenticate(formData, node) {
-    node.clearErrors();
-
-    const { setToken } = useTokenStore();
-
-    const { isEmbeddedInAdvisingApp } = getAppContext(props.accessUrl);
-
-    if (isEmbeddedInAdvisingApp) {
-        await axios.get(props.appUrl + '/sanctum/csrf-cookie');
-    }
-
-    if (authentication.value.isRequested) {
         axios
-            .post(authentication.value.url, {
-                code: formData.code,
+            .post(authentication.value.requestUrl, {
+                email: formData.email,
+                isSpa: isEmbeddedInAdvisingApp,
             })
             .then((response) => {
                 if (response.errors) {
@@ -229,60 +265,24 @@ async function authenticate(formData, node) {
                     return;
                 }
 
-                if (response.data.is_expired) {
-                    node.setErrors(['The authentication code expires after 24 hours. Please authenticate again.']);
-
-                    authentication.value.isRequested = false;
-                    authentication.value.requestedMessage = null;
+                if (!response.data.authentication_url) {
+                    node.setErrors([response.data.message]);
 
                     return;
                 }
 
-                if (response.data.success === true) {
-                    setToken(response.data.token);
-
-                    userIsAuthenticated.value = true;
-
-                    getResourceHubPortalCategories();
-                }
+                authentication.value.isRequested = true;
+                authentication.value.requestedMessage = response.data.message;
+                authentication.value.url = response.data.authentication_url;
             })
             .catch((error) => {
                 node.setErrors([error]);
             });
-
-        return;
     }
 
-    axios
-        .post(authentication.value.requestUrl, {
-            email: formData.email,
-            isSpa: isEmbeddedInAdvisingApp,
-        })
-        .then((response) => {
-            if (response.errors) {
-                node.setErrors([], response.errors);
-
-                return;
-            }
-
-            if (!response.data.authentication_url) {
-                node.setErrors([response.data.message]);
-
-                return;
-            }
-
-            authentication.value.isRequested = true;
-            authentication.value.requestedMessage = response.data.message;
-            authentication.value.url = response.data.authentication_url;
-        })
-        .catch((error) => {
-            node.setErrors([error]);
-        });
-}
-
-watch(route, () => {
-    showMobileMenu.value = !showMobileMenu;
-});
+    watch(route, () => {
+        showMobileMenu.value = !showMobileMenu;
+    });
 </script>
 
 <template>
@@ -388,8 +388,8 @@ watch(route, () => {
 </template>
 
 <style scoped>
-.bg-gradient {
-    @apply relative bg-no-repeat;
-    background-image: radial-gradient(circle at top, theme('colors.primary.200'), theme('colors.white') 50%);
-}
+    .bg-gradient {
+        @apply relative bg-no-repeat;
+        background-image: radial-gradient(circle at top, theme('colors.primary.200'), theme('colors.white') 50%);
+    }
 </style>

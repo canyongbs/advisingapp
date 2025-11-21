@@ -1,32 +1,32 @@
 {
-  "name": "canyon-gbs/advising-app-authorization",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^4.0",
-    "spatie/laravel-permission": "^6.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "AdvisingApp\\Authorization\\": "src/",
-      "AdvisingApp\\Authorization\\Tests\\": "tests/",
-      "AdvisingApp\\Authorization\\Database\\Factories\\": "database/factories/",
-      "AdvisingApp\\Authorization\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/advising-app-authorization",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^4.0",
+        "spatie/laravel-permission": "^6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\Authorization\\": "src/",
+            "AdvisingApp\\Authorization\\Tests\\": "tests/",
+            "AdvisingApp\\Authorization\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\Authorization\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\Authorization\\Providers\\AuthorizationServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
-  },
-  "minimum-stability": "stable",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "AdvisingApp\\Authorization\\Providers\\AuthorizationServiceProvider"
-      ]
-    }
-  },
-  "config": {
-    "allow-plugins": {
-      "pestphp/pest-plugin": true
-    }
-  }
 }

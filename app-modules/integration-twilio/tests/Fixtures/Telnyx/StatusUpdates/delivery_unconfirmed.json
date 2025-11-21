@@ -36,10 +36,7 @@
             "received_at": "2019-12-09T21:32:13.552+00:00",
             "record_type": "message",
             "sent_at": "2019-12-09T21:32:13.596+00:00",
-            "tags": [
-                "tag-a",
-                "tag-b"
-            ],
+            "tags": ["tag-a", "tag-b"],
             "text": "Hello there!",
             "to": [
                 {

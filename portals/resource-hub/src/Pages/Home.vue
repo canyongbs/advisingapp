@@ -32,65 +32,65 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { consumer } from '@/Services/Consumer.js';
-import { Bars3Icon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
-import { defineProps, ref, watch } from 'vue';
-import HelpCenter from '../Components/HelpCenter.vue';
-import SearchResults from '../Components/SearchResults.vue';
+    import { consumer } from '@/Services/Consumer.js';
+    import { Bars3Icon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
+    import { defineProps, ref, watch } from 'vue';
+    import HelpCenter from '../Components/HelpCenter.vue';
+    import SearchResults from '../Components/SearchResults.vue';
 
-const props = defineProps({
-    searchUrl: {
-        type: String,
-        required: true,
-    },
-    apiUrl: {
-        type: String,
-        required: true,
-    },
-    categories: {
-        type: Object,
-        required: true,
-    },
-});
-
-const searchQuery = ref(null);
-const loadingResults = ref(false);
-const searchResults = ref(null);
-
-const debounceSearch = debounce((value) => {
-    if (!value) {
-        searchQuery.value = null;
-        searchResults.value = null;
-        return;
-    }
-
-    loadingResults.value = true;
-
-    const { post } = consumer();
-
-    post(props.searchUrl, {
-        body: JSON.stringify({ search: value }),
-    }).then((response) => {
-        searchResults.value = response.data;
-        loadingResults.value = false;
+    const props = defineProps({
+        searchUrl: {
+            type: String,
+            required: true,
+        },
+        apiUrl: {
+            type: String,
+            required: true,
+        },
+        categories: {
+            type: Object,
+            required: true,
+        },
     });
-}, 500);
 
-watch(searchQuery, (value) => {
-    debounceSearch(value);
-});
+    const searchQuery = ref(null);
+    const loadingResults = ref(false);
+    const searchResults = ref(null);
 
-function debounce(func, delay) {
-    let timerId;
-    return function (...args) {
-        if (timerId) {
-            clearTimeout(timerId);
+    const debounceSearch = debounce((value) => {
+        if (!value) {
+            searchQuery.value = null;
+            searchResults.value = null;
+            return;
         }
-        timerId = setTimeout(() => {
-            func(...args);
-        }, delay);
-    };
-}
+
+        loadingResults.value = true;
+
+        const { post } = consumer();
+
+        post(props.searchUrl, {
+            body: JSON.stringify({ search: value }),
+        }).then((response) => {
+            searchResults.value = response.data;
+            loadingResults.value = false;
+        });
+    }, 500);
+
+    watch(searchQuery, (value) => {
+        debounceSearch(value);
+    });
+
+    function debounce(func, delay) {
+        let timerId;
+        return function (...args) {
+            if (timerId) {
+                clearTimeout(timerId);
+            }
+            timerId = setTimeout(() => {
+                func(...args);
+            }, delay);
+        };
+    }
 </script>
 
 <template>

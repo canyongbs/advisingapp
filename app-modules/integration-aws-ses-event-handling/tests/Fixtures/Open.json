@@ -2,18 +2,12 @@
     "eventType": "Open",
     "mail": {
         "commonHeaders": {
-            "from": [
-                "sender@example.com"
-            ],
+            "from": ["sender@example.com"],
             "messageId": "EXAMPLE7c191be45-e9aedb9a-02f9-4d12-a87d-dd0099a07f8a-000000",
             "subject": "Message sent from Amazon SES",
-            "to": [
-                "recipient@example.com"
-            ]
+            "to": ["recipient@example.com"]
         },
-        "destination": [
-            "recipient@example.com"
-        ],
+        "destination": ["recipient@example.com"],
         "headers": [
             {
                 "name": "X-SES-CONFIGURATION-SET",
@@ -49,24 +43,12 @@
         "sendingAccountId": "123456789012",
         "source": "sender@example.com",
         "tags": {
-            "ses:caller-identity": [
-                "IAM_user_or_role_name"
-            ],
-            "ses:configuration-set": [
-                "ConfigSet"
-            ],
-            "ses:from-domain": [
-                "example.com"
-            ],
-            "ses:source-ip": [
-                "192.0.2.0"
-            ],
-            "app_message_id": [
-                "xxx"
-            ],
-            "tenant_id": [
-                "xxx"
-            ]
+            "ses:caller-identity": ["IAM_user_or_role_name"],
+            "ses:configuration-set": ["ConfigSet"],
+            "ses:from-domain": ["example.com"],
+            "ses:source-ip": ["192.0.2.0"],
+            "app_message_id": ["xxx"],
+            "tenant_id": ["xxx"]
         },
         "timestamp": "2017-08-09T21:59:49.927Z"
     },

@@ -32,283 +32,315 @@
 </COPYRIGHT>
 -->
 <script setup>
-import axios from 'axios';
-import Echo from 'laravel-echo';
-import Pusher from 'pusher-js/dist/web/pusher';
-import { defineProps, onMounted, onUnmounted, ref } from 'vue';
-import advisorDefaultAvatarUrl from '../../../resources/images/canyon-ai-headshot.jpg?url';
-import loadingSpinner from '../public/images/loading-spinner.svg?url';
-import userAvatar from '../public/images/user-default-avatar.svg?url';
-import { useAuthStore } from './stores/auth';
+    import axios from 'axios';
+    import Echo from 'laravel-echo';
+    import Pusher from 'pusher-js/dist/web/pusher';
+    import { defineProps, onMounted, onUnmounted, ref } from 'vue';
+    import advisorDefaultAvatarUrl from '../../../resources/images/canyon-ai-headshot.jpg?url';
+    import loadingSpinner from '../public/images/loading-spinner.svg?url';
+    import userAvatar from '../public/images/user-default-avatar.svg?url';
+    import { useAuthStore } from './stores/auth';
 
-// Configure axios defaults
-axios.defaults.withCredentials = true;
-axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-axios.defaults.headers.common['Accept'] = 'application/json';
+    // Configure axios defaults
+    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+    axios.defaults.headers.common['Accept'] = 'application/json';
 
-const props = defineProps({
-    entryUrl: {
-        type: String,
-        required: true,
-    },
-    cssUrl: {
-        type: String,
-        required: true,
-        default: null,
-    },
-});
-const authStore = useAuthStore();
-const requiresAuthentication = ref(false);
-const authentication = ref({
-    promptToAuthenticate: false,
-    requestUrl: null,
-    refreshUrl: null,
-    email: null,
-    code: null,
-    isRequested: false,
-    requestedMessage: null,
-    confirmationUrl: null,
-    registrationAllowed: false,
-});
-const loadingError = ref(null);
-const sendMessageUrl = ref(null);
-const threadId = ref(null);
-const finishThreadUrl = ref(null);
-const message = ref('');
-const messages = ref([]);
-const currentResponse = ref('');
-const isLoading = ref(false);
-const isThreadFinished = ref(false);
-const isSplashScreenVisible = ref(true);
-const advisor = ref({
-    name: null,
-    description: null,
-    avatar_url: null,
-});
-let websocketChannel = null;
-
-onMounted(async () => {
-    axios
-        .post(
-            props.entryUrl,
-            {},
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            },
-        )
-        .then((response) => {
-            const json = response.data;
-
-            requiresAuthentication.value = json.requires_authentication;
-            authentication.value.requestUrl = json.authentication_url;
-            authentication.value.refreshUrl = json.refresh_url;
-            sendMessageUrl.value = json.send_message_url;
-            advisor.value = json.advisor;
-
-            if (requiresAuthentication.value === true) {
-                if (json.access_token) {
-                    authStore.$patch({ accessToken: json.access_token });
-                    setupWebsockets(json.websockets_config);
-                    return;
-                }
-                authentication.value.promptToAuthenticate = true;
-            } else {
-                // If authentication is not required, ensure prompt is false and setup websockets
-                authentication.value.promptToAuthenticate = false;
-                setupWebsockets(json.websockets_config);
-            }
-
-            websocketChannel = requiresAuthentication.value
-                ? window.Echo.private(channelName)
-                : window.Echo.channel(channelName);
-
-            websocketChannel.listen('.qna-advisor.automatic-end', () => {
-                finishThread();
-            });
-        })
-        .catch((error) => {
-            if (error.response && error.response.data.error) {
-                loadingError.value = error.response.data.error;
-            } else {
-                loadingError.value = 'An error occurred while loading the advisor.';
-            }
-        });
-});
-
-onUnmounted(() => {
-    if (websocketChannel) {
-        websocketChannel.stopListening('advisor-message.chunk');
-    }
-    if (window.Echo) {
-        window.Echo.disconnect();
-    }
-});
-
-function setupWebsockets(config) {
-    try {
-        window.Pusher = Pusher;
-
-        window.Echo = new Echo({
-            ...config,
-            authorizer: (channel, options) => {
-                return {
-                    authorize: (socketId, callback) => {
-                        axios
-                            .post(
-                                config.authEndpoint,
-                                {
-                                    socket_id: socketId,
-                                    channel_name: channel.name,
-                                },
-                                {
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        ...(requiresAuthentication.value && authStore.getAccessToken
-                                            ? { Authorization: `Bearer ${authStore.getAccessToken}` }
-                                            : {}),
-                                    },
-                                },
-                            )
-                            .then((response) => {
-                                callback(false, response.data);
-                            })
-                            .catch((error) => {
-                                callback(true, error);
-                            });
-                    },
-                };
-            },
-        });
-    } catch (error) {
-        console.error('Failed to setup websockets:', error);
-    }
-}
-
-async function sendMessage() {
-    if (!sendMessageUrl.value || !message.value.trim()) return;
-
-    messages.value.push({
-        from: 'user',
-        content: message.value,
+    const props = defineProps({
+        entryUrl: {
+            type: String,
+            required: true,
+        },
+        cssUrl: {
+            type: String,
+            required: true,
+            default: null,
+        },
     });
+    const authStore = useAuthStore();
+    const requiresAuthentication = ref(false);
+    const authentication = ref({
+        promptToAuthenticate: false,
+        requestUrl: null,
+        refreshUrl: null,
+        email: null,
+        code: null,
+        isRequested: false,
+        requestedMessage: null,
+        confirmationUrl: null,
+        registrationAllowed: false,
+    });
+    const loadingError = ref(null);
+    const sendMessageUrl = ref(null);
+    const threadId = ref(null);
+    const finishThreadUrl = ref(null);
+    const message = ref('');
+    const messages = ref([]);
+    const currentResponse = ref('');
+    const isLoading = ref(false);
+    const isThreadFinished = ref(false);
+    const isSplashScreenVisible = ref(true);
+    const advisor = ref({
+        name: null,
+        description: null,
+        avatar_url: null,
+    });
+    let websocketChannel = null;
 
-    isLoading.value = true;
-    currentResponse.value = '';
-
-    try {
-        const requestBody = {
-            content: message.value,
-            thread_id: threadId.value,
-        };
-
-        const sendMessageResponse = await authorizedPost(sendMessageUrl.value, requestBody);
-
-        const data = sendMessageResponse.data;
-
-        if (!threadId.value) {
-            threadId.value = data.thread_id;
-            finishThreadUrl.value = data.finish_thread_url;
-
-            let channelName = `qna-advisor-thread-${threadId.value}`;
-
-            websocketChannel = requiresAuthentication.value
-                ? window.Echo.private(channelName)
-                : window.Echo.channel(channelName);
-
-            websocketChannel.listen('.qna-advisor-message.chunk', (data) => {
-                if (data.error) {
-                    console.error('Advisor message error:', data.error);
-                    isLoading.value = false;
-                    return;
-                }
-
-                if (data.content) {
-                    currentResponse.value += data.content;
-                }
-
-                if (data.is_complete) {
-                    messages.value.push({
-                        from: 'advisor',
-                        content: currentResponse.value,
-                    });
-                    currentResponse.value = '';
-                    isLoading.value = false;
-                }
-            });
-        }
-
-        message.value = '';
-    } catch (error) {
-        console.error('Send message error:', error);
-        isLoading.value = false;
-    }
-}
-
-async function finishThread() {
-    if (!finishThreadUrl.value) return;
-
-    try {
-        isThreadFinished.value = true;
-
-        await authorizedPost(finishThreadUrl.value);
-    } catch (error) {
-        console.error('Finish thread error:', error);
-    }
-}
-
-async function authenticate(formData, node) {
-    node.clearErrors();
-
-    if (authentication.value.isRequested) {
-        const data = {
-            code: formData.code,
-        };
-
+    onMounted(async () => {
         axios
-            .post(authentication.value.confirmationUrl, data, {
-                headers: {
-                    'Content-Type': 'application/json',
+            .post(
+                props.entryUrl,
+                {},
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                 },
-            })
+            )
             .then((response) => {
-                if (response.errors) {
-                    node.setErrors([], response.errors);
+                const json = response.data;
 
-                    return;
-                }
+                requiresAuthentication.value = json.requires_authentication;
+                authentication.value.requestUrl = json.authentication_url;
+                authentication.value.refreshUrl = json.refresh_url;
+                sendMessageUrl.value = json.send_message_url;
+                advisor.value = json.advisor;
 
-                if (typeof response.data.access_token !== 'undefined') {
-                    authStore.$patch({ accessToken: response.data.access_token });
+                if (requiresAuthentication.value === true) {
+                    if (json.access_token) {
+                        authStore.$patch({ accessToken: json.access_token });
+                        setupWebsockets(json.websockets_config);
+                        return;
+                    }
+                    authentication.value.promptToAuthenticate = true;
+                } else {
+                    // If authentication is not required, ensure prompt is false and setup websockets
                     authentication.value.promptToAuthenticate = false;
-
-                    setupWebsockets(response.data.websockets_config);
+                    setupWebsockets(json.websockets_config);
                 }
+
+                websocketChannel = requiresAuthentication.value
+                    ? window.Echo.private(channelName)
+                    : window.Echo.channel(channelName);
+
+                websocketChannel.listen('.qna-advisor.automatic-end', () => {
+                    finishThread();
+                });
             })
             .catch((error) => {
-                node.setErrors([], error.response.data.errors);
+                if (error.response && error.response.data.error) {
+                    loadingError.value = error.response.data.error;
+                } else {
+                    loadingError.value = 'An error occurred while loading the advisor.';
+                }
             });
+    });
 
-        return;
+    onUnmounted(() => {
+        if (websocketChannel) {
+            websocketChannel.stopListening('advisor-message.chunk');
+        }
+        if (window.Echo) {
+            window.Echo.disconnect();
+        }
+    });
+
+    function setupWebsockets(config) {
+        try {
+            window.Pusher = Pusher;
+
+            window.Echo = new Echo({
+                ...config,
+                authorizer: (channel, options) => {
+                    return {
+                        authorize: (socketId, callback) => {
+                            axios
+                                .post(
+                                    config.authEndpoint,
+                                    {
+                                        socket_id: socketId,
+                                        channel_name: channel.name,
+                                    },
+                                    {
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            ...(requiresAuthentication.value && authStore.getAccessToken
+                                                ? { Authorization: `Bearer ${authStore.getAccessToken}` }
+                                                : {}),
+                                        },
+                                    },
+                                )
+                                .then((response) => {
+                                    callback(false, response.data);
+                                })
+                                .catch((error) => {
+                                    callback(true, error);
+                                });
+                        },
+                    };
+                },
+            });
+        } catch (error) {
+            console.error('Failed to setup websockets:', error);
+        }
     }
 
-    if (authentication.value.registrationAllowed) {
+    async function sendMessage() {
+        if (!sendMessageUrl.value || !message.value.trim()) return;
+
+        messages.value.push({
+            from: 'user',
+            content: message.value,
+        });
+
+        isLoading.value = true;
+        currentResponse.value = '';
+
+        try {
+            const requestBody = {
+                content: message.value,
+                thread_id: threadId.value,
+            };
+
+            const sendMessageResponse = await authorizedPost(sendMessageUrl.value, requestBody);
+
+            const data = sendMessageResponse.data;
+
+            if (!threadId.value) {
+                threadId.value = data.thread_id;
+                finishThreadUrl.value = data.finish_thread_url;
+
+                let channelName = `qna-advisor-thread-${threadId.value}`;
+
+                websocketChannel = requiresAuthentication.value
+                    ? window.Echo.private(channelName)
+                    : window.Echo.channel(channelName);
+
+                websocketChannel.listen('.qna-advisor-message.chunk', (data) => {
+                    if (data.error) {
+                        console.error('Advisor message error:', data.error);
+                        isLoading.value = false;
+                        return;
+                    }
+
+                    if (data.content) {
+                        currentResponse.value += data.content;
+                    }
+
+                    if (data.is_complete) {
+                        messages.value.push({
+                            from: 'advisor',
+                            content: currentResponse.value,
+                        });
+                        currentResponse.value = '';
+                        isLoading.value = false;
+                    }
+                });
+            }
+
+            message.value = '';
+        } catch (error) {
+            console.error('Send message error:', error);
+            isLoading.value = false;
+        }
+    }
+
+    async function finishThread() {
+        if (!finishThreadUrl.value) return;
+
+        try {
+            isThreadFinished.value = true;
+
+            await authorizedPost(finishThreadUrl.value);
+        } catch (error) {
+            console.error('Finish thread error:', error);
+        }
+    }
+
+    async function authenticate(formData, node) {
+        node.clearErrors();
+
+        if (authentication.value.isRequested) {
+            const data = {
+                code: formData.code,
+            };
+
+            axios
+                .post(authentication.value.confirmationUrl, data, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then((response) => {
+                    if (response.errors) {
+                        node.setErrors([], response.errors);
+
+                        return;
+                    }
+
+                    if (typeof response.data.access_token !== 'undefined') {
+                        authStore.$patch({ accessToken: response.data.access_token });
+                        authentication.value.promptToAuthenticate = false;
+
+                        setupWebsockets(response.data.websockets_config);
+                    }
+                })
+                .catch((error) => {
+                    node.setErrors([], error.response.data.errors);
+                });
+
+            return;
+        }
+
+        if (authentication.value.registrationAllowed) {
+            axios
+                .post(
+                    authentication.value.requestUrl,
+                    {
+                        email: formData.email,
+                        first_name: formData.first_name,
+                        last_name: formData.last_name,
+                        preferred: formData.preferred,
+                        mobile: formData.mobile,
+                        birthdate: formData.birthdate,
+                        address: formData.address,
+                        address_2: formData.address_2,
+                        city: formData.city,
+                        state: formData.state,
+                        postal: formData.postal,
+                    },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    },
+                )
+                .then((response) => {
+                    if (!response.data.authentication_url) {
+                        node.setErrors([response.data.message]);
+
+                        return;
+                    }
+
+                    authentication.value.isRequested = true;
+                    authentication.value.requestedMessage = response.data.message;
+                    authentication.value.confirmationUrl = response.data.authentication_url;
+                })
+                .catch((error) => {
+                    const data = error.response.data;
+
+                    node.setErrors([], data.errors);
+                });
+
+            return;
+        }
+
         axios
             .post(
                 authentication.value.requestUrl,
                 {
                     email: formData.email,
-                    first_name: formData.first_name,
-                    last_name: formData.last_name,
-                    preferred: formData.preferred,
-                    mobile: formData.mobile,
-                    birthdate: formData.birthdate,
-                    address: formData.address,
-                    address_2: formData.address_2,
-                    city: formData.city,
-                    state: formData.state,
-                    postal: formData.postal,
                 },
                 {
                     headers: {
@@ -328,106 +360,74 @@ async function authenticate(formData, node) {
                 authentication.value.confirmationUrl = response.data.authentication_url;
             })
             .catch((error) => {
-                const data = error.response.data;
+                let status = error.response.status;
+                let data = error.response.data;
+
+                if (status === 404 && data.registration_allowed) {
+                    authentication.value.registrationAllowed = true;
+                    authentication.value.isRequested = false;
+                    authentication.value.requestedMessage = data.message;
+                    authentication.value.requestUrl = data.authentication_url;
+
+                    return;
+                }
 
                 node.setErrors([], data.errors);
             });
-
-        return;
     }
 
-    axios
-        .post(
-            authentication.value.requestUrl,
-            {
-                email: formData.email,
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            },
-        )
-        .then((response) => {
-            if (!response.data.authentication_url) {
-                node.setErrors([response.data.message]);
-
-                return;
-            }
-
-            authentication.value.isRequested = true;
-            authentication.value.requestedMessage = response.data.message;
-            authentication.value.confirmationUrl = response.data.authentication_url;
-        })
-        .catch((error) => {
-            let status = error.response.status;
-            let data = error.response.data;
-
-            if (status === 404 && data.registration_allowed) {
-                authentication.value.registrationAllowed = true;
-                authentication.value.isRequested = false;
-                authentication.value.requestedMessage = data.message;
-                authentication.value.requestUrl = data.authentication_url;
-
-                return;
-            }
-
-            node.setErrors([], data.errors);
-        });
-}
-
-function startNewChat() {
-    isSplashScreenVisible.value = false;
-}
-
-async function authorizedPost(url, data) {
-    const headers = {
-        'Content-Type': 'application/json',
-    };
-
-    if (authStore.getAccessToken) {
-        headers['Authorization'] = `Bearer ${authStore.getAccessToken}`;
+    function startNewChat() {
+        isSplashScreenVisible.value = false;
     }
 
-    try {
-        return await axios.post(url, data, { headers });
-    } catch (error) {
-        if (error.response && error.response.status === 401) {
-            // Token expired, try to refresh
-            try {
-                const refreshResponse = await axios.post(
-                    authentication.value.refreshUrl,
-                    {},
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    },
-                );
+    async function authorizedPost(url, data) {
+        const headers = {
+            'Content-Type': 'application/json',
+        };
 
-                if (refreshResponse.data && refreshResponse.data.access_token) {
-                    // Save new token
-                    authStore.$patch({ accessToken: refreshResponse.data.access_token });
-
-                    // Retry original request with new token
-                    const newHeaders = {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${authStore.getAccessToken}`,
-                    };
-
-                    return await axios.post(url, data, { headers: newHeaders });
-                }
-            } catch (refreshError) {
-                console.error('Token refresh failed:', refreshError);
-                // If refresh fails, throw original error
-                throw error;
-            }
+        if (authStore.getAccessToken) {
+            headers['Authorization'] = `Bearer ${authStore.getAccessToken}`;
         }
 
-        // If not a 401 error, throw the original error
-        throw error;
+        try {
+            return await axios.post(url, data, { headers });
+        } catch (error) {
+            if (error.response && error.response.status === 401) {
+                // Token expired, try to refresh
+                try {
+                    const refreshResponse = await axios.post(
+                        authentication.value.refreshUrl,
+                        {},
+                        {
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        },
+                    );
+
+                    if (refreshResponse.data && refreshResponse.data.access_token) {
+                        // Save new token
+                        authStore.$patch({ accessToken: refreshResponse.data.access_token });
+
+                        // Retry original request with new token
+                        const newHeaders = {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${authStore.getAccessToken}`,
+                        };
+
+                        return await axios.post(url, data, { headers: newHeaders });
+                    }
+                } catch (refreshError) {
+                    console.error('Token refresh failed:', refreshError);
+                    // If refresh fails, throw original error
+                    throw error;
+                }
+            }
+
+            // If not a 401 error, throw the original error
+            throw error;
+        }
     }
-}
 </script>
 
 <template>

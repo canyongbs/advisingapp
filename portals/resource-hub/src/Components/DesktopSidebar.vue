@@ -32,19 +32,19 @@
 </COPYRIGHT>
 -->
 <script setup>
-import SidebarContent from '@/Components/SidebarContent.vue';
-import { defineProps } from 'vue';
+    import SidebarContent from '@/Components/SidebarContent.vue';
+    import { defineProps } from 'vue';
 
-defineProps({
-    categories: {
-        type: Object,
-        default: {},
-    },
-    apiUrl: {
-        type: String,
-        required: true,
-    },
-});
+    defineProps({
+        categories: {
+            type: Object,
+            default: {},
+        },
+        apiUrl: {
+            type: String,
+            required: true,
+        },
+    });
 </script>
 
 <template>

@@ -1,12 +1,12 @@
 {
-  "Type" : "NotARealType",
-  "MessageId" : "165545c9-2a5c-472c-8df2-7ff2be2b3b1b",
-  "Token" : "2336412f37f...",
-  "TopicArn" : "arn:aws:sns:us-west-2:123456789012:MyTopic",
-  "Message" : "You have chosen to subscribe to the topic arn:aws:sns:us-west-2:123456789012:MyTopic.\nTo confirm the subscription, visit the SubscribeURL included in this message.",
-  "SubscribeURL" : "http://127.0.0.1",
-  "Timestamp" : "2012-04-26T20:45:04.751Z",
-  "SignatureVersion" : "1",
-  "Signature" : "EXAMPLEpH+...",
-  "SigningCertURL" : "https://sns.us-west-2.amazonaws.com/SimpleNotificationService-f3ecfb7224c7233fe7bb5f59f96de52f.pem"
+    "Type": "NotARealType",
+    "MessageId": "165545c9-2a5c-472c-8df2-7ff2be2b3b1b",
+    "Token": "2336412f37f...",
+    "TopicArn": "arn:aws:sns:us-west-2:123456789012:MyTopic",
+    "Message": "You have chosen to subscribe to the topic arn:aws:sns:us-west-2:123456789012:MyTopic.\nTo confirm the subscription, visit the SubscribeURL included in this message.",
+    "SubscribeURL": "http://127.0.0.1",
+    "Timestamp": "2012-04-26T20:45:04.751Z",
+    "SignatureVersion": "1",
+    "Signature": "EXAMPLEpH+...",
+    "SigningCertURL": "https://sns.us-west-2.amazonaws.com/SimpleNotificationService-f3ecfb7224c7233fe7bb5f59f96de52f.pem"
 }

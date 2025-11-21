@@ -2,10 +2,10 @@
 
 ### Requirements
 
-* [Docker](https://docs.docker.com/get-docker/) version `26.0.0` or higher
-* [Docker Compose](https://docs.docker.com/compose/install/) version `2.25.0` or higher (It is most likely that the way
+- [Docker](https://docs.docker.com/get-docker/) version `26.0.0` or higher
+- [Docker Compose](https://docs.docker.com/compose/install/) version `2.25.0` or higher (It is most likely that the way
   you installed Docker already came with Docker Compose, so on most systems you probably need not install this)
-* [NVM (Node Version Manager)](https://github.com/nvm-sh/nvm) (Optional, but recommended)
+- [NVM (Node Version Manager)](https://github.com/nvm-sh/nvm) (Optional, but recommended)
 
 ### Pre-Setup
 
@@ -48,7 +48,7 @@ following in your local `/etc/hosts` (or equivalent) file:
 ```
 
 > Note: If you want any other tenant domains other than `test.advisingapp.local` you will need to add them to your
-`etc/hosts` file in the same way as well.
+> `etc/hosts` file in the same way as well.
 
 ### Setup
 

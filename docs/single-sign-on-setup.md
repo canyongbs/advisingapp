@@ -13,7 +13,7 @@ Once the Google API project/application is set up, the following steps are requi
 1. Retrieve the `client_id` and `client_secret` from the Google API project/application.
 2. Add the `client_id` and `client_secret` to the `.env` file as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` respectively.
 3. Ensure that the proper Redirect URI is set in the Google API project/application. The Redirect URI should be set to `https://[YOUR_DOMAIN_HERE]/auth/google/callback`.
-   1. If you are using a local development environment, the Redirect URI should be set to `http://localhost/auth/google/callback`.
+    1. If you are using a local development environment, the Redirect URI should be set to `http://localhost/auth/google/callback`.
 4. The `GOOGLE_REDIRECT_URI` environment variable should be set to the same value as the Redirect URI set in the Google API project/application. This should already be dynamically configured for you based on the applications `APP_URL` environment variable. But it is recommended to double-check.
 5. "Login with Google SSO" should now be available on the login page.
 

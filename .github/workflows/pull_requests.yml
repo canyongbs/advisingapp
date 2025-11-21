@@ -1,18 +1,18 @@
 name: Pull Requests
 
 on:
-  pull_request:
-  merge_group:
-    types: [checks_requested]
+    pull_request:
+    merge_group:
+        types: [checks_requested]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+    cancel-in-progress: true
 
 jobs:
-  code-checks:
-    name: Code Checks
+    code-checks:
+        name: Code Checks
 
-    uses: ./.github/workflows/ci.yml
-    secrets:
-      pat-token: ${{ secrets.PAT }}
+        uses: ./.github/workflows/ci.yml
+        secrets:
+            pat-token: ${{ secrets.PAT }}
