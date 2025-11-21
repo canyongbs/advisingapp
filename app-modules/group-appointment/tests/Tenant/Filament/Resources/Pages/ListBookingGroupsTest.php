@@ -64,7 +64,7 @@ test('ListBookingGroups is gated with proper access control', function () {
             BookingGroupResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('booking_group.view-any');
+    $user->givePermissionTo('group_appointment.view-any');
 
     actingAs($user)
         ->get(
