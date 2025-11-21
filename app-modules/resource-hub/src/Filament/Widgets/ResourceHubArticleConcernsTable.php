@@ -76,8 +76,8 @@ class ResourceHubArticleConcernsTable extends TableWidget
             ->filters([
                 SelectFilter::make('status')
                     ->multiple()
-                    ->options(ConcernStatus::class)
-                    // ->default([ConcernStatus::New->value]),
+                    ->options(ConcernStatus::class),
+                // ->default([ConcernStatus::New->value]),
             ]);
     }
 }
