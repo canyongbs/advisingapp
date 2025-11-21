@@ -37,13 +37,56 @@
 namespace AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages;
 
 use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\BookingGroupResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 
 class EditBookingGroup extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = BookingGroupResource::class;
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema->components([
+            TextInput::make('name')
+                ->required()
+                ->string()
+                ->maxLength(255)
+                ->label('Name'),
+            Textarea::make('description')
+                ->string()
+                ->maxLength(65535)
+                ->columnSpanFull()
+                ->label('Description'),
+            Checkbox::make('is_confidential')
+                ->label('Confidential')
+                ->live()
+                ->columnSpanFull(),
+            Select::make('users')
+                ->label('User')
+                ->multiple()
+                ->relationship('users', 'name')
+                ->searchable()
+                ->preload()
+                ->visible(fn (Get $get) => $get('is_confidential')),
+            Select::make('teams')
+                ->label('Team')
+                ->multiple()
+                ->relationship('teams', 'name')
+                ->searchable()
+                ->preload()
+                ->visible(fn (Get $get) => $get('is_confidential')),
+        ]);
+    }
 
     protected function getHeaderActions(): array
     {

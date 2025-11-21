@@ -54,26 +54,29 @@ class CreateBookingGroup extends CreateRecord
         return $schema->components([
             TextInput::make('name')
                 ->required()
+                ->string()
+                ->maxLength(255)
                 ->label('Name'),
             Textarea::make('description')
-                ->required()
+                ->string()
+                ->maxLength(65535)
                 ->columnSpanFull()
                 ->label('Description'),
             Checkbox::make('is_confidential')
                 ->label('Confidential')
                 ->live()
                 ->columnSpanFull(),
-            Select::make('user_id')
+            Select::make('users')
                 ->label('User')
-                ->relationship('user', 'name')
-                ->required()
+                ->multiple()
+                ->relationship('users', 'name')
                 ->searchable()
                 ->preload()
                 ->visible(fn (Get $get) => $get('is_confidential')),
-            Select::make('team_id')
+            Select::make('teams')
                 ->label('Team')
-                ->relationship('team', 'name')
-                ->required()
+                ->multiple()
+                ->relationship('teams', 'name')
                 ->searchable()
                 ->preload()
                 ->visible(fn (Get $get) => $get('is_confidential')),

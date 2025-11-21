@@ -40,41 +40,17 @@ use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages\CreateBo
 use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages\EditBookingGroup;
 use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
 use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages\ViewBookingGroup;
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Schemas\BookingGroupForm;
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Schemas\BookingGroupInfolist;
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Tables\BookingGroupsTable;
 use AdvisingApp\GroupAppointment\Models\BookingGroup;
 use App\Filament\Clusters\GroupAppointment;
 use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
-use Filament\Tables\Table;
 
 class BookingGroupResource extends Resource
 {
+    protected static ?int $navigationSort = 20;
+
     protected static ?string $model = BookingGroup::class;
 
     protected static ?string $cluster = GroupAppointment::class;
-
-    public static function form(Schema $schema): Schema
-    {
-        return BookingGroupForm::configure($schema);
-    }
-
-    public static function infolist(Schema $schema): Schema
-    {
-        return BookingGroupInfolist::configure($schema);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return BookingGroupsTable::configure($table);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
 
     public static function getPages(): array
     {
