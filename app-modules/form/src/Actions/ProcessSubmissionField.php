@@ -42,10 +42,8 @@ use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Form\Filament\Blocks\EducatableAddressFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableBirthdateFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\EducatableFirstNameFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\EducatableLastNameFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\EducatableNameFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatablePhoneNumberFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\EducatablePreferredNameFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableUploadFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\UploadFormFieldBlock;
 use AdvisingApp\Form\Models\Form;
@@ -108,20 +106,8 @@ class ProcessSubmissionField
             $this->handleEducatableEmailField($submission, $response);
         }
 
-        if ($fields[$fieldId] === EducatableFirstNameFormFieldBlock::type()) {
-            $this->handleEducatableField($submission, $response, 'first_name');
-        }
-
-        if ($fields[$fieldId] === EducatableLastNameFormFieldBlock::type()) {
-            $this->handleEducatableField($submission, $response, 'last_name');
-        }
-
-        if ($fields[$fieldId] === EducatablePreferredNameFormFieldBlock::type()) {
-            $this->handleEducatablePreferredNameField($submission, $response);
-        }
-
         if ($fields[$fieldId] === EducatableBirthdateFormFieldBlock::type()) {
-            $this->handleEducatableField($submission, $response, 'birthdate');
+            $this->handleEducatableBirthdateField($submission, $response);
         }
 
         if ($fields[$fieldId] === EducatablePhoneNumberFormFieldBlock::type()) {
@@ -130,6 +116,10 @@ class ProcessSubmissionField
 
         if ($fields[$fieldId] === EducatableAddressFormFieldBlock::type()) {
             $this->handleEducatableAddressField($submission, $response);
+        }
+
+        if ($fields[$fieldId] === EducatableNameFormFieldBlock::type()) {
+            $this->handleEducatableNameField($submission, $response);
         }
     }
 
@@ -183,7 +173,7 @@ class ProcessSubmissionField
         }
     }
 
-    protected function handleEducatableField(Submission $submission, mixed $response, string $attribute): void
+    protected function handleEducatableBirthdateField(Submission $submission, mixed $response): void
     {
         $submissible = $submission->submissible;
 
@@ -195,54 +185,23 @@ class ProcessSubmissionField
             return;
         }
 
-        $this->updateProspectAttribute($submission->author, $attribute, $response);
+        $this->updateProspectBirthdate($submission->author, $response);
     }
 
-    protected function updateProspectAttribute(Prospect $prospect, string $attribute, mixed $value): void
+    protected function updateProspectBirthdate(Prospect $prospect, mixed $value): void
     {
         if (blank($value)) {
             return;
         }
 
-        $currentValue = $prospect->{$attribute};
+        $currentValue = $prospect->birthdate;
 
         if ($currentValue == $value) {
             return;
         }
 
         $prospect->update([
-            $attribute => $value,
-        ]);
-    }
-
-    protected function handleEducatablePreferredNameField(Submission $submission, mixed $response): void
-    {
-        $submissible = $submission->submissible;
-
-        if (! $submission->author instanceof Prospect) {
-            return;
-        }
-
-        if (! in_array($submissible::class, [Form::class, Application::class])) {
-            return;
-        }
-
-        $this->updateProspectPreferredName($submission->author, $response);
-    }
-
-    protected function updateProspectPreferredName(Prospect $prospect, ?string $value): void
-    {
-        // Treat empty string as null (clear the field)
-        $value = blank($value) ? null : $value;
-
-        $currentValue = $prospect->preferred;
-
-        if ($currentValue === $value) {
-            return;
-        }
-
-        $prospect->update([
-            'preferred' => $value,
+            'birthdate' => $value,
         ]);
     }
 
@@ -326,6 +285,64 @@ class ProcessSubmissionField
         }
 
         $this->updateProspectAddress($submission->author, $response);
+    }
+
+    protected function handleEducatableNameField(Submission $submission, mixed $response): void
+    {
+        $submissible = $submission->submissible;
+
+        if (! $submission->author instanceof Prospect) {
+            return;
+        }
+
+        if (! in_array($submissible::class, [Form::class, Application::class])) {
+            return;
+        }
+
+        $this->updateProspectName($submission->author, $response);
+    }
+
+    protected function updateProspectName(Prospect $prospect, mixed $nameData): void
+    {
+        if (! is_array($nameData)) {
+            $nameData = json_decode($nameData ?? '{}', true);
+        }
+
+        if (blank($nameData)) {
+            return;
+        }
+
+        $firstName = $nameData['first_name'] ?? null;
+        $lastName = $nameData['last_name'] ?? null;
+        $preferred = $nameData['preferred'] ?? null;
+
+        $updates = [];
+
+        if (filled($firstName) && $prospect->first_name !== $firstName) {
+            $updates['first_name'] = $firstName;
+        }
+
+        if (filled($lastName) && $prospect->last_name !== $lastName) {
+            $updates['last_name'] = $lastName;
+        }
+
+        $preferred = blank($preferred) ? null : $preferred;
+
+        if ($prospect->preferred !== $preferred) {
+            $updates['preferred'] = $preferred;
+        }
+
+        if (filled($firstName) && filled($lastName)) {
+            $fullName = "{$firstName} {$lastName}";
+
+            if ($prospect->full_name !== $fullName) {
+                $updates['full_name'] = $fullName;
+            }
+        }
+
+        if (! empty($updates)) {
+            $prospect->update($updates);
+        }
     }
 
     protected function updateProspectAddress(Prospect $prospect, mixed $addressData): void
