@@ -36,15 +36,22 @@
 
 namespace AdvisingApp\GroupAppointment\Models;
 
+use AdvisingApp\GroupAppointment\Database\Factories\BookingGroupFactory;
 use AdvisingApp\Team\Models\Team;
+use App\Models\BaseModel;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
-class BookingGroup extends Model
+/**
+ * @mixin IdeHelperBookingGroup
+ */
+class BookingGroup extends BaseModel
 {
+    /** @use HasFactory<BookingGroupFactory> */
+    use HasFactory;
+
     use HasUserSaveTracking;
 
     protected $fillable = [
@@ -55,21 +62,37 @@ class BookingGroup extends Model
         'last_updated_by_id',
     ];
 
+    protected $casts = [
+        'is_confidential' => 'bool',
+    ];
+
     /**
-     * @return HasOne<Team, $this>
-     */
-    public function team(): HasOne
+    * @return MorphToMany<User, $this, covariant BookingGroupPivot>
+    */
+    public function users(): MorphToMany
     {
-        return $this->hasOne(Team::class);
+        return $this->morphedByMany(
+            related: User::class,
+            name: 'related_to',
+            table: 'booking_groups_pivot'
+        )
+            ->using(BookingGroupPivot::class)
+            ->withPivot('id')
+            ->withTimestamps();
     }
 
     /**
-     * @return BelongsToMany<User, $this>
+     * @return MorphToMany<Team, $this, covariant BookingGroupPivot>
      */
-    public function users(): BelongsToMany
+    public function teams(): MorphToMany
     {
-        return $this->belongsToMany(User::class)
-            ->withTimestamps()
-            ->withPivot('id');
+        return $this->morphedByMany(
+            related: Team::class,
+            name: 'related_to',
+            table: 'booking_groups_pivot'
+        )
+            ->using(BookingGroupPivot::class)
+            ->withPivot('id')
+            ->withTimestamps();
     }
 }

@@ -45,6 +45,9 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
             $table->string('name');
             $table->text('description')->nullable();
+            $table->boolean('is_confidential')->default(false);
+            $table->foreignUuid('created_by_id')->nullable()->constrained('users');
+            $table->foreignUuid('last_updated_by_id')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();
         });

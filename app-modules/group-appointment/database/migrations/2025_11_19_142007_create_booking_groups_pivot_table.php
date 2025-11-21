@@ -34,38 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\BookingGroupResource;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\CreateAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-
-class ListBookingGroups extends ListRecords
-{
-    protected static string $resource = BookingGroupResource::class;
-
-    public function table(Table $table): Table
+return new class () extends Migration {
+    public function up(): void
     {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name'),
-            ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-            ]);
+        Schema::create('booking_groups_pivot', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('booking_group_id')->constrained('booking_groups');
+            $table->uuidMorphs('related_to');
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
-    protected function getHeaderActions(): array
+    public function down(): void
     {
-        return [
-            CreateAction::make(),
-        ];
+        Schema::dropIfExists('booking_groups_pivot');
     }
-}
+};

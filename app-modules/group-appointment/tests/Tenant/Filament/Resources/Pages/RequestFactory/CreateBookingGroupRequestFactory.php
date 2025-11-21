@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,14 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\GroupAppointment\Filament\Pages;
+namespace AdvisingApp\GroupAppointment\Tests\Tenant\Filament\Resources\Pages\RequestFactory;
 
-use App\Filament\Clusters\GroupAppointment;
-use Filament\Pages\Page;
+use Worksome\RequestFactories\RequestFactory;
 
-class SharedCalender extends Page
+class CreateBookingGroupRequestFactory extends RequestFactory
 {
-    protected string $view = 'filament.pages.coming-soon';
-
-    protected static ?string $cluster = GroupAppointment::class;
+    public function definition(): array
+    {
+        return [
+            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
+            'description' => $this->faker->paragraph(),
+            'is_confidential' => $this->faker->boolean(),
+        ];
+    }
 }

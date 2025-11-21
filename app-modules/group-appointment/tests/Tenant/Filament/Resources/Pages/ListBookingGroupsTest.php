@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,24 +34,41 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\BookingGroupResource;
+use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
+use AdvisingApp\GroupAppointment\Models\BookingGroup;
+use App\Models\User;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        Schema::create('booking_group_user', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('booking_group_id')->constrained('booking_groups');
-            $table->foreignUuid('user_id')->constrained('users');
-            $table->timestamps();
-            $table->softDeletes();
-        });
-    }
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
-    public function down(): void
-    {
-        Schema::dropIfExists('booking_group_user');
-    }
-};
+test('The correct details are displayed on the ListBookingGroups page', function () {
+    $bookingGroups = BookingGroup::factory()
+        ->count(10)
+        ->create();
+
+    asSuperAdmin();
+
+    livewire(ListBookingGroups::class)
+        ->assertSuccessful()
+        // ->assertCanSeeTableRecords($bookingGroups)
+        ->assertCountTableRecords(10)
+        ->assertTableColumnExists('name');
+});
+
+test('ListBookingGroups is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    actingAs($user)
+        ->get(
+            BookingGroupResource::getUrl('index')
+        )->assertForbidden();
+
+    $user->givePermissionTo('booking_group.view-any');
+
+    actingAs($user)
+        ->get(
+            BookingGroupResource::getUrl('index')
+        )->assertSuccessful();
+});

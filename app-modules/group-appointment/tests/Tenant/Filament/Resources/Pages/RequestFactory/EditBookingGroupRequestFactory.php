@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,38 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages;
+namespace AdvisingApp\GroupAppointment\Tests\Tenant\Filament\Resources\Pages\RequestFactory;
 
-use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\BookingGroupResource;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\CreateAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Worksome\RequestFactories\RequestFactory;
 
-class ListBookingGroups extends ListRecords
+class EditBookingGroupRequestFactory extends RequestFactory
 {
-    protected static string $resource = BookingGroupResource::class;
-
-    public function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name'),
-            ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
+    public function definition(): array
     {
         return [
-            CreateAction::make(),
+            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
+            'description' => $this->faker->paragraph(),
+            'is_confidential' => $this->faker->boolean(),
         ];
     }
 }

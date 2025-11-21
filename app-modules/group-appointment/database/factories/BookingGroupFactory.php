@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,24 +34,24 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+namespace AdvisingApp\GroupAppointment\Database\Factories;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        Schema::create('booking_group_team', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('booking_group_id')->constrained('booking_groups');
-            $table->foreignUuid('team_id')->constrained('teams');
-            $table->timestamps();
-            $table->softDeletes();
-        });
-    }
+use AdvisingApp\GroupAppointment\Models\BookingGroup;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-    public function down(): void
+/**
+ * @extends Factory<BookingGroup>
+ */
+class BookingGroupFactory extends Factory
+{
+    protected $model = BookingGroup::class;
+
+    public function definition(): array
     {
-        Schema::dropIfExists('booking_group_team');
+        return [
+            'name' => fake()->words(3, true),
+            'description' => fake()->optional()->sentence(),
+            'is_confidential' => fake()->boolean(30),
+        ];
     }
-};
+}

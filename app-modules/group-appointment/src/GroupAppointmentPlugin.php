@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\GroupAppointment;
 
+use AdvisingApp\GroupAppointment\Filament\Resources\SharedCalendars\Pages\SharedCalendar;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
@@ -48,10 +49,14 @@ class GroupAppointmentPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel->discoverResources(
-            in: __DIR__ . '/Filament/Resources',
-            for: 'AdvisingApp\\GroupAppointment\\Filament\\Resources'
-        );
+        $panel
+            ->discoverResources(
+                in: __DIR__ . '/Filament/Resources',
+                for: 'AdvisingApp\\GroupAppointment\\Filament\\Resources'
+            )
+            ->pages([
+                SharedCalendar::class,
+            ]);
     }
 
     public function boot(Panel $panel): void {}

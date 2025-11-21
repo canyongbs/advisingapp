@@ -38,11 +38,43 @@ namespace AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages;
 
 use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\BookingGroupResource;
 use Filament\Actions\EditAction;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 
 class ViewBookingGroup extends ViewRecord
 {
     protected static string $resource = BookingGroupResource::class;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema->schema([
+            Section::make()
+                ->schema([
+                    TextEntry::make('name')
+                        ->label('Name'),
+                    TextEntry::make('description')
+                        ->label('Description'),
+                    TextEntry::make('is_confidential')
+                        ->columnSpanFull()
+                        ->badge()
+                        ->formatStateUsing(fn ($state): string => $state ? 'Confidential' : '')
+                        ->visible(fn ($record): bool => $record->is_confidential),
+                    TextEntry::make('users.name')
+                        ->placeholder('N/A')
+                        ->badge()
+                        ->label('User')
+                        ->visible(fn (Get $get) => $get('is_confidential')),
+                    TextEntry::make('teams.name')
+                        ->placeholder('N/A')
+                        ->badge()
+                        ->label('Team')
+                        ->visible(fn (Get $get) => $get('is_confidential')),
+                ]),
+        ]);
+    }
 
     protected function getHeaderActions(): array
     {
