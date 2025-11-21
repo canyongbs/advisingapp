@@ -65,7 +65,7 @@ class StudentFactory extends Factory
             'sms_opt_out' => $this->faker->boolean(),
             'email_bounce' => $this->faker->boolean(),
             'birthdate' => $this->faker->date(),
-            'hsgrad' => $this->faker->year(),
+            'hsgrad' => $this->faker->date(),
             'dual' => $this->faker->boolean(),
             'ferpa' => $this->faker->boolean(),
             'dfw' => $this->faker->date(),

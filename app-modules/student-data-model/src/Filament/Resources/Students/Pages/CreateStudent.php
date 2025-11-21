@@ -39,6 +39,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\HsGradeTypeChangeFeature;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
@@ -139,10 +140,19 @@ class CreateStudent extends CreateRecord
                             ->format('Y-m-d')
                             ->displayFormat('Y-m-d')
                             ->maxDate(now()),
+                        DatePicker::make('hsgrad')
+                            ->label('High School Graduation Year')
+                            ->nullable()
+                            ->native(false)
+                            ->closeOnDateSelection()
+                            ->format('Y-m-d')
+                            ->visible(fn (): bool => HsGradeTypeChangeFeature::active())
+                            ->displayFormat('Y-m-d'),
                         TextInput::make('hsgrad')
                             ->label('High School Graduation Year')
                             ->nullable()
-                            ->numeric(),
+                            ->numeric()
+                            ->visible(fn (): bool => ! HsGradeTypeChangeFeature::active()),
                         TextInput::make('gender')
                             ->nullable()
                             ->maxLength(255),

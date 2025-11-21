@@ -40,6 +40,7 @@ use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
+use App\Features\HsGradeTypeChangeFeature;
 use App\Models\User;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
@@ -108,8 +109,11 @@ class StudentImporter extends Importer
                     'date',
                 ]),
             ImportColumn::make('hsgrad')
-                ->example('1920')
-                ->rules([
+                ->example(fn () => HsGradeTypeChangeFeature::active() ? '2025-11-21' : '1920')
+                ->rules(fn () => HsGradeTypeChangeFeature::active() ? [
+                    'nullable',
+                    'date',
+                ] : [
                     'nullable',
                     'integer',
                 ]),
