@@ -42,7 +42,7 @@ use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Translation\PotentiallyTranslatedString;
 
-class ExcludeSuperAdmin implements ValidationRule
+class OnlySuperAdminMayAssignAdminRoles implements ValidationRule
 {
     /**
      * Run the validation rule.
@@ -59,8 +59,8 @@ class ExcludeSuperAdmin implements ValidationRule
             return;
         }
 
-        if (! auth()->user()->isSuperAdmin() && $role->name === Authenticatable::SUPER_ADMIN_ROLE) {
-            $fail('You are not allowed to select the Super Admin role.');
+        if (! auth()->user()->isSuperAdmin() && in_array($role->name, [Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE, Authenticatable::AI_ADMIN_ROLE])) {
+            $fail('You are not allowed to assign admin roles.');
         }
     }
 }
