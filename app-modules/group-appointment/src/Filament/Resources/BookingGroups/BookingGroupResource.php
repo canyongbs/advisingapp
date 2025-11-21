@@ -43,6 +43,7 @@ use AdvisingApp\GroupAppointment\Filament\Resources\BookingGroups\Pages\ViewBook
 use AdvisingApp\GroupAppointment\Models\BookingGroup;
 use App\Features\BookingGroupFeature;
 use App\Filament\Clusters\GroupAppointment;
+use App\Models\User;
 use Filament\Resources\Resource;
 
 class BookingGroupResource extends Resource
@@ -55,7 +56,10 @@ class BookingGroupResource extends Resource
 
     public static function canAccess(): bool
     {
-        return BookingGroupFeature::active() && parent::canAccess();
+        $user = auth()->user();
+        assert($user instanceof User);
+
+        return BookingGroupFeature::active() && $user->can(['group_appointment.view-any']) && parent::canAccess();
     }
 
     public static function getPages(): array

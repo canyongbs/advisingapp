@@ -44,13 +44,13 @@ return new class () extends Migration {
      * @var array<string, string> $permissions
      */
     private array $permissions = [
-        'booking_group.*.delete' => 'Booking Group',
-        'booking_group.*.force-delete' => 'Booking Group',
-        'booking_group.*.restore' => 'Booking Group',
-        'booking_group.*.update' => 'Booking Group',
-        'booking_group.*.view' => 'Booking Group',
-        'booking_group.create' => 'Booking Group',
-        'booking_group.view-any' => 'Booking Group',
+        'group_appointment.*.delete' => 'Group Appointment',
+        'group_appointment.*.force-delete' => 'Group Appointment',
+        'group_appointment.*.restore' => 'Group Appointment',
+        'group_appointment.*.update' => 'Group Appointment',
+        'group_appointment.*.view' => 'Group Appointment',
+        'group_appointment.create' => 'Group Appointment',
+        'group_appointment.view-any' => 'Group Appointment',
     ];
 
     /**

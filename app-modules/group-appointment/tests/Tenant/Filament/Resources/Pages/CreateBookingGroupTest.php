@@ -54,8 +54,8 @@ it('can render with proper permission', function () {
     get(CreateBookingGroup::getUrl())
         ->assertForbidden();
 
-    $user->givePermissionTo('booking_group.view-any');
-    $user->givePermissionTo('booking_group.create');
+    $user->givePermissionTo('group_appointment.view-any');
+    $user->givePermissionTo('group_appointment.create');
 
     $user->refresh();
 
@@ -106,8 +106,8 @@ it('validates the inputs', function (CreateBookingGroupRequestFactory $data, arr
 it('can create a confidential booking group with users and teams', function () {
     $user = User::factory()->create();
 
-    $user->givePermissionTo('booking_group.view-any');
-    $user->givePermissionTo('booking_group.create');
+    $user->givePermissionTo('group_appointment.view-any');
+    $user->givePermissionTo('group_appointment.create');
 
     actingAs($user);
 
@@ -139,8 +139,8 @@ it('can create a confidential booking group with users and teams', function () {
 it('can create a non-confidential booking group without users and teams', function () {
     $user = User::factory()->create();
 
-    $user->givePermissionTo('booking_group.view-any');
-    $user->givePermissionTo('booking_group.create');
+    $user->givePermissionTo('group_appointment.view-any');
+    $user->givePermissionTo('group_appointment.create');
 
     actingAs($user);
 
@@ -166,8 +166,8 @@ it('can create a non-confidential booking group without users and teams', functi
 it('tracks created_by user correctly', function () {
     $user = User::factory()->create();
 
-    $user->givePermissionTo('booking_group.view-any');
-    $user->givePermissionTo('booking_group.create');
+    $user->givePermissionTo('group_appointment.view-any');
+    $user->givePermissionTo('group_appointment.create');
 
     actingAs($user);
 
