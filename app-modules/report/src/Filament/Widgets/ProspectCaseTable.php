@@ -58,8 +58,6 @@ class ProspectCaseTable extends BaseWidget
 
     protected static ?string $heading = 'Prospect Cases';
 
-    protected static bool $isLazy = false;
-
     protected static ?string $pollingInterval = null;
 
     protected int | string | array $columnSpan = [

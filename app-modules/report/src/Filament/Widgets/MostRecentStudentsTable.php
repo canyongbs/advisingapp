@@ -55,8 +55,6 @@ class MostRecentStudentsTable extends BaseWidget
 
     protected static ?string $heading = 'Most Recent Students Added';
 
-    protected static bool $isLazy = false;
-
     protected static ?string $pollingInterval = null;
 
     protected int | string | array $columnSpan = [
