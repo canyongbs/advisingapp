@@ -67,8 +67,9 @@ class ManageAiCustomAdvisorSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
-        /** @var User $user */
         $user = Auth::user();
+
+        assert($user instanceof User);
 
         if (! $user->hasLicense(LicenseType::ConversationalAi)) {
             return false;

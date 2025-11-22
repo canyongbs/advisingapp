@@ -81,7 +81,7 @@ class ManageAiSettings extends SettingsPage
             return false;
         }
 
-        return $user->isSuperAdmin() || $user->isAiAdmin();
+        return $user->canAccessAiSettings();
     }
 
     #[Computed]
@@ -159,12 +159,12 @@ class ManageAiSettings extends SettingsPage
                     ->searchable()
                     ->required(),
             ])
-            ->disabled(! auth()->user()->isSuperAdmin());
+            ->disabled(! auth()->user()->canAccessAiSettings());
     }
 
     public function save(): void
     {
-        if (! auth()->user()->isSuperAdmin()) {
+        if (! auth()->user()->canAccessAiSettings()) {
             return;
         }
 
@@ -176,7 +176,7 @@ class ManageAiSettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (! auth()->user()->isSuperAdmin()) {
+        if (! auth()->user()->canAccessAiSettings()) {
             return [];
         }
 

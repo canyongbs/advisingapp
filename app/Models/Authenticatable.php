@@ -91,4 +91,9 @@ abstract class Authenticatable extends BaseAuthenticatable
     {
         return $this->isAiAdmin ??= $this->hasRole(static::AI_ADMIN_ROLE);
     }
+
+    public function canAccessAiSettings(): bool
+    {
+        return $this->isSuperAdmin() || $this->isAiAdmin();
+    }
 }
