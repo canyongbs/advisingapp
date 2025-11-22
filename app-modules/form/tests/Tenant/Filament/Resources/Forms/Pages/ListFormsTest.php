@@ -59,7 +59,7 @@ it('can duplicate a form its steps and its fields', function () {
 
     $duplicatedForm = Form::where('id', '<>', $form->id)->first();
 
-    expect($duplicatedForm->title)->toBe("Copy - {$form->title}");
+    expect($duplicatedForm->name)->toBe("Copy - {$form->name}");
     expect($duplicatedForm->fields->count())->toBe($form->fields->count());
     expect($duplicatedForm->steps->count())->toBe($form->steps->count());
 });
