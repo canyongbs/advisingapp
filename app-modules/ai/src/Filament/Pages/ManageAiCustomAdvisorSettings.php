@@ -75,7 +75,7 @@ class ManageAiCustomAdvisorSettings extends SettingsPage
             return false;
         }
 
-        return $user->isSuperAdmin();
+        return $user->canAccessAiSettings();
     }
 
     public function form(Schema $schema): Schema
@@ -102,12 +102,12 @@ class ManageAiCustomAdvisorSettings extends SettingsPage
                     ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomAdvisors->getModels()))
                     ->visible(fn (Get $get): bool => ! $get('allow_selection_of_model')),
             ])
-            ->disabled(! Auth::user()->isSuperAdmin());
+            ->disabled(! Auth::user()->canAccessAiSettings());
     }
 
     public function save(): void
     {
-        if (! Auth::user()->isSuperAdmin()) {
+        if (! Auth::user()->canAccessAiSettings()) {
             return;
         }
 
@@ -119,7 +119,7 @@ class ManageAiCustomAdvisorSettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (! Auth::user()->isSuperAdmin()) {
+        if (! Auth::user()->canAccessAiSettings()) {
             return [];
         }
 
