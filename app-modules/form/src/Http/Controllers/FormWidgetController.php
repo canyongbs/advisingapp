@@ -113,7 +113,7 @@ class FormWidgetController extends Controller
     public function view(GenerateFormKitSchema $generateSchema, Form $form): JsonResponse
     {
         return response()->json([
-            'name' => $form->name,
+            'name' => $form->title,
             'description' => $form->description,
             'is_authenticated' => $form->is_authenticated,
             ...($form->is_authenticated ? [
@@ -145,7 +145,7 @@ class FormWidgetController extends Controller
     {
         return response()->json(
             [
-                'name' => $form->name,
+                'name' => $form->title,
                 'description' => $form->description,
                 'is_authenticated' => false,
                 'recaptcha_enabled' => false,

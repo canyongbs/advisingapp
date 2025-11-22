@@ -68,6 +68,7 @@ class Form extends Submissible
         'content',
         'on_screen_response',
         'generate_prospects',
+        'title',
     ];
 
     protected $casts = [
