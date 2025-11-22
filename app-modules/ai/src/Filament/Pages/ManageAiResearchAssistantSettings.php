@@ -62,10 +62,11 @@ class ManageAiResearchAssistantSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
-        /** @var User $user */
         $user = auth()->user();
 
-        return $user->isSuperAdmin();
+        assert($user instanceof User);
+
+        return $user->canAccessAiSettings();
     }
 
     public function form(Schema $schema): Schema
