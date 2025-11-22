@@ -40,11 +40,11 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentTags\Pages\CreateStud
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentTags\Pages\EditStudentTag;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentTags\Pages\ListStudentTags;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentTags\Pages\ViewStudentTag;
-use AdvisingApp\StudentDataModel\Filament\Resources\User;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\TagType;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Models\Tag;
+use App\Models\User;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
@@ -63,10 +63,11 @@ class StudentTagResource extends Resource
 
     public static function canAccess(): bool
     {
-        /** @var User $user */
         $user = auth()->user();
 
-        return $user->hasLicense(Student::getLicenseType());
+        assert($user instanceof User);
+
+        return $user->hasLicense(Student::getLicenseType()) && parent::canAccess();
     }
 
     public static function getPages(): array

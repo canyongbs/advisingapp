@@ -73,14 +73,15 @@ class ManageAiSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
-        /** @var User $user */
         $user = auth()->user();
+
+        assert($user instanceof User);
 
         if (! $user->hasLicense(LicenseType::ConversationalAi)) {
             return false;
         }
 
-        return $user->isSuperAdmin();
+        return $user->isSuperAdmin() || $user->isAiAdmin();
     }
 
     #[Computed]
@@ -96,7 +97,7 @@ class ManageAiSettings extends SettingsPage
     {
         return $schema
             ->components([
-                Section::make('Institutional Assistant')
+                Section::make('Institutional Advisor')
                     ->statePath('defaultAssistant')
                     ->columns()
                     ->visible($this->defaultAssistant !== null)
