@@ -34,33 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Providers;
+namespace AdvisingApp\ResourceHub\Enums;
 
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use AdvisingApp\ResourceHub\ResourceHubPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use Filament\Support\Contracts\HasLabel;
 
-class ResourceHubServiceProvider extends ServiceProvider
+enum ConcernStatus: string implements HasLabel
 {
-    public function register(): void
-    {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ResourceHubPlugin()));
-    }
+    case New = 'new';
 
-    public function boot(): void
+    case Resolved = 'resolved';
+
+    case Archived = 'archived';
+
+    public function getLabel(): string
     {
-        Relation::morphMap([
-            'resource_hub_article' => ResourceHubArticle::class,
-            'resource_hub_category' => ResourceHubCategory::class,
-            'resource_hub_quality' => ResourceHubQuality::class,
-            'resource_hub_status' => ResourceHubStatus::class,
-            'resource_hub_article_concern' => ResourceHubArticleConcern::class,
-        ]);
+        return $this->name;
     }
 }

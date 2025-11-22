@@ -34,33 +34,50 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Providers;
+namespace AdvisingApp\ResourceHub\Filament\Actions;
 
+use AdvisingApp\ResourceHub\Enums\ConcernStatus;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use AdvisingApp\ResourceHub\ResourceHubPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\ResourceHub\Notifications\ResourceHubArticleConcernCreated;
+use App\Features\ResourceHubArticleConcernFeature;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Textarea;
+use Filament\Pages\Page;
 
-class ResourceHubServiceProvider extends ServiceProvider
+class CreateConcernAction extends Action
 {
-    public function register(): void
+    protected function setUp(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ResourceHubPlugin()));
+        parent::setUp();
+
+        $this
+            ->label('Raise Concern')
+            ->button()
+            ->modalDescription('Please articulate the concern you have with this resource hub article. You may enter up to 100 characters in the box below.')
+            ->schema([
+                Textarea::make('description')
+                    ->hiddenLabel()
+                    ->maxLength(100)
+                    ->required(),
+            ])
+            ->action(function (array $data, ResourceHubArticle $record, Page $livewire): void {
+                $concern = ResourceHubArticleConcern::create([
+                    'description' => $data['description'],
+                    'created_by_id' => auth()->id(),
+                    'status' => ConcernStatus::New,
+                    'resource_hub_article_id' => $record->getKey(),
+                ]);
+
+                $concern->createdBy->notifyNow(new ResourceHubArticleConcernCreated($concern));
+
+                $livewire->dispatch('concern-created');
+            })
+            ->visible(ResourceHubArticleConcernFeature::active());
     }
 
-    public function boot(): void
+    public static function getDefaultName(): ?string
     {
-        Relation::morphMap([
-            'resource_hub_article' => ResourceHubArticle::class,
-            'resource_hub_category' => ResourceHubCategory::class,
-            'resource_hub_quality' => ResourceHubQuality::class,
-            'resource_hub_status' => ResourceHubStatus::class,
-            'resource_hub_article_concern' => ResourceHubArticleConcern::class,
-        ]);
+        return 'raiseConcern';
     }
 }

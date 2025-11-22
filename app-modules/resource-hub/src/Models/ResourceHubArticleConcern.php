@@ -34,33 +34,55 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Providers;
+namespace AdvisingApp\ResourceHub\Models;
 
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use AdvisingApp\ResourceHub\ResourceHubPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\ResourceHub\Database\Factories\ResourceHubArticleConcernFactory;
+use AdvisingApp\ResourceHub\Enums\ConcernStatus;
+use App\Models\BaseModel;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ResourceHubServiceProvider extends ServiceProvider
+/**
+ * @mixin IdeHelperResourceHubArticleConcern
+ */
+class ResourceHubArticleConcern extends BaseModel implements Auditable
 {
-    public function register(): void
+    /** @use HasFactory<ResourceHubArticleConcernFactory> */
+    use HasFactory;
+
+    use SoftDeletes;
+    use AuditableTrait;
+    use HasUuids;
+
+    protected $fillable = [
+        'description',
+        'created_by_id',
+        'status',
+        'resource_hub_article_id',
+    ];
+
+    protected $casts = [
+        'status' => ConcernStatus::class,
+    ];
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function createdBy(): BelongsTo
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ResourceHubPlugin()));
+        return $this->belongsTo(User::class, 'created_by_id');
     }
 
-    public function boot(): void
+    /**
+     * @return BelongsTo<ResourceHubArticle, $this>
+     */
+    public function resourceHubArticle(): BelongsTo
     {
-        Relation::morphMap([
-            'resource_hub_article' => ResourceHubArticle::class,
-            'resource_hub_category' => ResourceHubCategory::class,
-            'resource_hub_quality' => ResourceHubQuality::class,
-            'resource_hub_status' => ResourceHubStatus::class,
-            'resource_hub_article_concern' => ResourceHubArticleConcern::class,
-        ]);
+        return $this->belongsTo(ResourceHubArticle::class);
     }
 }

@@ -34,33 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Providers;
-
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\ViewResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use AdvisingApp\ResourceHub\ResourceHubPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\ResourceHub\Tests\Tenant\Filament\Actions\RequestFactories\CreateConcernActionRequestFactory;
 
-class ResourceHubServiceProvider extends ServiceProvider
-{
-    public function register(): void
-    {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ResourceHubPlugin()));
-    }
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'resource_hub_article' => ResourceHubArticle::class,
-            'resource_hub_category' => ResourceHubCategory::class,
-            'resource_hub_quality' => ResourceHubQuality::class,
-            'resource_hub_status' => ResourceHubStatus::class,
-            'resource_hub_article_concern' => ResourceHubArticleConcern::class,
+it('can create a concern properly', function () {
+    asSuperAdmin();
+
+    $resourceHubArticle = ResourceHubArticle::factory()->create();
+
+    $data = CreateConcernActionRequestFactory::new()->create();
+
+    livewire(ViewResourceHubArticle::class, ['record' => $resourceHubArticle->getKey()])
+        ->callAction('raiseConcern', [
+            'description' => $data['description'],
         ]);
-    }
-}
+
+    $resourceHubArticle->refresh();
+
+    expect($resourceHubArticle->concerns()->count())->toBe(1);
+    expect($resourceHubArticle->concerns()->first()->description)->toBe($data['description']);
+});

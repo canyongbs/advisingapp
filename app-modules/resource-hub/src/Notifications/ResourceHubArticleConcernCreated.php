@@ -34,33 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Providers;
+namespace AdvisingApp\ResourceHub\Notifications;
 
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use AdvisingApp\ResourceHub\ResourceHubPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use App\Models\User;
+use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
+use Illuminate\Support\HtmlString;
 
-class ResourceHubServiceProvider extends ServiceProvider
+class ResourceHubArticleConcernCreated extends Notification
 {
-    public function register(): void
+    use Queueable;
+
+    public function __construct(public ResourceHubArticleConcern $resourceHubArticleConcern) {}
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(User $notifiable): array
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ResourceHubPlugin()));
+        return ['database'];
     }
 
-    public function boot(): void
+    /**
+     * @return array<string, mixed>
+     */
+    public function toDatabase(User $notifiable): array
     {
-        Relation::morphMap([
-            'resource_hub_article' => ResourceHubArticle::class,
-            'resource_hub_category' => ResourceHubCategory::class,
-            'resource_hub_quality' => ResourceHubQuality::class,
-            'resource_hub_status' => ResourceHubStatus::class,
-            'resource_hub_article_concern' => ResourceHubArticleConcern::class,
-        ]);
+        $resourceHubArticle = $this->resourceHubArticleConcern->resourceHubArticle;
+
+        $url = ResourceHubArticleResource::getUrl('view', ['record' => $resourceHubArticle->getKey()]);
+
+        $link = new HtmlString("<a href='{$url}' target='_blank' class='underline'>{$resourceHubArticle->title}</a>");
+
+        return FilamentNotification::make()
+            ->title("You have successfully raised a new concern on the resource hub article {$link}")
+            ->success()
+            ->getDatabaseMessage();
     }
 }

@@ -133,6 +133,14 @@ class ResourceHubArticle extends BaseModel implements Auditable, HasMedia
     }
 
     /**
+     * @return HasMany<ResourceHubArticleConcern, $this>
+     */
+    public function concerns(): HasMany
+    {
+        return $this->hasMany(ResourceHubArticleConcern::class);
+    }
+
+    /**
      * @return HasMany<ResourceHubArticleUpvote, $this>
      */
     public function upvotes(): HasMany
