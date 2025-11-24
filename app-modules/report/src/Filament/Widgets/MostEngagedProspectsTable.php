@@ -56,8 +56,6 @@ class MostEngagedProspectsTable extends BaseWidget
 
     protected static ?string $pollingInterval = null;
 
-    protected static bool $isLazy = false;
-
     public function mount(string $cacheTag)
     {
         $this->cacheTag = $cacheTag;

@@ -64,8 +64,6 @@ class StudentInteractionUsersTable extends BaseWidget
 
     protected static ?string $heading = 'Users Interaction Overview';
 
-    protected static bool $isLazy = false;
-
     protected static ?string $pollingInterval = null;
 
     protected int | string | array $columnSpan = [

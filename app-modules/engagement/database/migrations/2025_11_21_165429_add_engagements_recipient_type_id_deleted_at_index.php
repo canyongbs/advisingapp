@@ -34,36 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Widgets;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
-use Filament\Widgets\ChartWidget;
-use Livewire\Attributes\Locked;
-use Livewire\Attributes\On;
-
-abstract class PieChartReportWidget extends ChartWidget
-{
-    use InteractsWithPageFilters;
-
-    #[Locked]
-    public string $cacheTag;
-
-    protected ?string $pollingInterval = null;
-
-    protected ?string $maxHeight = '200px';
-
-    public function mount($cacheTag = null): void
+return new class () extends Migration {
+    public function up(): void
     {
-        parent::mount();
-
-        $this->cacheTag = $cacheTag;
+        Schema::table('engagements', function (Blueprint $table) {
+            $table->index(
+                ['recipient_type', 'recipient_id', 'deleted_at'],
+                'engagements_recipient_type_id_deleted_at_index'
+            );
+        });
     }
 
-    #[On('refresh-widgets')]
-    public function refreshWidget() {}
-
-    protected function getType(): string
+    public function down(): void
     {
-        return 'line';
+        Schema::table('engagements', function (Blueprint $table) {
+            $table->dropIndex('engagements_recipient_type_id_deleted_at_index');
+        });
     }
-}
+};
