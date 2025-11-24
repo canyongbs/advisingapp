@@ -37,7 +37,7 @@
 namespace AdvisingApp\Team\Filament\Resources\Teams\RelationManagers;
 
 use App\Filament\Tables\Columns\IdColumn;
-use App\Models\Scopes\WithoutSuperAdmin;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Closure;
 use Filament\Actions\AssociateAction;
@@ -77,7 +77,7 @@ class UsersRelationManager extends RelationManager
                 AssociateAction::make()
                     ->label('Add user to this team')
                     ->recordSelectOptionsQuery(function (Builder $query) {
-                        $query->tap(new WithoutSuperAdmin());
+                        $query->tap(new WithoutAnyAdmin());
                     })
                     ->schema(fn (AssociateAction $action): array => [
                         $action->getRecordSelect()
