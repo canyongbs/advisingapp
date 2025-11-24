@@ -60,6 +60,7 @@ class StudentResource extends JsonResource
             'first' => $this->resource->first,
             'last' => $this->resource->last,
             'full_name' => $this->resource->full_name,
+            'preferred' => $this->resource->preferred,
             'birthdate' => $this->resource->birthdate ? $this->resource->birthdate->format('Y-m-d') : null,
             'hsgrad' => $this->resource->hsgrad ? (HsGradeTypeChangeFeature::active() ? Date::parse($this->resource->hsgrad)->format('Y-m-d') : $this->resource->hsgrad) : null,
             'gender' => $this->resource->gender,
