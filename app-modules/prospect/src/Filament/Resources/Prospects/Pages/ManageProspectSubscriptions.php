@@ -42,6 +42,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use BackedEnum;
 use Filament\Actions\AttachAction;
@@ -101,7 +102,9 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                         fn (Select $select) => $select->placeholder('Select a User'),
                     )
                     ->recordSelectOptionsQuery(
-                        fn (Builder $query) => $query->tap(new HasLicense(Prospect::getLicenseType())),
+                        fn (Builder $query) => $query
+                            ->tap(new HasLicense(Prospect::getLicenseType()))
+                            ->tap(new WithoutAnyAdmin()),
                     )
                     ->successNotificationTitle(function (User $record) {
                         /** @var Prospect $prospect */
