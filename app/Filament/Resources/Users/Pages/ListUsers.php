@@ -65,7 +65,6 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use STS\FilamentImpersonate\Actions\Impersonate;
@@ -75,18 +74,6 @@ class ListUsers extends ListRecords
     protected static string $resource = UserResource::class;
 
     protected ?string $heading = 'Product Users';
-
-    public function getSubheading(): string | Htmlable | null
-    {
-        // TODO: Either remove or change to show all possible seats
-
-        //return new HtmlString(view('crm-seats', [
-        //    'count' => User::count(),
-        //    'max' => app(LicenseSettings::class)->data->limits->crmSeats,
-        //])->render());
-
-        return null;
-    }
 
     public function table(Table $table): Table
     {
