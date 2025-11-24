@@ -34,54 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Database\Factories;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Form\Models\Form;
-use AdvisingApp\Form\Models\FormField;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends Factory<Form>
- */
-class FormFactory extends Factory
-{
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'name' => $this->faker->unique()->word(),
-            'description' => $this->faker->sentences(asText: true),
-            'embed_enabled' => $this->faker->boolean(),
-            'allowed_domains' => [$this->faker->domainName()],
-            'title' => $this->faker->sentence(),
-        ];
-    }
-
-    public function configure(): static
-    {
-        return $this->afterCreating(function (Form $form) {
-            if ($form->fields()->doesntExist()) {
-                $form->fields()->createMany(FormField::factory()->count(3)->make()->toArray());
-
-                $form->content = [
-                    'type' => 'doc',
-                    'content' => $form->fields->map(fn (FormField $field): array => [
-                        'type' => 'tiptapBlock',
-                        'attrs' => [
-                            'id' => $field->id,
-                            'type' => $field->type,
-                            'data' => [
-                                'label' => $field->label,
-                                'isRequired' => $field->is_required,
-                                ...$field->config,
-                            ],
-                        ],
-                    ])->all(),
-                ];
-                $form->save();
-            }
+        Schema::table('applications', function (Blueprint $table) {
+            $table->string('title')->nullable();
         });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('applications', function (Blueprint $table) {
+            $table->dropColumn('title');
+        });
+    }
+};

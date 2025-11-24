@@ -112,7 +112,7 @@ class ApplicationWidgetController extends Controller
     {
         return response()->json(
             [
-                'name' => $application->name,
+                'name' => $application->title,
                 'description' => $application->description,
                 'authentication_url' => URL::signedRoute(
                     name: 'widgets.applications.api.request-authentication',
@@ -131,7 +131,7 @@ class ApplicationWidgetController extends Controller
     {
         return response()->json(
             [
-                'name' => $application->name,
+                'name' => $application->title,
                 'description' => $application->description,
                 'authentication_url' => null,
                 'schema' => $generateSchema($application),

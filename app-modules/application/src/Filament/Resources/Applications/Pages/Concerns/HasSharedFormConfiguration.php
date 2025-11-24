@@ -43,6 +43,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Rules\IsDomain;
+use App\Features\FormApplicationTitleFeature;
 use App\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -67,7 +68,15 @@ trait HasSharedFormConfiguration
                 ->maxLength(255)
                 ->unique(ignoreRecord: true)
                 ->autocomplete(false)
-                ->columnSpanFull(),
+                ->columnSpanFull()
+                ->helperText('The name of this application will only display for form administrators.'),
+            TextInput::make('title')
+                ->string()
+                ->maxLength(255)
+                ->autocomplete(false)
+                ->columnSpanFull()
+                ->visible(FormApplicationTitleFeature::active())
+                ->helperText('The title of this application will be displayed when the form is embedded.'),
             Textarea::make('description')
                 ->string()
                 ->columnSpanFull(),
