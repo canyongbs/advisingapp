@@ -36,17 +36,28 @@
 
 namespace App\Models\Scopes;
 
-use App\Models\Authenticatable;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
-class WithoutSuperAdmin
+class ConditionalAdminScope
 {
     /**
      * @param Builder<User> $query
      */
     public function __invoke(Builder $query): void
     {
-        $query->whereNot->role(Authenticatable::SUPER_ADMIN_ROLE);
+        $user = Auth::user();
+
+        if (! $user instanceof User) {
+            return;
+        }
+
+        $user->loadMissing('roles');
+
+        $query
+            ->unless($user->isSuperAdmin(), fn (Builder $query) => $query->tap(new WithoutSuperAdmin()))
+            ->unless($user->isSuperAdmin() || $user->isPartnerAdmin(), fn (Builder $query) => $query->tap(new WithoutPartnerAdmin()))
+            ->unless($user->isSuperAdmin() || $user->isAiAdmin(), fn (Builder $query) => $query->tap(new WithoutAiAdmin()));
     }
 }
