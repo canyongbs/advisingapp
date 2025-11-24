@@ -101,7 +101,11 @@ class EditForm extends EditRecord
                 ->modalSubmitAction(false)
                 ->modalCancelActionLabel('Close')
                 ->hidden(fn (Form $form) => ! $form->embed_enabled),
+            $this->getSaveFormAction()
+                ->label('Save')
+                ->formId('form'),
             DeleteAction::make(),
+            $this->getCancelFormAction(),
         ];
     }
 }
