@@ -46,9 +46,7 @@ use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
-use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -126,7 +124,7 @@ class ListResourceHubArticles extends ListRecords
             ->recordActions([
                 ReplicateAction::make()
                     ->label('Duplicate')
-                    ->modalHeading(fn(ResourceHubArticle $record): string => 'Duplicate ' . $record->title)
+                    ->modalHeading(fn (ResourceHubArticle $record): string => 'Duplicate ' . $record->title)
                     ->modalSubmitActionLabel('Dupliate')
                     ->schema([
                         Section::make()
