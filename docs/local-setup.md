@@ -69,14 +69,14 @@ Typically these commands only need to be run when first setting up the project. 
 within a shell of the `app` container.
 
 > Note: The commands run in helper containers, like `pls composersetup`, are done in containers to prevent the need to
-> have OS dependancies installed on the host. They also run processes to ensure file permissions and further setup are
+> have OS dependencies installed on the host. They also run processes to ensure file permissions and further setup are
 > correct.
 >
 > As mentioned above, typically you only need run these commands when first setting up the project. Further composer
 > installs, npm installs, and other commands can typically be done from within a shell of the `app` container. But
-> sometimes if something gets broken with dependancies the respective `composersetup` and `npmsetup` commands can be
+> sometimes if something gets broken with dependencies the respective `composersetup` and `npmsetup` commands can be
 > used
-> to re-install while the `app` contaner is shutdown.
+> to re-install while the `app` container is shutdown.
 
 ##### 1.1 Create a `.env`
 
@@ -142,7 +142,7 @@ holding all information on tenants. Next we will set up a tenant.
 php artisan tenants:create [A Name for the Tenant] [A domain for the tenant] -y
 ```
 
-Example : `php artisan tenants:create test test.advisingapp.local`
+Example : `php artisan tenants:create test test.advisingapp.local -y`
 
 These commands will create a new tenant with the name and domain you supplied and then refresh and seed the tenant's
 database.
