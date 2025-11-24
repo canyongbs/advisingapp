@@ -710,6 +710,10 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="text-xs text-gray-500 italic dark:text-gray-400">
+                    Conversations are saved/available to your support team to assist you at our institution.
+                </div>
             </div>
         </div>
 
