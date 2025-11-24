@@ -124,10 +124,10 @@ class ListResourceHubArticles extends ListRecords
                 TernaryFilter::make('public'),
             ], layout: FiltersLayout::BeforeContent)
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
                 ReplicateAction::make()
-                    ->label('Replicate')
+                    ->label('Duplicate')
+                    ->modalHeading(fn(ResourceHubArticle $record): string => 'Duplicate ' . $record->title)
+                    ->modalSubmitActionLabel('Dupliate')
                     ->schema([
                         Section::make()
                             ->schema([
@@ -191,7 +191,7 @@ class ListResourceHubArticles extends ListRecords
                         $replica->save();
                     })
                     ->excludeAttributes(['views_count', 'upvotes_count', 'my_upvotes_count'])
-                    ->successNotificationTitle('Article replicated successfully!'),
+                    ->successNotificationTitle('Article duplicated successfully!'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
