@@ -123,9 +123,7 @@ class ListResourceHubArticles extends ListRecords
             ], layout: FiltersLayout::BeforeContent)
             ->recordActions([
                 ReplicateAction::make()
-                    ->label('Duplicate')
                     ->modalHeading(fn (ResourceHubArticle $record): string => 'Duplicate ' . $record->title)
-                    ->modalSubmitActionLabel('Dupliate')
                     ->schema([
                         Section::make()
                             ->schema([

@@ -44,6 +44,7 @@ use App\Settings\DisplaySettings;
 use Filament\Actions\Exports\Models\Export as BaseExport;
 use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
 use Filament\Actions\Imports\Models\Import as BaseImport;
+use Filament\Actions\ReplicateAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
@@ -318,5 +319,10 @@ class FilamentServiceProvider extends ServiceProvider
         Textarea::configureUsing(function (Textarea $textarea): void {
             $textarea->disableGrammarly();
         });
+
+        ReplicateAction::configureUsing(fn (ReplicateAction $replicateAction) => $replicateAction
+            ->label('Duplicate')
+            ->modalSubmitActionLabel('Duplicate')
+            ->modalHeading('Duplicate'));
     }
 }

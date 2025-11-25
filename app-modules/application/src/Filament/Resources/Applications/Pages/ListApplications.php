@@ -80,10 +80,8 @@ class ListApplications extends ListRecords
                     ->openUrlInNewTab()
                     ->color('gray'),
                 EditAction::make(),
-                ReplicateAction::make('Duplicate')
-                    ->label('Duplicate')
+                ReplicateAction::make()
                     ->modalHeading('Duplicate Application')
-                    ->modalSubmitActionLabel('Duplicate')
                     ->mutateRecordDataUsing(function (array $data): array {
                         $data['name'] = "Copy - {$data['name']}";
 

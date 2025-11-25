@@ -95,10 +95,8 @@ class ListEvents extends ListRecords
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
-                ReplicateAction::make('Duplicate')
-                    ->label('Duplicate')
+                ReplicateAction::make()
                     ->modalHeading('Duplicate Event')
-                    ->modalSubmitActionLabel('Duplicate')
                     ->mutateRecordDataUsing(function (array $data): array {
                         $data['title'] = "Copy - {$data['title']}";
 
