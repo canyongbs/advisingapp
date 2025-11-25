@@ -73,7 +73,7 @@ class ListForms extends ListRecords
                     ->openUrlInNewTab()
                     ->color('gray'),
                 EditAction::make(),
-                ReplicateAction::make()
+                ReplicateAction::make('Duplicate')
                     ->modalHeading('Duplicate Form')
                     ->mutateRecordDataUsing(function (array $data): array {
                         $data['name'] = "Copy - {$data['name']}";
