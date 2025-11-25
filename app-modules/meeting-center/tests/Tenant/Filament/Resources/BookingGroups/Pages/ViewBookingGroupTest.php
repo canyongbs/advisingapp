@@ -105,7 +105,6 @@ it('displays booking group with both users and teams', function () {
 
     $bookingGroup = BookingGroup::factory()->create([
         'name' => 'Mixed Booking Group',
-        'is_confidential' => true,
     ]);
 
     $bookingGroup->users()->attach($users);
