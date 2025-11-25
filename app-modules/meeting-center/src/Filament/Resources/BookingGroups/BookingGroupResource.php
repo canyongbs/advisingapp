@@ -41,7 +41,6 @@ use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\EditBooking
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ViewBookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use App\Features\BookingGroupFeature;
 use App\Filament\Clusters\GroupAppointment;
 use App\Models\User;
 use Filament\Resources\Resource;
