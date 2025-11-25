@@ -38,10 +38,8 @@ namespace AdvisingApp\ResourceHub\Filament\Actions;
 
 use AdvisingApp\ResourceHub\Enums\ConcernStatus;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
-use AdvisingApp\ResourceHub\Notifications\ResourceHubArticleConcernStatusChanged;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
-use Filament\Widgets\Widget;
 
 class ChangeConcernStatusAction extends Action
 {
@@ -60,12 +58,10 @@ class ChangeConcernStatusAction extends Action
                     ->enum(ConcernStatus::class)
                     ->default(fn (ResourceHubArticleConcern $record) => $record->status->value),
             ])
-            ->action(function (array $data, ResourceHubArticleConcern $record, Widget $livewire): void {
+            ->action(function (array $data, ResourceHubArticleConcern $record): void {
                 $record->status = $data['status'];
 
                 $record->save();
-
-                $record->createdBy->notifyNow(new ResourceHubArticleConcernStatusChanged($record));
             });
     }
 

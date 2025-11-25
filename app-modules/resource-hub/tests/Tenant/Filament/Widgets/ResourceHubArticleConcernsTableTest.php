@@ -65,7 +65,7 @@ it('returns all new concerns for a given resource hub article by default', funct
         ->for($resourceHubArticle, 'resourceHubArticle')
         ->create();
 
-    livewire(ResourceHubArticleConcernsTable::class, ['resourceHubArticleId' => $resourceHubArticle->getKey()])
+    livewire(ResourceHubArticleConcernsTable::class, ['record' => $resourceHubArticle])
         ->assertCanSeeTableRecords($newConcerns)
         ->assertCanNotSeeTableRecords($archivedConcerns->merge($resolvedConcerns));
 });
@@ -93,11 +93,24 @@ it('can filter concerns by status', function () {
         ->for($resourceHubArticle, 'resourceHubArticle')
         ->create();
 
-    livewire(ResourceHubArticleConcernsTable::class, ['resourceHubArticleId' => $resourceHubArticle->getKey()])
+    livewire(ResourceHubArticleConcernsTable::class, ['record' => $resourceHubArticle])
         ->filterTable('status', ConcernStatus::Archived->value)
         ->assertCanSeeTableRecords($archivedConcerns)
         ->assertCanNotSeeTableRecords($newConcerns->merge($resolvedConcerns))
         ->filterTable('status', ConcernStatus::Resolved->value)
         ->assertCanSeeTableRecords($resolvedConcerns)
         ->assertCanNotSeeTableRecords($newConcerns->merge($archivedConcerns));
+});
+
+it('can change the status of a concern properly', function () {
+    asSuperAdmin();
+
+    $concern = ResourceHubArticleConcern::factory()->create(['status' => ConcernStatus::New]);
+
+    livewire(ResourceHubArticleConcernsTable::class, ['record' => $concern->resourceHubArticle])
+        ->callTableAction('changeConcernStatus', $concern->getKey(), ['status' => ConcernStatus::Resolved])
+        ->assertHasNoErrors();
+    
+    expect($concern->refresh()->status)->toBe(ConcernStatus::Resolved);
+
 });

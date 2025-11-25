@@ -38,6 +38,7 @@ namespace AdvisingApp\ResourceHub\Filament\Widgets;
 
 use AdvisingApp\ResourceHub\Enums\ConcernStatus;
 use AdvisingApp\ResourceHub\Filament\Actions\ChangeConcernStatusAction;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -48,13 +49,13 @@ use Livewire\Attributes\On;
 
 class ResourceHubArticleConcernsTable extends TableWidget
 {
-    public string $resourceHubArticleId;
+    public ResourceHubArticle $record;
 
     protected static ?string $heading = 'Concerns Raised';
 
-    public function mount(string $resourceHubArticleId): void
+    public function mount(ResourceHubArticle $record): void
     {
-        $this->resourceHubArticleId = $resourceHubArticleId;
+        $this->record = $record;
     }
 
     #[On('concern-created')]
@@ -63,7 +64,7 @@ class ResourceHubArticleConcernsTable extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => ResourceHubArticleConcern::where('resource_hub_article_id', $this->resourceHubArticleId))
+            ->query(fn () => ResourceHubArticleConcern::whereBelongsTo($this->record, 'resourceHubArticle'))
             ->columns([
                 TextColumn::make('createdBy.name')
                     ->label('Name'),

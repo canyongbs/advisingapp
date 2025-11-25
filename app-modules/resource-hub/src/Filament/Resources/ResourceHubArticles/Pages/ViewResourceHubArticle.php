@@ -118,7 +118,7 @@ class ViewResourceHubArticle extends ViewRecord
                             ]),
                         Tab::make('Concerns')
                             ->schema([
-                                Livewire::make(ResourceHubArticleConcernsTable::class, ['resourceHubArticleId' => $this->getRecord()->getKey()]),
+                                Livewire::make(ResourceHubArticleConcernsTable::class, ['record' => $this->getRecord()]),
                             ])
                             ->visible(ResourceHubArticleConcernFeature::active()),
                     ])

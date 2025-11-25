@@ -45,8 +45,9 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
 
             $table->string('description');
-            $table->foreignUuid('created_by_id')->constrained('users');
             $table->string('status');
+            $table->foreignUuid('created_by_id')->constrained('users');
+            $table->foreignUuid('last_updated_by_id')->constrained('users');
             $table->foreignUuid('resource_hub_article_id')->constrained('resource_hub_articles');
 
             $table->timestamps();
