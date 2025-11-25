@@ -74,8 +74,8 @@ class FormResource extends Resource
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
-            EditForm::class,
             ViewForm::class,
+            EditForm::class,
             SubmissionOnScreenResponse::class,
             ManageFormWorkflows::class,
             ManageFormSubmissions::class,

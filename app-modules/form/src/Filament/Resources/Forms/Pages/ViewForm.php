@@ -36,11 +36,12 @@
 
 namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
 
-use AdvisingApp\Application\Filament\Resources\Applications\Pages\Concerns\HasSharedFormConfiguration;
+use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Models\Form;
-use Filament\Actions\EditAction;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\ColorEntry;
@@ -49,14 +50,16 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Colors\Color;
 use FilamentTiptapEditor\TiptapEditor;
 
 class ViewForm extends ViewRecord
 {
-    use HasSharedFormConfiguration;
-
     protected static string $resource = FormResource::class;
 
+    /**
+     * @return Schema
+     */
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -100,6 +103,13 @@ class ViewForm extends ViewRecord
                             ->hiddenLabel()
                             ->dehydrated(false)
                             ->columnSpanFull()
+                            ->default(
+                                fn (Form $record) => ! is_null($record->content)
+                                        ? tiptap_converter()
+                                            ->record($record, 'content')
+                                            ->asHTML($record->content)
+                                        : null
+                            )
                             ->extraInputAttributes(['style' => 'min-height: 12rem;']),
                     ])
                     ->hidden(fn (Form $record) => $record->is_wizard)
@@ -113,7 +123,21 @@ class ViewForm extends ViewRecord
                             ->autocomplete(false)
                             ->columnSpanFull()
                             ->lazy(),
-                        $this->fieldBuilder(),
+                        TiptapEditor::make('content')
+                            ->blocks(FormFieldBlockRegistry::get())
+                            ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
+                            ->placeholder('Drag blocks here to build your form')
+                            ->hiddenLabel()
+                            ->default(
+                                fn (Form $record) => ! is_null($record->content)
+                                        ? tiptap_converter()
+                                            ->record($record, 'content')
+                                            ->asHTML($record->content)
+                                        : null
+                            )
+                            ->dehydrated(false)
+                            ->columnSpanFull()
+                            ->extraInputAttributes(['style' => 'min-height: 12rem;']),
                     ])
                     ->addActionLabel('New step')
                     ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
@@ -124,7 +148,8 @@ class ViewForm extends ViewRecord
                     ->columnSpanFull(),
                 Section::make('Appearance')
                     ->schema([
-                        ColorEntry::make('primary_color'),
+                        ColorEntry::make('primary_color')
+                            ->state(fn (Form $record): ?string => $record->primary_color ? Color::convertToRgb(Color::all()[$record->primary_color][600]) : null),
                         TextEntry::make('rounding'),
                     ])
                     ->columns(),
@@ -134,7 +159,43 @@ class ViewForm extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            EditAction::make(),
+            Action::make('preview')
+                ->label('Preview')
+                ->icon('heroicon-o-eye')
+                ->url(fn (Form $form) => route('forms.preview', $form))
+                ->openUrlInNewTab(),
+            Action::make('view')
+                ->url(fn (Form $form) => route('forms.show', ['form' => $form]))
+                ->icon('heroicon-m-arrow-top-right-on-square')
+                ->openUrlInNewTab(),
+            Action::make('embed_snippet')
+                ->label('Embed Snippet')
+                ->schema(
+                    [
+                        TextEntry::make('snippet')
+                            ->label('Click to Copy')
+                            ->state(function (Form $form) {
+                                $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($form);
+
+                                $state = <<<EOD
+                                ```
+                                {$code}
+                                ```
+                                EOD;
+
+                                return str($state)->markdown()->toHtmlString();
+                            })
+                            ->copyable()
+                            ->copyableState(fn (Form $form) => resolve(GenerateSubmissibleEmbedCode::class)->handle($form))
+                            ->copyMessage('Copied!')
+                            ->copyMessageDuration(1500)
+                            ->extraAttributes(['class' => 'embed-code-snippet']),
+                    ]
+                )
+                ->modalSubmitAction(false)
+                ->modalCancelActionLabel('Close')
+                ->hidden(fn (Form $form) => ! $form->embed_enabled),
+            DeleteAction::make(),
         ];
     }
 }
