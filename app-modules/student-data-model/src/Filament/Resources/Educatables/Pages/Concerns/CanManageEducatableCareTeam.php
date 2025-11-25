@@ -43,6 +43,7 @@ use App\Enums\CareTeamRoleType;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Filament\Actions\AttachAction;
 use Filament\Actions\BulkActionGroup;
@@ -96,7 +97,7 @@ trait CanManageEducatableCareTeam
                     ->mountUsing(fn (Schema $schema) => $schema->fill([
                         'care_team_role_id' => CareTeamRoleType::studentDefault()?->id,
                     ]))
-                    ->form([
+                    ->schema([
                         Select::make('recordId')
                             ->label('User')
                             ->searchable()
@@ -108,7 +109,9 @@ trait CanManageEducatableCareTeam
                                         fn ($query) => $query
                                             ->where('educatable_type', $this->getOwnerRecord()->getMorphClass())
                                             ->where('educatable_id', $this->getOwnerRecord()->getKey())
-                                    )->pluck('name', 'id')
+                                    )
+                                    ->tap(new WithoutAnyAdmin())
+                                    ->pluck('name', 'id')
                             ),
                         Select::make('care_team_role_id')
                             ->label('Role')

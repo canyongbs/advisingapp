@@ -34,33 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace App\Rules;
+namespace App\Models\Scopes;
 
-use AdvisingApp\Authorization\Models\Role;
 use App\Models\Authenticatable;
-use Closure;
-use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Translation\PotentiallyTranslatedString;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 
-class ExcludeSuperAdmin implements ValidationRule
+class WithoutAnyAdmin
 {
     /**
-     * Run the validation rule.
-     *
-     * @param  Closure(string): PotentiallyTranslatedString  $fail
+     * @param Builder<User> $query
      */
-    public function validate(string $attribute, mixed $value, Closure $fail): void
+    public function __invoke(Builder $query): void
     {
-        $role = Role::find($value);
-
-        if (! $role) {
-            $fail('The selected role does not exist.');
-
-            return;
-        }
-
-        if (! auth()->user()->isSuperAdmin() && $role->name === Authenticatable::SUPER_ADMIN_ROLE) {
-            $fail('You are not allowed to select the Super Admin role.');
-        }
+        $query->whereDoesntHaveRelation('roles', function (Builder $query) {
+            $query->whereIn('name', [
+                Authenticatable::SUPER_ADMIN_ROLE,
+                Authenticatable::PARTNER_ADMIN_ROLE,
+                Authenticatable::AI_ADMIN_ROLE,
+            ]);
+        });
     }
 }

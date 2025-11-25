@@ -34,36 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models\Scopes;
+namespace App\Rules;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Scope;
+use AdvisingApp\Authorization\Models\Role;
+use App\Models\Authenticatable;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
-class InteractionConfidentialScope implements Scope
+class OnlySuperAdminMayAssignAdminRoles implements ValidationRule
 {
     /**
-     * Apply the scope to a given Eloquent query builder.
+     * Run the validation rule.
+     *
+     * @param  Closure(string): PotentiallyTranslatedString  $fail
      */
-    public function apply(Builder $builder, Model $model): void
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (auth()->user()?->isAdmin()) {
+        $role = Role::find($value);
+
+        if (! $role) {
+            $fail('The selected role does not exist.');
+
             return;
         }
 
-        $builder->where('is_confidential', false)->orWhere(function (Builder $query) {
-            $query->where('is_confidential', true)
-                ->where(function (Builder $query) {
-                    $query->where('user_id', auth()->id())
-                        ->orWhereHas('confidentialAccessTeams', function (Builder $query) {
-                            $query->whereHas('users', function (Builder $query) {
-                                $query->where('users.id', auth()->id());
-                            });
-                        })
-                        ->orWhereHas('confidentialAccessUsers', function (Builder $query) {
-                            $query->where('users.id', auth()->id());
-                        });
-                });
-        });
+        if (! auth()->user()->isSuperAdmin() && in_array($role->name, [Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE, Authenticatable::AI_ADMIN_ROLE])) {
+            $fail('You are not allowed to assign admin roles.');
+        }
     }
 }

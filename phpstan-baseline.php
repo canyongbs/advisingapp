@@ -3264,32 +3264,8 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateSubmissibleValidation.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Actions\\\\GenerateSubmissibleValidation\\:\\:fields\\(\\) has parameter \\$blocks with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateSubmissibleValidation.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Actions\\\\GenerateSubmissibleValidation\\:\\:fields\\(\\) has parameter \\$fields with generic class Illuminate\\\\Database\\\\Eloquent\\\\Collection but does not specify its types\\: TKey, TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateSubmissibleValidation.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Actions\\\\GenerateSubmissibleValidation\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateSubmissibleValidation.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Form\\\\Actions\\\\GenerateSubmissibleValidation\\:\\:wizardRules\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateSubmissibleValidation.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:mapWithKeys\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: array\\<array\\>, Closure\\(AdvisingApp\\\\Form\\\\Models\\\\SubmissibleField\\)\\: non\\-empty\\-array\\<array\\> given\\.$#',
-    'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateSubmissibleValidation.php',
 ];
@@ -6714,12 +6690,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentDeliverableTable.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Widgets\\\\StudentEmailOptInOptOutPieChart\\:\\:getRgbString\\(\\) has parameter \\$color with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentEmailOptInOptOutPieChart.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$query of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 2,
@@ -6754,12 +6724,6 @@ $ignoreErrors[] = [
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentInteractionUsersTable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Widgets\\\\StudentSmsOptInOptOutPieChart\\:\\:getRgbString\\(\\) has parameter \\$color with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentSmsOptInOptOutPieChart.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Match expression does not handle remaining value\\: string$#',
@@ -6898,12 +6862,6 @@ $ignoreErrors[] = [
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/Pages/EditResourceHubArticle.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\ResourceHub\\\\Filament\\\\Resources\\\\ResourceHubArticles\\\\Pages\\\\EditResourceHubArticleMetadata\\:\\:form\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Filament/Resources/ResourceHubArticles/Pages/EditResourceHubArticleMetadata.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\ResourceHub\\\\Models\\\\ResourceHubArticle\\:\\:\\$my_upvotes_count\\.$#',
@@ -7404,20 +7362,8 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableTasksWidget.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to method hasLicense\\(\\) on an unknown class AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentTags/StudentTagResource.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\StudentTags\\\\StudentTagResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentTags/StudentTagResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var for variable \\$user contains unknown class AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\User\\.$#',
-    'identifier' => 'class.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentTags/StudentTagResource.php',
 ];
@@ -9510,24 +9456,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Models/Scopes/SetupIsComplete.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:role\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/Scopes/WithoutSuperAdmin.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\Scopes\\\\WithoutSuperAdmin\\:\\:__invoke\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/Scopes/WithoutSuperAdmin.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method "getIsAdminAttribute" starts with "get" and returns boolean, consider using "is" or "has" instead\\.$#',
-    'identifier' => 'MeliorStan.booleanGetMethodName',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:allowedOperators\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -9644,12 +9572,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$column of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter name "\\$q" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/User.php',
 ];

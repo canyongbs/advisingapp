@@ -67,14 +67,15 @@ class ManageAiCustomAdvisorSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
-        /** @var User $user */
         $user = Auth::user();
+
+        assert($user instanceof User);
 
         if (! $user->hasLicense(LicenseType::ConversationalAi)) {
             return false;
         }
 
-        return $user->isSuperAdmin();
+        return $user->canAccessAiSettings();
     }
 
     public function form(Schema $schema): Schema
@@ -101,12 +102,12 @@ class ManageAiCustomAdvisorSettings extends SettingsPage
                     ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomAdvisors->getModels()))
                     ->visible(fn (Get $get): bool => ! $get('allow_selection_of_model')),
             ])
-            ->disabled(! Auth::user()->isSuperAdmin());
+            ->disabled(! Auth::user()->canAccessAiSettings());
     }
 
     public function save(): void
     {
-        if (! Auth::user()->isSuperAdmin()) {
+        if (! Auth::user()->canAccessAiSettings()) {
             return;
         }
 
@@ -118,7 +119,7 @@ class ManageAiCustomAdvisorSettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (! Auth::user()->isSuperAdmin()) {
+        if (! Auth::user()->canAccessAiSettings()) {
             return [];
         }
 

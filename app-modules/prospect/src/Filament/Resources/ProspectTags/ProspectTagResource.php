@@ -63,10 +63,11 @@ class ProspectTagResource extends Resource
 
     public static function canAccess(): bool
     {
-        /** @var User $user */
         $user = auth()->user();
 
-        return $user->hasLicense(Prospect::getLicenseType());
+        assert($user instanceof User);
+
+        return $user->hasLicense(Prospect::getLicenseType()) && parent::canAccess();
     }
 
     public static function getPages(): array

@@ -37,7 +37,7 @@
 namespace AdvisingApp\Team\Filament\Resources\Teams\RelationManagers;
 
 use App\Filament\Tables\Columns\IdColumn;
-use App\Models\Scopes\WithoutSuperAdmin;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Closure;
 use Filament\Actions\AssociateAction;
@@ -77,9 +77,9 @@ class UsersRelationManager extends RelationManager
                 AssociateAction::make()
                     ->label('Add user to this team')
                     ->recordSelectOptionsQuery(function (Builder $query) {
-                        $query->tap(new WithoutSuperAdmin());
+                        $query->tap(new WithoutAnyAdmin());
                     })
-                    ->form(fn (AssociateAction $action): array => [
+                    ->schema(fn (AssociateAction $action): array => [
                         $action->getRecordSelect()
                             ->rules([
                                 fn (): Closure => function (string $attribute, mixed $value, Closure $fail) {
@@ -88,7 +88,6 @@ class UsersRelationManager extends RelationManager
                                         $fail('This user already belongs to a team.');
                                     }
 
-                                    //TODO: remove this if we want to allow super admin user as team member.
                                     if (User::findOrFail($value)->isSuperAdmin()) {
                                         $fail('Super admin users cannot be added to a team.');
                                     }

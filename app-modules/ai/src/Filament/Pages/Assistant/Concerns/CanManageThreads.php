@@ -44,7 +44,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
 use AdvisingApp\Team\Models\Team;
-use App\Models\Scopes\WithoutSuperAdmin;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Exception;
 use Filament\Actions\Action;
@@ -345,7 +345,7 @@ trait CanManageThreads
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
                             AiThreadShareTarget::Team => Team::orderBy('name')->pluck('name', 'id'),
-                            AiThreadShareTarget::User => User::tap(new WithoutSuperAdmin())->whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::User => User::query()->tap(new WithoutAnyAdmin())->whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
                             default => throw new Exception('Target type is not valid.')
                         };
                     })
@@ -404,7 +404,7 @@ trait CanManageThreads
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
                             AiThreadShareTarget::Team => Team::orderBy('name')->pluck('name', 'id'),
-                            AiThreadShareTarget::User => User::tap(new WithoutSuperAdmin())->orderBy('name')->pluck('name', 'id'),
+                            AiThreadShareTarget::User => User::query()->tap(new WithoutAnyAdmin())->orderBy('name')->pluck('name', 'id'),
                             default => throw new Exception('Target type is not valid.')
                         };
                     })

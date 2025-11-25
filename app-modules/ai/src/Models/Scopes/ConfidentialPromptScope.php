@@ -44,7 +44,7 @@ class ConfidentialPromptScope implements Scope
 {
     public function apply(Builder $builder, Model $model): void
     {
-        if (auth()->user()?->isAdmin) {
+        if (auth()->user()?->isAdmin()) {
             return;
         }
 

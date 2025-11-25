@@ -94,7 +94,7 @@ class ViewUser extends ViewRecord
                             ->relationship('team', 'name')
                             ->disabled(),
                     ])
-                    ->hidden(fn (?User $record) => $record->IsAdmin ?? false),
+                    ->hidden(fn (?User $record) => $record?->isAdmin() ?? false),
                 Licenses::make()
                     ->hidden(fn (?User $record) => is_null($record))
                     ->disabled(function () {

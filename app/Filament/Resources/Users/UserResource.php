@@ -42,7 +42,7 @@ use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Filament\Resources\Users\Pages\ViewUser;
 use App\Filament\Resources\Users\RelationManagers\PermissionsRelationManager;
 use App\Filament\Resources\Users\RelationManagers\RolesRelationManager;
-use App\Models\Scopes\WithoutSuperAdmin;
+use App\Models\Scopes\ConditionalAdminScope;
 use App\Models\User;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -70,10 +70,7 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->unless(
-                auth()->user()->isSuperAdmin(),
-                fn (Builder $query) => $query->tap(new WithoutSuperAdmin())
-            );
+            ->tap(new ConditionalAdminScope());
     }
 
     public static function getRelations(): array

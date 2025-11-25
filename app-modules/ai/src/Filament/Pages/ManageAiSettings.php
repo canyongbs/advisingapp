@@ -73,14 +73,15 @@ class ManageAiSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
-        /** @var User $user */
         $user = auth()->user();
+
+        assert($user instanceof User);
 
         if (! $user->hasLicense(LicenseType::ConversationalAi)) {
             return false;
         }
 
-        return $user->isSuperAdmin();
+        return $user->canAccessAiSettings();
     }
 
     #[Computed]
@@ -96,7 +97,7 @@ class ManageAiSettings extends SettingsPage
     {
         return $schema
             ->components([
-                Section::make('Institutional Assistant')
+                Section::make('Institutional Advisor')
                     ->statePath('defaultAssistant')
                     ->columns()
                     ->visible($this->defaultAssistant !== null)
@@ -158,12 +159,12 @@ class ManageAiSettings extends SettingsPage
                     ->searchable()
                     ->required(),
             ])
-            ->disabled(! auth()->user()->isSuperAdmin());
+            ->disabled(! auth()->user()->canAccessAiSettings());
     }
 
     public function save(): void
     {
-        if (! auth()->user()->isSuperAdmin()) {
+        if (! auth()->user()->canAccessAiSettings()) {
             return;
         }
 
@@ -175,7 +176,7 @@ class ManageAiSettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (! auth()->user()->isSuperAdmin()) {
+        if (! auth()->user()->canAccessAiSettings()) {
             return [];
         }
 

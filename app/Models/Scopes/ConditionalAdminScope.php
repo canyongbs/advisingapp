@@ -34,36 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models\Scopes;
+namespace App\Models\Scopes;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Scope;
+use Illuminate\Support\Facades\Auth;
 
-class InteractionConfidentialScope implements Scope
+class ConditionalAdminScope
 {
     /**
-     * Apply the scope to a given Eloquent query builder.
+     * @param Builder<User> $query
      */
-    public function apply(Builder $builder, Model $model): void
+    public function __invoke(Builder $query): void
     {
-        if (auth()->user()?->isAdmin()) {
+        $user = Auth::user();
+
+        if (! $user instanceof User) {
             return;
         }
 
-        $builder->where('is_confidential', false)->orWhere(function (Builder $query) {
-            $query->where('is_confidential', true)
-                ->where(function (Builder $query) {
-                    $query->where('user_id', auth()->id())
-                        ->orWhereHas('confidentialAccessTeams', function (Builder $query) {
-                            $query->whereHas('users', function (Builder $query) {
-                                $query->where('users.id', auth()->id());
-                            });
-                        })
-                        ->orWhereHas('confidentialAccessUsers', function (Builder $query) {
-                            $query->where('users.id', auth()->id());
-                        });
-                });
-        });
+        $user->loadMissing('roles');
+
+        $query
+            ->unless($user->isSuperAdmin(), fn (Builder $query) => $query->tap(new WithoutSuperAdmin()))
+            ->unless($user->isSuperAdmin() || $user->isPartnerAdmin(), fn (Builder $query) => $query->tap(new WithoutPartnerAdmin()))
+            ->unless($user->isSuperAdmin() || $user->isAiAdmin(), fn (Builder $query) => $query->tap(new WithoutAiAdmin()));
     }
 }
