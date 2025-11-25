@@ -110,7 +110,6 @@ it('can change the status of a concern properly', function () {
     livewire(ResourceHubArticleConcernsTable::class, ['record' => $concern->resourceHubArticle])
         ->callTableAction('changeConcernStatus', $concern->getKey(), ['status' => ConcernStatus::Resolved])
         ->assertHasNoErrors();
-    
-    expect($concern->refresh()->status)->toBe(ConcernStatus::Resolved);
 
+    expect($concern->refresh()->status)->toBe(ConcernStatus::Resolved);
 });

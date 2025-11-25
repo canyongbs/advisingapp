@@ -44,7 +44,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
-use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
 
 class ResourceHubArticleConcernsTable extends TableWidget

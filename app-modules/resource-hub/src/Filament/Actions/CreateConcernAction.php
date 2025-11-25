@@ -38,7 +38,6 @@ namespace AdvisingApp\ResourceHub\Filament\Actions;
 
 use AdvisingApp\ResourceHub\Enums\ConcernStatus;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
 use App\Features\ResourceHubArticleConcernFeature;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
@@ -61,7 +60,7 @@ class CreateConcernAction extends Action
                     ->required(),
             ])
             ->action(function (array $data, ResourceHubArticle $record, Page $livewire): void {
-              $record->concerns()->create([
+                $record->concerns()->create([
                     'description' => $data['description'],
                     'status' => ConcernStatus::New,
                 ]);
