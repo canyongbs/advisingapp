@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
@@ -55,6 +56,16 @@ class ListBookingGroups extends ListRecords
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name'),
+                TextColumn::make('members')
+                    ->label('Members')
+                    ->getStateUsing(function (BookingGroup $record): int {
+                        $userIds = $record->users()->pluck('users.id');
+                        $teamUserIds = $record->teams()->with('users')->get()->pluck('users')->flatten()->pluck('id');
+
+                        return $userIds->merge($teamUserIds)->unique()->count();
+                    })
+                    ->badge()
+                    ->color('primary'),
             ])
             ->recordActions([
                 ViewAction::make(),

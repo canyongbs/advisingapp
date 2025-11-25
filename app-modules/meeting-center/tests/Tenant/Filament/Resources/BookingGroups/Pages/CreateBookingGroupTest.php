@@ -103,7 +103,7 @@ it('validates the inputs', function (CreateBookingGroupRequestFactory $data, arr
     ],
 ]);
 
-it('can create a confidential booking group with users and teams', function () {
+it('can create a booking group with users and teams', function () {
     $user = User::factory()->create();
 
     $user->givePermissionTo('group_appointment.view-any');
@@ -115,7 +115,6 @@ it('can create a confidential booking group with users and teams', function () {
     $teams = Team::factory()->count(2)->create();
 
     $request = CreateBookingGroupRequestFactory::new()->state([
-        'is_confidential' => true,
         'users' => $users->pluck('id')->toArray(),
         'teams' => $teams->pluck('id')->toArray(),
     ])->create();
@@ -131,36 +130,8 @@ it('can create a confidential booking group with users and teams', function () {
     $bookingGroup = BookingGroup::first();
     assert($bookingGroup instanceof BookingGroup);
 
-    expect($bookingGroup->is_confidential)->toBeTrue();
     expect($bookingGroup->users)->toHaveCount(3);
     expect($bookingGroup->teams)->toHaveCount(2);
-});
-
-it('can create a non-confidential booking group without users and teams', function () {
-    $user = User::factory()->create();
-
-    $user->givePermissionTo('group_appointment.view-any');
-    $user->givePermissionTo('group_appointment.create');
-
-    actingAs($user);
-
-    $request = CreateBookingGroupRequestFactory::new()->state([
-        'is_confidential' => false,
-    ])->create();
-
-    livewire(CreateBookingGroup::class)
-        ->fillForm($request)
-        ->call('create')
-        ->assertHasNoFormErrors()
-        ->assertHasNoErrors();
-
-    assertDatabaseCount(BookingGroup::class, 1);
-
-    $bookingGroup = BookingGroup::first();
-
-    expect($bookingGroup->is_confidential)->toBeFalse();
-    expect($bookingGroup->users)->toHaveCount(0);
-    expect($bookingGroup->teams)->toHaveCount(0);
 });
 
 it('tracks created_by user correctly', function () {

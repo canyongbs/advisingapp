@@ -37,11 +37,17 @@
 namespace AdvisingApp\MeetingCenter\Policies;
 
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use App\Features\BookingGroupFeature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
 class BookingGroupPolicy
 {
+    public function before(Authenticatable $authenticatable): bool
+    {
+        return BookingGroupFeature::active();
+    }
+
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(

@@ -41,7 +41,6 @@ use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class ViewBookingGroup extends ViewRecord
@@ -57,21 +56,14 @@ class ViewBookingGroup extends ViewRecord
                         ->label('Name'),
                     TextEntry::make('description')
                         ->label('Description'),
-                    TextEntry::make('is_confidential')
-                        ->columnSpanFull()
-                        ->badge()
-                        ->formatStateUsing(fn ($state): string => $state ? 'Confidential' : '')
-                        ->visible(fn ($record): bool => $record->is_confidential),
                     TextEntry::make('users.name')
                         ->placeholder('N/A')
                         ->badge()
-                        ->label('User')
-                        ->visible(fn (Get $get) => $get('is_confidential')),
+                        ->label('User'),
                     TextEntry::make('teams.name')
                         ->placeholder('N/A')
                         ->badge()
-                        ->label('Team')
-                        ->visible(fn (Get $get) => $get('is_confidential')),
+                        ->label('Team'),
                 ]),
         ]);
     }

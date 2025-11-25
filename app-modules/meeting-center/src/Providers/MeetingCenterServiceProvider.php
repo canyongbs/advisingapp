@@ -38,6 +38,7 @@ namespace AdvisingApp\MeetingCenter\Providers;
 
 use AdvisingApp\MeetingCenter\Livewire\EventAttendeeSubmissionsManager;
 use AdvisingApp\MeetingCenter\MeetingCenterPlugin;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\Event;
@@ -64,6 +65,7 @@ class MeetingCenterServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([
+            'booking_group' => BookingGroup::class,
             'calendar' => Calendar::class,
             'calendar_event' => CalendarEvent::class,
             'event' => Event::class,

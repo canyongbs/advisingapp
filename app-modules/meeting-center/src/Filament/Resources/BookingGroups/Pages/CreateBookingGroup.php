@@ -37,12 +37,10 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class CreateBookingGroup extends CreateRecord
@@ -62,24 +60,18 @@ class CreateBookingGroup extends CreateRecord
                 ->maxLength(65535)
                 ->columnSpanFull()
                 ->label('Description'),
-            Checkbox::make('is_confidential')
-                ->label('Confidential')
-                ->live()
-                ->columnSpanFull(),
             Select::make('users')
                 ->label('User')
                 ->multiple()
                 ->relationship('users', 'name')
                 ->searchable()
-                ->preload()
-                ->visible(fn (Get $get) => $get('is_confidential')),
+                ->preload(),
             Select::make('teams')
                 ->label('Team')
                 ->multiple()
                 ->relationship('teams', 'name')
                 ->searchable()
-                ->preload()
-                ->visible(fn (Get $get) => $get('is_confidential')),
+                ->preload(),
         ]);
     }
 }

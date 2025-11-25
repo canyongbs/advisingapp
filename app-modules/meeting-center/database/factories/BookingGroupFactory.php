@@ -54,7 +54,6 @@ class BookingGroupFactory extends Factory
         return [
             'name' => $this->faker->word(),
             'description' => $this->faker->optional()->sentence(),
-            'is_confidential' => $this->faker->boolean(30),
         ];
     }
 }

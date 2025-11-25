@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\MeetingCenter\Database\Factories\BookingGroupFactory;
 use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
@@ -43,27 +44,22 @@ use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperBookingGroup
  */
-class BookingGroup extends BaseModel
+class BookingGroup extends BaseModel implements Auditable
 {
     /** @use HasFactory<BookingGroupFactory> */
     use HasFactory;
 
+    use AuditableTrait;
     use HasUserSaveTracking;
 
     protected $fillable = [
         'name',
         'description',
-        'is_confidential',
-        'created_by_id',
-        'last_updated_by_id',
-    ];
-
-    protected $casts = [
-        'is_confidential' => 'bool',
     ];
 
     /**

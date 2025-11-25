@@ -116,43 +116,7 @@ it('validates the inputs', function (EditBookingGroupRequestFactory $data, array
     ],
 ]);
 
-it('can edit a booking group to add users and teams when confidential', function () {
-    $user = User::factory()->create();
-
-    $user->givePermissionTo('group_appointment.view-any');
-    $user->givePermissionTo('group_appointment.*.update');
-
-    actingAs($user);
-
-    $bookingGroup = BookingGroup::factory()->for($user, 'createdBy')->create([
-        'is_confidential' => false,
-    ]);
-
-    $users = User::factory()->count(3)->create();
-    $teams = Team::factory()->count(2)->create();
-
-    $request = EditBookingGroupRequestFactory::new()->state([
-        'is_confidential' => true,
-        'users' => $users->pluck('id')->toArray(),
-        'teams' => $teams->pluck('id')->toArray(),
-    ])->create();
-
-    livewire(EditBookingGroup::class, [
-        'record' => $bookingGroup->getRouteKey(),
-    ])
-        ->fillForm($request)
-        ->call('save')
-        ->assertHasNoFormErrors()
-        ->assertHasNoErrors();
-
-    $bookingGroup->refresh();
-
-    expect($bookingGroup->is_confidential)->toBeTrue();
-    expect($bookingGroup->users)->toHaveCount(3);
-    expect($bookingGroup->teams)->toHaveCount(2);
-});
-
-it('can edit a booking group to remove users and teams while staying confidential', function () {
+it('can edit a booking group to remove users and teams ', function () {
     $user = User::factory()->create();
 
     $user->givePermissionTo('group_appointment.view-any');
@@ -163,15 +127,12 @@ it('can edit a booking group to remove users and teams while staying confidentia
     $users = User::factory()->count(3)->create();
     $teams = Team::factory()->count(2)->create();
 
-    $bookingGroup = BookingGroup::factory()->for($user, 'createdBy')->create([
-        'is_confidential' => true,
-    ]);
+    $bookingGroup = BookingGroup::factory()->for($user, 'createdBy')->create();
 
     $bookingGroup->users()->attach($users);
     $bookingGroup->teams()->attach($teams);
 
     $request = EditBookingGroupRequestFactory::new()->state([
-        'is_confidential' => true,
         'users' => [],
         'teams' => [],
     ])->create();
@@ -186,7 +147,6 @@ it('can edit a booking group to remove users and teams while staying confidentia
 
     $bookingGroup->refresh();
 
-    expect($bookingGroup->is_confidential)->toBeTrue();
     expect($bookingGroup->users)->toHaveCount(0);
     expect($bookingGroup->teams)->toHaveCount(0);
 });

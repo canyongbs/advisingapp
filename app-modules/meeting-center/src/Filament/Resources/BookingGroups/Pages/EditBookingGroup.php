@@ -40,12 +40,10 @@ use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResou
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class EditBookingGroup extends EditRecord
@@ -67,24 +65,18 @@ class EditBookingGroup extends EditRecord
                 ->maxLength(65535)
                 ->columnSpanFull()
                 ->label('Description'),
-            Checkbox::make('is_confidential')
-                ->label('Confidential')
-                ->live()
-                ->columnSpanFull(),
             Select::make('users')
                 ->label('User')
                 ->multiple()
                 ->relationship('users', 'name')
                 ->searchable()
-                ->preload()
-                ->visible(fn (Get $get) => $get('is_confidential')),
+                ->preload(),
             Select::make('teams')
                 ->label('Team')
                 ->multiple()
                 ->relationship('teams', 'name')
                 ->searchable()
-                ->preload()
-                ->visible(fn (Get $get) => $get('is_confidential')),
+                ->preload(),
         ]);
     }
 
