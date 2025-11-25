@@ -45,7 +45,6 @@ class EditBookingGroupRequestFactory extends RequestFactory
         return [
             'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
             'description' => $this->faker->paragraph(),
-            'is_confidential' => $this->faker->boolean(),
         ];
     }
 }

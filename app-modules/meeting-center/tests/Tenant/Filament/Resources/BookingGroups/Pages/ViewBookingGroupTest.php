@@ -82,7 +82,6 @@ it('displays booking group basic information', function () {
     $bookingGroup = BookingGroup::factory()->create([
         'name' => 'Test Booking Group',
         'description' => 'This is a test description',
-        'is_confidential' => false,
     ]);
 
     livewire(ViewBookingGroup::class, [
@@ -90,74 +89,6 @@ it('displays booking group basic information', function () {
     ])
         ->assertSee('Test Booking Group')
         ->assertSee('This is a test description')
-        ->assertHasNoErrors();
-});
-
-it('displays users for confidential booking groups', function () {
-    $user = User::factory()->create();
-
-    $user->givePermissionTo('group_appointment.view-any');
-    $user->givePermissionTo('group_appointment.*.view');
-
-    actingAs($user);
-
-    $users = User::factory()->count(3)->create();
-
-    $bookingGroup = BookingGroup::factory()->create([
-        'is_confidential' => true,
-    ]);
-
-    $bookingGroup->users()->attach($users);
-
-    livewire(ViewBookingGroup::class, [
-        'record' => $bookingGroup->getRouteKey(),
-    ])
-        ->assertSee($users[0]->name)
-        ->assertSee($users[1]->name)
-        ->assertSee($users[2]->name)
-        ->assertHasNoErrors();
-});
-
-it('displays teams for confidential booking groups', function () {
-    $user = User::factory()->create();
-
-    $user->givePermissionTo('group_appointment.view-any');
-    $user->givePermissionTo('group_appointment.*.view');
-
-    actingAs($user);
-
-    $teams = Team::factory()->count(2)->create();
-
-    $bookingGroup = BookingGroup::factory()->create([
-        'is_confidential' => true,
-    ]);
-
-    $bookingGroup->teams()->attach($teams);
-
-    livewire(ViewBookingGroup::class, [
-        'record' => $bookingGroup->getRouteKey(),
-    ])
-        ->assertSee($teams[0]->name)
-        ->assertSee($teams[1]->name)
-        ->assertHasNoErrors();
-});
-
-it('displays N/A for confidential booking groups without users', function () {
-    $user = User::factory()->create();
-
-    $user->givePermissionTo('group_appointment.view-any');
-    $user->givePermissionTo('group_appointment.*.view');
-
-    actingAs($user);
-
-    $bookingGroup = BookingGroup::factory()->create([
-        'is_confidential' => true,
-    ]);
-
-    livewire(ViewBookingGroup::class, [
-        'record' => $bookingGroup->getRouteKey(),
-    ])
-        ->assertSee('N/A')
         ->assertHasNoErrors();
 });
 
