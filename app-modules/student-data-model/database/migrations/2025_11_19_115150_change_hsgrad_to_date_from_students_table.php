@@ -41,14 +41,14 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-            DB::statement('ALTER TABLE students ALTER COLUMN hsgrad DROP NOT NULL, ALTER COLUMN hsgrad TYPE date USING (NULL) ');
+            DB::statement('ALTER TABLE students ALTER COLUMN hsgrad TYPE date USING (NULL) ');
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            DB::statement('ALTER TABLE students ALTER COLUMN hsgrad DROP NOT NULL, ALTER COLUMN hsgrad TYPE integer USING (NULL) ');
+            DB::statement('ALTER TABLE students ALTER COLUMN hsgrad TYPE integer USING (NULL) ');
         });
     }
 };
