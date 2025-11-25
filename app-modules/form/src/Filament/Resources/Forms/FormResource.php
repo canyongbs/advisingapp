@@ -89,7 +89,7 @@ class FormResource extends Resource
             'index' => ListForms::route('/'),
             'create' => CreateForm::route('/create'),
             'edit' => EditForm::route('/{record}/edit'),
-            'view' => ViewForm::route('/{record}/view'),
+            'view' => ViewForm::route('/{record}'),
             'manage-on-screen-response' => SubmissionOnScreenResponse::route('/{record}/on-screen-response'),
             'manage-form-workflows' => ManageFormWorkflows::route('/{record}/workflows'),
             'manage-submissions' => ManageFormSubmissions::route('/{record}/submissions'),
