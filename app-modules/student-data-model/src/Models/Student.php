@@ -66,6 +66,7 @@ use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Timeline\Models\Timeline;
 use App\Enums\TagType;
+use App\Features\HsGradeTypeChangeFeature;
 use App\Models\Authenticatable;
 use App\Models\Scopes\HasLicense;
 use App\Models\Tag;
@@ -533,6 +534,18 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             ->using(EducatablePipelineStage::class)
             ->withPivot(['pipeline_stage_id'])
             ->withTimestamps();
+    }
+
+    //TODO: Remove this method and move this cast in $casts when feature flag cleanup.
+    /**
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'hsgrad' => HsGradeTypeChangeFeature::active() ? 'date' : 'integer',
+        ];
     }
 
     protected static function booted(): void

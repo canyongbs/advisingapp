@@ -107,7 +107,7 @@ it('can filter students by all attributes', function (string $requestKey, mixed 
     '`lastlmslogin`' => ['lastlmslogin', '2025-07-01 00:00:00', ['lastlmslogin' => '2025-07-01 00:00:00'], ['lastlmslogin' => '1999-01-01 00:00:00'], 'lastlmslogin', '2025-07-01 00:00:00'],
     '`created_at_source`' => ['created_at_source', '2025-01-01 12:00:00', ['created_at_source' => '2025-01-01 12:00:00'], ['created_at_source' => '1999-01-01 00:00:00'], 'created_at_source', '2025-01-01T12:00:00.000000Z'],
     '`updated_at_source`' => ['updated_at_source', '2025-01-02 12:00:00', ['updated_at_source' => '2025-01-02 12:00:00'], ['updated_at_source' => '1999-01-01 00:00:00'], 'updated_at_source', '2025-01-02T12:00:00.000000Z'],
-    '`hsgrad`' => ['hsgrad', 2022, ['hsgrad' => 2022], ['hsgrad' => 1999], 'hsgrad', 2022],
+    '`hsgrad`' => ['hsgrad', '2022-01-01', ['hsgrad' => '2022-01-01'], ['hsgrad' => '1999-01-01'], 'hsgrad', '2022-01-01'],
     '`holds`' => ['holds', '1', ['holds' => '1'], ['holds' => '99'], 'holds', '1'],
     '`sms_opt_out`' => ['sms_opt_out', true, ['sms_opt_out' => true], ['sms_opt_out' => false], 'sms_opt_out', true],
     '`email_bounce`' => ['email_bounce', true, ['email_bounce' => true], ['email_bounce' => false], 'email_bounce', true],
@@ -132,7 +132,7 @@ dataset('sorts', [
     '`lastlmslogin`' => ['lastlmslogin', ['lastlmslogin' => '2025-07-01 00:00:00'], ['lastlmslogin' => '2025-07-02 00:00:00'], 'lastlmslogin', '2025-07-01 00:00:00', '2025-07-02 00:00:00'],
     '`created_at_source`' => ['created_at_source', ['created_at_source' => '2025-01-01 12:00:00'], ['created_at_source' => '2025-01-02 12:00:00'], 'created_at_source', '2025-01-01T12:00:00.000000Z', '2025-01-02T12:00:00.000000Z'],
     '`updated_at_source`' => ['updated_at_source', ['updated_at_source' => '2025-01-01 12:00:00'], ['updated_at_source' => '2025-01-02 12:00:00'], 'updated_at_source', '2025-01-01T12:00:00.000000Z', '2025-01-02T12:00:00.000000Z'],
-    '`hsgrad`' => ['hsgrad', ['hsgrad' => 2022], ['hsgrad' => 2023], 'hsgrad', 2022, 2023],
+    '`hsgrad`' => ['hsgrad', ['hsgrad' => '2000-01-01'], ['hsgrad' => '2023-01-01'], 'hsgrad', '2000-01-01', '2023-01-01'],
     '`holds`' => ['holds', ['holds' => '1'], ['holds' => '2'], 'holds', '1', '2'],
 ]);
 
