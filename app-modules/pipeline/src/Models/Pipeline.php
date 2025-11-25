@@ -104,19 +104,11 @@ class Pipeline extends Model implements Auditable
     }
 
     /**
-     * @return MorphToMany<EducatablePipelineStage, $this>
+     * @return HasMany<EducatablePipelineStage, $this>
      */
-    public function educatablePipelineStages(): MorphToMany
+    public function educatablePipelineStages(): HasMany
     {
-        return $this->morphToMany(
-            EducatablePipelineStage::class,
-            'educatable',
-            'educatable_pipeline_stages',
-            'pipeline_id',
-            'educatable_id'
-        )
-            ->withPivot(['pipeline_stage_id'])
-            ->withTimestamps();
+        return $this->hasMany(EducatablePipelineStage::class);
     }
 
     /**
