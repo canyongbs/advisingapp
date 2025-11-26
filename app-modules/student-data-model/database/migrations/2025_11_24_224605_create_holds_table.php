@@ -51,9 +51,7 @@ return new class () extends Migration {
             $table->string('sisid');
             $table->string('hold_id')->nullable();
             $table->string('name');
-            $table->string('category');
-
-            $table->softDeletes();
+            $table->string('category')->nullable();
 
             $table->index('sisid');
         });
