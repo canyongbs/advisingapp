@@ -34,36 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models\Scopes;
+use App\Features\HsGradeTypeChangeFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Scope;
-
-class InteractionConfidentialScope implements Scope
-{
-    /**
-     * Apply the scope to a given Eloquent query builder.
-     */
-    public function apply(Builder $builder, Model $model): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (auth()->user()?->isAdmin()) {
-            return;
-        }
-
-        $builder->where('is_confidential', false)->orWhere(function (Builder $query) {
-            $query->where('is_confidential', true)
-                ->where(function (Builder $query) {
-                    $query->where('user_id', auth()->id())
-                        ->orWhereHas('confidentialAccessTeams', function (Builder $query) {
-                            $query->whereHas('users', function (Builder $query) {
-                                $query->where('users.id', auth()->id());
-                            });
-                        })
-                        ->orWhereHas('confidentialAccessUsers', function (Builder $query) {
-                            $query->where('users.id', auth()->id());
-                        });
-                });
-        });
+        HsGradeTypeChangeFeature::activate();
     }
-}
+
+    public function down(): void
+    {
+        HsGradeTypeChangeFeature::deactivate();
+    }
+};

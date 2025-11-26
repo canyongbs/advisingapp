@@ -34,36 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models\Scopes;
+namespace App\Features;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Scope;
+use App\Support\AbstractFeatureFlag;
 
-class InteractionConfidentialScope implements Scope
+class HsGradeTypeChangeFeature extends AbstractFeatureFlag
 {
-    /**
-     * Apply the scope to a given Eloquent query builder.
-     */
-    public function apply(Builder $builder, Model $model): void
+    public function resolve(mixed $scope): mixed
     {
-        if (auth()->user()?->isAdmin()) {
-            return;
-        }
-
-        $builder->where('is_confidential', false)->orWhere(function (Builder $query) {
-            $query->where('is_confidential', true)
-                ->where(function (Builder $query) {
-                    $query->where('user_id', auth()->id())
-                        ->orWhereHas('confidentialAccessTeams', function (Builder $query) {
-                            $query->whereHas('users', function (Builder $query) {
-                                $query->where('users.id', auth()->id());
-                            });
-                        })
-                        ->orWhereHas('confidentialAccessUsers', function (Builder $query) {
-                            $query->where('users.id', auth()->id());
-                        });
-                });
-        });
+        return false;
     }
 }

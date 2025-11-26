@@ -43,7 +43,6 @@ use AdvisingApp\Team\Models\Team;
 use App\Filament\Forms\Components\Licenses;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Filament\Resources\Users\UserResource;
-use App\Models\Authenticatable;
 use App\Models\User;
 use App\Notifications\SetPasswordNotification;
 use App\Rules\EmailNotInUseOrSoftDeleted;
@@ -79,7 +78,7 @@ class EditUser extends EditRecord
                         TextInput::make('name')
                             ->required()
                             ->maxLength(255)
-                            ->disabled(fn (User $record) => $record->hasAnyRole([Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE])),
+                            ->disabled(fn (User $record) => $record->isAdmin()),
                         TextInput::make('email')
                             ->label('Email address')
                             ->email()
@@ -90,11 +89,11 @@ class EditUser extends EditRecord
                                     new EmailNotInUseOrSoftDeleted($record?->id),
                                 ];
                             })
-                            ->disabled(fn (User $record) => $record->hasAnyRole([Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE])),
+                            ->disabled(fn (User $record) => $record->isAdmin()),
                         TextInput::make('job_title')
                             ->string()
                             ->maxLength(255)
-                            ->disabled(fn (User $record) => $record->hasAnyRole([Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE])),
+                            ->disabled(fn (User $record) => $record->isAdmin()),
                         Toggle::make('is_external')
                             ->label('User can only login via Single Sign-On (SSO)')
                             ->live()
@@ -111,7 +110,7 @@ class EditUser extends EditRecord
 
                                 return null;
                             })
-                            ->disabled(fn (User $record) => $record->hasAnyRole([Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE])),
+                            ->disabled(fn (User $record) => $record->isAdmin()),
                         TextInput::make('created_at')
                             ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
@@ -126,7 +125,7 @@ class EditUser extends EditRecord
                             ->options(Team::all()->pluck('name', 'id'))
                             ->relationship('team', 'name'),
                     ])
-                    ->hidden(fn (?User $record) => $record->IsAdmin ?? false),
+                    ->hidden(fn (?User $record) => $record?->isAdmin() ?? false),
                 Licenses::make()
                     ->disabled(function () {
                         /** @var User $user */

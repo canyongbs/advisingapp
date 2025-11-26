@@ -40,6 +40,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\Concerns\HasS
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\HsGradeTypeChangeFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -120,10 +121,19 @@ class EditStudent extends EditRecord
                             ->format('Y-m-d')
                             ->displayFormat('Y-m-d')
                             ->maxDate(now()),
+                        DatePicker::make('hsgrad')
+                            ->label('High School Graduation Year')
+                            ->nullable()
+                            ->native(false)
+                            ->closeOnDateSelection()
+                            ->format('Y-m-d')
+                            ->visible(fn (): bool => HsGradeTypeChangeFeature::active())
+                            ->displayFormat('Y-m-d'),
                         TextInput::make('hsgrad')
                             ->label('High School Graduation Year')
                             ->nullable()
-                            ->numeric(),
+                            ->numeric()
+                            ->visible(fn (): bool => ! HsGradeTypeChangeFeature::active()),
                         TextInput::make('gender')
                             ->nullable()
                             ->maxLength(255),

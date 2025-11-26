@@ -46,6 +46,7 @@ use App\Enums\CareTeamRoleType;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use BackedEnum;
 use Filament\Actions\AttachAction;
@@ -109,7 +110,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                     ->mountUsing(fn (Schema $schema) => $schema->fill([
                         'care_team_role_id' => CareTeamRoleType::prospectDefault()?->getKey(),
                     ]))
-                    ->form([
+                    ->schema([
                         Select::make('recordId')
                             ->label('User')
                             ->searchable()
@@ -119,6 +120,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                                     ->whereDoesntHave('prospectCareTeams', fn ($query) => $query
                                         ->where('educatable_type', $this->getOwnerRecord()->getMorphClass())
                                         ->where('educatable_id', $this->getOwnerRecord()->getKey()))
+                                    ->tap(new WithoutAnyAdmin())
                                     ->pluck('name', 'id')
                             ),
                         Select::make('care_team_role_id')

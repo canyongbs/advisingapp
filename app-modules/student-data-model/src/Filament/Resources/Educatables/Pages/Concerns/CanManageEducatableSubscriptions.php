@@ -41,6 +41,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Filament\Actions\AttachAction;
 use Filament\Actions\BulkActionGroup;
@@ -91,7 +92,9 @@ trait CanManageEducatableSubscriptions
                         fn (Select $select) => $select->placeholder('Select a User'),
                     )
                     ->recordSelectOptionsQuery(
-                        fn (Builder $query) => $query->tap(new HasLicense(Student::getLicenseType())),
+                        fn (Builder $query) => $query
+                            ->tap(new HasLicense(Student::getLicenseType()))
+                            ->tap(new WithoutAnyAdmin()),
                     )
                     ->successNotificationTitle(function (User $record) {
                         /** @var Student $student */

@@ -76,7 +76,7 @@ it('A non-super admin user cannot assign the super admin role.', function () {
         'pageClass' => EditUser::class,
     ])
         ->callTableAction(AttachAction::class, data: ['recordId' => $superAdminRole->getKey()])
-        ->assertHasTableActionErrors(['recordId' => 'You are not allowed to select the Super Admin role.']);
+        ->assertHasTableActionErrors(['recordId' => 'You are not allowed to assign admin roles.']);
 
     $user->refresh();
 

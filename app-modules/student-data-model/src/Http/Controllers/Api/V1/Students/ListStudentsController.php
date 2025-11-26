@@ -70,7 +70,7 @@ class ListStudentsController
     #[QueryParameter('filter[lastlmslogin]', description: 'Filter the results where the student\'s last LMS login matches the provided date.', type: 'date')]
     #[QueryParameter('filter[created_at_source]', description: 'Filter the results where the student\'s created_at_source matches the provided datetime.', type: 'datetime')]
     #[QueryParameter('filter[updated_at_source]', description: 'Filter the results where the student\'s updated_at_source matches the provided datetime.', type: 'datetime')]
-    #[QueryParameter('filter[hsgrad]', description: 'Filter the results where the student\'s high school graduation year matches the provided integer.', type: 'integer')]
+    #[QueryParameter('filter[hsgrad]', description: 'Filter the results where the student\'s high school graduation date matches the provided date.', type: 'date')]
     #[QueryParameter('filter[holds]', description: 'Filter the results where the student\'s holds matches the provided integer.', type: 'integer')]
     #[QueryParameter('filter[sms_opt_out]', description: 'Filter the results where the student\'s sms_opt_out matches the provided boolean.', type: 'boolean')]
     #[QueryParameter('filter[email_bounce]', description: 'Filter the results where the student\'s email_bounce matches the provided boolean.', type: 'boolean')]

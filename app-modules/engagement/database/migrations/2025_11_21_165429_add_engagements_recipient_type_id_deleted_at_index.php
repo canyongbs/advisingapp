@@ -34,36 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models\Scopes;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Scope;
-
-class InteractionConfidentialScope implements Scope
-{
-    /**
-     * Apply the scope to a given Eloquent query builder.
-     */
-    public function apply(Builder $builder, Model $model): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (auth()->user()?->isAdmin()) {
-            return;
-        }
-
-        $builder->where('is_confidential', false)->orWhere(function (Builder $query) {
-            $query->where('is_confidential', true)
-                ->where(function (Builder $query) {
-                    $query->where('user_id', auth()->id())
-                        ->orWhereHas('confidentialAccessTeams', function (Builder $query) {
-                            $query->whereHas('users', function (Builder $query) {
-                                $query->where('users.id', auth()->id());
-                            });
-                        })
-                        ->orWhereHas('confidentialAccessUsers', function (Builder $query) {
-                            $query->where('users.id', auth()->id());
-                        });
-                });
+        Schema::table('engagements', function (Blueprint $table) {
+            $table->index(
+                ['recipient_type', 'recipient_id', 'deleted_at'],
+                'engagements_recipient_type_id_deleted_at_index'
+            );
         });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('engagements', function (Blueprint $table) {
+            $table->dropIndex('engagements_recipient_type_id_deleted_at_index');
+        });
+    }
+};

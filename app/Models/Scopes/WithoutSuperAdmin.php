@@ -37,10 +37,14 @@
 namespace App\Models\Scopes;
 
 use App\Models\Authenticatable;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
 class WithoutSuperAdmin
 {
+    /**
+     * @param Builder<User> $query
+     */
     public function __invoke(Builder $query): void
     {
         $query->whereNot->role(Authenticatable::SUPER_ADMIN_ROLE);

@@ -41,7 +41,7 @@ use AdvisingApp\Research\Enums\ResearchRequestShareTarget;
 use AdvisingApp\Research\Jobs\PrepareResearchRequestEmailing;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Team\Models\Team;
-use App\Models\Scopes\WithoutSuperAdmin;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
@@ -254,7 +254,7 @@ trait CanManageRequests
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
                             ResearchRequestShareTarget::Team => Team::orderBy('name')->pluck('name', 'id'),
-                            ResearchRequestShareTarget::User => User::tap(new WithoutSuperAdmin())->orderBy('name')->pluck('name', 'id'),
+                            ResearchRequestShareTarget::User => User::query()->tap(new WithoutAnyAdmin())->orderBy('name')->pluck('name', 'id'),
                             default => '',
                         };
                     })

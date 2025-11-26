@@ -34,36 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models\Scopes;
+namespace App\Models\Scopes;
 
+use App\Models\Authenticatable;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Scope;
 
-class InteractionConfidentialScope implements Scope
+class WithoutAiAdmin
 {
     /**
-     * Apply the scope to a given Eloquent query builder.
+     * @param Builder<User> $query
      */
-    public function apply(Builder $builder, Model $model): void
+    public function __invoke(Builder $query): void
     {
-        if (auth()->user()?->isAdmin()) {
-            return;
-        }
-
-        $builder->where('is_confidential', false)->orWhere(function (Builder $query) {
-            $query->where('is_confidential', true)
-                ->where(function (Builder $query) {
-                    $query->where('user_id', auth()->id())
-                        ->orWhereHas('confidentialAccessTeams', function (Builder $query) {
-                            $query->whereHas('users', function (Builder $query) {
-                                $query->where('users.id', auth()->id());
-                            });
-                        })
-                        ->orWhereHas('confidentialAccessUsers', function (Builder $query) {
-                            $query->where('users.id', auth()->id());
-                        });
-                });
-        });
+        $query->whereNot->role(Authenticatable::AI_ADMIN_ROLE);
     }
 }

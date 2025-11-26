@@ -55,8 +55,6 @@ class ResearchAdvisorReportTable extends BaseWidget
 
     protected static ?string $heading = 'Research Advisors';
 
-    protected static bool $isLazy = false;
-
     protected static ?string $pollingInterval = null;
 
     protected int | string | array $columnSpan = 'full';

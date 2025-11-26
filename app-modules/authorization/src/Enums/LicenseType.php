@@ -86,6 +86,7 @@ enum LicenseType: string implements HasLabel
                 $query->role([
                     Authenticatable::SUPER_ADMIN_ROLE,
                     Authenticatable::PARTNER_ADMIN_ROLE,
+                    Authenticatable::AI_ADMIN_ROLE,
                 ]);
             })
             ->where('type', $this)

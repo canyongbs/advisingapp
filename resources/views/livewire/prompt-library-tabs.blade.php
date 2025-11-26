@@ -34,6 +34,8 @@
 @php
     use Illuminate\Support\Str;
     use AdvisingApp\Ai\Enums\AiPromptTabs;
+
+    $normalizeWhitespace = fn($text) => preg_replace('/[\x{00A0}\x{202F}\x{2007}\x{2009}\x{200A}\x{2002}\x{2003}\x{2004}\x{2005}\x{2006}\x{205F}]+/u', ' ', $text);
 @endphp
 
 <div class="mx-auto w-full max-w-7xl px-4 py-6">
@@ -65,10 +67,10 @@
                 <x-filament::card>
                     <div class="h-18 flex flex-col justify-start">
                         <h3 class="text-base font-semibold text-gray-900 dark:text-white">
-                            {{ $prompt->type->title }}
+                            {{ $normalizeWhitespace($prompt->type->title) }}
                         </h3>
                         <p class="mt-2 line-clamp-4 text-sm text-gray-600 dark:text-gray-300">
-                            {{ Str::limit($prompt->title, 50) }}
+                            {{ Str::limit($normalizeWhitespace($prompt->title), 50) }}
                         </p>
                     </div>
                 </x-filament::card>

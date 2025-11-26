@@ -52,9 +52,15 @@ abstract class Authenticatable extends BaseAuthenticatable
 
     public const PARTNER_ADMIN_ROLE = 'Partner Admin';
 
+    public const AI_ADMIN_ROLE = 'AI Admin';
+
+    protected bool $isAdmin;
+
     protected bool $isSuperAdmin;
 
     protected bool $isPartnerAdmin;
+
+    protected bool $isAiAdmin;
 
     /**
      * @param LicenseType | string | array<LicenseType | string> | null $type
@@ -66,6 +72,11 @@ abstract class Authenticatable extends BaseAuthenticatable
      */
     abstract public function hasAnyLicense(LicenseType | string | array | null $type): bool;
 
+    public function isAdmin(): bool
+    {
+        return $this->isAdmin ??= $this->hasAnyRole([static::SUPER_ADMIN_ROLE, static::PARTNER_ADMIN_ROLE, static::AI_ADMIN_ROLE]);
+    }
+
     public function isSuperAdmin(): bool
     {
         return $this->isSuperAdmin ??= $this->hasRole(static::SUPER_ADMIN_ROLE);
@@ -74,5 +85,15 @@ abstract class Authenticatable extends BaseAuthenticatable
     public function isPartnerAdmin(): bool
     {
         return $this->isPartnerAdmin ??= $this->hasRole(static::PARTNER_ADMIN_ROLE);
+    }
+
+    public function isAiAdmin(): bool
+    {
+        return $this->isAiAdmin ??= $this->hasRole(static::AI_ADMIN_ROLE);
+    }
+
+    public function canAccessAiSettings(): bool
+    {
+        return $this->isSuperAdmin() || $this->isAiAdmin();
     }
 }

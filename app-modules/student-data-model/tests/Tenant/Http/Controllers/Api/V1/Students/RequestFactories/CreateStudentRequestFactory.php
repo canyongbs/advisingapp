@@ -50,7 +50,7 @@ class CreateStudentRequestFactory extends RequestFactory
             'full_name' => $this->faker->name(),
             'preferred' => $this->faker->optional()->firstName(),
             'birthdate' => $this->faker->optional()->randomElement([$this->faker->date('Y-m-d'), null]),
-            'hsgrad' => $this->faker->optional()->randomElement([$this->faker->numberBetween(1980, 2030), null]),
+            'hsgrad' => $this->faker->optional()->randomElement([$this->faker->date('Y-m-d'), null]),
             'gender' => $this->faker->optional()->text(10),
             'sms_opt_out' => $this->faker->optional()->randomElement([true, false, null]),
             'email_bounce' => $this->faker->optional()->randomElement([true, false, null]),

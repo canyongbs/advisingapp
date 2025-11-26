@@ -66,8 +66,6 @@ class ProspectMessagesDetailTable extends BaseWidget
 
     protected static ?string $pollingInterval = null;
 
-    protected static bool $isLazy = false;
-
     protected static ?string $heading = 'Prospect Messages';
 
     protected int | string | array $columnSpan = 'full';
