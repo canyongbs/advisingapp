@@ -81,17 +81,11 @@ class ViewApplication extends ViewRecord
                         TextEntry::make('allowed_domains')
                             ->visible(fn (Application $record) => $record->embed_enabled)
                             ->badge(),
-                        IconEntry::make('is_authenticated')
-                            ->label('Is Authenticated')
-                            ->boolean(),
                         IconEntry::make('should_generate_prospects')
                             ->label('Generate Prospects')
                             ->boolean(),
                         IconEntry::make('is_wizard')
                             ->label('Multi-step form')
-                            ->boolean(),
-                        IconEntry::make('recaptcha_enabled')
-                            ->label('Enable reCAPTCHA')
                             ->boolean(),
                     ]),
                 Section::make('Fields')
