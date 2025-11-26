@@ -64,7 +64,7 @@ class HoldPolicy
     public function view(Authenticatable $authenticatable, Hold $hold): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "hold.{$hold->getKey()}.view",
+            abilities: 'hold.*.view',
             denyResponse: 'You do not have permission to view this hold.'
         );
     }
@@ -88,7 +88,7 @@ class HoldPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: "hold.{$hold->getKey()}.update",
+            abilities: 'hold.*.update',
             denyResponse: 'You do not have permission to update this hold.'
         );
     }
@@ -100,7 +100,7 @@ class HoldPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: "hold.{$hold->getKey()}.delete",
+            abilities: 'hold.*.delete',
             denyResponse: 'You do not have permission to delete this hold.'
         );
     }
@@ -112,7 +112,7 @@ class HoldPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: "hold.{$hold->getKey()}.restore",
+            abilities: 'hold.*.restore',
             denyResponse: 'You do not have permission to restore this hold.'
         );
     }
@@ -124,7 +124,7 @@ class HoldPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: "hold.{$hold->getKey()}.force-delete",
+            abilities: 'hold.*.force-delete',
             denyResponse: 'You do not have permission to force delete this hold.'
         );
     }
