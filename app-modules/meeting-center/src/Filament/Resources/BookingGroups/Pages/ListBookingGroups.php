@@ -39,7 +39,6 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use App\Filament\Tables\Columns\IdColumn;
-use Dom\Text;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -79,9 +78,9 @@ class ListBookingGroups extends ListRecords
                             ->distinct()
                             ->count('users.id');
                     }),
-                    TextColumn::make('createdBy.name')
+                TextColumn::make('createdBy.name')
                     ->label('Created'),
-                    TextColumn::make('lastUpdatedBy.name')
+                TextColumn::make('lastUpdatedBy.name')
                     ->label('Updated'),
             ])
             ->recordActions([
