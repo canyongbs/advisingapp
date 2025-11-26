@@ -58,14 +58,6 @@ class UserPolicy
         );
     }
 
-    public function viewEmail(Authenticatable $authenticatable): Response
-    {
-        return $authenticatable->canOrElse(
-            abilities: ['user.view-email'],
-            denyResponse: 'You do not have permission to view user email addresses.'
-        );
-    }
-
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
