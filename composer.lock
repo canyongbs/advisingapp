@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a4b564e252fb0ffac349f4ad339561a1",
+    "content-hash": "8d5dd40bbece273dfe3f0f49b0986801",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -691,7 +691,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/alert",
-                "reference": "c2d6571cf3f5e9c430455c25e3c67138f2075c4e"
+                "reference": "538c072626baf674219e821e77a1c1db8e360ab5"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -726,7 +726,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/application",
-                "reference": "1207b6e6885809329ba7130663e98f77259c4500"
+                "reference": "5097bfd1a046fa3927e32dda13fa0a2f2b6a27c8"
             },
             "require": {
                 "canyon-gbs/advising-app-form": "*",
@@ -762,7 +762,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/assistant",
-                "reference": "5435841031048ca2642798428743033a67407922"
+                "reference": "6b64f6594f6348f852984adc933dfd7d0d31dc67"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -797,7 +797,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/audit",
-                "reference": "0172d97bb7ba8c7b01a4ad60ce843da157ab1118"
+                "reference": "20c456df44472bd7b49afb52fc45ec96c86b0c54"
             },
             "require": {
                 "filament/filament": "^4.0",
@@ -835,7 +835,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/authorization",
-                "reference": "238dea874ec7d35cbc79db53c97f59342b962d96"
+                "reference": "e04aafda20382970fe9b2f9d264d87c2479ca699"
             },
             "require": {
                 "filament/filament": "^4.0",
@@ -871,7 +871,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/campaign",
-                "reference": "e203b305465cdb204ae9a48de15c0a757b894d7f"
+                "reference": "9f4a30998f9bd8979ad9be95a898ba31a863dbf6"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -906,7 +906,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/care-team",
-                "reference": "df456522fb3ad44d77567ea42f45304c114c6893"
+                "reference": "77e223a3059c839c0c4f62bbf8900a65fed9c8b8"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -941,7 +941,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/case-management",
-                "reference": "08fa7e9f2edd246d755b01c18fd0de457664792a"
+                "reference": "8e99f17b730073268f16427cf672d9e551360383"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -976,7 +976,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/consent",
-                "reference": "453be0285b70bfae4ebbf237904c4306782451fc"
+                "reference": "fe87869b88d29a5d01567cacf5e1b08f6932eb6c"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1011,7 +1011,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/division",
-                "reference": "4b57e968810e3c8ed199a8934575921463f6a636"
+                "reference": "baa0ab990bff697e6cdb198d86ebb1520a5245b3"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1046,7 +1046,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/engagement",
-                "reference": "929b76484c0a57de5942f7ebfc76e7bbd7c7995c"
+                "reference": "471b568db6b69bec53e737503cc97fca67bcc625"
             },
             "require": {
                 "filament/filament": "^4.0",
@@ -1082,7 +1082,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/form",
-                "reference": "63bbf4def2a699efabb2555a65c679e309d72e98"
+                "reference": "1117d11ab499b4e0371ee8153f5e6f7c1fa3eb43"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1117,7 +1117,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/in-app-communication",
-                "reference": "eecade65dddfa044997b93dcead7cea369e66006"
+                "reference": "d06f6f29c97f1fcd4af7b6a69f8aec252d07a377"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1152,7 +1152,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-aws-ses-event-handling",
-                "reference": "b46e7dc31850f1430c1e7d84c9813a43a35d04b5"
+                "reference": "b2005032619ebdd272325ff5609c21b386ec32ca"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1187,7 +1187,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-google-analytics",
-                "reference": "18eff5add1b412df418aef6beb69033411030b19"
+                "reference": "88d7d0ecd3345f8fc1eadc846a72b964c0e2e60c"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1222,7 +1222,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-google-recaptcha",
-                "reference": "3d803054c50f1860c7ee7cd6fbc7a827e8e1d4a4"
+                "reference": "0226698bf8716560eb094e6d12f177e6e9fcd3aa"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1257,7 +1257,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-microsoft-clarity",
-                "reference": "bc01798ed19df0542e281f37fa943af21763a9b0"
+                "reference": "0e97363e8ed37c3d1365f7f994bb69ee9e11e31c"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1329,7 +1329,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/interaction",
-                "reference": "7ceef9fe13845a1d5264c803e43b832f9ca71fa9"
+                "reference": "efe3c2c16cabe36e2b44142896bc536beb3d5771"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1364,7 +1364,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/meeting-center",
-                "reference": "5853b14ff8a16ec476a9ecb98793b68a5e177bf0"
+                "reference": "95651d6e8f31419908d91bb25af4c16564ae912f"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1437,7 +1437,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/portal",
-                "reference": "b82277b19dfa1cd4147380793b0c93742095af7b"
+                "reference": "11cdd9411371d5f6c7ee83e86a6542aa4128e9fa"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1507,7 +1507,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/prospect",
-                "reference": "5d6e169ed03bede0cf969967d86c24a8c89347a5"
+                "reference": "347a9a8a2c04df88a1eebab4e98ba64bb47e4d00"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1542,7 +1542,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/report",
-                "reference": "56ae026fbeb43ca0f27d3ee4640ce23371b9d3a9"
+                "reference": "bb57d8ae37b74f2c33d958461da063e18ca9aefd"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1577,7 +1577,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/resource-hub",
-                "reference": "af21f03efd3c2d98e5d674ca5b1e8adffe05b83e"
+                "reference": "bf056c7dd07d4dea7de340fc235f10810116266f"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1648,7 +1648,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/survey",
-                "reference": "1aef4bbe5c58a3be73ace241846d1c00c0153aa8"
+                "reference": "ddb5618409d7c66c898810c34b6399e0c7236159"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1683,7 +1683,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/task",
-                "reference": "d29e43e0b755649d1058c6bce2e2afa12623aeab"
+                "reference": "afad713ea125de66834b3d9920e7412a59950a71"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1718,7 +1718,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/team",
-                "reference": "521f53d72bf53572837fa466318f2d92f4bcd07b"
+                "reference": "eac22f3bf8aae633f7f8e35963b0b45b904dceb2"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1753,7 +1753,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/theme",
-                "reference": "93f024195f5ce7cd70f9353a6351b7c74fd77091"
+                "reference": "cf6ceb31bf4e83b4413bcd5f8239f4f29d1cae29"
             },
             "require": {
                 "filament/filament": "^4.0",
@@ -1790,7 +1790,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/timeline",
-                "reference": "9ea3d6bd6065c7678bed4794f092ecd53d4c78d7"
+                "reference": "b17341689d2b599e48b080eb27df4d57ca268b47"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1860,7 +1860,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/ai",
-                "reference": "382d3372ecc673ed1f992920bb77905c4c8696df"
+                "reference": "4835bf5e387a4a4669068a998ad4c1ff6117e685"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1895,7 +1895,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/basic-needs",
-                "reference": "f6ada68fda0401905ef691d1f23f969413cd08d6"
+                "reference": "4f3c31cca560c3094936380227284f26a30cd982"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -1930,7 +1930,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/group",
-                "reference": "7a753a5567afdb11529bc6b35baf227b0cad2085"
+                "reference": "36634662983a5d3c654f58b612aa83d6b1cdd8a1"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -2002,7 +2002,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/multifactor-authentication",
-                "reference": "ad33c42f42e05e5fb09bff3175b71f290d7b4fa0"
+                "reference": "b729c37f0cc709357b592c08293c0cc901ede380"
             },
             "require": {
                 "bacon/bacon-qr-code": "^3.0",
@@ -2039,7 +2039,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/pipeline",
-                "reference": "d18cb99428893c5990cd22d509d9f7433345cace"
+                "reference": "5db7fc7c753af31f286ee09b92cf42111f33a03e"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -2074,7 +2074,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/research",
-                "reference": "3ec23a58614ff46a17770fd37fa78bf101e08774"
+                "reference": "dfdc0727711d8c024d5c4635d0efcc6c24fbe055"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -2109,7 +2109,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/stock-media",
-                "reference": "e779e37b1bfaa3906772a0a23f80ba29a75a30e9"
+                "reference": "cb7ab349c4c8df1a0f699c85783e21dd07a9c54c"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -2144,7 +2144,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/workflow",
-                "reference": "8c78ba6bf77433a0774188dccb91bd2b10119ec9"
+                "reference": "6fd16099ac196c432302688f7a70261a13ae47fb"
             },
             "require": {
                 "filament/filament": "^4.0"
@@ -2175,16 +2175,16 @@
         },
         {
             "name": "canyongbs/common",
-            "version": "2.2.1",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/common.git",
-                "reference": "59b07fd91f3731e2dd4dbd2bffb6dc12beb7abee"
+                "reference": "a09dee329a32fa8485b1bd9da44bbd0d7cb65195"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/common/zipball/59b07fd91f3731e2dd4dbd2bffb6dc12beb7abee",
-                "reference": "59b07fd91f3731e2dd4dbd2bffb6dc12beb7abee",
+                "url": "https://api.github.com/repos/canyongbs/common/zipball/a09dee329a32fa8485b1bd9da44bbd0d7cb65195",
+                "reference": "a09dee329a32fa8485b1bd9da44bbd0d7cb65195",
                 "shasum": ""
             },
             "require": {
@@ -2226,9 +2226,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/common/issues",
-                "source": "https://github.com/canyongbs/common/tree/2.2.1"
+                "source": "https://github.com/canyongbs/common/tree/2.3.0"
             },
-            "time": "2025-11-13T09:24:43+00:00"
+            "time": "2025-11-26T10:24:56+00:00"
         },
         {
             "name": "canyongbs/filament-tiptap-editor",
