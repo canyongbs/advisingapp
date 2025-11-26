@@ -34,33 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Providers;
+namespace AdvisingApp\ResourceHub\Models;
 
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use AdvisingApp\ResourceHub\ResourceHubPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\ResourceHub\Database\Factories\ResourceHubArticleConcernFactory;
+use AdvisingApp\ResourceHub\Enums\ConcernStatus;
+use AdvisingApp\ResourceHub\Observers\ResourceHubArticleConcernObserver;
+use App\Models\BaseModel;
+use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ResourceHubServiceProvider extends ServiceProvider
+/**
+ * @mixin IdeHelperResourceHubArticleConcern
+ */
+#[ObservedBy(ResourceHubArticleConcernObserver::class)]
+class ResourceHubArticleConcern extends BaseModel implements Auditable
 {
-    public function register(): void
-    {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ResourceHubPlugin()));
-    }
+    /** @use HasFactory<ResourceHubArticleConcernFactory> */
+    use HasFactory;
 
-    public function boot(): void
+    use SoftDeletes;
+    use AuditableTrait;
+    use HasUuids;
+    use HasUserSaveTracking;
+
+    protected $fillable = [
+        'description',
+        'status',
+    ];
+
+    protected $casts = [
+        'status' => ConcernStatus::class,
+    ];
+
+    /**
+     * @return BelongsTo<ResourceHubArticle, $this>
+     */
+    public function resourceHubArticle(): BelongsTo
     {
-        Relation::morphMap([
-            'resource_hub_article' => ResourceHubArticle::class,
-            'resource_hub_category' => ResourceHubCategory::class,
-            'resource_hub_quality' => ResourceHubQuality::class,
-            'resource_hub_status' => ResourceHubStatus::class,
-            'resource_hub_article_concern' => ResourceHubArticleConcern::class,
-        ]);
+        return $this->belongsTo(ResourceHubArticle::class);
     }
 }

@@ -34,33 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Providers;
+namespace AdvisingApp\ResourceHub\Filament\Actions;
 
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use AdvisingApp\ResourceHub\Enums\ConcernStatus;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use AdvisingApp\ResourceHub\ResourceHubPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
 
-class ResourceHubServiceProvider extends ServiceProvider
+class ChangeConcernStatusAction extends Action
 {
-    public function register(): void
+    protected function setUp(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ResourceHubPlugin()));
+        parent::setUp();
+
+        $this
+            ->label('Change Status')
+            ->button()
+            ->outlined()
+            ->modalDescription('Select what status this concern should have.')
+            ->schema([
+                Select::make('status')
+                    ->options(ConcernStatus::class)
+                    ->enum(ConcernStatus::class)
+                    ->default(fn (ResourceHubArticleConcern $record) => $record->status->value),
+            ])
+            ->action(function (array $data, ResourceHubArticleConcern $record): void {
+                $record->status = $data['status'];
+
+                $record->save();
+            });
     }
 
-    public function boot(): void
+    public static function getDefaultName(): ?string
     {
-        Relation::morphMap([
-            'resource_hub_article' => ResourceHubArticle::class,
-            'resource_hub_category' => ResourceHubCategory::class,
-            'resource_hub_quality' => ResourceHubQuality::class,
-            'resource_hub_status' => ResourceHubStatus::class,
-            'resource_hub_article_concern' => ResourceHubArticleConcern::class,
-        ]);
+        return 'changeConcernStatus';
     }
 }

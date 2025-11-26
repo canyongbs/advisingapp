@@ -34,33 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Providers;
+namespace AdvisingApp\ResourceHub\Database\Factories;
 
+use AdvisingApp\ResourceHub\Enums\ConcernStatus;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use AdvisingApp\ResourceHub\ResourceHubPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ResourceHubServiceProvider extends ServiceProvider
+/**
+ * @extends Factory<ResourceHubArticleConcern>
+ */
+class ResourceHubArticleConcernFactory extends Factory
 {
-    public function register(): void
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new ResourceHubPlugin()));
-    }
-
-    public function boot(): void
-    {
-        Relation::morphMap([
-            'resource_hub_article' => ResourceHubArticle::class,
-            'resource_hub_category' => ResourceHubCategory::class,
-            'resource_hub_quality' => ResourceHubQuality::class,
-            'resource_hub_status' => ResourceHubStatus::class,
-            'resource_hub_article_concern' => ResourceHubArticleConcern::class,
-        ]);
+        return [
+            'description' => $this->faker->words(3, true),
+            'created_by_id' => User::factory(),
+            'status' => $this->faker->randomElement(ConcernStatus::cases()),
+            'resource_hub_article_id' => ResourceHubArticle::factory(),
+        ];
     }
 }

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\ResourceHub;
 
+use AdvisingApp\ResourceHub\Filament\Widgets\ResourceHubArticleConcernsTable;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
@@ -51,7 +52,8 @@ class ResourceHubPlugin implements Plugin
         $panel->discoverResources(
             in: __DIR__ . '/Filament/Resources',
             for: 'AdvisingApp\\ResourceHub\\Filament\\Resources'
-        );
+        )
+            ->livewireComponents([ResourceHubArticleConcernsTable::class]);
     }
 
     public function boot(Panel $panel): void {}
