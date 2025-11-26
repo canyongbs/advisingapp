@@ -116,7 +116,7 @@ it('validates the inputs', function (EditBookingGroupRequestFactory $data, array
     ],
 ]);
 
-it('can edit a booking group to remove users and teams ', function () {
+it('can edit a booking group', function () {
     $user = User::factory()->create();
 
     $user->givePermissionTo('group_appointment.view-any');
@@ -133,8 +133,8 @@ it('can edit a booking group to remove users and teams ', function () {
     $bookingGroup->teams()->attach($teams);
 
     $request = EditBookingGroupRequestFactory::new()->state([
-        'users' => [],
-        'teams' => [],
+        'name' => 'Updated Name',
+        'description' => 'Updated Description',
     ])->create();
 
     livewire(EditBookingGroup::class, [
@@ -147,8 +147,8 @@ it('can edit a booking group to remove users and teams ', function () {
 
     $bookingGroup->refresh();
 
-    expect($bookingGroup->users)->toHaveCount(0);
-    expect($bookingGroup->teams)->toHaveCount(0);
+    expect($bookingGroup->name)->toBe('Updated Name');
+    expect($bookingGroup->description)->toBe('Updated Description');
 });
 
 it('tracks last_updated_by user correctly', function () {
