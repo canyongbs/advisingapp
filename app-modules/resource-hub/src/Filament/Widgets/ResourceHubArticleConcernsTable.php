@@ -76,7 +76,7 @@ class ResourceHubArticleConcernsTable extends TableWidget
             ])
             ->recordActions([
                 ChangeConcernStatusAction::make()
-                    ->authorize('resource_hub_article.*.update'),
+                    ->authorize('update', $this->record),
             ])
             ->filters([
                 SelectFilter::make('status')
