@@ -43,9 +43,13 @@ use Illuminate\Auth\Access\Response;
 
 class BookingGroupPolicy
 {
-    public function before(Authenticatable $authenticatable): bool
+    public function before(Authenticatable $authenticatable): ?Response
     {
-        return BookingGroupFeature::active();
+        if (! BookingGroupFeature::active()) {
+            return Response::deny('The Booking Groups feature is not enabled for your account.');
+        }
+
+        return null;
     }
 
     public function viewAny(Authenticatable $authenticatable): Response

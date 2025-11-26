@@ -45,6 +45,8 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 
 class ListBookingGroups extends ListRecords
 {
@@ -59,13 +61,23 @@ class ListBookingGroups extends ListRecords
                 TextColumn::make('members')
                     ->label('Members')
                     ->getStateUsing(function (BookingGroup $record): int {
-                        $userIds = $record->users()->pluck('users.id');
-                        $teamUserIds = $record->teams()->with('users')->get()->pluck('users')->flatten()->pluck('id');
-
-                        return $userIds->merge($teamUserIds)->unique()->count();
-                    })
-                    ->badge()
-                    ->color('primary'),
+                        return DB::table('users')
+                            ->where(function (Builder $query) use ($record) {
+                                $query->whereExists(function (Builder $query) use ($record) {
+                                    $query->from('booking_group_users')
+                                        ->whereColumn('booking_group_users.user_id', 'users.id')
+                                        ->where('booking_group_users.booking_group_id', $record->id);
+                                })
+                                    ->orWhereExists(function (Builder $query) use ($record) {
+                                        $query->from('booking_group_teams')
+                                            ->join('teams', 'booking_group_teams.team_id', '=', 'teams.id')
+                                            ->whereColumn('teams.id', 'users.team_id')
+                                            ->where('booking_group_teams.booking_group_id', $record->id);
+                                    });
+                            })
+                            ->distinct()
+                            ->count('users.id');
+                    }),
             ])
             ->recordActions([
                 ViewAction::make(),

@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,17 +34,37 @@
 </COPYRIGHT>
 */
 
-use App\Features\BookingGroupFeature;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\MeetingCenter\Models;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\Team\Models\Team;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+/**
+ * @mixin IdeHelperBookingGroupTeam
+ */
+class BookingGroupTeam extends Pivot
+{
+    use HasUuids;
+    use SoftDeletes;
+
+    protected $table = 'booking_group_teams';
+
+    /**
+     * @return BelongsTo<BookingGroup, $this>
+     */
+    public function bookingGroup(): BelongsTo
     {
-        BookingGroupFeature::activate();
+        return $this->belongsTo(BookingGroup::class, 'booking_group_id', 'id', 'bookingGroup');
     }
 
-    public function down(): void
+    /**
+     * @return BelongsTo<Team, $this>
+     */
+    public function team(): BelongsTo
     {
-        BookingGroupFeature::deactivate();
+        return $this->belongsTo(Team::class, 'team_id', 'id', 'team');
     }
-};
+}

@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -36,28 +36,35 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphPivot;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperBookingGroupPivot
+ * @mixin IdeHelperBookingGroupUser
  */
-class BookingGroupPivot extends MorphPivot
+class BookingGroupUser extends Pivot
 {
     use HasUuids;
+    use SoftDeletes;
 
-    protected $fillable = [
-        'booking_group_id',
-        'user_id',
-    ];
+    protected $table = 'booking_group_users';
 
     /**
-     * @return MorphTo<Model, $this>
+     * @return BelongsTo<BookingGroup, $this>
      */
-    public function relatedTo(): MorphTo
+    public function bookingGroup(): BelongsTo
     {
-        return $this->morphTo();
+        return $this->belongsTo(BookingGroup::class, 'booking_group_id', 'id', 'bookingGroup');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id', 'user');
     }
 }

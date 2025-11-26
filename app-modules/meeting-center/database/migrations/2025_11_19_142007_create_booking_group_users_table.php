@@ -41,10 +41,10 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('booking_groups_pivot', function (Blueprint $table) {
+        Schema::create('booking_group_users', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('booking_group_id')->constrained('booking_groups');
-            $table->uuidMorphs('related_to');
+            $table->foreignUuid('booking_group_id')->constrained('booking_groups')->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -52,6 +52,6 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('booking_groups_pivot');
+        Schema::dropIfExists('booking_group_users');
     }
 };

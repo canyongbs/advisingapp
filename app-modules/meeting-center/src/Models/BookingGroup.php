@@ -43,7 +43,7 @@ use App\Models\BaseModel;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -63,31 +63,29 @@ class BookingGroup extends BaseModel implements Auditable
     ];
 
     /**
-    * @return MorphToMany<User, $this, covariant BookingGroupPivot>
+    * @return BelongsToMany<User, $this, covariant BookingGroupUser>
     */
-    public function users(): MorphToMany
+    public function users(): BelongsToMany
     {
-        return $this->morphedByMany(
+        return $this->belongsToMany(
             related: User::class,
-            name: 'related_to',
-            table: 'booking_groups_pivot'
+            table: 'booking_group_users'
         )
-            ->using(BookingGroupPivot::class)
+            ->using(BookingGroupUser::class)
             ->withPivot('id')
             ->withTimestamps();
     }
 
     /**
-     * @return MorphToMany<Team, $this, covariant BookingGroupPivot>
+     * @return BelongsToMany<Team, $this, covariant BookingGroupTeam>
      */
-    public function teams(): MorphToMany
+    public function teams(): BelongsToMany
     {
-        return $this->morphedByMany(
+        return $this->belongsToMany(
             related: Team::class,
-            name: 'related_to',
-            table: 'booking_groups_pivot'
+            table: 'booking_group_teams'
         )
-            ->using(BookingGroupPivot::class)
+            ->using(BookingGroupTeam::class)
             ->withPivot('id')
             ->withTimestamps();
     }
