@@ -38,7 +38,6 @@ namespace AdvisingApp\StudentDataModel\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
@@ -46,7 +45,6 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
  */
 class Hold extends Model
 {
-    use SoftDeletes;
     use UsesTenantConnection;
 
     /**
