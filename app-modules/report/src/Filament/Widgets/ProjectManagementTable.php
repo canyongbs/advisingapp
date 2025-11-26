@@ -111,7 +111,6 @@ class ProjectManagementTable extends BaseWidget
                     ->label('Tasks')
                     ->counts('tasks'),
             ])
-            ->paginated([5])
             ->filtersFormWidth(Width::Small);
     }
 }

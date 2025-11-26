@@ -134,7 +134,6 @@ class StudentCaseTable extends BaseWidget
                 ExportAction::make()
                     ->exporter(StudentCaseExporter::class),
             ])
-            ->paginated([5])
             ->filtersFormWidth(Width::Small);
     }
 }

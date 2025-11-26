@@ -62,8 +62,10 @@ use Filament\Support\Facades\FilamentView;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Filament\Widgets\TableWidget;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
+use Livewire\Component;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Ysfkaya\FilamentPhoneInput\Infolists\PhoneEntry;
 use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
@@ -304,7 +306,7 @@ class FilamentServiceProvider extends ServiceProvider
             $table
                 ->deferFilters(false)
                 ->paginationPageOptions([5, 10, 20])
-                ->defaultPaginationPageOption(5);
+                ->defaultPaginationPageOption(fn (Component $livewire) => $livewire instanceof TableWidget ? 5 : 10);
         });
 
         Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset
