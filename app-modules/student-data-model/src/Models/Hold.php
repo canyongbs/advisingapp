@@ -49,6 +49,19 @@ class Hold extends Model
     use SoftDeletes;
     use UsesTenantConnection;
 
+    /**
+     * This Model has a primary key that is auto generated as a v4 UUID by Postgres.
+     * We do so so that we can do things like view, edit, and delete a specific record in the UI / API.
+     * This ID should NEVER be used for relationships as these records do not belong to our system, our reset during syncs, and are not truly unique.
+     */
+    protected $primaryKey = 'id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = false;
+
     protected $fillable = [
         'sisid',
         'hold_id',

@@ -35,6 +35,7 @@
 */
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
@@ -42,15 +43,19 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::create('holds', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->uuid('id')
+                ->initial(DB::raw('uuidv7()'))
+                ->default(DB::raw('uuidv7()'))
+                ->primary();
 
             $table->string('sisid');
             $table->string('hold_id')->nullable();
             $table->string('name');
             $table->string('category');
 
-            $table->timestamps();
             $table->softDeletes();
+
+            $table->index('sisid');
         });
     }
 
