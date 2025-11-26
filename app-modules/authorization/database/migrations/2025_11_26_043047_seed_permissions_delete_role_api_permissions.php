@@ -42,8 +42,11 @@ return new class () extends Migration {
 
     /** @var array<string, string> */
     private array $permissions = [
-        'role.view-any' => 'Role',
-        'role.*.view' => 'Role',
+        'role.*.delete' => 'Role',
+        'role.*.force-delete' => 'Role',
+        'role.*.restore' => 'Role',
+        'role.*.update' => 'Role',
+        'role.create' => 'Role',
     ];
 
     /** @var array<string> */
@@ -54,14 +57,14 @@ return new class () extends Migration {
     public function up(): void
     {
         foreach ($this->guards as $guard) {
-            $this->createPermissions($this->permissions, $guard);
+            $this->deletePermissions(array_keys($this->permissions), $guard);
         }
     }
 
     public function down(): void
     {
         foreach ($this->guards as $guard) {
-            $this->deletePermissions(array_keys($this->permissions), $guard);
+            $this->createPermissions($this->permissions, $guard);
         }
     }
 };
