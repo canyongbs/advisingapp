@@ -74,9 +74,7 @@ class ListSurveys extends ListRecords
                     ->color('gray'),
                 EditAction::make(),
                 ReplicateAction::make('Duplicate')
-                    ->label('Duplicate')
                     ->modalHeading('Duplicate Survey')
-                    ->modalSubmitActionLabel('Duplicate')
                     ->mutateRecordDataUsing(function (array $data): array {
                         $data['name'] = "Copy - {$data['name']}";
 

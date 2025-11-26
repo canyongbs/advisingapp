@@ -74,9 +74,7 @@ class ListForms extends ListRecords
                     ->color('gray'),
                 EditAction::make(),
                 ReplicateAction::make('Duplicate')
-                    ->label('Duplicate')
                     ->modalHeading('Duplicate Form')
-                    ->modalSubmitActionLabel('Duplicate')
                     ->mutateRecordDataUsing(function (array $data): array {
                         $data['name'] = "Copy - {$data['name']}";
 
