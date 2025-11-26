@@ -44,8 +44,8 @@ return new class () extends Migration {
     {
         Schema::create('holds', function (Blueprint $table) {
             $table->uuid('id')
-                ->initial(DB::raw('uuidv7()'))
-                ->default(DB::raw('uuidv7()'))
+                ->initial(DB::raw('gen_random_uuid()'))
+                ->default(DB::raw('gen_random_uuid()'))
                 ->primary();
 
             $table->string('sisid');
