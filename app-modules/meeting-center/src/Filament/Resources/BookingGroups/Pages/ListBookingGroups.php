@@ -40,11 +40,13 @@ use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResou
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Google\Service\DriveActivity\Delete;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
@@ -86,6 +88,7 @@ class ListBookingGroups extends ListRecords
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
+                DeleteAction::make(),
             ]);
     }
 
