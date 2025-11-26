@@ -293,7 +293,6 @@ class ProspectInteractionUsersTable extends BaseWidget
                     ->searchable()
                     ->preload(),
             ])
-            ->paginated([5])
             ->filtersFormWidth(Width::Small);
     }
 }

@@ -124,7 +124,6 @@ class ProspectCaseTable extends BaseWidget
                 ViewAction::make()
                     ->url(fn (CaseModel $record) => CaseResource::getUrl('view', ['record' => $record, 'referrer' => 'respondentReport'])),
             ])
-            ->paginated([5])
             ->filtersFormWidth(Width::Small);
     }
 }
