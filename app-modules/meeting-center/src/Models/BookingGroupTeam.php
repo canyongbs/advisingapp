@@ -57,7 +57,7 @@ class BookingGroupTeam extends Pivot
      */
     public function bookingGroup(): BelongsTo
     {
-        return $this->belongsTo(BookingGroup::class, 'booking_group_id', 'id', 'bookingGroup');
+        return $this->belongsTo(BookingGroup::class);
     }
 
     /**
@@ -65,6 +65,6 @@ class BookingGroupTeam extends Pivot
      */
     public function team(): BelongsTo
     {
-        return $this->belongsTo(Team::class, 'team_id', 'id', 'team');
+        return $this->belongsTo(Team::class);
     }
 }
