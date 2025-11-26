@@ -293,6 +293,14 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     }
 
     /**
+     * @return HasMany<Hold, $this>
+     */
+    public function holds(): HasMany
+    {
+        return $this->hasMany(Hold::class, 'sisid', 'sisid');
+    }
+
+    /**
      * @return MorphMany<FormSubmission, $this>
      */
     public function formSubmissions(): MorphMany
