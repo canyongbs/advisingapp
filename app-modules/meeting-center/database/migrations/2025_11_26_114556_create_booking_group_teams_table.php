@@ -46,7 +46,6 @@ return new class () extends Migration {
             $table->foreignUuid('booking_group_id')->constrained('booking_groups')->cascadeOnDelete();
             $table->foreignUuid('team_id')->constrained('teams')->cascadeOnDelete();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
