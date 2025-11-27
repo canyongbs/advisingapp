@@ -87,7 +87,7 @@ test('ListBookingGroups page displays correct member count', function () {
 
     livewire(ListBookingGroups::class)
         ->assertSuccessful()
-        ->assertTableColumnExists('members')
+        ->assertTableColumnExists('members_count')
         ->assertSee('4');
 
     $bookingGroup->users()->detach($otherUsers->pluck('id')->toArray());
@@ -96,6 +96,6 @@ test('ListBookingGroups page displays correct member count', function () {
 
     livewire(ListBookingGroups::class)
         ->assertSuccessful()
-        ->assertTableColumnExists('members')
+        ->assertTableColumnExists('members_count')
         ->assertSee('0');
 });
