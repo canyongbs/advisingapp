@@ -66,7 +66,7 @@ class EditBookingGroup extends EditRecord
                 ->columnSpanFull()
                 ->label('Description'),
             Select::make('users')
-                ->label('User')
+                ->label('Users')
                 ->multiple()
                 ->relationship('users', 'name')
                 ->searchable()
