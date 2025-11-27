@@ -77,9 +77,6 @@ it('validates the inputs', function (EditBookingGroupRequestFactory $data, array
     $user = User::factory()->create();
 
     $bookingGroup = BookingGroup::factory()->for($user, 'createdBy')->create();
-
-    BookingGroup::factory()->for($user, 'createdBy')->create(['name' => 'Test Booking Group']);
-
     $request = EditBookingGroupRequestFactory::new($data)->create();
 
     livewire(EditBookingGroup::class, [

@@ -72,14 +72,12 @@ it('validates the inputs', function (CreateBookingGroupRequestFactory $data, arr
 
     $user = User::factory()->create();
 
-    BookingGroup::factory()->for($user, 'createdBy')->create(['name' => 'Test Booking Group']);
-
     livewire(CreateBookingGroup::class)
         ->fillForm($request)
         ->call('create')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseCount(BookingGroup::class, 1);
+    assertDatabaseCount(BookingGroup::class, 0);
 })->with([
     'name required' => fn () => [
         CreateBookingGroupRequestFactory::new()->without('name'),

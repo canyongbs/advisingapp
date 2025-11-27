@@ -37,6 +37,7 @@
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use AdvisingApp\Team\Models\Team;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -70,4 +71,31 @@ test('ListBookingGroups is gated with proper access control', function () {
         ->get(
             BookingGroupResource::getUrl('index')
         )->assertSuccessful();
+});
+
+test('ListBookingGroups page displays correct member count', function () {
+    $otherUsers = User::factory()->count(2)->create();
+
+    $team = Team::factory()->create();
+    User::factory()->count(2)->create(['team_id' => $team->id]);
+
+    $bookingGroup = BookingGroup::factory()->create();
+    $bookingGroup->users()->attach($otherUsers->pluck('id')->toArray());
+    $bookingGroup->teams()->attach($team->id);
+
+    asSuperAdmin();
+
+    livewire(ListBookingGroups::class)
+        ->assertSuccessful()
+        ->assertTableColumnExists('members')
+        ->assertSee('4');
+
+    $bookingGroup->users()->detach($otherUsers->pluck('id')->toArray());
+    $bookingGroup->teams()->detach($team->id);
+    $bookingGroup->refresh();
+
+    livewire(ListBookingGroups::class)
+        ->assertSuccessful()
+        ->assertTableColumnExists('members')
+        ->assertSee('0');
 });

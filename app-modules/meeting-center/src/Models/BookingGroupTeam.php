@@ -40,7 +40,6 @@ use AdvisingApp\Team\Models\Team;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @mixin IdeHelperBookingGroupTeam
@@ -48,7 +47,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class BookingGroupTeam extends Pivot
 {
     use HasUuids;
-    use SoftDeletes;
 
     protected $table = 'booking_group_teams';
 
