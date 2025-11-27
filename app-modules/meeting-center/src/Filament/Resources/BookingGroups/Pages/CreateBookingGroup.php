@@ -67,7 +67,7 @@ class CreateBookingGroup extends CreateRecord
                 ->searchable()
                 ->preload(),
             Select::make('teams')
-                ->label('Team')
+                ->label('Teams')
                 ->multiple()
                 ->relationship('teams', 'name')
                 ->searchable()
