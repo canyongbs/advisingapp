@@ -61,7 +61,7 @@ class CreateBookingGroup extends CreateRecord
                 ->columnSpanFull()
                 ->label('Description'),
             Select::make('users')
-                ->label('User')
+                ->label('Users')
                 ->multiple()
                 ->relationship('users', 'name')
                 ->searchable()
