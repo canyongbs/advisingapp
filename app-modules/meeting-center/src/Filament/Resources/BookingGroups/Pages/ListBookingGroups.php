@@ -1,0 +1,111 @@
+<?php
+
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
+
+    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS LLC respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
+      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS LLC.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+
+namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
+
+use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
+
+class ListBookingGroups extends ListRecords
+{
+    protected static string $resource = BookingGroupResource::class;
+
+    protected static ?string $title = 'Configuration';
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->modifyQueryUsing(function (EloquentBuilder $query): EloquentBuilder {
+                return $query
+                    ->select('booking_groups.*')
+                    ->selectSub(function (Builder $subQuery): void {
+                        $subQuery
+                            ->from('users')
+                            ->selectRaw('count(distinct users.id)')
+                            ->where(function (Builder $userQuery): void {
+                                $userQuery
+                                    ->whereExists(function (Builder $directMembershipQuery): void {
+                                        $directMembershipQuery
+                                            ->select(DB::raw(1))
+                                            ->from('booking_group_users')
+                                            ->whereColumn('booking_group_users.user_id', 'users.id')
+                                            ->whereColumn('booking_group_users.booking_group_id', 'booking_groups.id');
+                                    })
+                                    ->orWhereExists(function (Builder $teamMembershipQuery): void {
+                                        $teamMembershipQuery
+                                            ->select(DB::raw(1))
+                                            ->from('booking_group_teams')
+                                            ->join('teams', 'booking_group_teams.team_id', '=', 'teams.id')
+                                            ->whereColumn('teams.id', 'users.team_id')
+                                            ->whereColumn('booking_group_teams.booking_group_id', 'booking_groups.id');
+                                    });
+                            });
+                    }, 'members_count');
+            })
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name'),
+                TextColumn::make('members_count')
+                    ->label('Members'),
+                TextColumn::make('createdBy.name')
+                    ->label('Created'),
+                TextColumn::make('lastUpdatedBy.name')
+                    ->label('Updated'),
+            ])
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
+}
