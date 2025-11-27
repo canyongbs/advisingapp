@@ -42,7 +42,6 @@ use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\Alignment;
 
 class EditApplication extends EditRecord
 {
@@ -59,20 +58,15 @@ class EditApplication extends EditRecord
             ->components($this->fields());
     }
 
-    public function getFormActionsAlignment(): string | Alignment
-    {
-        return Alignment::End;
-    }
-
     protected function getFormActions(): array
     {
         return [
-            $this->getCancelFormAction()
-                ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->record])),
-            DeleteAction::make(),
             $this->getSaveFormAction()
                 ->label('Save')
                 ->formId('form'),
+            DeleteAction::make(),
+            $this->getCancelFormAction()
+                ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->record])),
         ];
     }
 
