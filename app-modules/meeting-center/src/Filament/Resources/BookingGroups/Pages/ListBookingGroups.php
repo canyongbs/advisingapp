@@ -64,7 +64,7 @@ class ListBookingGroups extends ListRecords
                     ->selectSub(function (Builder $subQuery): void {
                         $subQuery
                             ->from('users')
-                            ->selectRaw('COUNT(DISTINCT users.id)')
+                            ->selectRaw('count(distinct users.id)')
                             ->where(function (Builder $userQuery): void {
                                 $userQuery
                                     ->whereExists(function (Builder $directMembershipQuery): void {
