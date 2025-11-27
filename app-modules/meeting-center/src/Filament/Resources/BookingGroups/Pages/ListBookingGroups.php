@@ -37,7 +37,6 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
-use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -46,6 +45,7 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
@@ -58,29 +58,38 @@ class ListBookingGroups extends ListRecords
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (EloquentBuilder $query): EloquentBuilder {
+                return $query
+                    ->select('booking_groups.*')
+                    ->selectSub(function (Builder $subQuery): void {
+                        $subQuery
+                            ->from('users')
+                            ->selectRaw('COUNT(DISTINCT users.id)')
+                            ->where(function (Builder $userQuery): void {
+                                $userQuery
+                                    ->whereExists(function (Builder $directMembershipQuery): void {
+                                        $directMembershipQuery
+                                            ->select(DB::raw(1))
+                                            ->from('booking_group_users')
+                                            ->whereColumn('booking_group_users.user_id', 'users.id')
+                                            ->whereColumn('booking_group_users.booking_group_id', 'booking_groups.id');
+                                    })
+                                    ->orWhereExists(function (Builder $teamMembershipQuery): void {
+                                        $teamMembershipQuery
+                                            ->select(DB::raw(1))
+                                            ->from('booking_group_teams')
+                                            ->join('teams', 'booking_group_teams.team_id', '=', 'teams.id')
+                                            ->whereColumn('teams.id', 'users.team_id')
+                                            ->whereColumn('booking_group_teams.booking_group_id', 'booking_groups.id');
+                                    });
+                            });
+                    }, 'members_count');
+            })
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name'),
-                TextColumn::make('members')
-                    ->label('Members')
-                    ->getStateUsing(function (BookingGroup $record): int {
-                        return DB::table('users')
-                            ->where(function (Builder $query) use ($record) {
-                                $query->whereExists(function (Builder $query) use ($record) {
-                                    $query->from('booking_group_users')
-                                        ->whereColumn('booking_group_users.user_id', 'users.id')
-                                        ->where('booking_group_users.booking_group_id', $record->id);
-                                })
-                                    ->orWhereExists(function (Builder $query) use ($record) {
-                                        $query->from('booking_group_teams')
-                                            ->join('teams', 'booking_group_teams.team_id', '=', 'teams.id')
-                                            ->whereColumn('teams.id', 'users.team_id')
-                                            ->where('booking_group_teams.booking_group_id', $record->id);
-                                    });
-                            })
-                            ->distinct()
-                            ->count('users.id');
-                    }),
+                TextColumn::make('members_count')
+                    ->label('Members'),
                 TextColumn::make('createdBy.name')
                     ->label('Created'),
                 TextColumn::make('lastUpdatedBy.name')
