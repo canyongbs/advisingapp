@@ -46,6 +46,10 @@ use Filament\Resources\Resource;
 
 class BookingGroupResource extends Resource
 {
+    protected static ?string $navigationLabel = 'Configuration';
+
+    protected static ?string $breadcrumb = 'Configuration';
+
     protected static ?int $navigationSort = 20;
 
     protected static ?string $model = BookingGroup::class;

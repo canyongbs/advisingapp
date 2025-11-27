@@ -53,6 +53,8 @@ class ListBookingGroups extends ListRecords
 {
     protected static string $resource = BookingGroupResource::class;
 
+    protected static ?string $title = 'Configuration';
+
     public function table(Table $table): Table
     {
         return $table
