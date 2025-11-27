@@ -59,7 +59,7 @@ class ViewBookingGroup extends ViewRecord
                     TextEntry::make('users.name')
                         ->placeholder('N/A')
                         ->badge()
-                        ->label('User'),
+                        ->label('Users'),
                     TextEntry::make('teams.name')
                         ->placeholder('N/A')
                         ->badge()
