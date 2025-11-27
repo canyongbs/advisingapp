@@ -39,11 +39,9 @@ namespace App\Filament\Clusters;
 use Filament\Clusters\Cluster;
 use UnitEnum;
 
-class GroupAppointment extends Cluster
+class GroupAppointments extends Cluster
 {
     protected static ?int $navigationSort = 70;
 
     protected static string | UnitEnum | null $navigationGroup = 'CRM';
-
-    protected static ?string $navigationLabel = 'Group Appointments';
 }

@@ -41,7 +41,7 @@ use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\EditBooking
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ViewBookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use App\Filament\Clusters\GroupAppointment;
+use App\Filament\Clusters\GroupAppointments;
 use Filament\Resources\Resource;
 
 class BookingGroupResource extends Resource
@@ -54,7 +54,7 @@ class BookingGroupResource extends Resource
 
     protected static ?string $model = BookingGroup::class;
 
-    protected static ?string $cluster = GroupAppointment::class;
+    protected static ?string $cluster = GroupAppointments::class;
 
     public static function getPages(): array
     {

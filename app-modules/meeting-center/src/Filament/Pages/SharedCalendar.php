@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Pages;
 
-use App\Filament\Clusters\GroupAppointment;
+use App\Filament\Clusters\GroupAppointments;
 use App\Models\User;
 use Filament\Pages\Page;
 
@@ -46,7 +46,7 @@ class SharedCalendar extends Page
 
     protected string $view = 'filament.pages.coming-soon';
 
-    protected static ?string $cluster = GroupAppointment::class;
+    protected static ?string $cluster = GroupAppointments::class;
 
     protected static ?string $navigationLabel = 'Shared Calendar';
 
