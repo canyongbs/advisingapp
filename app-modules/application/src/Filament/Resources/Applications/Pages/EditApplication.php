@@ -38,12 +38,8 @@ namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\Concerns\HasSharedFormConfiguration;
-use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 
@@ -62,46 +58,27 @@ class EditApplication extends EditRecord
             ->components($this->fields());
     }
 
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getSaveFormAction()
+                ->label('Save')
+                ->formId('form'),
+            DeleteAction::make(),
+            $this->getCancelFormAction()
+                ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->record])),
+        ];
+    }
+
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('preview')
-                ->label('Preview')
-                ->icon('heroicon-o-eye')
-                ->url(fn (Application $application) => route('applications.preview', $application))
-                ->openUrlInNewTab(),
-            Action::make('view')
-                ->url(fn (Application $application) => route('applications.show', ['application' => $application]))
-                ->icon('heroicon-m-arrow-top-right-on-square')
-                ->openUrlInNewTab(),
-            Action::make('embed_snippet')
-                ->label('Embed Snippet')
-                ->schema(
-                    [
-                        TextEntry::make('snippet')
-                            ->label('Click to Copy')
-                            ->state(function (Application $application) {
-                                $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($application);
-
-                                $state = <<<EOD
-                                ```
-                                {$code}
-                                ```
-                                EOD;
-
-                                return str($state)->markdown()->toHtmlString();
-                            })
-                            ->copyable()
-                            ->copyableState(fn (Application $application) => resolve(GenerateSubmissibleEmbedCode::class)->handle($application))
-                            ->copyMessage('Copied!')
-                            ->copyMessageDuration(1500)
-                            ->extraAttributes(['class' => 'embed-code-snippet']),
-                    ]
-                )
-                ->modalSubmitAction(false)
-                ->modalCancelActionLabel('Close')
-                ->hidden(fn (Application $application) => ! $application->embed_enabled),
+            $this->getSaveFormAction()
+                ->label('Save')
+                ->formId('form'),
             DeleteAction::make(),
+            $this->getCancelFormAction()
+                ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->record])),
         ];
     }
 }

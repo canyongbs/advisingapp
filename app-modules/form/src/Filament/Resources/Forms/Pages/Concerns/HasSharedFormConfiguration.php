@@ -165,7 +165,7 @@ trait HasSharedFormConfiguration
     public function fieldBuilder(): TiptapEditor
     {
         return TiptapEditor::make('content')
-            ->blocks(fn (Get $get): array => FormFieldBlockRegistry::get($get('is_authenticated')))
+            ->blocks(fn (Get $get): array => FormFieldBlockRegistry::get($get('is_authenticated') ?? false))
             ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
             ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()

@@ -41,6 +41,7 @@ use AdvisingApp\Application\Filament\Resources\Applications\Pages\EditApplicatio
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ListApplications;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationSubmissions;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationWorkflows;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ViewApplication;
 use AdvisingApp\Application\Models\Application;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
@@ -71,6 +72,7 @@ class ApplicationResource extends Resource
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
+            ViewApplication::class,
             EditApplication::class,
             ManageApplicationWorkflows::class,
             ManageApplicationSubmissions::class,
@@ -83,6 +85,7 @@ class ApplicationResource extends Resource
             'index' => ListApplications::route('/'),
             'create' => CreateApplication::route('/create'),
             'edit' => EditApplication::route('/{record}/edit'),
+            'view' => ViewApplication::route('/{record}'),
             'manage-application-workflows' => ManageApplicationWorkflows::route('/{record}/workflows'),
             'manage-submissions' => ManageApplicationSubmissions::route('/{record}/submissions'),
         ];
