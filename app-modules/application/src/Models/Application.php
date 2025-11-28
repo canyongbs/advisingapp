@@ -39,6 +39,7 @@ namespace AdvisingApp\Application\Models;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use App\Enums\FontWeight;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -66,6 +67,8 @@ class Application extends Submissible implements HasMedia
         'content',
         'should_generate_prospects',
         'title',
+        'title_color',
+        'title_font_weight',
     ];
 
     protected $casts = [
@@ -75,6 +78,7 @@ class Application extends Submissible implements HasMedia
         'is_wizard' => 'boolean',
         'rounding' => Rounding::class,
         'should_generate_prospects' => 'boolean',
+        'title_font_weight' => FontWeight::class,
     ];
 
     /**

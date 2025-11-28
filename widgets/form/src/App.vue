@@ -138,6 +138,8 @@
     const formRecaptchaKey = ref(null);
     const onScreenResponse = ref(null);
     const schema = ref([]);
+    const formTitleFontWeight = ref('');
+    const formTitleColor = ref({});
 
     const authentication = ref({
         code: null,
@@ -163,6 +165,8 @@
                 formIsAuthenticated.value = json.is_authenticated ?? false;
                 formSubmissionUrl.value = json.submission_url ?? null;
                 formPrimaryColor.value = json.primary_color;
+                formTitleFontWeight.value = json.title_font_weight;
+                formTitleColor.value = json.title_color;
                 authentication.value.requestUrl = json.authentication_url ?? null;
 
                 formRecaptchaEnabled.value = json.recaptcha_enabled ?? false;
@@ -408,7 +412,13 @@
                 </p>
             </div>
 
-            <h1>
+            <h1
+                :style="{
+                    '--title-font-weight': formTitleFontWeight,
+                    color: `rgb(${formTitleColor[900]})`,
+                }"
+                class="font-[--title-font-weight]"
+            >
                 {{ formName }}
             </h1>
 

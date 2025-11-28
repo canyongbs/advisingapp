@@ -39,6 +39,7 @@ namespace AdvisingApp\Form\Models;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Observers\FormObserver;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use App\Enums\FontWeight;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -69,6 +70,8 @@ class Form extends Submissible
         'on_screen_response',
         'generate_prospects',
         'title',
+        'title_font_weight',
+        'title_color',
     ];
 
     protected $casts = [
@@ -80,6 +83,7 @@ class Form extends Submissible
         'recaptcha_enabled' => 'boolean',
         'rounding' => Rounding::class,
         'generate_prospects' => 'boolean',
+        'title_font_weight' => FontWeight::class,
     ];
 
     /**
