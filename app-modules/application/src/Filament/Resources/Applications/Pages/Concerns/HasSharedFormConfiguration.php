@@ -43,6 +43,8 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Rules\IsDomain;
+use App\Enums\FontWeight;
+use App\Features\FontFeature;
 use App\Features\FormApplicationTitleFeature;
 use App\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
@@ -135,6 +137,11 @@ trait HasSharedFormConfiguration
                 ->columnSpanFull(),
             Section::make('Appearance')
                 ->schema([
+                    Select::make('title_font_weight')
+                        ->options(FontWeight::class)
+                        ->visible(FontFeature::active()),
+                    ColorSelect::make('title_color')
+                        ->visible(FontFeature::active()),
                     ColorSelect::make('primary_color'),
                     Select::make('rounding')
                         ->options(Rounding::class),
