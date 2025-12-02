@@ -43,7 +43,7 @@ use AdvisingApp\Survey\Filament\Blocks\SurveyFieldBlockRegistry;
 use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Survey\Models\SurveyField;
 use AdvisingApp\Survey\Models\SurveyStep;
-use App\Filament\Forms\Components\ColorSelect;
+use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
