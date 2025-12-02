@@ -77,7 +77,7 @@ class GoogleCalendarController extends CalendarController
         $calendar->provider_email = $email;
         $calendar->oauth_token = $token['access_token'];
         $calendar->oauth_refresh_token = $token['refresh_token'];
-        $calendar->oauth_token_expires_at = Carbon::parse($token['created'] + $token['expires_in']);
+        $calendar->oauth_token_expires_at = Carbon::parse((int) $token['created'] + (int) $token['expires_in']);
 
         $user->calendar()->save($calendar);
 

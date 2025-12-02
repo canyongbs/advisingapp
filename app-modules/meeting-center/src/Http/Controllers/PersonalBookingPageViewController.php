@@ -34,48 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Models\User;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Schema;
+use AdvisingApp\MeetingCenter\Actions\GeneratePersonalBookingPageEmbedCode;
+use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
+use App\Http\Controllers\Controller;
+use Illuminate\View\View;
 
-/**
- * @property Schema $form
- */
-class OfficeHours extends ProfilePage
+class PersonalBookingPageViewController extends Controller
 {
-    protected static ?string $slug = 'office-hours';
-
-    protected static ?string $title = 'Office Hours';
-
-    protected static ?int $navigationSort = 90;
-
-    public function form(Schema $schema): Schema
+    public function __invoke(string $slug, GeneratePersonalBookingPageEmbedCode $generateEmbedCode): View
     {
-        /** @var User $user */
-        $user = auth()->user();
-        $hasCrmLicense = $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
+        $bookingPage = PersonalBookingPage::query()
+            ->where('slug', $slug)
+            ->where('is_enabled', true)
+            ->with('user')
+            ->firstOrFail();
 
-        return $schema
-            ->components([
-                Section::make('Office Hours')
-                    ->visible($hasCrmLicense)
-                    ->schema([
-                        Toggle::make('office_hours_are_enabled')
-                            ->label('Enable Office Hours')
-                            ->live(),
-                        Checkbox::make('appointments_are_restricted_to_existing_students')
-                            ->label('Restrict appointments to existing students')
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                        Section::make('Days')
-                            ->schema($this->getHoursForDays('office_hours'))
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                    ]),
-            ]);
+        $embedCode = $generateEmbedCode($bookingPage);
+
+        return view('meeting-center::direct-booking', [
+            'bookingPage' => $bookingPage,
+            'embedCode' => $embedCode,
+        ]);
     }
 }

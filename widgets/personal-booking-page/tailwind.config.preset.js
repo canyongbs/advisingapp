@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,34 +31,28 @@
 
 </COPYRIGHT>
 */
+import forms from '@tailwindcss/forms';
+import typography from '@tailwindcss/typography';
 
-use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\MeetingCenter\Http\Controllers\GoogleCalendarController;
-use AdvisingApp\MeetingCenter\Http\Controllers\OutlookCalendarController;
-use AdvisingApp\MeetingCenter\Http\Controllers\PersonalBookingPageViewController;
-use AdvisingApp\MeetingCenter\Livewire\RenderEventRegistrationForm;
-use Illuminate\Support\Facades\Route;
-
-Route::middleware(['web', 'auth'])
-    ->name('calendar.')
-    ->prefix('/calendar')
-    ->group(function () {
-        provider_routes(CalendarProvider::Google, GoogleCalendarController::class);
-        provider_routes(CalendarProvider::Outlook, OutlookCalendarController::class);
-    });
-
-Route::middleware('web')
-    ->prefix('event-registration')
-    ->name('event-registration.')
-    ->group(function () {
-        Route::get('/{event}/respond', RenderEventRegistrationForm::class)
-            ->name('show');
-    });
-
-Route::middleware('web')
-    ->prefix('direct-booking')
-    ->name('direct-booking.')
-    ->group(function () {
-        Route::get('/{slug}', PersonalBookingPageViewController::class)
-            ->name('show');
-    });
+export default {
+    theme: {
+        extend: {
+            colors: {
+                primary: {
+                    50: 'rgba(var(--primary-50), <alpha-value>)',
+                    100: 'rgba(var(--primary-100), <alpha-value>)',
+                    200: 'rgba(var(--primary-200), <alpha-value>)',
+                    300: 'rgba(var(--primary-300), <alpha-value>)',
+                    400: 'rgba(var(--primary-400), <alpha-value>)',
+                    500: 'rgba(var(--primary-500), <alpha-value>)',
+                    600: 'rgba(var(--primary-600), <alpha-value>)',
+                    700: 'rgba(var(--primary-700), <alpha-value>)',
+                    800: 'rgba(var(--primary-800), <alpha-value>)',
+                    900: 'rgba(var(--primary-900), <alpha-value>)',
+                    950: 'rgba(var(--primary-950), <alpha-value>)',
+                },
+            },
+        },
+    },
+    plugins: [forms, typography],
+};

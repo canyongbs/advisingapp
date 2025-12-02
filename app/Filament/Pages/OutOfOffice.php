@@ -52,7 +52,7 @@ class OutOfOffice extends ProfilePage
 
     protected static ?string $title = 'Out Of Office';
 
-    protected static ?int $navigationSort = 90;
+    protected static ?int $navigationSort = 100;
 
     public function form(Schema $schema): Schema
     {

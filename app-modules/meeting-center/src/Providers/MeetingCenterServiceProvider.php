@@ -48,6 +48,7 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
+use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
@@ -75,8 +76,11 @@ class MeetingCenterServiceProvider extends ServiceProvider
             'event_registration_form_field' => EventRegistrationFormField::class,
             'event_registration_form_step' => EventRegistrationFormStep::class,
             'event_registration_form_submission' => EventRegistrationFormSubmission::class,
+            'personal_booking_page' => PersonalBookingPage::class,
         ]);
 
         Livewire::component('event-attendee-submissions-manager', EventAttendeeSubmissionsManager::class);
+
+        $this->loadRoutesFrom(__DIR__ . '/../../routes/widgets.php');
     }
 }

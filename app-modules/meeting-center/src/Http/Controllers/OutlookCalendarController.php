@@ -77,7 +77,7 @@ class OutlookCalendarController extends CalendarController
         $calendar->provider_email = $socialiteUser->getEmail();
         $calendar->oauth_token = $socialiteUser->token;
         $calendar->oauth_refresh_token = $socialiteUser->refreshToken;
-        $calendar->oauth_token_expires_at = now()->addSeconds($socialiteUser->expiresIn);
+        $calendar->oauth_token_expires_at = now()->addSeconds((int) $socialiteUser->expiresIn);
 
         $user->calendar()->save($calendar);
 

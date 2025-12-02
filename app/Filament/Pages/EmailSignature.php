@@ -54,7 +54,7 @@ class EmailSignature extends ProfilePage
 
     protected static ?string $title = 'Email Signature';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 40;
 
     public function form(Schema $schema): Schema
     {

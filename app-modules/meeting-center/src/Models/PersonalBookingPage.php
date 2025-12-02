@@ -34,48 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\MeetingCenter\Models;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\BaseModel;
 use App\Models\User;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property Schema $form
+ * @mixin IdeHelperPersonalBookingPage
  */
-class OfficeHours extends ProfilePage
+class PersonalBookingPage extends BaseModel
 {
-    protected static ?string $slug = 'office-hours';
+    protected $fillable = [
+        'user_id',
+        'is_enabled',
+        'default_appointment_duration',
+        'slug',
+    ];
 
-    protected static ?string $title = 'Office Hours';
+    protected $casts = [
+        'is_enabled' => 'boolean',
+        'default_appointment_duration' => 'integer',
+    ];
 
-    protected static ?int $navigationSort = 90;
-
-    public function form(Schema $schema): Schema
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
     {
-        /** @var User $user */
-        $user = auth()->user();
-        $hasCrmLicense = $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
-
-        return $schema
-            ->components([
-                Section::make('Office Hours')
-                    ->visible($hasCrmLicense)
-                    ->schema([
-                        Toggle::make('office_hours_are_enabled')
-                            ->label('Enable Office Hours')
-                            ->live(),
-                        Checkbox::make('appointments_are_restricted_to_existing_students')
-                            ->label('Restrict appointments to existing students')
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                        Section::make('Days')
-                            ->schema($this->getHoursForDays('office_hours'))
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                    ]),
-            ]);
+        return $this->belongsTo(User::class);
     }
 }

@@ -50,7 +50,7 @@ class Timezone extends ProfilePage
 
     protected static ?string $title = 'Timezone';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 30;
 
     public function form(Schema $schema): Schema
     {
