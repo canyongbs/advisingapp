@@ -50,6 +50,12 @@ return new class () extends Migration {
             DB::table('event_registration_forms')->whereNotNull('primary_color')->whereIn('primary_color', ['slate', 'zinc', 'neutral', 'stone'])->update(['primary_color' => 'gray']);
 
             DB::table('surveys')->whereNotNull('primary_color')->whereIn('primary_color', ['slate', 'zinc', 'neutral', 'stone'])->update(['primary_color' => 'gray']);
+
+            DB::table('settings')
+                ->whereIn('group', ['portal', 'college_branding'])
+                ->whereIn('name', ['resource_hub_portal_primary_color', 'color'])
+                ->whereRaw('payload::text IN (?, ?, ?, ?)', [json_encode('slate'), json_encode('zinc'), json_encode('neutral'), json_encode('stone')])
+                ->update(['payload' => json_encode('gray')]);
         });
     }
 };
