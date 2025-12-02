@@ -153,7 +153,7 @@ class ViewForm extends ViewRecord
                             ->visible(FontFeature::active()),
                         ColorEntry::make('title_color')
                             ->state(fn (Form $record): ?string => $record->title_color ? Color::convertToRgb(Color::all()[$record->title_color][600]) : null)
-                        ->visible(FontFeature::active()),
+                            ->visible(FontFeature::active()),
                         ColorEntry::make('primary_color')
                             ->state(fn (Form $record): ?string => $record->primary_color ? Color::convertToRgb(Color::all()[$record->primary_color][600]) : null),
                         TextEntry::make('rounding'),
