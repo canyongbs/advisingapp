@@ -129,7 +129,6 @@
             if (json.error) {
                 throw new Error(json.error);
             }
-            console.log('Application Widget Config:', json);
 
             applicationName.value = json.name;
             applicationDescription.value = json.description;
