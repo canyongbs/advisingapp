@@ -46,7 +46,6 @@ use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use App\Features\ResourceHubArticleManagersFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use App\Models\User;
 use Filament\Actions\Action as BaseAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -168,9 +167,9 @@ class EditResourceHubArticle extends EditRecord
                                         Toggle::make('remove_prior')
                                             ->label('Remove all previous assigned managers?')
                                             ->default(false)
-                                            ->hintIconTooltip('If selected, all prior managers will be removed.')
+                                            ->hintIconTooltip('If selected, all prior managers will be removed.'),
                                     ])
-                                    ->visible(ResourceHubArticleManagersFeature::active())
+                                    ->visible(ResourceHubArticleManagersFeature::active()),
                             ]),
                     ])
                     ->columnSpanFull(),
@@ -208,7 +207,7 @@ class EditResourceHubArticle extends EditRecord
 
         $data = $this->form->getRawState();
 
-        if(! empty($data['manager_ids'])) {
+        if (! empty($data['manager_ids'])) {
             $resourceHubArticle->managers()->sync($data['manager_ids'], $data['remove_prior']);
         }
     }
