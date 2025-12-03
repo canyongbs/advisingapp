@@ -200,14 +200,8 @@ class PersonalBookingPageWidgetController extends Controller
             // Check for overlapping events
             $hasConflict = CalendarEvent::query()
                 ->where('calendar_id', $user->calendar->id)
-                ->where(function (Builder $query) use ($startsAt, $endsAt) {
-                    $query->whereBetween('starts_at', [$startsAt, $endsAt])
-                        ->orWhereBetween('ends_at', [$startsAt, $endsAt])
-                        ->orWhere(function (Builder $query) use ($startsAt, $endsAt) {
-                            $query->where('starts_at', '<=', $startsAt)
-                                ->where('ends_at', '>=', $endsAt);
-                        });
-                })
+                ->where('starts_at', '<', $endsAt)
+                ->where('ends_at', '>', $startsAt)
                 ->lockForUpdate()
                 ->exists();
 
