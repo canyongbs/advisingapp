@@ -63,12 +63,8 @@
     const showBookingForm = ref(false);
     const bookingSuccess = ref(null);
     const conflictError = ref(null);
-
-    const bookingUrl = computed(() => {
-        if (!slug.value) return '';
-        const url = new URL(props.entryUrl);
-        return url.origin + url.pathname.replace('/entry', '/book');
-    });
+    const bookingUrl = ref('');
+    const availableSlotsUrl = ref('');
     const appointmentSlots = computed(() => {
         const slots = [];
         const allowedMinutes = [0, 15, 30, 45];
@@ -156,6 +152,8 @@
             duration.value = data.duration;
             userTimezone.value = data.timezone;
             primaryColor.value = data.primary_color || {};
+            bookingUrl.value = data.booking_url || '';
+            availableSlotsUrl.value = data.available_slots_url || '';
         } catch (err) {
             error.value = err.message;
         } finally {
@@ -165,18 +163,20 @@
     async function fetchAvailableBlocks() {
         loadingSlots.value = true;
         try {
-            const url = new URL(props.entryUrl);
-            const availableSlotsUrl =
-                url.pathname.replace('/entry', '/available-slots') +
-                `?year=${currentYear.value}&month=${currentMonth.value}`;
-            const response = await fetch(url.origin + availableSlotsUrl);
+            if (!availableSlotsUrl.value) {
+                throw new Error('Available slots URL not loaded');
+            }
+            const url = new URL(availableSlotsUrl.value);
+            url.searchParams.set('year', currentYear.value.toString());
+            url.searchParams.set('month', currentMonth.value.toString());
+            const response = await fetch(url.toString());
             if (!response.ok) {
                 throw new Error('Failed to load available blocks');
             }
             const data = await response.json();
             availableBlocks.value = data.blocks || [];
-        } catch (err) {
-            console.error('Error fetching blocks:', err);
+        } catch (error) {
+            console.error('Error fetching blocks:', error);
         } finally {
             loadingSlots.value = false;
         }

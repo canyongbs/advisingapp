@@ -126,6 +126,8 @@ class PersonalBookingPageWidgetController extends Controller
             'duration' => $bookingPage->default_appointment_duration,
             'timezone' => $bookingPage->user->timezone ?? config('app.timezone'),
             'primary_color' => $primaryColor,
+            'booking_url' => route('widgets.personal-booking-page.api.book', ['slug' => $slug]),
+            'available_slots_url' => route('widgets.personal-booking-page.api.available-slots', ['slug' => $slug]),
         ]);
     }
 
