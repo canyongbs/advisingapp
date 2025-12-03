@@ -132,7 +132,7 @@ class ViewResourceHubArticle extends ViewRecord
         $resourceHubArticle = $this->getRecord();
 
         return [
-            SendEmailAction::make(['view' => 'resource-hub::components.default-email-body'])
+            SendEmailAction::make('resource-hub::components.default-email-body')
                 ->label('Email Details'),
             Action::make('upvote')
                 ->label(fn (): string => ($resourceHubArticle->isUpvoted() ? 'Upvoted ' : 'Upvote ') . "({$resourceHubArticle->upvotes()->count()})")

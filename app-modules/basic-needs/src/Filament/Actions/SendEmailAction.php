@@ -65,9 +65,9 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 class SendEmailAction
 {
     /**
-     * @param array<string, mixed> $configuration
+     * @param string $view
      */
-    public static function make(array $configuration): Action
+    public static function make(string $view): Action
     {
         return Action::make('send_email')
             ->label('Send Email')
@@ -75,7 +75,7 @@ class SendEmailAction
             ->modalHeading('Send Engagement')
             ->model(Engagement::class)
             ->authorize(fn () => Auth::user()->can('create', Engagement::class))
-            ->steps(fn (): array => self::getSteps($configuration))
+            ->steps(fn (): array => self::getSteps($view))
             ->action(fn (array $data, Schema $schema, Page $livewire) => self::handleAction($data, $schema, $livewire))
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)
@@ -89,24 +89,22 @@ class SendEmailAction
     }
 
     /**
-     * @param array<string, mixed> $configuration
-     *
      * @return array<Step>
      */
-    protected static function getSteps(array $configuration): array
+    protected static function getSteps(string $view): array
     {
         return [
-            self::getContactInformationStep($configuration),
-            self::getContentStep($configuration),
+            self::getContactInformationStep($view),
+            self::getContentStep($view),
             self::getSignatureStep(),
             self::getSendLaterStep(),
         ];
     }
 
     /**
-     * @param array<string, mixed> $configuration
+     * @param string $view
      */
-    protected static function getContactInformationStep(array $configuration): Step
+    protected static function getContactInformationStep(string $view): Step
     {
         return Step::make('Contact Information')
             ->schema([
@@ -126,8 +124,8 @@ class SendEmailAction
                     ->options(fn (Get $get) => self::getRecipientOptions($get))
                     ->getSearchResultsUsing(fn (string $search, Get $get) => self::getRecipientSearchResults($search, $get))
                     ->getOptionLabelUsing(fn (string $value, Get $get) => self::getRecipientOptionLabel($value, $get))
-                    ->afterStateUpdated(function (Get $get, Set $set, mixed $record) use ($configuration) {
-                        self::updateBodyAndRouteId($get, $set, $record, $configuration);
+                    ->afterStateUpdated(function (Get $get, Set $set, mixed $record) use ($view) {
+                        self::updateBodyAndRouteId($get, $set, $record, $view);
                     })
                     ->live()
                     ->required(),
@@ -139,12 +137,12 @@ class SendEmailAction
     }
 
     /**
-     * @param array<string, mixed> $configuration
+     * @param string $view
      */
-    protected static function getContentStep(array $configuration): Step
+    protected static function getContentStep(string $view): Step
     {
         return Step::make('Content')
-            ->schema(function (Get $get) use ($configuration): array {
+            ->schema(function (Get $get) use ($view): array {
                 $educatable = self::resolveRecipient($get('recipient_type'), $get('recipient_id'));
 
                 return [
@@ -159,8 +157,8 @@ class SendEmailAction
                         ->disk('s3-public')
                         ->label('Body')
                         ->profile('email')
-                        ->default(function (mixed $record) use ($educatable, $configuration) {
-                            return view($configuration['view'], [
+                        ->default(function (mixed $record) use ($educatable, $view) {
+                            return view($view, [
                                 'recipient' => $educatable,
                                 'record' => $record,
                             ])->render();
@@ -373,13 +371,13 @@ class SendEmailAction
     }
 
     /**
-     * @param array<string, mixed> $configuration
+     * @param string $view
      */
-    protected static function updateBodyAndRouteId(Get $get, Set $set, mixed $record, array $configuration): void
+    protected static function updateBodyAndRouteId(Get $get, Set $set, mixed $record, string $view): void
     {
         $educatable = self::resolveRecipient($get('recipient_type'), $get('recipient_id'));
 
-        $defaultBody = view($configuration['view'], [
+        $defaultBody = view($view, [
             'recipient' => $educatable,
             'record' => $record,
         ])->render();
