@@ -152,13 +152,8 @@ class GetAvailableAppointmentSlots
                 $startTime = $period['start'] ?? $period['starts_at'];
                 $endTime = $period['end'] ?? $period['ends_at'];
 
-                $startUtc = Carbon::parse("{$date->toDateString()} {$startTime}", 'UTC');
-                $endUtc = Carbon::parse("{$date->toDateString()} {$endTime}", 'UTC');
-
-                // Then convert to user's timezone for the correct day
-                $userTimezone = $user->timezone ?? 'UTC';
-                $start = $startUtc->setTimezone($userTimezone);
-                $end = $endUtc->setTimezone($userTimezone);
+                $start = Carbon::parse("{$date->toDateString()} {$startTime}", 'UTC');
+                $end = Carbon::parse("{$date->toDateString()} {$endTime}", 'UTC');
 
                 return $this->carveOutBusyPeriods($start, $end, $busyPeriods);
             })
