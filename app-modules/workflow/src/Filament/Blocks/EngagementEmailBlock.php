@@ -70,7 +70,7 @@ class EngagementEmailBlock extends WorkflowActionBlock
     }
 
     /**
-     * @return array<int, covariant Field|\Filament\Schemas\Components\Section|\Filament\Schemas\Components\Actions>
+     * @return array<int, covariant Field|Section|Actions>
      */
     public function generateFields(string $fieldPrefix = ''): array
     {

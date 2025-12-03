@@ -73,7 +73,7 @@ class CaseBlock extends WorkflowActionBlock
     }
 
     /**
-     * @return array<int, covariant Field|\Filament\Schemas\Components\Section>
+     * @return array<int, covariant Field|Section>
      */
     public function generateFields(): array
     {
@@ -221,7 +221,7 @@ class CaseBlock extends WorkflowActionBlock
     }
 
     /**
-     * @return array<int, covariant Field|\Filament\Schemas\Components\Section>
+     * @return array<int, covariant Field|Section>
      */
     public function editFields(): array
     {
