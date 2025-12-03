@@ -71,18 +71,39 @@
     });
     const appointmentSlots = computed(() => {
         const slots = [];
+        const allowedMinutes = [0, 15, 30, 45];
+
         for (const block of availableBlocks.value) {
             const blockStart = new Date(block.start);
             const blockEnd = new Date(block.end);
             const durationMs = duration.value * 60 * 1000;
+
+            // Find the first allowed time slot at or after the block start
             let slotStart = new Date(blockStart);
+            const currentMinutes = slotStart.getMinutes();
+
+            // Round up to the next allowed minute interval
+            const nextAllowedMinute = allowedMinutes.find((minutes) => minutes >= currentMinutes) ?? allowedMinutes[0];
+            if (nextAllowedMinute < currentMinutes) {
+                // Need to go to next hour
+                slotStart.setHours(slotStart.getHours() + 1);
+                slotStart.setMinutes(0);
+            } else {
+                slotStart.setMinutes(nextAllowedMinute);
+            }
+            slotStart.setSeconds(0);
+            slotStart.setMilliseconds(0);
+
+            // Generate slots at 15-minute intervals
             while (slotStart.getTime() + durationMs <= blockEnd.getTime()) {
                 const slotEnd = new Date(slotStart.getTime() + durationMs);
                 slots.push({
                     start: slotStart.toISOString(),
                     end: slotEnd.toISOString(),
                 });
-                slotStart = new Date(slotStart.getTime() + durationMs);
+
+                // Move to next 15-minute interval
+                slotStart = new Date(slotStart.getTime() + 15 * 60 * 1000);
             }
         }
         return slots;

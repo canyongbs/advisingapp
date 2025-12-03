@@ -85,6 +85,7 @@ class ManagePersonalBookingPage extends ProfilePage
         $user = auth()->user();
         assert($user instanceof User);
         $hasCalendar = Calendar::query()->whereBelongsTo($user)->exists();
+        $hasHours = $this->userHasHoursConfigured($user);
         $bookingPage = PersonalBookingPage::query()->whereBelongsTo($user)->first();
 
         return $schema
@@ -92,9 +93,11 @@ class ManagePersonalBookingPage extends ProfilePage
             ->components([
                 Section::make()
                     ->belowContent(
-                        $hasCalendar
-                            ? null
-                            : 'This feature is only available if your Google or Outlook calendar is connected.'
+                        match (true) {
+                            ! $hasCalendar => 'This feature is only available if your Google or Outlook calendar is connected.',
+                            ! $hasHours => 'This feature requires you to configure your office hours or working hours first.',
+                            default => null,
+                        }
                     )
                     ->schema([
                         Toggle::make('is_enabled')
@@ -157,5 +160,13 @@ class ManagePersonalBookingPage extends ProfilePage
         $bookingPage->save();
 
         return $record;
+    }
+
+    protected function userHasHoursConfigured(User $user): bool
+    {
+        $hasOfficeHours = $user->office_hours_are_enabled && ! empty($user->office_hours);
+        $hasWorkingHours = $user->working_hours_are_enabled && ! empty($user->working_hours);
+
+        return $hasOfficeHours || $hasWorkingHours;
     }
 }
