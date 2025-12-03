@@ -59,6 +59,7 @@ use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class SendEmailAction
@@ -73,285 +74,9 @@ class SendEmailAction
             ->icon('heroicon-m-chat-bubble-bottom-center-text')
             ->modalHeading('Send Engagement')
             ->model(Engagement::class)
-            ->authorize(function () {
-                return auth()->user()->can('create', Engagement::class);
-            })
-            ->steps(fn (): array => [
-                Step::make('Contact Information')
-                    ->schema([
-                        Select::make('recipient_type')
-                            ->label('Recipient Type')
-                            ->options([
-                                'student' => 'Student',
-                                'prospect' => 'Prospect',
-                            ])
-                            ->live()
-                            ->afterStateUpdated(fn (Set $set) => $set('recipient_id', null))
-                            ->required(),
-                        Select::make('recipient_id')
-                            ->label('Recipient')
-                            ->searchable()
-                            ->hidden(fn (Get $get) => ! filled($get('recipient_type')))
-                            ->options(function (Get $get): array {
-                                $recipientType = $get('recipient_type');
-
-                                if ($recipientType === 'student') {
-                                    return Student::query()
-                                        ->with('primaryEmailAddress')
-                                        ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
-                                        ->limit(50)
-                                        ->get()
-                                        ->mapWithKeys(function (Student $student) {
-                                            $label = "{$student->display_name} (Student) - {$student->primaryEmailAddress?->address} - {$student->sisid}";
-
-                                            return [$student->sisid => $label];
-                                        })
-                                        ->toArray();
-                                }
-
-                                if ($recipientType === 'prospect') {
-                                    return Prospect::query()
-                                        ->with('primaryEmailAddress')
-                                        ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
-                                        ->limit(50)
-                                        ->get()
-                                        ->mapWithKeys(function (Prospect $prospect) {
-                                            $label = "{$prospect->display_name} (Prospect) - {$prospect->primaryEmailAddress?->address}";
-
-                                            return [$prospect->id => $label];
-                                        })
-                                        ->toArray();
-                                }
-
-                                return [];
-                            })
-                            ->getSearchResultsUsing(function (string $search, Get $get): array {
-                                $recipientType = $get('recipient_type');
-
-                                if ($recipientType === 'student') {
-                                    return Student::query()
-                                        ->with('primaryEmailAddress')
-                                        ->when($search, function (Builder $query) use ($search) {
-                                            $query->where(new Expression('lower(full_name)'), 'like', "%{$search}%")
-                                                ->orWhere(new Expression('lower(sisid)'), 'like', "%{$search}%")
-                                                ->orWhereHas('primaryEmailAddress', fn (Builder $query) => $query->where(new Expression('lower(address)'), 'like', "%{$search}%"));
-                                        })
-                                        ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
-                                        ->limit(50)
-                                        ->get()
-                                        ->mapWithKeys(function (Student $student) {
-                                            $label = "{$student->display_name} (Student) - {$student->primaryEmailAddress?->address} - {$student->sisid}";
-
-                                            return [$student->sisid => $label];
-                                        })
-                                        ->toArray();
-                                }
-
-                                if ($recipientType === 'prospect') {
-                                    return Prospect::query()
-                                        ->with('primaryEmailAddress')
-                                        ->when($search, function (Builder $query) use ($search) {
-                                            $query->where(new Expression('lower(full_name)'), 'like', "%{$search}%")
-                                                ->orWhereHas('primaryEmailAddress', fn (Builder $query) => $query->where(new Expression('lower(address)'), 'like', "%{$search}%"));
-                                        })
-                                        ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
-                                        ->limit(50)
-                                        ->get()
-                                        ->mapWithKeys(function (Prospect $prospect) {
-                                            $label = "{$prospect->display_name} (Prospect) - {$prospect->primaryEmailAddress?->address}";
-
-                                            return [$prospect->id => $label];
-                                        })
-                                        ->toArray();
-                                }
-
-                                return [];
-                            })
-                            ->getOptionLabelUsing(function (string $value, Get $get): string {
-                                $recipientType = $get('recipient_type');
-
-                                if ($recipientType === 'student') {
-                                    $student = Student::query()->find($value);
-
-                                    if (! $student) {
-                                        return '';
-                                    }
-
-                                    return "{$student->display_name} (Student) - {$student->primaryEmailAddress?->address} - {$student->sisid}";
-                                }
-
-                                if ($recipientType === 'prospect') {
-                                    $prospect = Prospect::query()->find($value);
-
-                                    if (! $prospect) {
-                                        return '';
-                                    }
-
-                                    return "{$prospect->display_name} (Prospect) - {$prospect->primaryEmailAddress?->address}";
-                                }
-
-                                return '';
-                            })
-                            ->afterStateUpdated(function (Get $get, Set $set, mixed $record) use ($configuration) {
-                                $educatable = match ($get('recipient_type')) {
-                                    'student' => Student::find($get('recipient_id')),
-                                    'prospect' => Prospect::find($get('recipient_id')),
-                                    default => null,
-                                };
-
-                                $defaultBody = view($configuration['view'], [
-                                    'recipient' => $educatable,
-                                    'record' => $record,
-                                ])->render();
-
-                                $set('body', $defaultBody);
-
-                                $set('recipient_route_id', $educatable?->primaryEmailAddress?->getKey() ?? $educatable?->emailAddresses()->first()?->getKey());
-                            })
-                            ->live()
-                            ->required(),
-
-                        Grid::make(1)
-                            ->schema(function (Get $get): array {
-                                $educatable = match ($get('recipient_type')) {
-                                    'student' => Student::find($get('recipient_id')),
-                                    'prospect' => Prospect::find($get('recipient_id')),
-                                    default => null,
-                                };
-
-                                return [
-                                    Select::make('recipient_route_id')
-                                        ->label('Email address')
-                                        ->options(function () use ($educatable) {
-                                            return $educatable?->emailAddresses
-                                                ->mapWithKeys(fn (StudentEmailAddress|ProspectEmailAddress $emailAddress): array => [
-                                                    $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
-                                                ])
-                                                ->all() ?? [];
-                                        })
-                                        ->disabled(blank($educatable))
-                                        ->required(),
-                                ];
-                            })
-                            ->hidden(fn (Get $get) => ! filled($get('recipient_type'))),
-                    ]),
-                Step::make('Content')
-                    ->schema(function (Get $get) use ($configuration): array {
-                        $educatable = match ($get('recipient_type')) {
-                            'student' => Student::find($get('recipient_id')),
-                            'prospect' => Prospect::find($get('recipient_id')),
-                            default => null,
-                        };
-
-                        return [
-                            TiptapEditor::make('subject')
-                                ->label('Subject')
-                                ->showMergeTagsInBlocksPanel(false)
-                                ->profile('email')
-                                ->required()
-                                ->placeholder('Enter the email subject here...')
-                                ->columnSpanFull(),
-                            TiptapEditor::make('body')
-                                ->disk('s3-public')
-                                ->label('Body')
-                                ->profile('email')
-                                ->default(function (mixed $record) use ($educatable, $configuration) {
-                                    return view($configuration['view'], [
-                                        'recipient' => $educatable,
-                                        'record' => $record,
-                                    ])->render();
-                                })
-                                ->required()
-                                ->columnSpanFull(),
-                        ];
-                    }),
-                Step::make('Email Signature')
-                    ->schema([
-                        Toggle::make('is_signature_enabled')
-                            ->label('Include Signature')
-                            ->helperText('You may configure your email signature in Profile Settings by selecting your avatar in the upper right portion of the screen.')
-                            ->live(),
-                        TiptapEditor::make('signature')
-                            ->profile('signature')
-                            ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                            ->output(TiptapOutput::Json)
-                            ->required(fn (Get $get) => $get('is_signature_enabled'))
-                            ->disk('s3-public')
-                            ->visible(fn (Get $get) => $get('is_signature_enabled'))
-                            ->default(auth()->user()->signature)
-                            // By default, the TipTap editor will attempt to save relationships to media items, but these will instead be saved as part of the main body content.
-                            ->saveRelationshipsUsing(null),
-                    ])
-                    ->visible(auth()->user()->is_signature_enabled),
-                Step::make('Send Your Message')
-                    ->schema([
-                        Toggle::make('send_later')
-                            ->reactive()
-                            ->helperText('By default, this message will send as soon as it is created unless you schedule it to send later.'),
-                        DateTimePicker::make('scheduled_at')
-                            ->required()
-                            ->visible(fn (Get $get) => $get('send_later')),
-                    ]),
-            ])
-            ->action(function (array $data, Schema $schema, Page $livewire) {
-                /** @var Student | Prospect $recipient */
-                $recipient = match ($data['recipient_type']) {
-                    'student' => Student::find($data['recipient_id']),
-                    'prospect' => Prospect::find($data['recipient_id']),
-                    default => null,
-                };
-                $data['subject'] ??= ['type' => 'doc', 'content' => []];
-                $data['subject']['content'] = [
-                    ...($data['subject']['content'] ?? []),
-                ];
-                $data['body'] ??= ['type' => 'doc', 'content' => []];
-                $data['body']['content'] = [
-                    ...($data['body']['content'] ?? []),
-                    ...($data['signature']['content'] ?? []),
-                ];
-
-                $formFields = $schema->getFlatFields();
-
-                /** @var TiptapEditor $bodyField */
-                $bodyField = $formFields['body'] ?? null;
-
-                /** @var ?TiptapEditor $signatureField */
-                $signatureField = $formFields['signature'] ?? null;
-
-                $channel = NotificationChannel::parse(NotificationChannel::Email->value);
-
-                $recipientRoute = $recipient->emailAddresses()->find($data['recipient_route_id'] ?? null)?->address;
-
-                $engagement = app(CreateEngagement::class)->execute(new EngagementCreationData(
-                    user: auth()->user(),
-                    recipient: $recipient,
-                    channel: $channel,
-                    subject: $data['subject'] ?? null,
-                    body: $data['body'] ?? null,
-                    temporaryBodyImages: [
-                        ...array_map(
-                            fn (TemporaryUploadedFile $file): array => [
-                                'extension' => $file->getClientOriginalExtension(),
-                                'path' => (fn () => $this->path)->call($file),
-                            ],
-                            $bodyField->getTemporaryImages(),
-                        ),
-                        ...($signatureField ? array_map(
-                            fn (TemporaryUploadedFile $file): array => [
-                                'extension' => $file->getClientOriginalExtension(),
-                                'path' => (fn () => $this->path)->call($file),
-                            ],
-                            $signatureField->getTemporaryImages(),
-                        ) : []),
-                    ],
-                    scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['scheduled_at'] ?? null) : null,
-                    recipientRoute: $recipientRoute,
-                ));
-
-                $schema->model($engagement)->saveRelationships();
-
-                $livewire->dispatch('engagement-sent');
-            })
+            ->authorize(fn () => Auth::user()->can('create', Engagement::class))
+            ->steps(fn (): array => self::getSteps($configuration))
+            ->action(fn (array $data, Schema $schema, Page $livewire) => self::handleAction($data, $schema, $livewire))
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)
             ->closeModalByClickingAway(false)
@@ -361,5 +86,328 @@ class SendEmailAction
     public static function getDefaultName(): ?string
     {
         return 'engage';
+    }
+
+    /**
+     * @param array<string, mixed> $configuration
+     *
+     * @return array<Step>
+     */
+    protected static function getSteps(array $configuration): array
+    {
+        return [
+            self::getContactInformationStep($configuration),
+            self::getContentStep($configuration),
+            self::getSignatureStep(),
+            self::getSendLaterStep(),
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $configuration
+     */
+    protected static function getContactInformationStep(array $configuration): Step
+    {
+        return Step::make('Contact Information')
+            ->schema([
+                Select::make('recipient_type')
+                    ->label('Recipient Type')
+                    ->options([
+                        'student' => 'Student',
+                        'prospect' => 'Prospect',
+                    ])
+                    ->live()
+                    ->afterStateUpdated(fn (Set $set) => $set('recipient_id', null))
+                    ->required(),
+                Select::make('recipient_id')
+                    ->label('Recipient')
+                    ->searchable()
+                    ->hidden(fn (Get $get) => ! filled($get('recipient_type')))
+                    ->options(fn (Get $get) => self::getRecipientOptions($get))
+                    ->getSearchResultsUsing(fn (string $search, Get $get) => self::getRecipientSearchResults($search, $get))
+                    ->getOptionLabelUsing(fn (string $value, Get $get) => self::getRecipientOptionLabel($value, $get))
+                    ->afterStateUpdated(function (Get $get, Set $set, mixed $record) use ($configuration) {
+                        self::updateBodyAndRouteId($get, $set, $record, $configuration);
+                    })
+                    ->live()
+                    ->required(),
+
+                Grid::make(1)
+                    ->schema(fn (Get $get) => self::getRecipientRouteIdSchema($get))
+                    ->hidden(fn (Get $get) => ! filled($get('recipient_type'))),
+            ]);
+    }
+
+    /**
+     * @param array<string, mixed> $configuration
+     */
+    protected static function getContentStep(array $configuration): Step
+    {
+        return Step::make('Content')
+            ->schema(function (Get $get) use ($configuration): array {
+                $educatable = self::resolveRecipient($get('recipient_type'), $get('recipient_id'));
+
+                return [
+                    TiptapEditor::make('subject')
+                        ->label('Subject')
+                        ->showMergeTagsInBlocksPanel(false)
+                        ->profile('email')
+                        ->required()
+                        ->placeholder('Enter the email subject here...')
+                        ->columnSpanFull(),
+                    TiptapEditor::make('body')
+                        ->disk('s3-public')
+                        ->label('Body')
+                        ->profile('email')
+                        ->default(function (mixed $record) use ($educatable, $configuration) {
+                            return view($configuration['view'], [
+                                'recipient' => $educatable,
+                                'record' => $record,
+                            ])->render();
+                        })
+                        ->required()
+                        ->columnSpanFull(),
+                ];
+            });
+    }
+
+    protected static function getSignatureStep(): Step
+    {
+        return Step::make('Email Signature')
+            ->schema([
+                Toggle::make('is_signature_enabled')
+                    ->label('Include Signature')
+                    ->helperText('You may configure your email signature in Profile Settings by selecting your avatar in the upper right portion of the screen.')
+                    ->live(),
+                TiptapEditor::make('signature')
+                    ->profile('signature')
+                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+                    ->output(TiptapOutput::Json)
+                    ->required(fn (Get $get) => $get('is_signature_enabled'))
+                    ->disk('s3-public')
+                    ->visible(fn (Get $get) => $get('is_signature_enabled'))
+                    ->default(Auth::user()->signature)
+                    ->saveRelationshipsUsing(null),
+            ])
+            ->visible(Auth::user()->is_signature_enabled);
+    }
+
+    protected static function getSendLaterStep(): Step
+    {
+        return Step::make('Send Your Message')
+            ->schema([
+                Toggle::make('send_later')
+                    ->reactive()
+                    ->helperText('By default, this message will send as soon as it is created unless you schedule it to send later.'),
+                DateTimePicker::make('scheduled_at')
+                    ->required()
+                    ->visible(fn (Get $get) => $get('send_later')),
+            ]);
+    }
+
+    /**
+     * @param array<mixed, mixed> $data
+     */
+    protected static function handleAction(array $data, Schema $schema, Page $livewire): void
+    {
+        $recipient = self::resolveRecipient($data['recipient_type'], $data['recipient_id']);
+
+        $data['subject'] ??= ['type' => 'doc', 'content' => []];
+        $data['subject']['content'] = [
+            ...($data['subject']['content'] ?? []),
+        ];
+        $data['body'] ??= ['type' => 'doc', 'content' => []];
+        $data['body']['content'] = [
+            ...($data['body']['content'] ?? []),
+            ...($data['signature']['content'] ?? []),
+        ];
+
+        $formFields = $schema->getFlatFields();
+
+        /** @var TiptapEditor $bodyField */
+        $bodyField = $formFields['body'] ?? null;
+
+        /** @var ?TiptapEditor $signatureField */
+        $signatureField = $formFields['signature'] ?? null;
+
+        $channel = NotificationChannel::parse(NotificationChannel::Email->value);
+
+        $recipientRoute = $recipient->emailAddresses()->find($data['recipient_route_id'] ?? null)?->address;
+
+        $engagement = app(CreateEngagement::class)->execute(new EngagementCreationData(
+            user: auth()->user(),
+            recipient: $recipient,
+            channel: $channel,
+            subject: $data['subject'] ?? null,
+            body: $data['body'] ?? null,
+            temporaryBodyImages: [
+                ...array_map(
+                    fn (TemporaryUploadedFile $file): array => [
+                        'extension' => $file->getClientOriginalExtension(),
+                        'path' => (fn () => $this->path)->call($file),
+                    ],
+                    $bodyField->getTemporaryImages(),
+                ),
+                ...($signatureField ? array_map(
+                    fn (TemporaryUploadedFile $file): array => [
+                        'extension' => $file->getClientOriginalExtension(),
+                        'path' => (fn () => $this->path)->call($file),
+                    ],
+                    $signatureField->getTemporaryImages(),
+                ) : []),
+            ],
+            scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['scheduled_at'] ?? null) : null,
+            recipientRoute: $recipientRoute,
+        ));
+
+        $schema->model($engagement)->saveRelationships();
+
+        $livewire->dispatch('engagement-sent');
+    }
+
+    protected static function resolveRecipient(?string $type, ?string $id): Student|Prospect|null
+    {
+        return match ($type) {
+            'student' => Student::find($id),
+            'prospect' => Prospect::find($id),
+            default => null,
+        };
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected static function getRecipientOptions(Get $get): array
+    {
+        $recipientType = $get('recipient_type');
+
+        if ($recipientType === 'student') {
+            return Student::query()
+                ->with('primaryEmailAddress')
+                ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
+                ->limit(50)
+                ->get()
+                ->mapWithKeys(fn (Student $student) => [$student->sisid => self::formatStudentLabel($student)])
+                ->toArray();
+        }
+
+        if ($recipientType === 'prospect') {
+            return Prospect::query()
+                ->with('primaryEmailAddress')
+                ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
+                ->limit(50)
+                ->get()
+                ->mapWithKeys(fn (Prospect $prospect) => [$prospect->id => self::formatProspectLabel($prospect)])
+                ->toArray();
+        }
+
+        return [];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected static function getRecipientSearchResults(string $search, Get $get): array
+    {
+        $recipientType = $get('recipient_type');
+
+        if ($recipientType === 'student') {
+            return Student::query()
+                ->with('primaryEmailAddress')
+                ->when($search, function (Builder $query) use ($search) {
+                    $query->where(new Expression('lower(full_name)'), 'like', "%{$search}%")
+                        ->orWhere(new Expression('lower(sisid)'), 'like', "%{$search}%")
+                        ->orWhereHas('primaryEmailAddress', fn (Builder $query) => $query->where(new Expression('lower(address)'), 'like', "%{$search}%"));
+                })
+                ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
+                ->limit(50)
+                ->get()
+                ->mapWithKeys(fn (Student $student) => [$student->sisid => self::formatStudentLabel($student)])
+                ->toArray();
+        }
+
+        if ($recipientType === 'prospect') {
+            return Prospect::query()
+                ->with('primaryEmailAddress')
+                ->when($search, function (Builder $query) use ($search) {
+                    $query->where(new Expression('lower(full_name)'), 'like', "%{$search}%")
+                        ->orWhereHas('primaryEmailAddress', fn (Builder $query) => $query->where(new Expression('lower(address)'), 'like', "%{$search}%"));
+                })
+                ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
+                ->limit(50)
+                ->get()
+                ->mapWithKeys(fn (Prospect $prospect) => [$prospect->id => self::formatProspectLabel($prospect)])
+                ->toArray();
+        }
+
+        return [];
+    }
+
+    protected static function getRecipientOptionLabel(string $value, Get $get): string
+    {
+        $recipientType = $get('recipient_type');
+
+        if ($recipientType === 'student') {
+            $student = Student::query()->find($value);
+
+            return $student ? self::formatStudentLabel($student) : '';
+        }
+
+        if ($recipientType === 'prospect') {
+            $prospect = Prospect::query()->find($value);
+
+            return $prospect ? self::formatProspectLabel($prospect) : '';
+        }
+
+        return '';
+    }
+
+    protected static function formatStudentLabel(Student $student): string
+    {
+        return "{$student->display_name} (Student) - {$student->primaryEmailAddress?->address} - {$student->sisid}";
+    }
+
+    protected static function formatProspectLabel(Prospect $prospect): string
+    {
+        return "{$prospect->display_name} (Prospect) - {$prospect->primaryEmailAddress?->address}";
+    }
+
+    /**
+     * @param array<string, mixed> $configuration
+     */
+    protected static function updateBodyAndRouteId(Get $get, Set $set, mixed $record, array $configuration): void
+    {
+        $educatable = self::resolveRecipient($get('recipient_type'), $get('recipient_id'));
+
+        $defaultBody = view($configuration['view'], [
+            'recipient' => $educatable,
+            'record' => $record,
+        ])->render();
+
+        $set('body', $defaultBody);
+
+        $set('recipient_route_id', $educatable?->primaryEmailAddress?->getKey() ?? $educatable?->emailAddresses()->first()?->getKey());
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected static function getRecipientRouteIdSchema(Get $get): array
+    {
+        $educatable = self::resolveRecipient($get('recipient_type'), $get('recipient_id'));
+
+        return [
+            Select::make('recipient_route_id')
+                ->label('Email address')
+                ->options(function () use ($educatable) {
+                    return $educatable?->emailAddresses
+                        ->mapWithKeys(fn (StudentEmailAddress|ProspectEmailAddress $emailAddress): array => [
+                            $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
+                        ])
+                        ->all() ?? [];
+                })
+                ->disabled(blank($educatable))
+                ->required(),
+        ];
     }
 }
