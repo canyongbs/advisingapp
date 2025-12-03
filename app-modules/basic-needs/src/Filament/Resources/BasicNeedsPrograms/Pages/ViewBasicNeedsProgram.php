@@ -84,7 +84,7 @@ class ViewBasicNeedsProgram extends ViewRecord
     {
         return [
             EditAction::make(),
-            SendEmailAction::make()
+            SendEmailAction::make('basic-needs::components.default-email-body')
                 ->label('Email Details'),
         ];
     }
