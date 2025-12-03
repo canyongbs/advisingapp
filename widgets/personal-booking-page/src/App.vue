@@ -108,17 +108,28 @@
         const slotsMap = {};
         appointmentSlots.value.forEach((slot) => {
             const date = new Date(slot.start);
-            const dateKey = date.toISOString().split('T')[0];
+            // Use local date string to avoid timezone issues
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const dateKey = `${year}-${month}-${day}`;
             slotsMap[dateKey] = (slotsMap[dateKey] || 0) + 1;
         });
         return slotsMap;
     });
     const slotsForSelectedDate = computed(() => {
         if (!selectedDate.value) return [];
-        const dateKey = selectedDate.value.toISOString().split('T')[0];
+        // Use local date string to avoid timezone issues
+        const year = selectedDate.value.getFullYear();
+        const month = String(selectedDate.value.getMonth() + 1).padStart(2, '0');
+        const day = String(selectedDate.value.getDate()).padStart(2, '0');
+        const dateKey = `${year}-${month}-${day}`;
         return appointmentSlots.value.filter((slot) => {
             const slotDate = new Date(slot.start);
-            const slotDateKey = slotDate.toISOString().split('T')[0];
+            const slotYear = slotDate.getFullYear();
+            const slotMonth = String(slotDate.getMonth() + 1).padStart(2, '0');
+            const slotDay = String(slotDate.getDate()).padStart(2, '0');
+            const slotDateKey = `${slotYear}-${slotMonth}-${slotDay}`;
             return slotDateKey === dateKey;
         });
     });
@@ -185,7 +196,11 @@
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const sortedDates = Object.keys(slotsPerDay.value)
-            .map((dateStr) => new Date(dateStr))
+            .map((dateStr) => {
+                // Parse the local date key (YYYY-MM-DD) correctly
+                const [year, month, day] = dateStr.split('-').map(Number);
+                return new Date(year, month - 1, day);
+            })
             .filter((date) => date >= today)
             .sort((a, b) => a - b);
         if (sortedDates.length > 0) {
