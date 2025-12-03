@@ -147,7 +147,7 @@ class GetAvailableAppointmentSlots
 
         return $hours
             ->filter(fn (array $period) => $period['enabled'] ?? false)
-            ->flatMap(function (array $period) use ($date, $user, $busyPeriods) {
+            ->flatMap(function (array $period) use ($date, $busyPeriods) {
                 // Office hours are stored in UTC, so we parse them as UTC first
                 $startTime = $period['start'] ?? $period['starts_at'];
                 $endTime = $period['end'] ?? $period['ends_at'];
