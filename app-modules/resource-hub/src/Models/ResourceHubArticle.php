@@ -39,6 +39,7 @@ namespace AdvisingApp\ResourceHub\Models;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Division\Models\Division;
 use App\Models\BaseModel;
+use App\Models\User;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -111,6 +112,17 @@ class ResourceHubArticle extends BaseModel implements Auditable, HasMedia
     public function division(): BelongsToMany
     {
         return $this->belongsToMany(Division::class, 'division_resource_hub_item', 'resource_hub_item_id', 'division_id');
+    }
+
+    /**
+     * @return BelongsToMany<User, $this, ManagerResourceHubArticle>
+     */
+    public function managers(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(User::class, 'manager_resource_hub_articles', 'resource_hub_article_id', 'manager_id')
+            ->using(ManagerResourceHubArticle::class)
+            ->withTimestamps();
     }
 
     public function registerMediaCollections(): void

@@ -40,10 +40,13 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\ResourceHub\Filament\Actions\DraftResourceHubArticleWithAiAction;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
+use App\Features\ResourceHubArticleManagersFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use App\Models\User;
 use Filament\Actions\Action as BaseAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -52,6 +55,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
@@ -152,6 +156,21 @@ class EditResourceHubArticle extends EditRecord
                                     ->searchable(['name', 'code'])
                                     ->preload()
                                     ->exists((new Division())->getTable(), (new Division())->getKeyName()),
+                                Section::make()
+                                    ->schema([
+                                        Select::make('manager_ids')
+                                            ->label('Managers')
+                                            ->relationship('managers', 'name')
+                                            ->multiple()
+                                            ->searchable()
+                                            ->preload()
+                                            ->exists('users', 'id'),
+                                        Toggle::make('remove_prior')
+                                            ->label('Remove all previous assigned managers?')
+                                            ->default(false)
+                                            ->hintIconTooltip('If selected, all prior managers will be removed.')
+                                    ])
+                                    ->visible(ResourceHubArticleManagersFeature::active())
                             ]),
                     ])
                     ->columnSpanFull(),
@@ -179,5 +198,18 @@ class EditResourceHubArticle extends EditRecord
                 ->color('primary')
                 ->label('Save'),
         ];
+    }
+
+    protected function afterSave(): void
+    {
+        $resourceHubArticle = $this->getRecord();
+
+        assert($resourceHubArticle instanceof ResourceHubArticle);
+
+        $data = $this->form->getRawState();
+
+        if(! empty($data['manager_ids'])) {
+            $resourceHubArticle->managers()->sync($data['manager_ids'], $data['remove_prior']);
+        }
     }
 }

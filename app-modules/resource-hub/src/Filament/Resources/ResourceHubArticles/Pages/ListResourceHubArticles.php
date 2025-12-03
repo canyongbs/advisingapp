@@ -37,11 +37,13 @@
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages;
 
 use AdvisingApp\Division\Models\Division;
+use AdvisingApp\ResourceHub\Filament\Actions\AssignManagerBulkAction;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
+use App\Features\ResourceHubArticleManagersFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -191,6 +193,7 @@ class ListResourceHubArticles extends ListRecords
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
+                    AssignManagerBulkAction::make()->visible(ResourceHubArticleManagersFeature::active()),
                     DeleteBulkAction::make(),
                 ]),
             ])
