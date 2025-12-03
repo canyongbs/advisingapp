@@ -38,9 +38,12 @@ namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages;
 
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
+use App\Features\ResourceHubArticleManagersFeature;
+use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -107,7 +110,28 @@ class CreateResourceHubArticle extends CreateRecord
                             ->saveRelationshipsWhenHidden()
                             ->visible(fn (): bool => Division::count() > 1)
                             ->exists((new Division())->getTable(), (new Division())->getKeyName()),
+                        Select::make('manager_ids')
+                            ->visible(ResourceHubArticleManagersFeature::active())
+                            ->label('Managers')
+                            ->options(fn (): array => User::query()->limit(50)->pluck('name', 'id')->all())
+                            ->relationship('managers', 'name')
+                            ->multiple()
+                            ->searchable()
+                            ->exists('users', 'id'),
                     ]),
             ]);
+    }
+
+    protected function afterCreate(): void
+    {
+        $resourceHubArticle = $this->getRecord();
+
+        assert($resourceHubArticle instanceof ResourceHubArticle);
+
+        $data = $this->form->getRawState();
+
+        if(! empty($data['manager_ids'])) {
+            $resourceHubArticle->managers()->sync($data['manager_ids']);
+        }
     }
 }
