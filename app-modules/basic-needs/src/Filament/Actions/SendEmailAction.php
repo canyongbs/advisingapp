@@ -244,14 +244,14 @@ class SendEmailAction
                 ...array_map(
                     fn (TemporaryUploadedFile $file): array => [
                         'extension' => $file->getClientOriginalExtension(),
-                        'path' => (fn () => $this->path)->call($file),
+                        'path' => $file->getRealPath(),
                     ],
                     $bodyField->getTemporaryImages(),
                 ),
                 ...($signatureField ? array_map(
                     fn (TemporaryUploadedFile $file): array => [
                         'extension' => $file->getClientOriginalExtension(),
-                        'path' => (fn () => $this->path)->call($file),
+                        'path' => $file->getRealPath(),
                     ],
                     $signatureField->getTemporaryImages(),
                 ) : []),
