@@ -39,14 +39,17 @@ namespace AdvisingApp\MeetingCenter\Models;
 use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperPersonalBookingPage
  */
-class PersonalBookingPage extends BaseModel
+class PersonalBookingPage extends BaseModel implements Auditable
 {
+    use AuditableTrait;
+
     protected $fillable = [
-        'user_id',
         'is_enabled',
         'default_appointment_duration',
         'slug',
