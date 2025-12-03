@@ -50,7 +50,7 @@ class ArtificialIntelligence extends ProfilePage
 
     protected static ?string $title = 'Artifical Intelligence';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 50;
 
     public function form(Schema $schema): Schema
     {

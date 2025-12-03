@@ -57,7 +57,7 @@ class EventFactory extends Factory
             'location' => $this->faker->address(),
             'capacity' => $this->faker->numberBetween(1, 5000),
             'starts_at' => $this->faker->dateTimeBetween('-1 week', '+1 week'),
-            'ends_at' => fn (array $attributes) => Carbon::parse($attributes['starts_at'])->add('1 hour'),
+            'ends_at' => fn (array $attributes) => Carbon::parse($attributes['starts_at'])->addHour(),
         ];
     }
 

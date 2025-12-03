@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,34 +31,37 @@
 
 </COPYRIGHT>
 */
+import preset from './tailwind.config.preset.js';
 
-use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\MeetingCenter\Http\Controllers\GoogleCalendarController;
-use AdvisingApp\MeetingCenter\Http\Controllers\OutlookCalendarController;
-use AdvisingApp\MeetingCenter\Http\Controllers\PersonalBookingPageViewController;
-use AdvisingApp\MeetingCenter\Livewire\RenderEventRegistrationForm;
-use Illuminate\Support\Facades\Route;
-
-Route::middleware(['web', 'auth'])
-    ->name('calendar.')
-    ->prefix('/calendar')
-    ->group(function () {
-        provider_routes(CalendarProvider::Google, GoogleCalendarController::class);
-        provider_routes(CalendarProvider::Outlook, OutlookCalendarController::class);
-    });
-
-Route::middleware('web')
-    ->prefix('event-registration')
-    ->name('event-registration.')
-    ->group(function () {
-        Route::get('/{event}/respond', RenderEventRegistrationForm::class)
-            ->name('show');
-    });
-
-Route::middleware('web')
-    ->prefix('direct-booking')
-    ->name('direct-booking.')
-    ->group(function () {
-        Route::get('/{slug}', PersonalBookingPageViewController::class)
-            ->name('show');
-    });
+export default {
+    presets: [preset],
+    content: ['./src/**/*.vue'],
+    theme: {
+        extend: {
+            colors: {
+                primary: {
+                    50: 'rgba(var(--primary-50), <alpha-value>)',
+                    100: 'rgba(var(--primary-100), <alpha-value>)',
+                    200: 'rgba(var(--primary-200), <alpha-value>)',
+                    300: 'rgba(var(--primary-300), <alpha-value>)',
+                    400: 'rgba(var(--primary-400), <alpha-value>)',
+                    500: 'rgba(var(--primary-500), <alpha-value>)',
+                    600: 'rgba(var(--primary-600), <alpha-value>)',
+                    700: 'rgba(var(--primary-700), <alpha-value>)',
+                    800: 'rgba(var(--primary-800), <alpha-value>)',
+                    900: 'rgba(var(--primary-900), <alpha-value>)',
+                    950: 'rgba(var(--primary-950), <alpha-value>)',
+                },
+            },
+            animation: {
+                'fade-in': 'fadeIn 0.3s ease-in',
+            },
+            keyframes: {
+                fadeIn: {
+                    '0%': { opacity: '0', transform: 'translateY(10px)' },
+                    '100%': { opacity: '1', transform: 'translateY(0)' },
+                },
+            },
+        },
+    },
+};

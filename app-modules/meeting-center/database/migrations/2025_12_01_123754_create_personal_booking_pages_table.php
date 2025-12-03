@@ -34,48 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+use App\Features\PersonalBookingPageFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Models\User;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Schema;
-
-/**
- * @property Schema $form
- */
-class OfficeHours extends ProfilePage
-{
-    protected static ?string $slug = 'office-hours';
-
-    protected static ?string $title = 'Office Hours';
-
-    protected static ?int $navigationSort = 90;
-
-    public function form(Schema $schema): Schema
+return new class () extends Migration {
+    public function up(): void
     {
-        /** @var User $user */
-        $user = auth()->user();
-        $hasCrmLicense = $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
+        DB::transaction(function () {
+            Schema::create('personal_booking_pages', function (Blueprint $table) {
+                $table->uuid('id')->primary();
 
-        return $schema
-            ->components([
-                Section::make('Office Hours')
-                    ->visible($hasCrmLicense)
-                    ->schema([
-                        Toggle::make('office_hours_are_enabled')
-                            ->label('Enable Office Hours')
-                            ->live(),
-                        Checkbox::make('appointments_are_restricted_to_existing_students')
-                            ->label('Restrict appointments to existing students')
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                        Section::make('Days')
-                            ->schema($this->getHoursForDays('office_hours'))
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                    ]),
-            ]);
+                $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+                $table->boolean('is_enabled')->default(false);
+                $table->unsignedInteger('default_appointment_duration');
+                $table->string('slug')->unique();
+
+                $table->timestamps();
+            });
+
+            PersonalBookingPageFeature::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            PersonalBookingPageFeature::deactivate();
+
+            Schema::dropIfExists('personal_booking_pages');
+        });
+    }
+};

@@ -34,48 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\MeetingCenter\Http\Requests;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Models\User;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Schema;
+use Illuminate\Foundation\Http\FormRequest;
 
-/**
- * @property Schema $form
- */
-class OfficeHours extends ProfilePage
+class BookPersonalCalendarSlotRequest extends FormRequest
 {
-    protected static ?string $slug = 'office-hours';
-
-    protected static ?string $title = 'Office Hours';
-
-    protected static ?int $navigationSort = 90;
-
-    public function form(Schema $schema): Schema
+    /**
+     * @return array<string, array<int, string>>
+     */
+    public function rules(): array
     {
-        /** @var User $user */
-        $user = auth()->user();
-        $hasCrmLicense = $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
+            'starts_at' => ['required', 'date'],
+            'ends_at' => ['required', 'date', 'after:starts_at'],
+        ];
+    }
 
-        return $schema
-            ->components([
-                Section::make('Office Hours')
-                    ->visible($hasCrmLicense)
-                    ->schema([
-                        Toggle::make('office_hours_are_enabled')
-                            ->label('Enable Office Hours')
-                            ->live(),
-                        Checkbox::make('appointments_are_restricted_to_existing_students')
-                            ->label('Restrict appointments to existing students')
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                        Section::make('Days')
-                            ->schema($this->getHoursForDays('office_hours'))
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                    ]),
-            ]);
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Please provide your name.',
+            'email.required' => 'Please provide your email address.',
+            'email.email' => 'Please provide a valid email address.',
+            'starts_at.required' => 'Please select a start time.',
+            'ends_at.required' => 'Please select an end time.',
+            'ends_at.after' => 'The end time must be after the start time.',
+        ];
     }
 }

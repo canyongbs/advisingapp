@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,34 +31,25 @@
 
 </COPYRIGHT>
 */
+import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
+import App from './App.vue';
+import styles from './widget.css?inline';
 
-use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\MeetingCenter\Http\Controllers\GoogleCalendarController;
-use AdvisingApp\MeetingCenter\Http\Controllers\OutlookCalendarController;
-use AdvisingApp\MeetingCenter\Http\Controllers\PersonalBookingPageViewController;
-use AdvisingApp\MeetingCenter\Livewire\RenderEventRegistrationForm;
-use Illuminate\Support\Facades\Route;
+customElements.define(
+    'personal-booking-page-embed',
+    defineCustomElement({
+        styles: [styles],
+        setup(props) {
+            const app = createApp();
 
-Route::middleware(['web', 'auth'])
-    ->name('calendar.')
-    ->prefix('/calendar')
-    ->group(function () {
-        provider_routes(CalendarProvider::Google, GoogleCalendarController::class);
-        provider_routes(CalendarProvider::Outlook, OutlookCalendarController::class);
-    });
+            app.config.devtools = true;
 
-Route::middleware('web')
-    ->prefix('event-registration')
-    ->name('event-registration.')
-    ->group(function () {
-        Route::get('/{event}/respond', RenderEventRegistrationForm::class)
-            ->name('show');
-    });
+            const inst = getCurrentInstance();
+            Object.assign(inst.appContext, app._context);
+            Object.assign(inst.provides, app._context.provides);
 
-Route::middleware('web')
-    ->prefix('direct-booking')
-    ->name('direct-booking.')
-    ->group(function () {
-        Route::get('/{slug}', PersonalBookingPageViewController::class)
-            ->name('show');
-    });
+            return () => h(App, props);
+        },
+        props: ['entryUrl'],
+    }),
+);

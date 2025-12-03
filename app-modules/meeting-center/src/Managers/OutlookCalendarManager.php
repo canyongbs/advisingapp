@@ -274,7 +274,7 @@ class OutlookCalendarManager implements CalendarInterface
 
         $calendar->oauth_token = $data->access_token;
         $calendar->oauth_refresh_token = $data->refresh_token;
-        $calendar->oauth_token_expires_at = now()->addSeconds($data->expires_in);
+        $calendar->oauth_token_expires_at = now()->addSeconds((int) $data->expires_in);
 
         $calendar->save();
 

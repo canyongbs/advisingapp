@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,34 +31,12 @@
 
 </COPYRIGHT>
 */
-
-use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\MeetingCenter\Http\Controllers\GoogleCalendarController;
-use AdvisingApp\MeetingCenter\Http\Controllers\OutlookCalendarController;
-use AdvisingApp\MeetingCenter\Http\Controllers\PersonalBookingPageViewController;
-use AdvisingApp\MeetingCenter\Livewire\RenderEventRegistrationForm;
-use Illuminate\Support\Facades\Route;
-
-Route::middleware(['web', 'auth'])
-    ->name('calendar.')
-    ->prefix('/calendar')
-    ->group(function () {
-        provider_routes(CalendarProvider::Google, GoogleCalendarController::class);
-        provider_routes(CalendarProvider::Outlook, OutlookCalendarController::class);
-    });
-
-Route::middleware('web')
-    ->prefix('event-registration')
-    ->name('event-registration.')
-    ->group(function () {
-        Route::get('/{event}/respond', RenderEventRegistrationForm::class)
-            ->name('show');
-    });
-
-Route::middleware('web')
-    ->prefix('direct-booking')
-    ->name('direct-booking.')
-    ->group(function () {
-        Route::get('/{slug}', PersonalBookingPageViewController::class)
-            ->name('show');
-    });
+export default {
+    plugins: {
+        'tailwindcss/nesting': {},
+        tailwindcss: {
+            config: './tailwind.config.js',
+        },
+        autoprefixer: {},
+    },
+};

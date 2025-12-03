@@ -34,48 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+use AdvisingApp\MeetingCenter\Http\Controllers\PersonalBookingPageWidgetController;
+use App\Http\Middleware\EncryptCookies;
+use Illuminate\Support\Facades\Route;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Models\User;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Schema;
+Route::middleware([
+    'api',
+    EncryptCookies::class,
+])
+    ->prefix('widgets/personal-booking-page')
+    ->name('widgets.personal-booking-page.')
+    ->group(function () {
+        Route::prefix('api/{slug}')
+            ->name('api.')
+            ->group(function () {
+                Route::get('/', [PersonalBookingPageWidgetController::class, 'assets'])
+                    ->name('assets');
 
-/**
- * @property Schema $form
- */
-class OfficeHours extends ProfilePage
-{
-    protected static ?string $slug = 'office-hours';
+                Route::get('entry', [PersonalBookingPageWidgetController::class, 'view'])
+                    ->name('entry');
 
-    protected static ?string $title = 'Office Hours';
+                Route::get('available-slots', [PersonalBookingPageWidgetController::class, 'availableSlots'])
+                    ->name('available-slots');
 
-    protected static ?int $navigationSort = 90;
+                Route::post('book', [PersonalBookingPageWidgetController::class, 'book'])
+                    ->name('book');
+            });
 
-    public function form(Schema $schema): Schema
-    {
-        /** @var User $user */
-        $user = auth()->user();
-        $hasCrmLicense = $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
-
-        return $schema
-            ->components([
-                Section::make('Office Hours')
-                    ->visible($hasCrmLicense)
-                    ->schema([
-                        Toggle::make('office_hours_are_enabled')
-                            ->label('Enable Office Hours')
-                            ->live(),
-                        Checkbox::make('appointments_are_restricted_to_existing_students')
-                            ->label('Restrict appointments to existing students')
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                        Section::make('Days')
-                            ->schema($this->getHoursForDays('office_hours'))
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                    ]),
-            ]);
-    }
-}
+        // This route MUST remain at /widgets/... in order to catch requests to asset files and return the correct headers
+        // NGINX has been configured to route all requests for assets under /widgets to the application
+        Route::get('{file?}', [PersonalBookingPageWidgetController::class, 'asset'])
+            ->where('file', '(.*)')
+            ->name('asset');
+    });
