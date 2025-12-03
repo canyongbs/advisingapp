@@ -61,15 +61,16 @@ use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
-class SendEmailAction extends Action
+class SendEmailAction
 {
-    protected Student|Prospect|null $educatable = null;
-
-    protected function setUp(): void
+    /**
+     * @param array<string, mixed> $configuration
+     */
+    public static function make(array $configuration): Action
     {
-        parent::setUp();
-
-        $this->icon('heroicon-m-chat-bubble-bottom-center-text')
+        return Action::make('send_email')
+            ->label('Send Email')
+            ->icon('heroicon-m-chat-bubble-bottom-center-text')
             ->modalHeading('Send Engagement')
             ->model(Engagement::class)
             ->authorize(function () {
@@ -191,16 +192,16 @@ class SendEmailAction extends Action
 
                                 return '';
                             })
-                            ->afterStateUpdated(function (Get $get, Set $set) {
+                            ->afterStateUpdated(function (Get $get, Set $set, mixed $record) use ($configuration) {
                                 $educatable = match ($get('recipient_type')) {
                                     'student' => Student::find($get('recipient_id')),
                                     'prospect' => Prospect::find($get('recipient_id')),
                                     default => null,
                                 };
 
-                                $defaultBody = view('basic-needs::components.default-email-body', [
+                                $defaultBody = view($configuration['view'], [
                                     'recipient' => $educatable,
-                                    'record' => $this->getRecord(),
+                                    'record' => $record,
                                 ])->render();
 
                                 $set('body', $defaultBody);
@@ -235,7 +236,7 @@ class SendEmailAction extends Action
                             ->hidden(fn (Get $get) => ! filled($get('recipient_type'))),
                     ]),
                 Step::make('Content')
-                    ->schema(function (Get $get): array {
+                    ->schema(function (Get $get) use ($configuration): array {
                         $educatable = match ($get('recipient_type')) {
                             'student' => Student::find($get('recipient_id')),
                             'prospect' => Prospect::find($get('recipient_id')),
@@ -254,10 +255,10 @@ class SendEmailAction extends Action
                                 ->disk('s3-public')
                                 ->label('Body')
                                 ->profile('email')
-                                ->default(function () use ($educatable) {
-                                    return view('basic-needs::components.default-email-body', [
+                                ->default(function (mixed $record) use ($educatable, $configuration) {
+                                    return view($configuration['view'], [
                                         'recipient' => $educatable,
-                                        'record' => $this->getRecord(),
+                                        'record' => $record,
                                     ])->render();
                                 })
                                 ->required()
