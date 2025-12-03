@@ -130,7 +130,7 @@ class CreateResourceHubArticle extends CreateRecord
 
         $data = $this->form->getRawState();
 
-        if(! empty($data['manager_ids'])) {
+        if (! empty($data['manager_ids'])) {
             $resourceHubArticle->managers()->sync($data['manager_ids']);
         }
     }
