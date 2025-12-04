@@ -34,7 +34,7 @@
 import Home from '@/Pages/Home.vue';
 import ViewArticle from '@/Pages/ViewArticle.vue';
 import ViewCategory from '@/Pages/ViewCategory.vue';
-import '@/portal.css';
+import styles from '@/portal.css?inline';
 import getAppContext from '@/Services/GetAppContext.js';
 import { defaultConfig, plugin } from '@formkit/vue';
 import { createPinia } from 'pinia';
@@ -46,6 +46,7 @@ import config from './formkit.config.js';
 customElements.define(
     'resource-hub-portal-embed',
     defineCustomElement({
+        styles: [styles],
         setup(props) {
             const app = createApp();
             const pinia = createPinia();

@@ -47,15 +47,10 @@
             if (!assets || !assets.asset_url || !assets.entry || !assets.js) {
                 throw Error('Assets are missing or incomplete.');
             }
-            // Apply the CSS URL as an attribute to the portal embed
-            // if (resources.css) {
-            //     portalEmbedElement.setAttribute('css-url', resources.css);
-            // }
-
             portalEmbedElement.setAttribute('entry-url', assets.entry);
 
             // Set up the global variable for Vite's dynamic imports using the asset endpoint
-            window.__VITE_RESOURCE_HUB_PORTAL_ASSET_URL__ = assets.asset_url;
+            window.__VITE_RESOURCE_HUB_PORTAL_ASSET_URL__ = assets.asset_url;1
 
             const scriptElement = document.createElement('script');
             scriptElement.src = assets.js;
