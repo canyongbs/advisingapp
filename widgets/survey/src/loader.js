@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -17,7 +15,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -33,36 +31,34 @@
 
 </COPYRIGHT>
 */
+(function () {
+    // Get the embed element
+    const embedElement = document.querySelector('survey-embed');
+    if (!embedElement) throw new Error('Embed not found');
 
-namespace AdvisingApp\Survey\Providers;
+    // Get the assets URL from the element
+    const assetsUrl = embedElement.getAttribute('url');
+    if (!assetsUrl) throw new Error('Assets URL not found');
 
-use AdvisingApp\Survey\Models\Survey;
-use AdvisingApp\Survey\Models\SurveyAuthentication;
-use AdvisingApp\Survey\Models\SurveyField;
-use AdvisingApp\Survey\Models\SurveyStep;
-use AdvisingApp\Survey\Models\SurveySubmission;
-use AdvisingApp\Survey\SurveyPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+    // Fetch the latest assets URLs
+    fetch(assetsUrl)
+        .then((response) => response.json())
+        .then((assets) => {
+            if (!assets || !assets.asset_url || !assets.entry || !assets.js) {
+                throw Error('Assets are missing or incomplete.');
+            }
 
-class SurveyServiceProvider extends ServiceProvider
-{
-    public function register()
-    {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new SurveyPlugin()));
-    }
+            embedElement.setAttribute('entry-url', assets.entry);
 
-    public function boot()
-    {
-        Relation::morphMap([
-            'survey_authentication' => SurveyAuthentication::class,
-            'survey_field' => SurveyField::class,
-            'survey_step' => SurveyStep::class,
-            'survey_submission' => SurveySubmission::class,
-            'survey' => Survey::class,
-        ]);
+            // Set up the global variable for Vite's dynamic imports using the asset endpoint
+            window.__VITE_SURVEYS_ASSET_URL__ = assets.asset_url;
 
-        $this->loadRoutesFrom(__DIR__ . '/../../routes/widgets.php');
-    }
-}
+            const scriptElement = document.createElement('script');
+            scriptElement.src = assets.js;
+            scriptElement.type = 'module';
+            document.body.appendChild(scriptElement);
+        })
+        .catch((error) => {
+            console.error('Failed to load widget assets:', error);
+        });
+})();
