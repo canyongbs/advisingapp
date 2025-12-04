@@ -44,24 +44,49 @@
     import { defineProps, onMounted, ref, watch } from 'vue';
     import { useRoute } from 'vue-router';
 
+    const props = defineProps({
+        entryUrl: {
+            type: String,
+            required: true,
+        },
+    });
+
     const errorLoading = ref(false);
     const loading = ref(true);
     const showMobileMenu = ref(false);
-
     const userIsAuthenticated = ref(false);
+    const portalRequiresAuthentication = ref(true);
+    const portalPrimaryColor = ref('');
+    const portalRounding = ref('');
+    const categories = ref({});
+    const route = useRoute();
+    const appUrl = ref(null);
+    const apiUrl = ref(null);
+    const searchUrl = ref(null);
+
+    const authentication = ref({
+        code: null,
+        email: null,
+        isRequested: false,
+        requestedMessage: null,
+        accessUrl: null,
+        authCheckUrl: null,
+        requestUrl: null,
+        url: null,
+    });
 
     onMounted(async () => {
-        const { isEmbeddedInAdvisingApp } = getAppContext(props.accessUrl);
-
-        if (isEmbeddedInAdvisingApp) {
-            await axios.get(props.appUrl + '/sanctum/csrf-cookie');
-        }
-
-        await determineIfUserIsAuthenticated(props.userAuthenticationUrl).then((response) => {
-            userIsAuthenticated.value = response;
-        });
-
         await getResourceHubPortal().then(async () => {
+            const { isEmbeddedInAdvisingApp } = getAppContext(authentication.value.accessUrl);
+
+            if (isEmbeddedInAdvisingApp) {
+                await axios.get(appUrl.value + '/sanctum/csrf-cookie');
+            }
+
+            await determineIfUserIsAuthenticated(authentication.value.authCheckUrl).then((response) => {
+                userIsAuthenticated.value = response;
+            });
+
             if (userIsAuthenticated.value || !portalRequiresAuthentication.value) {
                 await getResourceHubPortalCategories().then(() => {
                     loading.value = false;
@@ -74,58 +99,9 @@
         });
     });
 
-    const props = defineProps({
-        url: {
-            type: String,
-            required: true,
-        },
-        searchUrl: {
-            type: String,
-            required: true,
-        },
-        apiUrl: {
-            type: String,
-            required: true,
-        },
-        accessUrl: {
-            type: String,
-            required: true,
-        },
-        userAuthenticationUrl: {
-            type: String,
-            required: true,
-        },
-        appUrl: {
-            type: String,
-            required: true,
-        },
-    });
-
-    const scriptUrl = new URL(document.currentScript.getAttribute('src'));
-    const protocol = scriptUrl.protocol;
-    const scriptHostname = scriptUrl.hostname;
-    const scriptQuery = Object.fromEntries(scriptUrl.searchParams);
-
-    const hostUrl = `${protocol}//${scriptHostname}`;
-
-    const portalRequiresAuthentication = ref(true);
-    const portalPrimaryColor = ref('');
-    const portalRounding = ref('');
-    const categories = ref({});
-    const route = useRoute();
-
-    const authentication = ref({
-        code: null,
-        email: null,
-        isRequested: false,
-        requestedMessage: null,
-        requestUrl: null,
-        url: null,
-    });
-
     async function getResourceHubPortal() {
         await axios
-            .get(props.url)
+            .get(props.entryUrl)
             .then((response) => {
                 errorLoading.value = false;
 
@@ -142,6 +118,11 @@
                 );
 
                 authentication.value.requestUrl = response.data.authentication_url ?? null;
+                authentication.value.authCheckUrl = response.data.user_authentication_url;
+                authentication.value.accessUrl = response.data.access_url;
+                appUrl.value = response.data.app_url;
+                apiUrl.value = response.data.api_url;
+                searchUrl.value = response.data.search_url;
 
                 portalRounding.value = {
                     none: {
@@ -190,7 +171,7 @@
     async function getResourceHubPortalCategories() {
         const { get } = consumer();
 
-        get(`${props.apiUrl}/categories`)
+        get(`${apiUrl.value}/categories`)
             .then((response) => {
                 errorLoading.value = false;
 
@@ -211,10 +192,10 @@
 
         const { setToken } = useTokenStore();
 
-        const { isEmbeddedInAdvisingApp } = getAppContext(props.accessUrl);
+        const { isEmbeddedInAdvisingApp } = getAppContext(authentication.value.accessUrl);
 
         if (isEmbeddedInAdvisingApp) {
-            await axios.get(props.appUrl + '/sanctum/csrf-cookie');
+            await axios.get(appUrl.value + '/sanctum/csrf-cookie');
         }
 
         if (authentication.value.isRequested) {
@@ -307,10 +288,6 @@
             '--rounding-full': portalRounding.full,
         }"
     >
-        <div>
-            <link rel="stylesheet" v-bind:href="hostUrl + '/js/portals/resource-hub/style.css'" />
-        </div>
-
         <div v-if="loading">
             <AppLoading />
         </div>

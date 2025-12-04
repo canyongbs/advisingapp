@@ -40,10 +40,27 @@ use AdvisingApp\Portal\Settings\PortalSettings;
 use App\Http\Controllers\Controller;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\URL;
 
 class ResourceHubPortalController extends Controller
 {
+    public function assets(): JsonResponse
+    {
+        // Read the Vite manifest to determine the correct asset paths
+        $manifestPath = public_path('storage/portals/resource-hub/.vite/manifest.json');
+        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+        $manifest = json_decode(File::get($manifestPath), true, 512, JSON_THROW_ON_ERROR);
+
+        $portalEntry = $manifest['src/portal.js'];
+
+        return response()->json([
+            'asset_url' => URL::to('storage/portals/resource-hub/'),
+            'entry' => URL::signedRoute('api.portal.resource-hub.entry'),
+            'js' => URL::to('storage/portals/resource-hub/') . '/' . $portalEntry['file'],
+        ]);
+    }
+
     public function show(): JsonResponse
     {
         $settings = resolve(PortalSettings::class);
@@ -55,12 +72,18 @@ class ResourceHubPortalController extends Controller
                 ->all(),
             'rounding' => $settings->resource_hub_portal_rounding?->value,
             'requires_authentication' => $settings->resource_hub_portal_requires_authentication,
-            'authentication_url' => URL::to(
-                URL::signedRoute(
-                    name: 'api.portal.resource-hub.request-authentication',
-                    absolute: false,
-                )
-            ),
+            'authentication_url' => URL::signedRoute(name: 'api.portal.resource-hub.request-authentication'),
+
+            // user-authentication-url
+            'user_authentication_url' => route('api.user.auth-check'),
+            // access-url
+            'access_url' => route('portal.resource-hub.show'),
+            // search-url
+            'search_url' => URL::signedRoute(name: 'api.portal.resource-hub.search'),
+            // app-url
+            'app_url' => config('app.url'),
+            // api-url
+            'api_url' => route('api.portal.resource-hub.assets'),
         ]);
     }
 }

@@ -38,7 +38,7 @@ namespace AdvisingApp\Portal\Actions;
 
 use AdvisingApp\Portal\Enums\PortalType;
 use Exception;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Storage;
 
 class GeneratePortalEmbedCode
 {
@@ -46,33 +46,24 @@ class GeneratePortalEmbedCode
     {
         return match ($portal) {
             PortalType::ResourceHub => (function () {
-                $scriptUrl = url('js/portals/resource-hub/advising-app-resource-hub-portal.js?');
+                $manifestPath = Storage::disk('public')->get('portals/resource-hub/.vite/manifest.json');
 
-                $portalAccessUrl = route('portal.resource-hub.show');
+                if (is_null($manifestPath)) {
+                    throw new Exception('Vite manifest file not found.');
+                }
 
-                $userAuthenticationUrl = route('api.user.auth-check');
+                /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+                $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
 
-                $portalDefinitionUrl = URL::to(
-                    URL::signedRoute(
-                        name: 'api.portal.resource-hub.define',
-                        absolute: false,
-                    )
-                );
+                $loaderScriptUrl = url("storage/portals/resource-hub/{$manifest['src/loader.js']['file']}");
 
-                $portalSearchUrl = URL::to(
-                    URL::signedRoute(
-                        name: 'api.portal.resource-hub.search',
-                        absolute: false,
-                    )
-                );
+                $assetsUrl = route(name: 'api.portal.resource-hub.assets');
 
-                $appUrl = config('app.url');
-
-                $apiUrl = route('api.portal.resource-hub.define');
+                $accessUrl = route('portal.resource-hub.show');
 
                 return <<<EOD
-                <resource-hub-portal-embed url="{$portalDefinitionUrl}" user-authentication-url={$userAuthenticationUrl} access-url={$portalAccessUrl} search-url="{$portalSearchUrl}" app-url="{$appUrl}" api-url="{$apiUrl}"></resource-hub-portal-embed>
-                <script src="{$scriptUrl}"></script>
+                <resource-hub-portal-embed url="{$assetsUrl}" access-url="{$accessUrl}"></resource-hub-portal-embed>
+                <script src="{$loaderScriptUrl}"></script>
                 EOD;
             })(),
             default => throw new Exception('Unsupported Portal.'),
