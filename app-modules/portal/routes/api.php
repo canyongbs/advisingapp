@@ -52,8 +52,8 @@ use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 Route::prefix('api')
     ->name('api.')
     ->middleware([
-        EnsureFrontendRequestsAreStateful::class,
         'api',
+        EnsureFrontendRequestsAreStateful::class,
         NeedsTenant::class,
         EnsureResourceHubPortalIsEnabled::class,
         EnsureResourceHubPortalIsEmbeddableAndAuthorized::class,
@@ -75,9 +75,12 @@ Route::prefix('api')
         Route::prefix('portal/resource-hub')
             ->name('portal.resource-hub.')
             ->group(function () {
-                Route::get('/', [ResourceHubPortalController::class, 'show'])
-                    ->middleware(['signed:relative'])
-                    ->name('define');
+                Route::get('/', [ResourceHubPortalController::class, 'assets'])
+                    ->name('assets');
+
+                Route::get('/entry', [ResourceHubPortalController::class, 'show'])
+                    ->middleware(['signed'])
+                    ->name('entry');
 
                 Route::middleware([AuthenticateIfRequiredByPortalDefinition::class])
                     ->group(function () {
@@ -85,7 +88,7 @@ Route::prefix('api')
                             ->name('logout');
 
                         Route::post('/search', [ResourceHubPortalSearchController::class, 'get'])
-                            ->middleware(['signed:relative'])
+                            ->middleware(['signed'])
                             ->name('search');
 
                         Route::get('/categories', [ResourceHubPortalCategoryController::class, 'index'])
@@ -99,11 +102,11 @@ Route::prefix('api')
                     });
 
                 Route::post('/authenticate/request', ResourceHubPortalRequestAuthenticationController::class)
-                    ->middleware(['signed:relative'])
+                    ->middleware(['signed'])
                     ->name('request-authentication');
 
                 Route::post('/authenticate/{authentication}', ResourceHubPortalAuthenticateController::class)
-                    ->middleware(['signed:relative'])
+                    ->middleware(['signed'])
                     ->name('authenticate.embedded');
             });
     });
