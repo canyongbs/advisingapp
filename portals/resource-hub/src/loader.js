@@ -50,7 +50,8 @@
             portalEmbedElement.setAttribute('entry-url', assets.entry);
 
             // Set up the global variable for Vite's dynamic imports using the asset endpoint
-            window.__VITE_RESOURCE_HUB_PORTAL_ASSET_URL__ = assets.asset_url;1
+            window.__VITE_RESOURCE_HUB_PORTAL_ASSET_URL__ = assets.asset_url;
+            1;
 
             const scriptElement = document.createElement('script');
             scriptElement.src = assets.js;
