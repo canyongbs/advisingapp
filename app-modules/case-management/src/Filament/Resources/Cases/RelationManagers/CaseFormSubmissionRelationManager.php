@@ -56,7 +56,7 @@ class CaseFormSubmissionRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('submitted_at')
                     ->dateTime(),
-                TextColumn::make('author.email')
+                TextColumn::make('author.primaryEmailAddress.address')
                     ->label('Submitted By')
                     ->url(fn (CaseFormSubmission $record) => resolve($record->author::filamentResource())->getUrl('view', ['record' => $record->author]))
                     ->color('primary'),
@@ -74,7 +74,7 @@ class CaseFormSubmissionRelationManager extends RelationManager
                             ->schema([
                                 TextEntry::make('author.' . $record->author::displayNameKey())
                                     ->label('Name'),
-                                TextEntry::make('author.email')
+                                TextEntry::make('author.primaryEmailAddress.address')
                                     ->label('Email address'),
                             ])
                             ->columns(2),
