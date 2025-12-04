@@ -44,7 +44,6 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\Survey\Models\Survey;
 use Exception;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
 
 class GenerateSubmissibleEmbedCode
 {
@@ -130,18 +129,22 @@ class GenerateSubmissibleEmbedCode
             })(),
             CaseForm::class => (function () use ($submissible) {
                 /** @var CaseForm $submissible */
-                $scriptUrl = url('js/widgets/case-form/advising-app-case-form-widget.js?');
-                $formDefinitionUrl = URL::to(
-                    URL::signedRoute(
-                        name: 'case-forms.define',
-                        parameters: ['caseForm' => $submissible],
-                        absolute: false,
-                    )
-                );
+                $manifestPath = Storage::disk('public')->get('widgets/case-forms/.vite/manifest.json');
+
+                if (is_null($manifestPath)) {
+                    throw new Exception('Vite manifest file not found.');
+                }
+
+                /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+                $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
+
+                $loaderScriptUrl = url("widgets/case-forms/{$manifest['src/loader.js']['file']}");
+
+                $assetsUrl = route(name: 'widgets.case-forms.api.assets', parameters: ['caseForm' => $submissible]);
 
                 return <<<EOD
-                <case-form-embed url="{$formDefinitionUrl}"></case-form-embed>
-                <script src="{$scriptUrl}"></script>
+                <case-form-embed url="{$assetsUrl}"></case-form-embed>
+                <script src="{$loaderScriptUrl}"></script>
                 EOD;
             })(),
             default => throw new Exception('Unsupported submissible type.'),

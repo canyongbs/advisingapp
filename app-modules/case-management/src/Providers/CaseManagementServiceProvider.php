@@ -84,5 +84,7 @@ class CaseManagementServiceProvider extends ServiceProvider
             'sla' => Sla::class,
             'case_type_email_template' => CaseTypeEmailTemplate::class,
         ]);
+
+        $this->loadRoutesFrom(__DIR__ . '/../../routes/widgets.php');
     }
 }
