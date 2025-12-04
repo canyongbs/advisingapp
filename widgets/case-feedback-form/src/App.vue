@@ -94,18 +94,11 @@
             guard: userGuard.value,
         };
 
-        fetch(formSubmissionUrl.value, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestData),
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                if (json.errors) {
-                    node.setErrors([], json.errors);
+        axios
+            .post(formSubmissionUrl.value, requestData)
+            .then((response) => {
+                if (response.errors) {
+                    node.setErrors([], response.errors);
 
                     return;
                 }
