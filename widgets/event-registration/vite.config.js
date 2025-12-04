@@ -37,16 +37,34 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
     plugins: [vue()],
+    experimental: {
+        renderBuiltUrl(filename) {
+            return {
+                runtime: `window.__VITE_EVENT_REGISTRATION_ASSET_URL__ + ${JSON.stringify(filename)}`,
+            };
+        },
+    },
     build: {
         manifest: true,
-        lib: {
-            entry: resolve(__dirname, 'src/widget.js'),
-            name: 'AdvisingAppEventRegistrationFormWidget',
-            fileName: 'advising-app-event-registration-form-widget',
-            cssFileName: 'style',
-            formats: ['es'],
+        rollupOptions: {
+            input: {
+                widget: resolve(__dirname, './src/widget.js'),
+                loader: resolve(__dirname, './src/loader.js'),
+            },
+            output: {
+                entryFileNames: (chunkInfo) => {
+                    return chunkInfo.name === 'loader'
+                        ? 'advising-app-event-registration-widget.js'
+                        : 'advising-app-event-registration-widget-app-[hash].js';
+                },
+                assetFileNames: (assetInfo) => {
+                    return '[name]-[hash][extname]';
+                },
+                // Place chunks directly in the root
+                chunkFileNames: '[name]-[hash].js',
+            },
         },
-        outDir: resolve(__dirname, '../../public/js/widgets/events'),
+        outDir: resolve(__dirname, '../../storage/app/public/widgets/event-registration'),
         emptyOutDir: true,
         sourcemap: true,
     },

@@ -110,18 +110,22 @@ class GenerateSubmissibleEmbedCode
             })(),
             EventRegistrationForm::class => (function () use ($submissible) {
                 /** @var EventRegistrationForm $submissible */
-                $scriptUrl = url('js/widgets/events/advising-app-event-registration-form-widget.js?');
-                $formDefinitionUrl = URL::to(
-                    URL::signedRoute(
-                        name: 'event-registration.define',
-                        parameters: ['event' => $submissible->event],
-                        absolute: false,
-                    )
-                );
+                $manifestPath = Storage::disk('public')->get('widgets/event-registration/.vite/manifest.json');
+
+                if (is_null($manifestPath)) {
+                    throw new Exception('Vite manifest file not found.');
+                }
+
+                /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+                $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
+
+                $loaderScriptUrl = url("widgets/event-registration/{$manifest['src/loader.js']['file']}");
+
+                $assetsUrl = route(name: 'widgets.event-registration.api.assets', parameters: ['event' => $submissible->event]);
 
                 return <<<EOD
-                <event-registration-embed url="{$formDefinitionUrl}"></event-registration-embed>
-                <script src="{$scriptUrl}"></script>
+                <event-registration-embed url="{$assetsUrl}"></event-registration-embed>
+                <script src="{$loaderScriptUrl}"></script>
                 EOD;
             })(),
             CaseForm::class => (function () use ($submissible) {

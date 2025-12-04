@@ -15,7 +15,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -31,33 +31,34 @@
 
 </COPYRIGHT>
 */
-import { defaultConfig, plugin } from '@formkit/vue';
-import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import VueSignaturePad from 'vue-signature-pad';
-import App from './App.vue';
-import config from './formkit.config.js';
-import styles from './widget.css?inline';
+(function () {
+    // Get the embed element
+    const embedElement = document.querySelector('event-registration-embed');
+    if (!embedElement) throw new Error('Embed not found');
 
-customElements.define(
-    'event-registration-embed',
-    defineCustomElement({
-        styles: [styles],
-        setup(props) {
-            const app = createApp();
+    // Get the assets URL from the element
+    const assetsUrl = embedElement.getAttribute('url');
+    if (!assetsUrl) throw new Error('Assets URL not found');
 
-            // install plugins
-            app.use(plugin, defaultConfig(config));
+    // Fetch the latest assets URLs
+    fetch(assetsUrl)
+        .then((response) => response.json())
+        .then((assets) => {
+            if (!assets || !assets.asset_url || !assets.entry || !assets.js) {
+                throw Error('Assets are missing or incomplete.');
+            }
 
-            app.use(VueSignaturePad);
+            embedElement.setAttribute('entry-url', assets.entry);
 
-            app.config.devtools = true;
+            // Set up the global variable for Vite's dynamic imports using the asset endpoint
+            window.__VITE_EVENT_REGISTRATION_ASSET_URL__ = assets.asset_url;
 
-            const inst = getCurrentInstance();
-            Object.assign(inst.appContext, app._context);
-            Object.assign(inst.provides, app._context.provides);
-
-            return () => h(App, props);
-        },
-        props: ['entryUrl'],
-    }),
-);
+            const scriptElement = document.createElement('script');
+            scriptElement.src = assets.js;
+            scriptElement.type = 'module';
+            document.body.appendChild(scriptElement);
+        })
+        .catch((error) => {
+            console.error('Failed to load widget assets:', error);
+        });
+})();

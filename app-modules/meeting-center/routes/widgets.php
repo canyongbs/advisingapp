@@ -34,9 +34,59 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\MeetingCenter\Http\Controllers\EventRegistrationWidgetController;
 use AdvisingApp\MeetingCenter\Http\Controllers\PersonalBookingPageWidgetController;
+use AdvisingApp\MeetingCenter\Http\Middleware\EnsureEventRegistrationFormIsEmbeddableAndAuthorized;
+use AdvisingApp\MeetingCenter\Http\Middleware\EventRegistrationWidgetCors;
+use AdvisingApp\MeetingCenter\Models\Event;
 use App\Http\Middleware\EncryptCookies;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+Route::middleware([
+    'api',
+    EncryptCookies::class,
+    EventRegistrationWidgetCors::class,
+])
+    ->prefix('widgets/event-registration')
+    ->name('widgets.event-registration.')
+    ->group(function () {
+        Route::prefix('api/{event}')
+            ->name('api.')
+            ->middleware([
+                EnsureEventRegistrationFormIsEmbeddableAndAuthorized::class . ':event',
+            ])
+            ->group(function () {
+                Route::get('/', [EventRegistrationWidgetController::class, 'assets'])
+                    ->name('assets');
+
+                Route::get('entry', [EventRegistrationWidgetController::class, 'view'])
+                    ->name('entry');
+                Route::post('authenticate/request', [EventRegistrationWidgetController::class, 'requestAuthentication'])
+                    ->middleware(['signed'])
+                    ->name('request-authentication');
+                Route::post('authenticate/{authentication}', [EventRegistrationWidgetController::class, 'authenticate'])
+                    ->middleware(['signed'])
+                    ->name('authenticate');
+                Route::post('submit', [EventRegistrationWidgetController::class, 'store'])
+                    ->middleware(['signed'])
+                    ->name('submit');
+
+                // Handle preflight CORS requests for all routes in this group
+                // MUST remain the last route in this group
+                Route::options('/{any}', function (Request $request, Event $event) {
+                    return response()->noContent();
+                })
+                    ->where('any', '.*')
+                    ->name('preflight');
+            });
+
+        // This route MUST remain at /widgets/... in order to catch requests to asset files and return the correct headers
+        // NGINX has been configured to route all requests for assets under /widgets to the application
+        Route::get('{file?}', [EventRegistrationWidgetController::class, 'asset'])
+            ->where('file', '(.*)')
+            ->name('asset');
+    });
 
 Route::middleware([
     'api',
