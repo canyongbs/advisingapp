@@ -41,10 +41,13 @@ use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
+use App\Features\QnaAdvisorIntroductoryMessageFeature;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rule;
 
@@ -88,6 +91,25 @@ class CreateQnaAdvisor extends CreateRecord
                 Textarea::make('description')
                     ->maxLength(65535)
                     ->required(),
+                Toggle::make('is_introductory_message_enabled')
+                    ->label('Enable Introductory Message')
+                    ->live()
+                    ->default(false)
+                    ->visible(fn (): bool => QnaAdvisorIntroductoryMessageFeature::active()),
+                Toggle::make('is_introductory_message_dynamic')
+                    ->label('Dynamic')
+                    ->helperText(fn (Get $get): ?string => $get('is_introductory_message_dynamic')
+                        ? 'AI will greet the student or prospect.'
+                        : 'Specify a custom introductory message below.')
+                    ->live()
+                    ->default(true)
+                    ->visible(fn (Get $get): bool => QnaAdvisorIntroductoryMessageFeature::active() && $get('is_introductory_message_enabled')),
+                Textarea::make('introductory_message')
+                    ->label('Introductory Message')
+                    ->helperText('Specify the plain text introductory message.')
+                    ->maxLength(65535)
+                    ->rows(4)
+                    ->visible(fn (Get $get): bool => QnaAdvisorIntroductoryMessageFeature::active() && $get('is_introductory_message_enabled') && ! $get('is_introductory_message_dynamic')),
             ]);
     }
 

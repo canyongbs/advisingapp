@@ -43,14 +43,17 @@ use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use App\Features\QnaAdvisorIntroductoryMessageFeature;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -129,6 +132,25 @@ class EditQnaAdvisor extends EditRecord
                     Textarea::make('description')
                         ->maxLength(65535)
                         ->required(),
+                    Toggle::make('is_introductory_message_enabled')
+                        ->label('Enable Introductory Message')
+                        ->live()
+                        ->default(false)
+                        ->visible(fn (): bool => QnaAdvisorIntroductoryMessageFeature::active()),
+                    Toggle::make('is_introductory_message_dynamic')
+                        ->label('Dynamic')
+                        ->helperText(fn (Get $get): ?string => $get('is_introductory_message_dynamic')
+                            ? 'AI will greet the student or prospect.'
+                            : 'Specify a custom introductory message below.')
+                        ->live()
+                        ->default(true)
+                        ->visible(fn (Get $get): bool => QnaAdvisorIntroductoryMessageFeature::active() && $get('is_introductory_message_enabled')),
+                    Textarea::make('introductory_message')
+                        ->label('Introductory Message')
+                        ->helperText('Specify the plain text introductory message.')
+                        ->maxLength(65535)
+                        ->rows(4)
+                        ->visible(fn (Get $get): bool => QnaAdvisorIntroductoryMessageFeature::active() && $get('is_introductory_message_enabled') && ! $get('is_introductory_message_dynamic')),
                 ]),
             ]);
     }

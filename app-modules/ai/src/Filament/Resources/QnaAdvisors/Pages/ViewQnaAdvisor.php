@@ -39,7 +39,9 @@ namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
+use App\Features\QnaAdvisorIntroductoryMessageFeature;
 use Filament\Actions\Action;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
@@ -48,6 +50,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use UnitEnum;
@@ -70,6 +73,17 @@ class ViewQnaAdvisor extends ViewRecord
                     ->circular(),
                 TextEntry::make('name'),
                 TextEntry::make('description'),
+                IconEntry::make('is_introductory_message_enabled')
+                    ->label('Introductory Message Enabled')
+                    ->boolean()
+                    ->visible(fn (): bool => QnaAdvisorIntroductoryMessageFeature::active()),
+                IconEntry::make('is_introductory_message_dynamic')
+                    ->label('Dynamic Introductory Message')
+                    ->boolean()
+                    ->visible(fn (QnaAdvisor $record): bool => QnaAdvisorIntroductoryMessageFeature::active() && $record->is_introductory_message_enabled),
+                TextEntry::make('introductory_message')
+                    ->label('Custom Introductory Message')
+                    ->visible(fn (QnaAdvisor $record): bool => QnaAdvisorIntroductoryMessageFeature::active() && $record->is_introductory_message_enabled && ! $record->is_introductory_message_dynamic),
                 Tabs::make('Generated Instructions')
                     ->tabs([
                         Tab::make('Generated Instructions Markdown')
