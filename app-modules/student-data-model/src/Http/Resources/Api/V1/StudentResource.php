@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Http\Resources\Api\V1;
 
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\HsGradeTypeChangeFeature;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Date;
@@ -62,7 +61,7 @@ class StudentResource extends JsonResource
             'full_name' => $this->resource->full_name,
             'preferred' => $this->resource->preferred,
             'birthdate' => $this->resource->birthdate ? $this->resource->birthdate->format('Y-m-d') : null,
-            'hsgrad' => $this->resource->hsgrad ? (HsGradeTypeChangeFeature::active() ? Date::parse($this->resource->hsgrad)->format('Y-m-d') : $this->resource->hsgrad) : null,
+            'hsgrad' => $this->resource->hsgrad ? Date::parse($this->resource->hsgrad)->format('Y-m-d') : null,
             'gender' => $this->resource->gender,
             'sms_opt_out' => $this->resource->sms_opt_out,
             'email_bounce' => $this->resource->email_bounce,

@@ -41,7 +41,6 @@ use AdvisingApp\ResourceHub\Filament\Actions\CreateConcernAction;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Filament\Widgets\ResourceHubArticleConcernsTable;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use App\Features\ResourceHubArticleConcernFeature;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -120,8 +119,7 @@ class ViewResourceHubArticle extends ViewRecord
                         Tab::make('Concerns')
                             ->schema([
                                 Livewire::make(ResourceHubArticleConcernsTable::class, ['record' => $this->getRecord()]),
-                            ])
-                            ->visible(ResourceHubArticleConcernFeature::active()),
+                            ]),
                     ])
                     ->columnSpanFull(),
             ]);
