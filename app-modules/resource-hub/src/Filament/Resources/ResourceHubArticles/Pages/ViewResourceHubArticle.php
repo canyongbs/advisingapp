@@ -119,7 +119,7 @@ class ViewResourceHubArticle extends ViewRecord
                                 TextEntry::make('managers')
                                     ->visible(ResourceHubArticleManagersFeature::active())
                                     ->label('Managers')
-                                    ->formatStateUsing(fn (ResourceHubArticle $record) => $record->managers->pluck('name')->join(', ')),
+                                    ->getStateUsing(fn (ResourceHubArticle $record) => $record->managers->pluck('name')->join(', ')),
                             ]),
                         Tab::make('Concerns')
                             ->schema([
