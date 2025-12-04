@@ -60,6 +60,8 @@ class EditCaseTypeAssignments extends EditRecord
 
     protected static ?string $title = 'Assignments';
 
+    protected static ?string $navigationLabel = 'Assignments';
+
     public function getRelationManagers(): array
     {
         // Needed to prevent Filament from loading the relation managers on this page.
