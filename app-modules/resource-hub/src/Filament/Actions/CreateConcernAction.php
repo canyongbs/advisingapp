@@ -66,8 +66,7 @@ class CreateConcernAction extends Action
                 ]);
 
                 $livewire->dispatch('concern-created');
-            })
-            ->visible(ResourceHubArticleConcernFeature::active());
+            });
     }
 
     public static function getDefaultName(): ?string
