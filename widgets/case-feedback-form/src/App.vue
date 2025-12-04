@@ -36,6 +36,8 @@
     import { defineProps, onMounted, ref } from 'vue';
     import axios from '../../../portals/resource-hub/src/Globals/Axios.js';
     import determineIfUserIsAuthenticated from '../../../portals/resource-hub/src/Services/DetermineIfUserIsAuthenticated.js';
+    import { useAuthStore } from '@/Stores/auth.js';
+    import { useTokenStore } from '@/Stores/token.js';
     import AppLoading from '../src/Components/AppLoading.vue';
     import Footer from './Components/Footer.vue';
 
@@ -45,10 +47,6 @@
             required: true,
         },
     });
-
-    // Use local reactive refs instead of Pinia stores for widget context
-    const user = ref(null);
-    const portalRequiresAuthentication = ref(false);
 
     const submittedSuccess = ref(false);
 
@@ -154,8 +152,11 @@
 
                 authenticate.userAuthenticationUrl = response.data.user_auth_check_url;
 
-                portalRequiresAuthentication.value = response.data.requires_authentication;
-                requiresAuthentication.value = response.data.requires_authentication;
+                const authStore = useAuthStore();
+
+                authStore.setPortalRequiresAuthentication(response.data.requires_authentication).then(() => {
+                    requiresAuthentication.value = response.data.requires_authentication;
+                });
 
                 formRounding.value = {
                     none: {
@@ -226,8 +227,11 @@
                     }
 
                     if (response.data.success === true) {
-                        // Store auth data locally instead of using Pinia
-                        user.value = response.data.user;
+                        const authStore = useAuthStore();
+                        const tokenStore = useTokenStore();
+
+                        tokenStore.setToken(response.data.token);
+                        authStore.setUser(response.data.user);
                         userGuard.value = response.data.guard;
                         userIsAuthenticated.value = true;
                     }

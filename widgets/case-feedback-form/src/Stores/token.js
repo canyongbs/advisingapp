@@ -31,32 +31,25 @@
 
 </COPYRIGHT>
 */
-import { defaultConfig, plugin } from '@formkit/vue';
-import { createPinia } from 'pinia';
-import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import App from './App.vue';
-import config from './formkit.config.js';
-import styles from './widget.css?inline';
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-customElements.define(
-    'case-feedback-form-embed',
-    defineCustomElement({
-        styles: [styles],
-        setup(props) {
-            const app = createApp();
-            const pinia = createPinia();
+export const useTokenStore = defineStore('token', () => {
+    const token = ref(null);
 
-            app.use(pinia);
-            app.use(plugin, defaultConfig(config));
+    async function setToken(tokenToSet) {
+        token.value = tokenToSet;
+        localStorage.setItem('token', token.value);
+    }
 
-            app.config.devtools = true;
+    async function getToken() {
+        return localStorage.getItem('token');
+    }
 
-            const inst = getCurrentInstance();
-            Object.assign(inst.appContext, app._context);
-            Object.assign(inst.provides, app._context.provides);
+    async function removeToken() {
+        token.value = null;
+        localStorage.removeItem('token');
+    }
 
-            return () => h(App, props);
-        },
-        props: ['url'],
-    }),
-);
+    return { token, getToken, setToken, removeToken };
+});
