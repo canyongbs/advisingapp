@@ -51,7 +51,7 @@ class BrandingBar extends Component
 
     public bool $dismissible = false;
 
-    public string | null | Color $color;
+    public ?Color $color;
 
     public function dismiss(): void
     {

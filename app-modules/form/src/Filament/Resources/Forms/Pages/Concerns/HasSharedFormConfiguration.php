@@ -45,7 +45,7 @@ use AdvisingApp\Form\Models\FormStep;
 use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use App\Features\FormApplicationTitleFeature;
-use App\Filament\Forms\Components\ColorSelect;
+use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
