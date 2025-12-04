@@ -44,3 +44,8 @@
 li[data-message-type='success'] {
     color: green;
 }
+
+.bg-gradient {
+    @apply relative bg-no-repeat;
+    background-image: radial-gradient(circle at top, theme('colors.primary.200'), theme('colors.white') 50%);
+}

@@ -37,33 +37,29 @@
 namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use Illuminate\Support\Facades\URL;
+use Exception;
+use Illuminate\Support\Facades\Storage;
 
 class GenerateCaseFeedbackFormEmbedCode
 {
     public function handle(CaseModel $case): string
     {
-        $scriptUrl = url('js/widgets/case-feedback-form/advising-app-case-feedback-form-widget.js?');
+        $manifestPath = Storage::disk('public')->get('widgets/case-feedback-forms/.vite/manifest.json');
 
-        $formDefinitionUrl = URL::to(
-            URL::signedRoute(
-                name: 'cases.feedback.define',
-                parameters: ['case' => $case],
-                absolute: false,
-            )
-        );
+        if (is_null($manifestPath)) {
+            throw new Exception('Vite manifest file not found.');
+        }
 
-        $portalAccessUrl = route('portal.resource-hub.show');
+        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+        $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
 
-        $userAuthenticationUrl = route('api.user.auth-check');
+        $loaderScriptUrl = url("widgets/case-feedback-forms/{$manifest['src/loader.js']['file']}");
 
-        $appUrl = config('app.url');
-
-        $apiUrl = route('api.portal.resource-hub.define');
+        $assetsUrl = route(name: 'widgets.case-feedback-forms.api.assets', parameters: ['case' => $case]);
 
         return <<<EOD
-        <case-feedback-form-embed url="{$formDefinitionUrl}" user-authentication-url={$userAuthenticationUrl} access-url={$portalAccessUrl} app-url="{$appUrl}" api-url="{$apiUrl}"></case-feedback-form-embed>
-        <script src="{$scriptUrl}"></script>
+        <case-feedback-form-embed url="{$assetsUrl}"></case-feedback-form-embed>
+        <script src="{$loaderScriptUrl}"></script>
         EOD;
     }
 }
