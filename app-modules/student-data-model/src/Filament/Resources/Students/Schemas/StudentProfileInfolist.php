@@ -41,7 +41,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentAddress;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use App\Features\HsGradeTypeChangeFeature;
 use App\Infolists\Components\Subsection;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
@@ -112,11 +111,6 @@ class StudentProfileInfolist
                             TextEntry::make('hsgrad')
                                 ->label('High School Graduation')
                                 ->date()
-                                ->visible(fn (): bool => HsGradeTypeChangeFeature::active())
-                                ->placeholder('-'),
-                            TextEntry::make('hsgrad')
-                                ->label('High School Graduation')
-                                ->visible(fn (): bool => ! HsGradeTypeChangeFeature::active())
                                 ->placeholder('-'),
                         ]),
                         Subsection::make([
