@@ -73,16 +73,10 @@ class ResourceHubPortalController extends Controller
             'rounding' => $settings->resource_hub_portal_rounding?->value,
             'requires_authentication' => $settings->resource_hub_portal_requires_authentication,
             'authentication_url' => URL::signedRoute(name: 'api.portal.resource-hub.request-authentication'),
-
-            // user-authentication-url
             'user_authentication_url' => route('api.user.auth-check'),
-            // access-url
             'access_url' => route('portal.resource-hub.show'),
-            // search-url
             'search_url' => URL::signedRoute(name: 'api.portal.resource-hub.search'),
-            // app-url
             'app_url' => config('app.url'),
-            // api-url
             'api_url' => route('api.portal.resource-hub.assets'),
         ]);
     }

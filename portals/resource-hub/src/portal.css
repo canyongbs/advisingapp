@@ -36,3 +36,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.bg-gradient {
+    @apply relative bg-no-repeat;
+    background-image: radial-gradient(circle at top, theme('colors.primary.200'), theme('colors.white') 50%);
+}

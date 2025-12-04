@@ -363,10 +363,3 @@
         </div>
     </div>
 </template>
-
-<style scoped>
-    .bg-gradient {
-        @apply relative bg-no-repeat;
-        background-image: radial-gradient(circle at top, theme('colors.primary.200'), theme('colors.white') 50%);
-    }
-</style>
