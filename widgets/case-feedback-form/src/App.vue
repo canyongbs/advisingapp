@@ -32,12 +32,12 @@
 </COPYRIGHT>
 -->
 <script setup>
+    import { useAuthStore } from '@/Stores/auth.js';
+    import { useTokenStore } from '@/Stores/token.js';
     import { FormKit } from '@formkit/vue';
     import { defineProps, onMounted, ref } from 'vue';
     import axios from '../../../portals/resource-hub/src/Globals/Axios.js';
     import determineIfUserIsAuthenticated from '../../../portals/resource-hub/src/Services/DetermineIfUserIsAuthenticated.js';
-    import { useAuthStore } from '@/Stores/auth.js';
-    import { useTokenStore } from '@/Stores/token.js';
     import AppLoading from '../src/Components/AppLoading.vue';
     import Footer from './Components/Footer.vue';
 
