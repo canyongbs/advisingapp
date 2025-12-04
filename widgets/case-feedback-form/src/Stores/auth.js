@@ -31,32 +31,40 @@
 
 </COPYRIGHT>
 */
-import { defaultConfig, plugin } from '@formkit/vue';
-import { createPinia } from 'pinia';
-import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import App from './App.vue';
-import config from './formkit.config.js';
-import styles from './widget.css?inline';
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-customElements.define(
-    'case-feedback-form-embed',
-    defineCustomElement({
-        styles: [styles],
-        setup(props) {
-            const app = createApp();
-            const pinia = createPinia();
+export const useAuthStore = defineStore('auth', () => {
+    const user = ref(null);
+    const portalRequiresAuthentication = ref(false);
 
-            app.use(pinia);
-            app.use(plugin, defaultConfig(config));
+    async function setUser(userToSet) {
+        user.value = userToSet;
+    }
 
-            app.config.devtools = true;
+    async function getUser() {
+        return user.value;
+    }
 
-            const inst = getCurrentInstance();
-            Object.assign(inst.appContext, app._context);
-            Object.assign(inst.provides, app._context.provides);
+    async function removeUser() {
+        user.value = null;
+    }
 
-            return () => h(App, props);
-        },
-        props: ['url'],
-    }),
-);
+    async function setPortalRequiresAuthentication(value) {
+        portalRequiresAuthentication.value = value;
+    }
+
+    async function getPortalRequiresAuthentication() {
+        return portalRequiresAuthentication.value;
+    }
+
+    return {
+        user,
+        getUser,
+        setUser,
+        removeUser,
+        portalRequiresAuthentication,
+        setPortalRequiresAuthentication,
+        getPortalRequiresAuthentication,
+    };
+});
