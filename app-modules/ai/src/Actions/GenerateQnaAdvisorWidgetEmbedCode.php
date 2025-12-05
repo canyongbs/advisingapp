@@ -37,20 +37,27 @@
 namespace AdvisingApp\Ai\Actions;
 
 use AdvisingApp\Ai\Models\QnaAdvisor;
+use Exception;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
 class GenerateQnaAdvisorWidgetEmbedCode
 {
     public function handle(QnaAdvisor $qnaAdvisor): string
     {
-        // Read the Vite manifest for widget assets to get cache-busted URLs
-        $manifestPath = public_path('js/widgets/qna-advisor/.vite/manifest.json');
-        $manifest = json_decode(File::get($manifestPath), true);
+        $manifestPath = Storage::disk('public')->get('widgets/ai/qna-advisors/.vite/manifest.json');
 
-        $loaderScriptUrl = url("js/widgets/qna-advisor/{$manifest['src/loader.js']['file']}");
+        if (is_null($manifestPath)) {
+            throw new Exception('Vite manifest file not found.');
+        }
 
-        $resourcesUrl = URL::route(name: 'ai.qna-advisors.resources', parameters: ['advisor' => $qnaAdvisor]);
+        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+        $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
+
+        $loaderScriptUrl = url("widgets/ai/qna-advisors/{$manifest['src/loader.js']['file']}");
+
+        $resourcesUrl = URL::route(name: 'widgets.ai.qna-advisors.api.assets', parameters: ['advisor' => $qnaAdvisor]);
 
         return <<<EOD
         <qna-advisor-embed url="{$resourcesUrl}"></qna-advisor-embed>

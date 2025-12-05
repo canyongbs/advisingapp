@@ -32,34 +32,33 @@
 </COPYRIGHT>
 */
 (function () {
-    // Get the portal embed element
-    const portalEmbedElement = document.querySelector('qna-advisor-embed');
-    if (!portalEmbedElement) return;
+    // Get the embed element
+    const embedElement = document.querySelector('qna-advisor-embed');
+    if (!embedElement) throw new Error('Embed not found');
 
-    // Get the resources URL from the element
-    const resourcesUrl = portalEmbedElement.getAttribute('url');
-    if (!resourcesUrl) return;
+    // Get the assets URL from the element
+    const assetsUrl = embedElement.getAttribute('url');
+    if (!assetsUrl) throw new Error('Assets URL not found');
 
-    // Fetch the latest resource URLs
-    fetch(resourcesUrl)
+    // Fetch the latest assets URLs
+    fetch(assetsUrl)
         .then((response) => response.json())
-        .then((resources) => {
-            if (!resources || !resources.entry || !resources.js || !resources.css) {
-                throw Error('Resources are missing or incomplete.');
+        .then((assets) => {
+            if (!assets || !assets.asset_url || !assets.entry || !assets.js) {
+                throw Error('Assets are missing or incomplete.');
             }
 
-            portalEmbedElement.setAttribute('entry-url', resources.entry);
-            portalEmbedElement.setAttribute('css-url', resources.css);
+            embedElement.setAttribute('entry-url', assets.entry);
 
-            // Set up the global variable for Vite's dynamic imports using the resource endpoint
-            window.__VITE_QNA_ADVISOR_RESOURCE_URL__ = `${resourcesUrl}/resource?resource=js/widgets/qna-advisor/`;
+            // Set up the global variable for Vite's dynamic imports using the asset endpoint
+            window.__VITE_QNA_ADVISOR_RESOURCE_URL__ = assets.asset_url;
 
             const scriptElement = document.createElement('script');
-            scriptElement.src = resources.js;
+            scriptElement.src = assets.js;
             scriptElement.type = 'module';
             document.body.appendChild(scriptElement);
         })
         .catch((error) => {
-            console.error('Failed to load portal resources:', error);
+            console.error('Failed to load widget assets:', error);
         });
 })();

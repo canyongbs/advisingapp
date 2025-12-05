@@ -73,7 +73,7 @@ class AuthenticationConfirmController
             'access_token' => $accessToken->plainTextToken,
             'websockets_config' => [
                 ...config('filament.broadcasting.echo'),
-                'authEndpoint' => route('ai.qna-advisors.broadcasting.auth', ['advisor' => $advisor]),
+                'authEndpoint' => route('widgets.ai.qna-advisors.api.broadcasting.auth', ['advisor' => $advisor]),
             ],
         ])
             ->withCookie(

@@ -105,5 +105,7 @@ class AiServiceProvider extends ServiceProvider
         ]);
 
         $this->mergeConfigFrom(__DIR__ . '/../../config/ai.php', 'ai');
+
+        $this->loadRoutesFrom(__DIR__ . '/../../routes/widgets.php');
     }
 }

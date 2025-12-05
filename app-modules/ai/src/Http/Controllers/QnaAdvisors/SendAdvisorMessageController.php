@@ -120,7 +120,7 @@ class SendAdvisorMessageController
             'message' => 'Message dispatched for processing via websockets.',
             'thread_id' => $thread->getKey(),
             'finish_thread_url' => URL::temporarySignedRoute(
-                name: 'ai.qna-advisors.threads.finish',
+                name: 'widgets.ai.qna-advisors.api.threads.finish',
                 expiration: now()->addDays(3),
                 parameters: ['advisor' => $advisor, 'thread' => $thread],
             ),
