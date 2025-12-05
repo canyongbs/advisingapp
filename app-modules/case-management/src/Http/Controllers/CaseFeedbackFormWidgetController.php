@@ -104,9 +104,9 @@ class CaseFeedbackFormWidgetController extends Controller
             [
                 'requires_authentication' => true,
                 'is_authenticated' => (bool) auth('student')->check() || (bool) auth('prospect')->check(),
-                'user_auth_check_url' => route('api.user.auth-check'),
+                'user_auth_check_url' => route('portals.user.auth-check'),
                 'guard' => auth('student')->check() ? 'student' : (auth('prospect')->check() ? 'prospect' : null),
-                'authentication_url' => URL::signedRoute(name: 'api.portal.resource-hub.request-authentication'),
+                'authentication_url' => URL::signedRoute(name: 'portals.resource-hub.api.request-authentication'),
                 'submission_url' => URL::signedRoute(
                     name: 'widgets.case-feedback-forms.api.submit',
                     parameters: ['case' => $case],

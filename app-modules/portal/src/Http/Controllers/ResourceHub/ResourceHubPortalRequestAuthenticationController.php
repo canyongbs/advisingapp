@@ -85,7 +85,7 @@ class ResourceHubPortalRequestAuthenticationController extends Controller
                 )
             ),
             default => URL::signedRoute(
-                name: 'api.portal.resource-hub.authenticate.embedded',
+                name: 'portals.resource-hub.api.authenticate.embedded',
                 parameters: [
                     'authentication' => $authentication,
                 ],

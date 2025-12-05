@@ -40,8 +40,11 @@ use AdvisingApp\Portal\Settings\PortalSettings;
 use App\Http\Controllers\Controller;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ResourceHubPortalController extends Controller
 {
@@ -55,10 +58,34 @@ class ResourceHubPortalController extends Controller
         $portalEntry = $manifest['src/portal.js'];
 
         return response()->json([
-            'asset_url' => URL::to('storage/portals/resource-hub/'),
-            'entry' => URL::signedRoute('api.portal.resource-hub.entry'),
-            'js' => URL::to('storage/portals/resource-hub/') . '/' . $portalEntry['file'],
+            'asset_url' => route('portals.resource-hub.asset'),
+            'entry' => URL::signedRoute('portals.resource-hub.api.entry'),
+            'js' => route('portals.resource-hub.asset', ['file' => $portalEntry['file']]),
         ]);
+    }
+
+    public function asset(Request $request, string $file): StreamedResponse
+    {
+        $path = "portals/resource-hub/{$file}";
+
+        $disk = Storage::disk('public');
+
+        abort_if(! $disk->exists($path), 404, 'File not found.');
+
+        $mimeType = $disk->mimeType($path);
+
+        $stream = $disk->readStream($path);
+
+        abort_if(is_null($stream), 404, 'File not found.');
+
+        return response()->streamDownload(
+            function () use ($stream) {
+                fpassthru($stream);
+                fclose($stream);
+            },
+            $file,
+            ['Content-Type' => $mimeType]
+        );
     }
 
     public function show(): JsonResponse
@@ -72,12 +99,12 @@ class ResourceHubPortalController extends Controller
                 ->all(),
             'rounding' => $settings->resource_hub_portal_rounding?->value,
             'requires_authentication' => $settings->resource_hub_portal_requires_authentication,
-            'authentication_url' => URL::signedRoute(name: 'api.portal.resource-hub.request-authentication'),
-            'user_authentication_url' => route('api.user.auth-check'),
+            'authentication_url' => URL::signedRoute(name: 'portals.resource-hub.api.request-authentication'),
+            'user_authentication_url' => route('portals.user.auth-check'),
             'access_url' => route('portal.resource-hub.show'),
-            'search_url' => URL::signedRoute(name: 'api.portal.resource-hub.search'),
+            'search_url' => URL::signedRoute(name: 'portals.resource-hub.api.search'),
             'app_url' => config('app.url'),
-            'api_url' => route('api.portal.resource-hub.assets'),
+            'api_url' => route('portals.resource-hub.api.assets'),
         ]);
     }
 }
