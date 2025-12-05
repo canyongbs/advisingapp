@@ -34,12 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Histories;
+namespace AdvisingApp\Concern\Histories;
 
 use AdvisingApp\Alert\Models\AlertStatus;
-use AdvisingApp\Alert\Observers\AlertHistoryObserver;
 use AdvisingApp\Concern\Enums\ConcernSeverity;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
+use AdvisingApp\Concern\Observers\ConcernHistoryObserver;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\History;
 use AdvisingApp\Timeline\Timelines\AlertHistoryTimeline;
@@ -47,22 +49,33 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
-#[ObservedBy([AlertHistoryObserver::class])]
-class AlertHistory extends History implements ProvidesATimeline
+#[ObservedBy([ConcernHistoryObserver::class])]
+class ConcernHistory extends History implements ProvidesATimeline
 {
     public function timeline(): AlertHistoryTimeline
     {
         return new AlertHistoryTimeline($this);
     }
 
+    /**
+     * @return Collection<int, Model>
+     */
     public static function getTimelineData(Model $forModel): Collection
     {
-        /* @var Student|Prospect $forModel */
-        return $forModel->alertHistories()->get();
+        assert($forModel instanceof Student || $forModel instanceof Prospect);
+
+        return $forModel->concernHistories()->get();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getFormattedValueForKey(string $key): array
     {
+        $status = AlertStatus::find($this->old[$key]);
+
+        assert($status instanceof AlertStatus);
+
         return match ($key) {
             'status' => [
                 'key' => 'Status',
@@ -72,9 +85,9 @@ class AlertHistory extends History implements ProvidesATimeline
             'status_id' => [
                 'key' => 'Status',
                 'old' => array_key_exists($key, $this->old)
-                  ? AlertStatus::find($this->old[$key])?->name
+                  ? $status->name
                   : null,
-                'new' => AlertStatus::find($this->new[$key])?->name,
+                'new' => $status->name,
             ],
             'severity' => [
                 'key' => 'Severity',

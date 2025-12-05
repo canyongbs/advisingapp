@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Alert\Models;
 
-use AdvisingApp\Alert\Observers\AlertStatusObserver;
 use AdvisingApp\Concern\Database\Factories\ConcernStatusFactory;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
+use AdvisingApp\Concern\Observers\ConcernStatusObserver;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[ObservedBy([AlertStatusObserver::class])]
+#[ObservedBy([ConcernStatusObserver::class])]
 /**
  * @mixin IdeHelperAlertStatus
  */

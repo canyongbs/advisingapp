@@ -34,20 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Events;
+namespace AdvisingApp\Concern\Rules;
 
-use AdvisingApp\Alert\Models\Alert;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
+use Closure;
+use Illuminate\Contracts\Validation\DataAwareRule;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
-class AlertCreated
+class ConcernIdExistsRule implements DataAwareRule, ValidationRule
 {
-    use Dispatchable;
-    use InteractsWithSockets;
-    use SerializesModels;
+    protected $data = [];
 
-    public function __construct(
-        public Alert $alert
-    ) {}
+    public function validate(string $attribute, mixed $value, Closure $fail): void
+    {
+        $type = $this->data['input']['concern_type'];
+
+        /** @var ?Model $morph */
+        $morph = Relation::getMorphedModel($type);
+
+        if (! $morph) {
+            $fail('The concern type must be either student or prospect.');
+        } elseif ($morph::query()->whereKey($value)->doesntExist()) {
+            $fail('The concern does not exist.');
+        }
+    }
+
+    public function setData(array $data): static
+    {
+        $this->data = $data;
+
+        return $this;
+    }
 }

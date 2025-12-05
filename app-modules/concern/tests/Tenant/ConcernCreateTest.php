@@ -35,8 +35,8 @@
 */
 
 use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Alert\Notifications\AlertCreatedNotification;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Concern\Notifications\ConcernCreatedNotification;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
@@ -76,8 +76,8 @@ it('dispatches the proper notifications to subscribers on created', function () 
 
     $student->refresh();
 
-    Notification::assertSentTo($users, AlertCreatedNotification::class);
-    Notification::assertSentTimes(AlertCreatedNotification::class, $student->subscriptions()->count());
+    Notification::assertSentTo($users, ConcernCreatedNotification::class);
+    Notification::assertSentTimes(ConcernCreatedNotification::class, $student->subscriptions()->count());
 });
 
 it('only notifies active users of alerts', function () {
@@ -100,5 +100,5 @@ it('only notifies active users of alerts', function () {
         'concern_type' => Student::class,
     ]);
 
-    Notification::assertNotSentTo($deletedUser, AlertCreatedNotification::class);
+    Notification::assertNotSentTo($deletedUser, ConcernCreatedNotification::class);
 });

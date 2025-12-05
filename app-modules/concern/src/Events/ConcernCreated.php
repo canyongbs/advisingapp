@@ -34,17 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Observers;
+namespace AdvisingApp\Concern\Events;
 
-use AdvisingApp\Alert\Models\AlertStatus;
-use Illuminate\Support\Facades\DB;
+use AdvisingApp\Alert\Models\Alert;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
-class AlertStatusObserver
+class ConcernCreated
 {
-    public function creating(AlertStatus $alertStatus): void
-    {
-        if ($alertStatus->order === null) {
-            $alertStatus->order = DB::raw('(SELECT COALESCE(MAX(alert_statuses.order), 0) + 1 FROM alert_statuses)');
-        }
-    }
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
+
+    public function __construct(
+        public Alert $alert
+    ) {}
 }

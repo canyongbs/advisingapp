@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Policies;
+namespace AdvisingApp\Concern\Policies;
 
 use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Prospect\Models\Prospect;

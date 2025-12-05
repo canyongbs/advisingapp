@@ -38,14 +38,14 @@ namespace AdvisingApp\Timeline\Timelines;
 
 use AdvisingApp\Alert\Filament\Actions\AlertHistoryCreatedViewAction;
 use AdvisingApp\Alert\Filament\Actions\AlertHistoryUpdatedViewAction;
-use AdvisingApp\Alert\Histories\AlertHistory;
+use AdvisingApp\Concern\Histories\ConcernHistory;
 use AdvisingApp\Timeline\Models\CustomTimeline;
 use Filament\Actions\ViewAction;
 
 class AlertHistoryTimeline extends CustomTimeline
 {
     public function __construct(
-        public AlertHistory $history
+        public ConcernHistory $history
     ) {}
 
     public function icon(): string
