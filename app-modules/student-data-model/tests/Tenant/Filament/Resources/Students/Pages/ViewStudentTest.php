@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\StudentDataModel\Enums\SisSystem;
 use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableActivityFeedWidget;
 use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableAlertsWidget;
@@ -281,7 +281,7 @@ it('renders the EducatableAlertsWidget based on proper access', function () {
     actingAs($user);
 
     AlertStatus::factory()->create([
-        'classification' => SystemAlertStatusClassification::Active,
+        'classification' => SystemConcernStatusClassification::Active,
     ]);
     $widget = EducatableAlertsWidget::class;
 

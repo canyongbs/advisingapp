@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Widgets;
 
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
@@ -80,7 +80,7 @@ class StudentStats extends StatsOverviewWidget
                 ->count())),
             Stat::make('Open Alerts', Number::format(Alert::query()
                 ->whereHasMorph('concern', Student::class, $studentQuery)
-                ->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]))
+                ->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]))
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
@@ -113,7 +113,7 @@ class StudentStats extends StatsOverviewWidget
                 ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
             Stat::make('Closed Alerts', Number::format(Alert::query()
                 ->whereHasMorph('concern', Student::class, $studentQuery)
-                ->whereHas('status', fn (Builder $query) => $query->whereIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]))
+                ->whereHas('status', fn (Builder $query) => $query->whereIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]))
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])

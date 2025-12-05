@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
@@ -110,14 +110,14 @@ it('can filter students by alerts', function () {
     $activeStatusAlert = AlertStatus::factory()
         ->state([
             'name' => 'Active',
-            'classification' => SystemAlertStatusClassification::Active,
+            'classification' => SystemConcernStatusClassification::Active,
         ])
         ->create();
 
     $inprogressStatusAlert = AlertStatus::factory()
         ->state([
             'name' => 'InProgress',
-            'classification' => SystemAlertStatusClassification::Active,
+            'classification' => SystemConcernStatusClassification::Active,
         ])
         ->create();
 

@@ -34,51 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Timeline\Timelines;
+namespace AdvisingApp\Concern;
 
-use AdvisingApp\Alert\Filament\Actions\AlertHistoryCreatedViewAction;
-use AdvisingApp\Alert\Filament\Actions\AlertHistoryUpdatedViewAction;
-use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Timeline\Models\CustomTimeline;
-use Filament\Actions\ViewAction;
+use Filament\Contracts\Plugin;
+use Filament\Panel;
 
-class AlertHistoryTimeline extends CustomTimeline
+class ConcernPlugin implements Plugin
 {
-    public function __construct(
-        public AlertHistory $history
-    ) {}
-
-    public function icon(): string
+    public function getId(): string
     {
-        return 'heroicon-o-bell-alert';
+        return 'concern';
     }
 
-    public function sortableBy(): string
+    public function register(Panel $panel): void
     {
-        return $this->history->created_at;
+        $panel->discoverResources(
+            in: __DIR__ . '/Filament/Resources',
+            for: 'AdvisingApp\\Concern\\Filament\\Resources'
+        );
     }
 
-    public function providesCustomView(): bool
-    {
-        return true;
-    }
-
-    public function renderCustomView(): string
-    {
-        return match ($this->history->event) {
-            'created' => 'concern::created-history-timeline-item',
-            'updated' => 'concern::updated-history-timeline-item',
-            'status_changed' => 'concern::status-changed-history-timeline-item',
-        };
-    }
-
-    public function modalViewAction(): ViewAction
-    {
-        return (match ($this->history->event) {
-            'created' => AlertHistoryCreatedViewAction::make()
-                ->modalHeading('View Alert'),
-            'updated', 'status_changed' => AlertHistoryUpdatedViewAction::make()
-                ->modalHeading('View Changes'),
-        })->record($this->history);
-    }
+    public function boot(Panel $panel): void {}
 }

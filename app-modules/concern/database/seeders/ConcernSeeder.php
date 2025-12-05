@@ -34,21 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Tests\Tenant\Filament\Actions\RequestFactories;
+namespace AdvisingApp\Concern\Database\Seeders;
 
-use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\Alert\Models\AlertStatus;
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\Alert\Models\Alert;
+use Illuminate\Database\Seeder;
 
-class BulkCreateAlertActionRequestFactory extends RequestFactory
+class ConcernSeeder extends Seeder
 {
-    public function definition(): array
+    public function run(): void
     {
-        return [
-            'description' => $this->faker->sentence(),
-            'severity' => $this->faker->randomElement(AlertSeverity::cases()),
-            'status_id' => AlertStatus::factory(),
-            'suggested_intervention' => $this->faker->sentence(),
-        ];
+        Alert::factory()
+            ->count(50)
+            ->create();
     }
 }

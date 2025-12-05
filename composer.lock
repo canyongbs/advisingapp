@@ -1925,6 +1925,41 @@
             }
         },
         {
+            "name": "canyon-gbs/concern",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/concern",
+                "reference": "d1c8c4efc9c4baade5e29da2cdaaef84feadbc25"
+            },
+            "require": {
+                "filament/filament": "^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Concern\\Providers\\ConcernServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Concern\\": "src/",
+                    "AdvisingApp\\Concern\\Tests\\": "tests/",
+                    "AdvisingApp\\Concern\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Concern\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "canyon-gbs/group",
             "version": "1.0",
             "dist": {
@@ -24404,5 +24439,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }

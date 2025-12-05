@@ -34,37 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Database\Factories;
+namespace AdvisingApp\Concern\Providers;
 
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
-use AdvisingApp\Alert\Models\AlertStatus;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\Concern\ConcernPlugin;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
-/**
- * @extends Factory<AlertStatus>
- */
-class AlertStatusFactory extends Factory
+class ConcernServiceProvider extends ServiceProvider
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    public function register()
     {
-        return [
-            'classification' => SystemAlertStatusClassification::Active,
-            'name' => $this->faker->word(),
-        ];
+        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new ConcernPlugin()));
     }
 
-    public function resolved(): self
+    public function boot(): void
     {
-        return $this->state(fn () => ['classification' => SystemAlertStatusClassification::Resolved]);
-    }
-
-    public function canceled(): self
-    {
-        return $this->state(fn () => ['classification' => SystemAlertStatusClassification::Canceled]);
+        Relation::morphMap([]);
     }
 }

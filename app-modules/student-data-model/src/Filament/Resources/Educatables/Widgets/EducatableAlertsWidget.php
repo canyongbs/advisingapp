@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets;
 
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Model;
@@ -71,8 +71,8 @@ class EducatableAlertsWidget extends Widget
             ->groupBy('alert_statuses.classification')
             ->get();
 
-        return collect(SystemAlertStatusClassification::cases())
-            ->map(fn (SystemAlertStatusClassification $classification) => [
+        return collect(SystemConcernStatusClassification::cases())
+            ->map(fn (SystemConcernStatusClassification $classification) => [
                 'id' => AlertStatus::where('classification', $classification->value)->first()?->id,
                 'classification' => $classification->value,
                 'alert_count' => $counts->where('classification', $classification->value)->first()->alert_count ?? 0,

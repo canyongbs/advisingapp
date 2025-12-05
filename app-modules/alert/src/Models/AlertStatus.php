@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Alert\Models;
 
-use AdvisingApp\Alert\Database\Factories\AlertStatusFactory;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Observers\AlertStatusObserver;
+use AdvisingApp\Concern\Database\Factories\ConcernStatusFactory;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -51,7 +51,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class AlertStatus extends BaseModel
 {
-    /** @use HasFactory<AlertStatusFactory> */
+    /** @use HasFactory<ConcernStatusFactory> */
     use HasFactory;
 
     use SoftDeletes;
@@ -64,7 +64,7 @@ class AlertStatus extends BaseModel
     ];
 
     protected $casts = [
-        'classification' => SystemAlertStatusClassification::class,
+        'classification' => SystemConcernStatusClassification::class,
         'is_default' => 'boolean',
     ];
 

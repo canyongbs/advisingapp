@@ -32,16 +32,16 @@
 </COPYRIGHT>
 --}}
 @php
-    use AdvisingApp\Alert\Histories\AlertHistory;
+    use AdvisingApp\Concern\Histories\ConcernHistory;
 @endphp
 
 @php
-    /* @var AlertHistory $record */
+    /* @var ConcernHistory $record */
 @endphp
 <div>
     <div class="flex flex-row justify-between">
         <x-timeline::timeline.heading>
-            Alert Updated
+            Concern Status Changed
         </x-timeline::timeline.heading>
 
         <div>
@@ -54,11 +54,6 @@
     </x-timeline::timeline.time>
 
     <x-timeline::timeline.history.content>
-        Here's what changed
-        <ul class="list-inside list-disc">
-            @foreach ($record->formatted as $value)
-                <x-timeline::timeline.history.content.list-item :value="$value" />
-            @endforeach
-        </ul>
+        <x-timeline::timeline.history.content.item :value="$record->formatted['status']" />
     </x-timeline::timeline.history.content>
 </div>

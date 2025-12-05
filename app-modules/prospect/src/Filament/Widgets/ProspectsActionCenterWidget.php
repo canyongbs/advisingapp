@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Prospect\Filament\Widgets;
 
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -96,7 +96,7 @@ class ProspectsActionCenterWidget extends TableWidget
                     ->sortable(),
                 TextColumn::make('alerts_count')
                     ->label('Open Alerts')
-                    ->counts(['alerts' => fn (Builder $query) => $query->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]))])
+                    ->counts(['alerts' => fn (Builder $query) => $query->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]))])
                     ->sortable(),
                 TextColumn::make('tasks_count')
                     ->label('Open Tasks')
@@ -145,11 +145,11 @@ class ProspectsActionCenterWidget extends TableWidget
 
                         return $query->whereHas('alerts', function (Builder $query) use ($data): Builder {
                             if ($data['value'] === 'open') {
-                                return $query->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]));
+                                return $query->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]));
                             }
 
                             if ($data['value'] === 'closed') {
-                                return $query->whereHas('status', fn (Builder $query) => $query->whereIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]));
+                                return $query->whereHas('status', fn (Builder $query) => $query->whereIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]));
                             }
 
                             return $query;

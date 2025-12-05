@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,33 +32,39 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use AdvisingApp\Alert\Histories\AlertHistory;
-@endphp
+*/
 
-@php
-    /* @var AlertHistory $record */
-@endphp
-<div>
-    <div class="flex flex-row justify-between">
-        <x-timeline::timeline.heading>
-            Alert Created
-        </x-timeline::timeline.heading>
+namespace AdvisingApp\Concern\Database\Factories;
 
-        <div>
-            {{ $viewRecordIcon }}
-        </div>
-    </div>
+use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-    <x-timeline::timeline.time>
-        {{ $record->created_at->diffForHumans() }}
-    </x-timeline::timeline.time>
+/**
+ * @extends Factory<AlertStatus>
+ */
+class ConcernStatusFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'classification' => SystemConcernStatusClassification::Active,
+            'name' => $this->faker->word(),
+        ];
+    }
 
-    <x-timeline::timeline.history.content>
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['status_id']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['severity']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['description']" />
-        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['suggested_intervention']" />
-    </x-timeline::timeline.history.content>
-</div>
+    public function resolved(): self
+    {
+        return $this->state(fn () => ['classification' => SystemConcernStatusClassification::Resolved]);
+    }
+
+    public function canceled(): self
+    {
+        return $this->state(fn () => ['classification' => SystemConcernStatusClassification::Canceled]);
+    }
+}

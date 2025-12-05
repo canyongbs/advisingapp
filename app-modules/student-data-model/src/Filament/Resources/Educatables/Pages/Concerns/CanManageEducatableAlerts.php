@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Pages\Concerns;
 
-use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Concern\Enums\ConcernSeverity;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -89,17 +89,17 @@ trait CanManageEducatableAlerts
                     ->required()
                     ->string(),
                 Select::make('severity')
-                    ->options(AlertSeverity::class)
-                    ->default(AlertSeverity::default())
+                    ->options(ConcernSeverity::class)
+                    ->default(ConcernSeverity::default())
                     ->required()
-                    ->enum(AlertSeverity::class),
+                    ->enum(ConcernSeverity::class),
                 Textarea::make('suggested_intervention')
                     ->required()
                     ->string(),
                 Select::make('status_id')
                     ->label('Status')
                     ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
-                    ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
+                    ->default(fn () => SystemConcernStatusClassification::default()?->getKey())
                     ->required(),
                 Toggle::make('is_visible_for_students')
                     ->label('Make visible to students'),
@@ -130,7 +130,7 @@ trait CanManageEducatableAlerts
             ])
             ->filters([
                 SelectFilter::make('severity')
-                    ->options(AlertSeverity::class),
+                    ->options(ConcernSeverity::class),
                 SelectFilter::make('status_id')
                     ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order')),
             ])

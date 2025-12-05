@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -30,30 +32,23 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use AdvisingApp\Alert\Histories\AlertHistory;
-@endphp
+*/
 
-@php
-    /* @var AlertHistory $record */
-@endphp
-<div>
-    <div class="flex flex-row justify-between">
-        <x-timeline::timeline.heading>
-            Alert Status Changed
-        </x-timeline::timeline.heading>
+namespace AdvisingApp\Concern\Tests\Tenant\Filament\Actions\RequestFactories;
 
-        <div>
-            {{ $viewRecordIcon }}
-        </div>
-    </div>
+use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Concern\Enums\ConcernSeverity;
+use Worksome\RequestFactories\RequestFactory;
 
-    <x-timeline::timeline.time>
-        {{ $record->created_at->diffForHumans() }}
-    </x-timeline::timeline.time>
-
-    <x-timeline::timeline.history.content>
-        <x-timeline::timeline.history.content.item :value="$record->formatted['status']" />
-    </x-timeline::timeline.history.content>
-</div>
+class BulkCreateConcernActionRequestFactory extends RequestFactory
+{
+    public function definition(): array
+    {
+        return [
+            'description' => $this->faker->sentence(),
+            'severity' => $this->faker->randomElement(ConcernSeverity::cases()),
+            'status_id' => AlertStatus::factory(),
+            'suggested_intervention' => $this->faker->sentence(),
+        ];
+    }
+}

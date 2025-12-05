@@ -34,41 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Database\Seeders;
+namespace AdvisingApp\Concern\Database\Factories;
 
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Alert\Models\AlertStatus;
-use Illuminate\Database\Seeder;
+use AdvisingApp\Concern\Enums\ConcernSeverity;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
-class AlertStatusSeeder extends Seeder
+/**
+ * @extends Factory<Alert>
+ */
+class ConcernFactory extends Factory
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function definition(): array
     {
-        AlertStatus::factory()
-            ->createMany(
-                [
-                    [
-                        'name' => 'Active',
-                        'classification' => SystemAlertStatusClassification::Active,
-                        'order' => 1,
-                        'is_default' => true,
-                    ],
-                    [
-                        'name' => 'Resolved',
-                        'classification' => SystemAlertStatusClassification::Resolved,
-                        'order' => 2,
-                        'is_default' => false,
-                    ],
-                    [
-                        'name' => 'Canceled',
-                        'classification' => SystemAlertStatusClassification::Canceled,
-                        'order' => 3,
-                        'is_default' => false,
-                    ],
-                ]
-            );
+        return [
+            'concern_type' => $this->faker->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
+            'concern_id' => function (array $attributes) {
+                $concernClass = Relation::getMorphedModel($attributes['concern_type']);
+
+                /** @var Student|Prospect $concernModel */
+                $concernModel = new $concernClass();
+
+                $concern = $concernClass === Student::class
+                  ? Student::inRandomOrder()->first() ?? Student::factory()->create()
+                  : $concernModel::factory()->create();
+
+                return $concern->getKey();
+            },
+            'description' => $this->faker->sentence(),
+            'severity' => $this->faker->randomElement(ConcernSeverity::cases()),
+            'status_id' => AlertStatus::factory(),
+            'suggested_intervention' => $this->faker->sentence(),
+        ];
     }
 }

@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Workflow\Database\Factories;
 
-use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Concern\Enums\ConcernSeverity;
 use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -55,7 +55,7 @@ class WorkflowProactiveAlertDetailsFactory extends Factory
     {
         return [
             'description' => $this->faker->sentence(),
-            'severity' => $this->faker->randomElement(AlertSeverity::cases()),
+            'severity' => $this->faker->randomElement(ConcernSeverity::cases()),
             'status_id' => AlertStatus::factory(),
             'suggested_intervention' => $this->faker->sentence(),
         ];

@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
@@ -43,6 +42,7 @@ use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
+use AdvisingApp\Concern\Enums\ConcernSeverity;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
@@ -71,7 +71,7 @@ it('will execute appropriately on each educatable in the group', function (Educa
         ->create();
 
     $description = fake()->sentence();
-    $severity = AlertSeverity::cases()[array_rand(AlertSeverity::cases())];
+    $severity = ConcernSeverity::cases()[array_rand(ConcernSeverity::cases())];
     $suggestedIntervention = fake()->sentence();
     $alertStatus = AlertStatus::factory()->create();
 
