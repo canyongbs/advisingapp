@@ -71,6 +71,8 @@ use AdvisingApp\Report\Models\TrackedEvent;
 use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\Research\Models\ResearchRequestFolder;
+use AdvisingApp\ResourceHub\Models\ManagerResourceHubArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
@@ -692,6 +694,17 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function caseTypeIndividualAssignment(): HasMany
     {
         return $this->hasMany(CaseType::class, 'assignment_type_individual_id', 'id');
+    }
+
+    /**
+     * @return BelongsToMany<ResourceHubArticle, $this, ManagerResourceHubArticle>
+     */
+    public function resourceHubArticles(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(ResourceHubArticle::class, 'manager_resource_hub_articles', 'manager_id', 'resource_hub_article_id')
+            ->using(ManagerResourceHubArticle::class)
+            ->withTimestamps();
     }
 
     protected function serializeDate(DateTimeInterface $date): string
