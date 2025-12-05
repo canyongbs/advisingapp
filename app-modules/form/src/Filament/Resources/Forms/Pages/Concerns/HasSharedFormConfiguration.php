@@ -46,7 +46,6 @@ use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use App\Enums\FontWeight;
 use App\Features\FontFeature;
-use App\Features\FormApplicationTitleFeature;
 use App\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -78,7 +77,6 @@ trait HasSharedFormConfiguration
                 ->maxLength(255)
                 ->autocomplete(false)
                 ->columnSpanFull()
-                ->visible(FormApplicationTitleFeature::active())
                 ->helperText('The title of this form will be displayed when the form is embedded.'),
             Textarea::make('description')
                 ->string()
