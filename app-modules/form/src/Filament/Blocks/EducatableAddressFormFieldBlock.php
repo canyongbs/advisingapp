@@ -40,6 +40,7 @@ use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Models\SubmissibleStep;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Forms\Components\Checkbox;
@@ -80,7 +81,7 @@ class EducatableAddressFormFieldBlock extends FormFieldBlock
     /**
      * @return array<string, mixed>
      */
-    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
+    public static function getFormKitSchema(SubmissibleField $field, Submissible|SubmissibleStep|null $submissible = null, Student|Prospect|null $author = null): array
     {
         $baseKey = $field->getKey();
         $helpText = null;
