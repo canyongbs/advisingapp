@@ -38,7 +38,6 @@ namespace AdvisingApp\MeetingCenter\Filament\Pages;
 
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use App\Features\PersonalBookingPageFeature;
 use App\Filament\Pages\ProfilePage;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -59,11 +58,6 @@ class ManagePersonalBookingPage extends ProfilePage
     protected static ?string $title = 'Personal Booking Page';
 
     protected static ?int $navigationSort = 20;
-
-    public static function canAccess(): bool
-    {
-        return parent::canAccess() && PersonalBookingPageFeature::active();
-    }
 
     public function getHeaderActions(): array
     {
