@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Concern\Tests\Tenant\Filament\Actions\RequestFactories;
 
-use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Concern\Enums\ConcernSeverity;
+use AdvisingApp\Concern\Models\ConcernStatus;
 use Worksome\RequestFactories\RequestFactory;
 
 class BulkCreateConcernActionRequestFactory extends RequestFactory
@@ -47,7 +47,7 @@ class BulkCreateConcernActionRequestFactory extends RequestFactory
         return [
             'description' => $this->faker->sentence(),
             'severity' => $this->faker->randomElement(ConcernSeverity::cases()),
-            'status_id' => AlertStatus::factory(),
+            'status_id' => ConcernStatus::factory(),
             'suggested_intervention' => $this->faker->sentence(),
         ];
     }

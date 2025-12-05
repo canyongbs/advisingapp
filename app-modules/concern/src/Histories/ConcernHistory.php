@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Concern\Histories;
 
-use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Concern\Enums\ConcernSeverity;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
+use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\Concern\Observers\ConcernHistoryObserver;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\History;
-use AdvisingApp\Timeline\Timelines\AlertHistoryTimeline;
+use AdvisingApp\Timeline\Timelines\ConcernHistoryTimeline;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -52,9 +52,9 @@ use Illuminate\Support\Collection;
 #[ObservedBy([ConcernHistoryObserver::class])]
 class ConcernHistory extends History implements ProvidesATimeline
 {
-    public function timeline(): AlertHistoryTimeline
+    public function timeline(): ConcernHistoryTimeline
     {
-        return new AlertHistoryTimeline($this);
+        return new ConcernHistoryTimeline($this);
     }
 
     /**
@@ -72,9 +72,9 @@ class ConcernHistory extends History implements ProvidesATimeline
      */
     public function getFormattedValueForKey(string $key): array
     {
-        $status = AlertStatus::find($this->old[$key]);
+        $status = ConcernStatus::find($this->old[$key]);
 
-        assert($status instanceof AlertStatus);
+        assert($status instanceof ConcernStatus);
 
         return match ($key) {
             'status' => [

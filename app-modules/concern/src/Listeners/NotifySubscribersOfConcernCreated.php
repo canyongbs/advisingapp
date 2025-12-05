@@ -48,10 +48,10 @@ class NotifySubscribersOfConcernCreated implements ShouldQueue
     public function handle(ConcernCreated $event): void
     {
         /** @var Student|Prospect $concern */
-        $concern = $event->alert->concern;
+        $concern = $event->concern->concern;
 
-        $concern->subscriptions?->each(function (Subscription $subscription) use ($event) {
-            $subscription->user->notify(new ConcernCreatedNotification($event->alert));
+        $concern->subscriptions->each(function (Subscription $subscription) use ($event) {
+            $subscription->user->notify(new ConcernCreatedNotification($event->concern));
         });
     }
 }

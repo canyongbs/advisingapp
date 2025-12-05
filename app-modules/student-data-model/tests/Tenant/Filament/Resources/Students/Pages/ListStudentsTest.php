@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
+use AdvisingApp\Concern\Models\Concern;
+use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
@@ -102,19 +102,19 @@ it('renders the CreateAction based on proper access', function () {
         ->assertActionVisible(CreateAction::class);
 });
 
-it('can filter students by alerts', function () {
+it('can filter students by concerns', function () {
     Student::truncate();
 
     asSuperAdmin();
 
-    $activeStatusAlert = AlertStatus::factory()
+    $activeStatusConcern = ConcernStatus::factory()
         ->state([
             'name' => 'Active',
             'classification' => SystemConcernStatusClassification::Active,
         ])
         ->create();
 
-    $inprogressStatusAlert = AlertStatus::factory()
+    $inprogressStatusConcern = ConcernStatus::factory()
         ->state([
             'name' => 'InProgress',
             'classification' => SystemConcernStatusClassification::Active,
@@ -125,39 +125,39 @@ it('can filter students by alerts', function () {
 
     $studentWithStatusInprogress = Student::factory()->create();
 
-    $activeAlerts = Alert::factory()
+    $activeConcerns = Concern::factory()
         ->count(3)
         ->for($studentWithStatusActive, 'concern')
         ->state([
-            'status_id' => $activeStatusAlert->getKey(),
+            'status_id' => $activeStatusConcern->getKey(),
         ])
         ->create();
 
-    $inProgressAlerts = Alert::factory()
+    $inProgressConcerns = Concern::factory()
         ->count(2)
         ->for($studentWithStatusInprogress, 'concern')
         ->state([
-            'status_id' => $inprogressStatusAlert->getKey(),
+            'status_id' => $inprogressStatusConcern->getKey(),
         ])
         ->create();
 
-    $studentsWithoutAlerts = Student::factory()->count(5)->create();
+    $studentsWithoutConcerns = Student::factory()->count(5)->create();
 
     livewire(ListStudents::class)
         ->set('tableRecordsPerPage', 10)
-        ->assertCanSeeTableRecords($studentsWithoutAlerts->merge([$studentWithStatusActive, $studentWithStatusInprogress]))
-        ->filterTable('alerts', [$activeStatusAlert, $inprogressStatusAlert])
+        ->assertCanSeeTableRecords($studentsWithoutConcerns->merge([$studentWithStatusActive, $studentWithStatusInprogress]))
+        ->filterTable('concerns', [$activeStatusConcern, $inprogressStatusConcern])
         ->assertCanSeeTableRecords([$studentWithStatusActive, $studentWithStatusInprogress])
-        ->assertCanNotSeeTableRecords($studentsWithoutAlerts)
+        ->assertCanNotSeeTableRecords($studentsWithoutConcerns)
         ->resetTableFilters()
-        ->filterTable('alerts', [$activeStatusAlert])
+        ->filterTable('concerns', [$activeStatusConcern])
         ->assertCanSeeTableRecords([$studentWithStatusActive])
-        ->assertCanNotSeeTableRecords($studentsWithoutAlerts->merge([$studentWithStatusInprogress]))
-        ->removeTableFilter('alerts')
-        ->assertCanSeeTableRecords($studentsWithoutAlerts->merge([$studentWithStatusActive, $studentWithStatusInprogress]));
+        ->assertCanNotSeeTableRecords($studentsWithoutConcerns->merge([$studentWithStatusInprogress]))
+        ->removeTableFilter('concerns')
+        ->assertCanSeeTableRecords($studentsWithoutConcerns->merge([$studentWithStatusActive, $studentWithStatusInprogress]));
 });
 
-it('renders the bulk create alert action based on proper access', function () {
+it('renders the bulk create concern action based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $user->givePermissionTo('student.view-any');
@@ -167,16 +167,16 @@ it('renders the bulk create alert action based on proper access', function () {
 
     livewire(ListStudents::class)
         ->assertOk()
-        ->assertTableBulkActionHidden('createAlert');
+        ->assertTableBulkActionHidden('createConcern');
 
-    $user->givePermissionTo('alert.create');
+    $user->givePermissionTo('concern.create');
     $user->givePermissionTo('student.*.update');
 
     $user->refresh();
 
     livewire(ListStudents::class)
         ->assertOk()
-        ->assertTableBulkActionVisible('createAlert');
+        ->assertTableBulkActionVisible('createConcern');
 });
 
 it('shows bulk assign tags action for authorized user', function () {

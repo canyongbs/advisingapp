@@ -36,16 +36,16 @@
 
 namespace AdvisingApp\Concern\Database\Factories;
 
-use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Concern\Enums\ConcernSeverity;
+use AdvisingApp\Concern\Models\Concern;
+use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
- * @extends Factory<Alert>
+ * @extends Factory<Concern>
  */
 class ConcernFactory extends Factory
 {
@@ -67,7 +67,7 @@ class ConcernFactory extends Factory
             },
             'description' => $this->faker->sentence(),
             'severity' => $this->faker->randomElement(ConcernSeverity::cases()),
-            'status_id' => AlertStatus::factory(),
+            'status_id' => ConcernStatus::factory(),
             'suggested_intervention' => $this->faker->sentence(),
         ];
     }

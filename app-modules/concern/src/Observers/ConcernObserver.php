@@ -36,44 +36,44 @@
 
 namespace AdvisingApp\Concern\Observers;
 
-use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Concern\Events\ConcernCreated;
+use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 
 class ConcernObserver
 {
-    public function creating(Alert $alert): void
+    public function creating(Concern $concern): void
     {
         $user = auth()->user();
 
         if ($user) {
-            if (! $alert->createdBy) {
-                $alert->createdBy()->associate($user);
+            if (! $concern->createdBy) {
+                $concern->createdBy()->associate($user);
             }
         }
     }
 
-    public function created(Alert $alert): void
+    public function created(Concern $concern): void
     {
         $user = auth()->user();
 
         if ($user instanceof User) {
-            // Creating the subscription directly so that the alert can be sent to this User as well
-            resolve(SubscriptionCreate::class)->handle($user, $alert->getSubscribable());
+            // Creating the subscription directly so that the concern can be sent to this User as well
+            resolve(SubscriptionCreate::class)->handle($user, $concern->getSubscribable());
         }
 
-        ConcernCreated::dispatch($alert);
+        ConcernCreated::dispatch($concern);
     }
 
-    public function saved(Alert $alert): void
+    public function saved(Concern $concern): void
     {
-        Cache::tags('{alert-count}')->flush();
+        Cache::tags('{concern-count}')->flush();
     }
 
-    public function deleted(Alert $alert): void
+    public function deleted(Concern $concern): void
     {
-        Cache::tags('{alert-count}')->flush();
+        Cache::tags('{concern-count}')->flush();
     }
 }

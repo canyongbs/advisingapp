@@ -37,8 +37,8 @@
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Actions\ConvertToStudent;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Actions\DisassociateStudent;
-use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectAlerts;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectCareTeam;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectConcerns;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectSubscriptions;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectTasks;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspect;
@@ -210,7 +210,7 @@ test('can see prospect converted to student badge on', function (string $pages) 
 
     $user->givePermissionTo('student.view-any');
 
-    $user->givePermissionTo('alert.view-any');
+    $user->givePermissionTo('concern.view-any');
 
     $user->givePermissionTo('user.view-any');
 
@@ -245,7 +245,7 @@ test('can see prospect converted to student badge on', function (string $pages) 
 })
     ->with([
         ViewProspect::class,
-        ManageProspectAlerts::class,
+        ManageProspectConcerns::class,
         ManageProspectSubscriptions::class,
         ManageProspectTasks::class,
         ManageProspectCareTeam::class,

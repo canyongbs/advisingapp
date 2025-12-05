@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Concern\Events;
 
-use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Concern\Models\Concern;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -48,6 +48,6 @@ class ConcernCreated
     use SerializesModels;
 
     public function __construct(
-        public Alert $alert
+        public Concern $concern
     ) {}
 }

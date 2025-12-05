@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Concern\Database\Seeders;
 
-use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Concern\Models\Concern;
 use Illuminate\Database\Seeder;
 
 class ConcernSeeder extends Seeder
 {
     public function run(): void
     {
-        Alert::factory()
+        Concern::factory()
             ->count(50)
             ->create();
     }

@@ -43,7 +43,7 @@ use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
 use AdvisingApp\Workflow\Models\WorkflowEventDetails;
 use AdvisingApp\Workflow\Models\WorkflowInteractionDetails;
-use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
+use AdvisingApp\Workflow\Models\WorkflowProactiveConcernDetails;
 use AdvisingApp\Workflow\Models\WorkflowRun;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
@@ -79,7 +79,7 @@ class WorkflowServiceProvider extends ServiceProvider
             'workflow_engagement_sms_details' => WorkflowEngagementSmsDetails::class,
             'workflow_event_details' => WorkflowEventDetails::class,
             'workflow_interaction_details' => WorkflowInteractionDetails::class,
-            'workflow_proactive_alert_details' => WorkflowProactiveAlertDetails::class,
+            'workflow_proactive_concern_details' => WorkflowProactiveConcernDetails::class,
             'workflow_subscription_details' => WorkflowSubscriptionDetails::class,
             'workflow_tags_details' => WorkflowTagsDetails::class,
             'workflow_task_details' => WorkflowTaskDetails::class,

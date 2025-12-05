@@ -99,7 +99,7 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
             },
             'engagement_response' => $record->sender?->full_name,
             'task_history' => 'Task ' . $record->event,
-            'concern_history' => 'Alert ' . $record->event,
+            'concern_history' => 'Concern ' . $record->event,
         };
     }
 

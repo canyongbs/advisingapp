@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Concern\Observers;
 
-use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Concern\Models\ConcernStatus;
 use Illuminate\Support\Facades\DB;
 
 class ConcernStatusObserver
 {
-    public function creating(AlertStatus $alertStatus): void
+    public function creating(ConcernStatus $concernStatus): void
     {
-        if ($alertStatus->order === null) {
-            $alertStatus->order = DB::raw('(SELECT COALESCE(MAX(alert_statuses.order), 0) + 1 FROM alert_statuses)');
+        if ($concernStatus->order === null) {
+            $concernStatus->order = DB::raw('(SELECT COALESCE(MAX(alert_statuses.order), 0) + 1 FROM alert_statuses)');
         }
     }
 }

@@ -37,8 +37,13 @@
 namespace AdvisingApp\Concern\Providers;
 
 use AdvisingApp\Concern\ConcernPlugin;
+use AdvisingApp\Concern\Events\ConcernCreated;
+use AdvisingApp\Concern\Histories\ConcernHistory;
+use AdvisingApp\Concern\Listeners\NotifySubscribersOfConcernCreated;
+use AdvisingApp\Concern\Models\Concern;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class ConcernServiceProvider extends ServiceProvider
@@ -50,6 +55,19 @@ class ConcernServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Relation::morphMap([]);
+        Relation::morphMap([
+            'concern' => Concern::class,
+            'concern_history' => ConcernHistory::class,
+        ]);
+
+        $this->registerEvents();
+    }
+
+    protected function registerEvents(): void
+    {
+        Event::listen(
+            ConcernCreated::class,
+            NotifySubscribersOfConcernCreated::class
+        );
     }
 }

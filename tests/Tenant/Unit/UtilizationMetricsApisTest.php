@@ -37,10 +37,10 @@
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptUse;
-use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Group\Models\Group;
@@ -304,13 +304,13 @@ it('checks the API returns Tasks', function () {
     expect($data['tasks'])->toBe($randomRecords);
 });
 
-it('checks the API returns Alerts', function () {
+it('checks the API returns Concerns', function () {
     $randomRecords = random_int(1, 10);
 
-    Alert::factory()->count($randomRecords)->create();
+    Concern::factory()->count($randomRecords)->create();
 
-    $softDeleteAlert = Alert::factory()->create();
-    $softDeleteAlert->delete();
+    $softDeleteConcern = Concern::factory()->create();
+    $softDeleteConcern->delete();
 
     $response = get(route('utilization-metrics'));
 
@@ -318,7 +318,7 @@ it('checks the API returns Alerts', function () {
 
     $response->assertStatus(200);
 
-    expect($data['alerts'])->toBe($randomRecords);
+    expect($data['concerns'])->toBe($randomRecords);
 });
 
 it('checks the API returns Groups', function () {
