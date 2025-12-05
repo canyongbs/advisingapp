@@ -39,6 +39,7 @@ namespace AdvisingApp\MeetingCenter\Http\Middleware;
 use AdvisingApp\MeetingCenter\Models\Event;
 use Closure;
 use Fruitcake\Cors\CorsService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\Response;
@@ -65,7 +66,7 @@ class EventRegistrationWidgetCors
 
         // Check if the requesting host is allowed in ANY Event's EventRegistrationForm
         $isAllowed = Event::query()
-            ->whereHas('eventRegistrationForm', function ($query) use ($requestingUrlHost) {
+            ->whereHas('eventRegistrationForm', function (Builder $query) use ($requestingUrlHost) {
                 $query->whereJsonContains('allowed_domains', $requestingUrlHost);
             })
             ->exists();
