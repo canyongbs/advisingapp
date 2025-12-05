@@ -37,12 +37,16 @@
 namespace AdvisingApp\MeetingCenter\Policies;
 
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use App\Concerns\PerformsFeatureChecks;
+use App\Enums\Feature;
 use App\Features\BookingGroupFeature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
 class BookingGroupPolicy
 {
+    use PerformsFeatureChecks;
+
     public function before(Authenticatable $authenticatable): ?Response
     {
         if (! BookingGroupFeature::active()) {
@@ -106,5 +110,10 @@ class BookingGroupPolicy
             abilities: ['group_appointment.*.force-delete'],
             denyResponse: 'You do not have permissions to force delete this booking group.'
         );
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [Feature::ScheduleAndAppointments];
     }
 }

@@ -36,9 +36,11 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Pages;
 
+use App\Enums\Feature;
 use App\Filament\Clusters\GroupAppointments;
 use App\Models\User;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Gate;
 
 class SharedCalendar extends Page
 {
@@ -55,6 +57,6 @@ class SharedCalendar extends Page
         $user = auth()->user();
         assert($user instanceof User);
 
-        return $user->can(['group_appointment.view-any']);
+        return $user->can(['group_appointment.view-any']) && Gate::check(Feature::ScheduleAndAppointments->getGateName());
     }
 }
