@@ -41,6 +41,7 @@ use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Models\SubmissibleStep;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Forms\Components\Checkbox;
@@ -73,7 +74,7 @@ class EducatableEmailFormFieldBlock extends FormFieldBlock
         ];
     }
 
-    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
+    public static function getFormKitSchema(SubmissibleField $field, Submissible|SubmissibleStep|null $submissible = null, Student|Prospect|null $author = null): array
     {
         $schema = [
             '$formkit' => 'email',

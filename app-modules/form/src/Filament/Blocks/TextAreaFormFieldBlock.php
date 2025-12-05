@@ -38,6 +38,7 @@ namespace AdvisingApp\Form\Filament\Blocks;
 
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Models\SubmissibleStep;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 
@@ -57,7 +58,7 @@ class TextAreaFormFieldBlock extends FormFieldBlock
         return [];
     }
 
-    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
+    public static function getFormKitSchema(SubmissibleField $field, Submissible|SubmissibleStep|null $submissible = null, Student|Prospect|null $author = null): array
     {
         return [
             '$formkit' => 'textarea',
