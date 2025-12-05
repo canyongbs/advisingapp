@@ -36,32 +36,32 @@
 
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\Mime\MimeTypes;
 
 class QnaAdvisorResourceController
 {
-    public function __invoke(Request $request, QnaAdvisor $advisor): StreamedResponse
+    public function __invoke(Request $request, string $file): StreamedResponse
     {
-        $resourcePath = str_replace('\\/', '/', $request->query('resource'));
-        $fullPath = public_path($resourcePath);
+        $path = "widgets/ai/qna-advisors/{$file}";
 
-        if (! file_exists($fullPath)) {
-            abort(404, 'Resource not found.');
-        }
+        $disk = Storage::disk('public');
 
-        $extension = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
-        $mimeType = (mime_content_type($fullPath) ?: null) ?? MimeTypes::getDefault()->getMimeTypes($extension)[0] ?? 'application/octet-stream';
+        abort_if(! $disk->exists($path), 404, 'File not found.');
+
+        $mimeType = $disk->mimeType($path);
+
+        $stream = $disk->readStream($path);
+
+        abort_if(is_null($stream), 404, 'File not found.');
 
         return response()->streamDownload(
-            function () use ($fullPath) {
-                $stream = fopen($fullPath, 'rb');
+            function () use ($stream) {
                 fpassthru($stream);
                 fclose($stream);
             },
-            basename($fullPath),
+            $file,
             ['Content-Type' => $mimeType]
         );
     }

@@ -77,6 +77,7 @@ class Kernel extends HttpKernel
     protected $middleware = [
         // \App\Http\Middleware\TrustHosts::class,
         TrustProxies::class,
+        HandleCors::class,
         PreventRequestsDuringMaintenance::class,
         ValidatePostSize::class,
         TrimStrings::class,
@@ -90,7 +91,6 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
-            HandleCors::class,
             NeedsTenant::class,
             StartSession::class,
             EnsureValidTenantSession::class,
@@ -103,7 +103,6 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            HandleCors::class,
             NeedsTenant::class,
             // \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             SubstituteBindings::class,
@@ -111,7 +110,6 @@ class Kernel extends HttpKernel
         ],
 
         'landlord-api' => [
-            HandleCors::class,
             // \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             SubstituteBindings::class,
             CheckOlympusKey::class,

@@ -51,21 +51,21 @@ class ShowAdvisorController
     {
         $data = [
             'requires_authentication' => $advisor->is_requires_authentication_enabled ?? false,
-            'authentication_url' => URL::signedRoute(name: 'ai.qna-advisors.authentication.request', parameters: ['advisor' => $advisor]),
-            'refresh_url' => URL::signedRoute(name: 'ai.qna-advisors.authentication.refresh', parameters: ['advisor' => $advisor]),
+            'authentication_url' => URL::signedRoute(name: 'widgets.ai.qna-advisors.api.authentication.request', parameters: ['advisor' => $advisor]),
+            'refresh_url' => URL::signedRoute(name: 'widgets.ai.qna-advisors.api.authentication.refresh', parameters: ['advisor' => $advisor]),
             'start_thread_url' => URL::temporarySignedRoute(
-                name: 'ai.qna-advisors.threads.start',
+                name: 'widgets.ai.qna-advisors.api.threads.start',
                 expiration: now()->addDays(3),
                 parameters: ['advisor' => $advisor],
             ),
             'send_message_url' => URL::temporarySignedRoute(
-                name: 'ai.qna-advisors.messages.send',
+                name: 'widgets.ai.qna-advisors.api.messages.send',
                 expiration: now()->addDays(3),
                 parameters: ['advisor' => $advisor],
             ),
             'websockets_config' => [
                 ...config('filament.broadcasting.echo'),
-                'authEndpoint' => route('ai.qna-advisors.broadcasting.auth', ['advisor' => $advisor]),
+                'authEndpoint' => route('widgets.ai.qna-advisors.api.broadcasting.auth', ['advisor' => $advisor]),
             ],
             'advisor' => [
                 'name' => $advisor->name,

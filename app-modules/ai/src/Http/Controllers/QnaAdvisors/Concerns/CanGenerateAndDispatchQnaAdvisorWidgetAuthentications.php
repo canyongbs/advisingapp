@@ -62,7 +62,7 @@ trait CanGenerateAndDispatchQnaAdvisorWidgetAuthentications
         $educatable->notify(new AuthenticatePortalNotification($authentication, $code));
 
         return URL::signedRoute(
-            name: 'ai.qna-advisors.authentication.confirm',
+            name: 'widgets.ai.qna-advisors.api.authentication.confirm',
             parameters: [
                 'advisor' => $advisor,
                 'authentication' => $authentication,

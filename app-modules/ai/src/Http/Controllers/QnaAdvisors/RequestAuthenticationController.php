@@ -64,7 +64,7 @@ class RequestAuthenticationController
             return response()->json([
                 'registration_allowed' => true,
                 'authentication_url' => URL::temporarySignedRoute(
-                    name: 'ai.qna-advisors.register-prospect',
+                    name: 'widgets.ai.qna-advisors.api.register-prospect',
                     expiration: now()->addMinutes(30),
                     parameters: ['advisor' => $advisor],
                 ),
