@@ -47,15 +47,15 @@ class QnaAdvisorResourcesController
     {
         // Read the Vite manifest to determine the correct asset paths
         $manifestPath = public_path('storage/widgets/ai/qna-advisors/.vite/manifest.json');
-        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool, css: array<string>}> $manifest */
+        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
         $manifest = json_decode(File::get($manifestPath), true, 512, JSON_THROW_ON_ERROR);
 
         $widgetEntry = $manifest['src/widget.js'];
 
         return response()->json([
+            'asset_url' => route('widgets.ai.qna-advisors.asset'),
             'entry' => route('widgets.ai.qna-advisors.api.entry', ['advisor' => $advisor]),
             'js' => route('widgets.ai.qna-advisors.asset', ['file' => $widgetEntry['file']]),
-            'css' => route('widgets.ai.qna-advisors.asset', ['file' => $widgetEntry['css'][0]]),
         ]);
     }
 }
