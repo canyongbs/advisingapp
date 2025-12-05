@@ -70,9 +70,9 @@ Broadcast::channel('advisor-thread-{threadId}', function (User $user, string $th
 });
 
 Broadcast::channel('qna-advisor-thread-{threadId}', function (User | Student | Prospect $user, string $threadId): bool {
-    $user = auth('student')->user() ?? auth('prospect')->user();
+    $author = auth('student')->user() ?? auth('prospect')->user();
 
-    if (! $user) {
+    if (! $author) {
         $thread = QnaAdvisorThread::find($threadId);
 
         return $thread && (! $thread->advisor->is_requires_authentication_enabled);
@@ -84,5 +84,5 @@ Broadcast::channel('qna-advisor-thread-{threadId}', function (User | Student | P
         return false;
     }
 
-    return $thread->author()->is($user);
+    return $thread->author()->is($author);
 });
