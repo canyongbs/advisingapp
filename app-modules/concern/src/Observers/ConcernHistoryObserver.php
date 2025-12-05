@@ -34,24 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Listeners;
+namespace AdvisingApp\Concern\Observers;
 
-use AdvisingApp\Alert\Events\AlertCreated;
-use AdvisingApp\Alert\Notifications\AlertCreatedNotification;
-use AdvisingApp\Notification\Models\Subscription;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use AdvisingApp\Concern\Histories\ConcernHistory;
+use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 
-class NotifySubscribersOfAlertCreated implements ShouldQueue
+class ConcernHistoryObserver
 {
-    public function handle(AlertCreated $event): void
+    public function created(ConcernHistory $concernHistory): void
     {
-        /** @var Student|Prospect $concern */
-        $concern = $event->alert->concern;
-
-        $concern->subscriptions?->each(function (Subscription $subscription) use ($event) {
-            $subscription->user->notify(new AlertCreatedNotification($event->alert));
-        });
+        event(new TimelineableRecordCreated($concernHistory->subject->concern, $concernHistory));
     }
 }

@@ -34,36 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Rules;
+namespace AdvisingApp\Concern\Observers;
 
-use Closure;
-use Illuminate\Contracts\Validation\DataAwareRule;
-use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Alert\Models\AlertStatus;
+use Illuminate\Support\Facades\DB;
 
-class ConcernIdExistsRule implements DataAwareRule, ValidationRule
+class ConcernStatusObserver
 {
-    protected $data = [];
-
-    public function validate(string $attribute, mixed $value, Closure $fail): void
+    public function creating(AlertStatus $alertStatus): void
     {
-        $type = $this->data['input']['concern_type'];
-
-        /** @var ?Model $morph */
-        $morph = Relation::getMorphedModel($type);
-
-        if (! $morph) {
-            $fail('The concern type must be either student or prospect.');
-        } elseif ($morph::query()->whereKey($value)->doesntExist()) {
-            $fail('The concern does not exist.');
+        if ($alertStatus->order === null) {
+            $alertStatus->order = DB::raw('(SELECT COALESCE(MAX(alert_statuses.order), 0) + 1 FROM alert_statuses)');
         }
-    }
-
-    public function setData(array $data): static
-    {
-        $this->data = $data;
-
-        return $this;
     }
 }

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Notifications;
+namespace AdvisingApp\Concern\Notifications;
 
 use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
@@ -46,7 +46,7 @@ use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 
-class AlertCreatedNotification extends Notification
+class ConcernCreatedNotification extends Notification
 {
     public function __construct(public Alert $alert) {}
 

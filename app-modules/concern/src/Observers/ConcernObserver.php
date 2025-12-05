@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Observers;
+namespace AdvisingApp\Concern\Observers;
 
-use AdvisingApp\Alert\Events\AlertCreated;
 use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Concern\Events\ConcernCreated;
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 
-class AlertObserver
+class ConcernObserver
 {
     public function creating(Alert $alert): void
     {
@@ -64,7 +64,7 @@ class AlertObserver
             resolve(SubscriptionCreate::class)->handle($user, $alert->getSubscribable());
         }
 
-        AlertCreated::dispatch($alert);
+        ConcernCreated::dispatch($alert);
     }
 
     public function saved(Alert $alert): void

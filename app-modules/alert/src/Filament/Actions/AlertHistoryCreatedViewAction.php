@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Alert\Filament\Actions;
 
-use AdvisingApp\Alert\Histories\AlertHistory;
+use AdvisingApp\Concern\Histories\ConcernHistory;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
@@ -51,17 +51,17 @@ class AlertHistoryCreatedViewAction extends ViewAction
             Section::make()
                 ->schema([
                     TextEntry::make('description')
-                        ->label(fn (AlertHistory $record): ?string => $record->formatted['description']['key'])
-                        ->state(fn (AlertHistory $record): ?string => $record->formatted['description']['new']),
+                        ->label(fn (ConcernHistory $record): ?string => $record->formatted['description']['key'])
+                        ->state(fn (ConcernHistory $record): ?string => $record->formatted['description']['new']),
                     TextEntry::make('severity')
-                        ->label(fn (AlertHistory $record): ?string => $record->formatted['severity']['key'])
-                        ->state(fn (AlertHistory $record): ?string => $record->formatted['severity']['new']),
+                        ->label(fn (ConcernHistory $record): ?string => $record->formatted['severity']['key'])
+                        ->state(fn (ConcernHistory $record): ?string => $record->formatted['severity']['new']),
                     TextEntry::make('suggested_intervention')
-                        ->label(fn (AlertHistory $record): ?string => $record->formatted['suggested_intervention']['key'])
-                        ->state(fn (AlertHistory $record): ?string => $record->formatted['suggested_intervention']['new']),
+                        ->label(fn (ConcernHistory $record): ?string => $record->formatted['suggested_intervention']['key'])
+                        ->state(fn (ConcernHistory $record): ?string => $record->formatted['suggested_intervention']['new']),
                     TextEntry::make('status')
-                        ->label(fn (AlertHistory $record): ?string => $record->formatted['status_id']['key'])
-                        ->state(fn (AlertHistory $record): ?string => $record->formatted['status_id']['new']),
+                        ->label(fn (ConcernHistory $record): ?string => $record->formatted['status_id']['key'])
+                        ->state(fn (ConcernHistory $record): ?string => $record->formatted['status_id']['new']),
                 ])
                 ->columns(),
         ]);

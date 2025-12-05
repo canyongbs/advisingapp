@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Alert\Models;
 
-use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Alert\Observers\AlertObserver;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Concern\Enums\ConcernSeverity;
+use AdvisingApp\Concern\Histories\ConcernHistory;
+use AdvisingApp\Concern\Observers\ConcernObserver;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -64,7 +64,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  *
  * @mixin IdeHelperAlert
  */
-#[ObservedBy([AlertObserver::class])]
+#[ObservedBy([ConcernObserver::class])]
 class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, HasHistory
 {
     use SoftDeletes;
@@ -102,11 +102,11 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
     }
 
     /**
-     * @return MorphMany<AlertHistory, $this>
+     * @return MorphMany<ConcernHistory, $this>
      */
     public function histories(): MorphMany
     {
-        return $this->morphMany(AlertHistory::class, 'subject');
+        return $this->morphMany(ConcernHistory::class, 'subject');
     }
 
     public function concern(): MorphTo

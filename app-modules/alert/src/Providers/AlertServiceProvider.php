@@ -37,10 +37,10 @@
 namespace AdvisingApp\Alert\Providers;
 
 use AdvisingApp\Alert\AlertPlugin;
-use AdvisingApp\Alert\Events\AlertCreated;
-use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Alert\Listeners\NotifySubscribersOfAlertCreated;
 use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Concern\Events\ConcernCreated;
+use AdvisingApp\Concern\Histories\ConcernHistory;
+use AdvisingApp\Concern\Listeners\NotifySubscribersOfConcernCreated;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
@@ -57,7 +57,7 @@ class AlertServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'alert' => Alert::class,
-            'alert_history' => AlertHistory::class,
+            'concern_history' => ConcernHistory::class,
         ]);
 
         $this->registerEvents();
@@ -66,8 +66,8 @@ class AlertServiceProvider extends ServiceProvider
     protected function registerEvents(): void
     {
         Event::listen(
-            AlertCreated::class,
-            NotifySubscribersOfAlertCreated::class
+            ConcernCreated::class,
+            NotifySubscribersOfConcernCreated::class
         );
     }
 }

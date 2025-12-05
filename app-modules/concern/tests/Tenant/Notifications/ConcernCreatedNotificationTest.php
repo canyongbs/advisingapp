@@ -35,8 +35,8 @@
 */
 
 use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Alert\Notifications\AlertCreatedNotification;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Concern\Notifications\ConcernCreatedNotification;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
@@ -58,6 +58,6 @@ it('can be sent', function () {
 
     Notification::assertSentTo(
         $user,
-        AlertCreatedNotification::class,
+        ConcernCreatedNotification::class,
     );
 });
