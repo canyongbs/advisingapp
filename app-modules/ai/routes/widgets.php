@@ -68,7 +68,6 @@ Route::middleware([
                 EnsureQnaAdvisorRequestComingFromAuthorizedDomain::class,
             ])
             ->group(function () {
-                // TODO: Rename this controller
                 Route::get('/', QnaAdvisorResourcesController::class)
                     ->name('assets');
 
@@ -124,7 +123,6 @@ Route::middleware([
 
         // This route MUST remain at /widgets/... in order to catch requests to asset files and return the correct headers
         // NGINX has been configured to route all requests for assets under /widgets to the application
-        // TODO: Rename this controller
         Route::get('{file?}', QnaAdvisorResourceController::class)
             ->where('file', '(.*)')
             ->name('asset');
