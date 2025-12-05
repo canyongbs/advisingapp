@@ -71,6 +71,7 @@
         registrationAllowed: false,
     });
     const loadingError = ref(null);
+    const startThreadUrl = ref(null);
     const sendMessageUrl = ref(null);
     const threadId = ref(null);
     const finishThreadUrl = ref(null);
@@ -78,6 +79,7 @@
     const messages = ref([]);
     const currentResponse = ref('');
     const isLoading = ref(false);
+    const isStartingThread = ref(false);
     const isThreadFinished = ref(false);
     const isSplashScreenVisible = ref(true);
     const advisor = ref({
@@ -104,6 +106,7 @@
                 requiresAuthentication.value = json.requires_authentication;
                 authentication.value.requestUrl = json.authentication_url;
                 authentication.value.refreshUrl = json.refresh_url;
+                startThreadUrl.value = json.start_thread_url;
                 sendMessageUrl.value = json.send_message_url;
                 advisor.value = json.advisor;
 
@@ -187,11 +190,14 @@
     }
 
     async function sendMessage() {
-        if (!sendMessageUrl.value || !message.value.trim()) return;
+        if (!sendMessageUrl.value || !message.value.trim() || !threadId.value) return;
+
+        const userMessage = message.value;
+        message.value = '';
 
         messages.value.push({
             from: 'user',
-            content: message.value,
+            content: userMessage,
         });
 
         isLoading.value = true;
@@ -199,47 +205,11 @@
 
         try {
             const requestBody = {
-                content: message.value,
+                content: userMessage,
                 thread_id: threadId.value,
             };
 
-            const sendMessageResponse = await authorizedPost(sendMessageUrl.value, requestBody);
-
-            const data = sendMessageResponse.data;
-
-            if (!threadId.value) {
-                threadId.value = data.thread_id;
-                finishThreadUrl.value = data.finish_thread_url;
-
-                let channelName = `qna-advisor-thread-${threadId.value}`;
-
-                websocketChannel = requiresAuthentication.value
-                    ? window.Echo.private(channelName)
-                    : window.Echo.channel(channelName);
-
-                websocketChannel.listen('.qna-advisor-message.chunk', (data) => {
-                    if (data.error) {
-                        console.error('Advisor message error:', data.error);
-                        isLoading.value = false;
-                        return;
-                    }
-
-                    if (data.content) {
-                        currentResponse.value += data.content;
-                    }
-
-                    if (data.is_complete) {
-                        messages.value.push({
-                            from: 'advisor',
-                            content: currentResponse.value,
-                        });
-                        currentResponse.value = '';
-                        isLoading.value = false;
-                    }
-                });
-            }
-
-            message.value = '';
+            await authorizedPost(sendMessageUrl.value, requestBody);
         } catch (error) {
             console.error('Send message error:', error);
             isLoading.value = false;
@@ -376,8 +346,63 @@
             });
     }
 
-    function startNewChat() {
-        isSplashScreenVisible.value = false;
+    async function startNewChat() {
+        if (!startThreadUrl.value) {
+            isSplashScreenVisible.value = false;
+            return;
+        }
+
+        isStartingThread.value = true;
+
+        try {
+            const response = await authorizedPost(startThreadUrl.value, {});
+            const data = response.data;
+
+            threadId.value = data.thread_id;
+            finishThreadUrl.value = data.finish_thread_url;
+
+            let channelName = `qna-advisor-thread-${threadId.value}`;
+
+            websocketChannel = requiresAuthentication.value
+                ? window.Echo.private(channelName)
+                : window.Echo.channel(channelName);
+
+            websocketChannel.listen('.qna-advisor-message.chunk', (data) => {
+                if (data.error) {
+                    console.error('Advisor message error:', data.error);
+                    isLoading.value = false;
+                    return;
+                }
+
+                if (data.content) {
+                    currentResponse.value += data.content;
+                }
+
+                if (data.is_complete) {
+                    if (currentResponse.value) {
+                        messages.value.push({
+                            from: 'advisor',
+                            content: currentResponse.value,
+                        });
+                    }
+                    currentResponse.value = '';
+                    isLoading.value = false;
+                }
+            });
+
+            if (data.introductory_message) {
+                messages.value.push({
+                    from: 'advisor',
+                    content: data.introductory_message.content,
+                });
+            }
+
+            isSplashScreenVisible.value = false;
+            isStartingThread.value = false;
+        } catch (error) {
+            console.error('Start thread error:', error);
+            isStartingThread.value = false;
+        }
     }
 
     async function authorizedPost(url, data) {
@@ -453,7 +478,9 @@
     >
         <div
             class="flex h-full items-center justify-center"
-            v-if="isSplashScreenVisible && sendMessageUrl !== null && advisor.name"
+            v-if="
+                isSplashScreenVisible && sendMessageUrl !== null && advisor.name && !authentication.promptToAuthenticate
+            "
         >
             <div class="w-full max-w-4xl mx-auto p-8">
                 <div class="flex flex-col md:flex-row gap-8 items-center">
@@ -483,19 +510,38 @@
                         </p>
                         <button
                             @click="startNewChat"
-                            class="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-primary-500 hover:bg-primary-400 focus:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-400/50 rounded-md shadow-md transition-colors duration-200"
+                            :disabled="isStartingThread"
+                            class="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-primary-500 hover:bg-primary-400 focus:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-400/50 rounded-md shadow-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Start New Chat
+                            <svg
+                                v-if="isStartingThread"
+                                class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                            >
+                                <circle
+                                    class="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    stroke-width="4"
+                                ></circle>
+                                <path
+                                    class="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                ></path>
+                            </svg>
+                            {{ isStartingThread ? 'Starting...' : 'Start New Chat' }}
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div
-            class="flex h-full items-center justify-center"
-            v-if="!isSplashScreenVisible && authentication.promptToAuthenticate"
-        >
+        <div class="flex h-full items-center justify-center" v-if="authentication.promptToAuthenticate">
             <div class="w-full max-w-sm">
                 <FormKit type="form" @submit="authenticate" v-model="authentication">
                     <FormKit

@@ -69,6 +69,20 @@ Broadcast::channel('advisor-thread-{threadId}', function (User $user, string $th
     return AiThread::find($threadId)?->user()->is($user) ?? false;
 });
 
-Broadcast::channel('qna-advisor-thread-{threadId}', function (Student | Prospect | null $user, string $threadId): bool {
-    return QnaAdvisorThread::find($threadId)?->author()->is($user) ?? false;
+Broadcast::channel('qna-advisor-thread-{threadId}', function (User | Student | Prospect $user, string $threadId): bool {
+    $author = auth('student')->user() ?? auth('prospect')->user();
+
+    if (! $author) {
+        $thread = QnaAdvisorThread::find($threadId);
+
+        return $thread && (! $thread->advisor->is_requires_authentication_enabled);
+    }
+
+    $thread = QnaAdvisorThread::find($threadId);
+
+    if (! $thread) {
+        return false;
+    }
+
+    return $thread->author()->is($author);
 });

@@ -53,6 +53,11 @@ class ShowAdvisorController
             'requires_authentication' => $advisor->is_requires_authentication_enabled ?? false,
             'authentication_url' => URL::signedRoute(name: 'ai.qna-advisors.authentication.request', parameters: ['advisor' => $advisor]),
             'refresh_url' => URL::signedRoute(name: 'ai.qna-advisors.authentication.refresh', parameters: ['advisor' => $advisor]),
+            'start_thread_url' => URL::temporarySignedRoute(
+                name: 'ai.qna-advisors.threads.start',
+                expiration: now()->addDays(3),
+                parameters: ['advisor' => $advisor],
+            ),
             'send_message_url' => URL::temporarySignedRoute(
                 name: 'ai.qna-advisors.messages.send',
                 expiration: now()->addDays(3),
