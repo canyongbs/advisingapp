@@ -41,9 +41,9 @@ use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
+use App\Features\QnaAdvisorIntroductoryMessageFeature;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use App\Features\QnaAdvisorIntroductoryMessageFeature;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -139,7 +139,7 @@ class EditQnaAdvisor extends EditRecord
                         ->visible(fn (): bool => QnaAdvisorIntroductoryMessageFeature::active()),
                     Toggle::make('is_introductory_message_dynamic')
                         ->label('Dynamic')
-                        ->helperText(fn (Get $get): ?string => $get('is_introductory_message_dynamic')
+                        ->helperText(fn (Get $get): string => $get('is_introductory_message_dynamic')
                             ? 'AI will greet the student or prospect.'
                             : 'Specify a custom introductory message below.')
                         ->live()

@@ -50,7 +50,6 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\IconColumn;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use UnitEnum;

@@ -34,38 +34,46 @@
 </COPYRIGHT>
 */
 
-use App\Features\QnaAdvisorIntroductoryMessageFeature;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+namespace AdvisingApp\Ai\Actions;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Model;
+
+class GenerateQnaAdvisorIntroductoryMessage
+{
+    public function execute(QnaAdvisor $advisor, ?Model $author = null): ?string
     {
-        DB::transaction(function () {
-            Schema::table('qna_advisors', function (Blueprint $table) {
-                $table->boolean('is_introductory_message_enabled')->default(false);
-                $table->boolean('is_introductory_message_dynamic')->default(true);
-                $table->text('introductory_message')->nullable();
-            });
+        if (! $advisor->is_introductory_message_dynamic) {
+            return $advisor->introductory_message ?? null;
+        }
 
-            QnaAdvisorIntroductoryMessageFeature::activate();
-        });
+        $aiService = $advisor->model->getService();
+
+        return $aiService->complete(
+            prompt: $this->buildContext($advisor, $author),
+            content: 'Generate an introductory greeting message.',
+        );
     }
 
-    public function down(): void
+    protected function buildContext(QnaAdvisor $advisor, ?Model $author): string
     {
-        DB::transaction(function () {
-            QnaAdvisorIntroductoryMessageFeature::deactivate();
+        $systemPrompt = "You are {$advisor->name}, a helpful assistant. ";
+        $systemPrompt .= "Your role is to provide information about: {$advisor->description}. ";
 
-            Schema::table('qna_advisors', function (Blueprint $table) {
-                $table->dropColumn([
-                    'is_introductory_message_enabled',
-                    'is_introductory_message_dynamic',
-                    'introductory_message',
-                ]);
-            });
-        });
+        if (($author instanceof Student) || ($author instanceof Prospect)) {
+            $authorName = $author->full_name;
+
+            if ($authorName) {
+                $systemPrompt .= "You are greeting {$authorName}. ";
+            }
+        }
+
+        $systemPrompt .= 'Generate a brief, friendly greeting that introduces yourself and offers to help. ';
+        $systemPrompt .= 'Keep it concise (2-3 sentences maximum). ';
+        $systemPrompt .= 'Be warm and welcoming but professional.';
+
+        return $systemPrompt;
     }
-};
+}

@@ -45,4 +45,3 @@ class QnaAdvisorIntroductoryMessageFeature extends AbstractFeatureFlag
         return false;
     }
 }
-
