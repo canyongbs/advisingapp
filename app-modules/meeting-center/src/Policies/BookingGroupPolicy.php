@@ -53,6 +53,10 @@ class BookingGroupPolicy
             return Response::deny('The Booking Groups feature is not enabled for your account.');
         }
 
+        if (! is_null($response = $this->hasFeatures())) {
+            return $response;
+        }
+
         return null;
     }
 
