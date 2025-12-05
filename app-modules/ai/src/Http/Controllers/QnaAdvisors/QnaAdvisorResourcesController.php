@@ -45,16 +45,17 @@ class QnaAdvisorResourcesController
 {
     public function __invoke(Request $request, QnaAdvisor $advisor): JsonResponse
     {
-        // Read the Vite manifest for portal assets
-        $manifestPath = public_path('js/widgets/qna-advisor/.vite/manifest.json');
-        $manifest = json_decode(File::get($manifestPath), true);
+        // Read the Vite manifest to determine the correct asset paths
+        $manifestPath = public_path('storage/widgets/ai/qna-advisors/.vite/manifest.json');
+        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+        $manifest = json_decode(File::get($manifestPath), true, 512, JSON_THROW_ON_ERROR);
 
-        $portalEntry = $manifest['src/widget.js'];
+        $widgetEntry = $manifest['src/widget.js'];
 
         return response()->json([
-            'entry' => route('ai.qna-advisors.entry', ['advisor' => $advisor]),
-            'js' => route('ai.qna-advisors.resource', ['advisor' => $advisor, 'resource' => "js/widgets/qna-advisor/{$portalEntry['file']}"]),
-            'css' => url("js/widgets/qna-advisor/{$portalEntry['css'][0]}"),
+            'asset_url' => route('widgets.ai.qna-advisors.asset'),
+            'entry' => route('widgets.ai.qna-advisors.api.entry', ['advisor' => $advisor]),
+            'js' => route('widgets.ai.qna-advisors.asset', ['file' => $widgetEntry['file']]),
         ]);
     }
 }

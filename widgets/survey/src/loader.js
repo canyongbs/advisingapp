@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,34 +31,34 @@
 
 </COPYRIGHT>
 */
+(function () {
+    // Get the embed element
+    const embedElement = document.querySelector('survey-embed');
+    if (!embedElement) throw new Error('Embed not found');
 
-use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
-use AdvisingApp\Survey\Http\Controllers\SurveyWidgetController;
-use AdvisingApp\Survey\Http\Middleware\EnsureSurveysFeatureIsActive;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+    // Get the assets URL from the element
+    const assetsUrl = embedElement.getAttribute('url');
+    if (!assetsUrl) throw new Error('Assets URL not found');
 
-Route::prefix('api')
-    ->middleware([
-        EnsureFrontendRequestsAreStateful::class,
-        'api',
-        EnsureSurveysFeatureIsActive::class,
-        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':survey',
-    ])
-    ->group(function () {
-        Route::prefix('surveys')
-            ->name('surveys.')
-            ->group(function () {
-                Route::get('/{survey}', [SurveyWidgetController::class, 'view'])
-                    ->middleware(['signed:relative'])
-                    ->name('define');
-                Route::post('/{survey}/authenticate/request', [SurveyWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed:relative'])
-                    ->name('request-authentication');
-                Route::post('/{survey}/authenticate/{authentication}', [SurveyWidgetController::class, 'authenticate'])
-                    ->middleware(['signed:relative'])
-                    ->name('authenticate');
-                Route::post('/{survey}/submit', [SurveyWidgetController::class, 'store'])
-                    ->middleware(['signed:relative'])
-                    ->name('submit');
-            });
-    });
+    // Fetch the latest assets URLs
+    fetch(assetsUrl)
+        .then((response) => response.json())
+        .then((assets) => {
+            if (!assets || !assets.asset_url || !assets.entry || !assets.js) {
+                throw Error('Assets are missing or incomplete.');
+            }
+
+            embedElement.setAttribute('entry-url', assets.entry);
+
+            // Set up the global variable for Vite's dynamic imports using the asset endpoint
+            window.__VITE_SURVEYS_ASSET_URL__ = assets.asset_url;
+
+            const scriptElement = document.createElement('script');
+            scriptElement.src = assets.js;
+            scriptElement.type = 'module';
+            document.body.appendChild(scriptElement);
+        })
+        .catch((error) => {
+            console.error('Failed to load widget assets:', error);
+        });
+})();

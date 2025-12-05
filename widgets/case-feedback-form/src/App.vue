@@ -32,34 +32,17 @@
 </COPYRIGHT>
 -->
 <script setup>
+    import { useAuthStore } from '@/Stores/auth.js';
+    import { useTokenStore } from '@/Stores/token.js';
     import { FormKit } from '@formkit/vue';
     import { defineProps, onMounted, ref } from 'vue';
     import axios from '../../../portals/resource-hub/src/Globals/Axios.js';
     import determineIfUserIsAuthenticated from '../../../portals/resource-hub/src/Services/DetermineIfUserIsAuthenticated.js';
-    import getAppContext from '../../../portals/resource-hub/src/Services/GetAppContext.js';
-    import { useAuthStore } from '../../../portals/resource-hub/src/Stores/auth.js';
-    import { useTokenStore } from '../../../portals/resource-hub/src/Stores/token.js';
     import AppLoading from '../src/Components/AppLoading.vue';
     import Footer from './Components/Footer.vue';
 
     const props = defineProps({
-        url: {
-            type: String,
-            required: true,
-        },
-        apiUrl: {
-            type: String,
-            required: true,
-        },
-        accessUrl: {
-            type: String,
-            required: true,
-        },
-        userAuthenticationUrl: {
-            type: String,
-            required: true,
-        },
-        appUrl: {
+        entryUrl: {
             type: String,
             required: true,
         },
@@ -67,16 +50,12 @@
 
     const submittedSuccess = ref(false);
 
-    const scriptUrl = new URL(document.currentScript.getAttribute('src'));
-    const protocol = scriptUrl.protocol;
-    const scriptHostname = scriptUrl.hostname;
     const feedbackSubmitted = ref(false);
     const errorLoading = ref(false);
     const loading = ref(true);
     const userIsAuthenticated = ref(false);
     const requiresAuthentication = ref(false);
     const userGuard = ref('');
-    const hostUrl = `${protocol}//${scriptHostname}`;
     const formSubmissionUrl = ref('');
     const formPrimaryColor = ref('');
     const formRounding = ref('');
@@ -93,20 +72,15 @@
         requestedMessage: null,
         requestUrl: null,
         url: null,
+        userAuthenticationUrl: null,
     });
 
     onMounted(async () => {
-        const { isEmbeddedInAdvisingApp } = getAppContext(props.accessUrl);
+        await getForm().then(async () => {
+            await determineIfUserIsAuthenticated(authenticate.userAuthenticationUrl).then((response) => {
+                userIsAuthenticated.value = response;
+            });
 
-        if (isEmbeddedInAdvisingApp) {
-            await axios.get(props.appUrl + '/sanctum/csrf-cookie');
-        }
-
-        await determineIfUserIsAuthenticated(props.userAuthenticationUrl).then((response) => {
-            userIsAuthenticated.value = response;
-        });
-
-        await getForm().then(() => {
             loading.value = false;
         });
     });
@@ -120,18 +94,11 @@
             guard: userGuard.value,
         };
 
-        fetch(formSubmissionUrl.value, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestData),
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                if (json.errors) {
-                    node.setErrors([], json.errors);
+        axios
+            .post(formSubmissionUrl.value, requestData)
+            .then((response) => {
+                if (response.errors) {
+                    node.setErrors([], response.errors);
 
                     return;
                 }
@@ -146,7 +113,7 @@
 
     async function getForm() {
         await axios
-            .get(props.url)
+            .get(props.entryUrl)
             .then((response) => {
                 errorLoading.value = false;
 
@@ -176,9 +143,13 @@
 
                 userGuard.value = response.data.guard;
 
-                const { setPortalRequiresAuthentication } = useAuthStore();
+                authenticate.userAuthenticationUrl = response.data.user_auth_check_url;
 
-                setPortalRequiresAuthentication((requiresAuthentication.value = response.data.requires_authentication));
+                const authStore = useAuthStore();
+
+                authStore.setPortalRequiresAuthentication(response.data.requires_authentication).then(() => {
+                    requiresAuthentication.value = response.data.requires_authentication;
+                });
 
                 formRounding.value = {
                     none: {
@@ -219,22 +190,13 @@
                 }[response.data.rounding ?? 'md'];
             })
             .catch((error) => {
-                const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
-                node.setErrors([errorMessage]);
+                errorLoading.value = true;
+                console.error(error);
             });
     }
 
     async function authenticate(formData, node) {
         node.clearErrors();
-
-        const { setToken } = useTokenStore();
-        const { setUser } = useAuthStore();
-
-        const { isEmbeddedInAdvisingApp } = getAppContext(props.accessUrl);
-
-        if (isEmbeddedInAdvisingApp) {
-            await axios.get(props.appUrl + '/sanctum/csrf-cookie');
-        }
 
         if (authentication.value.isRequested) {
             axios
@@ -258,8 +220,11 @@
                     }
 
                     if (response.data.success === true) {
-                        setToken(response.data.token);
-                        setUser(response.data.user);
+                        const authStore = useAuthStore();
+                        const tokenStore = useTokenStore();
+
+                        tokenStore.setToken(response.data.token);
+                        authStore.setUser(response.data.user);
                         userGuard.value = response.data.guard;
                         userIsAuthenticated.value = true;
                     }
@@ -275,7 +240,7 @@
         axios
             .post(authentication.value.requestUrl, {
                 email: formData.email,
-                isSpa: isEmbeddedInAdvisingApp,
+                isSpa: true,
             })
             .then((response) => {
                 if (response.errors) {
@@ -322,10 +287,6 @@
         }"
         class="font-sans px-6"
     >
-        <div>
-            <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/case-feedback-form/style.css'" />
-        </div>
-
         <div v-if="loading">
             <AppLoading />
         </div>
@@ -431,10 +392,3 @@
         </div>
     </div>
 </template>
-
-<style scoped>
-    .bg-gradient {
-        @apply relative bg-no-repeat;
-        background-image: radial-gradient(circle at top, theme('colors.primary.200'), theme('colors.white') 50%);
-    }
-</style>

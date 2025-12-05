@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -34,35 +32,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
+(function () {
+    // Get the embed element
+    const embedElement = document.querySelector('case-form-embed');
+    if (!embedElement) throw new Error('Embed not found');
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+    // Get the assets URL from the element
+    const assetsUrl = embedElement.getAttribute('url');
+    if (!assetsUrl) throw new Error('Assets URL not found');
 
-class QnaAdvisorResourceController
-{
-    public function __invoke(Request $request, string $file): StreamedResponse
-    {
-        $path = "widgets/ai/qna-advisors/{$file}";
+    // Fetch the latest assets URLs
+    fetch(assetsUrl)
+        .then((response) => response.json())
+        .then((assets) => {
+            if (!assets || !assets.asset_url || !assets.entry || !assets.js) {
+                throw Error('Assets are missing or incomplete.');
+            }
 
-        $disk = Storage::disk('public');
+            embedElement.setAttribute('entry-url', assets.entry);
 
-        abort_if(! $disk->exists($path), 404, 'File not found.');
+            // Set up the global variable for Vite's dynamic imports using the asset endpoint
+            window.__VITE_CASE_FORMS_ASSET_URL__ = assets.asset_url;
 
-        $mimeType = $disk->mimeType($path);
-
-        $stream = $disk->readStream($path);
-
-        abort_if(is_null($stream), 404, 'File not found.');
-
-        return response()->streamDownload(
-            function () use ($stream) {
-                fpassthru($stream);
-                fclose($stream);
-            },
-            $file,
-            ['Content-Type' => $mimeType]
-        );
-    }
-}
+            const scriptElement = document.createElement('script');
+            scriptElement.src = assets.js;
+            scriptElement.type = 'module';
+            document.body.appendChild(scriptElement);
+        })
+        .catch((error) => {
+            console.error('Failed to load widget assets:', error);
+        });
+})();

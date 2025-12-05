@@ -36,11 +36,12 @@ import { createPinia } from 'pinia';
 import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
 import App from './App.vue';
 import config from './formkit.config.js';
-import './widget.css';
+import styles from './widget.css?inline';
 
 customElements.define(
     'qna-advisor-embed',
     defineCustomElement({
+        styles: [styles],
         setup(props) {
             const app = createApp();
             const pinia = createPinia();

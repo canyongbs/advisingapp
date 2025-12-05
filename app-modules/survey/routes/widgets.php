@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\MeetingCenter\Http\Controllers\EventRegistrationWidgetController;
-use AdvisingApp\MeetingCenter\Http\Controllers\PersonalBookingPageWidgetController;
-use AdvisingApp\MeetingCenter\Http\Middleware\EnsureEventRegistrationFormIsEmbeddableAndAuthorized;
-use AdvisingApp\MeetingCenter\Http\Middleware\EventRegistrationWidgetCors;
-use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
+use AdvisingApp\Survey\Http\Controllers\SurveyWidgetController;
+use AdvisingApp\Survey\Http\Middleware\EnsureSurveysFeatureIsActive;
+use AdvisingApp\Survey\Http\Middleware\SurveysWidgetCors;
+use AdvisingApp\Survey\Models\Survey;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -46,35 +46,36 @@ use Illuminate\Support\Facades\Route;
 Route::middleware([
     'api',
     EncryptCookies::class,
-    EventRegistrationWidgetCors::class,
+    EnsureSurveysFeatureIsActive::class,
+    SurveysWidgetCors::class,
 ])
-    ->prefix('widgets/event-registration')
-    ->name('widgets.event-registration.')
+    ->prefix('widgets/surveys')
+    ->name('widgets.surveys.')
     ->group(function () {
-        Route::prefix('api/{event}')
+        Route::prefix('api/{survey}')
             ->name('api.')
             ->middleware([
-                EnsureEventRegistrationFormIsEmbeddableAndAuthorized::class . ':event',
+                EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':survey',
             ])
             ->group(function () {
-                Route::get('/', [EventRegistrationWidgetController::class, 'assets'])
+                Route::get('/', [SurveyWidgetController::class, 'assets'])
                     ->name('assets');
 
-                Route::get('entry', [EventRegistrationWidgetController::class, 'view'])
+                Route::get('entry', [SurveyWidgetController::class, 'view'])
                     ->name('entry');
-                Route::post('authenticate/request', [EventRegistrationWidgetController::class, 'requestAuthentication'])
+                Route::post('authenticate/request', [SurveyWidgetController::class, 'requestAuthentication'])
                     ->middleware(['signed'])
                     ->name('request-authentication');
-                Route::post('authenticate/{authentication}', [EventRegistrationWidgetController::class, 'authenticate'])
+                Route::post('authenticate/{authentication}', [SurveyWidgetController::class, 'authenticate'])
                     ->middleware(['signed'])
                     ->name('authenticate');
-                Route::post('submit', [EventRegistrationWidgetController::class, 'store'])
+                Route::post('submit', [SurveyWidgetController::class, 'store'])
                     ->middleware(['signed'])
                     ->name('submit');
 
                 // Handle preflight CORS requests for all routes in this group
                 // MUST remain the last route in this group
-                Route::options('/{any}', function (Request $request, Event $event) {
+                Route::options('/{any}', function (Request $request, Survey $survey) {
                     return response()->noContent();
                 })
                     ->where('any', '.*')
@@ -83,37 +84,7 @@ Route::middleware([
 
         // This route MUST remain at /widgets/... in order to catch requests to asset files and return the correct headers
         // NGINX has been configured to route all requests for assets under /widgets to the application
-        Route::get('{file?}', [EventRegistrationWidgetController::class, 'asset'])
-            ->where('file', '(.*)')
-            ->name('asset');
-    });
-
-Route::middleware([
-    'api',
-    EncryptCookies::class,
-])
-    ->prefix('widgets/personal-booking-page')
-    ->name('widgets.personal-booking-page.')
-    ->group(function () {
-        Route::prefix('api/{slug}')
-            ->name('api.')
-            ->group(function () {
-                Route::get('/', [PersonalBookingPageWidgetController::class, 'assets'])
-                    ->name('assets');
-
-                Route::get('entry', [PersonalBookingPageWidgetController::class, 'view'])
-                    ->name('entry');
-
-                Route::get('available-slots', [PersonalBookingPageWidgetController::class, 'availableSlots'])
-                    ->name('available-slots');
-
-                Route::post('book', [PersonalBookingPageWidgetController::class, 'book'])
-                    ->name('book');
-            });
-
-        // This route MUST remain at /widgets/... in order to catch requests to asset files and return the correct headers
-        // NGINX has been configured to route all requests for assets under /widgets to the application
-        Route::get('{file?}', [PersonalBookingPageWidgetController::class, 'asset'])
+        Route::get('{file?}', [SurveyWidgetController::class, 'asset'])
             ->where('file', '(.*)')
             ->name('asset');
     });

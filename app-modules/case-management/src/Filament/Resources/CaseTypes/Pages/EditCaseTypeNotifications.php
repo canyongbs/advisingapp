@@ -51,6 +51,8 @@ class EditCaseTypeNotifications extends EditRecord
 
     protected static ?string $title = 'Notifications';
 
+    protected static ?string $navigationLabel = 'Notifications';
+
     public function getRelationManagers(): array
     {
         // Needed to prevent Filament from loading the relation managers on this page.

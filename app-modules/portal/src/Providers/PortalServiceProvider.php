@@ -54,5 +54,7 @@ class PortalServiceProvider extends ServiceProvider
         Relation::morphMap([
             'portal_settings_property' => PortalSettingsProperty::class,
         ]);
+
+        $this->loadRoutesFrom(__DIR__ . '/../../routes/portals.php');
     }
 }

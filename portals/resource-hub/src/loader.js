@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,33 +31,34 @@
 
 </COPYRIGHT>
 */
+(function () {
+    // Get the portal embed element
+    const portalEmbedElement = document.querySelector('resource-hub-portal-embed');
+    if (!portalEmbedElement) throw new Error('Embed not found');
 
-use AdvisingApp\MeetingCenter\Http\Controllers\EventRegistrationWidgetController;
-use AdvisingApp\MeetingCenter\Http\Middleware\EnsureEventRegistrationFormIsEmbeddableAndAuthorized;
-use Illuminate\Support\Facades\Route;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+    // Get the resources URL from the element
+    const resourcesUrl = portalEmbedElement.getAttribute('url');
+    if (!resourcesUrl) throw new Error('Assets URL not found');
 
-Route::prefix('api')
-    ->middleware([
-        EnsureFrontendRequestsAreStateful::class,
-        'api',
-        EnsureEventRegistrationFormIsEmbeddableAndAuthorized::class . ':event',
-    ])
-    ->group(function () {
-        Route::prefix('event-registration')
-            ->name('event-registration.')
-            ->group(function () {
-                Route::get('/{event}', [EventRegistrationWidgetController::class, 'view'])
-                    ->middleware(['signed:relative'])
-                    ->name('define');
-                Route::post('/{event}/authenticate/request', [EventRegistrationWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed:relative'])
-                    ->name('request-authentication');
-                Route::post('/{event}/authenticate/{authentication}', [EventRegistrationWidgetController::class, 'authenticate'])
-                    ->middleware(['signed:relative'])
-                    ->name('authenticate');
-                Route::post('/{event}/submit', [EventRegistrationWidgetController::class, 'store'])
-                    ->middleware(['signed:relative'])
-                    ->name('submit');
-            });
-    });
+    // Fetch the latest resource URLs
+    fetch(resourcesUrl)
+        .then((response) => response.json())
+        .then((assets) => {
+            if (!assets || !assets.asset_url || !assets.entry || !assets.js) {
+                throw Error('Assets are missing or incomplete.');
+            }
+            portalEmbedElement.setAttribute('entry-url', assets.entry);
+
+            // Set up the global variable for Vite's dynamic imports using the asset endpoint
+            window.__VITE_RESOURCE_HUB_PORTAL_ASSET_URL__ = assets.asset_url;
+            1;
+
+            const scriptElement = document.createElement('script');
+            scriptElement.src = assets.js;
+            scriptElement.type = 'module';
+            document.body.appendChild(scriptElement);
+        })
+        .catch((error) => {
+            console.error('Failed to load portal resources:', error);
+        });
+})();
