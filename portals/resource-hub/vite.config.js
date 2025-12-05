@@ -64,7 +64,7 @@ export default defineConfig({
                 chunkFileNames: '[name]-[hash].js',
             },
         },
-        outDir: resolve(__dirname, '../../storage/app/public/portals/resource-hub'),
+        outDir: resolve(__dirname, '../../storage/app/public/portals/resource-hub/assets'),
         emptyOutDir: true,
         sourcemap: true,
     },

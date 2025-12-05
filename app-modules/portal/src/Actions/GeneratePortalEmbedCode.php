@@ -55,9 +55,9 @@ class GeneratePortalEmbedCode
                 /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
                 $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
 
-                $loaderScriptUrl = url("storage/portals/resource-hub/{$manifest['src/loader.js']['file']}");
+                $loaderScriptUrl = route(name: 'portals.resource-hub.asset', parameters: ['file' => $manifest['src/loader.js']['file']]);
 
-                $assetsUrl = route(name: 'api.portal.resource-hub.assets');
+                $assetsUrl = route(name: 'portals.resource-hub.api.assets');
 
                 $accessUrl = route('portal.resource-hub.show');
 
