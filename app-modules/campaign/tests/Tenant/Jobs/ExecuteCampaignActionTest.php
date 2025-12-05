@@ -41,7 +41,7 @@ use AdvisingApp\Campaign\Jobs\EngagementCampaignActionJob;
 use AdvisingApp\Campaign\Jobs\EventCampaignActionJob;
 use AdvisingApp\Campaign\Jobs\ExecuteCampaignAction;
 use AdvisingApp\Campaign\Jobs\InteractionCampaignActionJob;
-use AdvisingApp\Campaign\Jobs\ProactiveAlertCampaignActionJob;
+use AdvisingApp\Campaign\Jobs\ProactiveConcernCampaignActionJob;
 use AdvisingApp\Campaign\Jobs\SubscriptionCampaignActionJob;
 use AdvisingApp\Campaign\Jobs\TagsCampaignActionJob;
 use AdvisingApp\Campaign\Jobs\TaskCampaignActionJob;
@@ -131,9 +131,9 @@ it('dispatches the correct job based on the CampaignAction type into the batch',
             CampaignActionType::Event,
             EventCampaignActionJob::class,
         ],
-        'Alert' => [
-            CampaignActionType::ProactiveAlert,
-            ProactiveAlertCampaignActionJob::class,
+        'Concern' => [
+            CampaignActionType::ProactiveConcern,
+            ProactiveConcernCampaignActionJob::class,
         ],
         'Interaction' => [
             CampaignActionType::Interaction,

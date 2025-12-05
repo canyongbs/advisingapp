@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Concern\Database\Seeders;
 
-use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
+use AdvisingApp\Concern\Models\ConcernStatus;
 use Illuminate\Database\Seeder;
 
 class ConcernStatusSeeder extends Seeder
@@ -47,7 +47,7 @@ class ConcernStatusSeeder extends Seeder
      */
     public function run(): void
     {
-        AlertStatus::factory()
+        ConcernStatus::factory()
             ->createMany(
                 [
                     [

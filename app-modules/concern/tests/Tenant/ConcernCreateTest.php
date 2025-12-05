@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Concern\Notifications\ConcernCreatedNotification;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
@@ -43,18 +43,18 @@ use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\actingAs;
 
-it('creates a subscription for the user that created the Alert', function () {
+it('creates a subscription for the user that created the Concern', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user);
 
     expect($user->subscriptions->count())->toEqual(0);
 
-    $alert = Alert::factory()->create();
+    $concern = Concern::factory()->create();
 
     $user->refresh();
 
-    expect($user->subscriptions->first()->subscribable)->toEqual($alert->concern);
+    expect($user->subscriptions->first()->subscribable)->toEqual($concern->concern);
 });
 
 it('dispatches the proper notifications to subscribers on created', function () {
@@ -69,7 +69,7 @@ it('dispatches the proper notifications to subscribers on created', function () 
         'user_id' => $user->id,
     ])->toArray());
 
-    Alert::factory()->create([
+    Concern::factory()->create([
         'concern_id' => $student->sisid,
         'concern_type' => Student::class,
     ]);
@@ -80,7 +80,7 @@ it('dispatches the proper notifications to subscribers on created', function () 
     Notification::assertSentTimes(ConcernCreatedNotification::class, $student->subscriptions()->count());
 });
 
-it('only notifies active users of alerts', function () {
+it('only notifies active users of concerns', function () {
     // @Todo: This tests works but we should change it to use the Listener instead of the Notification
     Notification::fake();
 
@@ -95,7 +95,7 @@ it('only notifies active users of alerts', function () {
 
     $deletedUser->delete();
 
-    Alert::factory()->create([
+    Concern::factory()->create([
         'concern_id' => $student->sisid,
         'concern_type' => Student::class,
     ]);

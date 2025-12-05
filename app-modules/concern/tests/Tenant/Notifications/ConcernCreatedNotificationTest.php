@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Concern\Notifications\ConcernCreatedNotification;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
@@ -51,7 +51,7 @@ it('can be sent', function () {
         'user_id' => $user->id,
     ]);
 
-    Alert::factory()->create([
+    Concern::factory()->create([
         'concern_id' => $student->sisid,
         'concern_type' => Student::class,
     ]);

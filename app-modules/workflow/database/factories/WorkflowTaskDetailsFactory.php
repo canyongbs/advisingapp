@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Workflow\Database\Factories;
 
-use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
+use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<WorkflowProactiveAlertDetails>
+ * @extends Factory<WorkflowTaskDetails>
  */
 class WorkflowTaskDetailsFactory extends Factory
 {

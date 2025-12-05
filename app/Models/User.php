@@ -320,17 +320,17 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     /**
      * @return HasManyDeep<Model, $this>
      */
-    public function studentAlerts(): HasManyDeep
+    public function studentConcerns(): HasManyDeep
     {
-        return $this->hasManyDeepFromRelations($this->studentSubscriptions(), (new Student())->alerts());
+        return $this->hasManyDeepFromRelations($this->studentSubscriptions(), (new Student())->concerns());
     }
 
     /**
      * @return HasManyDeep<Model, $this>
      */
-    public function prospectAlerts(): HasManyDeep
+    public function prospectConcerns(): HasManyDeep
     {
-        return $this->hasManyDeepFromRelations($this->prospectSubscriptions(), (new Prospect())->alerts());
+        return $this->hasManyDeepFromRelations($this->prospectSubscriptions(), (new Prospect())->concerns());
     }
 
     /**

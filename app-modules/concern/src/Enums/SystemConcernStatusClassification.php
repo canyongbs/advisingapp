@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Concern\Enums;
 
-use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Concern\Models\ConcernStatus;
 use Filament\Support\Contracts\HasLabel;
 
 enum SystemConcernStatusClassification: string implements HasLabel
@@ -52,10 +52,10 @@ enum SystemConcernStatusClassification: string implements HasLabel
         return $this->name;
     }
 
-    public static function default(): ?AlertStatus
+    public static function default(): ?ConcernStatus
     {
-        $alertStatus = AlertStatus::where('is_default', true)->first();
+        $concernStatus = ConcernStatus::where('is_default', true)->first();
 
-        return $alertStatus;
+        return $concernStatus;
     }
 }

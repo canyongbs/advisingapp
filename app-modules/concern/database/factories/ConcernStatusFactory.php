@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Concern\Database\Factories;
 
-use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
+use AdvisingApp\Concern\Models\ConcernStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<AlertStatus>
+ * @extends Factory<ConcernStatus>
  */
 class ConcernStatusFactory extends Factory
 {

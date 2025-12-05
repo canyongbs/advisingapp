@@ -46,7 +46,7 @@ class DeleteStudent
         DB::transaction(function () use ($student) {
             $student->enrollments()->delete();
             $student->programs()->delete();
-            $student->alerts()->delete();
+            $student->concerns()->delete();
             $student->tasks()->delete();
             $student->interactions()->delete();
             $student->timeline()->delete();

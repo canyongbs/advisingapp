@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\StudentDataModel\Models\Contracts;
 
-use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
@@ -67,7 +67,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  *
  * @property-read Collection<int, User> $careTeam
  * @property-read ProspectEmailAddress|StudentEmailAddress|null $primaryEmailAddress
- * @property-read Collection<int, Alert> $alerts
+ * @property-read Collection<int, Concern> $concerns
  * @property-read Collection<int, Task> $tasks
  * @property-read Collection<int, Tag> $tags
  * @property-read Collection<int, Interaction> $interactions
@@ -99,9 +99,9 @@ interface Educatable extends Identifiable, CanBeNotified
     public function tags(): MorphToMany;
 
     /**
-     * @return MorphMany<Alert, covariant Model>
+     * @return MorphMany<Concern, covariant Model>
      */
-    public function alerts(): MorphMany;
+    public function concerns(): MorphMany;
 
     /**
      * @return MorphMany<Task, covariant Model>

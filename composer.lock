@@ -686,41 +686,6 @@
             "time": "2025-11-24T14:40:29+00:00"
         },
         {
-            "name": "canyon-gbs/advising-app-alert",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/alert",
-                "reference": "538c072626baf674219e821e77a1c1db8e360ab5"
-            },
-            "require": {
-                "filament/filament": "^4.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\Alert\\Providers\\AlertServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\Alert\\": "src/",
-                    "AdvisingApp\\Alert\\Tests\\": "tests/",
-                    "AdvisingApp\\Alert\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\Alert\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
             "name": "canyon-gbs/advising-app-application",
             "version": "1.0",
             "dist": {
@@ -1930,7 +1895,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/concern",
-                "reference": "d1c8c4efc9c4baade5e29da2cdaaef84feadbc25"
+                "reference": "5b5c1ee98f19838b37004a3f94ae72f78d2e5e42"
             },
             "require": {
                 "filament/filament": "^4.0"

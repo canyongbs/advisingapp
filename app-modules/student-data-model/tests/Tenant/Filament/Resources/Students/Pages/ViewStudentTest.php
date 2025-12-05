@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
+use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\StudentDataModel\Enums\SisSystem;
 use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableActivityFeedWidget;
-use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableAlertsWidget;
 use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableCareTeamWidget;
+use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableConcernsWidget;
 use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableSubscriptionsWidget;
 use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableTasksWidget;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Actions\StudentTagsAction;
@@ -270,7 +270,7 @@ it('renders the EngagementFilesRelationManager based on proper access', function
         ->assertSeeLivewire($relationManager);
 });
 
-it('renders the EducatableAlertsWidget based on proper access', function () {
+it('renders the EducatableConcernsWidget based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $student = Student::factory()->create();
@@ -280,10 +280,10 @@ it('renders the EducatableAlertsWidget based on proper access', function () {
 
     actingAs($user);
 
-    AlertStatus::factory()->create([
+    ConcernStatus::factory()->create([
         'classification' => SystemConcernStatusClassification::Active,
     ]);
-    $widget = EducatableAlertsWidget::class;
+    $widget = EducatableConcernsWidget::class;
 
     livewire(ViewStudent::class, [
         'record' => $student->getKey(),
@@ -291,7 +291,7 @@ it('renders the EducatableAlertsWidget based on proper access', function () {
         ->assertOk()
         ->assertDontSeeLivewire($widget);
 
-    $user->givePermissionTo('alert.view-any');
+    $user->givePermissionTo('concern.view-any');
 
     livewire(ViewStudent::class, [
         'record' => $student->getKey(),

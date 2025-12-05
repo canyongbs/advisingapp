@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Campaign\Enums;
 
-use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
 use AdvisingApp\Campaign\Filament\Blocks\CareTeamBlock;
 use AdvisingApp\Campaign\Filament\Blocks\CaseBlock;
@@ -44,7 +43,7 @@ use AdvisingApp\Campaign\Filament\Blocks\EngagementBatchEmailBlock;
 use AdvisingApp\Campaign\Filament\Blocks\EngagementBatchSmsBlock;
 use AdvisingApp\Campaign\Filament\Blocks\EventBlock;
 use AdvisingApp\Campaign\Filament\Blocks\InteractionBlock;
-use AdvisingApp\Campaign\Filament\Blocks\ProactiveAlertBlock;
+use AdvisingApp\Campaign\Filament\Blocks\ProactiveConcernBlock;
 use AdvisingApp\Campaign\Filament\Blocks\SubscriptionBlock;
 use AdvisingApp\Campaign\Filament\Blocks\TagsBlock;
 use AdvisingApp\Campaign\Filament\Blocks\TaskBlock;
@@ -54,13 +53,14 @@ use AdvisingApp\Campaign\Jobs\EngagementCampaignActionJob;
 use AdvisingApp\Campaign\Jobs\EventCampaignActionJob;
 use AdvisingApp\Campaign\Jobs\ExecuteCampaignActionOnEducatableJob;
 use AdvisingApp\Campaign\Jobs\InteractionCampaignActionJob;
-use AdvisingApp\Campaign\Jobs\ProactiveAlertCampaignActionJob;
+use AdvisingApp\Campaign\Jobs\ProactiveConcernCampaignActionJob;
 use AdvisingApp\Campaign\Jobs\SubscriptionCampaignActionJob;
 use AdvisingApp\Campaign\Jobs\TagsCampaignActionJob;
 use AdvisingApp\Campaign\Jobs\TaskCampaignActionJob;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\MeetingCenter\Models\Event;
@@ -77,7 +77,7 @@ enum CampaignActionType: string implements HasLabel
 
     case Case = 'case';
 
-    case ProactiveAlert = 'proactive_alert';
+    case ProactiveConcern = 'proactive_conerns';
 
     case Interaction = 'interaction';
 
@@ -96,7 +96,7 @@ enum CampaignActionType: string implements HasLabel
         $blocks = [
             EngagementBatchEmailBlock::make(),
             EngagementBatchSmsBlock::make(),
-            ProactiveAlertBlock::make(),
+            ProactiveConcernBlock::make(),
             InteractionBlock::make(),
             CareTeamBlock::make(),
             TaskBlock::make(),
@@ -122,7 +122,7 @@ enum CampaignActionType: string implements HasLabel
             CampaignActionType::BulkEngagementEmail => 'Email',
             CampaignActionType::BulkEngagementSms => 'Text Message',
             CampaignActionType::Case => 'Case',
-            CampaignActionType::ProactiveAlert => 'Proactive Alert',
+            CampaignActionType::ProactiveConcern => 'Proactive Concern',
             CampaignActionType::CareTeam => 'Care Team',
             default => $this->name,
         };
@@ -134,7 +134,7 @@ enum CampaignActionType: string implements HasLabel
             CampaignActionType::BulkEngagementEmail => EngagementBatch::class,
             CampaignActionType::BulkEngagementSms => EngagementBatch::class,
             CampaignActionType::Case => CaseModel::class,
-            CampaignActionType::ProactiveAlert => Alert::class,
+            CampaignActionType::ProactiveConcern => Concern::class,
             CampaignActionType::Interaction => Interaction::class,
             CampaignActionType::CareTeam => CareTeam::class,
             CampaignActionType::Task => Task::class,
@@ -150,7 +150,7 @@ enum CampaignActionType: string implements HasLabel
             CampaignActionType::BulkEngagementEmail => EngagementBatchEmailBlock::make(),
             CampaignActionType::BulkEngagementSms => EngagementBatchSmsBlock::make(),
             CampaignActionType::Case => CaseBlock::make(),
-            CampaignActionType::ProactiveAlert => ProactiveAlertBlock::make(),
+            CampaignActionType::ProactiveConcern => ProactiveConcernBlock::make(),
             CampaignActionType::Interaction => InteractionBlock::make(),
             CampaignActionType::CareTeam => CareTeamBlock::make(),
             CampaignActionType::Task => TaskBlock::make(),
@@ -171,7 +171,7 @@ enum CampaignActionType: string implements HasLabel
             CampaignActionType::BulkEngagementEmail => 'filament.forms.components.campaigns.actions.bulk-engagement',
             CampaignActionType::BulkEngagementSms => 'filament.forms.components.campaigns.actions.bulk-engagement',
             CampaignActionType::Case => 'filament.forms.components.campaigns.actions.case',
-            CampaignActionType::ProactiveAlert => 'filament.forms.components.campaigns.actions.proactive-alert',
+            CampaignActionType::ProactiveConcern => 'filament.forms.components.campaigns.actions.proactive-concern',
             CampaignActionType::Interaction => 'filament.forms.components.campaigns.actions.interaction',
             CampaignActionType::CareTeam => 'filament.forms.components.campaigns.actions.care-team',
             CampaignActionType::Task => 'filament.forms.components.campaigns.actions.task',
@@ -187,7 +187,7 @@ enum CampaignActionType: string implements HasLabel
             CampaignActionType::BulkEngagementEmail, CampaignActionType::BulkEngagementSms => new EngagementCampaignActionJob($campaignActionEducatable),
             CampaignActionType::Event => new EventCampaignActionJob($campaignActionEducatable),
             CampaignActionType::Case => new CaseCampaignActionJob($campaignActionEducatable),
-            CampaignActionType::ProactiveAlert => new ProactiveAlertCampaignActionJob($campaignActionEducatable),
+            CampaignActionType::ProactiveConcern => new ProactiveConcernCampaignActionJob($campaignActionEducatable),
             CampaignActionType::Interaction => new InteractionCampaignActionJob($campaignActionEducatable),
             CampaignActionType::CareTeam => new CareTeamCampaignActionJob($campaignActionEducatable),
             CampaignActionType::Task => new TaskCampaignActionJob($campaignActionEducatable),

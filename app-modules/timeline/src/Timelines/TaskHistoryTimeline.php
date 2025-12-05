@@ -77,7 +77,7 @@ class TaskHistoryTimeline extends CustomTimeline
     {
         return (match ($this->history->event) {
             'created' => TaskHistoryCreatedViewAction::make()
-                ->modalHeading('View Alert'),
+                ->modalHeading('View Concern'),
             'updated', 'status_changed', 'reassigned' => TaskHistoryUpdatedViewAction::make()
                 ->modalHeading('View Changes'),
         })->record($this->history);

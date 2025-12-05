@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Concern\Tests\Tenant\Filament\Actions\RequestFactories\BulkCreateConcernActionRequestFactory;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ListProspects;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -55,12 +55,12 @@ it('shows the form and validation', function (BulkCreateConcernActionRequestFact
     $request = BulkCreateConcernActionRequestFactory::new($data)->create();
 
     livewire(ListStudents::class)
-        ->mountTableBulkAction('createAlert', [$student->getKey()])
+        ->mountTableBulkAction('createConcern', [$student->getKey()])
         ->setTableBulkActionData($request)
         ->callMountedTableBulkAction()
         ->assertHasTableBulkActionErrors($errors);
 
-    assertDatabaseMissing(Alert::class, $request);
+    assertDatabaseMissing(Concern::class, $request);
 })->with([
     'description required' => [
         BulkCreateConcernActionRequestFactory::new()->without('description'),
@@ -92,7 +92,7 @@ it('shows the form and validation', function (BulkCreateConcernActionRequestFact
     ],
 ]);
 
-it('can successfully create bulk alert with student', function () {
+it('can successfully create bulk concern with student', function () {
     asSuperAdmin();
 
     $student = Student::factory()->create();
@@ -100,7 +100,7 @@ it('can successfully create bulk alert with student', function () {
     $request = BulkCreateConcernActionRequestFactory::new()->create();
 
     livewire(ListStudents::class)
-        ->mountTableBulkAction('createAlert', [$student->getKey()])
+        ->mountTableBulkAction('createConcern', [$student->getKey()])
         ->setTableBulkActionData([
             ...$request,
         ])
@@ -109,7 +109,7 @@ it('can successfully create bulk alert with student', function () {
         ->assertSuccessful()
         ->assertNotified();
 
-    assertDatabaseHas(Alert::class, [
+    assertDatabaseHas(Concern::class, [
         'description' => $request['description'],
         'status_id' => $request['status_id'],
         'suggested_intervention' => $request['suggested_intervention'],
@@ -118,7 +118,7 @@ it('can successfully create bulk alert with student', function () {
     ]);
 });
 
-it('can successfully create bulk alert with prospect', function () {
+it('can successfully create bulk concern with prospect', function () {
     asSuperAdmin();
 
     $prospect = Prospect::factory()->create();
@@ -126,14 +126,14 @@ it('can successfully create bulk alert with prospect', function () {
     $request = BulkCreateConcernActionRequestFactory::new()->create();
 
     livewire(ListProspects::class)
-        ->mountTableBulkAction('createAlert', [$prospect->getKey()])
+        ->mountTableBulkAction('createConcern', [$prospect->getKey()])
         ->setTableBulkActionData($request)
         ->callMountedTableBulkAction()
         ->assertHasNoTableBulkActionErrors()
         ->assertSuccessful()
         ->assertNotified();
 
-    assertDatabaseHas(Alert::class, [
+    assertDatabaseHas(Concern::class, [
         'description' => $request['description'],
         'status_id' => $request['status_id'],
         'suggested_intervention' => $request['suggested_intervention'],

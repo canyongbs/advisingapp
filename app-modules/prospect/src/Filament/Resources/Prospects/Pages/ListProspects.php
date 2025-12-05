@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Pages;
 
-use AdvisingApp\Alert\Filament\Actions\BulkCreateAlertAction;
 use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
 use AdvisingApp\CaseManagement\Filament\Actions\BulkCreateCaseAction;
+use AdvisingApp\Concern\Filament\Actions\BulkCreateConcernAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEmailAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkTextAction;
 use AdvisingApp\Group\Actions\BulkGroupAction;
@@ -149,9 +149,9 @@ class ListProspects extends ListRecords
                                 ->get();
                         }
                     ),
-                SelectFilter::make('alerts')
+                SelectFilter::make('concerns')
                     ->multiple()
-                    ->relationship('alerts.status', 'name')
+                    ->relationship('concerns.status', 'name')
                     ->searchable()
                     ->preload()
                     ->optionsLimit(20),
@@ -269,7 +269,7 @@ class ListProspects extends ListRecords
                     ActionGroup::make([
                         BulkCreateCaseAction::make()
                             ->authorize(fn () => auth()->user()->can('prospect.*.update')),
-                        BulkCreateAlertAction::make()
+                        BulkCreateConcernAction::make()
                             ->visible(fn (): bool => auth()->user()->can('prospect.*.update')),
                         BulkCreateInteractionAction::make()
                             ->authorize(fn () => auth()->user()->can('prospect.*.update')),

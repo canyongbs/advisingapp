@@ -18,7 +18,6 @@
         "aws/aws-php-sns-message-validator": "^1.9",
         "aws/aws-sdk-php": "^3.316",
         "barryvdh/laravel-debugbar": "^3.9",
-        "canyon-gbs/advising-app-alert": "*",
         "canyon-gbs/advising-app-application": "*",
         "canyon-gbs/advising-app-assistant": "*",
         "canyon-gbs/advising-app-audit": "*",

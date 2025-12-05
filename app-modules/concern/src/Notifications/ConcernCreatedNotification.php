@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Concern\Notifications;
 
-use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
@@ -48,7 +48,7 @@ use Illuminate\Support\HtmlString;
 
 class ConcernCreatedNotification extends Notification
 {
-    public function __construct(public Alert $alert) {}
+    public function __construct(public Concern $concern) {}
 
     /**
      * @return array<int, string>
@@ -58,21 +58,24 @@ class ConcernCreatedNotification extends Notification
         return ['database'];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toDatabase(object $notifiable): array
     {
-        $concern = $this->alert->concern;
+        $concern = $this->concern->concern;
 
         $name = $concern->{$concern->displayNameKey()};
 
         [$target, $targetRoute] = match ($concern::class) {
-            Prospect::class => [ProspectResource::class, 'alerts'],
+            Prospect::class => [ProspectResource::class, 'concerns'],
             Student::class => [StudentResource::class, 'view'],
             default => throw new Exception('Unsupported concern type'),
         };
 
-        $alertUrl = $target::getUrl($targetRoute, ['record' => $concern]);
+        $concernUrl = $target::getUrl($targetRoute, ['record' => $concern]);
 
-        $alertLink = new HtmlString("<a href='{$alertUrl}' target='_blank' class='underline'>alert</a>");
+        $concernLink = new HtmlString("<a href='{$concernUrl}' target='_blank' class='underline'>concern</a>");
 
         $morph = str($concern->getMorphClass());
 
@@ -82,7 +85,7 @@ class ConcernCreatedNotification extends Notification
 
         return FilamentNotification::make()
             ->warning()
-            ->title("A {$this->alert->severity->value} severity {$alertLink} has been created for {$morph} {$morphLink}")
+            ->title("A {$this->concern->severity->value} severity {$concernLink} has been created for {$morph} {$morphLink}")
             ->getDatabaseMessage();
     }
 }
