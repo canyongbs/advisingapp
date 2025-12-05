@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentsStats;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 
-it('returns correct total student stats of students, alerts, groups and tasks within the given date range', function () {
+it('returns correct total student stats of students, concerns, groups and tasks within the given date range', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -56,7 +56,7 @@ it('returns correct total student stats of students, alerts, groups and tasks wi
         'created_at_source' => $endDate,
     ])->create();
 
-    Alert::factory()->count($count)->state([
+    Concern::factory()->count($count)->state([
         'concern_id' => Student::factory()
             ->state([
                 'created_at_source' => $endDate,
@@ -99,7 +99,7 @@ it('returns correct total student stats of students, alerts, groups and tasks wi
         ->and($stats[3]->getValue())->toEqual($count);
 });
 
-it('returns correct total student stats of students, alerts, cases and tasks based on group filters', function () {
+it('returns correct total student stats of students, concerns, cases and tasks based on group filters', function () {
     $count = random_int(1, 5);
 
     $group = Group::factory()->create([
@@ -129,7 +129,7 @@ it('returns correct total student stats of students, alerts, cases and tasks bas
         ->count($count)
         ->create(['last' => 'Doe']);
 
-    Alert::factory()
+    Concern::factory()
         ->count($count)
         ->for(
             Student::factory()->create(['last' => 'John']),
@@ -137,7 +137,7 @@ it('returns correct total student stats of students, alerts, cases and tasks bas
         )
         ->create();
 
-    Alert::factory()
+    Concern::factory()
         ->count($count)
         ->for(
             Student::factory()->create(['last' => 'Smith']),

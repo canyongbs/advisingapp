@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Report\Filament\Exports;
 
-use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
+use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -92,10 +92,10 @@ class StudentExporter extends Exporter
             static::notDefault($type::make('engagement_files_count')
                 ->label('Count of Files')
                 ->counts('engagementFiles')),
-            ...AlertStatus::all()->map(fn (AlertStatus $status): TextColumn | ExportColumn => static::notDefault($type::make("alerts_{$status->getKey()}_count")
-                ->label("Count of {$status->name} Alerts")
+            ...ConcernStatus::all()->map(fn (ConcernStatus $status): TextColumn | ExportColumn => static::notDefault($type::make("concerns_{$status->getKey()}_count")
+                ->label("Count of {$status->name} Concerns")
                 ->counts([
-                    "Alerts as alerts_{$status->getKey()}_count" => fn (Builder $query) => $query->whereBelongsTo($status, 'status'),
+                    "Concerns as concerns_{$status->getKey()}_count" => fn (Builder $query) => $query->whereBelongsTo($status, 'status'),
                 ]))),
             static::notDefault($type::make('tasks_count')
                 ->label('Count of Tasks')

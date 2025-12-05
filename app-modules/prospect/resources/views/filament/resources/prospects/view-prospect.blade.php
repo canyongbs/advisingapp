@@ -33,7 +33,7 @@
 --}}
 @php
     use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableActivityFeedWidget;
-    use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableAlertsWidget;
+    use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableConcernsWidget;
     use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableCareTeamWidget;
     use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableSubscriptionsWidget;
     use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableTasksWidget;
@@ -72,8 +72,8 @@
             ]" />
 
             <div class="grid grid-cols-1 gap-8 xl:grid-cols-2">
-                @if (EducatableAlertsWidget::canView())
-                    @livewire(EducatableAlertsWidget::class, [
+                @if (EducatableConcernsWidget::canView())
+                    @livewire(EducatableConcernsWidget::class, [
                         'educatable' => $this->getRecord(),
                         'resource' => ProspectResource::class,
                     ])

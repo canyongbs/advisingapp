@@ -34,21 +34,21 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
 use AdvisingApp\Task\Models\Task;
 
-it('returns correct total prospect stats of prospects, alerts, cases and tasks within the given date range', function () {
+it('returns correct total prospect stats of prospects, concerns, cases and tasks within the given date range', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
     $prospectCountStart = random_int(1, 5);
     $prospectCountEnd = random_int(1, 5);
-    $alertCount = random_int(1, 5);
+    $concernCount = random_int(1, 5);
     $casesCount = random_int(1, 5);
     $taskCount = random_int(1, 5);
 
@@ -60,7 +60,7 @@ it('returns correct total prospect stats of prospects, alerts, cases and tasks w
         'created_at' => $endDate,
     ])->create();
 
-    Alert::factory()->count($alertCount)->state([
+    Concern::factory()->count($concernCount)->state([
         'concern_id' => Prospect::factory(),
         'concern_type' => (new Prospect())->getMorphClass(),
         'created_at' => $startDate,
@@ -89,12 +89,12 @@ it('returns correct total prospect stats of prospects, alerts, cases and tasks w
     $stats = $widget->getStats();
 
     expect($stats[0]->getValue())->toEqual($prospectCountStart + $prospectCountEnd)
-        ->and($stats[1]->getValue())->toEqual($alertCount)
+        ->and($stats[1]->getValue())->toEqual($concernCount)
         ->and($stats[2]->getValue())->toEqual($casesCount)
         ->and($stats[3]->getValue())->toEqual($taskCount);
 });
 
-it('returns correct total prospect stats of prospects, alerts, cases and tasks based on group filter', function () {
+it('returns correct total prospect stats of prospects, concerns, cases and tasks based on group filter', function () {
     $count = random_int(1, 5);
 
     $group = Group::factory()->create([
@@ -128,7 +128,7 @@ it('returns correct total prospect stats of prospects, alerts, cases and tasks b
             'last_name' => 'Doe',
         ])->create();
 
-    Alert::factory()
+    Concern::factory()
         ->count($count)
         ->for(
             Prospect::factory()->create(['last_name' => 'John']),
@@ -136,7 +136,7 @@ it('returns correct total prospect stats of prospects, alerts, cases and tasks b
         )
         ->create();
 
-    Alert::factory()
+    Concern::factory()
         ->count($count)
         ->for(
             Prospect::factory()->create(['last_name' => 'Doe']),

@@ -39,8 +39,8 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\Students;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\CreateStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\EditStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
-use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudentAlerts;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudentCareTeam;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudentConcerns;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudentSubscriptions;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudentTasks;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
@@ -115,7 +115,7 @@ class StudentResource extends Resource
             'edit' => EditStudent::route('/{record}/edit'),
             'view' => ViewStudent::route('/{record}'),
             'activity-feed' => ViewStudentActivityFeed::route('/{record}/activity'),
-            'alerts' => ManageStudentAlerts::route('/{record}/alerts'),
+            'concerns' => ManageStudentConcerns::route('/{record}/concerns'),
             'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
             'subscriptions' => ManageStudentSubscriptions::route('/{record}/subscriptions'),
             'tasks' => ManageStudentTasks::route('/{record}/tasks'),

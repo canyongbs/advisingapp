@@ -39,10 +39,10 @@ namespace App\Http\Controllers;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptUse;
-use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Group\Models\Group;
@@ -95,7 +95,7 @@ class UtilizationMetricsApiController extends Controller
                     'campaigns' => Campaign::count(),
                     'journey_steps_executed' => CampaignAction::whereNotNull('execution_finished_at')->count(),
                     'tasks' => Task::count(),
-                    'alerts' => Alert::count(),
+                    'concerns' => Concern::count(),
                     'groups' => Group::count(),
                     'resource_hub_articles' => ResourceHubArticle::count(),
                     'events_created' => Event::count(),
