@@ -47,10 +47,10 @@ use Illuminate\Support\Facades\Storage;
 
 class GenerateSubmissibleEmbedCode
 {
-    public function handle(Submissible $submissible): string
+    public function handle(Submissible $submissible, bool $preview = false): string
     {
         return match ($submissible::class) {
-            Form::class => (function () use ($submissible) {
+            Form::class => (function () use ($submissible, $preview) {
                 $manifestPath = Storage::disk('public')->get('widgets/forms/.vite/manifest.json');
 
                 if (is_null($manifestPath)) {
@@ -64,12 +64,14 @@ class GenerateSubmissibleEmbedCode
 
                 $assetsUrl = route(name: 'widgets.forms.api.assets', parameters: ['form' => $submissible]);
 
+                $preview = $preview ? 'true' : 'false';
+
                 return <<<EOD
-                <form-embed url="{$assetsUrl}"></form-embed>
+                <form-embed url="{$assetsUrl}" preview="{$preview}"></form-embed>
                 <script src="{$loaderScriptUrl}"></script>
                 EOD;
             })(),
-            Application::class => (function () use ($submissible) {
+            Application::class => (function () use ($submissible, $preview) {
                 $manifestPath = Storage::disk('public')->get('widgets/applications/.vite/manifest.json');
 
                 if (is_null($manifestPath)) {
@@ -83,8 +85,10 @@ class GenerateSubmissibleEmbedCode
 
                 $assetsUrl = route(name: 'widgets.applications.api.assets', parameters: ['application' => $submissible]);
 
+                $preview = $preview ? 'true' : 'false';
+
                 return <<<EOD
-                <application-embed url="{$assetsUrl}"></application-embed>
+                <application-embed url="{$assetsUrl}" preview="{$preview}"></application-embed>
                 <script src="{$loaderScriptUrl}"></script>
                 EOD;
             })(),
