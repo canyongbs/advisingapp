@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Alert\Filament\Actions;
 
-use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Concern\Enums\ConcernSeverity;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Exception;
@@ -64,10 +64,10 @@ class BulkCreateAlertAction
                     ->string()
                     ->label('Description'),
                 Select::make('severity')
-                    ->options(AlertSeverity::class)
-                    ->default(AlertSeverity::default())
+                    ->options(ConcernSeverity::class)
+                    ->default(ConcernSeverity::default())
                     ->required()
-                    ->enum(AlertSeverity::class)
+                    ->enum(ConcernSeverity::class)
                     ->label('Severity'),
                 Textarea::make('suggested_intervention')
                     ->required()
@@ -77,7 +77,7 @@ class BulkCreateAlertAction
                 Select::make('status_id')
                     ->label('Status')
                     ->options(AlertStatus::orderBy('order')->pluck('name', 'id'))
-                    ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
+                    ->default(fn () => SystemConcernStatusClassification::default()?->getKey())
                     ->exists('alert_statuses', 'id')
                     ->required(),
             ])->action(function (Collection $records, array $data) {

@@ -1,0 +1,24 @@
+{
+    "name": "canyon-gbs/concern",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\Concern\\": "src/",
+            "AdvisingApp\\Concern\\Tests\\": "tests/",
+            "AdvisingApp\\Concern\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\Concern\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": ["AdvisingApp\\Concern\\Providers\\ConcernServiceProvider"]
+        }
+    }
+}

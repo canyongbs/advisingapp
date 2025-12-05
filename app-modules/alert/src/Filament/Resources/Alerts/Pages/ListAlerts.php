@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Alert\Filament\Resources\Alerts\Pages;
 
-use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Filament\Resources\Alerts\AlertResource;
 use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Concern\Enums\ConcernSeverity;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Group\Actions\TranslateGroupFilters;
 use AdvisingApp\Group\Models\Group as GroupModel;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectAlerts;
@@ -151,12 +151,12 @@ class ListAlerts extends ListRecords
                     ->optionsLimit(20)
                     ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
                 SelectFilter::make('severity')
-                    ->options(AlertSeverity::class),
+                    ->options(ConcernSeverity::class),
                 SelectFilter::make('status_id')
                     ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
                     ->multiple()
                     ->preload()
-                    ->default(! is_null(SystemAlertStatusClassification::default()) ? [SystemAlertStatusClassification::default()] : []),
+                    ->default(! is_null(SystemConcernStatusClassification::default()) ? [SystemConcernStatusClassification::default()] : []),
             ])
             ->recordActions([
                 ViewAction::make(),
@@ -183,16 +183,16 @@ class ListAlerts extends ListRecords
                                 ->required()
                                 ->string(),
                             Select::make('severity')
-                                ->options(AlertSeverity::class)
-                                ->default(AlertSeverity::default())
+                                ->options(ConcernSeverity::class)
+                                ->default(ConcernSeverity::default())
                                 ->required()
-                                ->enum(AlertSeverity::class),
+                                ->enum(ConcernSeverity::class),
                             Textarea::make('suggested_intervention')
                                 ->required()
                                 ->string(),
                             Select::make('status_id')
                                 ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
-                                ->default(SystemAlertStatusClassification::default())
+                                ->default(SystemConcernStatusClassification::default())
                                 ->required(),
                         ])
                         ->columns(),

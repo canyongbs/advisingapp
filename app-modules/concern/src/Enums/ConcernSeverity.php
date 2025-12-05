@@ -34,51 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Timeline\Timelines;
+namespace AdvisingApp\Concern\Enums;
 
-use AdvisingApp\Alert\Filament\Actions\AlertHistoryCreatedViewAction;
-use AdvisingApp\Alert\Filament\Actions\AlertHistoryUpdatedViewAction;
-use AdvisingApp\Alert\Histories\AlertHistory;
-use AdvisingApp\Timeline\Models\CustomTimeline;
-use Filament\Actions\ViewAction;
+use Filament\Support\Contracts\HasLabel;
 
-class AlertHistoryTimeline extends CustomTimeline
+enum ConcernSeverity: string implements HasLabel
 {
-    public function __construct(
-        public AlertHistory $history
-    ) {}
+    case Low = 'low';
 
-    public function icon(): string
+    case Medium = 'medium';
+
+    case High = 'high';
+
+    public function getLabel(): string
     {
-        return 'heroicon-o-bell-alert';
+        return $this->name;
     }
 
-    public function sortableBy(): string
+    public static function default(): ConcernSeverity
     {
-        return $this->history->created_at;
-    }
-
-    public function providesCustomView(): bool
-    {
-        return true;
-    }
-
-    public function renderCustomView(): string
-    {
-        return match ($this->history->event) {
-            'created' => 'concern::created-history-timeline-item',
-            'updated' => 'concern::updated-history-timeline-item',
-            'status_changed' => 'concern::status-changed-history-timeline-item',
-        };
-    }
-
-    public function modalViewAction(): ViewAction
-    {
-        return (match ($this->history->event) {
-            'created' => AlertHistoryCreatedViewAction::make()
-                ->modalHeading('View Alert'),
-            'updated', 'status_changed' => AlertHistoryUpdatedViewAction::make()
-                ->modalHeading('View Changes'),
-        })->record($this->history);
+        return ConcernSeverity::Low;
     }
 }

@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Alert\Histories;
 
-use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Alert\Observers\AlertHistoryObserver;
+use AdvisingApp\Concern\Enums\ConcernSeverity;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\History;
 use AdvisingApp\Timeline\Timelines\AlertHistoryTimeline;
@@ -66,8 +66,8 @@ class AlertHistory extends History implements ProvidesATimeline
         return match ($key) {
             'status' => [
                 'key' => 'Status',
-                'old' => array_key_exists($key, $this->old) ? SystemAlertStatusClassification::tryFrom($this->old[$key])?->getLabel() : null,
-                'new' => SystemAlertStatusClassification::tryFrom($this->new[$key])?->getLabel(),
+                'old' => array_key_exists($key, $this->old) ? SystemConcernStatusClassification::tryFrom($this->old[$key])?->getLabel() : null,
+                'new' => SystemConcernStatusClassification::tryFrom($this->new[$key])?->getLabel(),
             ],
             'status_id' => [
                 'key' => 'Status',
@@ -78,8 +78,8 @@ class AlertHistory extends History implements ProvidesATimeline
             ],
             'severity' => [
                 'key' => 'Severity',
-                'old' => array_key_exists($key, $this->old) ? AlertSeverity::tryFrom($this->old[$key])?->getLabel() : null,
-                'new' => AlertSeverity::tryFrom($this->new[$key])?->getLabel(),
+                'old' => array_key_exists($key, $this->old) ? ConcernSeverity::tryFrom($this->old[$key])?->getLabel() : null,
+                'new' => ConcernSeverity::tryFrom($this->new[$key])?->getLabel(),
             ],
             default => parent::getFormattedValueForKey($key),
         };

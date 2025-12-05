@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Workflow\Models;
 
-use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Concern\Enums\ConcernSeverity;
 use AdvisingApp\Workflow\Filament\Blocks\ProactiveAlertBlock;
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
@@ -64,7 +64,7 @@ class WorkflowProactiveAlertDetails extends WorkflowDetails implements Auditable
     ];
 
     protected $casts = [
-        'severity' => AlertSeverity::class,
+        'severity' => ConcernSeverity::class,
     ];
 
     public function getLabel(): string

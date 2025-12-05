@@ -34,17 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Database\Seeders;
+use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
-use AdvisingApp\Alert\Models\Alert;
-use Illuminate\Database\Seeder;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-class AlertSeeder extends Seeder
-{
-    public function run(): void
+    /** @var array<string, string> */
+    private array $permissions = [
+        'alert_status.*.delete' => 'Alert Status',
+        'alert_status.*.force-delete' => 'Alert Status',
+        'alert_status.*.restore' => 'Alert Status',
+        'alert_status.*.update' => 'Alert Status',
+        'alert_status.*.view' => 'Alert Status',
+        'alert_status.create' => 'Alert Status',
+        'alert_status.view-any' => 'Alert Status',
+    ];
+
+    /** @var array<string> */
+    private array $guards = [
+        'web',
+        'api',
+    ];
+
+    public function up(): void
     {
-        Alert::factory()
-            ->count(50)
-            ->create();
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $permissions = Arr::except($this->permissions, keys: DB::table('permissions')
+                    ->where('guard_name', $guard)
+                    ->pluck('name')
+                    ->all());
+
+                $this->createPermissions($permissions, $guard);
+            });
     }
-}
+
+    public function down(): void
+    {
+        collect($this->guards)
+            ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
+    }
+};

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6b0838c0d5dbb5c3100611307dd51fca",
+    "content-hash": "4dc7bb9ae0c7ebd2917061d4dac6d963",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -1914,6 +1914,41 @@
                     "AdvisingApp\\BasicNeeds\\Tests\\": "tests/",
                     "AdvisingApp\\BasicNeeds\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\BasicNeeds\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/concern",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/concern",
+                "reference": "d1c8c4efc9c4baade5e29da2cdaaef84feadbc25"
+            },
+            "require": {
+                "filament/filament": "^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Concern\\Providers\\ConcernServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Concern\\": "src/",
+                    "AdvisingApp\\Concern\\Tests\\": "tests/",
+                    "AdvisingApp\\Concern\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Concern\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -24401,5 +24436,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }

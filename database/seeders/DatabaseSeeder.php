@@ -38,14 +38,14 @@ namespace Database\Seeders;
 
 use AdvisingApp\Ai\Database\Seeders\PromptSeeder;
 use AdvisingApp\Ai\Database\Seeders\PromptTypeSeeder;
-use AdvisingApp\Alert\Database\Seeders\AlertSeeder;
-use AdvisingApp\Alert\Database\Seeders\AlertStatusSeeder;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Authorization\Console\Commands\SetupRoles;
 use AdvisingApp\CaseManagement\Database\Seeders\CaseSeeder;
 use AdvisingApp\CaseManagement\Database\Seeders\CaseStatusSeeder;
 use AdvisingApp\CaseManagement\Database\Seeders\CaseTypeSeeder;
 use AdvisingApp\CaseManagement\Database\Seeders\CaseUpdateSeeder;
+use AdvisingApp\Concern\Database\Seeders\ConcernSeeder;
+use AdvisingApp\Concern\Database\Seeders\ConcernStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Form\Database\Seeders\FormSeeder;
@@ -103,8 +103,8 @@ class DatabaseSeeder extends Seeder
             ResourceHubArticleSeeder::class,
             TaskSeeder::class,
             FormSeeder::class,
-            AlertStatusSeeder::class,
-            AlertSeeder::class,
+            ConcernStatusSeeder::class,
+            ConcernSeeder::class,
             TeamSeeder::class,
             SuperAdminSeeder::class,
             TwilioStudentSeeder::class,

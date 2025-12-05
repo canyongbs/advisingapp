@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,47 +30,33 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\Concern\Histories\ConcernHistory;
+@endphp
 
-use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
+@php
+    /* @var ConcernHistory $record */
+@endphp
+<div>
+    <div class="flex flex-row justify-between">
+        <x-timeline::timeline.heading>
+            Concern Created
+        </x-timeline::timeline.heading>
 
-return new class () extends Migration {
-    use CanModifyPermissions;
+        <div>
+            {{ $viewRecordIcon }}
+        </div>
+    </div>
 
-    private array $permissions = [
-        'alert_status.*.delete' => 'Alert Status',
-        'alert_status.*.force-delete' => 'Alert Status',
-        'alert_status.*.restore' => 'Alert Status',
-        'alert_status.*.update' => 'Alert Status',
-        'alert_status.*.view' => 'Alert Status',
-        'alert_status.create' => 'Alert Status',
-        'alert_status.view-any' => 'Alert Status',
-    ];
+    <x-timeline::timeline.time>
+        {{ $record->created_at->diffForHumans() }}
+    </x-timeline::timeline.time>
 
-    private array $guards = [
-        'web',
-        'api',
-    ];
-
-    public function up(): void
-    {
-        collect($this->guards)
-            ->each(function (string $guard) {
-                $permissions = Arr::except($this->permissions, keys: DB::table('permissions')
-                    ->where('guard_name', $guard)
-                    ->pluck('name')
-                    ->all());
-
-                $this->createPermissions($permissions, $guard);
-            });
-    }
-
-    public function down(): void
-    {
-        collect($this->guards)
-            ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
-    }
-};
+    <x-timeline::timeline.history.content>
+        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['status_id']" />
+        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['severity']" />
+        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['description']" />
+        <x-timeline::timeline.history.content.labeled-value :value="$record->formatted['suggested_intervention']" />
+    </x-timeline::timeline.history.content>
+</div>

@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
@@ -32,27 +30,35 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\Concern\Histories\ConcernHistory;
+@endphp
 
-namespace AdvisingApp\Alert\Enums;
+@php
+    /* @var ConcernHistory $record */
+@endphp
+<div>
+    <div class="flex flex-row justify-between">
+        <x-timeline::timeline.heading>
+            Concern Updated
+        </x-timeline::timeline.heading>
 
-use Filament\Support\Contracts\HasLabel;
+        <div>
+            {{ $viewRecordIcon }}
+        </div>
+    </div>
 
-enum AlertSeverity: string implements HasLabel
-{
-    case Low = 'low';
+    <x-timeline::timeline.time>
+        {{ $record->created_at->diffForHumans() }}
+    </x-timeline::timeline.time>
 
-    case Medium = 'medium';
-
-    case High = 'high';
-
-    public function getLabel(): ?string
-    {
-        return $this->name;
-    }
-
-    public static function default(): AlertSeverity
-    {
-        return AlertSeverity::Low;
-    }
-}
+    <x-timeline::timeline.history.content>
+        Here's what changed
+        <ul class="list-inside list-disc">
+            @foreach ($record->formatted as $value)
+                <x-timeline::timeline.history.content.list-item :value="$value" />
+            @endforeach
+        </ul>
+    </x-timeline::timeline.history.content>
+</div>

@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Alert\Tests\Tenant\Filament\Actions\RequestFactories\BulkCreateAlertActionRequestFactory;
+use AdvisingApp\Concern\Tests\Tenant\Filament\Actions\RequestFactories\BulkCreateConcernActionRequestFactory;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ListProspects;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
@@ -47,12 +47,12 @@ use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-it('shows the form and validation', function (BulkCreateAlertActionRequestFactory $data, array $errors) {
+it('shows the form and validation', function (BulkCreateConcernActionRequestFactory $data, array $errors) {
     asSuperAdmin();
 
     $student = Student::factory()->create();
 
-    $request = BulkCreateAlertActionRequestFactory::new($data)->create();
+    $request = BulkCreateConcernActionRequestFactory::new($data)->create();
 
     livewire(ListStudents::class)
         ->mountTableBulkAction('createAlert', [$student->getKey()])
@@ -63,29 +63,29 @@ it('shows the form and validation', function (BulkCreateAlertActionRequestFactor
     assertDatabaseMissing(Alert::class, $request);
 })->with([
     'description required' => [
-        BulkCreateAlertActionRequestFactory::new()->without('description'),
+        BulkCreateConcernActionRequestFactory::new()->without('description'),
         ['description' => 'required'],
     ],
     'description max 65535 characters only' => [
-        BulkCreateAlertActionRequestFactory::new([
+        BulkCreateConcernActionRequestFactory::new([
             'description' => str_repeat('a', 65536),
         ]),
         ['description' => 'max:65535'],
     ],
     'status_id required' => [
-        BulkCreateAlertActionRequestFactory::new()->without('status_id'),
+        BulkCreateConcernActionRequestFactory::new()->without('status_id'),
         ['status_id' => 'required'],
     ],
     'status_id exists' => [
-        BulkCreateAlertActionRequestFactory::new()->state(['status_id' => (string) Str::uuid()]),
+        BulkCreateConcernActionRequestFactory::new()->state(['status_id' => (string) Str::uuid()]),
         ['status_id'],
     ],
     'suggested_intervention required' => [
-        BulkCreateAlertActionRequestFactory::new()->without('suggested_intervention'),
+        BulkCreateConcernActionRequestFactory::new()->without('suggested_intervention'),
         ['suggested_intervention' => 'required'],
     ],
     'suggested_intervention max 65535 characters only' => [
-        BulkCreateAlertActionRequestFactory::new([
+        BulkCreateConcernActionRequestFactory::new([
             'suggested_intervention' => str_repeat('a', 65536),
         ]),
         ['suggested_intervention' => 'max:65535'],
@@ -97,7 +97,7 @@ it('can successfully create bulk alert with student', function () {
 
     $student = Student::factory()->create();
 
-    $request = BulkCreateAlertActionRequestFactory::new()->create();
+    $request = BulkCreateConcernActionRequestFactory::new()->create();
 
     livewire(ListStudents::class)
         ->mountTableBulkAction('createAlert', [$student->getKey()])
@@ -123,7 +123,7 @@ it('can successfully create bulk alert with prospect', function () {
 
     $prospect = Prospect::factory()->create();
 
-    $request = BulkCreateAlertActionRequestFactory::new()->create();
+    $request = BulkCreateConcernActionRequestFactory::new()->create();
 
     livewire(ListProspects::class)
         ->mountTableBulkAction('createAlert', [$prospect->getKey()])

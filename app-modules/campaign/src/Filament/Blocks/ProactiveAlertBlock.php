@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
+use AdvisingApp\Concern\Enums\ConcernSeverity;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -63,17 +63,17 @@ class ProactiveAlertBlock extends CampaignActionBlock
                 ->required()
                 ->string(),
             Select::make($fieldPrefix . 'severity')
-                ->options(AlertSeverity::class)
-                ->default(AlertSeverity::default())
+                ->options(ConcernSeverity::class)
+                ->default(ConcernSeverity::default())
                 ->required()
-                ->enum(AlertSeverity::class),
+                ->enum(ConcernSeverity::class),
             Textarea::make($fieldPrefix . 'suggested_intervention')
                 ->required()
                 ->string(),
             Select::make($fieldPrefix . 'status_id')
                 ->label('Status')
                 ->options(AlertStatus::orderBy('order')->pluck('name', 'id'))
-                ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
+                ->default(fn () => SystemConcernStatusClassification::default()?->getKey())
                 ->exists('alert_statuses', 'id')
                 ->required(),
             DateTimePicker::make('execute_at')

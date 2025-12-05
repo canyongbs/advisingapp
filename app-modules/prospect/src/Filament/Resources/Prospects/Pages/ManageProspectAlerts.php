@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Pages;
 
-use AdvisingApp\Alert\Enums\AlertSeverity;
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Concern\Enums\ConcernSeverity;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\Concerns\HasProspectHeader;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
@@ -91,7 +91,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
                 "alert-count-{$ownerRecord->getKey()}",
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
-                    return $ownerRecord->alerts()->whereRelation('status', 'classification', SystemAlertStatusClassification::Active->value)->count();
+                    return $ownerRecord->alerts()->whereRelation('status', 'classification', SystemConcernStatusClassification::Active->value)->count();
                 },
             );
 
@@ -123,17 +123,17 @@ class ManageProspectAlerts extends ManageRelatedRecords
                     ->required()
                     ->string(),
                 Select::make('severity')
-                    ->options(AlertSeverity::class)
-                    ->default(AlertSeverity::default())
+                    ->options(ConcernSeverity::class)
+                    ->default(ConcernSeverity::default())
                     ->required()
-                    ->enum(AlertSeverity::class),
+                    ->enum(ConcernSeverity::class),
                 Textarea::make('suggested_intervention')
                     ->required()
                     ->string(),
                 Select::make('status_id')
                     ->label('Status')
                     ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
-                    ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
+                    ->default(fn () => SystemConcernStatusClassification::default()?->getKey())
                     ->required(),
             ]);
     }
@@ -156,7 +156,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
             ])
             ->filters([
                 SelectFilter::make('severity')
-                    ->options(AlertSeverity::class),
+                    ->options(ConcernSeverity::class),
                 SelectFilter::make('status_id')
                     ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order')),
             ])

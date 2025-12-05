@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Alert\Filament\Resources\AlertStatuses\Pages;
 
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\Alert\Filament\Resources\AlertStatuses\AlertStatusResource;
 use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -62,9 +62,9 @@ class CreateAlertStatus extends CreateRecord
                 Select::make('classification')
                     ->label('Classification')
                     ->searchable()
-                    ->options(SystemAlertStatusClassification::class)
+                    ->options(SystemConcernStatusClassification::class)
                     ->required()
-                    ->enum(SystemAlertStatusClassification::class),
+                    ->enum(SystemConcernStatusClassification::class),
                 Toggle::make('is_default')
                     ->label('Default')
                     ->live()

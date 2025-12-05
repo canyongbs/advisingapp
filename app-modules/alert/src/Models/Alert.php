@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Alert\Models;
 
-use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Histories\AlertHistory;
 use AdvisingApp\Alert\Observers\AlertObserver;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Concern\Enums\ConcernSeverity;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -72,6 +72,8 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
     use BelongsToEducatable;
     use InteractsWithHistory;
 
+    protected $table = 'alerts';
+
     protected $fillable = [
         'concern_id',
         'concern_type',
@@ -83,7 +85,7 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
     ];
 
     protected $casts = [
-        'severity' => AlertSeverity::class,
+        'severity' => ConcernSeverity::class,
         'is_visible_for_students' => 'boolean',
     ];
 
