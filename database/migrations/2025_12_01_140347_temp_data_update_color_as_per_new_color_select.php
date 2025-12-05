@@ -34,45 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Forms\Components;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-use Filament\Forms\Components\Select;
-use Filament\Support\Colors\Color;
-
-class ColorSelect extends Select
-{
-    protected int $shade = 600;
-
-    protected function setUp(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        parent::setUp();
+        DB::transaction(function () {
+            DB::table('notification_settings')->whereNotNull('primary_color')->whereIn('primary_color', ['slate', 'zinc', 'neutral', 'stone'])->update(['primary_color' => 'gray']);
 
-        $this->allowHtml()
-            ->native(false)
-            ->shade($this->getShade());
+            DB::table('applications')->whereNotNull('primary_color')->whereIn('primary_color', ['slate', 'zinc', 'neutral', 'stone'])->update(['primary_color' => 'gray']);
+
+            DB::table('case_forms')->whereNotNull('primary_color')->whereIn('primary_color', ['slate', 'zinc', 'neutral', 'stone'])->update(['primary_color' => 'gray']);
+
+            DB::table('event_registration_forms')->whereNotNull('primary_color')->whereIn('primary_color', ['slate', 'zinc', 'neutral', 'stone'])->update(['primary_color' => 'gray']);
+
+            DB::table('surveys')->whereNotNull('primary_color')->whereIn('primary_color', ['slate', 'zinc', 'neutral', 'stone'])->update(['primary_color' => 'gray']);
+
+            DB::table('settings')
+                ->whereIn('group', ['portal', 'college_branding'])
+                ->whereIn('name', ['resource_hub_portal_primary_color', 'color'])
+                ->whereRaw('payload::text IN (?, ?, ?, ?)', [json_encode('slate'), json_encode('zinc'), json_encode('neutral'), json_encode('stone')])
+                ->update(['payload' => json_encode('gray')]);
+        });
     }
-
-    public function shade(int $shade): static
-    {
-        $this->shade = $shade;
-
-        $this->options(
-            collect(Color::all())
-                ->keys()
-                ->sort()
-                ->mapWithKeys(fn (string $color) => [
-                    $color => "<span class='flex items-center gap-x-4'>
-                            <span class='rounded-full w-4 h-4' style='background:" . Color::convertToRgb(Color::all()[$color][$shade]) . "'></span>
-                            <span>" . str($color)->headline() . '</span>
-                            </span>',
-                ])
-        );
-
-        return $this;
-    }
-
-    public function getShade(): int
-    {
-        return $this->shade;
-    }
-}
+};

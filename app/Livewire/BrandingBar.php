@@ -38,6 +38,7 @@ namespace App\Livewire;
 
 use App\Models\User;
 use App\Settings\CollegeBrandingSettings;
+use CanyonGBS\Common\Enums\Color;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -50,7 +51,7 @@ class BrandingBar extends Component
 
     public bool $dismissible = false;
 
-    public ?string $color;
+    public ?Color $color;
 
     public function dismiss(): void
     {

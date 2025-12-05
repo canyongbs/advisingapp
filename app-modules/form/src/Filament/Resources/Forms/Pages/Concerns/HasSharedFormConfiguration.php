@@ -47,7 +47,7 @@ use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use App\Enums\FontWeight;
 use App\Features\FontFeature;
 use App\Features\FormApplicationTitleFeature;
-use App\Filament\Forms\Components\ColorSelect;
+use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;

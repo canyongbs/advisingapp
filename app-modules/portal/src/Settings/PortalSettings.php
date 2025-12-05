@@ -40,6 +40,7 @@ use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
 use AdvisingApp\Portal\Settings\SettingsProperties\PortalSettingsProperty;
 use App\Settings\SettingsWithMedia;
+use CanyonGBS\Common\Enums\Color;
 
 class PortalSettings extends SettingsWithMedia
 {
@@ -86,7 +87,7 @@ class PortalSettings extends SettingsWithMedia
 
     public bool $resource_hub_portal_requires_authentication = false;
 
-    public ?string $resource_hub_portal_primary_color = null;
+    public ?Color $resource_hub_portal_primary_color = null;
 
     public ?Rounding $resource_hub_portal_rounding = null;
 

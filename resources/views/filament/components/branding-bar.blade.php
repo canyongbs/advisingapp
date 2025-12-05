@@ -38,7 +38,7 @@
 
 <div
     class="bg-custom-600 sticky top-16 z-10 flex h-10 items-center px-6 py-2 text-sm font-medium text-white"
-    style="display: none; --color-600: {{ Color::all()[$color][600] }}"
+    style="display: none; --color-600: {{ Color::all()[$color->value][600] }}"
     x-data="{ isVisible: @entangle('isVisible') }"
     x-show="isVisible"
     x-bind:class="{ 'branding-bar': isVisible }"

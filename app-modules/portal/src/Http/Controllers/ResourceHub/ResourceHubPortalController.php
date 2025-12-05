@@ -49,7 +49,7 @@ class ResourceHubPortalController extends Controller
         $settings = resolve(PortalSettings::class);
 
         return response()->json([
-            'primary_color' => collect(Color::all()[$settings->resource_hub_portal_primary_color ?? 'blue'])
+            'primary_color' => collect(Color::all()[$settings->resource_hub_portal_primary_color->value ?? 'blue'])
                 ->map(Color::convertToRgb(...))
                 ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
                 ->all(),
