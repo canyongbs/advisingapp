@@ -48,6 +48,7 @@ use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\StartAdvisorThreadController;
 use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorEmbedIsEnabled;
 use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorRequestComingFromAuthorizedDomain;
 use AdvisingApp\Ai\Http\Middleware\QnaAdvisorAuthorization;
+use AdvisingApp\Ai\Http\Middleware\QnaAdvisorWidgetCors;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
@@ -56,7 +57,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware([
     'api',
     EncryptCookies::class,
-    // TODO: QnA Advisor CORS middleware
+    QnaAdvisorWidgetCors::class,
 ])
     ->name('widgets.ai.qna-advisors.')
     ->prefix('widgets/ai/qna-advisors')
