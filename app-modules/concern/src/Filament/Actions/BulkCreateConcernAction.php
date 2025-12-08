@@ -92,7 +92,7 @@ class BulkCreateConcernAction
                     }
 
                     DB::commit();
-                } catch (Exception $e) {
+                } catch (Exception $exception) {
                     DB::rollBack();
                     Notification::make()
                         ->title('Something went wrong')

@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Concern\Policies;
 
-use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
-class AlertPolicy
+class ConcernPolicy
 {
     public function before(Authenticatable $authenticatable): ?Response
     {
@@ -56,84 +56,84 @@ class AlertPolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'alert.view-any',
-            denyResponse: 'You do not have permission to view alerts.'
+            abilities: 'concern.view-any',
+            denyResponse: 'You do not have permission to view concerns.'
         );
     }
 
-    public function view(Authenticatable $authenticatable, Alert $alert): Response
+    public function view(Authenticatable $authenticatable, Concern $concern): Response
     {
-        if (! $authenticatable->hasLicense($alert->concern?->getLicenseType())) {
-            return Response::deny('You do not have permission to view this alert.');
+        if (! $authenticatable->hasLicense($concern->concern?->getLicenseType())) {
+            return Response::deny('You do not have permission to view this concern.');
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["alert.{$alert->getKey()}.view"],
-            denyResponse: 'You do not have permission to view this alert.'
+            abilities: ['concern.*.view'],
+            denyResponse: 'You do not have permission to view this concern.'
         );
     }
 
     public function create(Authenticatable $authenticatable, ?Prospect $prospect = null): Response
     {
         if ($prospect?->student()->exists()) {
-            return Response::deny('You cannot create alerts for a Prospect that has been converted to a Student.');
+            return Response::deny('You cannot create concerns for a Prospect that has been converted to a Student.');
         }
 
         return $authenticatable->canOrElse(
-            abilities: 'alert.create',
-            denyResponse: 'You do not have permission to create alerts.'
+            abilities: 'concern.create',
+            denyResponse: 'You do not have permission to create concerns.'
         );
     }
 
-    public function update(Authenticatable $authenticatable, Alert $alert): Response
+    public function update(Authenticatable $authenticatable, Concern $concern): Response
     {
-        if ($alert->concern_type === (new Prospect())->getMorphClass() && filled($alert->concern->student_id)) {
-            return Response::deny('You cannot edit this alert as the related Prospect has been converted to a Student.');
+        if ($concern->concern_type === (new Prospect())->getMorphClass() && filled($concern->concern->student_id)) {
+            return Response::deny('You cannot edit this concern as the related Prospect has been converted to a Student.');
         }
 
-        if (! $authenticatable->hasLicense($alert->concern?->getLicenseType())) {
-            return Response::deny('You do not have permission to update this alert.');
+        if (! $authenticatable->hasLicense($concern->concern?->getLicenseType())) {
+            return Response::deny('You do not have permission to update this concern.');
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["alert.{$alert->getKey()}.update"],
-            denyResponse: 'You do not have permission to update this alert.'
+            abilities: ['concern.*.update'],
+            denyResponse: 'You do not have permission to update this concern.'
         );
     }
 
-    public function delete(Authenticatable $authenticatable, Alert $alert): Response
+    public function delete(Authenticatable $authenticatable, Concern $concern): Response
     {
-        if (! $authenticatable->hasLicense($alert->concern?->getLicenseType())) {
-            return Response::deny('You do not have permission to delete this alert.');
+        if (! $authenticatable->hasLicense($concern->concern?->getLicenseType())) {
+            return Response::deny('You do not have permission to delete this concern.');
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["alert.{$alert->getKey()}.delete"],
-            denyResponse: 'You do not have permission to delete this alert.'
+            abilities: ['concern.*.delete'],
+            denyResponse: 'You do not have permission to delete this concern.'
         );
     }
 
-    public function restore(Authenticatable $authenticatable, Alert $alert): Response
+    public function restore(Authenticatable $authenticatable, Concern $concern): Response
     {
-        if (! $authenticatable->hasLicense($alert->concern?->getLicenseType())) {
-            return Response::deny('You do not have permission to restore this alert.');
+        if (! $authenticatable->hasLicense($concern->concern?->getLicenseType())) {
+            return Response::deny('You do not have permission to restore this concern.');
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["alert.{$alert->getKey()}.restore"],
-            denyResponse: 'You do not have permission to restore this alert.'
+            abilities: ['concern.*.restore'],
+            denyResponse: 'You do not have permission to restore this concern.'
         );
     }
 
-    public function forceDelete(Authenticatable $authenticatable, Alert $alert): Response
+    public function forceDelete(Authenticatable $authenticatable, Concern $concern): Response
     {
-        if (! $authenticatable->hasLicense($alert->concern?->getLicenseType())) {
-            return Response::deny('You do not have permission to permanently delete this alert.');
+        if (! $authenticatable->hasLicense($concern->concern?->getLicenseType())) {
+            return Response::deny('You do not have permission to permanently delete this concern.');
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["alert.{$alert->getKey()}.force-delete"],
-            denyResponse: 'You do not have permission to permanently delete this alert.'
+            abilities: ['concern.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete this concern.'
         );
     }
 }

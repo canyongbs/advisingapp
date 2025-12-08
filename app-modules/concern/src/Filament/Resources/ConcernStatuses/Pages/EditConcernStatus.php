@@ -73,7 +73,7 @@ class EditConcernStatus extends EditRecord
                 Toggle::make('is_default')
                     ->label('Default')
                     ->live()
-                    ->hint(function (?ConcernStatus $record, $state): ?string {
+                    ->hint(function (?ConcernStatus $record, bool $state): ?string {
                         if ($record?->is_default) {
                             return null;
                         }

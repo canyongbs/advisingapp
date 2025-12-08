@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Concern\Policies;
 
-use AdvisingApp\Alert\Models\AlertStatus;
+use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
-class AlertStatusPolicy
+class ConcernStatusPolicy
 {
     public function before(Authenticatable $authenticatable): ?Response
     {
@@ -57,15 +57,15 @@ class AlertStatusPolicy
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.view-any',
-            denyResponse: 'You do not have permission to view alert statuses.'
+            denyResponse: 'You do not have permission to view concern statuses.'
         );
     }
 
-    public function view(Authenticatable $authenticatable, AlertStatus $alertStatus): Response
+    public function view(Authenticatable $authenticatable, ConcernStatus $concernStatus): Response
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.*.view',
-            denyResponse: 'You do not have permission to view this alert status.'
+            denyResponse: 'You do not have permission to view this concern status.'
         );
     }
 
@@ -73,47 +73,47 @@ class AlertStatusPolicy
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.create',
-            denyResponse: 'You do not have permission to create alert statuses.'
+            denyResponse: 'You do not have permission to create concern statuses.'
         );
     }
 
-    public function update(Authenticatable $authenticatable, AlertStatus $alertStatus): Response
+    public function update(Authenticatable $authenticatable, ConcernStatus $concernStatus): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['settings.*.update'],
-            denyResponse: 'You do not have permission to update this alert status.'
+            denyResponse: 'You do not have permission to update this concern status.'
         );
     }
 
-    public function delete(Authenticatable $authenticatable, AlertStatus $alertStatus): Response
+    public function delete(Authenticatable $authenticatable, ConcernStatus $concernStatus): Response
     {
-        if (count($alertStatus->alerts) > 0) {
-            return Response::deny('You cannot delete this alert status because this status is associated with active alerts.');
+        if (count($concernStatus->concerns) > 0) {
+            return Response::deny('You cannot delete this concern status because this status is associated with active concerns.');
         }
 
         return $authenticatable->canOrElse(
             abilities: ['settings.*.delete'],
-            denyResponse: 'You do not have permission to delete this alert status.'
+            denyResponse: 'You do not have permission to delete this concern status.'
         );
     }
 
-    public function restore(Authenticatable $authenticatable, AlertStatus $alertStatus): Response
+    public function restore(Authenticatable $authenticatable, ConcernStatus $concernStatus): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['settings.*.restore'],
-            denyResponse: 'You do not have permission to restore this alert status.'
+            denyResponse: 'You do not have permission to restore this concern status.'
         );
     }
 
-    public function forceDelete(Authenticatable $authenticatable, AlertStatus $alertStatus): Response
+    public function forceDelete(Authenticatable $authenticatable, ConcernStatus $concernStatus): Response
     {
-        if (count($alertStatus->alerts) > 0) {
-            return Response::deny('You cannot delete this alert status because this status is associated with active alerts.');
+        if (count($concernStatus->concerns) > 0) {
+            return Response::deny('You cannot delete this concern status because this status is associated with active concerns.');
         }
 
         return $authenticatable->canOrElse(
             abilities: ['settings.*.force-delete'],
-            denyResponse: 'You do not have permission to permanently delete this alert status.'
+            denyResponse: 'You do not have permission to permanently delete this concern status.'
         );
     }
 }

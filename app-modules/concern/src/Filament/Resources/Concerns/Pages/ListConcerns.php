@@ -200,6 +200,9 @@ class ListConcerns extends ListRecords
         ];
     }
 
+    /**
+     * @param array<strin, mixed> $data
+     */
     protected function groupFilter(Builder $query, array $data): void
     {
         if (blank($data['value'])) {
