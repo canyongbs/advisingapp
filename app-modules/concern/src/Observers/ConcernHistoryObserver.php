@@ -37,12 +37,15 @@
 namespace AdvisingApp\Concern\Observers;
 
 use AdvisingApp\Concern\Histories\ConcernHistory;
+use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 
 class ConcernHistoryObserver
 {
     public function created(ConcernHistory $concernHistory): void
     {
+        assert($concernHistory->subject instanceof Concern);
+        
         event(new TimelineableRecordCreated($concernHistory->subject->concern, $concernHistory));
     }
 }

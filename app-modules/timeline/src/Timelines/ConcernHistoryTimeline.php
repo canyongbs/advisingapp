@@ -40,6 +40,7 @@ use AdvisingApp\Concern\Filament\Actions\ConcernHistoryCreatedViewAction;
 use AdvisingApp\Concern\Filament\Actions\ConcernHistoryUpdatedViewAction;
 use AdvisingApp\Concern\Histories\ConcernHistory;
 use AdvisingApp\Timeline\Models\CustomTimeline;
+use Exception;
 use Filament\Actions\ViewAction;
 
 class ConcernHistoryTimeline extends CustomTimeline
@@ -69,6 +70,7 @@ class ConcernHistoryTimeline extends CustomTimeline
             'created' => 'concern::created-history-timeline-item',
             'updated' => 'concern::updated-history-timeline-item',
             'status_changed' => 'concern::status-changed-history-timeline-item',
+            default => throw new Exception('Invalid concern event.'),
         };
     }
 
@@ -79,6 +81,7 @@ class ConcernHistoryTimeline extends CustomTimeline
                 ->modalHeading('View Concern'),
             'updated', 'status_changed' => ConcernHistoryUpdatedViewAction::make()
                 ->modalHeading('View Changes'),
+            default => throw new Exception('Invalid concern event.'),
         })->record($this->history);
     }
 }

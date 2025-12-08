@@ -43,7 +43,7 @@ class ConcernStatusObserver
 {
     public function creating(ConcernStatus $concernStatus): void
     {
-        if ($concernStatus->order === null) {
+        if ($concernStatus->order == null) {
             $concernStatus->order = DB::raw('(SELECT COALESCE(MAX(alert_statuses.order), 0) + 1 FROM alert_statuses)');
         }
     }

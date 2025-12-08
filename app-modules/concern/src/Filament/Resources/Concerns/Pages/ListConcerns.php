@@ -201,7 +201,8 @@ class ListConcerns extends ListRecords
     }
 
     /**
-     * @param array<strin, mixed> $data
+     * @param Builder<Model> $query
+     * @param array<string, mixed> $data
      */
     protected function groupFilter(Builder $query, array $data): void
     {
