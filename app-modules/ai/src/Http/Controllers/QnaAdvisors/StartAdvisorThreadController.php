@@ -78,7 +78,7 @@ class StartAdvisorThreadController
             'thread_id' => $thread->getKey(),
             'introductory_message' => $introductoryMessage,
             'finish_thread_url' => URL::temporarySignedRoute(
-                name: 'ai.qna-advisors.threads.finish',
+                name: 'widgets.ai.qna-advisors.api.threads.finish',
                 expiration: now()->addDays(3),
                 parameters: ['advisor' => $advisor, 'thread' => $thread],
             ),
