@@ -45,7 +45,7 @@ class ConcernHistoryObserver
     public function created(ConcernHistory $concernHistory): void
     {
         assert($concernHistory->subject instanceof Concern);
-        
+
         event(new TimelineableRecordCreated($concernHistory->subject->concern, $concernHistory));
     }
 }
