@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\Research\Models\ResearchRequest;
 use Closure;
 use Generator;
+use Prism\Prism\Contracts\Message;
 
 interface AiService
 {
@@ -67,8 +68,9 @@ interface AiService
      *
      * @param array<AiFile> $files
      * @param array<string, mixed> $options
+     * @param ?array<Message> $messages
      */
-    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = []): Closure;
+    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null, bool $hasImageGeneration = false): Closure;
 
     /**
      * This method is passed an unsaved `AiMessage` model and should send the

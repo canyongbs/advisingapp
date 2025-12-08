@@ -44,6 +44,7 @@ use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\RegisterProspectController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\RequestAuthenticationController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendAdvisorMessageController as SendQnaAdvisorMessageController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\ShowAdvisorController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\StartAdvisorThreadController;
 use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorEmbedIsEnabled;
 use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorRequestComingFromAuthorizedDomain;
 use AdvisingApp\Ai\Http\Middleware\QnaAdvisorAuthorization;
@@ -77,7 +78,7 @@ Route::middleware([
             '/broadcasting/auth',
             [QnaAdvisorBroadcastController::class, 'auth']
         )
-            ->middleware(['auth:sanctum'])
+            ->middleware([QnaAdvisorAuthorization::class])
             ->name('broadcasting.auth');
 
         Route::post('/authenticate/request', RequestAuthenticationController::class)
@@ -95,6 +96,13 @@ Route::middleware([
         Route::post('/authenticate/refresh', AuthenticationRefreshController::class)
             ->middleware(['signed'])
             ->name('authentication.refresh');
+
+        Route::post('/threads/start', StartAdvisorThreadController::class)
+            ->middleware([
+                'signed',
+                QnaAdvisorAuthorization::class,
+            ])
+            ->name('threads.start');
 
         Route::post('/messages', SendQnaAdvisorMessageController::class)
             ->middleware([
