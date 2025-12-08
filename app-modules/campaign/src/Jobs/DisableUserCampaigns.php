@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,40 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Providers;
+namespace AdvisingApp\Campaign\Jobs;
 
-use AdvisingApp\Campaign\CampaignPlugin;
-use AdvisingApp\Campaign\Listeners\HandleUserRetentionCrmRestrictionSet;
 use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use App\Events\UserRetentionCrmRestrictionSet;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\ServiceProvider;
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-class CampaignServiceProvider extends ServiceProvider
+class DisableUserCampaigns implements ShouldQueue
 {
-    public function register()
-    {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new CampaignPlugin()));
-    }
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    public function boot()
-    {
-        Relation::morphMap([
-            'campaign' => Campaign::class,
-            'campaign_action' => CampaignAction::class,
-        ]);
+    public function __construct(
+        public User $user,
+    ) {}
 
-        $this->registerEvents();
-    }
-
-    protected function registerEvents(): void
+    public function handle(): void
     {
-        Event::listen(
-            UserRetentionCrmRestrictionSet::class,
-            HandleUserRetentionCrmRestrictionSet::class
-        );
+        Campaign::query()
+            ->where('created_by_type', User::class)
+            ->where('created_by_id', $this->user->id)
+            ->where('enabled', true)
+            ->whereDoesntHave('actions', fn (Builder $query) => $query->whereNotNull('execution_finished_at'))
+            ->update(['enabled' => false]);
     }
 }

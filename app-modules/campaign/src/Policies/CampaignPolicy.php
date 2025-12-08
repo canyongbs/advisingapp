@@ -39,7 +39,9 @@ namespace AdvisingApp\Campaign\Policies;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Models\Campaign;
 use App\Concerns\PerformsLicenseChecks;
+use App\Features\RetentionCrmRestrictionFeature;
 use App\Models\Authenticatable;
+use App\Models\User;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 use Illuminate\Auth\Access\Response;
 
@@ -51,6 +53,14 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
     {
         if (! is_null($response = $this->hasAnyLicense($authenticatable, [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]))) {
             return $response;
+        }
+
+        if (RetentionCrmRestrictionFeature::active() && $authenticatable instanceof User) {
+            $restriction = $authenticatable->retention_crm_restriction;
+
+            if ($restriction !== null) {
+                return Response::deny('You do not have access to Campaigns due to your Retention CRM restriction.');
+            }
         }
 
         return null;

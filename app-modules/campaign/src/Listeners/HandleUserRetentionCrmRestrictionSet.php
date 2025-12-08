@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,40 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Providers;
+namespace AdvisingApp\Campaign\Listeners;
 
-use AdvisingApp\Campaign\CampaignPlugin;
-use AdvisingApp\Campaign\Listeners\HandleUserRetentionCrmRestrictionSet;
-use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Campaign\Jobs\DisableUserCampaigns;
 use App\Events\UserRetentionCrmRestrictionSet;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\ServiceProvider;
 
-class CampaignServiceProvider extends ServiceProvider
+class HandleUserRetentionCrmRestrictionSet
 {
-    public function register()
+    public function handle(UserRetentionCrmRestrictionSet $event): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new CampaignPlugin()));
-    }
-
-    public function boot()
-    {
-        Relation::morphMap([
-            'campaign' => Campaign::class,
-            'campaign_action' => CampaignAction::class,
-        ]);
-
-        $this->registerEvents();
-    }
-
-    protected function registerEvents(): void
-    {
-        Event::listen(
-            UserRetentionCrmRestrictionSet::class,
-            HandleUserRetentionCrmRestrictionSet::class
-        );
+        DisableUserCampaigns::dispatch($event->user);
     }
 }

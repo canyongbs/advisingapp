@@ -37,6 +37,8 @@
 namespace App\Observers;
 
 use AdvisingApp\Authorization\Settings\LocalPasswordSettings;
+use App\Events\UserRetentionCrmRestrictionSet;
+use App\Features\RetentionCrmRestrictionFeature;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 
@@ -58,6 +60,17 @@ class UserObserver
             $user->password_history = array_slice($passwordHistory, -$numPreviousPasswords);
 
             $user->password_last_updated_at = Carbon::now();
+        }
+    }
+
+    public function saved(User $user): void
+    {
+        if (
+            RetentionCrmRestrictionFeature::active()
+            && $user->wasChanged('retention_crm_restriction')
+            && $user->retention_crm_restriction
+        ) {
+            UserRetentionCrmRestrictionSet::dispatch($user);
         }
     }
 

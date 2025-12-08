@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,40 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Providers;
+use App\Features\RetentionCrmRestrictionFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Laravel\Pennant\Feature;
 
-use AdvisingApp\Campaign\CampaignPlugin;
-use AdvisingApp\Campaign\Listeners\HandleUserRetentionCrmRestrictionSet;
-use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use App\Events\UserRetentionCrmRestrictionSet;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\ServiceProvider;
-
-class CampaignServiceProvider extends ServiceProvider
-{
-    public function register()
+return new class () extends Migration {
+    public function up(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new CampaignPlugin()));
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('retention_crm_restriction')
+                ->nullable()
+                ->after('team_id');
+        });
+
+        Feature::activate(RetentionCrmRestrictionFeature::class);
     }
 
-    public function boot()
+    public function down(): void
     {
-        Relation::morphMap([
-            'campaign' => Campaign::class,
-            'campaign_action' => CampaignAction::class,
-        ]);
+        Feature::deactivate(RetentionCrmRestrictionFeature::class);
 
-        $this->registerEvents();
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('retention_crm_restriction');
+        });
     }
-
-    protected function registerEvents(): void
-    {
-        Event::listen(
-            UserRetentionCrmRestrictionSet::class,
-            HandleUserRetentionCrmRestrictionSet::class
-        );
-    }
-}
+};

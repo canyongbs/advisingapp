@@ -62,6 +62,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Database\Factories\StudentFactory;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Scopes\RetentionCrmRestrictionScope;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Timeline\Models\Timeline;
@@ -71,6 +72,7 @@ use App\Models\Scopes\HasLicense;
 use App\Models\Tag;
 use App\Models\Taggable;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -97,6 +99,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  *
  * @mixin IdeHelperStudent
  */
+#[ScopedBy([RetentionCrmRestrictionScope::class])]
 class Student extends BaseAuthenticatable implements Auditable, Subscribable, Educatable, HasFilamentResource, CanBeNotified
 {
     use SoftDeletes;
