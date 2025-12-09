@@ -37,6 +37,8 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
+use App\Features\BookingGroupAppointmentConfigurationFeature;
+use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -44,6 +46,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class EditBookingGroup extends EditRecord
@@ -55,28 +58,49 @@ class EditBookingGroup extends EditRecord
     public function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('name')
-                ->required()
-                ->string()
-                ->maxLength(255)
-                ->label('Name'),
-            Textarea::make('description')
-                ->string()
-                ->maxLength(65535)
-                ->columnSpanFull()
-                ->label('Description'),
-            Select::make('users')
-                ->label('Users')
-                ->multiple()
-                ->relationship('users', 'name')
-                ->searchable()
-                ->preload(),
-            Select::make('teams')
-                ->label('Teams')
-                ->multiple()
-                ->relationship('teams', 'name')
-                ->searchable()
-                ->preload(),
+            Section::make('Booking Group Details')
+                ->schema([
+                    TextInput::make('name')
+                        ->required()
+                        ->string()
+                        ->maxLength(255)
+                        ->label('Name'),
+                    Textarea::make('description')
+                        ->string()
+                        ->maxLength(65535)
+                        ->columnSpanFull()
+                        ->label('Description'),
+                ]),
+            Section::make('Members')
+                ->schema([
+                    Select::make('users')
+                        ->label('Users')
+                        ->multiple()
+                        ->relationship('users', 'name')
+                        ->searchable()
+                        ->preload(),
+                    Select::make('teams')
+                        ->label('Teams')
+                        ->multiple()
+                        ->relationship('teams', 'name')
+                        ->searchable()
+                        ->preload(),
+                ]),
+            Section::make('Availability')
+                ->schema([
+                    Select::make('default_appointment_duration')
+                        ->label('Meeting Duration')
+                        ->required()
+                        ->options([
+                            15 => '15 minutes',
+                            30 => '30 minutes',
+                            60 => '1 hour',
+                        ]),
+                    DailyHoursRepeater::make('available_appointment_hours')
+                        ->label('Days and Hours')
+                        ->columnSpanFull(),
+                ])
+                ->visible(BookingGroupAppointmentConfigurationFeature::active()),
         ]);
     }
 
@@ -86,5 +110,27 @@ class EditBookingGroup extends EditRecord
             ViewAction::make(),
             DeleteAction::make(),
         ];
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        if (! BookingGroupAppointmentConfigurationFeature::active()) {
+            return $data;
+        }
+
+        $data['available_appointment_hours'] = DailyHoursRepeater::mutateDataBeforeFill($data['available_appointment_hours']);
+
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (! BookingGroupAppointmentConfigurationFeature::active()) {
+            return $data;
+        }
+
+        $data['available_appointment_hours'] = DailyHoursRepeater::mutateDataBeforeSave($data['available_appointment_hours']);
+
+        return $data;
     }
 }

@@ -60,6 +60,13 @@ class BookingGroup extends BaseModel implements Auditable
     protected $fillable = [
         'name',
         'description',
+        'default_appointment_duration',
+        'available_appointment_hours',
+    ];
+
+    protected $casts = [
+        'default_appointment_duration' => 'integer',
+        'available_appointment_hours' => 'array',
     ];
 
     /**
