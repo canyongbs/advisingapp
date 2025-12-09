@@ -36,6 +36,7 @@
 
 namespace App\Settings;
 
+use CanyonGBS\Common\Enums\Color;
 use Spatie\LaravelSettings\Settings;
 
 class CollegeBrandingSettings extends Settings
@@ -44,7 +45,7 @@ class CollegeBrandingSettings extends Settings
 
     public ?string $college_text = null;
 
-    public ?string $color = null;
+    public ?Color $color = null;
 
     public bool $dismissible = false;
 

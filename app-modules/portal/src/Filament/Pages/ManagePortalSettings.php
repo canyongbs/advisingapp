@@ -42,8 +42,8 @@ use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
 use AdvisingApp\Portal\Enums\PortalType;
 use AdvisingApp\Portal\Settings\PortalSettings;
 use App\Enums\Feature;
-use App\Filament\Forms\Components\ColorSelect;
 use App\Models\User;
+use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
@@ -154,7 +154,7 @@ class ManagePortalSettings extends SettingsPage
                             ->label('Primary Color')
                             ->visible(fn (Get $get) => $get('resource_hub_portal_enabled'))
                             ->disabled(! Gate::check(Feature::ResourceHub->getGateName()))
-                            ->hintIcon(fn (ColorSelect $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                            ->hintIcon(fn (Select $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Resource Hub is not a part of your current subscription.')
                             ->columnSpan(1),
                         Select::make('resource_hub_portal_rounding')

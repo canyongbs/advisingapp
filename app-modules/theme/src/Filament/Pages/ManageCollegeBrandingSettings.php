@@ -37,9 +37,9 @@
 namespace AdvisingApp\Theme\Filament\Pages;
 
 use App\Filament\Clusters\DisplaySettings;
-use App\Filament\Forms\Components\ColorSelect;
 use App\Models\User;
 use App\Settings\CollegeBrandingSettings;
+use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\TextInput;
