@@ -40,7 +40,7 @@ export default defineConfig({
     experimental: {
         renderBuiltUrl(filename) {
             return {
-                runtime: `window.__VITE_RESOURCE_HUB_PORTAL_ASSET_URL__ + ${JSON.stringify(filename)}`,
+                runtime: `window.__VITE_RESOURCE_HUB_PORTAL_ASSET_URL__.replace(/\\/$/, '') + '/' + ${JSON.stringify(filename)}`,
             };
         },
     },
