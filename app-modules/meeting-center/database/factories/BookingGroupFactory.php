@@ -54,6 +54,16 @@ class BookingGroupFactory extends Factory
         return [
             'name' => $this->faker->word(),
             'description' => $this->faker->optional()->sentence(),
+            'default_appointment_duration' => 60,
+            'available_appointment_hours' => [
+                'monday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            ],
         ];
     }
 }
