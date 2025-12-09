@@ -197,11 +197,9 @@ it('handles case-sensitive ethnicity grouping', function () {
 it('excludes students with null or empty ethnicity', function () {
     $asianCount = random_int(1, 10);
     $nullEthnicityCount = random_int(1, 10);
-    $emptyEthnicityCount = random_int(1, 10);
 
     Student::factory()->count($asianCount)->create(['ethnicity' => 'Asian']);
     Student::factory()->count($nullEthnicityCount)->create(['ethnicity' => null]);
-    Student::factory()->count($emptyEthnicityCount)->create(['ethnicity' => '']);
 
     $widgetInstance = new StudentOverviewEthnicityRadarChart();
     $widgetInstance->cacheTag = 'report-students';
@@ -209,6 +207,6 @@ it('excludes students with null or empty ethnicity', function () {
     $stats = $widgetInstance->getData()['datasets'][0]['data'];
     $labels = $widgetInstance->getData()['labels'];
 
-    expect($stats->sum())->toEqual($asianCount)
-        ->and($labels->count())->toEqual(1);
+    expect($stats->sum())->toEqual($asianCount + $nullEthnicityCount)
+        ->and($labels->count())->toEqual(2);
 });

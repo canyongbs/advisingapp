@@ -135,12 +135,10 @@ class StudentOverviewEthnicityRadarChart extends ChartReportWidget
     {
         return Student::query()
             ->select(
-                DB::raw('LOWER(ethnicity) as ethnicity_lower'),
-                DB::raw('MIN(ethnicity) as ethnicity'),
+                DB::raw("LOWER(COALESCE(NULLIF(ethnicity, ''), 'Unknown')) as ethnicity_lower"),
+                DB::raw("COALESCE(NULLIF(MIN(ethnicity), ''), 'Unknown') as ethnicity"),
                 DB::raw('COUNT(*) as count')
             )
-            ->whereNotNull('ethnicity')
-            ->where('ethnicity', '!=', '')
             ->when(
                 $startDate && $endDate,
                 fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
