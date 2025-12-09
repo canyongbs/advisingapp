@@ -39,6 +39,7 @@ use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory\CreateBookingGroupRequestFactory;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
+use Filament\Forms\Components\Repeater;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
@@ -102,6 +103,8 @@ it('validates the inputs', function (CreateBookingGroupRequestFactory $data, arr
 ]);
 
 it('can create a booking group with users and teams', function () {
+    $undoRepeaterFake = Repeater::fake();
+
     $user = User::factory()->create();
 
     $user->givePermissionTo('group_appointment.view-any');
@@ -130,9 +133,13 @@ it('can create a booking group with users and teams', function () {
 
     expect($bookingGroup->users)->toHaveCount(3);
     expect($bookingGroup->teams)->toHaveCount(2);
+
+    $undoRepeaterFake();
 });
 
 it('tracks created_by user correctly', function () {
+    $undoRepeaterFake = Repeater::fake();
+
     $user = User::factory()->create();
 
     $user->givePermissionTo('group_appointment.view-any');
@@ -151,4 +158,6 @@ it('tracks created_by user correctly', function () {
 
     expect($bookingGroup->created_by_id)->toBe($user->id);
     expect($bookingGroup->last_updated_by_id)->toBe($user->id);
+
+    $undoRepeaterFake();
 });
