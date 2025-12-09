@@ -49,6 +49,9 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
+/**
+ * @mixin IdeHelperConcernHistory
+ */
 #[ObservedBy([ConcernHistoryObserver::class])]
 class ConcernHistory extends History implements ProvidesATimeline
 {

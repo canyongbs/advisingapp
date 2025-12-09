@@ -174,6 +174,7 @@ return [
     'model_locations' => [
         'app',
         'app-modules/*/src/Models',
+        'app-modules/*/src/Histories',
     ],
 
     /*

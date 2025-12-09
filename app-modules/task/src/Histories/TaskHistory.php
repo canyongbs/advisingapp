@@ -49,6 +49,9 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
+/**
+ * @mixin IdeHelperTaskHistory
+ */
 class TaskHistory extends History implements ProvidesATimeline
 {
     public function timeline(): TaskHistoryTimeline
