@@ -70,30 +70,30 @@ class AssignManagerBulkAction
                     ->hintIconTooltip('If selected, all prior managers will be removed.'),
             ])
             ->action(function (array $data, Collection $records) {
-              try {
-                DB::beginTransaction();
+                try {
+                    DB::beginTransaction();
 
-                $records->each(function (ResourceHubArticle $record) use ($data) {
-                    if (! empty($data['manager_ids'])) {
-                        $record->managers()->sync($data['manager_ids'], $data['remove_prior']);
-                    }
-                });
+                    $records->each(function (ResourceHubArticle $record) use ($data) {
+                        if (! empty($data['manager_ids'])) {
+                            $record->managers()->sync($data['manager_ids'], $data['remove_prior']);
+                        }
+                    });
 
-                Notification::make()
-                    ->title('Managers assigned successfully.')
-                    ->success()
-                    ->send();
-                
-                DB::commit();
-              } catch (Exception $exception) {
-                DB::rollBack();
+                    Notification::make()
+                        ->title('Managers assigned successfully.')
+                        ->success()
+                        ->send();
 
-                Notification::make()
-                  ->title('Something went wrong')
-                  ->body('We failed to assign these managers. Please try again later.')
-                  ->danger()
-                  ->send();
-              }
+                    DB::commit();
+                } catch (Exception $exception) {
+                    DB::rollBack();
+
+                    Notification::make()
+                        ->title('Something went wrong')
+                        ->body('We failed to assign these managers. Please try again later.')
+                        ->danger()
+                        ->send();
+                }
             })
             ->deselectRecordsAfterCompletion();
     }
