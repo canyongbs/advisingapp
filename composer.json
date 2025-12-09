@@ -82,7 +82,7 @@
         "laravel/octane": "^2.8.3",
         "laravel/pennant": "^1.10",
         "laravel/sanctum": "^4.0",
-        "laravel/socialite": "^5.15",
+        "laravel/socialite": "^v5.23.2, !=5.24.0",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.5",
         "league/flysystem-aws-s3-v3": "^3.28",
