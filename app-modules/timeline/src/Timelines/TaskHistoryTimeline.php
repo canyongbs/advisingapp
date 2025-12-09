@@ -40,6 +40,7 @@ use AdvisingApp\Task\Filament\Actions\TaskHistoryCreatedViewAction;
 use AdvisingApp\Task\Filament\Actions\TaskHistoryUpdatedViewAction;
 use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Timeline\Models\CustomTimeline;
+use Exception;
 use Filament\Actions\ViewAction;
 
 class TaskHistoryTimeline extends CustomTimeline
@@ -70,6 +71,7 @@ class TaskHistoryTimeline extends CustomTimeline
             'updated' => 'task::updated-history-timeline-item',
             'status_changed' => 'task::status-changed-history-timeline-item',
             'reassigned' => 'task::reassigned-history-timeline-item',
+            default => throw new Exception('Unsupported task history event: ' . $this->history->event),
         };
     }
 
@@ -80,6 +82,7 @@ class TaskHistoryTimeline extends CustomTimeline
                 ->modalHeading('View Concern'),
             'updated', 'status_changed', 'reassigned' => TaskHistoryUpdatedViewAction::make()
                 ->modalHeading('View Changes'),
+            default => throw new Exception('Unsupported task history event: ' . $this->history->event),
         })->record($this->history);
     }
 }
