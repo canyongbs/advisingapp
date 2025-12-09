@@ -38,7 +38,10 @@
 >
     @php
         $nameData = is_array($response ?? null) ? $response : json_decode($response ?? '{}', true);
-        $hasName = filled($nameData['first_name'] ?? null) || filled($nameData['last_name'] ?? null) || filled($nameData['preferred'] ?? null);
+        $hasName =
+            filled($nameData['first_name'] ?? null) ||
+            filled($nameData['last_name'] ?? null) ||
+            filled($nameData['preferred'] ?? null);
     @endphp
 
     @if ($hasName)

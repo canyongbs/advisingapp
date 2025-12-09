@@ -91,7 +91,8 @@
                                     <div class="relative flex flex-shrink-0 flex-col items-end">
                                         <img
                                             class="h-8 w-8 rounded-full object-cover object-center"
-                                            x-bind:src="message.user_id ? @js(filament()->getUserAvatarUrl(auth()->user())) : @js(\Illuminate\Support\Facades\Vite::asset('resources/images/canyon-ai-headshot.jpg'))"
+                                            x-bind:src="message.user_id ? @js(filament()->getUserAvatarUrl(auth()->user())) :
+                                                @js(\Illuminate\Support\Facades\Vite::asset('resources/images/canyon-ai-headshot.jpg'))"
                                             x-bind:alt="message.user_id ? (@js(auth()->user()->name . ' avatar')) :
                                                 @js($this->getRecord()->name . ' avatar')"
                                         />

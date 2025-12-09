@@ -95,7 +95,12 @@
                                 @foreach (['email' => 'Email', 'notification' => 'App'] as $typeSlug => $type)
                                     @php
                                         $isSurveyResponse = $eventSlug === 'survey_response';
-                                        $shouldShow = !(($isSurveyResponse && in_array($roleSlug, ['managers', 'auditors'])) || ($isSurveyResponse && $roleSlug === 'customers' && $typeSlug === 'notification'));
+                                        $shouldShow = !(
+                                            ($isSurveyResponse && in_array($roleSlug, ['managers', 'auditors'])) ||
+                                            ($isSurveyResponse &&
+                                                $roleSlug === 'customers' &&
+                                                $typeSlug === 'notification')
+                                        );
                                     @endphp
 
                                     @if ($shouldShow)

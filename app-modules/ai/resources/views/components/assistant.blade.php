@@ -620,7 +620,8 @@
                                                 class="h-8 w-8 rounded-full object-cover object-center"
                                                 x-bind:src="message.user_id ? (users[message.user_id]?.avatar_url ??
                                                     @js(filament()->getUserAvatarUrl(auth()->user()))) : @js($this->thread->assistant->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'thumbnail') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'))"
-                                                x-bind:alt="message.user_id ? (users[message.user_id]?.name ?? @js(auth()->user()->name . ' avatar')) :
+                                                x-bind:alt="message.user_id ? (users[message.user_id]?.name ??
+                                                        @js(auth()->user()->name . ' avatar')) :
                                                     @js($this->thread->assistant->name . ' avatar')"
                                             />
                                         </div>
