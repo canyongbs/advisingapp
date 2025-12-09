@@ -100,6 +100,7 @@ class EditBookingGroup extends EditRecord
                         ->label('Days and Hours')
                         ->columnSpanFull(),
                 ])
+                ->columns(2)
                 ->visible(BookingGroupAppointmentConfigurationFeature::active()),
         ]);
     }
