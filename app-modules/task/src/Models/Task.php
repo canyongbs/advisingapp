@@ -103,6 +103,14 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, H
         'is_confidential' => 'boolean',
     ];
 
+    /**
+     * @param string $event
+     * @param Collection<string, string> $old
+     * @param Collection<string, string> $new
+     * @param Collection<int, array<string, mixed>> $pending
+     *
+     * @return void
+     */
     public function processCustomHistories(string $event, Collection $old, Collection $new, Collection $pending): void
     {
         if ($event !== 'updated') {

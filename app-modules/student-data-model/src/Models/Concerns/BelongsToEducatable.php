@@ -45,6 +45,12 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 trait BelongsToEducatable
 {
+    /**
+     * @param Builder<Student|Prospect> $query
+     * @param string $relationship
+     *
+     * @return Builder<Student|Prospect>
+     */
     public function scopeLicensedToEducatable(Builder $query, string $relationship): Builder
     {
         if (! auth()->check()) {

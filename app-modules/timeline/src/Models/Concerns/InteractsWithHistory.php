@@ -41,6 +41,9 @@ use Illuminate\Support\Collection;
 
 trait InteractsWithHistory
 {
+    /**
+     * @var array<string>
+     */
     protected array $ignoredAttributes = [
         'id',
         'created_at',
@@ -53,8 +56,23 @@ trait InteractsWithHistory
         static::observe(HistorySubjectObserver::class);
     }
 
+    /**
+     * @param string $event
+     * @param Collection<string, string> $old
+     * @param Collection<string, string> $new
+     * @param Collection<int, array<string, mixed>> $pending
+     *
+     * @return void
+     */
     public function processCustomHistories(string $event, Collection $old, Collection $new, Collection $pending): void {}
 
+    /**
+     * @param string $event
+     * @param Collection<string, string> $old
+     * @param Collection<string, string> $new
+     *
+     * @return void
+     */
     public function processHistory(string $event, Collection $old, Collection $new): void
     {
         $pending = collect();
@@ -68,6 +86,14 @@ trait InteractsWithHistory
         $pending->each(fn (array $history) => $this->histories()->create($history));
     }
 
+    /**
+     * @param string $event
+     * @param Collection<string, string> $old
+     * @param Collection<string, string> $new
+     * @param Collection<int, array<string, mixed>> $pending
+     *
+     * @return void
+     */
     public function recordHistory(string $event, Collection $old, Collection $new, Collection $pending): void
     {
         if ($new->isEmpty()) {

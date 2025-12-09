@@ -92,9 +92,9 @@ class Concern extends BaseModel implements Auditable, CanTriggerAutoSubscription
 
     /**
      * @param string $event
-     * @param Collection<int, string> $old
-     * @param Collection<int, string> $new
-     * @param Collection<int, string> $pending
+     * @param Collection<string, string> $old
+     * @param Collection<string, string> $new
+     * @param Collection<int, array<string, mixed>> $pending
      *
      * @return void
      */

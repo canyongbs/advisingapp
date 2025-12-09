@@ -106,7 +106,7 @@ trait HasStudentHeader
                 ->view('student-data-model::filament.resources.educatables.subscribe-header-action', ['record' => $this->getRecord()]),
             DeleteAction::make()
                 ->modalDescription('Are you sure you wish to delete the student? By deleting a student record, you will remove any related enrollment and program data, along with any related interactions, notes, etc. This action cannot be reversed.')
-                ->using(function ($record) {
+                ->using(function (Student $record) {
                     app(DeleteStudent::class)->execute($record);
                 }),
         ];
