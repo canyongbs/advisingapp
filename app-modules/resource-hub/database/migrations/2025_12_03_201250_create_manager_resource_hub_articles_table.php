@@ -48,7 +48,6 @@ return new class () extends Migration {
             $table->foreignUuid('resource_hub_article_id')->constrained('resource_hub_articles')->cascadeOnDelete();
 
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

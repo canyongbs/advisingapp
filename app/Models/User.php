@@ -699,7 +699,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     /**
      * @return BelongsToMany<ResourceHubArticle, $this, ManagerResourceHubArticle>
      */
-    public function resourceHubArticles(): BelongsToMany
+    public function managedResourceHubArticles(): BelongsToMany
     {
         return $this
             ->belongsToMany(ResourceHubArticle::class, 'manager_resource_hub_articles', 'manager_id', 'resource_hub_article_id')

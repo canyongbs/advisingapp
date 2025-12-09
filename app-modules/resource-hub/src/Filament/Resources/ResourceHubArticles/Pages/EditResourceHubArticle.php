@@ -164,10 +164,6 @@ class EditResourceHubArticle extends EditRecord
                                             ->searchable()
                                             ->preload()
                                             ->exists('users', 'id'),
-                                        Toggle::make('remove_prior')
-                                            ->label('Remove all previous assigned managers?')
-                                            ->default(false)
-                                            ->hintIconTooltip('If selected, all prior managers will be removed.'),
                                     ])
                                     ->visible(ResourceHubArticleManagersFeature::active()),
                             ]),

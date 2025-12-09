@@ -38,11 +38,13 @@ namespace AdvisingApp\ResourceHub\Filament\Actions;
 
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use App\Models\User;
+use Exception;
 use Filament\Actions\BulkAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class AssignManagerBulkAction
@@ -68,6 +70,9 @@ class AssignManagerBulkAction
                     ->hintIconTooltip('If selected, all prior managers will be removed.'),
             ])
             ->action(function (array $data, Collection $records) {
+              try {
+                DB::beginTransaction();
+
                 $records->each(function (ResourceHubArticle $record) use ($data) {
                     if (! empty($data['manager_ids'])) {
                         $record->managers()->sync($data['manager_ids'], $data['remove_prior']);
@@ -78,6 +83,17 @@ class AssignManagerBulkAction
                     ->title('Managers assigned successfully.')
                     ->success()
                     ->send();
+                
+                DB::commit();
+              } catch (Exception $exception) {
+                DB::rollBack();
+
+                Notification::make()
+                  ->title('Something went wrong')
+                  ->body('We failed to assign these managers. Please try again later.')
+                  ->danger()
+                  ->send();
+              }
             })
             ->deselectRecordsAfterCompletion();
     }
