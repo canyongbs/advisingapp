@@ -43,6 +43,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Actions\StudentTags
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Actions\SyncStudentSisAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use App\Settings\DisplaySettings;
 use Filament\Actions\DeleteAction;
@@ -57,6 +58,9 @@ trait HasStudentHeader
         $sisSettings = app(StudentInformationSystemSettings::class);
 
         $student = $this->getRecord();
+
+        assert($student instanceof Student);
+
         $studentName = filled($student->full_name)
             ? $student->full_name
             : "{$student->first} {$student->last}";
