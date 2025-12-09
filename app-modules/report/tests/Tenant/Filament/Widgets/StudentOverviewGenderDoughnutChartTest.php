@@ -40,9 +40,9 @@ use AdvisingApp\Report\Filament\Widgets\StudentOverviewGenderDoughnutChart;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('checks student gender doughnut chart', function () {
-    $maleCount = rand(1, 10);
-    $femaleCount = rand(1, 10);
-    $nonBinaryCount = rand(1, 10);
+    $maleCount = random_int(1, 10);
+    $femaleCount = random_int(1, 10);
+    $nonBinaryCount = random_int(1, 10);
 
     Student::factory()->count($maleCount)->create(['gender' => 'Male']);
     Student::factory()->count($femaleCount)->create(['gender' => 'Female']);
@@ -59,9 +59,9 @@ it('checks student gender doughnut chart', function () {
 });
 
 it('returns correct student counts by gender within the selected date range', function () {
-    $maleCount = rand(1, 10);
-    $femaleCount = rand(1, 10);
-    $nonBinaryCount = rand(1, 10);
+    $maleCount = random_int(1, 10);
+    $femaleCount = random_int(1, 10);
+    $nonBinaryCount = random_int(1, 10);
 
     $startDate = now()->subDays(90);
     $endDate = now()->subDays(5);
@@ -176,9 +176,9 @@ it('returns correct student counts by gender based on group filter', function ()
 });
 
 it('handles case-sensitive gender grouping', function () {
-    $maleUpperCount = rand(1, 10);
-    $maleLowerCount = rand(1, 10);
-    $maleMixedCount = rand(1, 10);
+    $maleUpperCount = random_int(1, 10);
+    $maleLowerCount = random_int(1, 10);
+    $maleMixedCount = random_int(1, 10);
 
     Student::factory()->count($maleUpperCount)->create(['gender' => 'MALE']);
     Student::factory()->count($maleLowerCount)->create(['gender' => 'male']);
@@ -195,9 +195,9 @@ it('handles case-sensitive gender grouping', function () {
 });
 
 it('excludes students with null or empty gender', function () {
-    $maleCount = rand(1, 10);
-    $nullGenderCount = rand(1, 10);
-    $emptyGenderCount = rand(1, 10);
+    $maleCount = random_int(1, 10);
+    $nullGenderCount = random_int(1, 10);
+    $emptyGenderCount = random_int(1, 10);
 
     Student::factory()->count($maleCount)->create(['gender' => 'Male']);
     Student::factory()->count($nullGenderCount)->create(['gender' => null]);

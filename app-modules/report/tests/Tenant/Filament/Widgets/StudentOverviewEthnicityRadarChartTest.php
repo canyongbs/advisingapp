@@ -40,9 +40,9 @@ use AdvisingApp\Report\Filament\Widgets\StudentOverviewEthnicityRadarChart;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('checks student ethnicity polar area chart', function () {
-    $asianCount = rand(1, 10);
-    $hispanicCount = rand(1, 10);
-    $caucasianCount = rand(1, 10);
+    $asianCount = random_int(1, 10);
+    $hispanicCount = random_int(1, 10);
+    $caucasianCount = random_int(1, 10);
 
     Student::factory()->count($asianCount)->create(['ethnicity' => 'Asian']);
     Student::factory()->count($hispanicCount)->create(['ethnicity' => 'Hispanic']);
@@ -59,9 +59,9 @@ it('checks student ethnicity polar area chart', function () {
 });
 
 it('returns correct student counts by ethnicity within the selected date range', function () {
-    $asianCount = rand(1, 10);
-    $hispanicCount = rand(1, 10);
-    $caucasianCount = rand(1, 10);
+    $asianCount = random_int(1, 10);
+    $hispanicCount = random_int(1, 10);
+    $caucasianCount = random_int(1, 10);
 
     $startDate = now()->subDays(90);
     $endDate = now()->subDays(5);
@@ -176,9 +176,9 @@ it('returns correct student counts by ethnicity based on group filter', function
 });
 
 it('handles case-sensitive ethnicity grouping', function () {
-    $asianUpperCount = rand(1, 10);
-    $asianLowerCount = rand(1, 10);
-    $asianMixedCount = rand(1, 10);
+    $asianUpperCount = random_int(1, 10);
+    $asianLowerCount = random_int(1, 10);
+    $asianMixedCount = random_int(1, 10);
 
     Student::factory()->count($asianUpperCount)->create(['ethnicity' => 'ASIAN']);
     Student::factory()->count($asianLowerCount)->create(['ethnicity' => 'asian']);
@@ -195,9 +195,9 @@ it('handles case-sensitive ethnicity grouping', function () {
 });
 
 it('excludes students with null or empty ethnicity', function () {
-    $asianCount = rand(1, 10);
-    $nullEthnicityCount = rand(1, 10);
-    $emptyEthnicityCount = rand(1, 10);
+    $asianCount = random_int(1, 10);
+    $nullEthnicityCount = random_int(1, 10);
+    $emptyEthnicityCount = random_int(1, 10);
 
     Student::factory()->count($asianCount)->create(['ethnicity' => 'Asian']);
     Student::factory()->count($nullEthnicityCount)->create(['ethnicity' => null]);
