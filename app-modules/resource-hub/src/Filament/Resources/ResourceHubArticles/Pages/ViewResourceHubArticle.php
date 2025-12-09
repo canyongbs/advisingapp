@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages;
 
+use AdvisingApp\BasicNeeds\Filament\Actions\SendEmailAction;
 use AdvisingApp\ResourceHub\Filament\Actions\CreateConcernAction;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Filament\Widgets\ResourceHubArticleConcernsTable;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use App\Features\ResourceHubArticleConcernFeature;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -119,8 +119,7 @@ class ViewResourceHubArticle extends ViewRecord
                         Tab::make('Concerns')
                             ->schema([
                                 Livewire::make(ResourceHubArticleConcernsTable::class, ['record' => $this->getRecord()]),
-                            ])
-                            ->visible(ResourceHubArticleConcernFeature::active()),
+                            ]),
                     ])
                     ->columnSpanFull(),
             ]);
@@ -131,6 +130,8 @@ class ViewResourceHubArticle extends ViewRecord
         $resourceHubArticle = $this->getRecord();
 
         return [
+            SendEmailAction::make('resource-hub::components.default-email-body')
+                ->label('Email Details'),
             Action::make('upvote')
                 ->label(fn (): string => ($resourceHubArticle->isUpvoted() ? 'Upvoted ' : 'Upvote ') . "({$resourceHubArticle->upvotes()->count()})")
                 ->color(fn (): string => $resourceHubArticle->isUpvoted() ? 'success' : 'gray')

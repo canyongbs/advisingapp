@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -34,17 +32,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\ResourceHubArticleConcernFeature;
-use Illuminate\Database\Migrations\Migration;
-
-return new class () extends Migration {
-    public function up(): void
-    {
-        ResourceHubArticleConcernFeature::activate();
-    }
-
-    public function down(): void
-    {
-        ResourceHubArticleConcernFeature::deactivate();
-    }
-};
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

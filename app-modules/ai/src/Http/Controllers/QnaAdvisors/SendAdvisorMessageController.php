@@ -43,7 +43,6 @@ use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
@@ -53,7 +52,6 @@ class SendAdvisorMessageController
     {
         $data = $request->validate([
             'content' => ['required', 'string', 'max:25000'],
-            'thread_id' => ['nullable', 'string', 'max:255'],
             'options' => ['nullable', 'array'],
         ]);
 
@@ -87,21 +85,19 @@ class SendAdvisorMessageController
             }
         }
 
+        $data = $request->validate([
+            'content' => ['required', 'string', 'max:25000'],
+            'thread_id' => ['required', 'string', 'max:255'],
+        ]);
+
         $author = auth('student')->user() ?? auth('prospect')->user();
 
-        if (filled($data['thread_id'] ?? null)) {
-            $thread = QnaAdvisorThread::query()
-                ->whereKey($data['thread_id'])
-                ->whereBelongsTo($advisor, 'advisor')
-                ->whereMorphedTo('author', $author)
-                ->whereNull('finished_at')
-                ->firstOrFail();
-        } else {
-            $thread = new QnaAdvisorThread();
-            $thread->advisor()->associate($advisor);
-            $thread->author()->associate($author);
-            $thread->save();
-        }
+        $thread = QnaAdvisorThread::query()
+            ->whereKey($data['thread_id'])
+            ->whereBelongsTo($advisor, 'advisor')
+            ->whereMorphedTo('author', $author)
+            ->whereNull('finished_at')
+            ->firstOrFail();
 
         dispatch(new SendQnaAdvisorMessage(
             $advisor,
@@ -118,12 +114,6 @@ class SendAdvisorMessageController
 
         return response()->json([
             'message' => 'Message dispatched for processing via websockets.',
-            'thread_id' => $thread->getKey(),
-            'finish_thread_url' => URL::temporarySignedRoute(
-                name: 'ai.qna-advisors.threads.finish',
-                expiration: now()->addDays(3),
-                parameters: ['advisor' => $advisor, 'thread' => $thread],
-            ),
         ]);
     }
 }

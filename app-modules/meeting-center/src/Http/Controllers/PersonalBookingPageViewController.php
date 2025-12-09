@@ -34,17 +34,28 @@
 </COPYRIGHT>
 */
 
-use App\Features\HsGradeTypeChangeFeature;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        HsGradeTypeChangeFeature::activate();
-    }
+use AdvisingApp\MeetingCenter\Actions\GeneratePersonalBookingPageEmbedCode;
+use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
+use App\Http\Controllers\Controller;
+use Illuminate\View\View;
 
-    public function down(): void
+class PersonalBookingPageViewController extends Controller
+{
+    public function __invoke(string $slug, GeneratePersonalBookingPageEmbedCode $generateEmbedCode): View
     {
-        HsGradeTypeChangeFeature::deactivate();
+        $bookingPage = PersonalBookingPage::query()
+            ->where('slug', $slug)
+            ->where('is_enabled', true)
+            ->with('user')
+            ->firstOrFail();
+
+        $embedCode = $generateEmbedCode($bookingPage);
+
+        return view('meeting-center::direct-booking', [
+            'bookingPage' => $bookingPage,
+            'embedCode' => $embedCode,
+        ]);
     }
-};
+}

@@ -53,7 +53,7 @@ class OfficeHours extends ProfilePage
 
     protected static ?string $title = 'Office Hours';
 
-    protected static ?int $navigationSort = 80;
+    protected static ?int $navigationSort = 90;
 
     public function form(Schema $schema): Schema
     {

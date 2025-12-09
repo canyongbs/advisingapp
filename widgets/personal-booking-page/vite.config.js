@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,15 +31,47 @@
 
 </COPYRIGHT>
 */
+import vue from '@vitejs/plugin-vue';
+import { resolve } from 'path';
+import { defineConfig } from 'vite';
 
-namespace App\Features;
-
-use App\Support\AbstractFeatureFlag;
-
-class ResourceHubArticleConcernFeature extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
-    {
-        return false;
-    }
-}
+export default defineConfig({
+    plugins: [vue()],
+    experimental: {
+        renderBuiltUrl(filename) {
+            return {
+                runtime: `window.__VITE_PERSONAL_BOOKING_PAGE_ASSET_URL__ + ${JSON.stringify(filename)}`,
+            };
+        },
+    },
+    build: {
+        manifest: true,
+        rollupOptions: {
+            input: {
+                widget: resolve(__dirname, './src/widget.js'),
+                loader: resolve(__dirname, './src/loader.js'),
+            },
+            output: {
+                entryFileNames: (chunkInfo) => {
+                    return chunkInfo.name === 'loader'
+                        ? 'advising-app-personal-booking-page-widget.js'
+                        : 'advising-app-personal-booking-page-widget-app-[hash].js';
+                },
+                assetFileNames: (assetInfo) => {
+                    return '[name]-[hash][extname]';
+                },
+                // Place chunks directly in the root
+                chunkFileNames: '[name]-[hash].js',
+            },
+        },
+        outDir: resolve(__dirname, '../../storage/app/public/widgets/personal-booking-page'),
+        emptyOutDir: true,
+        sourcemap: true,
+    },
+    resolve: {
+        alias: {
+            '@': resolve(__dirname, 'src'),
+        },
+    },
+    define: { 'process.env.NODE_ENV': '"production"' },
+});

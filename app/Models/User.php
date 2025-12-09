@@ -57,6 +57,7 @@ use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use AdvisingApp\MultifactorAuthentication\Traits\MultifactorAuthenticatable;
 use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
@@ -489,6 +490,14 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function calendar(): HasOne
     {
         return $this->hasOne(Calendar::class);
+    }
+
+    /**
+     * @return HasOne<PersonalBookingPage, $this>
+     */
+    public function personalBookingPage(): HasOne
+    {
+        return $this->hasOne(PersonalBookingPage::class);
     }
 
     /**

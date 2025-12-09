@@ -51,7 +51,7 @@ class UpdateStudentData extends Data
         public string | Optional | null $fullName,
         public string | Optional | null $preferred,
         public string | Optional | null $birthdate,
-        public string | int | Optional | null $hsgrad, //TODO: Remove `int` option when migration is fully adopted and you doing HsGradeTypeChangeFeature cleanup
+        public string | Optional | null $hsgrad,
         public string | Optional | null $gender,
         public bool | Optional | null $smsOptOut,
         public bool | Optional | null $emailBounce,

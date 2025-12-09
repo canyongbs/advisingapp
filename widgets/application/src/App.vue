@@ -109,6 +109,8 @@
     const applicationSubmissionUrl = ref('');
     const applicationPrimaryColor = ref('');
     const applicationRounding = ref('');
+    const applicationTitleColor = ref('');
+    const applicationTitleFontWeight = ref('');
     const schema = ref([]);
 
     const authentication = ref({
@@ -131,6 +133,8 @@
             applicationName.value = json.name;
             applicationDescription.value = json.description;
             applicationPrimaryColor.value = json.primary_color;
+            applicationTitleColor.value = json.title_color;
+            applicationTitleFontWeight.value = json.title_font_weight;
             authentication.value.requestUrl = json.authentication_url;
 
             if (props.preview === 'true' || props.preview === true) {
@@ -368,7 +372,13 @@
                 </p>
             </div>
 
-            <h1>
+            <h1
+                :style="{
+                    '--title-font-weight': applicationTitleFontWeight,
+                    color: `rgb(${applicationTitleColor[900]})`,
+                }"
+                class="font-[--title-font-weight]"
+            >
                 {{ applicationName }}
             </h1>
 

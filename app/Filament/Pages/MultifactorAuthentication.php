@@ -56,5 +56,5 @@ class MultifactorAuthentication extends Page
 
     protected static ?string $title = 'Multifactor Authentication';
 
-    protected static ?int $navigationSort = 100;
+    protected static ?int $navigationSort = 110;
 }

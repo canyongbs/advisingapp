@@ -57,7 +57,7 @@ class ConnectedAccounts extends ProfilePage
 
     protected static ?string $title = 'Connected Accounts';
 
-    protected static ?int $navigationSort = 60;
+    protected static ?int $navigationSort = 70;
 
     public static function canAccess(): bool
     {

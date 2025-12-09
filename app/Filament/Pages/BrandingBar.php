@@ -50,7 +50,7 @@ class BrandingBar extends ProfilePage
 
     protected static ?string $title = 'Branding Bar';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 60;
 
     public static function canAccess(): bool
     {

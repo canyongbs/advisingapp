@@ -17,14 +17,14 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 #6.0.0
+              uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #6.0.1
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 #5.1.0
+              uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 #5.1.1
               with:
                   aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
@@ -56,14 +56,14 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 #6.0.0
+              uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #6.0.1
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 #5.1.0
+              uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 #5.1.1
               with:
                   aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
@@ -79,7 +79,7 @@ jobs:
 
             - name: Deploy Amazon ECS task definition
               id: task-deploy
-              uses: aws-actions/amazon-ecs-deploy-task-definition@1beffbdddb3eb5f83c7a746c3e9bafeccdccbbaa #2.4.0
+              uses: aws-actions/amazon-ecs-deploy-task-definition@7b5ba17dae98c8fd463ddf2cef977d3be43322c5 #2.5.0
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
                   service: 'advisingapp-p-crm-ecs-service'
@@ -107,14 +107,14 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 #6.0.0
+              uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #6.0.1
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 #5.1.0
+              uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 #5.1.1
               with:
                   aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
@@ -146,14 +146,14 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 #6.0.0
+              uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #6.0.1
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 #5.1.0
+              uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 #5.1.1
               with:
                   aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
@@ -169,7 +169,7 @@ jobs:
 
             - name: Deploy Amazon ECS task definition
               id: task-deploy
-              uses: aws-actions/amazon-ecs-deploy-task-definition@1beffbdddb3eb5f83c7a746c3e9bafeccdccbbaa #2.4.0
+              uses: aws-actions/amazon-ecs-deploy-task-definition@7b5ba17dae98c8fd463ddf2cef977d3be43322c5 #2.5.0
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
                   service: 'advisingapp-worker-prod-service'
@@ -197,14 +197,14 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 #6.0.0
+              uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #6.0.1
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 #5.1.0
+              uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 #5.1.1
               with:
                   aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
@@ -236,14 +236,14 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 #6.0.0
+              uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #6.0.1
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 #5.1.0
+              uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 #5.1.1
               with:
                   aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
@@ -259,7 +259,7 @@ jobs:
 
             - name: Deploy Amazon ECS task definition
               id: task-deploy
-              uses: aws-actions/amazon-ecs-deploy-task-definition@1beffbdddb3eb5f83c7a746c3e9bafeccdccbbaa #2.4.0
+              uses: aws-actions/amazon-ecs-deploy-task-definition@7b5ba17dae98c8fd463ddf2cef977d3be43322c5 #2.5.0
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
                   service: 'advisingapp-scheduler-prod-service'
@@ -287,14 +287,14 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 #6.0.0
+              uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #6.0.1
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 #5.1.0
+              uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 #5.1.1
               with:
                   aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
@@ -326,14 +326,14 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 #6.0.0
+              uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #6.0.1
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 #5.1.0
+              uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 #5.1.1
               with:
                   aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
@@ -348,7 +348,7 @@ jobs:
                   image: ${{ needs.build-release-automation.outputs.image }}
 
             - name: Deploy Amazon ECS task definition
-              uses: aws-actions/amazon-ecs-deploy-task-definition@1beffbdddb3eb5f83c7a746c3e9bafeccdccbbaa #2.4.0
+              uses: aws-actions/amazon-ecs-deploy-task-definition@7b5ba17dae98c8fd463ddf2cef977d3be43322c5 #2.5.0
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
                   cluster: 'advisingapp-prod'

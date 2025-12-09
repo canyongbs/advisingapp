@@ -38,7 +38,6 @@ namespace AdvisingApp\ResourceHub\Filament\Actions;
 
 use AdvisingApp\ResourceHub\Enums\ConcernStatus;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use App\Features\ResourceHubArticleConcernFeature;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Pages\Page;
@@ -66,8 +65,7 @@ class CreateConcernAction extends Action
                 ]);
 
                 $livewire->dispatch('concern-created');
-            })
-            ->visible(ResourceHubArticleConcernFeature::active());
+            });
     }
 
     public static function getDefaultName(): ?string

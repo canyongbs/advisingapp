@@ -44,7 +44,8 @@ use AdvisingApp\Form\Models\FormField;
 use AdvisingApp\Form\Models\FormStep;
 use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
-use App\Features\FormApplicationTitleFeature;
+use App\Enums\FontWeight;
+use App\Features\FontFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -76,7 +77,6 @@ trait HasSharedFormConfiguration
                 ->maxLength(255)
                 ->autocomplete(false)
                 ->columnSpanFull()
-                ->visible(FormApplicationTitleFeature::active())
                 ->helperText('The title of this form will be displayed when the form is embedded.'),
             Textarea::make('description')
                 ->string()
@@ -154,6 +154,11 @@ trait HasSharedFormConfiguration
                 ->columnSpanFull(),
             Section::make('Appearance')
                 ->schema([
+                    Select::make('title_font_weight')
+                        ->options(FontWeight::class)
+                        ->visible(FontFeature::active()),
+                    ColorSelect::make('title_color')
+                        ->visible(FontFeature::active()),
                     ColorSelect::make('primary_color'),
                     Select::make('rounding')
                         ->options(Rounding::class),

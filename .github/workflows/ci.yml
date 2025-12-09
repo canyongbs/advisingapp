@@ -26,14 +26,14 @@ jobs:
         steps:
             - name: Checkout code | Internal
               if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-              uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 #6.0.0
+              uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #6.0.1
               with:
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.pat-token }}
 
             - name: Checkout code | External
               if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
-              uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 #6.0.0
+              uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #6.0.1
               with:
                   ref: ${{ github.head_ref }}
 
@@ -52,11 +52,14 @@ jobs:
                   key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
                   restore-keys: ${{ runner.os }}-phpext-${{ env.php-version }}
 
-            - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f #2.35.5
+            - uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 #2.36.0
               with:
                   php-version: ${{ env.php-version }}
                   coverage: none
                   extensions: ${{ env.php-extensions }}
+
+            - name: Validate Composer JSON
+              run: composer validate --strict --no-check-all
 
             - name: Cache dependencies
               id: cache-composer
@@ -70,14 +73,14 @@ jobs:
               run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
               shell: bash
 
-            - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 #6.0.0
+            - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #6.1.0
               with:
                   node-version-file: '.nvmrc'
                   cache: 'npm'
             - run: npm install
 
             - name: Set up Ruby
-              uses: ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71 #1.268.0
+              uses: ruby/setup-ruby@d697be2f83c6234b20877c3b5eac7a7f342f0d0c #1.269.0
 
             - name: Run Ruby Script
               run: ruby ./copyright.rb
@@ -179,13 +182,13 @@ jobs:
                   key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
                   restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
 
-            - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f #2.35.5
+            - uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 #2.36.0
               with:
                   php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
                   coverage: none
                   extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
 
-            - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 #6.0.0
+            - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #6.0.1
               with:
                   fetch-depth: 0
                   fetch-tags: true
@@ -205,7 +208,7 @@ jobs:
               run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
               shell: bash
 
-            - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 #6.0.0
+            - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #6.1.0
               with:
                   node-version-file: '.nvmrc'
                   cache: 'npm'
@@ -295,13 +298,13 @@ jobs:
                   key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
                   restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
 
-            - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f #2.35.5
+            - uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 #2.36.0
               with:
                   php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
                   coverage: none
                   extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
 
-            - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 #6.0.0
+            - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #6.0.1
               with:
                   fetch-depth: 0
                   fetch-tags: true

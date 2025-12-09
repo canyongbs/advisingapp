@@ -34,14 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use App\Features\FontFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Support\AbstractFeatureFlag;
-
-class HsGradeTypeChangeFeature extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
+return new class () extends Migration {
+    public function up(): void
     {
-        return false;
+        FontFeature::activate();
     }
-}
+
+    public function down(): void
+    {
+        FontFeature::deactivate();
+    }
+};

@@ -54,7 +54,7 @@ class CalendarEventFactory extends Factory
             'title' => $this->faker->catchPhrase(),
             'description' => $this->faker->optional()->sentence(),
             'starts_at' => $this->faker->dateTimeBetween('+1 hour', '+1 day'),
-            'ends_at' => fn (array $attributes) => Carbon::parse($attributes['starts_at'])->add('1 hour'),
+            'ends_at' => fn (array $attributes) => Carbon::parse($attributes['starts_at'])->addHour(),
         ];
     }
 }

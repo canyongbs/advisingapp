@@ -48,6 +48,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Prism\Prism\Contracts\Message;
+use Prism\Prism\ValueObjects\Messages\AssistantMessage;
+use Prism\Prism\ValueObjects\Messages\UserMessage;
 use Throwable;
 
 class SendQnaAdvisorMessage implements ShouldQueue
@@ -71,6 +74,8 @@ class SendQnaAdvisorMessage implements ShouldQueue
 
     public function handle(GetQnaAdvisorInstructions $getQnaAdvisorInstructions): void
     {
+        $isStartOfConversation = ! $this->thread->messages()->where('is_advisor', false)->exists();
+
         $message = new QnaAdvisorMessage();
         $message->thread()->associate($this->thread);
         $message->author()->associate($this->thread->author);
@@ -82,6 +87,16 @@ class SendQnaAdvisorMessage implements ShouldQueue
         try {
             $aiService = $this->advisor->model->getService();
 
+            $messages = $isStartOfConversation
+                ? $this->thread->messages()
+                    ->orderBy('created_at')
+                    ->get()
+                    ->map(fn (QnaAdvisorMessage $message): Message => $message->is_advisor
+                        ? new AssistantMessage($message->content)
+                        : new UserMessage($message->content))
+                    ->all()
+                : [];
+
             $stream = $aiService->streamRaw(
                 prompt: $context = $getQnaAdvisorInstructions->execute($this->advisor),
                 content: $this->content,
@@ -90,6 +105,7 @@ class SendQnaAdvisorMessage implements ShouldQueue
                     ...$this->advisor->links()->whereNotNull('parsing_results')->get()->all(),
                 ],
                 options: $this->thread->messages()->where('is_advisor', true)->latest()->value('next_request_options') ?? [],
+                messages: $messages,
             );
 
             $response = new QnaAdvisorMessage();
