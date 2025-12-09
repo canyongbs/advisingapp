@@ -109,7 +109,7 @@ class DailyHoursRepeater
 
         return array_map(
             function (string $day) use ($data, $displayTimezone, $appTimezone): array {
-                $dayData = $data[$day] ?? ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null];
+                $dayData = $data[$day];
 
                 if (filled($dayData['starts_at'] ?? null)) {
                     $dayData['starts_at'] = Carbon::parse($dayData['starts_at'], $appTimezone)
@@ -166,8 +166,6 @@ class DailyHoursRepeater
                         ->setTimezone($appTimezone)
                         ->format('H:i');
                 }
-
-                unset($itemData['day']);
 
                 return [
                     ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'][$index] => $itemData,
