@@ -77,7 +77,7 @@ enum CampaignActionType: string implements HasLabel
 
     case Case = 'case';
 
-    case ProactiveConcern = 'proactive_conerns';
+    case ProactiveConcern = 'proactive_concern';
 
     case Interaction = 'interaction';
 
