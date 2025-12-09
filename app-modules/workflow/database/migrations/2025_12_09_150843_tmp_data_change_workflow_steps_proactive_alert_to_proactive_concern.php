@@ -50,6 +50,16 @@ return new class () extends Migration {
                             ->update(['current_details_type' => 'workflow_proactive_concern_details']);
                     }
                 });
+
+            DB::table('workflow_run_steps')
+                ->where('details_type', 'workflow_proactive_alert_details')
+                ->chunkById(100, function (Collection $workflowRunSteps) {
+                    foreach ($workflowRunSteps as $workflowRunStep) {
+                        DB::table('workflow_run_steps')
+                            ->where('id', $workflowRunStep->id)
+                            ->update(['details_type' => 'workflow_proactive_concern_details']);
+                    }
+                });
         });
     }
 
@@ -63,6 +73,16 @@ return new class () extends Migration {
                         DB::table('workflow_steps')
                             ->where('id', $workflowStep->id)
                             ->update(['current_details_type' => 'workflow_proactive_alert_details']);
+                    }
+                });
+
+            DB::table('workflow_run_steps')
+                ->where('details_type', 'workflow_proactive_concern_details')
+                ->chunkById(100, function (Collection $workflowRunSteps) {
+                    foreach ($workflowRunSteps as $workflowRunStep) {
+                        DB::table('workflow_run_steps')
+                            ->where('id', $workflowRunStep->id)
+                            ->update(['details_type' => 'workflow_proactive_alert_details']);
                     }
                 });
         });
