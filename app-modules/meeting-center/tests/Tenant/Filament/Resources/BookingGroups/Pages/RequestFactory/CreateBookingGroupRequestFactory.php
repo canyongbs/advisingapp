@@ -45,6 +45,20 @@ class CreateBookingGroupRequestFactory extends RequestFactory
         return [
             'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
             'description' => $this->faker->paragraph(),
+            'default_appointment_duration' => [
+                'days' => $this->faker->numberBetween(0, 27),
+                'hours' => $this->faker->numberBetween(0, 23),
+                'minutes' => $this->faker->numberBetween(0, 59),
+            ],
+            'available_appointment_hours' => [
+                ['day' => 'monday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                ['day' => 'tuesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                ['day' => 'wednesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                ['day' => 'thursday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                ['day' => 'friday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                ['day' => 'saturday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                ['day' => 'sunday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            ],
         ];
     }
 }
