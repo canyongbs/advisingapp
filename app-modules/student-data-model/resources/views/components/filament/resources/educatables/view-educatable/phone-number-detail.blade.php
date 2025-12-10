@@ -45,13 +45,15 @@
     x-data="{ isLoading: false }"
     x-on:engage-action-finished-loading.window="isLoading = false"
     x-on:click="isLoading = true; $dispatch('send-sms', { phoneNumberKey: @js($phoneNumber->getKey()) })"
-    @if (!$isOptedOut) x-tooltip.raw="Click to send an SMS" @endif @disabled(
+    @if (!$isOptedOut) x-tooltip.raw="Click to send an SMS" @endif
+    @disabled(
         $isOptedOut ||
             !$phoneNumber->can_receive_sms ||
             !auth()->user()->can('create', [
                     Engagement::class,
                     $phoneNumber instanceof ProspectPhoneNumber ? $phoneNumber->prospect : null,
-                ]))>
+                ]))
+>
     @svg('heroicon-m-phone', 'size-5', ['x-show' => '! isLoading'])
 
     <x-filament::loading-indicator

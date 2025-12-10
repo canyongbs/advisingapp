@@ -36,7 +36,10 @@
 @php
     use Illuminate\Support\Js;
 
-    $managers = array_filter($managers, fn(string $manager): bool => $manager::canViewForRecord($this->getRecord(), static::class));
+    $managers = array_filter(
+        $managers,
+        fn(string $manager): bool => $manager::canViewForRecord($this->getRecord(), static::class),
+    );
 @endphp
 
 @if ($managers)

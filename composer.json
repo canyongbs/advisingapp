@@ -69,7 +69,7 @@
         "defectivecode/laravel-sqs-extended": "^1.1.0",
         "ezimuel/guzzlestreams": "^4.0",
         "fakerphp/faker": "^1.23",
-        "filament/filament": "^4.1.9",
+        "filament/filament": "^4.3.1",
         "filament/spatie-laravel-media-library-plugin": "^4.1.9",
         "filament/spatie-laravel-settings-plugin": "^4.1.9",
         "giggsey/libphonenumber-for-php-lite": "^9.0",
@@ -82,7 +82,7 @@
         "laravel/octane": "^2.8.3",
         "laravel/pennant": "^1.10",
         "laravel/sanctum": "^4.0",
-        "laravel/socialite": "^5.15",
+        "laravel/socialite": "^5.24.0",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.5",
         "league/flysystem-aws-s3-v3": "^3.28",
@@ -168,12 +168,14 @@
         ],
         "post-install-cmd": [
             "@php -r \"if (file_exists('vendor/telnyx/telnyx-php/composer.lock')) { unlink('vendor/telnyx/telnyx-php/composer.lock'); }\"",
-            "@php -r \"if (file_exists('vendor/talkroute/message-segment-calculator/tools/php-cs-fixer/composer.lock')) { unlink('vendor/talkroute/message-segment-calculator/tools/php-cs-fixer/composer.lock'); }\""
+            "@php -r \"if (file_exists('vendor/talkroute/message-segment-calculator/tools/php-cs-fixer/composer.lock')) { unlink('vendor/talkroute/message-segment-calculator/tools/php-cs-fixer/composer.lock'); }\"",
+            "@php -r \"if (file_exists('vendor/spatie/laravel-health/yarn.lock')) { unlink('vendor/spatie/laravel-health/yarn.lock'); }\""
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
             "@php -r \"if (file_exists('vendor/telnyx/telnyx-php/composer.lock')) { unlink('vendor/telnyx/telnyx-php/composer.lock'); }\"",
-            "@php -r \"if (file_exists('vendor/talkroute/message-segment-calculator/tools/php-cs-fixer/composer.lock')) { unlink('vendor/talkroute/message-segment-calculator/tools/php-cs-fixer/composer.lock'); }\""
+            "@php -r \"if (file_exists('vendor/talkroute/message-segment-calculator/tools/php-cs-fixer/composer.lock')) { unlink('vendor/talkroute/message-segment-calculator/tools/php-cs-fixer/composer.lock'); }\"",
+            "@php -r \"if (file_exists('vendor/spatie/laravel-health/yarn.lock')) { unlink('vendor/spatie/laravel-health/yarn.lock'); }\""
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""

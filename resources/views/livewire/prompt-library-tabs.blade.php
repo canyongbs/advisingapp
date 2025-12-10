@@ -35,7 +35,11 @@
     use Illuminate\Support\Str;
     use AdvisingApp\Ai\Enums\AiPromptTabs;
 
-    $normalizeWhitespace = fn($text) => preg_replace('/[\x{00A0}\x{202F}\x{2007}\x{2009}\x{200A}\x{2002}\x{2003}\x{2004}\x{2005}\x{2006}\x{205F}]+/u', ' ', $text);
+    $normalizeWhitespace = fn($text) => preg_replace(
+        '/[\x{00A0}\x{202F}\x{2007}\x{2009}\x{200A}\x{2002}\x{2003}\x{2004}\x{2005}\x{2006}\x{205F}]+/u',
+        ' ',
+        $text,
+    );
 @endphp
 
 <div class="mx-auto w-full max-w-7xl px-4 py-6">

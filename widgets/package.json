@@ -43,7 +43,7 @@
         "@headlessui/vue": "^1.7.16",
         "@heroicons/vue": "^2.1.1",
         "@ryangjchandler/alpine-clipboard": "^2.3.0",
-        "@shufo/prettier-plugin-blade": "1.13.4",
+        "@shufo/prettier-plugin-blade": "^1.16.1",
         "@tiptap/core": "^2.2.1",
         "@tiptap/extension-color": "^2.2.1",
         "@tiptap/extension-link": "^2.2.1",

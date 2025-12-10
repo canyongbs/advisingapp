@@ -36,7 +36,9 @@
     use AdvisingApp\Prospect\Models\ProspectEmailAddress;
     use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 
-    $isBounced = ($emailAddress instanceof StudentEmailAddress || $emailAddress instanceof ProspectEmailAddress) && $emailAddress->bounced()->exists();
+    $isBounced =
+        ($emailAddress instanceof StudentEmailAddress || $emailAddress instanceof ProspectEmailAddress) &&
+        $emailAddress->bounced()->exists();
 @endphp
 
 <button
@@ -45,12 +47,14 @@
     x-data="{ isLoading: false }"
     x-on:engage-action-finished-loading.window="isLoading = false"
     x-on:click="isLoading = true; $dispatch('send-email', { emailAddressKey: @js($emailAddress->getKey()) })"
-    @if (!$isBounced) x-tooltip.raw="Click to send an email" @endif @disabled(
+    @if (!$isBounced) x-tooltip.raw="Click to send an email" @endif
+    @disabled(
         $isBounced ||
             !auth()->user()->can('create', [
                     Engagement::class,
                     $emailAddress instanceof ProspectEmailAddress ? $emailAddress->prospect : null,
-                ]))>
+                ]))
+>
     <div class="mt-1">
         @svg('heroicon-m-envelope', 'size-5', ['x-show' => '! isLoading'])
     </div>

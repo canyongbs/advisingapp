@@ -44,9 +44,13 @@
         @php
             $themeSettings = app(ThemeSettings::class);
 
-            $themeChangelogUrl = !empty($themeSettings->changelog_url) ? $themeSettings->changelog_url : 'https://advising.app/changelog/';
+            $themeChangelogUrl = !empty($themeSettings->changelog_url)
+                ? $themeSettings->changelog_url
+                : 'https://advising.app/changelog/';
 
-            $productResourcehubUrl = !empty($themeSettings->product_resource_hub_url) ? $themeSettings->product_resource_hub_url : 'https://canyongbs.aiding.app/portal/categories/9bcc47d1-05be-40d2-bf95-9bd719209b06';
+            $productResourcehubUrl = !empty($themeSettings->product_resource_hub_url)
+                ? $themeSettings->product_resource_hub_url
+                : 'https://canyongbs.aiding.app/portal/categories/9bcc47d1-05be-40d2-bf95-9bd719209b06';
         @endphp
         <x-authorization::login-version-card :themeChangelogUrl="$themeChangelogUrl" />
         <x-authorization::login-resource-portal-card :productResourcehubUrl="$productResourcehubUrl" />

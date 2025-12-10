@@ -466,9 +466,7 @@
 
         <div
             class="grid h-full flex-1 grid-cols-1 grid-rows-[1fr_auto] gap-2 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-4 2xl:grid-cols-4"
-            x-data="requests($wire, @js(
-                auth()->user()->getKey()
-            ))"
+            x-data="requests($wire, @js(auth()->user()->getKey()))"
         >
             <div class="col-span-1 hidden overflow-y-auto px-px pt-3 lg:block lg:pt-6">
                 {{ $sidebarContent() }}
@@ -516,14 +514,16 @@
                             results: @js($this->request->results ?? ''),
                             outline: @js($this->request->outline),
                             sources: @js($this->request->sources),
-                            files: @js(
-                                $this->request->getMedia('files')->map(fn($media) => data_set($media, 'temporary_url', $media->getTemporaryUrl(now()->addDay())))->toArray()
-                            ),
+                            files: @js($this->request->getMedia('files')->map(fn($media) => data_set($media, 'temporary_url', $media->getTemporaryUrl(now()->addDay())))->toArray()),
                             links: @js($this->request->links),
                             searchQueries: @js($this->request->search_queries),
                             parsedFiles: @js(
-                                $this->request->parsedFiles->loadMissing(['media'])->map(fn($file) => data_set($file, 'media.temporary_url', $file->media->getTemporaryUrl(now()->addDay())))->map(fn($file): array => Arr::except($file->toArray(), ['results']))->toArray()
-                            ),
+    $this->request->parsedFiles
+        ->loadMissing(['media'])
+        ->map(fn($file) => data_set($file, 'media.temporary_url', $file->media->getTemporaryUrl(now()->addDay())))
+        ->map(fn($file): array => Arr::except($file->toArray(), ['results']))
+        ->toArray(),
+),
                             parsedLinks: @js($this->request->parsedLinks->map(fn($link): array => Arr::except($link->toArray(), ['results']))->toArray()),
                             parsedSearchResults: @js($this->request->parsedSearchResults->map(fn($searchResults): array => Arr::except($searchResults->toArray(), ['results']))->toArray()),
                             title: @js($this->request->title),

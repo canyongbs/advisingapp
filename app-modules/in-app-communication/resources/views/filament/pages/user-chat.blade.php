@@ -115,14 +115,14 @@
                                                         </x-filament::badge>
                                                     @endif
 
-                                                    <x-filament::loading-indicator :attributes="(new \Illuminate\View\ComponentAttributeBag([
+                                                    <x-filament::loading-indicator :attributes="new \Illuminate\View\ComponentAttributeBag([
                                                         'wire:loading.delay.' .
                                                         config('filament.livewire_loading_delay', 'default') => '',
                                                         'wire:target' =>
                                                             'selectConversation(\'' .
                                                             $conversationItem->getKey() .
                                                             '\')',
-                                                    ]))->class(['w-5 h-5'])" />
+                                                    ])->class(['w-5 h-5'])" />
                                                 </div>
                                             </button>
                                             @php
