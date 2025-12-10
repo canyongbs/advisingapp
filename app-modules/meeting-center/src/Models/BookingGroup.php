@@ -61,11 +61,17 @@ class BookingGroup extends BaseModel implements Auditable
         'name',
         'description',
         'default_appointment_duration',
+        'is_default_appointment_buffer_enabled',
+        'default_appointment_buffer_before_duration',
+        'default_appointment_buffer_after_duration',
         'available_appointment_hours',
     ];
 
     protected $casts = [
         'default_appointment_duration' => 'integer',
+        'is_default_appointment_buffer_enabled' => 'boolean',
+        'default_appointment_buffer_before_duration' => 'integer',
+        'default_appointment_buffer_after_duration' => 'integer',
         'available_appointment_hours' => 'array',
     ];
 

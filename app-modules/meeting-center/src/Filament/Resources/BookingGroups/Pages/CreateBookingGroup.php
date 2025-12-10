@@ -39,11 +39,14 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use App\Features\BookingGroupAppointmentConfigurationFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
+use App\Filament\Forms\Components\DurationInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class CreateBookingGroup extends CreateRecord
@@ -83,19 +86,24 @@ class CreateBookingGroup extends CreateRecord
                 ]),
             Section::make('Availability')
                 ->schema([
-                    Select::make('default_appointment_duration')
-                        ->label('Meeting Duration')
-                        ->required()
-                        ->options([
-                            15 => '15 minutes',
-                            30 => '30 minutes',
-                            60 => '1 hour',
-                        ]),
+                    DurationInput::make('default_appointment_duration', isRequired: true, hasDays: true)
+                        ->label('Meeting Duration'),
+                    Toggle::make('is_default_appointment_buffer_enabled')
+                        ->label('Buffer Time')
+                        ->live()
+                        ->columnStart(1),
+                    DurationInput::make('default_appointment_buffer_before_duration', isRequired: true, hasDays: false)
+                        ->label('Before')
+                        ->columnStart(1)
+                        ->visible(fn (Get $get): bool => $get('is_default_appointment_buffer_enabled')),
+                    DurationInput::make('default_appointment_buffer_after_duration', isRequired: true, hasDays: false)
+                        ->label('After')
+                        ->visible(fn (Get $get): bool => $get('is_default_appointment_buffer_enabled')),
                     DailyHoursRepeater::make('available_appointment_hours')
                         ->label('Days and Hours')
                         ->columnSpanFull(),
                 ])
-                ->columns(2)
+                ->columns(3)
                 ->visible(BookingGroupAppointmentConfigurationFeature::active()),
         ]);
     }
@@ -104,6 +112,16 @@ class CreateBookingGroup extends CreateRecord
     {
         if (! BookingGroupAppointmentConfigurationFeature::active()) {
             return $data;
+        }
+
+        $data['default_appointment_duration'] = DurationInput::mutateDataBeforeSave($data['default_appointment_duration']);
+
+        if (array_key_exists('default_appointment_buffer_before_duration', $data)) {
+            $data['default_appointment_buffer_before_duration'] = DurationInput::mutateDataBeforeSave($data['default_appointment_buffer_before_duration']);
+        }
+
+        if (array_key_exists('default_appointment_buffer_after_duration', $data)) {
+            $data['default_appointment_buffer_after_duration'] = DurationInput::mutateDataBeforeSave($data['default_appointment_buffer_after_duration']);
         }
 
         $data['available_appointment_hours'] = DailyHoursRepeater::mutateDataBeforeSave($data['available_appointment_hours']);
