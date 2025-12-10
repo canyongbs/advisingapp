@@ -76,6 +76,8 @@ class GenerateFormKitSchema
 
     public function content(array $blocks, array $content, Submissible|SubmissibleStep $submissible, ?Collection $fields = null): array
     {
+        $actualSubmissible = $submissible instanceof SubmissibleStep ? $submissible->submissible : $submissible;
+
         return array_map(
             fn (array $component): array | string => match ($component['type'] ?? null) {
                 'bulletList' => ['$el' => 'ul', 'children' => $this->content($blocks, $component['content'] ?? [], $submissible, $fields)],
@@ -89,7 +91,7 @@ class GenerateFormKitSchema
                 'small' => ['$el' => 'small', 'children' => $this->content($blocks, $component['content'] ?? [], $submissible, $fields)],
                 'text' => $this->text($component),
                 'image' => $this->getImageSrc($component, $submissible),
-                'tiptapBlock' => ($field = ($fields[$component['attrs']['id']] ?? null)) ? $blocks[$component['attrs']['type']]::getFormKitSchema($field, $submissible, $this->author) : [],
+                'tiptapBlock' => ($field = ($fields[$component['attrs']['id']] ?? null)) ? $blocks[$component['attrs']['type']]::getFormKitSchema($field, $actualSubmissible, $this->author) : [],
                 default => [],
             },
             $content,

@@ -143,7 +143,7 @@ trait HasSharedFormConfiguration
                         ->autocomplete(false)
                         ->columnSpanFull()
                         ->lazy(),
-                    $this->fieldBuilder(),
+                    $this->fieldBuilder(isAuthenticatedPath: '../../is_authenticated'),
                 ])
                 ->addActionLabel('New step')
                 ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
@@ -167,10 +167,10 @@ trait HasSharedFormConfiguration
         ];
     }
 
-    public function fieldBuilder(): TiptapEditor
+    public function fieldBuilder(string $isAuthenticatedPath = 'is_authenticated'): TiptapEditor
     {
         return TiptapEditor::make('content')
-            ->blocks(fn (Get $get): array => FormFieldBlockRegistry::get($get('is_authenticated') ?? false))
+            ->blocks(fn (Get $get): array => FormFieldBlockRegistry::get($get($isAuthenticatedPath) ?? false))
             ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
             ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()
