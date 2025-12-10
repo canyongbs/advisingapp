@@ -39,7 +39,6 @@ namespace AdvisingApp\Survey\Filament\Blocks;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
-use AdvisingApp\Form\Models\SubmissibleStep;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 
@@ -52,7 +51,7 @@ class SliderSurveyFieldBlock extends FormFieldBlock
         return 'slider';
     }
 
-    public static function getFormKitSchema(SubmissibleField $field, Submissible|SubmissibleStep|null $submissible = null, Student|Prospect|null $author = null): array
+    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
         return [
             '$formkit' => 'slider',
