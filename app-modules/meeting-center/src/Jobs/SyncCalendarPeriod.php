@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -36,71 +36,46 @@
 
 namespace AdvisingApp\MeetingCenter\Jobs;
 
+use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use App\Models\Tenant;
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Bus;
 
-class SyncCalendar implements ShouldQueue, ShouldBeUnique
+class SyncCalendarPeriod implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
-    public function __construct(protected Calendar $calendar)
-    {
+    public function __construct(
+        protected Calendar $calendar,
+        protected Carbon $start,
+        protected Carbon $end,
+    ) {
         $this->onQueue(config('meeting-center.queue'));
     }
 
     public function uniqueId(): string
     {
-        return Tenant::current()->getKey() . ':' . $this->calendar->getKey();
+        return Tenant::current()->getKey() . ':' . $this->calendar->getKey() . ':' . $this->start->format('Y-m-d') . ':' . $this->end->format('Y-m-d');
     }
 
     public function handle(): void
     {
-        $now = Carbon::now();
-        $jobs = [];
-
-        // Chunk 1: Current month + next month
-        $jobs[] = new SyncCalendarPeriod(
-            $this->calendar,
-            $now->copy()->startOfMonth(),
-            $now->copy()->addMonth()->endOfMonth()
-        );
-
-        // Chunk 2: Past 2 months
-        $jobs[] = new SyncCalendarPeriod(
-            $this->calendar,
-            $now->copy()->subMonths(2)->startOfMonth(),
-            $now->copy()->subMonth()->endOfMonth()
-        );
-
-        // Chunks 3-7: Remaining future months for the next year
-        for ($month = 2; $month <= 10; $month += 2) {
-            $jobs[] = new SyncCalendarPeriod(
+        resolve(CalendarManager::class)
+            ->driver($this->calendar->provider_type->value)
+            ->syncEvents(
                 $this->calendar,
-                $now->copy()->addMonths($month)->startOfMonth(),
-                $now->copy()->addMonths($month + 1)->endOfMonth()
+                new DateTime($this->start->toDateTimeString()),
+                new DateTime($this->end->toDateTimeString())
             );
-        }
-
-        // Chunks 8-12: Remaining past months for the last year
-        for ($month = 3; $month <= 11; $month += 2) {
-            $jobs[] = new SyncCalendarPeriod(
-                $this->calendar,
-                $now->copy()->subMonths($month + 1)->startOfMonth(),
-                $now->copy()->subMonths($month)->endOfMonth()
-            );
-        }
-
-        Bus::chain($jobs)->dispatch();
     }
 }

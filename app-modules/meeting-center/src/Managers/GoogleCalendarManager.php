@@ -158,6 +158,9 @@ class GoogleCalendarManager implements CalendarInterface
 
     public function syncEvents(Calendar $calendar, ?DateTime $start = null, ?DateTime $end = null, ?int $perPage = null): void
     {
+        $start = $start ?? now()->subYear()->startOfDay();
+        $end = $end ?? now()->addYear()->endOfDay();
+
         $events = collect($this->getEvents($calendar, $start, $end, $perPage));
 
         $events
@@ -195,8 +198,13 @@ class GoogleCalendarManager implements CalendarInterface
             ->whereNull('provider_id')
             ->each(fn ($event) => $this->createEvent($event));
 
-        // TODO: needs to only delete orphaned events and not previous events
-        // $calendar->events()->whereNotIn('provider_id', $events->pluck('id'))->delete();
+        // Only delete orphaned events within the synced date range
+        $calendar->events()
+            ->whereNotNull('provider_id')
+            ->where('starts_at', '>=', $start)
+            ->where('starts_at', '<', $end)
+            ->whereNotIn('provider_id', $events->pluck('id'))
+            ->delete();
     }
 
     public function revokeToken(Calendar $calendar): bool
