@@ -34,40 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Providers;
+use App\Features\RetentionCrmRestrictionFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Laravel\Pennant\Feature;
 
-use AdvisingApp\Campaign\CampaignPlugin;
-use AdvisingApp\Campaign\Listeners\HandleUserRetentionCrmRestrictionSet;
-use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use App\Events\UserRetentionCrmRestrictionSet;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\ServiceProvider;
-
-class CampaignServiceProvider extends ServiceProvider
-{
-    public function register()
+return new class () extends Migration {
+    public function up(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new CampaignPlugin()));
+        DB::transaction(function () {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('retention_crm_restriction')->nullable();
+            });
+
+            Feature::activate(RetentionCrmRestrictionFeature::class);
+        });
     }
 
-    public function boot()
+    public function down(): void
     {
-        Relation::morphMap([
-            'campaign' => Campaign::class,
-            'campaign_action' => CampaignAction::class,
-        ]);
+        DB::transaction(function () {
+            Feature::deactivate(RetentionCrmRestrictionFeature::class);
 
-        $this->registerEvents();
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('retention_crm_restriction');
+            });
+        });
     }
-
-    protected function registerEvents(): void
-    {
-        Event::listen(
-            UserRetentionCrmRestrictionSet::class,
-            HandleUserRetentionCrmRestrictionSet::class
-        );
-    }
-}
+};

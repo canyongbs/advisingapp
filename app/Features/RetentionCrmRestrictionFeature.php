@@ -34,40 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Providers;
+namespace App\Features;
 
-use AdvisingApp\Campaign\CampaignPlugin;
-use AdvisingApp\Campaign\Listeners\HandleUserRetentionCrmRestrictionSet;
-use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use App\Events\UserRetentionCrmRestrictionSet;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\ServiceProvider;
+use App\Support\AbstractFeatureFlag;
 
-class CampaignServiceProvider extends ServiceProvider
+class RetentionCrmRestrictionFeature extends AbstractFeatureFlag
 {
-    public function register()
+    public function resolve(mixed $scope): mixed
     {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new CampaignPlugin()));
-    }
-
-    public function boot()
-    {
-        Relation::morphMap([
-            'campaign' => Campaign::class,
-            'campaign_action' => CampaignAction::class,
-        ]);
-
-        $this->registerEvents();
-    }
-
-    protected function registerEvents(): void
-    {
-        Event::listen(
-            UserRetentionCrmRestrictionSet::class,
-            HandleUserRetentionCrmRestrictionSet::class
-        );
+        return false;
     }
 }

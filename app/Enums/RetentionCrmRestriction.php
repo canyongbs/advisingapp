@@ -34,40 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Providers;
+namespace App\Enums;
 
-use AdvisingApp\Campaign\CampaignPlugin;
-use AdvisingApp\Campaign\Listeners\HandleUserRetentionCrmRestrictionSet;
-use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use App\Events\UserRetentionCrmRestrictionSet;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\ServiceProvider;
+use Filament\Support\Contracts\HasLabel;
 
-class CampaignServiceProvider extends ServiceProvider
+enum RetentionCrmRestriction: string implements HasLabel
 {
-    public function register()
-    {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new CampaignPlugin()));
-    }
+    case FacultyMember = 'faculty';
+    case CareTeamMember = 'care_team';
 
-    public function boot()
+    public function getLabel(): string
     {
-        Relation::morphMap([
-            'campaign' => Campaign::class,
-            'campaign_action' => CampaignAction::class,
-        ]);
-
-        $this->registerEvents();
-    }
-
-    protected function registerEvents(): void
-    {
-        Event::listen(
-            UserRetentionCrmRestrictionSet::class,
-            HandleUserRetentionCrmRestrictionSet::class
-        );
+        return match ($this) {
+            self::FacultyMember => 'Faculty Member',
+            self::CareTeamMember => 'Care Team Member',
+        };
     }
 }

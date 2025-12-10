@@ -75,6 +75,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
+use App\Enums\RetentionCrmRestriction;
 use App\Filament\Resources\Users\UserResource;
 use App\Observers\UserObserver;
 use App\Support\HasAdvancedFilter;
@@ -167,6 +168,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'signature' => 'array',
         'is_submit_ai_chat_on_enter_enabled' => 'boolean',
         'is_action_center_update_enabled' => 'boolean',
+        'retention_crm_restriction' => RetentionCrmRestriction::class,
     ];
 
     protected $fillable = [
@@ -210,6 +212,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'signature',
         'is_submit_ai_chat_on_enter_enabled',
         'is_action_center_update_enabled',
+        'retention_crm_restriction',
     ];
 
     /** @var array<int, string> */

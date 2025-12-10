@@ -40,6 +40,8 @@ use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\Team\Models\Team;
+use App\Enums\RetentionCrmRestriction;
+use App\Features\RetentionCrmRestrictionFeature;
 use App\Filament\Forms\Components\Licenses;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Filament\Resources\Users\UserResource;
@@ -63,6 +65,8 @@ class EditUser extends EditRecord
     use EditPageRedirection;
 
     protected static string $resource = UserResource::class;
+
+    protected ?bool $hasDatabaseTransactions = true;
 
     public function form(Schema $schema): Schema
     {
@@ -133,6 +137,12 @@ class EditUser extends EditRecord
 
                         return $user->cannot('create', License::class);
                     }),
+                Select::make('retention_crm_restriction')
+                    ->label('Retention CRM Restriction')
+                    ->options(RetentionCrmRestriction::class)
+                    ->placeholder('No Restrictions')
+                    ->visible(fn () => RetentionCrmRestrictionFeature::active())
+                    ->hidden(fn (?User $record) => $record?->isAdmin() ?? false),
             ]);
     }
 
