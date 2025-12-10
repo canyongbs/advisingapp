@@ -38,7 +38,6 @@ namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages;
 
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
@@ -120,18 +119,5 @@ class CreateResourceHubArticle extends CreateRecord
                             ->exists('users', 'id'),
                     ]),
             ]);
-    }
-
-    protected function afterCreate(): void
-    {
-        $resourceHubArticle = $this->getRecord();
-
-        assert($resourceHubArticle instanceof ResourceHubArticle);
-
-        $data = $this->form->getRawState();
-
-        if (! empty($data['manager_ids'])) {
-            $resourceHubArticle->managers()->sync($data['manager_ids']);
-        }
     }
 }
