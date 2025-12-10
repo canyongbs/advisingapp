@@ -203,6 +203,9 @@ class OutlookCalendarManager implements CalendarInterface
 
     public function syncEvents(Calendar $calendar, ?DateTime $start = null, ?DateTime $end = null, ?int $perPage = null): void
     {
+        $start = $start ?? now()->subYear()->startOfDay();
+        $end = $end ?? now()->addYear()->endOfDay();
+
         $providerEvents = collect($this->getEvents($calendar, $start, $end, $perPage));
 
         $providerEvents
@@ -229,8 +232,11 @@ class OutlookCalendarManager implements CalendarInterface
             ->whereNull('provider_id')
             ->each(fn ($event) => $this->createEvent($event));
 
+        // Only delete orphaned events within the synced date range
         $calendar->events()
             ->whereNotNull('provider_id')
+            ->where('starts_at', '>=', $start)
+            ->where('starts_at', '<', $end)
             ->whereNotIn('provider_id', $providerEvents->map(fn (Event $event) => $event->getId()))
             ->delete();
     }

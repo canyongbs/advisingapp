@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Console\Commands;
 
-use AdvisingApp\MeetingCenter\Managers\CalendarManager;
+use AdvisingApp\MeetingCenter\Jobs\SyncCalendar;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
@@ -53,9 +53,7 @@ class SyncEvents extends Command
     {
         $user = User::where('email', config('local_development.super_admin.email'))->first();
 
-        resolve(CalendarManager::class)
-            ->driver($user->calendar->provider_type->value)
-            ->syncEvents($user->calendar);
+        dispatch(new SyncCalendar($user->calendar));
 
         return static::SUCCESS;
     }

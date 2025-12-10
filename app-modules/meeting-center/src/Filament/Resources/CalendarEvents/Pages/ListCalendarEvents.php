@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\CalendarEventResource;
+use AdvisingApp\MeetingCenter\Jobs\SyncCalendar;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use App\Filament\Tables\Columns\IdColumn;
@@ -50,8 +51,10 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -121,10 +124,7 @@ class ListCalendarEvents extends ListRecords
 
                 $calendar->saveQuietly();
 
-                //TODO: queue
-                resolve(CalendarManager::class)
-                    ->driver($calendar->provider_type->value)
-                    ->syncEvents($calendar);
+                dispatch(new SyncCalendar($calendar));
             });
     }
 
@@ -170,7 +170,9 @@ class ListCalendarEvents extends ListRecords
 
                 return $query->whereRelation('calendar', 'user_id', $user->id);
             })
-            ->defaultSort('starts_at');
+            ->defaultSort('starts_at')
+            ->paginationMode(PaginationMode::Cursor)
+            ->poll('10s');
     }
 
     protected function getHeaderActions(): array
@@ -182,11 +184,13 @@ class ListCalendarEvents extends ListRecords
                     /** @var User $user */
                     $user = auth()->user();
 
-                    resolve(CalendarManager::class)
-                        ->driver($user->calendar->provider_type->value)
-                        ->syncEvents($user->calendar);
+                    dispatch(new SyncCalendar($user->calendar));
 
-                    $this->dispatch('refresh-events');
+                    Notification::make()
+                        ->title('Calendar synchronization started')
+                        ->body('Your calendar is being synchronized in the background. This may take a few moments.')
+                        ->success()
+                        ->send();
                 }),
         ];
     }
