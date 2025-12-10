@@ -99,7 +99,7 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
             },
             'engagement_response' => $record->sender?->full_name,
             'task_history' => 'Task ' . $record->event,
-            'concern_history' => 'Concern ' . $record->event,
+            'alert_history' => 'Concern ' . $record->event,
         };
     }
 
@@ -110,7 +110,7 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
             'engagement' => $this->getEngagementDescription($record),
             'engagement_response' => 'Preview: ' . str($record->getBody())->stripTags(),
             'task_history' => "Title: {$record->subject?->title}",
-            'concern_history' => "{$record->subject?->severity->getLabel()} severity, " . str($record->subject?->description)->limit(200),
+            'alert_history' => "{$record->subject?->severity->getLabel()} severity, " . str($record->subject?->description)->limit(200),
         })->limit(110);
     }
 
@@ -118,7 +118,7 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
     {
         return match ($record->getMorphClass()) {
             'interaction', 'engagement' => $record->user,
-            'task_history', 'concern_history' => $record->subject?->createdBy,
+            'task_history', 'alert_history' => $record->subject?->createdBy,
             default => null,
         };
     }

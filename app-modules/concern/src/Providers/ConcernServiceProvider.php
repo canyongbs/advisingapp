@@ -56,8 +56,8 @@ class ConcernServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([
-            'concern' => Concern::class,
-            'concern_history' => ConcernHistory::class,
+            'alert' => Concern::class,
+            'alert_history' => ConcernHistory::class,
         ]);
 
         $this->registerEvents();
