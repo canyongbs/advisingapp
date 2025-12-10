@@ -62,5 +62,7 @@ class SurveyServiceProvider extends ServiceProvider
             'survey_submission' => SurveySubmission::class,
             'survey' => Survey::class,
         ]);
+
+        $this->loadRoutesFrom(__DIR__ . '/../../routes/widgets.php');
     }
 }

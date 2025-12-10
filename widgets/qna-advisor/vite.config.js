@@ -40,7 +40,7 @@ export default defineConfig({
     experimental: {
         renderBuiltUrl(filename) {
             return {
-                runtime: `window.__VITE_QNA_ADVISOR_RESOURCE_URL__ + ${JSON.stringify(filename)}`,
+                runtime: `window.__VITE_QNA_ADVISOR_RESOURCE_URL__.replace(/\\/$/, '') + '/' + ${JSON.stringify(filename)}`,
             };
         },
     },
@@ -67,7 +67,7 @@ export default defineConfig({
                 chunkFileNames: '[name]-[hash].js',
             },
         },
-        outDir: resolve(__dirname, '../../public/js/widgets/qna-advisor'),
+        outDir: resolve(__dirname, '../../storage/app/public/widgets/ai/qna-advisors'),
         emptyOutDir: true,
         sourcemap: true,
     },

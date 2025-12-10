@@ -40,7 +40,7 @@ export default defineConfig({
     experimental: {
         renderBuiltUrl(filename) {
             return {
-                runtime: `window.__VITE_PERSONAL_BOOKING_PAGE_ASSET_URL__ + ${JSON.stringify(filename)}`,
+                runtime: `window.__VITE_PERSONAL_BOOKING_PAGE_ASSET_URL__.replace(/\\/$/, '') + '/' + ${JSON.stringify(filename)}`,
             };
         },
     },

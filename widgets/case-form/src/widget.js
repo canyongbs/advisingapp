@@ -36,7 +36,7 @@ import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
 import VueSignaturePad from 'vue-signature-pad';
 import App from './App.vue';
 import config from './formkit.config.js';
-import './widget.css';
+import styles from './widget.css?inline';
 
 customElements.define(
     'case-form-embed',
@@ -57,6 +57,7 @@ customElements.define(
 
             return () => h(App, props);
         },
-        props: ['url'],
+        props: ['entryUrl'],
+        styles: [styles],
     }),
 );

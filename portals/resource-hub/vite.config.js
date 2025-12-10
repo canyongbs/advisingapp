@@ -37,16 +37,34 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
     plugins: [vue()],
+    experimental: {
+        renderBuiltUrl(filename) {
+            return {
+                runtime: `window.__VITE_RESOURCE_HUB_PORTAL_ASSET_URL__.replace(/\\/$/, '') + '/' + ${JSON.stringify(filename)}`,
+            };
+        },
+    },
     build: {
         manifest: true,
-        lib: {
-            entry: resolve(__dirname, './src/portal.js'),
-            name: 'ResourceHubPortal',
-            fileName: 'advising-app-resource-hub-portal',
-            cssFileName: 'style',
-            formats: ['es'],
+        rollupOptions: {
+            input: {
+                portal: resolve(__dirname, './src/portal.js'),
+                loader: resolve(__dirname, './src/loader.js'),
+            },
+            output: {
+                entryFileNames: (chunkInfo) => {
+                    return chunkInfo.name === 'loader'
+                        ? 'advising-app-resource-hub-portal.js'
+                        : 'advising-app-resource-hub-portal-app-[hash].js';
+                },
+                assetFileNames: (assetInfo) => {
+                    return '[name]-[hash][extname]';
+                },
+                // Place chunks directly in the root
+                chunkFileNames: '[name]-[hash].js',
+            },
         },
-        outDir: resolve(__dirname, '../../public/js/portals/resource-hub'),
+        outDir: resolve(__dirname, '../../storage/app/public/portals/resource-hub/assets'),
         emptyOutDir: true,
         sourcemap: true,
     },

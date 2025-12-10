@@ -78,17 +78,12 @@ class ManageSurveySubmissions extends ManageRelatedRecords
                 TextColumn::make('submitted_at')
                     ->dateTime()
                     ->sortable(),
-                TextColumn::make('author.email')
+                TextColumn::make('author.primaryEmailAddress.address')
                     ->searchable(),
                 TextColumn::make('author_type')
                     ->badge()
                     ->formatStateUsing(fn (?string $state): ?string => filled($state) ? ucfirst($state) : null)
                     ->color('success'),
-                // TODO: Add requester column when implemented
-                // TextColumn::make('requester.name'),
-                // TextColumn::make('requested_at')
-                //     ->dateTime()
-                //     ->state(fn (SurveySubmission $record): ?CarbonInterface => $record->requester ? $record->created_at : null),
             ])
             ->filters([
                 FormSubmissionStatusFilter::make(),
@@ -118,7 +113,7 @@ class ManageSurveySubmissions extends ManageRelatedRecords
                             ->schema([
                                 TextEntry::make('author.' . $record->author::displayNameKey())
                                     ->label('Name'),
-                                TextEntry::make('author.email')
+                                TextEntry::make('author.primaryEmailAddress.address')
                                     ->label('Email address'),
                             ])
                             ->columns(2),

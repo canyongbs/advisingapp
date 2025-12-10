@@ -44,14 +44,57 @@ use App\Http\Controllers\Controller;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CaseFeedbackFormWidgetController extends Controller
 {
+    public function assets(Request $request, CaseModel $case): JsonResponse
+    {
+        // Read the Vite manifest to determine the correct asset paths
+        $manifestPath = public_path('storage/widgets/case-feedback-forms/.vite/manifest.json');
+        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+        $manifest = json_decode(File::get($manifestPath), true, 512, JSON_THROW_ON_ERROR);
+
+        $widgetEntry = $manifest['src/widget.js'];
+
+        return response()->json([
+            'asset_url' => route('widgets.case-feedback-forms.asset'),
+            'entry' => route('widgets.case-feedback-forms.api.entry', ['case' => $case]),
+            'js' => route('widgets.case-feedback-forms.asset', ['file' => $widgetEntry['file']]),
+        ]);
+    }
+
+    public function asset(Request $request, string $file): StreamedResponse
+    {
+        $path = "widgets/case-feedback-forms/{$file}";
+
+        $disk = Storage::disk('public');
+
+        abort_if(! $disk->exists($path), 404, 'File not found.');
+
+        $mimeType = $disk->mimeType($path);
+
+        $stream = $disk->readStream($path);
+
+        abort_if(is_null($stream), 404, 'File not found.');
+
+        return response()->streamDownload(
+            function () use ($stream) {
+                fpassthru($stream);
+                fclose($stream);
+            },
+            $file,
+            ['Content-Type' => $mimeType]
+        );
+    }
+
     public function view(Request $request, CaseModel $case): JsonResponse
     {
         $logo = ThemeSettings::getSettingsPropertyModel('theme.is_logo_active')->getFirstMedia('logo');
@@ -61,17 +104,12 @@ class CaseFeedbackFormWidgetController extends Controller
             [
                 'requires_authentication' => true,
                 'is_authenticated' => (bool) auth('student')->check() || (bool) auth('prospect')->check(),
+                'user_auth_check_url' => route('portals.user.auth-check'),
                 'guard' => auth('student')->check() ? 'student' : (auth('prospect')->check() ? 'prospect' : null),
-                'authentication_url' => URL::to(
-                    URL::signedRoute(
-                        name: 'api.portal.resource-hub.request-authentication',
-                        absolute: false,
-                    )
-                ),
+                'authentication_url' => URL::signedRoute(name: 'portals.resource-hub.api.request-authentication'),
                 'submission_url' => URL::signedRoute(
-                    name: 'cases.feedback.submit',
+                    name: 'widgets.case-feedback-forms.api.submit',
                     parameters: ['case' => $case],
-                    absolute: false
                 ),
                 'header_logo' => $logo?->getTemporaryUrl(
                     expiration: now()->addMinutes(5),

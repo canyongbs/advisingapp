@@ -37,16 +37,34 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
     plugins: [vue()],
+    experimental: {
+        renderBuiltUrl(filename) {
+            return {
+                runtime: `window.__VITE_SURVEYS_ASSET_URL__.replace(/\\/$/, '') + '/' + ${JSON.stringify(filename)}`,
+            };
+        },
+    },
     build: {
         manifest: true,
-        lib: {
-            entry: resolve(__dirname, 'src/widget.js'),
-            name: 'AdvisingAppSurveyWidget',
-            fileName: 'advising-app-survey-widget',
-            cssFileName: 'style',
-            formats: ['es'],
+        rollupOptions: {
+            input: {
+                widget: resolve(__dirname, './src/widget.js'),
+                loader: resolve(__dirname, './src/loader.js'),
+            },
+            output: {
+                entryFileNames: (chunkInfo) => {
+                    return chunkInfo.name === 'loader'
+                        ? 'advising-app-survey-widget.js'
+                        : 'advising-app-survey-widget-app-[hash].js';
+                },
+                assetFileNames: (assetInfo) => {
+                    return '[name]-[hash][extname]';
+                },
+                // Place chunks directly in the root
+                chunkFileNames: '[name]-[hash].js',
+            },
         },
-        outDir: resolve(__dirname, '../../public/js/widgets/survey'),
+        outDir: resolve(__dirname, '../../storage/app/public/widgets/surveys'),
         emptyOutDir: true,
         sourcemap: true,
     },

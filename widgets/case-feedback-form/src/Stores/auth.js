@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,36 +31,40 @@
 
 </COPYRIGHT>
 */
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
+export const useAuthStore = defineStore('auth', () => {
+    const user = ref(null);
+    const portalRequiresAuthentication = ref(false);
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-
-class QnaAdvisorResourceController
-{
-    public function __invoke(Request $request, string $file): StreamedResponse
-    {
-        $path = "widgets/ai/qna-advisors/{$file}";
-
-        $disk = Storage::disk('public');
-
-        abort_if(! $disk->exists($path), 404, 'File not found.');
-
-        $mimeType = $disk->mimeType($path);
-
-        $stream = $disk->readStream($path);
-
-        abort_if(is_null($stream), 404, 'File not found.');
-
-        return response()->streamDownload(
-            function () use ($stream) {
-                fpassthru($stream);
-                fclose($stream);
-            },
-            $file,
-            ['Content-Type' => $mimeType]
-        );
+    async function setUser(userToSet) {
+        user.value = userToSet;
     }
-}
+
+    async function getUser() {
+        return user.value;
+    }
+
+    async function removeUser() {
+        user.value = null;
+    }
+
+    async function setPortalRequiresAuthentication(value) {
+        portalRequiresAuthentication.value = value;
+    }
+
+    async function getPortalRequiresAuthentication() {
+        return portalRequiresAuthentication.value;
+    }
+
+    return {
+        user,
+        getUser,
+        setUser,
+        removeUser,
+        portalRequiresAuthentication,
+        setPortalRequiresAuthentication,
+        getPortalRequiresAuthentication,
+    };
+});

@@ -36,11 +36,12 @@ import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
 import VueSignaturePad from 'vue-signature-pad';
 import App from './App.vue';
 import config from './formkit.config.js';
-import './widget.css';
+import styles from './widget.css?inline';
 
 customElements.define(
     'event-registration-embed',
     defineCustomElement({
+        styles: [styles],
         setup(props) {
             const app = createApp();
 
@@ -57,6 +58,6 @@ customElements.define(
 
             return () => h(App, props);
         },
-        props: ['url'],
+        props: ['entryUrl'],
     }),
 );

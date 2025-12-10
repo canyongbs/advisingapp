@@ -48,7 +48,7 @@
 
     let { steps, visitedSteps, activeStep, setStep, wizardPlugin } = wizard();
 
-    const props = defineProps(['url']);
+    const props = defineProps({ entryUrl: String });
 
     const data = reactive({
         steps,
@@ -115,14 +115,6 @@
     });
 
     const submittedSuccess = ref(false);
-
-    const scriptUrl = new URL(document.currentScript.getAttribute('src'));
-    const protocol = scriptUrl.protocol;
-    const scriptHostname = scriptUrl.hostname;
-    const scriptQuery = Object.fromEntries(scriptUrl.searchParams);
-
-    const hostUrl = `${protocol}//${scriptHostname}`;
-
     const display = ref(false);
     const formName = ref('');
     const formIsAuthenticated = ref(false);
@@ -144,7 +136,7 @@
     });
 
     async function getForm() {
-        await fetch(props.url)
+        await fetch(props.entryUrl)
             .then((response) => response.json())
             .then((json) => {
                 if (json.error) {
@@ -309,8 +301,6 @@
         class="font-sans"
     >
         <div class="prose max-w-none" v-if="display && !submittedSuccess">
-            <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/events/style.css'" />
-
             <h1>
                 {{ formName }}
             </h1>

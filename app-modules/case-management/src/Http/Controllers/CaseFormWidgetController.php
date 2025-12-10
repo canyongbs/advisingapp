@@ -50,16 +50,59 @@ use Closure;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CaseFormWidgetController extends Controller
 {
+    public function assets(Request $request, CaseForm $caseForm): JsonResponse
+    {
+        // Read the Vite manifest to determine the correct asset paths
+        $manifestPath = public_path('storage/widgets/case-forms/.vite/manifest.json');
+        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+        $manifest = json_decode(File::get($manifestPath), true, 512, JSON_THROW_ON_ERROR);
+
+        $widgetEntry = $manifest['src/widget.js'];
+
+        return response()->json([
+            'asset_url' => route('widgets.case-forms.asset'),
+            'entry' => route('widgets.case-forms.api.entry', ['caseForm' => $caseForm]),
+            'js' => route('widgets.case-forms.asset', ['file' => $widgetEntry['file']]),
+        ]);
+    }
+
+    public function asset(Request $request, string $file): StreamedResponse
+    {
+        $path = "widgets/case-forms/{$file}";
+
+        $disk = Storage::disk('public');
+
+        abort_if(! $disk->exists($path), 404, 'File not found.');
+
+        $mimeType = $disk->mimeType($path);
+
+        $stream = $disk->readStream($path);
+
+        abort_if(is_null($stream), 404, 'File not found.');
+
+        return response()->streamDownload(
+            function () use ($stream) {
+                fpassthru($stream);
+                fclose($stream);
+            },
+            $file,
+            ['Content-Type' => $mimeType]
+        );
+    }
+
     public function view(GenerateCaseFormKitSchema $generateSchema, CaseForm $caseForm): JsonResponse
     {
         return response()->json(
@@ -69,15 +112,13 @@ class CaseFormWidgetController extends Controller
                 'is_authenticated' => $caseForm->is_authenticated,
                 ...($caseForm->is_authenticated ? [
                     'authentication_url' => URL::signedRoute(
-                        name: 'case-forms.request-authentication',
+                        name: 'widgets.case-forms.api.request-authentication',
                         parameters: ['caseForm' => $caseForm],
-                        absolute: false
                     ),
                 ] : [
                     'submission_url' => URL::signedRoute(
-                        name: 'case-forms.submit',
+                        name: 'widgets.case-forms.api.submit',
                         parameters: ['caseForm' => $caseForm],
-                        absolute: false
                     ),
                 ]),
                 'recaptcha_enabled' => $caseForm->recaptcha_enabled,
@@ -123,12 +164,11 @@ class CaseFormWidgetController extends Controller
         return response()->json([
             'message' => "We've sent an authentication code to {$data['email']}.",
             'authentication_url' => URL::signedRoute(
-                name: 'case-forms.authenticate',
+                name: 'widgets.case-forms.api.authenticate',
                 parameters: [
                     'caseForm' => $caseForm,
                     'authentication' => $authentication,
                 ],
-                absolute: false
             ),
         ]);
     }
@@ -153,12 +193,11 @@ class CaseFormWidgetController extends Controller
 
         return response()->json([
             'submission_url' => URL::signedRoute(
-                name: 'case-forms.submit',
+                name: 'widgets.case-forms.api.submit',
                 parameters: [
                     'authentication' => $authentication,
                     'caseForm' => $authentication->submissible,
                 ],
-                absolute: false
             ),
         ]);
     }

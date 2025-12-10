@@ -36,17 +36,17 @@ import { createPinia } from 'pinia';
 import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
 import App from './App.vue';
 import config from './formkit.config.js';
-import './widget.css';
+import styles from './widget.css?inline';
 
 customElements.define(
     'case-feedback-form-embed',
     defineCustomElement({
+        styles: [styles],
         setup(props) {
             const app = createApp();
             const pinia = createPinia();
 
             app.use(pinia);
-
             app.use(plugin, defaultConfig(config));
 
             app.config.devtools = true;
@@ -57,6 +57,6 @@ customElements.define(
 
             return () => h(App, props);
         },
-        props: ['url', 'userAuthenticationUrl', 'accessUrl', 'appUrl', 'apiUrl'],
+        props: ['url'],
     }),
 );

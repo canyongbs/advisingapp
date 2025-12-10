@@ -34,47 +34,54 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\MeetingCenter\Http\Controllers\EventRegistrationWidgetController;
-use AdvisingApp\MeetingCenter\Http\Controllers\PersonalBookingPageWidgetController;
-use AdvisingApp\MeetingCenter\Http\Middleware\EnsureEventRegistrationFormIsEmbeddableAndAuthorized;
-use AdvisingApp\MeetingCenter\Http\Middleware\EventRegistrationWidgetCors;
-use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\CaseManagement\Http\Controllers\CaseFeedbackFormWidgetController;
+use AdvisingApp\CaseManagement\Http\Controllers\CaseFormWidgetController;
+use AdvisingApp\CaseManagement\Http\Middleware\CaseFormsWidgetCors;
+use AdvisingApp\CaseManagement\Http\Middleware\CaseTypeFeedbackIsOn;
+use AdvisingApp\CaseManagement\Http\Middleware\EnsureCaseManagementFeatureIsActive;
+use AdvisingApp\CaseManagement\Http\Middleware\FeedbackManagementIsOn;
+use AdvisingApp\CaseManagement\Models\CaseForm;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
+// Case Form Widget Routes (with CORS for external embedding)
 Route::middleware([
     'api',
     EncryptCookies::class,
-    EventRegistrationWidgetCors::class,
+    EnsureCaseManagementFeatureIsActive::class,
+    CaseFormsWidgetCors::class,
 ])
-    ->prefix('widgets/event-registration')
-    ->name('widgets.event-registration.')
+    ->prefix('widgets/case-forms')
+    ->name('widgets.case-forms.')
     ->group(function () {
-        Route::prefix('api/{event}')
+        Route::prefix('api/{caseForm}')
             ->name('api.')
             ->middleware([
-                EnsureEventRegistrationFormIsEmbeddableAndAuthorized::class . ':event',
+                EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':caseForm',
             ])
             ->group(function () {
-                Route::get('/', [EventRegistrationWidgetController::class, 'assets'])
+                Route::get('/', [CaseFormWidgetController::class, 'assets'])
                     ->name('assets');
 
-                Route::get('entry', [EventRegistrationWidgetController::class, 'view'])
+                Route::get('entry', [CaseFormWidgetController::class, 'view'])
                     ->name('entry');
-                Route::post('authenticate/request', [EventRegistrationWidgetController::class, 'requestAuthentication'])
+                Route::post('authenticate/request', [CaseFormWidgetController::class, 'requestAuthentication'])
                     ->middleware(['signed'])
                     ->name('request-authentication');
-                Route::post('authenticate/{authentication}', [EventRegistrationWidgetController::class, 'authenticate'])
+                Route::post('authenticate/{authentication}', [CaseFormWidgetController::class, 'authenticate'])
                     ->middleware(['signed'])
                     ->name('authenticate');
-                Route::post('submit', [EventRegistrationWidgetController::class, 'store'])
+                Route::post('submit', [CaseFormWidgetController::class, 'store'])
                     ->middleware(['signed'])
                     ->name('submit');
 
                 // Handle preflight CORS requests for all routes in this group
                 // MUST remain the last route in this group
-                Route::options('/{any}', function (Request $request, Event $event) {
+                Route::options('/{any}', function (Request $request, CaseForm $caseForm) {
                     return response()->noContent();
                 })
                     ->where('any', '.*')
@@ -83,37 +90,48 @@ Route::middleware([
 
         // This route MUST remain at /widgets/... in order to catch requests to asset files and return the correct headers
         // NGINX has been configured to route all requests for assets under /widgets to the application
-        Route::get('{file?}', [EventRegistrationWidgetController::class, 'asset'])
+        Route::get('{file?}', [CaseFormWidgetController::class, 'asset'])
             ->where('file', '(.*)')
             ->name('asset');
     });
 
+// Case Feedback Form Widget Routes (internal use only, with Sanctum)
 Route::middleware([
     'api',
     EncryptCookies::class,
+    EnsureFrontendRequestsAreStateful::class,
 ])
-    ->prefix('widgets/personal-booking-page')
-    ->name('widgets.personal-booking-page.')
+    ->prefix('widgets/case-feedback-forms')
+    ->name('widgets.case-feedback-forms.')
     ->group(function () {
-        Route::prefix('api/{slug}')
+        Route::prefix('api/{case}')
             ->name('api.')
+            ->middleware([
+                FeedbackManagementIsOn::class,
+                CaseTypeFeedbackIsOn::class,
+            ])
             ->group(function () {
-                Route::get('/', [PersonalBookingPageWidgetController::class, 'assets'])
+                Route::get('/', [CaseFeedbackFormWidgetController::class, 'assets'])
                     ->name('assets');
 
-                Route::get('entry', [PersonalBookingPageWidgetController::class, 'view'])
+                Route::get('entry', [CaseFeedbackFormWidgetController::class, 'view'])
                     ->name('entry');
+                Route::post('submit', [CaseFeedbackFormWidgetController::class, 'store'])
+                    ->middleware(['signed'])
+                    ->name('submit');
 
-                Route::get('available-slots', [PersonalBookingPageWidgetController::class, 'availableSlots'])
-                    ->name('available-slots');
-
-                Route::post('book', [PersonalBookingPageWidgetController::class, 'book'])
-                    ->name('book');
+                // Handle preflight CORS requests for all routes in this group
+                // MUST remain the last route in this group
+                Route::options('/{any}', function (Request $request, CaseModel $case) {
+                    return response()->noContent();
+                })
+                    ->where('any', '.*')
+                    ->name('preflight');
             });
 
         // This route MUST remain at /widgets/... in order to catch requests to asset files and return the correct headers
         // NGINX has been configured to route all requests for assets under /widgets to the application
-        Route::get('{file?}', [PersonalBookingPageWidgetController::class, 'asset'])
+        Route::get('{file?}', [CaseFeedbackFormWidgetController::class, 'asset'])
             ->where('file', '(.*)')
             ->name('asset');
     });

@@ -50,16 +50,59 @@ use Closure;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SurveyWidgetController extends Controller
 {
+    public function assets(Request $request, Survey $survey): JsonResponse
+    {
+        // Read the Vite manifest to determine the correct asset paths
+        $manifestPath = public_path('storage/widgets/surveys/.vite/manifest.json');
+        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+        $manifest = json_decode(File::get($manifestPath), true, 512, JSON_THROW_ON_ERROR);
+
+        $widgetEntry = $manifest['src/widget.js'];
+
+        return response()->json([
+            'asset_url' => route('widgets.surveys.asset'),
+            'entry' => route('widgets.surveys.api.entry', ['survey' => $survey]),
+            'js' => route('widgets.surveys.asset', ['file' => $widgetEntry['file']]),
+        ]);
+    }
+
+    public function asset(Request $request, string $file): StreamedResponse
+    {
+        $path = "widgets/surveys/{$file}";
+
+        $disk = Storage::disk('public');
+
+        abort_if(! $disk->exists($path), 404, 'File not found.');
+
+        $mimeType = $disk->mimeType($path);
+
+        $stream = $disk->readStream($path);
+
+        abort_if(is_null($stream), 404, 'File not found.');
+
+        return response()->streamDownload(
+            function () use ($stream) {
+                fpassthru($stream);
+                fclose($stream);
+            },
+            $file,
+            ['Content-Type' => $mimeType]
+        );
+    }
+
     public function view(GenerateFormKitSchema $generateSchema, Survey $survey): JsonResponse
     {
         return response()->json(
@@ -69,15 +112,13 @@ class SurveyWidgetController extends Controller
                 'is_authenticated' => $survey->is_authenticated,
                 ...($survey->is_authenticated ? [
                     'authentication_url' => URL::signedRoute(
-                        name: 'surveys.request-authentication',
+                        name: 'widgets.surveys.api.request-authentication',
                         parameters: ['survey' => $survey],
-                        absolute: false,
                     ),
                 ] : [
                     'submission_url' => URL::signedRoute(
-                        name: 'surveys.submit',
+                        name: 'widgets.surveys.api.submit',
                         parameters: ['survey' => $survey],
-                        absolute: false
                     ),
                 ]),
                 'recaptcha_enabled' => $survey->recaptcha_enabled,
@@ -123,12 +164,11 @@ class SurveyWidgetController extends Controller
         return response()->json([
             'message' => "We've sent an authentication code to {$data['email']}.",
             'authentication_url' => URL::signedRoute(
-                name: 'surveys.authenticate',
+                name: 'widgets.surveys.api.authenticate',
                 parameters: [
                     'survey' => $survey,
                     'authentication' => $authentication,
                 ],
-                absolute: false
             ),
         ]);
     }
@@ -153,12 +193,11 @@ class SurveyWidgetController extends Controller
 
         return response()->json([
             'submission_url' => URL::signedRoute(
-                name: 'surveys.submit',
+                name: 'widgets.surveys.api.submit',
                 parameters: [
                     'authentication' => $authentication,
                     'survey' => $authentication->submissible,
                 ],
-                absolute: false
             ),
         ]);
     }

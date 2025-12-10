@@ -37,16 +37,34 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
     plugins: [vue()],
+    experimental: {
+        renderBuiltUrl(filename) {
+            return {
+                runtime: `window.__VITE_CASE_FEEDBACK_FORMS_ASSET_URL__.replace(/\\/$/, '') + '/' + ${JSON.stringify(filename)}`,
+            };
+        },
+    },
     build: {
         manifest: true,
-        lib: {
-            entry: resolve(__dirname, 'src/widget.js'),
-            name: 'AdvisingAppCaseFeedbackFormWidget',
-            fileName: 'advising-app-case-feedback-form-widget',
-            cssFileName: 'style',
-            formats: ['es'],
+        rollupOptions: {
+            input: {
+                widget: resolve(__dirname, './src/widget.js'),
+                loader: resolve(__dirname, './src/loader.js'),
+            },
+            output: {
+                entryFileNames: (chunkInfo) => {
+                    return chunkInfo.name === 'loader'
+                        ? 'advising-app-case-feedback-form-widget.js'
+                        : 'advising-app-case-feedback-form-widget-app-[hash].js';
+                },
+                assetFileNames: (assetInfo) => {
+                    return '[name]-[hash][extname]';
+                },
+                // Place chunks directly in the root
+                chunkFileNames: '[name]-[hash].js',
+            },
         },
-        outDir: resolve(__dirname, '../../public/js/widgets/case-feedback-form'),
+        outDir: resolve(__dirname, '../../storage/app/public/widgets/case-feedback-forms'),
         emptyOutDir: true,
         sourcemap: true,
     },

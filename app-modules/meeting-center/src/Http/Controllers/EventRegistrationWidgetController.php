@@ -52,15 +52,58 @@ use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EventRegistrationWidgetController extends Controller
 {
+    public function assets(Request $request, Event $event): JsonResponse
+    {
+        // Read the Vite manifest to determine the correct asset paths
+        $manifestPath = public_path('storage/widgets/event-registration/.vite/manifest.json');
+        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+        $manifest = json_decode(File::get($manifestPath), true, 512, JSON_THROW_ON_ERROR);
+
+        $widgetEntry = $manifest['src/widget.js'];
+
+        return response()->json([
+            'asset_url' => route('widgets.event-registration.asset'),
+            'entry' => route('widgets.event-registration.api.entry', ['event' => $event]),
+            'js' => route('widgets.event-registration.asset', ['file' => $widgetEntry['file']]),
+        ]);
+    }
+
+    public function asset(Request $request, string $file): StreamedResponse
+    {
+        $path = "widgets/event-registration/{$file}";
+
+        $disk = Storage::disk('public');
+
+        abort_if(! $disk->exists($path), 404, 'File not found.');
+
+        $mimeType = $disk->mimeType($path);
+
+        $stream = $disk->readStream($path);
+
+        abort_if(is_null($stream), 404, 'File not found.');
+
+        return response()->streamDownload(
+            function () use ($stream) {
+                fpassthru($stream);
+                fclose($stream);
+            },
+            $file,
+            ['Content-Type' => $mimeType]
+        );
+    }
+
     public function view(GenerateEventRegistrationFormKitSchema $generateSchema, Event $event): JsonResponse
     {
         $form = $event->eventRegistrationForm;
@@ -71,9 +114,8 @@ class EventRegistrationWidgetController extends Controller
                 'description' => $form->event->description,
                 'is_authenticated' => true,
                 'authentication_url' => URL::signedRoute(
-                    name: 'event-registration.request-authentication',
+                    name: 'widgets.event-registration.api.request-authentication',
                     parameters: ['event' => $event],
-                    absolute: false,
                 ),
                 'recaptcha_enabled' => $form->recaptcha_enabled,
                 ...($form->recaptcha_enabled ? [
@@ -124,12 +166,11 @@ class EventRegistrationWidgetController extends Controller
         return response()->json([
             'message' => "We've sent an authentication code to {$attendee->email}.",
             'authentication_url' => URL::signedRoute(
-                name: 'event-registration.authenticate',
+                name: 'widgets.event-registration.api.authenticate',
                 parameters: [
                     'event' => $event,
                     'authentication' => $authentication,
                 ],
-                absolute: false,
             ),
         ]);
     }
@@ -154,12 +195,11 @@ class EventRegistrationWidgetController extends Controller
 
         return response()->json([
             'submission_url' => URL::signedRoute(
-                name: 'event-registration.submit',
+                name: 'widgets.event-registration.api.submit',
                 parameters: [
                     'authentication' => $authentication,
                     'event' => $authentication->submissible->event,
                 ],
-                absolute: false,
             ),
         ]);
     }
