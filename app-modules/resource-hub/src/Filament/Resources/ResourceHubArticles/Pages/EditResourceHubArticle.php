@@ -204,7 +204,7 @@ class EditResourceHubArticle extends EditRecord
         $data = $this->form->getRawState();
 
         if (! empty($data['manager_ids'])) {
-            $resourceHubArticle->managers()->sync($data['manager_ids'], $data['remove_prior']);
+            $resourceHubArticle->managers()->sync($data['manager_ids'], false);
         }
     }
 }
