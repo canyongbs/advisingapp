@@ -40,7 +40,6 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\ResourceHub\Filament\Actions\DraftResourceHubArticleWithAiAction;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
@@ -193,18 +192,5 @@ class EditResourceHubArticle extends EditRecord
                 ->color('primary')
                 ->label('Save'),
         ];
-    }
-
-    protected function afterSave(): void
-    {
-        $resourceHubArticle = $this->getRecord();
-
-        assert($resourceHubArticle instanceof ResourceHubArticle);
-
-        $data = $this->form->getRawState();
-
-        if (! empty($data['manager_ids'])) {
-            $resourceHubArticle->managers()->sync($data['manager_ids'], false);
-        }
     }
 }
