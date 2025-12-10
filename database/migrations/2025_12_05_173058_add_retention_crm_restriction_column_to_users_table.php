@@ -37,27 +37,30 @@
 use App\Features\RetentionCrmRestrictionFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Laravel\Pennant\Feature;
 
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('retention_crm_restriction')
-                ->nullable()
-                ->after('team_id');
-        });
+        DB::transaction(function () {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('retention_crm_restriction')->nullable();
+            });
 
-        Feature::activate(RetentionCrmRestrictionFeature::class);
+            Feature::activate(RetentionCrmRestrictionFeature::class);
+        });
     }
 
     public function down(): void
     {
-        Feature::deactivate(RetentionCrmRestrictionFeature::class);
+        DB::transaction(function () {
+            Feature::deactivate(RetentionCrmRestrictionFeature::class);
 
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('retention_crm_restriction');
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('retention_crm_restriction');
+            });
         });
     }
 };

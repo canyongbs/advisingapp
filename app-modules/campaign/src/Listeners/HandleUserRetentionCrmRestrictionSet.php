@@ -36,13 +36,17 @@
 
 namespace AdvisingApp\Campaign\Listeners;
 
-use AdvisingApp\Campaign\Jobs\DisableUserCampaigns;
+use AdvisingApp\Campaign\Models\Campaign;
 use App\Events\UserRetentionCrmRestrictionSet;
 
 class HandleUserRetentionCrmRestrictionSet
 {
     public function handle(UserRetentionCrmRestrictionSet $event): void
     {
-        DisableUserCampaigns::dispatch($event->user);
+        Campaign::query()
+            ->whereMorphedTo('createdBy', $event->user)
+            ->where('enabled', true)
+            ->whereDoesntHave('actions', fn (Builder $query) => $query->whereNotNull('execution_finished_at'))
+            ->update(['enabled' => false]);
     }
 }

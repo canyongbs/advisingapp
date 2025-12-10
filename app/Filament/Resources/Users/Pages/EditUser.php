@@ -66,6 +66,8 @@ class EditUser extends EditRecord
 
     protected static string $resource = UserResource::class;
 
+    protected ?bool $hasDatabaseTransactions = true;
+
     public function form(Schema $schema): Schema
     {
         $azureSsoSettings = app(AzureSsoSettings::class)->is_enabled;
