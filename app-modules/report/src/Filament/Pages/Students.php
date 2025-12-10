@@ -40,6 +40,8 @@ use AdvisingApp\Report\Abstract\StudentReport;
 use AdvisingApp\Report\Filament\Widgets\MostRecentStudentsTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\StudentCumulativeCountLineChart;
+use AdvisingApp\Report\Filament\Widgets\StudentOverviewEthnicityRadarChart;
+use AdvisingApp\Report\Filament\Widgets\StudentOverviewGenderDoughnutChart;
 use AdvisingApp\Report\Filament\Widgets\StudentsStats;
 use App\Filament\Clusters\ReportLibrary;
 use UnitEnum;
@@ -65,6 +67,8 @@ class Students extends StudentReport
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
             StudentsStats::make(['cacheTag' => $this->cacheTag]),
+            StudentOverviewGenderDoughnutChart::make(['cacheTag' => $this->cacheTag]),
+            StudentOverviewEthnicityRadarChart::make(['cacheTag' => $this->cacheTag]),
             StudentCumulativeCountLineChart::make(['cacheTag' => $this->cacheTag]),
             MostRecentStudentsTable::make(['cacheTag' => $this->cacheTag]),
         ];
