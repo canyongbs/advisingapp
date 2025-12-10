@@ -38,6 +38,7 @@ namespace AdvisingApp\Campaign\Listeners;
 
 use AdvisingApp\Campaign\Models\Campaign;
 use App\Events\UserRetentionCrmRestrictionSet;
+use Illuminate\Database\Eloquent\Builder;
 
 class HandleUserRetentionCrmRestrictionSet
 {
