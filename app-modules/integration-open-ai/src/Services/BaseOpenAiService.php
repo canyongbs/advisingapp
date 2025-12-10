@@ -53,7 +53,6 @@ use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsW
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsWithVectorStores;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use App\Features\AiAssistantLinkFeature;
 use App\Models\User;
 use Closure;
 use Exception;
@@ -668,10 +667,10 @@ abstract class BaseOpenAiService implements AiService
                         ->whereNotNull('parsing_results')
                         ->get()
                         ->all(),
-                    ...(AiAssistantLinkFeature::active() ? $message->thread->assistant->links()
+                    ...$message->thread->assistant->links()
                         ->whereNotNull('parsing_results')
                         ->get()
-                        ->all() : []),
+                        ->all(),
                 ]),
             ]));
 
