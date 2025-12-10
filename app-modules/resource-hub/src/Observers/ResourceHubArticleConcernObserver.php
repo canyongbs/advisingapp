@@ -48,7 +48,7 @@ class ResourceHubArticleConcernObserver
     {
         $resourceHubArticleConcern->createdBy->notifyNow(new ResourceHubArticleConcernCreated($resourceHubArticleConcern));
         $resourceHubArticleConcern->managers->each(
-          fn(User $user) => $user->notifyNow(new AlertManagerConcernCreated($resourceHubArticleConcern))
+            fn (User $user) => $user->notifyNow(new AlertManagerConcernCreated($resourceHubArticleConcern))
         );
     }
 
