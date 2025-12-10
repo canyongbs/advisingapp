@@ -33,7 +33,8 @@ class DurationInput
                 ->maxValue(59)
                 ->integer(),
         ])
-            ->columns($hasDays ? 3 : 2)
+            ->gridContainer()
+            ->columns($hasDays ? ['default' => 1, '@sm' => 3, '!@sm' => 3] : ['default' => 1, '@3xs' => 2, '!@sm' => 2])
             ->statePath($name);
     }
 
