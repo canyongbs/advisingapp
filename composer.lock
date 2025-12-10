@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d9250098fd6558c7722dcb7d681fcc58",
+    "content-hash": "b33a8fb5bc470e485e8f1f04c68ce93f",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -684,41 +684,6 @@
                 }
             ],
             "time": "2025-11-24T14:40:29+00:00"
-        },
-        {
-            "name": "canyon-gbs/advising-app-alert",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/alert",
-                "reference": "538c072626baf674219e821e77a1c1db8e360ab5"
-            },
-            "require": {
-                "filament/filament": "^4.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\Alert\\Providers\\AlertServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\Alert\\": "src/",
-                    "AdvisingApp\\Alert\\Tests\\": "tests/",
-                    "AdvisingApp\\Alert\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\Alert\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
         },
         {
             "name": "canyon-gbs/advising-app-application",
@@ -1914,6 +1879,41 @@
                     "AdvisingApp\\BasicNeeds\\Tests\\": "tests/",
                     "AdvisingApp\\BasicNeeds\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\BasicNeeds\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/concern",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/concern",
+                "reference": "5b5c1ee98f19838b37004a3f94ae72f78d2e5e42"
+            },
+            "require": {
+                "filament/filament": "^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Concern\\Providers\\ConcernServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Concern\\": "src/",
+                    "AdvisingApp\\Concern\\Tests\\": "tests/",
+                    "AdvisingApp\\Concern\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Concern\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

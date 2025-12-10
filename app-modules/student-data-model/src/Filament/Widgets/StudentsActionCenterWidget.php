@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Widgets;
 
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
@@ -90,9 +90,9 @@ class StudentsActionCenterWidget extends TableWidget
                     ->label('New Messages')
                     ->counts(['engagementResponses' => fn (Builder $query) => $query->where('status', EngagementResponseStatus::New)])
                     ->sortable(),
-                TextColumn::make('alerts_count')
-                    ->label('Open Alerts')
-                    ->counts(['alerts' => fn (Builder $query) => $query->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]))])
+                TextColumn::make('concerns_count')
+                    ->label('Open Concerns')
+                    ->counts(['concerns' => fn (Builder $query) => $query->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]))])
                     ->sortable(),
                 TextColumn::make('tasks_count')
                     ->label('Open Tasks')
@@ -132,20 +132,20 @@ class StudentsActionCenterWidget extends TableWidget
                             return $query;
                         });
                     }),
-                SelectFilter::make('alerts')
+                SelectFilter::make('concerns')
                     ->options(['open' => 'Open', 'closed' => 'Closed'])
                     ->query(function (Builder $query, array $data): Builder {
                         if (blank($data['value'] ?? null)) {
                             return $query;
                         }
 
-                        return $query->whereHas('alerts', function (Builder $query) use ($data): Builder {
+                        return $query->whereHas('concerns', function (Builder $query) use ($data): Builder {
                             if ($data['value'] === 'open') {
-                                return $query->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]));
+                                return $query->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]));
                             }
 
                             if ($data['value'] === 'closed') {
-                                return $query->whereHas('status', fn (Builder $query) => $query->whereIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]));
+                                return $query->whereHas('status', fn (Builder $query) => $query->whereIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]));
                             }
 
                             return $query;

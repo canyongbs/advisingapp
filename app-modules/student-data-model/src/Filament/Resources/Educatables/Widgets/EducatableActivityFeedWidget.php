@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets;
 
-use AdvisingApp\Alert\Histories\AlertHistory;
+use AdvisingApp\Concern\Histories\ConcernHistory;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Interaction\Models\Interaction;
@@ -81,7 +81,7 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
         $this->modelsToTimeline = [
             Engagement::class,
             EngagementResponse::class,
-            AlertHistory::class,
+            ConcernHistory::class,
             TaskHistory::class,
             Interaction::class,
         ];
@@ -99,7 +99,7 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
             },
             'engagement_response' => $record->sender?->full_name,
             'task_history' => 'Task ' . $record->event,
-            'alert_history' => 'Alert ' . $record->event,
+            'alert_history' => 'Concern ' . $record->event,
         };
     }
 

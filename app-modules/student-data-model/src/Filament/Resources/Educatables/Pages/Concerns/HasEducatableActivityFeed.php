@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Pages\Concerns;
 
-use AdvisingApp\Alert\Histories\AlertHistory;
+use AdvisingApp\Concern\Histories\ConcernHistory;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Interaction\Models\Interaction;
@@ -60,7 +60,7 @@ trait HasEducatableActivityFeed
         $this->modelsToTimeline = [
             Engagement::class,
             EngagementResponse::class,
-            AlertHistory::class,
+            ConcernHistory::class,
             TaskHistory::class,
             Interaction::class,
         ];

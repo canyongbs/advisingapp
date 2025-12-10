@@ -39,8 +39,8 @@ namespace AdvisingApp\Prospect\Filament\Resources\Prospects;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\CreateProspect;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\EditProspect;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ListProspects;
-use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectAlerts;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectCareTeam;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectConcerns;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectSubscriptions;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectTasks;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspect;
@@ -109,7 +109,7 @@ class ProspectResource extends Resource
             'index' => ListProspects::route('/'),
             'create' => CreateProspect::route('/create'),
             'edit' => EditProspect::route('/{record}/edit'),
-            'alerts' => ManageProspectAlerts::route('/{record}/alerts'),
+            'concerns' => ManageProspectConcerns::route('/{record}/concerns'),
             'manage-subscriptions' => ManageProspectSubscriptions::route('/{record}/subscriptions'),
             'tasks' => ManageProspectTasks::route('/{record}/tasks'),
             'view' => ViewProspect::route('/{record}'),

@@ -43,6 +43,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Actions\StudentTags
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Actions\SyncStudentSisAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use App\Settings\DisplaySettings;
 use Filament\Actions\DeleteAction;
@@ -57,6 +58,9 @@ trait HasStudentHeader
         $sisSettings = app(StudentInformationSystemSettings::class);
 
         $student = $this->getRecord();
+
+        assert($student instanceof Student);
+
         $studentName = filled($student->full_name)
             ? $student->full_name
             : "{$student->first} {$student->last}";
@@ -102,7 +106,7 @@ trait HasStudentHeader
                 ->view('student-data-model::filament.resources.educatables.subscribe-header-action', ['record' => $this->getRecord()]),
             DeleteAction::make()
                 ->modalDescription('Are you sure you wish to delete the student? By deleting a student record, you will remove any related enrollment and program data, along with any related interactions, notes, etc. This action cannot be reversed.')
-                ->using(function ($record) {
+                ->using(function (Student $record) {
                     app(DeleteStudent::class)->execute($record);
                 }),
         ];

@@ -42,7 +42,7 @@ use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
-use AdvisingApp\Workflow\Models\WorkflowProactiveAlertDetails;
+use AdvisingApp\Workflow\Models\WorkflowProactiveConcernDetails;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowSubscriptionDetails;
 use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
@@ -241,7 +241,7 @@ class WorkflowStepsRelationManager extends RelationManager
                 'channel' => $transformedData['channel'],
                 'body' => $transformedData['body'],
             ]),
-            'workflow_proactive_alert_details' => WorkflowProactiveAlertDetails::create([
+            'workflow_proactive_concern_details' => WorkflowProactiveConcernDetails::create([
                 'description' => $transformedData['description'],
                 'severity' => $transformedData['severity'],
                 'suggested_intervention' => $transformedData['suggested_intervention'],

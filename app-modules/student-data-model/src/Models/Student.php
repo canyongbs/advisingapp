@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\StudentDataModel\Models;
 
-use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
 use AdvisingApp\Engagement\Models\EngagementFile;
@@ -76,6 +76,7 @@ use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -272,11 +273,11 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     }
 
     /**
-     * @return MorphMany<Alert, $this>
+     * @return MorphMany<Concern, $this>
      */
-    public function alerts(): MorphMany
+    public function concerns(): MorphMany
     {
-        return $this->morphMany(Alert::class, 'concern');
+        return $this->morphMany(Concern::class, 'concern');
     }
 
     /**
@@ -385,9 +386,12 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return StudentResource::class;
     }
 
-    public function alertHistories(): HasManyDeep
+    /**
+     * @return HasManyDeep<Model, $this>
+     */
+    public function concernHistories(): HasManyDeep
     {
-        return $this->hasManyDeepFromRelations($this->alerts(), (new Alert())->histories());
+        return $this->hasManyDeepFromRelations($this->concerns(), (new Concern())->histories());
     }
 
     public function taskHistories(): HasManyDeep

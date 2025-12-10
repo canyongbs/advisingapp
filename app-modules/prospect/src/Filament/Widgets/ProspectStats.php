@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Prospect\Filament\Widgets;
 
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
-use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
+use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -80,13 +80,13 @@ class ProspectStats extends StatsOverviewWidget
                 )
                 ->where('status', EngagementResponseStatus::New)
                 ->count())),
-            Stat::make('Open Alerts', Number::format(Alert::query()
+            Stat::make('Open Concerns', Number::format(Concern::query()
                 ->whereHasMorph('concern', Prospect::class, $prospectQuery)
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
-                ->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]))
+                ->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]))
                 ->count())),
             Stat::make('Open Tasks', Number::format(Task::query()
                 ->whereHasMorph('concern', Prospect::class, $prospectQuery)
@@ -113,13 +113,13 @@ class ProspectStats extends StatsOverviewWidget
                 ->where('status', EngagementResponseStatus::Actioned)
                 ->count()))
                 ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
-            Stat::make('Closed Alerts', Number::format(Alert::query()
+            Stat::make('Closed Concerns', Number::format(Concern::query()
                 ->whereHasMorph('concern', Prospect::class, $prospectQuery)
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
-                ->whereHas('status', fn (Builder $query) => $query->whereIn('classification', [SystemAlertStatusClassification::Resolved, SystemAlertStatusClassification::Canceled]))
+                ->whereHas('status', fn (Builder $query) => $query->whereIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]))
                 ->count()))
                 ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
             Stat::make('Closed Tasks', Number::format(Task::query()

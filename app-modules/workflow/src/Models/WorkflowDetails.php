@@ -42,7 +42,7 @@ use AdvisingApp\Workflow\Filament\Blocks\EngagementEmailBlock;
 use AdvisingApp\Workflow\Filament\Blocks\EngagementSmsBlock;
 use AdvisingApp\Workflow\Filament\Blocks\EventBlock;
 use AdvisingApp\Workflow\Filament\Blocks\InteractionBlock;
-use AdvisingApp\Workflow\Filament\Blocks\ProactiveAlertBlock;
+use AdvisingApp\Workflow\Filament\Blocks\ProactiveConcernBlock;
 use AdvisingApp\Workflow\Filament\Blocks\SubscriptionBlock;
 use AdvisingApp\Workflow\Filament\Blocks\TagsBlock;
 use AdvisingApp\Workflow\Filament\Blocks\TaskBlock;
@@ -71,7 +71,7 @@ abstract class WorkflowDetails extends BaseModel
             EngagementEmailBlock::make(),
             EngagementSmsBlock::make(),
             //            InteractionBlock::make(),
-            ProactiveAlertBlock::make(),
+            ProactiveConcernBlock::make(),
             SubscriptionBlock::make(),
             //            TagsBlock::make(),
             TaskBlock::make(),

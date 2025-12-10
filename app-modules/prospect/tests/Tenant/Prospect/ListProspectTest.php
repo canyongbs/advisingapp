@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
-use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
+use AdvisingApp\Concern\Models\Concern;
+use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ListProspects;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
@@ -167,20 +167,20 @@ it('can filter prospects by `subscribed` prospects', function () {
         ->assertCanNotSeeTableRecords($notSubscribedProspects);
 });
 
-it('can filter prospect by alerts', function () {
+it('can filter prospect by concerns', function () {
     asSuperAdmin();
 
-    $activeStatusAlert = AlertStatus::factory()
+    $activeStatusConcern = ConcernStatus::factory()
         ->state([
             'name' => 'Active',
-            'classification' => SystemAlertStatusClassification::Active,
+            'classification' => SystemConcernStatusClassification::Active,
         ])
         ->create();
 
-    $inprogressStatusAlert = AlertStatus::factory()
+    $inprogressStatusConcern = ConcernStatus::factory()
         ->state([
             'name' => 'InProgress',
-            'classification' => SystemAlertStatusClassification::Active,
+            'classification' => SystemConcernStatusClassification::Active,
         ])
         ->create();
 
@@ -188,39 +188,39 @@ it('can filter prospect by alerts', function () {
 
     $prospectWithStatusInprogress = Prospect::factory()->create();
 
-    $activeAlerts = Alert::factory()
+    $activeConcerns = Concern::factory()
         ->count(3)
         ->for($prospectWithStatusActive, 'concern')
         ->state([
-            'status_id' => $activeStatusAlert->getKey(),
+            'status_id' => $activeStatusConcern->getKey(),
         ])
         ->create();
 
-    $inProgressAlerts = Alert::factory()
+    $inProgressConcerns = Concern::factory()
         ->count(2)
         ->for($prospectWithStatusInprogress, 'concern')
         ->state([
-            'status_id' => $inprogressStatusAlert->getKey(),
+            'status_id' => $inprogressStatusConcern->getKey(),
         ])
         ->create();
 
-    $prospectsWithoutAlerts = Prospect::factory()->count(5)->create();
+    $prospectsWithoutConcerns = Prospect::factory()->count(5)->create();
 
     livewire(ListProspects::class)
         ->set('tableRecordsPerPage', 10)
-        ->assertCanSeeTableRecords($prospectsWithoutAlerts->merge([$prospectWithStatusActive, $prospectWithStatusInprogress]))
-        ->filterTable('alerts', [$activeStatusAlert, $inprogressStatusAlert])
+        ->assertCanSeeTableRecords($prospectsWithoutConcerns->merge([$prospectWithStatusActive, $prospectWithStatusInprogress]))
+        ->filterTable('concerns', [$activeStatusConcern, $inprogressStatusConcern])
         ->assertCanSeeTableRecords([$prospectWithStatusActive, $prospectWithStatusInprogress])
-        ->assertCanNotSeeTableRecords($prospectsWithoutAlerts)
+        ->assertCanNotSeeTableRecords($prospectsWithoutConcerns)
         ->resetTableFilters()
-        ->filterTable('alerts', [$activeStatusAlert])
+        ->filterTable('concerns', [$activeStatusConcern])
         ->assertCanSeeTableRecords([$prospectWithStatusActive])
-        ->assertCanNotSeeTableRecords($prospectsWithoutAlerts->merge([$prospectWithStatusInprogress]))
-        ->removeTableFilter('alerts')
-        ->assertCanSeeTableRecords($prospectsWithoutAlerts->merge([$prospectWithStatusActive, $prospectWithStatusInprogress]));
+        ->assertCanNotSeeTableRecords($prospectsWithoutConcerns->merge([$prospectWithStatusInprogress]))
+        ->removeTableFilter('concerns')
+        ->assertCanSeeTableRecords($prospectsWithoutConcerns->merge([$prospectWithStatusActive, $prospectWithStatusInprogress]));
 });
 
-it('renders the bulk create alert action based on proper access', function () {
+it('renders the bulk create concern action based on proper access', function () {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $user->givePermissionTo('prospect.view-any');
@@ -230,16 +230,16 @@ it('renders the bulk create alert action based on proper access', function () {
 
     livewire(ListProspects::class)
         ->assertOk()
-        ->assertTableBulkActionHidden('createAlert');
+        ->assertTableBulkActionHidden('createConcern');
 
-    $user->givePermissionTo('alert.create');
+    $user->givePermissionTo('concern.create');
     $user->givePermissionTo('prospect.*.update');
 
     $user->refresh();
 
     livewire(ListProspects::class)
         ->assertOk()
-        ->assertTableBulkActionVisible('createAlert');
+        ->assertTableBulkActionVisible('createConcern');
 });
 
 it('shows bulk assign tags action for authorized user', function () {
