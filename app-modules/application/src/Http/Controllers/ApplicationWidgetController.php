@@ -50,7 +50,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\FontFeature;
 use App\Http\Controllers\Controller;
 use Closure;
 use Filament\Support\Colors\Color;
@@ -124,8 +123,8 @@ class ApplicationWidgetController extends Controller
                     ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
                     ->all(),
                 'rounding' => $application->rounding,
-                'title_font_weight' => FontFeature::active() ? $application->title_font_weight : null,
-                'title_color' => collect(Color::all()[FontFeature::active() ? $application->title_color ?? 'neutral' : 'neutral'])
+                'title_font_weight' => $application->title_font_weight,
+                'title_color' => collect(Color::all()[$application->title_color ?? 'neutral'])
                     ->map(Color::convertToRgb(...))
                     ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
                     ->all(),
@@ -146,8 +145,8 @@ class ApplicationWidgetController extends Controller
                     ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
                     ->all(),
                 'rounding' => $application->rounding,
-                'title_font_weight' => FontFeature::active() ? $application->title_font_weight : null,
-                'title_color' => collect(Color::all()[FontFeature::active() ? $application->title_color ?? 'neutral' : 'neutral'])
+                'title_font_weight' => $application->title_font_weight,
+                'title_color' => collect(Color::all()[$application->title_color ?? 'neutral'])
                     ->map(Color::convertToRgb(...))
                     ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
                     ->all(),

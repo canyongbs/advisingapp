@@ -40,7 +40,6 @@ use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Models\Form;
-use App\Features\FontFeature;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Repeater;
@@ -149,11 +148,9 @@ class ViewForm extends ViewRecord
                     ->columnSpanFull(),
                 Section::make('Appearance')
                     ->schema([
-                        TextEntry::make('title_font_weight')
-                            ->visible(FontFeature::active()),
+                        TextEntry::make('title_font_weight'),
                         ColorEntry::make('title_color')
-                            ->state(fn (Form $record): ?string => $record->title_color ? Color::convertToRgb(Color::all()[$record->title_color][600]) : null)
-                            ->visible(FontFeature::active()),
+                            ->state(fn (Form $record): ?string => $record->title_color ? Color::convertToRgb(Color::all()[$record->title_color][600]) : null),
                         ColorEntry::make('primary_color')
                             ->state(fn (Form $record): ?string => $record->primary_color ? Color::convertToRgb(Color::all()[$record->primary_color][600]) : null),
                         TextEntry::make('rounding'),

@@ -45,7 +45,6 @@ use AdvisingApp\Form\Models\FormStep;
 use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use App\Enums\FontWeight;
-use App\Features\FontFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -155,10 +154,8 @@ trait HasSharedFormConfiguration
             Section::make('Appearance')
                 ->schema([
                     Select::make('title_font_weight')
-                        ->options(FontWeight::class)
-                        ->visible(FontFeature::active()),
-                    ColorSelect::make('title_color')
-                        ->visible(FontFeature::active()),
+                        ->options(FontWeight::class),
+                    ColorSelect::make('title_color'),
                     ColorSelect::make('primary_color'),
                     Select::make('rounding')
                         ->options(Rounding::class),
