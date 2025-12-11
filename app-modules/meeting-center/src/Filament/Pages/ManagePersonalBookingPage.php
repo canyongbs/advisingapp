@@ -101,7 +101,7 @@ class ManagePersonalBookingPage extends ProfilePage
                     ->schema([
                         Toggle::make('is_enabled')
                             ->label('Enable booking page')
-                            // ->disabled(! $hasCalendar)
+                            ->disabled(! $hasCalendar)
                             ->live(),
                         TextInput::make('slug')
                             ->label('URL Slug')
