@@ -38,6 +38,7 @@ namespace AdvisingApp\ResourceHub\Filament\Actions;
 
 use AdvisingApp\ResourceHub\Enums\ConcernStatus;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
+use App\Features\ConcernStatusUpdaterFeature;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 
@@ -60,6 +61,10 @@ class ChangeConcernStatusAction extends Action
             ])
             ->action(function (array $data, ResourceHubArticleConcern $record): void {
                 $record->status = $data['status'];
+
+                if (ConcernStatusUpdaterFeature::active()) {
+                    $record->lastUpdatedBy()->associate(auth()->user());
+                }
 
                 $record->save();
             });

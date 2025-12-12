@@ -41,6 +41,7 @@ use AdvisingApp\ResourceHub\Database\Factories\ResourceHubArticleConcernFactory;
 use AdvisingApp\ResourceHub\Enums\ConcernStatus;
 use AdvisingApp\ResourceHub\Observers\ResourceHubArticleConcernObserver;
 use App\Models\BaseModel;
+use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
@@ -66,11 +67,28 @@ class ResourceHubArticleConcern extends BaseModel implements Auditable
     protected $fillable = [
         'description',
         'status',
+        'last_updated_by_id',
     ];
 
     protected $casts = [
         'status' => ConcernStatus::class,
     ];
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by_id');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function lastUpdatedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'last_updated_by_id');
+    }
 
     /**
      * @return BelongsTo<ResourceHubArticle, $this>

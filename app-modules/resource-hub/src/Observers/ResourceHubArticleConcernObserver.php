@@ -38,8 +38,10 @@ namespace AdvisingApp\ResourceHub\Observers;
 
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
 use AdvisingApp\ResourceHub\Notifications\AlertManagerConcernCreated;
+use AdvisingApp\ResourceHub\Notifications\AlertManagerConcernStatusChanged;
 use AdvisingApp\ResourceHub\Notifications\ResourceHubArticleConcernCreated;
 use AdvisingApp\ResourceHub\Notifications\ResourceHubArticleConcernStatusChanged;
+use App\Features\ConcernStatusUpdaterFeature;
 use App\Models\User;
 
 class ResourceHubArticleConcernObserver
@@ -47,7 +49,8 @@ class ResourceHubArticleConcernObserver
     public function created(ResourceHubArticleConcern $resourceHubArticleConcern): void
     {
         $resourceHubArticleConcern->createdBy->notifyNow(new ResourceHubArticleConcernCreated($resourceHubArticleConcern));
-        $resourceHubArticleConcern->managers->each(
+
+        $resourceHubArticleConcern->resourceHubArticle->managers->each(
             fn (User $user) => $user->notifyNow(new AlertManagerConcernCreated($resourceHubArticleConcern))
         );
     }
@@ -56,6 +59,12 @@ class ResourceHubArticleConcernObserver
     {
         if ($resourceHubArticleConcern->wasChanged('status')) {
             $resourceHubArticleConcern->createdBy->notifyNow(new ResourceHubArticleConcernStatusChanged($resourceHubArticleConcern));
+
+            if(ConcernStatusUpdaterFeature::active()) {
+              $resourceHubArticleConcern->resourceHubArticle->managers->each(
+                fn(User $user) => $user->notifyNow(new AlertManagerConcernStatusChanged($resourceHubArticleConcern, $resourceHubArticleConcern->getOriginal('status')))
+              );
+            }
         }
     }
 }
