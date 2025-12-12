@@ -60,10 +60,10 @@ class ResourceHubArticleConcernObserver
         if ($resourceHubArticleConcern->wasChanged('status')) {
             $resourceHubArticleConcern->createdBy->notifyNow(new ResourceHubArticleConcernStatusChanged($resourceHubArticleConcern));
 
-            if(ConcernStatusUpdaterFeature::active()) {
-              $resourceHubArticleConcern->resourceHubArticle->managers->each(
-                fn(User $user) => $user->notifyNow(new AlertManagerConcernStatusChanged($resourceHubArticleConcern, $resourceHubArticleConcern->getOriginal('status')))
-              );
+            if (ConcernStatusUpdaterFeature::active()) {
+                $resourceHubArticleConcern->resourceHubArticle->managers->each(
+                    fn (User $user) => $user->notifyNow(new AlertManagerConcernStatusChanged($resourceHubArticleConcern, $resourceHubArticleConcern->getOriginal('status')))
+                );
             }
         }
     }
