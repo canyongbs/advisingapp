@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b33a8fb5bc470e485e8f1f04c68ce93f",
+    "content-hash": "28eb8f0ce2223ad3b246201e36d6f295",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -2175,25 +2175,27 @@
         },
         {
             "name": "canyongbs/common",
-            "version": "2.3.1",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/common.git",
-                "reference": "dc779788cb255783cc8070284eaf7da6cf1a60c6"
+                "reference": "c903379863a869dddf4446adc81c21af72c90cc5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/common/zipball/dc779788cb255783cc8070284eaf7da6cf1a60c6",
-                "reference": "dc779788cb255783cc8070284eaf7da6cf1a60c6",
+                "url": "https://api.github.com/repos/canyongbs/common/zipball/c903379863a869dddf4446adc81c21af72c90cc5",
+                "reference": "c903379863a869dddf4446adc81c21af72c90cc5",
                 "shasum": ""
             },
             "require": {
                 "filament/filament": "^4.3.1",
-                "laravel/framework": "^11.0|^12.0"
+                "laravel/framework": "^11.0|^12.0",
+                "php": "8.4.*"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.75",
                 "orchestra/testbench": "^10.4",
+                "orrison/meliorstan": "^0.3.2",
                 "pestphp/pest": "^3.8",
                 "pestphp/pest-plugin-laravel": "^3.2",
                 "php-coveralls/php-coveralls": "^0.1.0",
@@ -2226,9 +2228,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/common/issues",
-                "source": "https://github.com/canyongbs/common/tree/2.3.1"
+                "source": "https://github.com/canyongbs/common/tree/2.4.0"
             },
-            "time": "2025-12-09T19:23:14+00:00"
+            "time": "2025-12-12T20:15:23+00:00"
         },
         {
             "name": "canyongbs/filament-tiptap-editor",
