@@ -166,12 +166,12 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-clipboard-document-check')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Online Admissions')
-                    ->icon('heroicon-o-document-plus')
-                    ->collapsed(),
-                NavigationGroup::make()
                     ->label('Digital Forms')
                     ->icon('heroicon-o-inbox-arrow-down')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Online Admissions')
+                    ->icon('heroicon-o-document-plus')
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label('Event Management')
