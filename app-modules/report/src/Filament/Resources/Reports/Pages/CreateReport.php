@@ -88,6 +88,7 @@ class CreateReport extends CreateRecord implements HasTable
                         ->required()
                         ->default(Arr::first($models))
                         ->selectablePlaceholder(false)
+                        ->live()
                         ->afterStateUpdated(function (Set $set) {
                             $set('columns', collect($this->getReportModel()->exporter()::getColumns())
                                 ->filter(fn (ExportColumn $column): bool => $column->isEnabledByDefault())
@@ -118,7 +119,7 @@ class CreateReport extends CreateRecord implements HasTable
                             ->all())
                         ->columns(3)
                         ->live()
-                        ->afterStateUpdated($this->bootedInteractsWithTable(...)),
+                        ->afterStateUpdated($this->resetTable(...)),
                     View::make('filament.forms.components.table'),
                 ]),
         ];
