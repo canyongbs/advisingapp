@@ -39,7 +39,6 @@ namespace AdvisingApp\Group\Policies;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Group\Models\Group;
 use App\Concerns\PerformsLicenseChecks;
-use App\Features\RetentionCrmRestrictionFeature;
 use App\Models\Authenticatable;
 use App\Models\User;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
@@ -55,7 +54,7 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
             return $response;
         }
 
-        if (RetentionCrmRestrictionFeature::active() && $authenticatable instanceof User) {
+        if ($authenticatable instanceof User) {
             $restriction = $authenticatable->retention_crm_restriction;
 
             if ($restriction !== null) {

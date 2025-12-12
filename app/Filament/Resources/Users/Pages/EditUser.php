@@ -41,7 +41,6 @@ use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\Team\Models\Team;
 use App\Enums\RetentionCrmRestriction;
-use App\Features\RetentionCrmRestrictionFeature;
 use App\Filament\Forms\Components\Licenses;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Filament\Resources\Users\UserResource;
@@ -141,7 +140,6 @@ class EditUser extends EditRecord
                     ->label('Retention CRM Restriction')
                     ->options(RetentionCrmRestriction::class)
                     ->placeholder('No Restrictions')
-                    ->visible(fn () => RetentionCrmRestrictionFeature::active())
                     ->hidden(fn (?User $record) => $record?->isAdmin() ?? false),
             ]);
     }
