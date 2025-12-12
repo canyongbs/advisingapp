@@ -270,7 +270,7 @@ class EventRegistrationWidgetController extends Controller
                             continue;
                         }
 
-                        foreach ($data[$step->label] as $fieldId => $response) {
+                        foreach ($data[$step->label] ?? [] as $fieldId => $response) {
                             $submission->fields()->attach(
                                 $fieldId,
                                 ['id' => Str::orderedUuid(), 'response' => $response],

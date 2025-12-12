@@ -266,7 +266,7 @@ class CaseFormWidgetController extends Controller
             foreach ($caseForm->steps as $step) {
                 $stepFields = $step->fields()->pluck('type', 'id')->all();
 
-                foreach ($data[$step->label] as $fieldId => $response) {
+                foreach ($data[$step->label] ?? [] as $fieldId => $response) {
                     $submission->fields()->attach(
                         $fieldId,
                         ['id' => Str::orderedUuid(), 'response' => $response],

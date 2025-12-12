@@ -286,7 +286,7 @@ class ApplicationWidgetController extends Controller
             foreach ($application->steps as $step) {
                 $stepFields = $step->fields()->pluck('type', 'id')->all();
 
-                foreach ($data[$step->label] as $fieldId => $response) {
+                foreach ($data[$step->label] ?? [] as $fieldId => $response) {
                     $processSubmissionField(
                         $submission,
                         $fieldId,
