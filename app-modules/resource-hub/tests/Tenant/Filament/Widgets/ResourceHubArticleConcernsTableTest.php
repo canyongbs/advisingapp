@@ -119,5 +119,5 @@ it('can change the status of a concern properly', function () {
         ->assertHasNoErrors();
 
     expect($concern->refresh()->status)->toBe(ConcernStatus::Resolved);
-    expect($concern->lastUpdatedBy)->toBe($user->getKey());
+    expect($concern->statusLastUpdatedBy)->toBe($user->getKey());
 });
