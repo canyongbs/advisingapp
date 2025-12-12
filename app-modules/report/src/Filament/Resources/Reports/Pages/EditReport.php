@@ -102,7 +102,7 @@ class EditReport extends EditRecord implements HasTable
                     ->columns(3)
                     ->live()
                     ->columnSpanFull()
-                    ->afterStateUpdated($this->bootedInteractsWithTable(...)),
+                    ->afterStateUpdated($this->resetTable(...)),
             ]);
     }
 

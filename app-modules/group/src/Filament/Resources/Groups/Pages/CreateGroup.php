@@ -97,6 +97,7 @@ class CreateGroup extends CreateRecord implements HasTable
                         ->required()
                         ->default(GroupModel::default())
                         ->selectablePlaceholder(false)
+                        ->live()
                         ->afterStateUpdated(function () {
                             $this->resetTable();
                         }),
