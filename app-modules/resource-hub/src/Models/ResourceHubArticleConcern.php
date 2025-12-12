@@ -67,7 +67,7 @@ class ResourceHubArticleConcern extends BaseModel implements Auditable
     protected $fillable = [
         'description',
         'status',
-        'last_updated_by_id',
+        'status_last_updated_by_id',
     ];
 
     protected $casts = [
@@ -85,9 +85,9 @@ class ResourceHubArticleConcern extends BaseModel implements Auditable
     /**
      * @return BelongsTo<User, $this>
      */
-    public function lastUpdatedBy(): BelongsTo
+    public function statusLastUpdatedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'last_updated_by_id');
+        return $this->belongsTo(User::class, 'status_last_updated_by_id');
     }
 
     /**
