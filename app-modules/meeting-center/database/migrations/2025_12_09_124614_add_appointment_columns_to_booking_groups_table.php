@@ -53,16 +53,11 @@ return new class () extends Migration {
                 $table->unsignedInteger('default_appointment_buffer_after_duration')->default(0);
                 $table->jsonb('available_appointment_hours');
             });
-
-            BookingGroupAppointmentConfigurationFeature::activate();
         });
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            BookingGroupAppointmentConfigurationFeature::deactivate();
-
             Schema::table('booking_groups', function (Blueprint $table) {
                 $table->dropColumn('default_appointment_duration');
                 $table->dropColumn('is_default_appointment_buffer_enabled');
@@ -70,6 +65,5 @@ return new class () extends Migration {
                 $table->dropColumn('default_appointment_buffer_after_duration');
                 $table->dropColumn('available_appointment_hours');
             });
-        });
     }
 };

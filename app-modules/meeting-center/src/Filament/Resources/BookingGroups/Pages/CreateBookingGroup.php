@@ -103,17 +103,12 @@ class CreateBookingGroup extends CreateRecord
                         ->label('Days and Hours')
                         ->columnSpanFull(),
                 ])
-                ->columns(2)
-                ->visible(BookingGroupAppointmentConfigurationFeature::active()),
+                ->columns(2),
         ]);
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        if (! BookingGroupAppointmentConfigurationFeature::active()) {
-            return $data;
-        }
-
         $data['default_appointment_duration'] = DurationInput::mutateDataBeforeSave($data['default_appointment_duration']);
 
         if (array_key_exists('default_appointment_buffer_before_duration', $data)) {
