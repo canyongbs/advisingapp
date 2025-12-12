@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\QnaAdvisorIntroductoryMessageFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
@@ -49,16 +48,12 @@ return new class () extends Migration {
                 $table->boolean('is_introductory_message_dynamic')->default(true);
                 $table->text('introductory_message')->nullable();
             });
-
-            QnaAdvisorIntroductoryMessageFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            QnaAdvisorIntroductoryMessageFeature::deactivate();
-
             Schema::table('qna_advisors', function (Blueprint $table) {
                 $table->dropColumn([
                     'is_introductory_message_enabled',

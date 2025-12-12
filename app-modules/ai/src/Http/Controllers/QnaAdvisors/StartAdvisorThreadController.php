@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Actions\GenerateQnaAdvisorIntroductoryMessage;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
-use App\Features\QnaAdvisorIntroductoryMessageFeature;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
 
@@ -58,8 +57,7 @@ class StartAdvisorThreadController
         $introductoryMessage = null;
 
         if (
-            QnaAdvisorIntroductoryMessageFeature::active()
-            && $advisor->is_introductory_message_enabled
+            $advisor->is_introductory_message_enabled
             && filled($content = $generateIntroductoryMessage->execute($advisor, $author))
         ) {
             $message = new QnaAdvisorMessage();
