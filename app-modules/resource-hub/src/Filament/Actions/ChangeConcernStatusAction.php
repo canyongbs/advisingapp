@@ -63,7 +63,7 @@ class ChangeConcernStatusAction extends Action
                 $record->status = $data['status'];
 
                 if (ConcernStatusUpdaterFeature::active()) {
-                    $record->lastUpdatedBy()->associate(auth()->user());
+                    $record->statusLastUpdatedBy()->associate(auth()->user());
                 }
 
                 $record->save();
