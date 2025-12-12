@@ -125,14 +125,14 @@ class SendEngagementAction extends Action
 
                                     if ($educatable && $educatable->emailAddresses()->whereDoesntHave('bounced')->exists()) {
                                         $set('channel', 'email');
-                                        $set('recipient_route_id', $educatable?->emailAddresses()->whereDoesntHave('bounced')->orderBy('order')->first()?->getKey());
+                                        $set('recipient_route_id', $educatable->emailAddresses()->whereDoesntHave('bounced')->orderBy('order')->first()?->getKey());
 
                                         return;
                                     }
 
                                     if ($educatable && $educatable->phoneNumbers()->where('can_receive_sms', true)->whereDoesntHave('smsOptOut')->exists()) {
                                         $set('channel', 'sms');
-                                        $set('recipient_route_id', $educatable?->phoneNumbers()->where('can_receive_sms', true)->whereDoesntHave('smsOptOut')->orderBy('order')->first()?->getKey());
+                                        $set('recipient_route_id', $educatable->phoneNumbers()->where('can_receive_sms', true)->whereDoesntHave('smsOptOut')->orderBy('order')->first()?->getKey());
 
                                         return;
                                     }
