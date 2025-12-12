@@ -38,7 +38,6 @@ namespace App\Filament\Resources\Users\Pages;
 
 use AdvisingApp\Authorization\Models\License;
 use App\Enums\RetentionCrmRestriction;
-use App\Features\RetentionCrmRestrictionFeature;
 use App\Filament\Forms\Components\Licenses;
 use App\Filament\Resources\Users\UserResource;
 use App\Models\User;

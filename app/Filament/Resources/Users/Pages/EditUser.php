@@ -41,7 +41,6 @@ use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\Team\Models\Team;
 use App\Enums\RetentionCrmRestriction;
-use App\Features\RetentionCrmRestrictionFeature;
 use App\Filament\Forms\Components\Licenses;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Filament\Resources\Users\UserResource;

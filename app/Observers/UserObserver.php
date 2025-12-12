@@ -38,7 +38,6 @@ namespace App\Observers;
 
 use AdvisingApp\Authorization\Settings\LocalPasswordSettings;
 use App\Events\UserRetentionCrmRestrictionSet;
-use App\Features\RetentionCrmRestrictionFeature;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 

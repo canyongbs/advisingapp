@@ -39,7 +39,6 @@ namespace AdvisingApp\Campaign\Policies;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Models\Campaign;
 use App\Concerns\PerformsLicenseChecks;
-use App\Features\RetentionCrmRestrictionFeature;
 use App\Models\Authenticatable;
 use App\Models\User;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;

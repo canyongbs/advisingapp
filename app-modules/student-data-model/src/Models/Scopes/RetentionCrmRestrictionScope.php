@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Models\Scopes;
 
 use App\Enums\RetentionCrmRestriction;
-use App\Features\RetentionCrmRestrictionFeature;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
