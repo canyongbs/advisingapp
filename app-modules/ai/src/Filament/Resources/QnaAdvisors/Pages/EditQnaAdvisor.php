@@ -41,7 +41,6 @@ use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
-use App\Features\QnaAdvisorIntroductoryMessageFeature;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
@@ -135,8 +134,7 @@ class EditQnaAdvisor extends EditRecord
                     Toggle::make('is_introductory_message_enabled')
                         ->label('Enable Introductory Message')
                         ->live()
-                        ->default(false)
-                        ->visible(fn (): bool => QnaAdvisorIntroductoryMessageFeature::active()),
+                        ->default(false),
                     Toggle::make('is_introductory_message_dynamic')
                         ->label('Dynamic')
                         ->helperText(fn (Get $get): string => $get('is_introductory_message_dynamic')
@@ -144,13 +142,13 @@ class EditQnaAdvisor extends EditRecord
                             : 'Specify a custom introductory message below.')
                         ->live()
                         ->default(true)
-                        ->visible(fn (Get $get): bool => QnaAdvisorIntroductoryMessageFeature::active() && $get('is_introductory_message_enabled')),
+                        ->visible(fn (Get $get): bool => $get('is_introductory_message_enabled')),
                     Textarea::make('introductory_message')
                         ->label('Introductory Message')
                         ->helperText('Specify the plain text introductory message.')
                         ->maxLength(65535)
                         ->rows(4)
-                        ->visible(fn (Get $get): bool => QnaAdvisorIntroductoryMessageFeature::active() && $get('is_introductory_message_enabled') && ! $get('is_introductory_message_dynamic')),
+                        ->visible(fn (Get $get): bool => $get('is_introductory_message_enabled') && ! $get('is_introductory_message_dynamic')),
                 ]),
             ]);
     }

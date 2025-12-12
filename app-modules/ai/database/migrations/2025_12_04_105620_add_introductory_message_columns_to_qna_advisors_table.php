@@ -34,38 +34,28 @@
 </COPYRIGHT>
 */
 
-use App\Features\QnaAdvisorIntroductoryMessageFeature;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('qna_advisors', function (Blueprint $table) {
-                $table->boolean('is_introductory_message_enabled')->default(false);
-                $table->boolean('is_introductory_message_dynamic')->default(true);
-                $table->text('introductory_message')->nullable();
-            });
-
-            QnaAdvisorIntroductoryMessageFeature::activate();
+        Schema::table('qna_advisors', function (Blueprint $table) {
+            $table->boolean('is_introductory_message_enabled')->default(false);
+            $table->boolean('is_introductory_message_dynamic')->default(true);
+            $table->text('introductory_message')->nullable();
         });
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            QnaAdvisorIntroductoryMessageFeature::deactivate();
-
-            Schema::table('qna_advisors', function (Blueprint $table) {
-                $table->dropColumn([
-                    'is_introductory_message_enabled',
-                    'is_introductory_message_dynamic',
-                    'introductory_message',
-                ]);
-            });
+        Schema::table('qna_advisors', function (Blueprint $table) {
+            $table->dropColumn([
+                'is_introductory_message_enabled',
+                'is_introductory_message_dynamic',
+                'introductory_message',
+            ]);
         });
     }
 };
