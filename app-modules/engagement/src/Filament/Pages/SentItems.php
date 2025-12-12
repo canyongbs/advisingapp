@@ -46,7 +46,9 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
@@ -61,8 +63,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
-use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
-use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 
 class SentItems extends Page implements HasTable
 {
