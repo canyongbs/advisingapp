@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\BookingGroupAppointmentConfigurationFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
@@ -53,23 +52,17 @@ return new class () extends Migration {
                 $table->unsignedInteger('default_appointment_buffer_after_duration')->default(0);
                 $table->jsonb('available_appointment_hours');
             });
-
-            BookingGroupAppointmentConfigurationFeature::activate();
         });
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            BookingGroupAppointmentConfigurationFeature::deactivate();
-
-            Schema::table('booking_groups', function (Blueprint $table) {
-                $table->dropColumn('default_appointment_duration');
-                $table->dropColumn('is_default_appointment_buffer_enabled');
-                $table->dropColumn('default_appointment_buffer_before_duration');
-                $table->dropColumn('default_appointment_buffer_after_duration');
-                $table->dropColumn('available_appointment_hours');
-            });
+        Schema::table('booking_groups', function (Blueprint $table) {
+            $table->dropColumn('default_appointment_duration');
+            $table->dropColumn('is_default_appointment_buffer_enabled');
+            $table->dropColumn('default_appointment_buffer_before_duration');
+            $table->dropColumn('default_appointment_buffer_after_duration');
+            $table->dropColumn('available_appointment_hours');
         });
     }
 };

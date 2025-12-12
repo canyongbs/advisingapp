@@ -37,7 +37,6 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
-use App\Features\BookingGroupAppointmentConfigurationFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -108,8 +107,7 @@ class EditBookingGroup extends EditRecord
                         ->label('Days and Hours')
                         ->columnSpanFull(),
                 ])
-                ->columns(2)
-                ->visible(BookingGroupAppointmentConfigurationFeature::active()),
+                ->columns(2),
         ]);
     }
 
@@ -123,10 +121,6 @@ class EditBookingGroup extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        if (! BookingGroupAppointmentConfigurationFeature::active()) {
-            return $data;
-        }
-
         $data['default_appointment_duration'] = DurationInput::mutateDataBeforeFill($data['default_appointment_duration'], hasDays: true);
         $data['default_appointment_buffer_before_duration'] = DurationInput::mutateDataBeforeFill($data['default_appointment_buffer_before_duration'], hasDays: false);
         $data['default_appointment_buffer_after_duration'] = DurationInput::mutateDataBeforeFill($data['default_appointment_buffer_after_duration'], hasDays: false);
@@ -137,10 +131,6 @@ class EditBookingGroup extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        if (! BookingGroupAppointmentConfigurationFeature::active()) {
-            return $data;
-        }
-
         $data['default_appointment_duration'] = DurationInput::mutateDataBeforeSave($data['default_appointment_duration']);
 
         if (array_key_exists('default_appointment_buffer_before_duration', $data)) {
