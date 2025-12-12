@@ -61,6 +61,8 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 
 class SentItems extends Page implements HasTable
 {
@@ -108,7 +110,13 @@ class SentItems extends Page implements HasTable
                 TextColumn::make('user.name')
                     ->label('From'),
                 TextColumn::make('recipient.full_name')
-                    ->label('To'),
+                    ->label('To')
+                    ->url(fn (Engagement $record): ?string => match (true) {
+                        $record->recipient instanceof Student => StudentResource::getUrl('view', ['record' => $record->recipient]),
+                        $record->recipient instanceof Prospect => ProspectResource::getUrl('view', ['record' => $record->recipient]),
+                        default => null,
+                    })
+                    ->openUrlInNewTab(),
                 TextColumn::make('channel')
                     ->label('Type')
                     ->state(fn (Engagement $record): string => $record->channel->getLabel())
