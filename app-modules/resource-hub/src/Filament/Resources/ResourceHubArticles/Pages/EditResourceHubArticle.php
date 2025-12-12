@@ -43,7 +43,6 @@ use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubAr
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use App\Features\ResourceHubArticleManagersFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action as BaseAction;
 use Filament\Forms\Components\Select;
@@ -163,8 +162,7 @@ class EditResourceHubArticle extends EditRecord
                                             ->searchable()
                                             ->preload()
                                             ->exists('users', 'id'),
-                                    ])
-                                    ->visible(ResourceHubArticleManagersFeature::active()),
+                                    ]),
                             ]),
                     ])
                     ->columnSpanFull(),

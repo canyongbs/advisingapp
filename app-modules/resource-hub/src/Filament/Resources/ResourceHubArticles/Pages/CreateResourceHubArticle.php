@@ -41,7 +41,6 @@ use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubAr
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use App\Features\ResourceHubArticleManagersFeature;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -110,7 +109,6 @@ class CreateResourceHubArticle extends CreateRecord
                             ->visible(fn (): bool => Division::count() > 1)
                             ->exists((new Division())->getTable(), (new Division())->getKeyName()),
                         Select::make('manager_ids')
-                            ->visible(ResourceHubArticleManagersFeature::active())
                             ->label('Managers')
                             ->options(fn (): array => User::query()->limit(50)->pluck('name', 'id')->all())
                             ->relationship('managers', 'name')

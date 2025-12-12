@@ -41,7 +41,6 @@ use AdvisingApp\ResourceHub\Filament\Actions\CreateConcernAction;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Filament\Widgets\ResourceHubArticleConcernsTable;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use App\Features\ResourceHubArticleManagersFeature;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -117,7 +116,6 @@ class ViewResourceHubArticle extends ViewRecord
                                 TextEntry::make('division.name')
                                     ->label('Division'),
                                 TextEntry::make('managers')
-                                    ->visible(ResourceHubArticleManagersFeature::active())
                                     ->label('Managers')
                                     ->getStateUsing(fn (ResourceHubArticle $record) => $record->managers->pluck('name')->join(', ')),
                             ]),
