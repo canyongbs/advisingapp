@@ -38,7 +38,9 @@ use AdvisingApp\ResourceHub\Enums\ConcernStatus;
 use AdvisingApp\ResourceHub\Filament\Widgets\ResourceHubArticleConcernsTable;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
+use App\Models\User;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -103,7 +105,12 @@ it('can filter concerns by status', function () {
 });
 
 it('can change the status of a concern properly', function () {
-    asSuperAdmin();
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('resource_hub_article.view-any');
+    $user->givePermissionTo('resource_hub_article.*.view');
+
+    actingAs($user);
 
     $concern = ResourceHubArticleConcern::factory()->create(['status' => ConcernStatus::New]);
 
@@ -112,4 +119,5 @@ it('can change the status of a concern properly', function () {
         ->assertHasNoErrors();
 
     expect($concern->refresh()->status)->toBe(ConcernStatus::Resolved);
+    expect($concern->lastUpdatedBy)->toBe($user->getKey());
 });

@@ -124,7 +124,8 @@ class ViewResourceHubArticle extends ViewRecord
                                 Livewire::make(ResourceHubArticleConcernsTable::class, ['record' => $this->getRecord()]),
                             ]),
                     ])
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->persistTabInQueryString(),
             ]);
     }
 
