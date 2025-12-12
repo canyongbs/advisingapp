@@ -110,7 +110,6 @@ class ViewUser extends ViewRecord
                     ->options(RetentionCrmRestriction::class)
                     ->placeholder('No Restrictions')
                     ->disabled()
-                    ->visible(fn () => RetentionCrmRestrictionFeature::active())
                     ->hidden(fn (?User $record) => $record?->isAdmin() ?? false),
             ]);
     }

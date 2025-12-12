@@ -65,9 +65,7 @@ class UserObserver
 
     public function saved(User $user): void
     {
-        if (
-            RetentionCrmRestrictionFeature::active()
-            && $user->wasChanged('retention_crm_restriction')
+        if ($user->wasChanged('retention_crm_restriction')
             && $user->retention_crm_restriction
         ) {
             UserRetentionCrmRestrictionSet::dispatch($user);

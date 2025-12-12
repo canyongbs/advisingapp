@@ -141,7 +141,6 @@ class EditUser extends EditRecord
                     ->label('Retention CRM Restriction')
                     ->options(RetentionCrmRestriction::class)
                     ->placeholder('No Restrictions')
-                    ->visible(fn () => RetentionCrmRestrictionFeature::active())
                     ->hidden(fn (?User $record) => $record?->isAdmin() ?? false),
             ]);
     }

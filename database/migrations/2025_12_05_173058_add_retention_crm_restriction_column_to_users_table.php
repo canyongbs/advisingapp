@@ -44,23 +44,16 @@ use Laravel\Pennant\Feature;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
             Schema::table('users', function (Blueprint $table) {
                 $table->string('retention_crm_restriction')->nullable();
             });
-
-            Feature::activate(RetentionCrmRestrictionFeature::class);
-        });
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Feature::deactivate(RetentionCrmRestrictionFeature::class);
 
             Schema::table('users', function (Blueprint $table) {
                 $table->dropColumn('retention_crm_restriction');
             });
-        });
     }
 };

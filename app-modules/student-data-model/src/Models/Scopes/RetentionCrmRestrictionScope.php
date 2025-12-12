@@ -49,10 +49,6 @@ class RetentionCrmRestrictionScope implements Scope
 {
     public function apply(Builder $builder, Model $model): void
     {
-        if (! RetentionCrmRestrictionFeature::active()) {
-            return;
-        }
-
         $user = auth()->user();
 
         if (! $user instanceof User) {
