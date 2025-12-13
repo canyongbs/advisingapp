@@ -72,7 +72,6 @@ class AlertManagerConcernStatusChanged extends Notification
 
         return FilamentNotification::make()
             ->title("The status of a concern has changed from {$this->oldStatus->getLabel()} to {$this->resourceHubArticleConcern->status->getLabel()} by {$this->resourceHubArticleConcern->lastUpdatedBy->name} on the resource hub article {$link}.")
-            ->success()
             ->getDatabaseMessage();
     }
 }
