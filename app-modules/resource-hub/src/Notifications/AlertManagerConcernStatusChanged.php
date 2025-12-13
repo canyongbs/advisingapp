@@ -65,8 +65,8 @@ class AlertManagerConcernStatusChanged extends Notification
     public function toDatabase(User $notifiable): array
     {
         $resourceHubArticle = $this->resourceHubArticleConcern->resourceHubArticle;
-        //TODO: link to the concerns tab
-        $url = ResourceHubArticleResource::getUrl('view', ['record' => $resourceHubArticle->getKey()]);
+        
+        $url = ResourceHubArticleResource::getUrl('view', ['record' => $resourceHubArticle->getKey(), 'tab' => 'concerns']);
 
         $link = new HtmlString("<a href='{$url}' target='_blank' class='underline'>{$resourceHubArticle->title}</a>");
 
