@@ -66,7 +66,7 @@ class AlertManagerConcernCreated extends Notification
         $resourceHubArticle = $this->resourceHubArticleConcern->resourceHubArticle;
 
         $user = $this->resourceHubArticleConcern->createdBy;
-        
+
         $url = ResourceHubArticleResource::getUrl('view', ['record' => $resourceHubArticle->getKey(), 'tab' => 'concerns']);
 
         $link = new HtmlString("<a href='{$url}' target='_blank' class='underline'>{$resourceHubArticle->title}</a>");
