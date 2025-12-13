@@ -88,7 +88,8 @@ class ViewResourceHubArticle extends ViewRecord
                                     ->label('Article Details')
                                     ->columnSpanFull()
                                     ->view('filament.infolists.components.html'),
-                            ]),
+                            ])
+                            ->id('content'),
                         Tab::make('Properties')
                             ->schema([
                                 TextEntry::make('title')
@@ -104,6 +105,7 @@ class ViewResourceHubArticle extends ViewRecord
                                     ->label('Views')
                                     ->state(fn (ResourceHubArticle $record): int => $record->views()->count()),
                             ])
+                            ->id('properties')
                             ->columns(2),
                         Tab::make('Metadata')
                             ->schema([
@@ -118,11 +120,13 @@ class ViewResourceHubArticle extends ViewRecord
                                 TextEntry::make('managers')
                                     ->label('Managers')
                                     ->getStateUsing(fn (ResourceHubArticle $record) => $record->managers->pluck('name')->join(', ')),
-                            ]),
+                            ])
+                            ->id('metadata'),
                         Tab::make('Concerns')
                             ->schema([
                                 Livewire::make(ResourceHubArticleConcernsTable::class, ['record' => $this->getRecord()]),
-                            ]),
+                            ])
+                            ->id('concerns'),
                     ])
                     ->columnSpanFull()
                     ->persistTabInQueryString(),
