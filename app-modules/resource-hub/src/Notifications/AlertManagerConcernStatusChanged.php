@@ -34,58 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Models;
+namespace AdvisingApp\ResourceHub\Notifications;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\ResourceHub\Database\Factories\ResourceHubArticleConcernFactory;
 use AdvisingApp\ResourceHub\Enums\ConcernStatus;
-use AdvisingApp\ResourceHub\Observers\ResourceHubArticleConcernObserver;
-use App\Models\BaseModel;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
 use App\Models\User;
-use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
+use Illuminate\Support\HtmlString;
 
-/**
- * @mixin IdeHelperResourceHubArticleConcern
- */
-#[ObservedBy(ResourceHubArticleConcernObserver::class)]
-class ResourceHubArticleConcern extends BaseModel implements Auditable
+class AlertManagerConcernStatusChanged extends Notification
 {
-    /** @use HasFactory<ResourceHubArticleConcernFactory> */
-    use HasFactory;
+    use Queueable;
 
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-    use HasUserSaveTracking;
-
-    protected $fillable = [
-        'description',
-        'status',
-    ];
-
-    protected $casts = [
-        'status' => ConcernStatus::class,
-    ];
+    public function __construct(public ResourceHubArticleConcern $resourceHubArticleConcern, public ConcernStatus $oldStatus) {}
 
     /**
-     * @return BelongsTo<User, $this>
+     * @return array<int, string>
      */
-    public function createdBy(): BelongsTo
+    public function via(User $notifiable): array
     {
-        return $this->belongsTo(User::class, 'created_by_id');
+        return ['database'];
     }
 
     /**
-     * @return BelongsTo<ResourceHubArticle, $this>
+     * @return array<string, mixed>
      */
-    public function resourceHubArticle(): BelongsTo
+    public function toDatabase(User $notifiable): array
     {
-        return $this->belongsTo(ResourceHubArticle::class);
+        $resourceHubArticle = $this->resourceHubArticleConcern->resourceHubArticle;
+
+        $url = ResourceHubArticleResource::getUrl('view', ['record' => $resourceHubArticle->getKey(), 'tab' => 'concerns']);
+
+        $link = new HtmlString("<a href='{$url}' target='_blank' class='underline'>{$resourceHubArticle->title}</a>");
+
+        return FilamentNotification::make()
+            ->title("The status of a concern has changed from {$this->oldStatus->getLabel()} to {$this->resourceHubArticleConcern->status->getLabel()} by {$this->resourceHubArticleConcern->lastUpdatedBy->name} on the resource hub article {$link}.")
+            ->getDatabaseMessage();
     }
 }
