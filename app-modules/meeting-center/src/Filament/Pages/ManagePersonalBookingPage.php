@@ -185,9 +185,9 @@ class ManagePersonalBookingPage extends ProfilePage
                                             ->required()
                                             ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
                                     ]),
-                            ])->visible(fn (Get $get) => $get('is_enabled')),                            
+                            ])->visible(fn (Get $get) => $get('is_enabled')),
                     ]),
-                ]);
+            ]);
     }
 
     public function mutateFormDataBeforeFill(array $data): array
