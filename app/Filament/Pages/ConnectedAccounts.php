@@ -106,6 +106,7 @@ class ConnectedAccounts extends ProfilePage
                                 $user = auth()->user();
 
                                 $calendar = $user->calendar;
+                                $providerLabel = $calendar->provider_type->getLabel();
 
                                 $revoked = resolve(CalendarManager::class)
                                     ->driver($calendar->provider_type->value)
@@ -115,10 +116,23 @@ class ConnectedAccounts extends ProfilePage
                                     $calendar->delete();
 
                                     Notification::make()
-                                        ->title("Disconnected {$calendar->provider_type->getLabel()} Calendar")
+                                        ->title("Disconnected {$providerLabel} Calendar")
                                         ->success()
                                         ->send();
+
+                                    $user->refresh();
+
+                                    if (! $user->calendar?->oauth_token) {
+                                        return redirect(ProfileInformation::getUrl());
+                                    }
+
+                                    return redirect(request()->url());
                                 }
+                                Notification::make()
+                                    ->title("Failed to disconnect {$providerLabel} Calendar")
+                                    ->body('Please try again or contact support if the problem persists.')
+                                    ->danger()
+                                    ->send();
                             }),
                     ])->alignRight()
                         ->verticallyAlignCenter(),
