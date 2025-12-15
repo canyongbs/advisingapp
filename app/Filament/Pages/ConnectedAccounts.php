@@ -37,7 +37,6 @@
 namespace App\Filament\Pages;
 
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
-use App\Filament\Pages\ProfileInformation;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
@@ -128,13 +127,12 @@ class ConnectedAccounts extends ProfilePage
                                     }
 
                                     return redirect(request()->url());
-                                } else {
-                                    Notification::make()
-                                        ->title("Failed to disconnect {$providerLabel} Calendar")
-                                        ->body('Please try again or contact support if the problem persists.')
-                                        ->danger()
-                                        ->send();
                                 }
+                                Notification::make()
+                                    ->title("Failed to disconnect {$providerLabel} Calendar")
+                                    ->body('Please try again or contact support if the problem persists.')
+                                    ->danger()
+                                    ->send();
                             }),
                     ])->alignRight()
                         ->verticallyAlignCenter(),
