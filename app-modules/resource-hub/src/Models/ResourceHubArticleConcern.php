@@ -74,14 +74,6 @@ class ResourceHubArticleConcern extends BaseModel implements Auditable
     ];
 
     /**
-     * @return BelongsTo<User, $this>
-     */
-    public function createdBy(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'created_by_id');
-    }
-
-    /**
      * @return BelongsTo<ResourceHubArticle, $this>
      */
     public function resourceHubArticle(): BelongsTo

@@ -41,10 +41,11 @@ use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
 use App\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 
-class AlertManagerConcernCreated extends Notification
+class AlertManagerConcernCreated extends Notification implements ShouldQueue
 {
     use Queueable;
 
