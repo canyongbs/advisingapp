@@ -37,6 +37,7 @@
 namespace App\Filament\Pages;
 
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
+use App\Filament\Pages\ProfileInformation;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
@@ -106,6 +107,7 @@ class ConnectedAccounts extends ProfilePage
                                 $user = auth()->user();
 
                                 $calendar = $user->calendar;
+                                $providerLabel = $calendar->provider_type->getLabel();
 
                                 $revoked = resolve(CalendarManager::class)
                                     ->driver($calendar->provider_type->value)
@@ -115,8 +117,22 @@ class ConnectedAccounts extends ProfilePage
                                     $calendar->delete();
 
                                     Notification::make()
-                                        ->title("Disconnected {$calendar->provider_type->getLabel()} Calendar")
+                                        ->title("Disconnected {$providerLabel} Calendar")
                                         ->success()
+                                        ->send();
+
+                                    $user->refresh();
+
+                                    if (! $user->calendar?->oauth_token) {
+                                        return redirect(ProfileInformation::getUrl());
+                                    }
+
+                                    return redirect(request()->url());
+                                } else {
+                                    Notification::make()
+                                        ->title("Failed to disconnect {$providerLabel} Calendar")
+                                        ->body('Please try again or contact support if the problem persists.')
+                                        ->danger()
                                         ->send();
                                 }
                             }),
