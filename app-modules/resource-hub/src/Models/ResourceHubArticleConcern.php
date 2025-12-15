@@ -41,7 +41,6 @@ use AdvisingApp\ResourceHub\Database\Factories\ResourceHubArticleConcernFactory;
 use AdvisingApp\ResourceHub\Enums\ConcernStatus;
 use AdvisingApp\ResourceHub\Observers\ResourceHubArticleConcernObserver;
 use App\Models\BaseModel;
-use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
