@@ -122,72 +122,72 @@ class ManagePersonalBookingPage extends ProfilePage
                                 60 => '1 hour',
                             ])
                             ->visible(fn (Get $get) => $get('is_enabled')),
-                    ]),
-                Section::make('Working Hours')
-                    ->visible($hasCrmLicense)
-                    ->schema([
-                        Toggle::make('working_hours_are_enabled')
-                            ->label('Set Working Hours')
-                            ->live()
-                            ->required()
-                            ->hint(fn (Get $get): string => $get('are_working_hours_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile')
-                            ->validationMessages([
-                                'accepted' => 'Working hours must be enabled when booking page is enabled.',
-                            ])
-                            ->rules([
-                                fn (Get $get): string => $get('is_enabled') ? 'accepted' : '',
-                            ]),
-                        Checkbox::make('are_working_hours_visible_on_profile')
-                            ->label('Show Working Hours on profile')
-                            ->visible(fn (Get $get) => $get('working_hours_are_enabled'))
-                            ->live(),
-                        Section::make('Days')
-                            ->schema($this->getHoursForDays('working_hours'))
-                            ->visible(fn (Get $get) => $get('working_hours_are_enabled')),
-                    ])
-                    ->visible(fn (Get $get) => $get('is_enabled')),
-                Section::make('Office Hours')
-                    ->visible($hasCrmLicense)
-                    ->schema([
-                        Toggle::make('office_hours_are_enabled')
-                            ->label('Enable Office Hours')
-                            ->live(),
-                        Checkbox::make('appointments_are_restricted_to_existing_students')
-                            ->label('Restrict appointments to existing students')
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                        Section::make('Days')
-                            ->schema($this->getHoursForDays('office_hours'))
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                    ])
-                    ->visible(fn (Get $get) => $get('is_enabled')),
-                Section::make('Out of Office')
-                    ->schema([
-                        Grid::make()
-                            ->columns([
-                                'sm' => 1,
-                                'md' => 1,
-                                'lg' => 1,
-                                'xl' => 2,
-                                '2xl' => 2,
-                            ])
+                        Section::make('Working Hours')
+                            ->visible($hasCrmLicense)
                             ->schema([
-                                Toggle::make('out_of_office_is_enabled')
-                                    ->columnSpanFull()
-                                    ->label('Enable Out of Office')
+                                Toggle::make('working_hours_are_enabled')
+                                    ->label('Set Working Hours')
+                                    ->live()
+                                    ->required()
+                                    ->hint(fn (Get $get): string => $get('are_working_hours_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile')
+                                    ->validationMessages([
+                                        'accepted' => 'Working hours must be enabled when booking page is enabled.',
+                                    ])
+                                    ->rules([
+                                        fn (Get $get): string => $get('is_enabled') ? 'accepted' : '',
+                                    ]),
+                                Checkbox::make('are_working_hours_visible_on_profile')
+                                    ->label('Show Working Hours on profile')
+                                    ->visible(fn (Get $get) => $get('working_hours_are_enabled'))
                                     ->live(),
-                                DateTimePicker::make('out_of_office_starts_at')
-                                    ->columnSpan(1)
-                                    ->label('Start')
-                                    ->required()
-                                    ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
-                                DateTimePicker::make('out_of_office_ends_at')
-                                    ->columnSpan(1)
-                                    ->label('End')
-                                    ->required()
-                                    ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
-                            ]),
-                    ])->visible(fn (Get $get) => $get('is_enabled')),
-            ]);
+                                Section::make('Days')
+                                    ->schema($this->getHoursForDays('working_hours'))
+                                    ->visible(fn (Get $get) => $get('working_hours_are_enabled')),
+                            ])
+                            ->visible(fn (Get $get) => $get('is_enabled')),
+                        Section::make('Office Hours')
+                            ->visible($hasCrmLicense)
+                            ->schema([
+                                Toggle::make('office_hours_are_enabled')
+                                    ->label('Enable Office Hours')
+                                    ->live(),
+                                Checkbox::make('appointments_are_restricted_to_existing_students')
+                                    ->label('Restrict appointments to existing students')
+                                    ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
+                                Section::make('Days')
+                                    ->schema($this->getHoursForDays('office_hours'))
+                                    ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
+                            ])
+                            ->visible(fn (Get $get) => $get('is_enabled')),
+                        Section::make('Out of Office')
+                            ->schema([
+                                Grid::make()
+                                    ->columns([
+                                        'sm' => 1,
+                                        'md' => 1,
+                                        'lg' => 1,
+                                        'xl' => 2,
+                                        '2xl' => 2,
+                                    ])
+                                    ->schema([
+                                        Toggle::make('out_of_office_is_enabled')
+                                            ->columnSpanFull()
+                                            ->label('Enable Out of Office')
+                                            ->live(),
+                                        DateTimePicker::make('out_of_office_starts_at')
+                                            ->columnSpan(1)
+                                            ->label('Start')
+                                            ->required()
+                                            ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
+                                        DateTimePicker::make('out_of_office_ends_at')
+                                            ->columnSpan(1)
+                                            ->label('End')
+                                            ->required()
+                                            ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
+                                    ]),
+                            ])->visible(fn (Get $get) => $get('is_enabled')),                            
+                    ]),
+                ]);
     }
 
     public function mutateFormDataBeforeFill(array $data): array
