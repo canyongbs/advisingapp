@@ -208,10 +208,6 @@ class FilamentServiceProvider extends ServiceProvider
             $component->native(false);
         });
 
-        TimezoneSelect::configureUsing(function (TimezoneSelect $component) {
-            $component->optionsLimit(PHP_INT_MAX);
-        });
-
         SelectFilter::configureUsing(function (SelectFilter $component) {
             $component->native(false);
         });
