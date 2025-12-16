@@ -34,34 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Observers;
+namespace AdvisingApp\ResourceHub\Notifications;
 
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
-use AdvisingApp\ResourceHub\Notifications\AlertManagerConcernCreated;
-use AdvisingApp\ResourceHub\Notifications\AlertManagerConcernStatusChanged;
-use AdvisingApp\ResourceHub\Notifications\ResourceHubArticleConcernCreated;
-use AdvisingApp\ResourceHub\Notifications\ResourceHubArticleConcernStatusChanged;
 use App\Models\User;
+use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
+use Illuminate\Support\HtmlString;
 
-class ResourceHubArticleConcernObserver
+class AlertManagerConcernCreated extends Notification implements ShouldQueue
 {
-    public function created(ResourceHubArticleConcern $resourceHubArticleConcern): void
-    {
-        $resourceHubArticleConcern->createdBy->notifyNow(new ResourceHubArticleConcernCreated($resourceHubArticleConcern));
+    use Queueable;
 
-        $resourceHubArticleConcern->resourceHubArticle->managers->each(
-            fn (User $user) => $user->notifyNow(new AlertManagerConcernCreated($resourceHubArticleConcern))
-        );
+    public function __construct(public ResourceHubArticleConcern $resourceHubArticleConcern) {}
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(User $notifiable): array
+    {
+        return ['database'];
     }
 
-    public function updated(ResourceHubArticleConcern $resourceHubArticleConcern): void
+    /**
+     * @return array<string, mixed>
+     */
+    public function toDatabase(User $notifiable): array
     {
-        if ($resourceHubArticleConcern->wasChanged('status')) {
-            $resourceHubArticleConcern->createdBy->notifyNow(new ResourceHubArticleConcernStatusChanged($resourceHubArticleConcern));
+        $resourceHubArticle = $this->resourceHubArticleConcern->resourceHubArticle;
 
-            $resourceHubArticleConcern->resourceHubArticle->managers->each(
-                fn (User $user) => $user->notifyNow(new AlertManagerConcernStatusChanged($resourceHubArticleConcern, $resourceHubArticleConcern->getOriginal('status')))
-            );
-        }
+        $user = $this->resourceHubArticleConcern->createdBy;
+
+        $url = ResourceHubArticleResource::getUrl('view', ['record' => $resourceHubArticle->getKey(), 'tab' => 'concerns']);
+
+        $link = new HtmlString("<a href='{$url}' target='_blank' class='underline'>{$resourceHubArticle->title}</a>");
+
+        return FilamentNotification::make()
+            ->title("A concern has been raised by {$user->name}, {$user->job_title} about the resource hub article {$link}.")
+            ->getDatabaseMessage();
     }
 }
