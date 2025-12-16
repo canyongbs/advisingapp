@@ -110,26 +110,12 @@ class Inbox extends Page implements HasTable
                     ->label('Relation')
                     ->formatStateUsing(fn (EngagementResponse $record) => ucwords($record->sender_type))
                     ->sortable(),
-                TextColumn::make('from')
-                    ->state(function (EngagementResponse $record): ?string {
-                        return (($record->sender instanceof Student) || ($record->sender instanceof Prospect))
-                            ? $record->sender->full_name
-                            : null;
-                    })
-                    ->url(function (EngagementResponse $record) {
-                        if ($record->sender instanceof Student) {
-                            return StudentResource::getUrl('view', [
-                                'record' => $record->sender,
-                            ]);
-                        }
-
-                        if ($record->sender instanceof Prospect) {
-                            return ProspectResource::getUrl('view', [
-                                'record' => $record->sender,
-                            ]);
-                        }
-
-                        return null;
+                TextColumn::make('sender.full_name')
+                    ->label('From')
+                    ->url(fn (EngagementResponse $record): ?string => match (true) {
+                        $record->sender instanceof Student => StudentResource::getUrl('view', ['record' => $record->sender]),
+                        $record->sender instanceof Prospect => ProspectResource::getUrl('view', ['record' => $record->sender]),
+                        default => null,
                     }),
                 TextColumn::make('type')
                     ->formatStateUsing(fn (EngagementResponse $record) => match ($record->type) {
