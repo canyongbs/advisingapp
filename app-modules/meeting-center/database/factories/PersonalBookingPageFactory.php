@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,50 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+namespace AdvisingApp\MeetingCenter\Database\Factories;
 
-use AdvisingApp\MeetingCenter\Database\Factories\PersonalBookingPageFactory;
-use App\Models\BaseModel;
+use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use OwenIt\Auditing\Auditable as AuditableTrait;
-use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperPersonalBookingPage
+ * @extends Factory<PersonalBookingPage>
  */
-class PersonalBookingPage extends BaseModel implements Auditable
+class PersonalBookingPageFactory extends Factory
 {
-    use AuditableTrait;
-    
-    /** @use HasFactory<PersonalBookingPageFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'is_enabled',
-        'default_appointment_duration',
-        'slug',
-    ];
-
-    protected $casts = [
-        'is_enabled' => 'boolean',
-        'default_appointment_duration' => 'integer',
-    ];
+    protected $model = PersonalBookingPage::class;
 
     /**
-     * @return BelongsTo<User, $this>
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
      */
-    public function user(): BelongsTo
+    public function definition(): array
     {
-        return $this->belongsTo(User::class);
+        return [
+            'user_id' => User::factory(),
+            'is_enabled' => $this->faker->boolean(),
+            'slug' => $this->faker->unique()->slug(),
+            'default_appointment_duration' => $this->faker->randomElement([15, 30, 60]),
+        ];
     }
 
     /**
-     * Create a new factory instance for the model.
+     * Indicate that the booking page is enabled.
      */
-    protected static function newFactory(): PersonalBookingPageFactory
+    public function enabled(): static
     {
-        return PersonalBookingPageFactory::new();
+        return $this->state(fn (array $attributes) => [
+            'is_enabled' => true,
+        ]);
+    }
+
+    /**
+     * Indicate that the booking page is disabled.
+     */
+    public function disabled(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_enabled' => false,
+        ]);
     }
 }

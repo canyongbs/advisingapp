@@ -101,7 +101,7 @@ class ManagePersonalBookingPage extends ProfilePage
                     ->schema([
                         Toggle::make('is_enabled')
                             ->label('Enable booking page')
-                            ->disabled(! $hasCalendar)
+                            // ->disabled(! $hasCalendar)
                             ->live(),
                         TextInput::make('slug')
                             ->label('URL Slug')
@@ -135,6 +135,27 @@ class ManagePersonalBookingPage extends ProfilePage
                                     ])
                                     ->rules([
                                         fn (Get $get): string => $get('is_enabled') ? 'accepted' : '',
+                                        function (Get $get) {
+                                            return function (string $attribute, mixed $value, \Closure $fail) use ($get) {
+                                                if (! $value) {
+                                                    return;
+                                                }
+
+                                                $workingHours = $get('working_hours');
+                                                if (empty($workingHours)) {
+                                                    $fail('At least one day must have working hours configured.');
+                                                    return;
+                                                }
+
+                                                $hasAnyEnabledDay = collect($workingHours)
+                                                    ->filter(fn ($day) => ($day['enabled'] ?? false) === true && ! empty($day['starts_at']) && ! empty($day['ends_at']))
+                                                    ->isNotEmpty();
+
+                                                if (! $hasAnyEnabledDay) {
+                                                    $fail('At least one day must have working hours configured.');
+                                                }
+                                            };
+                                        },
                                     ]),
                                 Checkbox::make('are_working_hours_visible_on_profile')
                                     ->label('Show Working Hours on profile')
@@ -150,7 +171,30 @@ class ManagePersonalBookingPage extends ProfilePage
                             ->schema([
                                 Toggle::make('office_hours_are_enabled')
                                     ->label('Enable Office Hours')
-                                    ->live(),
+                                    ->live()
+                                    ->rules([
+                                        function (Get $get) {
+                                            return function (string $attribute, mixed $value, \Closure $fail) use ($get) {
+                                                if (! $value) {
+                                                    return;
+                                                }
+
+                                                $officeHours = $get('office_hours');
+                                                if (empty($officeHours)) {
+                                                    $fail('At least one day must have office hours configured.');
+                                                    return;
+                                                }
+
+                                                $hasAnyEnabledDay = collect($officeHours)
+                                                    ->filter(fn ($day) => ($day['enabled'] ?? false) === true && ! empty($day['starts_at']) && ! empty($day['ends_at']))
+                                                    ->isNotEmpty();
+
+                                                if (! $hasAnyEnabledDay) {
+                                                    $fail('At least one day must have office hours configured.');
+                                                }
+                                            };
+                                        },
+                                    ]),
                                 Checkbox::make('appointments_are_restricted_to_existing_students')
                                     ->label('Restrict appointments to existing students')
                                     ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
