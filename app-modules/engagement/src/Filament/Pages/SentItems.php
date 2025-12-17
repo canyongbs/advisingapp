@@ -46,7 +46,9 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
@@ -108,7 +110,13 @@ class SentItems extends Page implements HasTable
                 TextColumn::make('user.name')
                     ->label('From'),
                 TextColumn::make('recipient.full_name')
-                    ->label('To'),
+                    ->label('To')
+                    ->url(fn (Engagement $record): ?string => match (true) {
+                        $record->recipient instanceof Student => StudentResource::getUrl('view', ['record' => $record->recipient]),
+                        $record->recipient instanceof Prospect => ProspectResource::getUrl('view', ['record' => $record->recipient]),
+                        default => null,
+                    })
+                    ->openUrlInNewTab(),
                 TextColumn::make('channel')
                     ->label('Type')
                     ->state(fn (Engagement $record): string => $record->channel->getLabel())
