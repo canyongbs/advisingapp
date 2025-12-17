@@ -36,10 +36,7 @@
 
 namespace AdvisingApp\Ai\Actions;
 
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
-use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
 use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -66,34 +63,9 @@ class UploadFileForParsing
 
         $data = [
             'parse_mode' => 'parse_page_with_lvm',
+            'do_not_cache' => true,
             'user_prompt' => 'If the upload has images retrieve text from it and also describe the image in detail. If the upload seems to be just an image with no text in it, just return the image description.',
         ];
-
-        /**
-         * For right now, we have been asked to use the default Institutional Advisor
-         * as the LVM Model for parsing.
-         * In the future we may want this to be configurable.
-         */
-        $service = AiAssistant::query()
-            ->where('is_default', true)
-            ->where('application', AiAssistantApplication::PersonalAssistant->value)
-            ->first()
-            ?->model
-            ->getService();
-
-        if ($service instanceof BaseOpenAiService) {
-            $deploymentName = $service->getModel();
-
-            $baseUri = $service->getDeployment();
-
-            $apiVersion = '2024-05-01-preview';
-
-            $data['vendor_multimodal_model_name'] = 'custom-azure-model';
-            $data['azure_openai_deployment_name'] = $deploymentName;
-            $data['azure_openai_api_version'] = $apiVersion;
-            $data['azure_openai_endpoint'] = "{$baseUri}/deployments/{$deploymentName}/chat/completions?api-version={$apiVersion}";
-            $data['azure_openai_key'] = $service->getApiKey();
-        }
 
         $response = Http::attach(
             'file',
