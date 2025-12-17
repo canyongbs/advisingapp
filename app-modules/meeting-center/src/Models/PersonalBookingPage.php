@@ -72,12 +72,4 @@ class PersonalBookingPage extends BaseModel implements Auditable
     {
         return $this->belongsTo(User::class);
     }
-
-    /**
-     * Create a new factory instance for the model.
-     */
-    protected static function newFactory(): PersonalBookingPageFactory
-    {
-        return PersonalBookingPageFactory::new();
-    }
 }
