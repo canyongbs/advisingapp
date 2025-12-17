@@ -102,7 +102,7 @@ class ManagePersonalBookingPage extends ProfilePage
                     ->schema([
                         Toggle::make('is_enabled')
                             ->label('Enable booking page')
-                            // ->disabled(! $hasCalendar)
+                            ->disabled(! $hasCalendar)
                             ->live(),
                         TextInput::make('slug')
                             ->label('URL Slug')
@@ -246,10 +246,11 @@ class ManagePersonalBookingPage extends ProfilePage
         $user = auth()->user();
         assert($user instanceof User);
         $bookingPage = PersonalBookingPage::query()->whereBelongsTo($user)->first();
+        $hasCalendar = Calendar::query()->whereBelongsTo($user)->exists();
 
         if ($bookingPage) {
             return [
-                'is_enabled' => $bookingPage->is_enabled,
+                'is_enabled' => $hasCalendar ? $bookingPage->is_enabled : false,
                 'slug' => $bookingPage->slug,
                 'default_appointment_duration' => $bookingPage->default_appointment_duration,
                 'working_hours_are_enabled' => $user->working_hours_are_enabled,

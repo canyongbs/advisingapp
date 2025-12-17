@@ -36,6 +36,7 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Filament\Pages\ManagePersonalBookingPage;
+use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use App\Models\User;
 
@@ -56,6 +57,8 @@ it('can render the page', function () {
 
 it('creates a personal booking page when enabled', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
+
+    Calendar::factory()->for($user)->create();
 
     actingAs($user);
 
@@ -87,6 +90,8 @@ it('creates a personal booking page when enabled', function () {
 it('validates slug is required when enabled', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
+    Calendar::factory()->for($user)->create();
+
     actingAs($user);
 
     livewire(ManagePersonalBookingPage::class)
@@ -112,6 +117,8 @@ it('validates slug must be unique', function () {
         'slug' => 'existing-slug',
     ]);
 
+    Calendar::factory()->for($user)->create();
+
     actingAs($user);
 
     livewire(ManagePersonalBookingPage::class)
@@ -130,6 +137,8 @@ it('validates slug must be unique', function () {
 
 it('validates slug must be alpha dash', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
+
+    Calendar::factory()->for($user)->create();
 
     actingAs($user);
 
@@ -150,6 +159,8 @@ it('validates slug must be alpha dash', function () {
 it('validates slug max length', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
+    Calendar::factory()->for($user)->create();
+
     actingAs($user);
 
     livewire(ManagePersonalBookingPage::class)
@@ -168,6 +179,8 @@ it('validates slug max length', function () {
 
 it('validates default appointment duration is required when enabled', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
+
+    Calendar::factory()->for($user)->create();
 
     actingAs($user);
 
@@ -188,6 +201,8 @@ it('validates default appointment duration is required when enabled', function (
 it('validates working hours are required when booking page is enabled', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
+    Calendar::factory()->for($user)->create();
+
     actingAs($user);
 
     livewire(ManagePersonalBookingPage::class)
@@ -204,6 +219,8 @@ it('validates working hours are required when booking page is enabled', function
 
 it('validates at least one day must have working hours configured', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
+
+    Calendar::factory()->for($user)->create();
 
     actingAs($user);
 
@@ -223,6 +240,8 @@ it('validates at least one day must have working hours configured', function () 
 
 it('can update an existing personal booking page', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
+
+    Calendar::factory()->for($user)->create();
 
     $bookingPage = PersonalBookingPage::factory()->create([
         'user_id' => $user->id,
@@ -255,6 +274,8 @@ it('can update an existing personal booking page', function () {
 it('can disable a personal booking page', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
+    Calendar::factory()->for($user)->create();
+
     $bookingPage = PersonalBookingPage::factory()->create([
         'user_id' => $user->id,
         'is_enabled' => true,
@@ -279,6 +300,8 @@ it('can disable a personal booking page', function () {
 
 it('saves working hours configuration to user', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
+
+    Calendar::factory()->for($user)->create();
 
     actingAs($user);
 
@@ -313,6 +336,8 @@ it('saves working hours configuration to user', function () {
 
 it('saves office hours configuration to user', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
+
+    Calendar::factory()->for($user)->create();
 
     actingAs($user);
 
@@ -352,6 +377,8 @@ it('saves office hours configuration to user', function () {
 it('validates at least one day must have office hours when office hours enabled', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
+    Calendar::factory()->for($user)->create();
+
     actingAs($user);
 
     livewire(ManagePersonalBookingPage::class)
@@ -372,6 +399,8 @@ it('validates at least one day must have office hours when office hours enabled'
 
 it('saves out of office configuration to user', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
+
+    Calendar::factory()->for($user)->create();
 
     actingAs($user);
 
@@ -404,6 +433,8 @@ it('saves out of office configuration to user', function () {
 it('validates out of office start date is required when out of office enabled', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
+    Calendar::factory()->for($user)->create();
+
     actingAs($user);
 
     livewire(ManagePersonalBookingPage::class)
@@ -425,6 +456,8 @@ it('validates out of office start date is required when out of office enabled', 
 
 it('validates out of office end date is required when out of office enabled', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
+
+    Calendar::factory()->for($user)->create();
 
     actingAs($user);
 
@@ -452,6 +485,8 @@ it('pre-fills form with existing booking page data', function () {
             'monday' => ['enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
         ],
     ]);
+
+    Calendar::factory()->for($user)->create();
 
     $bookingPage = PersonalBookingPage::factory()->create([
         'user_id' => $user->id,
@@ -503,6 +538,8 @@ it('hides view booking page action when booking page is disabled', function () {
 it('shows view booking page action when booking page is enabled', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
+    Calendar::factory()->for($user)->create();
+
     PersonalBookingPage::factory()->create([
         'user_id' => $user->id,
         'is_enabled' => true,
@@ -517,6 +554,8 @@ it('shows view booking page action when booking page is enabled', function () {
 
 it('can save booking page with multiple working hours per day', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
+
+    Calendar::factory()->for($user)->create();
 
     actingAs($user);
 
@@ -548,6 +587,8 @@ it('can save booking page with multiple working hours per day', function () {
 
 it('can update slug without affecting unique constraint for same user', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
+
+    Calendar::factory()->for($user)->create();
 
     $bookingPage = PersonalBookingPage::factory()->create([
         'user_id' => $user->id,

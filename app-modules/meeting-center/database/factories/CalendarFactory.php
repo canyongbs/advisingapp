@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Database\Factories;
 
+use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -50,6 +51,8 @@ class CalendarFactory extends Factory
     public function definition(): array
     {
         return [
+            'provider_type' => CalendarProvider::Google,
+            'provider_email' => fake()->safeEmail(),
         ];
     }
 }
