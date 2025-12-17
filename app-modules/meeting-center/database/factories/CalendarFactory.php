@@ -52,7 +52,7 @@ class CalendarFactory extends Factory
     {
         return [
             'provider_type' => CalendarProvider::Google,
-            'provider_email' => fake()->safeEmail(),
+            'provider_email' => $this->faker->safeEmail(),
         ];
     }
 }
