@@ -36,14 +36,19 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Pages;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use App\Filament\Pages\ProfilePage;
 use App\Models\User;
+use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -81,6 +86,7 @@ class ManagePersonalBookingPage extends ProfilePage
         $hasCalendar = Calendar::query()->whereBelongsTo($user)->exists();
         $hasHours = $this->userHasHoursConfigured($user);
         $bookingPage = PersonalBookingPage::query()->whereBelongsTo($user)->first();
+        $hasCrmLicense = $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
 
         return $schema
             ->columns(1)
@@ -117,6 +123,120 @@ class ManagePersonalBookingPage extends ProfilePage
                                 60 => '1 hour',
                             ])
                             ->visible(fn (Get $get) => $get('is_enabled')),
+                        Section::make('Working Hours')
+                            ->visible($hasCrmLicense)
+                            ->schema([
+                                Toggle::make('working_hours_are_enabled')
+                                    ->label('Set Working Hours')
+                                    ->live()
+                                    ->required()
+                                    ->hint(fn (Get $get): string => $get('are_working_hours_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile')
+                                    ->validationMessages([
+                                        'accepted' => 'Working hours must be enabled when booking page is enabled.',
+                                    ])
+                                    ->rules([
+                                        fn (Get $get): string => $get('is_enabled') ? 'accepted' : '',
+                                        function (Get $get) {
+                                            return function (string $attribute, mixed $value, Closure $fail) use ($get) {
+                                                if (! $value) {
+                                                    return;
+                                                }
+
+                                                /** @var array<int, array<string, mixed>> $workingHours */
+                                                $workingHours = $get('working_hours');
+
+                                                if (empty($workingHours)) {
+                                                    $fail('At least one day must have working hours configured.');
+
+                                                    return;
+                                                }
+
+                                                $hasAnyEnabledDay = collect($workingHours)
+                                                    ->filter(fn ($day) => ($day['enabled'] ?? false) === true && ! empty($day['starts_at']) && ! empty($day['ends_at']))
+                                                    ->isNotEmpty();
+
+                                                if (! $hasAnyEnabledDay) {
+                                                    $fail('At least one day must have working hours configured.');
+                                                }
+                                            };
+                                        },
+                                    ]),
+                                Checkbox::make('are_working_hours_visible_on_profile')
+                                    ->label('Show Working Hours on profile')
+                                    ->visible(fn (Get $get) => $get('working_hours_are_enabled'))
+                                    ->live(),
+                                Section::make('Days')
+                                    ->schema($this->getHoursForDays('working_hours'))
+                                    ->visible(fn (Get $get) => $get('working_hours_are_enabled')),
+                            ])
+                            ->visible(fn (Get $get) => $get('is_enabled')),
+                        Section::make('Office Hours')
+                            ->visible($hasCrmLicense)
+                            ->schema([
+                                Toggle::make('office_hours_are_enabled')
+                                    ->label('Enable Office Hours')
+                                    ->live()
+                                    ->rules([
+                                        function (Get $get) {
+                                            return function (string $attribute, mixed $value, Closure $fail) use ($get) {
+                                                if (! $value) {
+                                                    return;
+                                                }
+
+                                                /** @var array<int, array<string, mixed>> $officeHours */
+                                                $officeHours = $get('office_hours');
+
+                                                if (empty($officeHours)) {
+                                                    $fail('At least one day must have office hours configured.');
+
+                                                    return;
+                                                }
+
+                                                $hasAnyEnabledDay = collect($officeHours)
+                                                    ->filter(fn ($day) => ($day['enabled'] ?? false) === true && ! empty($day['starts_at']) && ! empty($day['ends_at']))
+                                                    ->isNotEmpty();
+
+                                                if (! $hasAnyEnabledDay) {
+                                                    $fail('At least one day must have office hours configured.');
+                                                }
+                                            };
+                                        },
+                                    ]),
+                                Checkbox::make('appointments_are_restricted_to_existing_students')
+                                    ->label('Restrict appointments to existing students')
+                                    ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
+                                Section::make('Days')
+                                    ->schema($this->getHoursForDays('office_hours'))
+                                    ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
+                            ])
+                            ->visible(fn (Get $get) => $get('is_enabled')),
+                        Section::make('Out of Office')
+                            ->schema([
+                                Grid::make()
+                                    ->columns([
+                                        'sm' => 1,
+                                        'md' => 1,
+                                        'lg' => 1,
+                                        'xl' => 2,
+                                        '2xl' => 2,
+                                    ])
+                                    ->schema([
+                                        Toggle::make('out_of_office_is_enabled')
+                                            ->columnSpanFull()
+                                            ->label('Enable Out of Office')
+                                            ->live(),
+                                        DateTimePicker::make('out_of_office_starts_at')
+                                            ->columnSpan(1)
+                                            ->label('Start')
+                                            ->required()
+                                            ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
+                                        DateTimePicker::make('out_of_office_ends_at')
+                                            ->columnSpan(1)
+                                            ->label('End')
+                                            ->required()
+                                            ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
+                                    ]),
+                            ])->visible(fn (Get $get) => $get('is_enabled')),
                     ]),
             ]);
     }
@@ -126,12 +246,22 @@ class ManagePersonalBookingPage extends ProfilePage
         $user = auth()->user();
         assert($user instanceof User);
         $bookingPage = PersonalBookingPage::query()->whereBelongsTo($user)->first();
+        $hasCalendar = Calendar::query()->whereBelongsTo($user)->exists();
 
         if ($bookingPage) {
             return [
-                'is_enabled' => $bookingPage->is_enabled,
+                'is_enabled' => $hasCalendar ? $bookingPage->is_enabled : false,
                 'slug' => $bookingPage->slug,
                 'default_appointment_duration' => $bookingPage->default_appointment_duration,
+                'working_hours_are_enabled' => $user->working_hours_are_enabled,
+                'are_working_hours_visible_on_profile' => $user->are_working_hours_visible_on_profile,
+                'working_hours' => $user->working_hours,
+                'office_hours_are_enabled' => $user->office_hours_are_enabled,
+                'appointments_are_restricted_to_existing_students' => $user->appointments_are_restricted_to_existing_students,
+                'office_hours' => $user->office_hours,
+                'out_of_office_is_enabled' => $user->out_of_office_is_enabled,
+                'out_of_office_starts_at' => $user->out_of_office_starts_at,
+                'out_of_office_ends_at' => $user->out_of_office_ends_at,
             ];
         }
 
@@ -139,6 +269,15 @@ class ManagePersonalBookingPage extends ProfilePage
             'is_enabled' => false,
             'slug' => Str::slug($user->name),
             'default_appointment_duration' => 30,
+            'working_hours_are_enabled' => $user->working_hours_are_enabled,
+            'are_working_hours_visible_on_profile' => $user->are_working_hours_visible_on_profile,
+            'working_hours' => $user->working_hours,
+            'office_hours_are_enabled' => $user->office_hours_are_enabled,
+            'appointments_are_restricted_to_existing_students' => $user->appointments_are_restricted_to_existing_students,
+            'office_hours' => $user->office_hours,
+            'out_of_office_is_enabled' => $user->out_of_office_is_enabled,
+            'out_of_office_starts_at' => $user->out_of_office_starts_at,
+            'out_of_office_ends_at' => $user->out_of_office_ends_at,
         ];
     }
 
@@ -152,6 +291,18 @@ class ManagePersonalBookingPage extends ProfilePage
         $bookingPage->slug = $data['slug'] ?? Str::slug($user->name);
         $bookingPage->default_appointment_duration = $data['default_appointment_duration'] ?? 30;
         $bookingPage->save();
+
+        $user->update([
+            'working_hours_are_enabled' => $data['working_hours_are_enabled'] ?? false,
+            'are_working_hours_visible_on_profile' => $data['are_working_hours_visible_on_profile'] ?? false,
+            'working_hours' => $data['working_hours'] ?? null,
+            'office_hours_are_enabled' => $data['office_hours_are_enabled'] ?? false,
+            'appointments_are_restricted_to_existing_students' => $data['appointments_are_restricted_to_existing_students'] ?? false,
+            'office_hours' => $data['office_hours'] ?? null,
+            'out_of_office_is_enabled' => $data['out_of_office_is_enabled'] ?? false,
+            'out_of_office_starts_at' => $data['out_of_office_starts_at'] ?? null,
+            'out_of_office_ends_at' => $data['out_of_office_ends_at'] ?? null,
+        ]);
 
         return $record;
     }

@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
+use AdvisingApp\MeetingCenter\Database\Factories\PersonalBookingPageFactory;
 use App\Models\BaseModel;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -48,6 +50,9 @@ use OwenIt\Auditing\Contracts\Auditable;
 class PersonalBookingPage extends BaseModel implements Auditable
 {
     use AuditableTrait;
+
+    /** @use HasFactory<PersonalBookingPageFactory> */
+    use HasFactory;
 
     protected $fillable = [
         'is_enabled',

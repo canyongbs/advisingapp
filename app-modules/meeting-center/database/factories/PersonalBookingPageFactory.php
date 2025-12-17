@@ -34,48 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\MeetingCenter\Database\Factories;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use App\Models\User;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @property Schema $form
+ * @extends Factory<PersonalBookingPage>
  */
-class OfficeHours extends ProfilePage
+class PersonalBookingPageFactory extends Factory
 {
-    protected static ?string $slug = 'office-hours';
+    protected $model = PersonalBookingPage::class;
 
-    protected static ?string $title = 'Office Hours';
-
-    protected static ?int $navigationSort = 90;
-
-    public function form(Schema $schema): Schema
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        /** @var User $user */
-        $user = auth()->user();
-        $hasCrmLicense = $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
+        return [
+            'user_id' => User::factory(),
+            'is_enabled' => $this->faker->boolean(),
+            'slug' => $this->faker->unique()->slug(),
+            'default_appointment_duration' => $this->faker->randomElement([15, 30, 60]),
+        ];
+    }
 
-        return $schema
-            ->components([
-                Section::make('Office Hours')
-                    ->visible($hasCrmLicense)
-                    ->schema([
-                        Toggle::make('office_hours_are_enabled')
-                            ->label('Enable Office Hours')
-                            ->live(),
-                        Checkbox::make('appointments_are_restricted_to_existing_students')
-                            ->label('Restrict appointments to existing students')
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                        Section::make('Days')
-                            ->schema($this->getHoursForDays('office_hours'))
-                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
-                    ]),
-            ]);
+    /**
+     * Indicate that the booking page is enabled.
+     */
+    public function enabled(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_enabled' => true,
+        ]);
+    }
+
+    /**
+     * Indicate that the booking page is disabled.
+     */
+    public function disabled(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_enabled' => false,
+        ]);
     }
 }
