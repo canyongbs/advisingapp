@@ -66,7 +66,6 @@ use Filament\Widgets\TableWidget;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
 use Livewire\Component;
-use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Ysfkaya\FilamentPhoneInput\Infolists\PhoneEntry;
 use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
@@ -206,10 +205,6 @@ class FilamentServiceProvider extends ServiceProvider
 
         Select::configureUsing(function (Select $component) {
             $component->native(false);
-        });
-
-        TimezoneSelect::configureUsing(function (TimezoneSelect $component) {
-            $component->optionsLimit(PHP_INT_MAX);
         });
 
         SelectFilter::configureUsing(function (SelectFilter $component) {
