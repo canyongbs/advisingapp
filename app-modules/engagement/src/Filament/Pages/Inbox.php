@@ -116,7 +116,8 @@ class Inbox extends Page implements HasTable
                         $record->sender instanceof Student => StudentResource::getUrl('view', ['record' => $record->sender]),
                         $record->sender instanceof Prospect => ProspectResource::getUrl('view', ['record' => $record->sender]),
                         default => null,
-                    }),
+                    })
+                    ->openUrlInNewTab(),
                 TextColumn::make('type')
                     ->formatStateUsing(fn (EngagementResponse $record) => match ($record->type) {
                         EngagementResponseType::Email => 'Email',
