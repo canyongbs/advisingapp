@@ -41,6 +41,7 @@ use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use App\Filament\Pages\ProfilePage;
 use App\Models\User;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
@@ -136,14 +137,16 @@ class ManagePersonalBookingPage extends ProfilePage
                                     ->rules([
                                         fn (Get $get): string => $get('is_enabled') ? 'accepted' : '',
                                         function (Get $get) {
-                                            return function (string $attribute, mixed $value, \Closure $fail) use ($get) {
+                                            return function (string $attribute, mixed $value, Closure $fail) use ($get) {
                                                 if (! $value) {
                                                     return;
                                                 }
 
                                                 $workingHours = $get('working_hours');
+
                                                 if (empty($workingHours)) {
                                                     $fail('At least one day must have working hours configured.');
+
                                                     return;
                                                 }
 
@@ -174,14 +177,16 @@ class ManagePersonalBookingPage extends ProfilePage
                                     ->live()
                                     ->rules([
                                         function (Get $get) {
-                                            return function (string $attribute, mixed $value, \Closure $fail) use ($get) {
+                                            return function (string $attribute, mixed $value, Closure $fail) use ($get) {
                                                 if (! $value) {
                                                     return;
                                                 }
 
                                                 $officeHours = $get('office_hours');
+
                                                 if (empty($officeHours)) {
                                                     $fail('At least one day must have office hours configured.');
+
                                                     return;
                                                 }
 

@@ -50,7 +50,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 class PersonalBookingPage extends BaseModel implements Auditable
 {
     use AuditableTrait;
-    
+
     /** @use HasFactory<PersonalBookingPageFactory> */
     use HasFactory;
 
