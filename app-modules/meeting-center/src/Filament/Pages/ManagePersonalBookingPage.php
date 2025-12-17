@@ -142,7 +142,7 @@ class ManagePersonalBookingPage extends ProfilePage
                                                     return;
                                                 }
 
-                                                /** 
+                                                /**
                                                 * @var array<int, array<string, mixed>> $workingHours */
                                                 $workingHours = $get('working_hours');
 
@@ -184,7 +184,7 @@ class ManagePersonalBookingPage extends ProfilePage
                                                     return;
                                                 }
 
-                                                /** 
+                                                /**
                                                 * @var array<int, array<string, mixed>> $officeHours */
                                                 $officeHours = $get('office_hours');
 
