@@ -10,6 +10,7 @@
         cacheDirectory=".phpunit.cache"
         backupStaticProperties="false"
         failOnDeprecation="true"
+        failOnIncomplete="true"
 >
   <testsuites>
     <testsuite name="Landlord">
