@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Ai\Actions;
 
+use AdvisingApp\Ai\DataTransferObjects\FileParsingResult;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use Illuminate\Support\Facades\Http;
+use Throwable;
 
 class FetchFileParsingResults
 {
@@ -45,7 +47,7 @@ class FetchFileParsingResults
         protected AiIntegrationsSettings $aiIntegrationsSettings,
     ) {}
 
-    public function execute(string $fileId, string $mimeType): ?string
+    public function execute(string $fileId, string $mimeType): FileParsingResult
     {
         // TODO: Check the status of the file parsing job, if it is not completed, return null. If it is in an ERROR state then throw an exeception that upstream needs to handle.
 
@@ -54,13 +56,29 @@ class FetchFileParsingResults
             default => 'markdown',
         };
 
-        $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
-            ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$fileId}/result/{$outputFormat}");
+        try {
+            $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
+                ->retry(2)
+                ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$fileId}/result/{$outputFormat}");
+        } catch (Throwable $exception) {
+            report($exception);
 
-        if ((! $response->successful()) || blank($response->json($outputFormat))) {
-            return null;
+            return new FileParsingResult(
+                fileId: $fileId,
+                parsingResults: null,
+            );
         }
 
-        return $response->json($outputFormat);
+        if ((! $response->successful()) || blank($response->json($outputFormat))) {
+            return new FileParsingResult(
+                fileId: $fileId,
+                parsingResults: null,
+            );
+        }
+
+        return new FileParsingResult(
+            fileId: $fileId,
+            parsingResults: $response->json($outputFormat),
+        );
     }
 }

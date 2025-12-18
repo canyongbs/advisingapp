@@ -34,52 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs\Advisors;
+namespace AdvisingApp\Ai\DataTransferObjects;
 
-use AdvisingApp\Ai\Actions\FetchFileParsingResults;
-use AdvisingApp\Ai\Models\AiAssistantFile;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Spatie\Multitenancy\Jobs\TenantAware;
+use Spatie\LaravelData\Data;
 
-class FetchAiAssistantFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
+class FileParsingResult extends Data
 {
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
     public function __construct(
-        protected AiAssistantFile $file,
+        public ?string $fileId,
+        public ?string $parsingResults,
     ) {}
-
-    public function handle(FetchFileParsingResults $fetchFileParsingResults): void
-    {
-        if (filled($this->file->parsing_results)) {
-            return;
-        }
-
-        $result = $fetchFileParsingResults->execute(
-            fileId: $this->file->file_id,
-            mimeType: $this->file->mime_type,
-        );
-
-        if (blank($result->parsingResults)) {
-            return;
-        }
-
-        $this->file->parsing_results = $result->parsingResults;
-        $this->file->save();
-    }
-
-    public function uniqueId(): string
-    {
-        return $this->file->id;
-    }
 }

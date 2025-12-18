@@ -66,9 +66,9 @@ class FetchResearchRequestFileParsingResults implements ShouldQueue
 
     public function handle(FetchFileParsingResults $fetchFileParsingResults): void
     {
-        $results = $fetchFileParsingResults->execute($this->fileId, $this->media->mime_type);
+        $result = $fetchFileParsingResults->execute($this->fileId, $this->media->mime_type);
 
-        if (blank($results)) {
+        if (blank($result->parsingResults)) {
             $this->release(delay: 5);
 
             return;
@@ -77,9 +77,9 @@ class FetchResearchRequestFileParsingResults implements ShouldQueue
         $researchRequestParsedFile = new ResearchRequestParsedFile();
         $researchRequestParsedFile->researchRequest()->associate($this->media->model);
         $researchRequestParsedFile->uploaded_at = $this->uploadedAt;
-        $researchRequestParsedFile->results = $results;
+        $researchRequestParsedFile->results = $result->parsingResults;
         $researchRequestParsedFile->media()->associate($this->media);
-        $researchRequestParsedFile->file_id = $this->fileId;
+        $researchRequestParsedFile->file_id = $result->fileId;
         $researchRequestParsedFile->save();
 
         assert($this->media->model instanceof ResearchRequest);
