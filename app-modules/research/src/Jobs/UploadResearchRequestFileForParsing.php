@@ -37,6 +37,10 @@
 namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Actions\UploadFileForParsing;
+use AdvisingApp\Research\Events\ResearchRequestFileParsed;
+use AdvisingApp\Research\Events\ResearchRequestProgress;
+use AdvisingApp\Research\Models\ResearchRequest;
+use AdvisingApp\Research\Models\ResearchRequestParsedFile;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -59,18 +63,41 @@ class UploadResearchRequestFileForParsing implements ShouldQueue
 
     public function handle(UploadFileForParsing $uploadFileForParsing): void
     {
-        $fileId = $uploadFileForParsing->execute(
+        $result = $uploadFileForParsing->execute(
             path: $this->media->getPath(),
             name: $this->media->file_name,
             mimeType: $this->media->mime_type,
         );
 
-        if (blank($fileId)) {
+        if (blank($result->fileId) && blank($result->parsingResults)) {
             $this->release();
 
             return;
         }
 
-        $this->batch()->add(new FetchResearchRequestFileParsingResults($this->media, $fileId, uploadedAt: now()));
+        if (filled($result->parsingResults)) {
+            $researchRequestParsedFile = new ResearchRequestParsedFile();
+            $researchRequestParsedFile->researchRequest()->associate($this->media->model);
+            $researchRequestParsedFile->uploaded_at = now();
+            $researchRequestParsedFile->results = $result->parsingResults;
+            $researchRequestParsedFile->media()->associate($this->media);
+            $researchRequestParsedFile->file_id = $result->fileId;
+            $researchRequestParsedFile->save();
+
+            assert($this->media->model instanceof ResearchRequest);
+
+            broadcast(new ResearchRequestFileParsed(
+                researchRequest: $this->media->model,
+                parsedFile: $researchRequestParsedFile,
+            ));
+
+            broadcast(new ResearchRequestProgress(
+                researchRequest: $this->media->model,
+            ));
+
+            return;
+        }
+
+        $this->batch()->add(new FetchResearchRequestFileParsingResults($this->media, $result->fileId, uploadedAt: now()));
     }
 }

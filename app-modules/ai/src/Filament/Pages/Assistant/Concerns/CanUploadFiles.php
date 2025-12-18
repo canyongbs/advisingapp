@@ -93,13 +93,13 @@ trait CanUploadFiles
 
             $result = app(FetchFileParsingResults::class)->execute($file->file_id, $file->mime_type);
 
-            if (blank($result)) {
+            if (blank($result->parsingResults)) {
                 $hasFilesWithoutParsingResults = true;
 
                 continue;
             }
 
-            $file->parsing_results = $result;
+            $file->parsing_results = $result->parsingResults;
             $file->save();
         }
 
@@ -155,13 +155,13 @@ trait CanUploadFiles
                 $file->mime_type = $attachment->getMimeType();
                 $file->temporary_url = $attachment->temporaryUrl();
 
-                $fileId = app(UploadFileForParsing::class)->execute(
+                $result = app(UploadFileForParsing::class)->execute(
                     path: $attachment->getRealPath(),
                     name: $file->name,
                     mimeType: $file->mime_type,
                 );
 
-                if (blank($fileId)) {
+                if (blank($result->fileId) && blank($result->parsingResults)) {
                     Notification::make()
                         ->title('File Upload Failed')
                         ->body('There was an error uploading the file. Please try again later.')
@@ -173,7 +173,8 @@ trait CanUploadFiles
                     return;
                 }
 
-                $file->file_id = $fileId;
+                $file->file_id = $result->fileId;
+                $file->parsing_results = $result->parsingResults;
                 $file->save();
 
                 $file->addMediaFromUrl($file->temporary_url)->toMediaCollection('files');
