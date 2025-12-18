@@ -58,7 +58,6 @@ class FetchFileParsingResults
 
         try {
             $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
-                ->retry(2)
                 ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$fileId}/result/{$outputFormat}");
         } catch (Throwable $exception) {
             report($exception);

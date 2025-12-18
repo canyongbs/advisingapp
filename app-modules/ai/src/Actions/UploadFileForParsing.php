@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class UploadFileForParsing
 {
@@ -82,7 +83,6 @@ class UploadFileForParsing
                 $name,
                 ['Content-Type' => $mimeType]
             )
-                ->retry(2)
                 ->withToken($this->aiIntegrationsSettings->llamaparse_api_key)
                 ->acceptJson()
                 ->post('https://api.cloud.llamaindex.ai/api/v1/parsing/upload', $data)
