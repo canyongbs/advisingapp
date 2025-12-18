@@ -242,7 +242,7 @@ jobs:
               run: php artisan route:list
 
             - name: Execute tests (Unit and Feature tests) via PHPUnit
-              run: php artisan test --configuration phpunit-ci.xml --parallel --testsuite=${{ matrix.testsuite }}
+              run: php artisan test --configuration phpunit-ci.xml --parallel --testsuite=${{ matrix.testsuite }} --fail-on-incomplete --fail-on-deprecation
 
     lint:
         runs-on: ubuntu-22.04
