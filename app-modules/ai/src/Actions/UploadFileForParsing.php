@@ -70,7 +70,7 @@ class UploadFileForParsing
         ]));
 
         $data = [
-            'parse_mode' => 'parse_page_with_lvm',
+            'parse_mode' => $this->isImage($mimeType) ? 'parse_page_with_lvm' : 'parse_page_with_llm',
             'do_not_cache' => true,
             'user_prompt' => 'If the upload has images retrieve text from it and also describe the image in detail. If the upload seems to be just an image with no text in it, just return the image description.',
         ];
@@ -123,6 +123,11 @@ class UploadFileForParsing
                 'application/csv',
                 'application/x-csv',
             ], true);
+    }
+
+    protected function isImage(string $mimeType): bool
+    {
+        return str_starts_with($mimeType, 'image/');
     }
 
     protected function readFileContent(string $path): ?string
