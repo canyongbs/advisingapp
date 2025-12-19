@@ -380,6 +380,7 @@ abstract class BaseOpenAiService implements AiService
             }
 
             return function () use ($shouldTrack, $request): Generator {
+                // We will create a function to handle the request here, then call it within a retry loop below so that we can retry the request in case of specific errors
                 $handleRequest = function (PendingRequest $request) {
                     try {
                         $clonedRequest = clone $request;
