@@ -40,7 +40,6 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Facades\Queue;
 
-use function Pest\Faker\fake;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 

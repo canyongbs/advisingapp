@@ -10,6 +10,7 @@
         cacheDirectory=".phpunit.cache"
         backupStaticProperties="false"
         failOnDeprecation="true"
+        failOnIncomplete="true"
 >
   <testsuites>
     <testsuite name="Landlord">
@@ -19,6 +20,11 @@
     <testsuite name="Tenant">
         <directory suffix="Test.php">./tests/Tenant</directory>
         <directory suffix="Test.php">./app-modules/*/tests/Tenant</directory>
+    </testsuite>
+    <testsuite name="Modules">
+        <directory suffix="Test.php">./app-modules/*/tests</directory>
+        <exclude>./app-modules/*/tests/Landlord</exclude>
+        <exclude>./app-modules/*/tests/Tenant</exclude>
     </testsuite>
   </testsuites>
   <php>

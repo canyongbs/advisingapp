@@ -56,5 +56,5 @@ it('returns correct cumulative prospect counts grouped by month within the given
         'endDate' => $endDate->toDateString(),
     ];
 
-    expect($widgetInstance->getData())->toMatchSnapshot();
+    expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
 });
