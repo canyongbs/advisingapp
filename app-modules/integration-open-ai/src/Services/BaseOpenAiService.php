@@ -65,8 +65,10 @@ use Prism\Prism\Contracts\Message;
 use Prism\Prism\Contracts\Schema;
 use Prism\Prism\Enums\ChunkType;
 use Prism\Prism\Enums\FinishReason;
+use Prism\Prism\Exceptions\PrismException;
 use Prism\Prism\Exceptions\PrismRateLimitedException;
 use Prism\Prism\Prism;
+use Prism\Prism\Text\PendingRequest;
 use Prism\Prism\ValueObjects\Messages\AssistantMessage;
 use Prism\Prism\ValueObjects\Messages\UserMessage;
 use Throwable;
@@ -184,7 +186,7 @@ abstract class BaseOpenAiService implements AiService
         try {
             $vectorStoreId = $this->getReadyVectorStoreId($files);
 
-            $stream = Prism::text()
+            $request = Prism::text()
                 ->using('azure_open_ai', $this->getModel())
                 ->withClientOptions([
                     'apiKey' => $this->getApiKey(),
@@ -204,53 +206,80 @@ abstract class BaseOpenAiService implements AiService
                 ])
                 ->withPrompt($content)
                 ->withMaxTokens($aiSettings->max_tokens->getTokens())
-                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
-                ->asStream();
+                ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null);
 
-            return function () use ($shouldTrack, $stream): Generator {
-                try {
-                    foreach ($stream as $chunk) {
-                        if (
-                            ($chunk->chunkType === ChunkType::Meta) &&
-                            filled($chunk->meta?->id)
-                        ) {
-                            yield json_encode(['type' => 'next_request_options', 'options' => base64_encode(json_encode(['previous_response_id' => $chunk->meta->id]))]);
+            return function () use ($shouldTrack, $request): Generator {
+                // We will create a function to handle the request here, then call it within a retry loop below so that we can retry the request in case of specific errors
+                $handleRequest = function (PendingRequest $request) {
+                    try {
+                        $clonedRequest = clone $request;
 
-                            continue;
+                        $stream = $clonedRequest->asStream();
+
+                        foreach ($stream as $chunk) {
+                            if (
+                                ($chunk->chunkType === ChunkType::Meta) &&
+                                filled($chunk->meta?->id)
+                            ) {
+                                yield json_encode(['type' => 'next_request_options', 'options' => base64_encode(json_encode(['previous_response_id' => $chunk->meta->id]))]);
+
+                                continue;
+                            }
+
+                            if ($chunk->chunkType !== ChunkType::Text) {
+                                continue;
+                            }
+
+                            yield json_encode(['type' => 'content', 'content' => base64_encode($chunk->text)]);
+
+                            if ($chunk->finishReason === FinishReason::Length) {
+                                yield json_encode(['type' => 'content', 'content' => base64_encode('...'), 'incomplete' => true]);
+                            }
+
+                            if ($chunk->finishReason === FinishReason::Error) {
+                                yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
+
+                                report(new MessageResponseException('Stream not successful.'));
+                            }
+                        }
+                    } catch (PrismRateLimitedException $exception) {
+                        foreach ($exception->rateLimits as $rateLimit) {
+                            if ($rateLimit->resetsAt?->isFuture()) {
+                                yield json_encode(['type' => 'rate_limited', 'message' => 'Heavy traffic, just a few more moments...', 'retry_after_seconds' => now()->diffInSeconds($rateLimit->resetsAt) + 1]);
+
+                                return;
+                            }
                         }
 
-                        if ($chunk->chunkType !== ChunkType::Text) {
-                            continue;
-                        }
+                        yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
 
-                        yield json_encode(['type' => 'content', 'content' => base64_encode($chunk->text)]);
+                        report(new MessageResponseException('Thread run was rate limited, but the system was unable to extract the number of retry seconds: [' . $exception->getMessage() . '].'));
+                    } catch (Throwable $exception) {
+                        // Throw to bubble up to the retry handling
+                        throw $exception;
+                    }
+                };
 
-                        if ($chunk->finishReason === FinishReason::Length) {
-                            yield json_encode(['type' => 'content', 'content' => base64_encode('...'), 'incomplete' => true]);
-                        }
+                $maxRetries = 3;
+                $retryDelays = [1, 3, 5];
 
-                        if ($chunk->finishReason === FinishReason::Error) {
+                for ($attempt = 0; $attempt < $maxRetries; $attempt++) {
+                    try {
+                        yield from $handleRequest($request);
+
+                        break;
+                    } catch (Throwable $exception) {
+                        // Check if this is an exception we should retry for
+                        $shouldRetry = $exception instanceof PrismException && str_contains($exception->getMessage(), 'server_error');
+
+                        if (! $shouldRetry || $attempt >= $maxRetries - 1) {
                             yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
 
-                            report(new MessageResponseException('Stream not successful.'));
+                            report($exception);
                         }
+
+                        sleep($retryDelays[$attempt]);
                     }
-                } catch (PrismRateLimitedException $exception) {
-                    foreach ($exception->rateLimits as $rateLimit) {
-                        if ($rateLimit->resetsAt?->isFuture()) {
-                            yield json_encode(['type' => 'rate_limited', 'message' => 'Heavy traffic, just a few more moments...', 'retry_after_seconds' => now()->diffInSeconds($rateLimit->resetsAt) + 1]);
-
-                            return;
-                        }
-                    }
-
-                    yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
-
-                    report(new MessageResponseException('Thread run was rate limited, but the system was unable to extract the number of retry seconds: [' . $exception->getMessage() . '].'));
-                } catch (Throwable $exception) {
-                    yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
-
-                    report($exception);
                 }
 
                 if ($shouldTrack) {
@@ -319,53 +348,85 @@ abstract class BaseOpenAiService implements AiService
 
             if ($hasImageGeneration) {
                 return function () use ($shouldTrack, $request): Generator {
-                    try {
-                        $response = $request->asText();
+                    // We will create a function to handle the request here, then call it within a retry loop below so that we can retry the request in case of specific errors
+                    $handleRequest = function (PendingRequest $request) {
+                        try {
+                            $clonedRequest = clone $request;
 
-                        if (filled($response->meta->id)) {
-                            yield new Meta(
-                                messageId: $response->meta->id,
-                                nextRequestOptions: ['previous_response_id' => $response->meta->id],
-                            );
-                        }
+                            $response = $clonedRequest->asText();
 
-                        if (filled($response->text)) {
-                            yield new Text(
-                                filled($response->additionalContent['generated_images'] ?? [])
-                                    ? $response->text
-                                    : ('We have determined that an image is not needed for this request.' . PHP_EOL . PHP_EOL . $response->text),
-                            );
-                        }
-
-                        if (filled($response->additionalContent['generated_images'] ?? [])) {
-                            foreach ($response->additionalContent['generated_images'] as $image) {
-                                yield new Image(
-                                    content: $image['result'],
-                                    format: $image['output_format'],
+                            if (filled($response->meta->id)) {
+                                yield new Meta(
+                                    messageId: $response->meta->id,
+                                    nextRequestOptions: ['previous_response_id' => $response->meta->id],
                                 );
                             }
-                        }
 
-                        yield new Finish(
-                            isIncomplete: $response->finishReason === FinishReason::Length,
-                            error: ($response->finishReason === FinishReason::Error) ? 'Something went wrong' : null,
-                        );
-                    } catch (PrismRateLimitedException $exception) {
-                        foreach ($exception->rateLimits as $rateLimit) {
-                            if ($rateLimit->resetsAt?->isFuture()) {
+                            if (filled($response->text)) {
+                                yield new Text(
+                                    filled($response->additionalContent['generated_images'] ?? [])
+                                        ? $response->text
+                                        : ('We have determined that an image is not needed for this request.' . PHP_EOL . PHP_EOL . $response->text),
+                                );
+                            }
+
+                            if (filled($response->additionalContent['generated_images'] ?? [])) {
+                                foreach ($response->additionalContent['generated_images'] as $image) {
+                                    yield new Image(
+                                        content: $image['result'],
+                                        format: $image['output_format'],
+                                    );
+                                }
+                            }
+
+                            yield new Finish(
+                                isIncomplete: $response->finishReason === FinishReason::Length,
+                                error: ($response->finishReason === FinishReason::Error) ? 'Something went wrong' : null,
+                            );
+                        } catch (PrismRateLimitedException $exception) {
+                            foreach ($exception->rateLimits as $rateLimit) {
+                                if ($rateLimit->resetsAt?->isFuture()) {
+                                    yield new Finish(
+                                        rateLimitResetsAt: $rateLimit->resetsAt,
+                                    );
+
+                                    break;
+                                }
+                            }
+                        } catch (PrismException $exception) {
+                            // Throw to pass up to the caller
+                            throw $exception;
+                        } catch (Throwable $exception) {
+                            report($exception);
+
+                            yield new Finish(
+                                error: 'Something went wrong',
+                            );
+                        }
+                    };
+
+                    $maxRetries = 3;
+                    $retryDelays = [1, 3, 5];
+
+                    for ($attempt = 0; $attempt < $maxRetries; $attempt++) {
+                        try {
+                            yield from $handleRequest($request);
+
+                            break;
+                        } catch (Throwable $exception) {
+                            // Check if this is an exception we should retry for
+                            $shouldRetry = $exception instanceof PrismException && str_contains($exception->getMessage(), 'server_error');
+
+                            if (! $shouldRetry || $attempt >= $maxRetries - 1) {
+                                report($exception);
+
                                 yield new Finish(
-                                    rateLimitResetsAt: $rateLimit->resetsAt,
+                                    error: 'Something went wrong',
                                 );
-
-                                break;
                             }
-                        }
-                    } catch (Throwable $exception) {
-                        report($exception);
 
-                        yield new Finish(
-                            error: 'Something went wrong',
-                        );
+                            sleep($retryDelays[$attempt]);
+                        }
                     }
 
                     if ($shouldTrack) {
@@ -378,53 +439,85 @@ abstract class BaseOpenAiService implements AiService
             }
 
             return function () use ($shouldTrack, $request): Generator {
-                try {
-                    $stream = $request->asStream();
+                // We will create a function to handle the request here, then call it within a retry loop below so that we can retry the request in case of specific errors
+                $handleRequest = function (PendingRequest $request) {
+                    try {
+                        $clonedRequest = clone $request;
 
-                    foreach ($stream as $chunk) {
-                        if (
-                            ($chunk->chunkType === ChunkType::Meta) &&
-                            filled($chunk->meta?->id)
-                        ) {
-                            yield new Meta(
-                                messageId: $chunk->meta->id,
-                                nextRequestOptions: ['previous_response_id' => $chunk->meta->id],
-                            );
+                        $stream = $clonedRequest->asStream();
 
-                            continue;
+                        foreach ($stream as $chunk) {
+                            if (
+                                ($chunk->chunkType === ChunkType::Meta) &&
+                                filled($chunk->meta?->id)
+                            ) {
+                                yield new Meta(
+                                    messageId: $chunk->meta->id,
+                                    nextRequestOptions: ['previous_response_id' => $chunk->meta->id],
+                                );
+
+                                continue;
+                            }
+
+                            if ($chunk->chunkType !== ChunkType::Text) {
+                                continue;
+                            }
+
+                            yield new Text($chunk->text);
+
+                            if ($chunk->finishReason) {
+                                yield new Finish(
+                                    isIncomplete: $chunk->finishReason === FinishReason::Length,
+                                    error: ($chunk->finishReason === FinishReason::Error) ? 'Something went wrong' : null,
+                                );
+
+                                break;
+                            }
                         }
+                    } catch (PrismRateLimitedException $exception) {
+                        foreach ($exception->rateLimits as $rateLimit) {
+                            if ($rateLimit->resetsAt?->isFuture()) {
+                                yield new Finish(
+                                    rateLimitResetsAt: $rateLimit->resetsAt,
+                                );
 
-                        if ($chunk->chunkType !== ChunkType::Text) {
-                            continue;
+                                break;
+                            }
                         }
+                    } catch (PrismException $exception) {
+                        // Throw to pass up to the caller
+                        throw $exception;
+                    } catch (Throwable $exception) {
+                        report($exception);
 
-                        yield new Text($chunk->text);
-
-                        if ($chunk->finishReason) {
-                            yield new Finish(
-                                isIncomplete: $chunk->finishReason === FinishReason::Length,
-                                error: ($chunk->finishReason === FinishReason::Error) ? 'Something went wrong' : null,
-                            );
-
-                            break;
-                        }
+                        yield new Finish(
+                            error: 'Something went wrong',
+                        );
                     }
-                } catch (PrismRateLimitedException $exception) {
-                    foreach ($exception->rateLimits as $rateLimit) {
-                        if ($rateLimit->resetsAt?->isFuture()) {
+                };
+
+                $maxRetries = 3;
+                $retryDelays = [1, 3, 5];
+
+                for ($attempt = 0; $attempt < $maxRetries; $attempt++) {
+                    try {
+                        yield from $handleRequest($request);
+
+                        break;
+                    } catch (Throwable $exception) {
+                        // Check if this is an exception we should retry for
+                        $shouldRetry = $exception instanceof PrismException && str_contains($exception->getMessage(), 'server_error');
+
+                        if (! $shouldRetry || $attempt >= $maxRetries - 1) {
+                            report($exception);
+
                             yield new Finish(
-                                rateLimitResetsAt: $rateLimit->resetsAt,
+                                error: 'Something went wrong',
                             );
-
-                            break;
                         }
-                    }
-                } catch (Throwable $exception) {
-                    report($exception);
 
-                    yield new Finish(
-                        error: 'Something went wrong',
-                    );
+                        sleep($retryDelays[$attempt]);
+                    }
                 }
 
                 if ($shouldTrack) {
