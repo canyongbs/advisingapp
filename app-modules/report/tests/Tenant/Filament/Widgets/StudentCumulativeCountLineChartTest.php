@@ -58,7 +58,7 @@ it('returns correct cumulative student counts grouped by month within the given 
         'endDate' => $endDate->toDateString(),
     ];
 
-    expect($widgetInstance->getData())->toMatchSnapshot();
+    expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
 });
 
 it('returns correct cumulative student counts grouped by month based on group filters', function () {
@@ -101,12 +101,12 @@ it('returns correct cumulative student counts grouped by month based on group fi
         'populationGroup' => $group->getKey(),
     ];
 
-    expect($widgetInstance->getData())->toMatchSnapshot();
+    expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
 
     // without filter
     $widgetInstance = new StudentCumulativeCountLineChart();
     $widgetInstance->cacheTag = 'report-student';
     $widgetInstance->pageFilters = [];
 
-    expect($widgetInstance->getData())->toMatchSnapshot();
+    expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
 });

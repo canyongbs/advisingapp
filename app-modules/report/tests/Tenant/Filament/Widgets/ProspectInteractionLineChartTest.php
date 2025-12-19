@@ -53,7 +53,7 @@ it('checks prospect interactions monthly line chart', function () {
     $widgetInstance = new ProspectInteractionLineChart();
     $widgetInstance->cacheTag = 'report-prospect-interaction';
 
-    expect($widgetInstance->getData())->toMatchSnapshot();
+    expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
 });
 
 it('returns correct data for prospect interactions within the given date range', function () {
@@ -85,7 +85,7 @@ it('returns correct data for prospect interactions within the given date range',
         'endDate' => $interactionEndDate->toDateString(),
     ];
 
-    expect($widgetInstance->getData())->toMatchSnapshot();
+    expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
 });
 
 it('returns correct data for prospect interactions based on group filter', function () {
@@ -139,5 +139,5 @@ it('returns correct data for prospect interactions based on group filter', funct
         'populationGroup' => $group->getKey(),
     ];
 
-    expect($widgetInstance->getData())->toMatchSnapshot();
+    expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
 });

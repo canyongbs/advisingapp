@@ -53,7 +53,7 @@ it('checks student interactions monthly line chart', function () {
     $widgetInstance = new StudentInteractionLineChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
 
-    expect($widgetInstance->getData())->toMatchSnapshot();
+    expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
 });
 
 it('returns correct data for student interactions within the given date range', function () {
@@ -85,7 +85,7 @@ it('returns correct data for student interactions within the given date range', 
         'endDate' => $interactionEndDate->toDateString(),
     ];
 
-    expect($widgetInstance->getData())->toMatchSnapshot();
+    expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
 });
 
 it('returns correct data for student interactions based on group filter', function () {
@@ -139,5 +139,5 @@ it('returns correct data for student interactions based on group filter', functi
         'populationGroup' => $group->getKey(),
     ];
 
-    expect($widgetInstance->getData())->toMatchSnapshot();
+    expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
 });

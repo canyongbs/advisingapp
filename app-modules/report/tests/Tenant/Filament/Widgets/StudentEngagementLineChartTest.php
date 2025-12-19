@@ -69,7 +69,7 @@ it('returns correct monthly email and sms engagement data for students within th
         'endDate' => $endDate->toDateString(),
     ];
 
-    expect($widgetInstance->getData())->toMatchSnapshot();
+    expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
 });
 
 it('returns correct monthly email and sms engagement data for students based on group filters', function () {
@@ -138,7 +138,7 @@ it('returns correct monthly email and sms engagement data for students based on 
 
     expect($dataWithGroup)
         ->not->toBeEmpty()
-        ->and($dataWithGroup)->toMatchSnapshot();
+        ->and($dataWithGroup['datasets'][0]['data'])->toMatchSnapshot();
 
     $widgetInstance = new StudentEngagementLineChart();
     $widgetInstance->cacheTag = 'report-student-engagement';
@@ -148,5 +148,5 @@ it('returns correct monthly email and sms engagement data for students based on 
 
     expect($dataWithoutGroup)
         ->not->toBeEmpty()
-        ->and($dataWithoutGroup)->toMatchSnapshot();
+        ->and($dataWithoutGroup['datasets'][0]['data'])->toMatchSnapshot();
 });

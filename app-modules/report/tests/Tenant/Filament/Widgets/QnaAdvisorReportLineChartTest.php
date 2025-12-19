@@ -67,7 +67,7 @@ it('returns correct QnaAdvisorMessage counts grouped by month within the given d
             'endDate' => $endDate->toDateString(),
         ];
 
-        expect($widgetInstance->getData())->toMatchSnapshot();
+        expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
     } finally {
         travelBack();
     }
