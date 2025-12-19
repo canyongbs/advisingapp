@@ -38,7 +38,7 @@ namespace AdvisingApp\Alert\Presets\Handlers;
 
 use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;
 
-class MultipleDorFGradesPresetHandler implements AlertPresetHandler
+class MultipleDorfGradesPresetHandler implements AlertPresetHandler
 {
     public function getName(): string
     {

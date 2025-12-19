@@ -38,7 +38,7 @@ namespace AdvisingApp\Alert\Presets\Handlers;
 
 use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;
 
-class DorFGradePresetHandler implements AlertPresetHandler
+class DorfGradePresetHandler implements AlertPresetHandler
 {
     public function getName(): string
     {
