@@ -65,8 +65,10 @@ use Prism\Prism\Contracts\Message;
 use Prism\Prism\Contracts\Schema;
 use Prism\Prism\Enums\ChunkType;
 use Prism\Prism\Enums\FinishReason;
+use Prism\Prism\Exceptions\PrismException;
 use Prism\Prism\Exceptions\PrismRateLimitedException;
 use Prism\Prism\Prism;
+use Prism\Prism\Text\PendingRequest;
 use Prism\Prism\ValueObjects\Messages\AssistantMessage;
 use Prism\Prism\ValueObjects\Messages\UserMessage;
 use Throwable;
@@ -378,53 +380,84 @@ abstract class BaseOpenAiService implements AiService
             }
 
             return function () use ($shouldTrack, $request): Generator {
-                try {
-                    $stream = $request->asStream();
+                $handleRequest = function (PendingRequest $request) {
+                    try {
+                        $clonedRequest = clone $request;
 
-                    foreach ($stream as $chunk) {
-                        if (
-                            ($chunk->chunkType === ChunkType::Meta) &&
-                            filled($chunk->meta?->id)
-                        ) {
-                            yield new Meta(
-                                messageId: $chunk->meta->id,
-                                nextRequestOptions: ['previous_response_id' => $chunk->meta->id],
-                            );
+                        $stream = $clonedRequest->asStream();
 
-                            continue;
+                        foreach ($stream as $chunk) {
+                            if (
+                                ($chunk->chunkType === ChunkType::Meta) &&
+                                filled($chunk->meta?->id)
+                            ) {
+                                yield new Meta(
+                                    messageId: $chunk->meta->id,
+                                    nextRequestOptions: ['previous_response_id' => $chunk->meta->id],
+                                );
+
+                                continue;
+                            }
+
+                            if ($chunk->chunkType !== ChunkType::Text) {
+                                continue;
+                            }
+
+                            yield new Text($chunk->text);
+
+                            if ($chunk->finishReason) {
+                                yield new Finish(
+                                    isIncomplete: $chunk->finishReason === FinishReason::Length,
+                                    error: ($chunk->finishReason === FinishReason::Error) ? 'Something went wrong' : null,
+                                );
+
+                                break;
+                            }
                         }
+                    } catch (PrismRateLimitedException $exception) {
+                        foreach ($exception->rateLimits as $rateLimit) {
+                            if ($rateLimit->resetsAt?->isFuture()) {
+                                yield new Finish(
+                                    rateLimitResetsAt: $rateLimit->resetsAt,
+                                );
 
-                        if ($chunk->chunkType !== ChunkType::Text) {
-                            continue;
+                                break;
+                            }
                         }
+                    } catch (PrismException $exception) {
+                        // Throw to pass up to the caller
+                        throw $exception;
+                    } catch (Throwable $exception) {
+                        report($exception);
 
-                        yield new Text($chunk->text);
-
-                        if ($chunk->finishReason) {
-                            yield new Finish(
-                                isIncomplete: $chunk->finishReason === FinishReason::Length,
-                                error: ($chunk->finishReason === FinishReason::Error) ? 'Something went wrong' : null,
-                            );
-
-                            break;
-                        }
+                        yield new Finish(
+                            error: 'Something went wrong',
+                        );
                     }
-                } catch (PrismRateLimitedException $exception) {
-                    foreach ($exception->rateLimits as $rateLimit) {
-                        if ($rateLimit->resetsAt?->isFuture()) {
+                };
+
+                $maxRetries = 3;
+                $retryDelays = [1, 3, 5];
+
+                for ($attempt = 0; $attempt < $maxRetries; $attempt++) {
+                    try {
+                        yield from $handleRequest($request);
+
+                        break;
+                    } catch (Throwable $exception) {
+                        // Check if this is an exception we should retry for
+                        $shouldRetry = $exception instanceof PrismException && str_contains($exception->getMessage(), 'server_error');
+
+                        if (! $shouldRetry || $attempt >= $maxRetries) {
+                            report($exception);
+
                             yield new Finish(
-                                rateLimitResetsAt: $rateLimit->resetsAt,
+                                error: 'Something went wrong',
                             );
-
-                            break;
                         }
-                    }
-                } catch (Throwable $exception) {
-                    report($exception);
 
-                    yield new Finish(
-                        error: 'Something went wrong',
-                    );
+                        sleep($retryDelays[$attempt]);
+                    }
                 }
 
                 if ($shouldTrack) {
