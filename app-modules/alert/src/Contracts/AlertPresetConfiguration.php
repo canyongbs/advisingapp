@@ -36,6 +36,4 @@
 
 namespace AdvisingApp\Alert\Contracts;
 
-interface AlertPresetConfiguration
-{
-}
+interface AlertPresetConfiguration {}

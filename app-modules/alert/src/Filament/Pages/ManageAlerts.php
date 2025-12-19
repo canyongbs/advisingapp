@@ -56,6 +56,7 @@ use UnitEnum;
 class ManageAlerts extends Page implements HasForms
 {
     use InteractsWithForms;
+
     protected static ?string $cluster = ConstituentManagement::class;
 
     protected static ?string $navigationLabel = 'Alerts';
@@ -85,6 +86,53 @@ class ManageAlerts extends Page implements HasForms
         $this->form->fill($this->getFormData());
     }
 
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->statePath('data')
+            ->components($this->getFormSchema());
+    }
+
+    public function save(): void
+    {
+        $data = $this->form->getState();
+
+        $alertConfigurations = AlertConfiguration::with('configuration')->get();
+
+        foreach ($alertConfigurations as $config) {
+            $configId = (string) $config->id;
+
+            if (! isset($data[$configId])) {
+                continue;
+            }
+
+            $configData = $data[$configId];
+
+            $config->is_enabled = $configData['is_enabled'] ?? false;
+            $config->save();
+
+            if ($config->configuration) {
+                $configurationData = [];
+
+                foreach ($config->configuration->getFillable() as $field) {
+                    if (isset($configData[$field])) {
+                        $configurationData[$field] = $configData[$field];
+                    }
+                }
+
+                if (! empty($configurationData)) {
+                    $config->configuration->update($configurationData);
+                }
+            }
+        }
+
+        Notification::make()
+            ->success()
+            ->title('Alert configurations saved')
+            ->body('Your alert settings have been updated successfully.')
+            ->send();
+    }
+
     protected function getFormData(): array
     {
         $data = [];
@@ -110,13 +158,6 @@ class ManageAlerts extends Page implements HasForms
         return $data;
     }
 
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->statePath('data')
-            ->components($this->getFormSchema());
-    }
-
     protected function getFormSchema(): array
     {
         $alertConfigurations = AlertConfiguration::with('configuration')->get();
@@ -132,6 +173,7 @@ class ManageAlerts extends Page implements HasForms
             ];
 
             $configurationForm = $handler->configurationForm();
+
             if (! empty($configurationForm)) {
                 $components = array_merge($components, $configurationForm);
             }
@@ -173,46 +215,6 @@ class ManageAlerts extends Page implements HasForms
         return [
             $this->getSaveFormAction(),
         ];
-    }
-
-    public function save(): void
-    {
-        $data = $this->form->getState();
-
-        $alertConfigurations = AlertConfiguration::with('configuration')->get();
-
-        foreach ($alertConfigurations as $config) {
-            $configId = (string) $config->id;
-
-            if (! isset($data[$configId])) {
-                continue;
-            }
-
-            $configData = $data[$configId];
-
-            $config->is_enabled = $configData['is_enabled'] ?? false;
-            $config->save();
-
-            if ($config->configuration) {
-                $configurationData = [];
-
-                foreach ($config->configuration->getFillable() as $field) {
-                    if (isset($configData[$field])) {
-                        $configurationData[$field] = $configData[$field];
-                    }
-                }
-
-                if (! empty($configurationData)) {
-                    $config->configuration->update($configurationData);
-                }
-            }
-        }
-
-        Notification::make()
-            ->success()
-            ->title('Alert configurations saved')
-            ->body('Your alert settings have been updated successfully.')
-            ->send();
     }
 
     protected function getHeaderActions(): array

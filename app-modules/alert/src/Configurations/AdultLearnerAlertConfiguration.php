@@ -41,9 +41,6 @@ use AdvisingApp\Alert\Models\AlertConfiguration;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
-/**
- * @mixin IdeHelperAdultLearnerAlertConfiguration
- */
 class AdultLearnerAlertConfiguration extends BaseModel implements AlertPresetConfiguration
 {
     protected $fillable = [

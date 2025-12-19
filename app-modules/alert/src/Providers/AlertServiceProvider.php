@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Alert\Providers;
 
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Alert\AlertPlugin;
 use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
 use AdvisingApp\Alert\Configurations\CumulativeGpaAlertConfiguration;
 use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
 use AdvisingApp\Alert\Configurations\SemesterGpaAlertConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
 class AlertServiceProvider extends ServiceProvider
 {
@@ -56,11 +56,11 @@ class AlertServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([
-          'alert_configuration' => AlertConfiguration::class,
-          'cumulative_gpa_alert_configuration' => CumulativeGpaAlertConfiguration::class,
-          'semester_gpa_alert_configuration' => SemesterGpaAlertConfiguration::class,
-          'adult_learner_alert_configuration' => AdultLearnerAlertConfiguration::class,
-          'new_student_alert_configuration' => NewStudentAlertConfiguration::class
+            'alert_configuration' => AlertConfiguration::class,
+            'cumulative_gpa_alert_configuration' => CumulativeGpaAlertConfiguration::class,
+            'semester_gpa_alert_configuration' => SemesterGpaAlertConfiguration::class,
+            'adult_learner_alert_configuration' => AdultLearnerAlertConfiguration::class,
+            'new_student_alert_configuration' => NewStudentAlertConfiguration::class,
         ]);
     }
 }

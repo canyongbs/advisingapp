@@ -147,7 +147,6 @@ return new class () extends Migration {
             }
 
             AlertConfigurationFeature::activate();
-            
         });
     }
 
