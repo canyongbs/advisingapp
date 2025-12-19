@@ -59,6 +59,7 @@ class CumulativeGpaBelowThresholdPresetHandler implements AlertPresetHandler
                 ->label('Cumulative GPA Threshold')
                 ->numeric()
                 ->minValue(0.0)
+                ->maxValue(5.0)
                 ->step(0.01)
                 ->required()
                 ->helperText('Students with a cumulative GPA below this value will trigger the alert.'),

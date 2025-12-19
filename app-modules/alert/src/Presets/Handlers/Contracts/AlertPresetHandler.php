@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Alert\Presets\Handlers\Contracts;
 
-use Filament\Forms\Components\Component;
+use Filament\Schemas\Components\Component;
 
 interface AlertPresetHandler
 {

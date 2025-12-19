@@ -55,7 +55,7 @@ class ConcernStatusResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = 'Concern';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 120;
 
     public static function getPages(): array
     {

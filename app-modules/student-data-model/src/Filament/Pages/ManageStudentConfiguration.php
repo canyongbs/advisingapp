@@ -55,6 +55,8 @@ class ManageStudentConfiguration extends SettingsPage
 
     protected static ?string $navigationLabel = 'Configuration';
 
+    protected static ?int $navigationSort = 10;
+
     public static function canAccess(): bool
     {
         /** @var User $user */

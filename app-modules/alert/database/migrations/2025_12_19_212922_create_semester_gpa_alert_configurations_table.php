@@ -44,7 +44,7 @@ return new class () extends Migration {
         Schema::create('semester_gpa_alert_configurations', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            $table->decimal('gpa_threshold', 3, 2);
+            $table->decimal('gpa_threshold', 4, 2);
 
             $table->timestamps();
         });

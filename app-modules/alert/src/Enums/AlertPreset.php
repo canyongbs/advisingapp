@@ -40,10 +40,10 @@ use AdvisingApp\Alert\Presets\Handlers\AdultLearnerPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\CourseWithdrawalPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\CumulativeGpaBelowThresholdPresetHandler;
-use AdvisingApp\Alert\Presets\Handlers\DOrFGradePresetHandler;
+use AdvisingApp\Alert\Presets\Handlers\DorFGradePresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\FirstGenerationStudentPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\MultipleCourseWithdrawalsPresetHandler;
-use AdvisingApp\Alert\Presets\Handlers\MultipleDOrFGradesPresetHandler;
+use AdvisingApp\Alert\Presets\Handlers\MultipleDorFGradesPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\NewStudentPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\RepeatedCourseAttemptPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\SemesterGpaBelowThresholdPresetHandler;
@@ -51,8 +51,8 @@ use Filament\Support\Contracts\HasLabel;
 
 enum AlertPreset: string implements HasLabel
 {
-    case DOrFGrade = 'd_or_f_grade';
-    case MultipleDOrFGrades = 'multiple_d_or_f_grades';
+    case DorFGrade = 'd_or_f_grade';
+    case MultipleDorFGrades = 'multiple_d_or_f_grades';
     case CourseWithdrawal = 'course_withdrawal';
     case MultipleCourseWithdrawals = 'multiple_course_withdrawals';
     case RepeatedCourseAttempt = 'repeated_course_attempt';
@@ -65,8 +65,8 @@ enum AlertPreset: string implements HasLabel
     public function getLabel(): string
     {
         return match ($this) {
-            self::DOrFGrade => 'D or F Grade Posted',
-            self::MultipleDOrFGrades => 'Multiple D or F Grades Posted',
+            self::DorFGrade => 'D or F Grade Posted',
+            self::MultipleDorFGrades => 'Multiple D or F Grades Posted',
             self::CourseWithdrawal => 'Course Withdrawal',
             self::MultipleCourseWithdrawals => 'Multiple Course Withdrawals',
             self::RepeatedCourseAttempt => 'Repeated Course Attempt',
@@ -85,8 +85,8 @@ enum AlertPreset: string implements HasLabel
     {
         // /** @var AlertPresetHandler */
         return match ($this) {
-            self::DOrFGrade => new DOrFGradePresetHandler(),
-            self::MultipleDOrFGrades => new MultipleDOrFGradesPresetHandler(),
+            self::DorFGrade => new DorFGradePresetHandler(),
+            self::MultipleDorFGrades => new MultipleDorFGradesPresetHandler(),
             self::CourseWithdrawal => new CourseWithdrawalPresetHandler(),
             self::MultipleCourseWithdrawals => new MultipleCourseWithdrawalsPresetHandler(),
             self::RepeatedCourseAttempt => new RepeatedCourseAttemptPresetHandler(),

@@ -52,7 +52,7 @@ class ProspectStatusResource extends Resource
 
     protected static ?string $navigationLabel = 'Statuses';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 60;
 
     protected static ?string $cluster = ConstituentManagement::class;
 

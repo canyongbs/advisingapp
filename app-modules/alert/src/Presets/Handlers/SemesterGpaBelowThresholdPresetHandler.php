@@ -59,6 +59,7 @@ class SemesterGpaBelowThresholdPresetHandler implements AlertPresetHandler
                 ->label('Semester GPA Threshold')
                 ->numeric()
                 ->minValue(0.0)
+                ->maxValue(5.0)
                 ->step(0.01)
                 ->required()
                 ->helperText('Students with a semester GPA below this value will trigger the alert.'),

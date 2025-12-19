@@ -49,10 +49,14 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use UnitEnum;
 
+/**
+ * @property-read Schema $form
+ */
 class ManageAlerts extends Page implements HasForms
 {
     use InteractsWithForms;
@@ -90,11 +94,16 @@ class ManageAlerts extends Page implements HasForms
     {
         return $schema
             ->statePath('data')
-            ->components($this->getFormSchema());
+            ->components($this->getFormSchema())
+            ->disabled(! auth()->user()->can('settings.*.update'));
     }
 
     public function save(): void
     {
+        if (! auth()->user()->can('settings.*.update')) {
+            return;
+        }
+
         $data = $this->form->getState();
 
         $alertConfigurations = AlertConfiguration::with('configuration')->get();
@@ -133,6 +142,9 @@ class ManageAlerts extends Page implements HasForms
             ->send();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getFormData(): array
     {
         $data = [];
@@ -158,6 +170,9 @@ class ManageAlerts extends Page implements HasForms
         return $data;
     }
 
+    /**
+     * @return array<Component>
+     */
     protected function getFormSchema(): array
     {
         $alertConfigurations = AlertConfiguration::with('configuration')->get();
@@ -188,6 +203,7 @@ class ManageAlerts extends Page implements HasForms
 
         return [
             Section::make()
+                ->columns()
                 ->schema([
                     Heading::make()
                         ->content('Student Alerts'),
@@ -198,23 +214,26 @@ class ManageAlerts extends Page implements HasForms
         ];
     }
 
-    // protected function getFormActions(): array
-    // {
-    //     return [
-    //         Action::make('save')
-    //             ->label('Save Changes')
-    //             ->submit('save'),
-    //     ];
-    // }
-
     /**
      * @return array<Action | ActionGroup>
      */
     protected function getFormActions(): array
     {
+        if (! auth()->user()->can('settings.*.update')) {
+            return [];
+        }
+
         return [
             $this->getSaveFormAction(),
         ];
+    }
+
+    protected function getSaveFormAction(): Action
+    {
+        return Action::make('save')
+            ->label('Save Changes')
+            ->submit('save')
+            ->keyBindings(['mod+s']);
     }
 
     protected function getHeaderActions(): array

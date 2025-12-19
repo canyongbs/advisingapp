@@ -60,7 +60,7 @@ class StudentCareTeamRoleResource extends Resource
 
     protected static ?string $breadcrumb = 'Student Care Team Roles';
 
-    protected static ?int $navigationSort = 60;
+    protected static ?int $navigationSort = 30;
 
     public static function canAccess(): bool
     {

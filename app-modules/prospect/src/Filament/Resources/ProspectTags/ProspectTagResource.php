@@ -55,7 +55,7 @@ class ProspectTagResource extends Resource
 
     protected static ?string $navigationLabel = 'Tags';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 90;
 
     protected static ?string $cluster = ConstituentManagement::class;
 

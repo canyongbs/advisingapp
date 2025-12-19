@@ -38,16 +38,16 @@ namespace AdvisingApp\Alert\Presets\Handlers;
 
 use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;
 
-class MultipleDOrFGradesPresetHandler implements AlertPresetHandler
+class DorFGradePresetHandler implements AlertPresetHandler
 {
     public function getName(): string
     {
-        return 'Multiple D or F Grades Posted';
+        return 'D or F Grade Posted';
     }
 
     public function getDescription(): string
     {
-        return 'This alert is turned on when a student has more than one final grade of D or F on their record. It is intended to identify students who are experiencing academic difficulty in multiple courses, which may require a more comprehensive intervention plan.';
+        return 'This alert is turned on when a student receives a final course grade of D or F in any semester. It is intended to highlight students who may be struggling in at least one course so advisors can review the situation and offer academic support.';
     }
 
     public function configurationForm(): array
