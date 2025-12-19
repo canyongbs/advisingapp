@@ -272,7 +272,7 @@ abstract class BaseOpenAiService implements AiService
                         // Check if this is an exception we should retry for
                         $shouldRetry = $exception instanceof PrismException && str_contains($exception->getMessage(), 'server_error');
 
-                        if (! $shouldRetry || $attempt >= $maxRetries) {
+                        if (! $shouldRetry || $attempt >= $maxRetries - 1) {
                             yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
 
                             report($exception);
@@ -417,7 +417,7 @@ abstract class BaseOpenAiService implements AiService
                             // Check if this is an exception we should retry for
                             $shouldRetry = $exception instanceof PrismException && str_contains($exception->getMessage(), 'server_error');
 
-                            if (! $shouldRetry || $attempt >= $maxRetries) {
+                            if (! $shouldRetry || $attempt >= $maxRetries - 1) {
                                 report($exception);
 
                                 yield new Finish(
@@ -508,7 +508,7 @@ abstract class BaseOpenAiService implements AiService
                         // Check if this is an exception we should retry for
                         $shouldRetry = $exception instanceof PrismException && str_contains($exception->getMessage(), 'server_error');
 
-                        if (! $shouldRetry || $attempt >= $maxRetries) {
+                        if (! $shouldRetry || $attempt >= $maxRetries - 1) {
                             report($exception);
 
                             yield new Finish(
