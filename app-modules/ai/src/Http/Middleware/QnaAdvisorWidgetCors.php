@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Http\Middleware;
 
-use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Ai\Models\QnaAdvisor;
 use Closure;
 use Fruitcake\Cors\CorsService;
 use Illuminate\Http\Request;
@@ -63,9 +63,9 @@ class QnaAdvisorWidgetCors
 
         $requestingUrlHost = parse_url($requestingUrlHeader, PHP_URL_HOST);
 
-        // Check if the requesting host is allowed in ANY Form
-        $isAllowed = Form::query()
-            ->whereJsonContains('allowed_domains', $requestingUrlHost)
+        // Check if the requesting host is allowed in ANY QnaAdvisor
+        $isAllowed = QnaAdvisor::query()
+            ->whereJsonContains('authorized_domains', $requestingUrlHost)
             ->exists();
 
         if (
