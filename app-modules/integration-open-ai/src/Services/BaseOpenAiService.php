@@ -321,53 +321,85 @@ abstract class BaseOpenAiService implements AiService
 
             if ($hasImageGeneration) {
                 return function () use ($shouldTrack, $request): Generator {
-                    try {
-                        $response = $request->asText();
+                    // We will create a function to handle the request here, then call it within a retry loop below so that we can retry the request in case of specific errors
+                    $handleRequest = function (PendingRequest $request) {
+                        try {
+                            $clonedRequest = clone $request;
 
-                        if (filled($response->meta->id)) {
-                            yield new Meta(
-                                messageId: $response->meta->id,
-                                nextRequestOptions: ['previous_response_id' => $response->meta->id],
-                            );
-                        }
+                            $response = $clonedRequest->asText();
 
-                        if (filled($response->text)) {
-                            yield new Text(
-                                filled($response->additionalContent['generated_images'] ?? [])
-                                    ? $response->text
-                                    : ('We have determined that an image is not needed for this request.' . PHP_EOL . PHP_EOL . $response->text),
-                            );
-                        }
-
-                        if (filled($response->additionalContent['generated_images'] ?? [])) {
-                            foreach ($response->additionalContent['generated_images'] as $image) {
-                                yield new Image(
-                                    content: $image['result'],
-                                    format: $image['output_format'],
+                            if (filled($response->meta->id)) {
+                                yield new Meta(
+                                    messageId: $response->meta->id,
+                                    nextRequestOptions: ['previous_response_id' => $response->meta->id],
                                 );
                             }
-                        }
 
-                        yield new Finish(
-                            isIncomplete: $response->finishReason === FinishReason::Length,
-                            error: ($response->finishReason === FinishReason::Error) ? 'Something went wrong' : null,
-                        );
-                    } catch (PrismRateLimitedException $exception) {
-                        foreach ($exception->rateLimits as $rateLimit) {
-                            if ($rateLimit->resetsAt?->isFuture()) {
+                            if (filled($response->text)) {
+                                yield new Text(
+                                    filled($response->additionalContent['generated_images'] ?? [])
+                                        ? $response->text
+                                        : ('We have determined that an image is not needed for this request.' . PHP_EOL . PHP_EOL . $response->text),
+                                );
+                            }
+
+                            if (filled($response->additionalContent['generated_images'] ?? [])) {
+                                foreach ($response->additionalContent['generated_images'] as $image) {
+                                    yield new Image(
+                                        content: $image['result'],
+                                        format: $image['output_format'],
+                                    );
+                                }
+                            }
+
+                            yield new Finish(
+                                isIncomplete: $response->finishReason === FinishReason::Length,
+                                error: ($response->finishReason === FinishReason::Error) ? 'Something went wrong' : null,
+                            );
+                        } catch (PrismRateLimitedException $exception) {
+                            foreach ($exception->rateLimits as $rateLimit) {
+                                if ($rateLimit->resetsAt?->isFuture()) {
+                                    yield new Finish(
+                                        rateLimitResetsAt: $rateLimit->resetsAt,
+                                    );
+
+                                    break;
+                                }
+                            }
+                        } catch (PrismException $exception) {
+                            // Throw to pass up to the caller
+                            throw $exception;
+                        } catch (Throwable $exception) {
+                            report($exception);
+
+                            yield new Finish(
+                                error: 'Something went wrong',
+                            );
+                        }
+                    };
+
+                    $maxRetries = 3;
+                    $retryDelays = [1, 3, 5];
+
+                    for ($attempt = 0; $attempt < $maxRetries; $attempt++) {
+                        try {
+                            yield from $handleRequest($request);
+
+                            break;
+                        } catch (Throwable $exception) {
+                            // Check if this is an exception we should retry for
+                            $shouldRetry = $exception instanceof PrismException && str_contains($exception->getMessage(), 'server_error');
+
+                            if (! $shouldRetry || $attempt >= $maxRetries) {
+                                report($exception);
+
                                 yield new Finish(
-                                    rateLimitResetsAt: $rateLimit->resetsAt,
+                                    error: 'Something went wrong',
                                 );
-
-                                break;
                             }
-                        }
-                    } catch (Throwable $exception) {
-                        report($exception);
 
-                        yield new Finish(
-                            error: 'Something went wrong',
-                        );
+                            sleep($retryDelays[$attempt]);
+                        }
                     }
 
                     if ($shouldTrack) {
