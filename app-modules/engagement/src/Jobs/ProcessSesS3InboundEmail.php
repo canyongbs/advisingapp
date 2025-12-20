@@ -114,6 +114,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                         'Cipher' => 'gcm',
                         'KeySize' => 256,
                     ],
+                    '@CommitmentPolicy' => 'FORBID_ENCRYPT_ALLOW_DECRYPT',
                     'Bucket' => config('filesystems.disks.s3.bucket'),
                     'Key' => config('filesystems.disks.s3-inbound-email.root') . '/' . $this->emailFilePath,
                 ]);
