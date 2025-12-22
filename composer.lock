@@ -240,16 +240,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.368.0",
+            "version": "3.369.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "c1189f8e4ba3268d6306e515f6f65611c671d033"
+                "reference": "b2d04cf1184a96839a8ab62ec6e3cf2d62a278e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c1189f8e4ba3268d6306e515f6f65611c671d033",
-                "reference": "c1189f8e4ba3268d6306e515f6f65611c671d033",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b2d04cf1184a96839a8ab62ec6e3cf2d62a278e3",
+                "reference": "b2d04cf1184a96839a8ab62ec6e3cf2d62a278e3",
                 "shasum": ""
             },
             "require": {
@@ -331,9 +331,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.368.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.1"
             },
-            "time": "2025-12-16T20:11:32+00:00"
+            "time": "2025-12-22T19:13:21+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -5157,16 +5157,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.424.0",
+            "version": "v0.425.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "b368dcc5dce8043fed1b248a66020747d5cec353"
+                "reference": "3dc7a1bf23d0fee0f701d9a249c8f2ed622c16ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/b368dcc5dce8043fed1b248a66020747d5cec353",
-                "reference": "b368dcc5dce8043fed1b248a66020747d5cec353",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/3dc7a1bf23d0fee0f701d9a249c8f2ed622c16ec",
+                "reference": "3dc7a1bf23d0fee0f701d9a249c8f2ed622c16ec",
                 "shasum": ""
             },
             "require": {
@@ -5195,9 +5195,9 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/google-api-php-client-services/issues",
-                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.424.0"
+                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.425.0"
             },
-            "time": "2025-12-15T00:58:22+00:00"
+            "time": "2025-12-22T01:06:21+00:00"
         },
         {
             "name": "google/auth",
@@ -9222,16 +9222,16 @@
         },
         {
             "name": "nette/utils",
-            "version": "v4.1.0",
+            "version": "v4.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/utils.git",
-                "reference": "fa1f0b8261ed150447979eb22e373b7b7ad5a8e0"
+                "reference": "c99059c0315591f1a0db7ad6002000288ab8dc72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/utils/zipball/fa1f0b8261ed150447979eb22e373b7b7ad5a8e0",
-                "reference": "fa1f0b8261ed150447979eb22e373b7b7ad5a8e0",
+                "url": "https://api.github.com/repos/nette/utils/zipball/c99059c0315591f1a0db7ad6002000288ab8dc72",
+                "reference": "c99059c0315591f1a0db7ad6002000288ab8dc72",
                 "shasum": ""
             },
             "require": {
@@ -9305,9 +9305,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/utils/issues",
-                "source": "https://github.com/nette/utils/tree/v4.1.0"
+                "source": "https://github.com/nette/utils/tree/v4.1.1"
             },
-            "time": "2025-12-01T17:49:23+00:00"
+            "time": "2025-12-22T12:14:32+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -10058,31 +10058,32 @@
         },
         {
             "name": "php-debugbar/php-debugbar",
-            "version": "v2.2.4",
+            "version": "v2.2.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-debugbar/php-debugbar.git",
-                "reference": "3146d04671f51f69ffec2a4207ac3bdcf13a9f35"
+                "reference": "c5dce08e98dd101c771e55949fd89124b216271d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-debugbar/php-debugbar/zipball/3146d04671f51f69ffec2a4207ac3bdcf13a9f35",
-                "reference": "3146d04671f51f69ffec2a4207ac3bdcf13a9f35",
+                "url": "https://api.github.com/repos/php-debugbar/php-debugbar/zipball/c5dce08e98dd101c771e55949fd89124b216271d",
+                "reference": "c5dce08e98dd101c771e55949fd89124b216271d",
                 "shasum": ""
             },
             "require": {
-                "php": "^8",
+                "php": "^8.1",
                 "psr/log": "^1|^2|^3",
-                "symfony/var-dumper": "^4|^5|^6|^7"
+                "symfony/var-dumper": "^5.4|^6.4|^7.3|^8.0"
             },
             "replace": {
                 "maximebf/debugbar": "self.version"
             },
             "require-dev": {
                 "dbrekelmans/bdi": "^1",
-                "phpunit/phpunit": "^8|^9",
+                "phpunit/phpunit": "^10",
+                "symfony/browser-kit": "^6.0|7.0",
                 "symfony/panther": "^1|^2.1",
-                "twig/twig": "^1.38|^2.7|^3.0"
+                "twig/twig": "^3.11.2"
             },
             "suggest": {
                 "kriswallsmith/assetic": "The best way to manage assets",
@@ -10092,7 +10093,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1-dev"
+                    "dev-master": "2.2-dev"
                 }
             },
             "autoload": {
@@ -10125,9 +10126,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-debugbar/php-debugbar/issues",
-                "source": "https://github.com/php-debugbar/php-debugbar/tree/v2.2.4"
+                "source": "https://github.com/php-debugbar/php-debugbar/tree/v2.2.5"
             },
-            "time": "2025-07-22T14:01:30+00:00"
+            "time": "2025-12-21T08:50:08+00:00"
         },
         {
             "name": "php-http/discovery",
@@ -13444,16 +13445,16 @@
         },
         {
             "name": "spatie/laravel-health",
-            "version": "1.34.9",
+            "version": "1.34.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-health.git",
-                "reference": "dc2963c97d04cae7ce9abeeb085de50d84eabe92"
+                "reference": "db30de065dd4d41132b9262f2685ffd28f9af8b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-health/zipball/dc2963c97d04cae7ce9abeeb085de50d84eabe92",
-                "reference": "dc2963c97d04cae7ce9abeeb085de50d84eabe92",
+                "url": "https://api.github.com/repos/spatie/laravel-health/zipball/db30de065dd4d41132b9262f2685ffd28f9af8b2",
+                "reference": "db30de065dd4d41132b9262f2685ffd28f9af8b2",
                 "shasum": ""
             },
             "require": {
@@ -13525,7 +13526,7 @@
                 "spatie"
             ],
             "support": {
-                "source": "https://github.com/spatie/laravel-health/tree/1.34.9"
+                "source": "https://github.com/spatie/laravel-health/tree/1.34.10"
             },
             "funding": [
                 {
@@ -13533,7 +13534,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-11-28T09:47:19+00:00"
+            "time": "2025-12-22T10:06:29+00:00"
         },
         {
             "name": "spatie/laravel-json-api-paginate",
@@ -24307,5 +24308,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
