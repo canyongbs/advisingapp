@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Enums;
+namespace AdvisingApp\Alert\Presets;
 
 use AdvisingApp\Alert\Presets\Handlers\AdultLearnerPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;

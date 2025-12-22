@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Alert\Database\Seeders;
 
-use AdvisingApp\Alert\Enums\AlertPreset;
+use AdvisingApp\Alert\Presets\AlertPreset;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use Illuminate\Database\Seeder;
 

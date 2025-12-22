@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Alert\Models;
 
-use AdvisingApp\Alert\Enums\AlertPreset;
+use AdvisingApp\Alert\Presets\AlertPreset;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
