@@ -545,16 +545,17 @@
                     <div
                         class="bg-danger-100 dark:bg-danger-900 px-4 py-2"
                         x-cloak
-                        x-show="error"
+                        x-show="error ?? lockedMessage"
                     >
-                        <span x-text="error"></span>
+                        <span x-text="error ?? lockedMessage"></span>
 
-                        <span x-show="! (isRetryable || isRateLimited)">We will inform you once you can retry sending
+                        <span x-show="! (isRetryable || isRateLimited || lockedMessage)">We will inform you once you
+                            can retry sending
                             your message.</span>
 
                         <x-filament::link
                             x-on:click="retryMessage"
-                            x-show="isRetryable && (! isRateLimited)"
+                            x-show="isRetryable && (! isRateLimited) && (! lockedMessage)"
                             tag="button"
                             color="gray"
                         >Click here to retry.
@@ -691,7 +692,10 @@
                     @endif
                 </div>
                 @if (!$this->thread->assistant->archived_at)
-                    <form x-on:submit.prevent="sendMessage()">
+                    <form
+                        x-on:submit.prevent="sendMessage()"
+                        x-show="! lockedMessage"
+                    >
                         <div
                             class="border-gray-950/5 w-full overflow-hidden rounded-xl border bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
                             <div class="flex items-start justify-between gap-x-4 p-4">
