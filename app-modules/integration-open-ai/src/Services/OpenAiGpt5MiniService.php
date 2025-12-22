@@ -62,4 +62,9 @@ class OpenAiGpt5MiniService extends BaseOpenAiService
     {
         return false;
     }
+
+    public function hasReasoning(): bool
+    {
+        return true;
+    }
 }

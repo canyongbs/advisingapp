@@ -40,6 +40,8 @@ use Filament\Support\Contracts\HasLabel;
 
 enum AiReasoningEffort: string implements HasLabel
 {
+    case Minimal = 'minimal';
+
     case Low = 'low';
 
     case Medium = 'medium';

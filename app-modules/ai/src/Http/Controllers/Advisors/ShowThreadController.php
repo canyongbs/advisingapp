@@ -83,6 +83,7 @@ class ShowThreadController
                     'avatar_url' => Filament::getUserAvatarUrl($user),
                 ]])
                 ->all(),
+            'locked_message' => $thread->locked_at ? $thread->locked_reason?->getMessage() : null,
         ]);
     }
 }
