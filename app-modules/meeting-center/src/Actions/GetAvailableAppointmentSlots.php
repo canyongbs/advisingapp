@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Actions;
 
+use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use App\Models\User;
 use Carbon\CarbonPeriod;
@@ -87,6 +88,14 @@ class GetAvailableAppointmentSlots
         return CalendarEvent::query()
             ->whereHas('calendar', fn (Builder $query) => $query->whereBelongsTo($user))
             ->where(fn (Builder $query) => $this->wherePeriodOverlaps($query, $start, $end))
+            ->where(function (Builder $query) {
+                $query->whereIn('transparency', [
+                    EventTransparency::Busy->value,
+                    EventTransparency::Tentative->value,
+                    EventTransparency::OutOfOffice->value,
+                    EventTransparency::WorkingElsewhere->value,
+                ]);
+            })
             ->get();
     }
 

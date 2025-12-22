@@ -36,9 +36,11 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages;
 
+use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\CalendarEventResource;
 use App\Models\User;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -61,6 +63,10 @@ class CreateCalendarEvent extends CreateRecord
             DateTimePicker::make('starts_at')
                 ->required(),
             DateTimePicker::make('ends_at')
+                ->required(),
+            Select::make('transparency')
+                ->options(EventTransparency::class)
+                ->default(EventTransparency::Busy)
                 ->required(),
             TagsInput::make('attendees')
                 ->placeholder('Add attendee email')

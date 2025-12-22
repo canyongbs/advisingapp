@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,43 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\MeetingCenter\Enums\EventTransparency;
-use AdvisingApp\MeetingCenter\Observers\CalendarEventObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-/**
- * @mixin IdeHelperCalendarEvent
- */
-#[ObservedBy([CalendarEventObserver::class])]
-class CalendarEvent extends BaseModel
-{
-    protected $fillable = [
-        'title',
-        'description',
-        'starts_at',
-        'ends_at',
-        'provider_id',
-        'calendar_id',
-        'attendees',
-        'transparency',
-    ];
-
-    protected $casts = [
-        'starts_at' => 'datetime',
-        'ends_at' => 'datetime',
-        'attendees' => 'array',
-        'transparency' => EventTransparency::class,
-    ];
-
-    /**
-     * @return BelongsTo<Calendar, $this>
-     */
-    public function calendar(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(Calendar::class);
+        Schema::table('calendar_events', function (Blueprint $table) {
+            $table->string('transparency')->nullable();
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('calendar_events', function (Blueprint $table) {
+            $table->dropColumn('transparency');
+        });
+    }
+};

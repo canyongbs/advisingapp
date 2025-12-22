@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Managers;
 
+use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
@@ -54,6 +55,7 @@ use Microsoft\Graph\Model\Calendar as MicrosoftGraphCalendar;
 use Microsoft\Graph\Model\DateTimeTimeZone;
 use Microsoft\Graph\Model\EmailAddress;
 use Microsoft\Graph\Model\Event;
+use Microsoft\Graph\Model\FreeBusyStatus;
 use Microsoft\Graph\Model\ItemBody;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -221,6 +223,7 @@ class OutlookCalendarManager implements CalendarInterface
                     'attendees' => collect($providerEvent->getAttendees())
                         ->map(fn ($attendee) => $attendee['emailAddress']['address'])
                         ->prepend($calendar->provider_email),
+                    'transparency' => EventTransparency::fromOutlookShowAs($providerEvent->getShowAs()?->value()),
                 ]);
 
                 if ($userEvent->isDirty()) {
@@ -301,7 +304,7 @@ class OutlookCalendarManager implements CalendarInterface
 
     protected function toMicrosoftGraphEvent(CalendarEvent $event): Event
     {
-        return (new Event())
+        $microsoftEvent = (new Event())
             ->setSubject($event->title)
             ->setBody(
                 (new ItemBody())
@@ -334,5 +337,11 @@ class OutlookCalendarManager implements CalendarInterface
                     ->toArray()
             )
             ->setTransactionId($event->id);
+
+        if ($event->transparency) {
+            $microsoftEvent->setShowAs(new FreeBusyStatus($event->transparency->toOutlookShowAs()));
+        }
+
+        return $microsoftEvent;
     }
 }

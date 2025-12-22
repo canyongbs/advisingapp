@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Managers;
 
+use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
@@ -174,6 +175,7 @@ class GoogleCalendarManager implements CalendarInterface
                         'attendees' => collect($event->getAttendees())
                             ->map(fn (EventAttendee $attendee) => $attendee->getEmail())
                             ->prepend($calendar->provider_email),
+                        'transparency' => EventTransparency::fromGoogleTransparency($event->getTransparency()),
                     ];
 
                     $userEvent = $calendar->events()->where('provider_id', $event->id)->first();
@@ -320,6 +322,10 @@ class GoogleCalendarManager implements CalendarInterface
             ->toArray();
 
         $googleEvent->setAttendees($attendees);
+
+        if ($event->transparency) {
+            $googleEvent->setTransparency($event->transparency->toGoogleTransparency());
+        }
 
         return $googleEvent;
     }

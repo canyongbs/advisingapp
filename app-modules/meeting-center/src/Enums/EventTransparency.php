@@ -1,0 +1,98 @@
+<?php
+
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
+
+    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor's trademarks is subject
+      to applicable law.
+    - Canyon GBS LLC respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS™ is a registered trademark of Canyon GBS LLC.
+
+    For more information on licensing, add-ons, and support, please visit
+    <https://www.canyongbs.com>.
+
+</COPYRIGHT>
+*/
+
+namespace AdvisingApp\MeetingCenter\Enums;
+
+use Filament\Support\Contracts\HasLabel;
+
+enum EventTransparency: string implements HasLabel
+{
+    case Free = 'free';
+    case Busy = 'busy';
+    case Tentative = 'tentative';
+    case OutOfOffice = 'out_of_office';
+    case WorkingElsewhere = 'working_elsewhere';
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::Free => 'Free',
+            self::Busy => 'Busy',
+            self::Tentative => 'Tentative',
+            self::OutOfOffice => 'Out of Office',
+            self::WorkingElsewhere => 'Working Elsewhere',
+        };
+    }
+
+    public function isOpaque(): bool
+    {
+        return match ($this) {
+            self::Free => false,
+            self::Busy, self::Tentative, self::OutOfOffice, self::WorkingElsewhere => true,
+        };
+    }
+
+    public static function fromGoogleTransparency(?string $transparency): self
+    {
+        return match ($transparency) {
+            'transparent' => self::Free,
+            'opaque', null => self::Busy,
+            default => self::Busy,
+        };
+    }
+
+    public static function fromOutlookShowAs(?string $showAs): self
+    {
+        return match ($showAs) {
+            'free' => self::Free,
+            'tentative' => self::Tentative,
+            'oof' => self::OutOfOffice,
+            'workingElsewhere' => self::WorkingElsewhere,
+            'busy', 'unknown', null => self::Busy,
+            default => self::Busy,
+        };
+    }
+
+    public function toGoogleTransparency(): string
+    {
+        return $this->isOpaque() ? 'opaque' : 'transparent';
+    }
+
+    public function toOutlookShowAs(): string
+    {
+        return match ($this) {
+            self::Free => 'free',
+            self::Busy => 'busy',
+            self::Tentative => 'tentative',
+            self::OutOfOffice => 'oof',
+            self::WorkingElsewhere => 'workingElsewhere',
+        };
+    }
+}
