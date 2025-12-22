@@ -80,7 +80,7 @@ jobs:
             - run: npm install
 
             - name: Set up Ruby
-              uses: ruby/setup-ruby@ac793fdd38cc468a4dd57246fa9d0e868aba9085 #1.270.0
+              uses: ruby/setup-ruby@d354de180d0c9e813cfddfcbdc079945d4be589b #1.275.0
 
             - name: Run Ruby Script
               run: ruby ./copyright.rb
@@ -106,7 +106,7 @@ jobs:
 
             - name: Commit changes
               if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-              uses: stefanzweifel/git-auto-commit-action@28e16e81777b558cc906c8750092100bbb34c5e3 #7.0.0
+              uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 #7.1.0
               with:
                   commit_message: >
                       Update code formatting and copyright headers
