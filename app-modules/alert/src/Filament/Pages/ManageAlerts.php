@@ -147,6 +147,10 @@ class ManageAlerts extends Page implements HasForms
      */
     protected function getFormData(): array
     {
+        if (! AlertConfigurationFeature::active()) {
+            return [];
+        }
+
         $data = [];
 
         $alertConfigurations = AlertConfiguration::with('configuration')->get();
@@ -175,6 +179,10 @@ class ManageAlerts extends Page implements HasForms
      */
     protected function getFormSchema(): array
     {
+        if(! AlertConfigurationFeature::active()) {
+            return [];
+        }
+
         $alertConfigurations = AlertConfiguration::with('configuration')->get();
         $innerSections = [];
 
@@ -234,10 +242,5 @@ class ManageAlerts extends Page implements HasForms
             ->label('Save Changes')
             ->submit('save')
             ->keyBindings(['mod+s']);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [];
     }
 }

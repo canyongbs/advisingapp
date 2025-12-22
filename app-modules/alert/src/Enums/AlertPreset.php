@@ -83,7 +83,6 @@ enum AlertPreset: string implements HasLabel
      */
     public function getHandler(): AlertPresetHandler
     {
-        // /** @var AlertPresetHandler */
         return match ($this) {
             self::DorfGrade => new DorfGradePresetHandler(),
             self::MultipleDorfGrades => new MultipleDorfGradesPresetHandler(),
