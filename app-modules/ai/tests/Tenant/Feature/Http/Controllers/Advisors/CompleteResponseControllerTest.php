@@ -85,7 +85,7 @@ it('returns a message if the thread is locked', function () {
         ->assertServiceUnavailable()
         ->assertJson([
             'isThreadLocked' => true,
-            'message' => 'The assistant is currently undergoing maintenance.',
+            'message' => 'The advisor is currently undergoing maintenance.',
         ]);
 });
 
