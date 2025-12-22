@@ -71,7 +71,7 @@ jobs:
 
             - name: Fill in the new image ID in the Amazon ECS task definition
               id: task-def
-              uses: aws-actions/amazon-ecs-render-task-definition@cbed19f1b86bbb18f59cfffde7107b93cc9b75da #1.8.1
+              uses: aws-actions/amazon-ecs-render-task-definition@06472d439cb66af6210a6709bfc842c26b053706 #1.8.2
               with:
                   task-definition: 'docker/devops/ecs/advisingapp/advisingapp-prod-task-definition.json'
                   container-name: 'app'
@@ -79,7 +79,7 @@ jobs:
 
             - name: Deploy Amazon ECS task definition
               id: task-deploy
-              uses: aws-actions/amazon-ecs-deploy-task-definition@7b5ba17dae98c8fd463ddf2cef977d3be43322c5 #2.5.0
+              uses: aws-actions/amazon-ecs-deploy-task-definition@c6e19c08506099e50400581201a3a767fd8e3ff4 #2.5.1
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
                   service: 'advisingapp-p-crm-ecs-service'
@@ -161,7 +161,7 @@ jobs:
 
             - name: Fill in the new image ID in the Amazon ECS task definition
               id: task-def
-              uses: aws-actions/amazon-ecs-render-task-definition@cbed19f1b86bbb18f59cfffde7107b93cc9b75da #1.8.1
+              uses: aws-actions/amazon-ecs-render-task-definition@06472d439cb66af6210a6709bfc842c26b053706 #1.8.2
               with:
                   task-definition: 'docker/devops/ecs/advisingapp/advisingapp-worker-prod-task-definition.json'
                   container-name: 'worker'
@@ -169,7 +169,7 @@ jobs:
 
             - name: Deploy Amazon ECS task definition
               id: task-deploy
-              uses: aws-actions/amazon-ecs-deploy-task-definition@7b5ba17dae98c8fd463ddf2cef977d3be43322c5 #2.5.0
+              uses: aws-actions/amazon-ecs-deploy-task-definition@c6e19c08506099e50400581201a3a767fd8e3ff4 #2.5.1
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
                   service: 'advisingapp-worker-prod-service'
@@ -251,7 +251,7 @@ jobs:
 
             - name: Fill in the new image ID in the Amazon ECS task definition
               id: task-def
-              uses: aws-actions/amazon-ecs-render-task-definition@cbed19f1b86bbb18f59cfffde7107b93cc9b75da #1.8.1
+              uses: aws-actions/amazon-ecs-render-task-definition@06472d439cb66af6210a6709bfc842c26b053706 #1.8.2
               with:
                   task-definition: 'docker/devops/ecs/advisingapp/advisingapp-scheduler-prod-task-definition.json'
                   container-name: 'scheduler'
@@ -259,7 +259,7 @@ jobs:
 
             - name: Deploy Amazon ECS task definition
               id: task-deploy
-              uses: aws-actions/amazon-ecs-deploy-task-definition@7b5ba17dae98c8fd463ddf2cef977d3be43322c5 #2.5.0
+              uses: aws-actions/amazon-ecs-deploy-task-definition@c6e19c08506099e50400581201a3a767fd8e3ff4 #2.5.1
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
                   service: 'advisingapp-scheduler-prod-service'
@@ -341,14 +341,14 @@ jobs:
 
             - name: Fill in the new image ID in the Amazon ECS task definition
               id: task-def
-              uses: aws-actions/amazon-ecs-render-task-definition@cbed19f1b86bbb18f59cfffde7107b93cc9b75da #1.8.1
+              uses: aws-actions/amazon-ecs-render-task-definition@06472d439cb66af6210a6709bfc842c26b053706 #1.8.2
               with:
                   task-definition: 'docker/devops/ecs/advisingapp/advisingapp-release-automation-prod-task-definition.json'
                   container-name: 'release-automation'
                   image: ${{ needs.build-release-automation.outputs.image }}
 
             - name: Deploy Amazon ECS task definition
-              uses: aws-actions/amazon-ecs-deploy-task-definition@7b5ba17dae98c8fd463ddf2cef977d3be43322c5 #2.5.0
+              uses: aws-actions/amazon-ecs-deploy-task-definition@c6e19c08506099e50400581201a3a767fd8e3ff4 #2.5.1
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
                   cluster: 'advisingapp-prod'
