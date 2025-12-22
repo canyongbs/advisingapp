@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Handlers;
 
+use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Maps\MessageMap;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Arr;
 use Prism\Prism\Providers\OpenAI\Handlers\Stream as BaseStream;
-use Prism\Prism\Providers\OpenAI\Maps\MessageMap;
 use Prism\Prism\Providers\OpenAI\Maps\ToolChoiceMap;
 use Prism\Prism\Text\Request;
 

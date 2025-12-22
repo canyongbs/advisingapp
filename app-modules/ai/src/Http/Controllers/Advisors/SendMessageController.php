@@ -53,13 +53,13 @@ class SendMessageController
             if ($thread->locked_at) {
                 return response()->json([
                     'isThreadLocked' => true,
-                    'message' => 'The assistant is currently undergoing maintenance.',
+                    'message' => $thread->locked_reason?->getMessage() ?? 'The advisor is currently undergoing maintenance.',
                 ], 503);
             }
 
             if ($thread->assistant->archived_at) {
                 return response()->json([
-                    'message' => 'This assistant has been archived and is no longer available to use.',
+                    'message' => 'This advisor has been archived and is no longer available to use.',
                 ], 404);
             }
 
