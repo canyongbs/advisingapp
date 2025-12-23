@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor's trademarks is subject
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -53,8 +53,8 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\DB;
-use Throwable;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 use UnitEnum;
 
 /**
@@ -150,6 +150,7 @@ class ManageAlerts extends Page implements HasForms
                 ->send();
         } catch (ValidationException $exception) {
             DB::rollBack();
+
             throw $exception;
         } catch (Throwable $exception) {
             DB::rollBack();

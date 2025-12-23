@@ -18,7 +18,9 @@
     "minimum-stability": "stable",
     "extra": {
         "laravel": {
-            "providers": ["AdvisingApp\\Alert\\Providers\\AlertServiceProvider"]
+            "providers": [
+                "AdvisingApp\\Alert\\Providers\\AlertServiceProvider"
+            ]
         }
     }
 }
