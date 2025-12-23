@@ -175,7 +175,7 @@ class ListResourceHubArticles extends ListRecords
                                                     ->where('is_default', true)
                                                     ->first()
                                                     ?->getKey()
-                                                ?? Division::query()->first()->getKey()
+                                                ?? Division::query()->first()?->getKey()
                                                 ?? new Exception('No division found'),
                                         ]
                                     )
