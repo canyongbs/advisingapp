@@ -38,7 +38,6 @@ namespace AdvisingApp\Team\Filament\Resources\Teams\Pages;
 
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Team\Filament\Resources\Teams\TeamResource;
-use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
