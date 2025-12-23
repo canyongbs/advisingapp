@@ -37,7 +37,6 @@
 namespace AdvisingApp\Ai\Filament\Pages;
 
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
-use AdvisingApp\Ai\Enums\AiMaxTokens;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Enums\AiReasoningEffort;
@@ -130,11 +129,6 @@ class ManageAiSettings extends SettingsPage
                                     ->maxLength(fn (?AiAssistant $record): int => ($record?->model ?? AiModel::OpenAiGpt4o)->getService()->getMaxAssistantInstructionsLength()),
                             ]),
                     ]),
-                Select::make('max_tokens')
-                    ->label('Response Length')
-                    ->options(AiMaxTokens::class)
-                    ->enum(AiMaxTokens::class)
-                    ->required(),
                 Select::make('reasoning_effort')
                     ->label('Reasoning Effort')
                     ->options(AiReasoningEffort::class)

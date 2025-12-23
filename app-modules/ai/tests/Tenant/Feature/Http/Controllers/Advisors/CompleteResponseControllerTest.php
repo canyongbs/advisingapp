@@ -85,7 +85,7 @@ it('returns a message if the thread is locked', function () {
         ->assertServiceUnavailable()
         ->assertJson([
             'isThreadLocked' => true,
-            'message' => 'The assistant is currently undergoing maintenance.',
+            'message' => 'The advisor is currently undergoing maintenance.',
         ]);
 });
 
@@ -105,7 +105,7 @@ it('returns a message if the assistant is archived', function () {
     post(route('ai.advisors.threads.messages.complete-response', ['thread' => $thread]))
         ->assertNotFound()
         ->assertJson([
-            'message' => 'This assistant has been archived and is no longer available to use.',
+            'message' => 'This advisor has been archived and is no longer available to use.',
         ]);
 });
 

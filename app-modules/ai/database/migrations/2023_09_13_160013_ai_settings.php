@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Enums\AiMaxTokens;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
@@ -47,7 +46,7 @@ return new class () extends SettingsMigration {
 
         $this->migrator->add(
             'ai.max_tokens',
-            AiMaxTokens::Short
+            64000,
         );
 
         $this->migrator->add(

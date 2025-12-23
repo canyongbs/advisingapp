@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Ai\Enums\AiThreadLockedReason;
 use AdvisingApp\Ai\Events\AiThreadTrashed;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use AdvisingApp\Ai\Models\Scopes\AiThreadScope;
@@ -74,10 +75,12 @@ class AiThread extends BaseModel implements HasMedia, Wireable
         'folder_id',
         'user_id',
         'locked_at',
+        'locked_reason',
     ];
 
     protected $casts = [
         'locked_at' => 'datetime',
+        'locked_reason' => AiThreadLockedReason::class,
         'saved_at' => 'datetime',
     ];
 

@@ -242,6 +242,7 @@ document.addEventListener('alpine:init', () => {
                     return message;
                 });
                 this.users = thread.users;
+                this.lockedMessage = thread.locked_message || null;
 
                 Echo.private(`advisor-thread-${threadId}`)
                     .listen('.advisor-message.chunk', (event) => {
@@ -403,6 +404,10 @@ document.addEventListener('alpine:init', () => {
                     this.isRateLimited = false;
                     this.isSendingMessage = false;
                     this.hasImagePlaceholder = false;
+
+                    if (responseJson.isThreadLocked) {
+                        this.lockedMessage = responseJson.message || null;
+                    }
 
                     return;
                 }

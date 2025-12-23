@@ -49,6 +49,7 @@ use AdvisingApp\Ai\Support\StreamingChunks\Image;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
+use AdvisingApp\IntegrationOpenAi\Prism\ValueObjects\Messages\DeveloperMessage;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsWithResearchRequests;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsWithVectorStores;
 use AdvisingApp\Report\Enums\TrackedEventType;
@@ -61,6 +62,7 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Prism\Prism\Contracts\Message;
 use Prism\Prism\Contracts\Schema;
 use Prism\Prism\Enums\ChunkType;
@@ -110,7 +112,7 @@ abstract class BaseOpenAiService implements AiService
                 ])
                 ->withSystemPrompt($prompt)
                 ->withPrompt($content)
-                ->withMaxTokens($aiSettings->max_tokens->getTokens())
+                ->withMaxTokens(null)
                 ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
                 ->asText();
         } catch (PrismRateLimitedException $exception) {
@@ -205,7 +207,7 @@ abstract class BaseOpenAiService implements AiService
                     ...$options,
                 ])
                 ->withPrompt($content)
-                ->withMaxTokens($aiSettings->max_tokens->getTokens())
+                ->withMaxTokens(null)
                 ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null);
 
             return function () use ($shouldTrack, $request): Generator {
@@ -227,6 +229,10 @@ abstract class BaseOpenAiService implements AiService
                             }
 
                             if ($chunk->chunkType !== ChunkType::Text) {
+                                Log::info('Received unhandled AI stream chunk.', [
+                                    'chunk' => $chunk,
+                                ]);
+
                                 continue;
                             }
 
@@ -304,7 +310,7 @@ abstract class BaseOpenAiService implements AiService
      * @param array<string, mixed> $options
      * @param ?array<Message> $messages
      */
-    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null, bool $hasImageGeneration = false): Closure
+    public function streamRaw(?string $prompt = null, ?string $content = null, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null, bool $hasImageGeneration = false): Closure
     {
         $aiSettings = app(AiSettings::class);
 
@@ -320,7 +326,7 @@ abstract class BaseOpenAiService implements AiService
                     ...($hasImageGeneration ? ['headers' => ['x-ms-oai-image-generation-deployment' => $this->getImageGenerationDeployment()]] : []),
                 ])
                 ->withProviderOptions([
-                    'instructions' => $prompt,
+                    ...(filled($prompt) ? ['instructions' => $prompt] : []),
                     'truncation' => 'auto',
                     ...((filled($vectorStoreId) || $hasImageGeneration) ? [
                         'tools' => [
@@ -338,12 +344,12 @@ abstract class BaseOpenAiService implements AiService
 
             if (filled($messages)) {
                 $request->withMessages($messages);
-            } else {
+            } elseif (filled($content)) {
                 $request->withPrompt($content);
             }
 
             $request
-                ->withMaxTokens($aiSettings->max_tokens->getTokens())
+                ->withMaxTokens(null)
                 ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null);
 
             if ($hasImageGeneration) {
@@ -460,6 +466,10 @@ abstract class BaseOpenAiService implements AiService
                             }
 
                             if ($chunk->chunkType !== ChunkType::Text) {
+                                Log::info('Received unhandled AI stream chunk.', [
+                                    'chunk' => $chunk,
+                                ]);
+
                                 continue;
                             }
 
@@ -723,22 +733,26 @@ abstract class BaseOpenAiService implements AiService
             $hasImageGeneration = false;
         }
 
+        $instructions = $this->generateAssistantInstructions($message->thread->assistant, $message->thread->user, withDynamicContext: true);
+
         $previousMessages = [];
 
         $previousResponseId = $this->getMessagePreviousResponseId($message);
 
         if (blank($previousResponseId)) {
-            $previousMessages = $message->thread->messages()
-                ->oldest()
-                ->get()
-                ->map(fn (AiMessage $message): Message => filled($message->user_id)
-                    ? new UserMessage($message->content)
-                    : new AssistantMessage($message->content))
-                ->all();
+            $previousMessages = [
+                ...($this->hasReasoning() ? [new DeveloperMessage($instructions)] : []),
+                ...$message->thread->messages()
+                    ->oldest()
+                    ->get()
+                    ->map(fn (AiMessage $message): Message => filled($message->user_id)
+                        ? new UserMessage($message->content)
+                        : new AssistantMessage($message->content))
+                    ->all(),
+            ];
         }
 
         $aiSettings = app(AiSettings::class);
-        $instructions = $this->generateAssistantInstructions($message->thread->assistant, $message->thread->user, withDynamicContext: true);
 
         try {
             $vectorStoreIds = array_values(array_filter([
@@ -768,8 +782,7 @@ abstract class BaseOpenAiService implements AiService
             ]));
 
             return $this->streamRaw(
-                prompt: $instructions,
-                content: $message->content,
+                prompt: $this->hasReasoning() ? null : $instructions,
                 options: [
                     'previous_response_id' => $previousResponseId,
                     ...($this->hasReasoning() ? [
@@ -855,6 +868,7 @@ abstract class BaseOpenAiService implements AiService
                 ])
                 ->withSystemPrompt($prompt)
                 ->withPrompt($content)
+                ->withMaxTokens(null)
                 ->withSchema($schema)
                 ->usingTemperature($this->hasTemperature() ? $aiSettings->temperature : null)
                 ->asStructured();

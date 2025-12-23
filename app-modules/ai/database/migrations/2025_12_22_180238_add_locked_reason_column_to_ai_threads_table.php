@@ -34,38 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Enums;
+use App\Features\LockAiThreadsAfterAssistantUpdateFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use Filament\Support\Contracts\HasLabel;
-
-enum AiMaxTokens: string implements HasLabel
-{
-    case Short = 'short';
-
-    case Medium = 'medium';
-
-    case Long = 'long';
-
-    public function getLabel(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->name;
+        DB::transaction(function () {
+            Schema::table('ai_threads', function (Blueprint $table) {
+                $table->string('locked_reason')->nullable();
+            });
+
+            LockAiThreadsAfterAssistantUpdateFeature::activate();
+        });
     }
 
-    public function getTokens(): int
+    public function down(): void
     {
-        return match ($this) {
-            self::Short => 500,
-            self::Medium => 1000,
-            self::Long => 2500,
-        };
-    }
+        DB::transaction(function () {
+            LockAiThreadsAfterAssistantUpdateFeature::deactivate();
 
-    public static function parse(string | self | null $value): ?self
-    {
-        if ($value instanceof self) {
-            return $value;
-        }
-
-        return self::tryFrom($value);
+            Schema::table('ai_threads', function (Blueprint $table) {
+                $table->dropColumn('locked_reason');
+            });
+        });
     }
-}
+};
