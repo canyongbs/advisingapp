@@ -58,6 +58,7 @@ use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
 
 class CreateCase extends CreateRecord
 {
@@ -77,7 +78,7 @@ class CreateCase extends CreateRecord
                             ->first()
                             ?->getKey()
                         ?? Division::query()->first()?->getKey()
-                        ?? new Exception('No division found')
+                        ?? throw ValidationException::withMessages(['No division found'])
                     )
                     ->label('Division')
                     ->visible(fn (): bool => Division::count() > 1)

@@ -55,6 +55,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 
 class CaseBlock extends WorkflowActionBlock
 {
@@ -84,7 +85,7 @@ class CaseBlock extends WorkflowActionBlock
                 ->default(fn () => auth()->user()->team?->division?->getKey()
                     ?? Division::query()->where('is_default', true)->first()?->getKey()
                     ?? Division::query()->first()?->getKey()
-                    ?? new Exception('No division found'))
+                    ?? throw ValidationException::withMessages(['No division found']))
                 ->label('Division')
                 ->hidden(fn () => Division::count() === 1 || Division::where('is_default', true)->exists())
                 ->required()

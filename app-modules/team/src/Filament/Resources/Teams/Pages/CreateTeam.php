@@ -45,6 +45,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\ValidationException;
 
 class CreateTeam extends CreateRecord
 {
@@ -72,7 +73,7 @@ class CreateTeam extends CreateRecord
                             ->first()
                             ?->getKey()
                         ?? Division::query()->first()?->getKey()
-                        ?? new Exception('No division found')
+                        ?? throw ValidationException::withMessages(['No division found'])
                     )
                     ->visible(fn (): bool => Division::count() > 1)
                     ->dehydratedWhenHidden(),

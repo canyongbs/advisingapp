@@ -62,6 +62,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 
 class ListResourceHubArticles extends ListRecords
 {
@@ -176,7 +177,7 @@ class ListResourceHubArticles extends ListRecords
                                                     ->first()
                                                     ?->getKey()
                                                 ?? Division::query()->first()?->getKey()
-                                                ?? new Exception('No division found'),
+                                                ?? throw ValidationException::withMessages(['No division found']),
                                         ]
                                     )
                                     ->saveRelationshipsWhenHidden()

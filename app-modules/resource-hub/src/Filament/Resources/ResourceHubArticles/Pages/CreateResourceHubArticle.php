@@ -50,6 +50,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\ValidationException;
 
 class CreateResourceHubArticle extends CreateRecord
 {
@@ -108,7 +109,7 @@ class CreateResourceHubArticle extends CreateRecord
                                             ->first()
                                             ?->getKey()
                                         ?? Division::query()->first()?->getKey()
-                                        ?? new Exception('No division found'),
+                                        ?? throw ValidationException::withMessages(['No division found']),
                                 ]
                             )
                             ->saveRelationshipsWhenHidden()

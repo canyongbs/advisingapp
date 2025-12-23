@@ -58,6 +58,7 @@ use Filament\Schemas\Components\Wizard\Step;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class BulkCreateInteractionAction
 {
@@ -98,7 +99,7 @@ class BulkCreateInteractionAction
                                         ->first()
                                         ?->getKey()
                                     ?? Division::query()->first()?->getKey()
-                                    ?? new Exception('No division found')
+                                    ?? throw ValidationException::withMessages(['No division found'])
                             )
                             ->label('Division')
                             ->visible(fn () => Division::count() > 1)

@@ -53,6 +53,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 
 class CaseBlock extends CampaignActionBlock
 {
@@ -83,7 +84,7 @@ class CaseBlock extends CampaignActionBlock
                             ->first()
                             ?->getKey()
                         ?? Division::query()->first()?->getKey()
-                        ?? new Exception('No division found')
+                        ?? throw ValidationException::withMessages(['No division found'])
                 )
                 ->label('Division')
                 ->visible(fn (): bool => Division::count() > 1)

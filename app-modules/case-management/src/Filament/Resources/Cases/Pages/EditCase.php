@@ -56,6 +56,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
 
 class EditCase extends EditRecord
 {
@@ -83,7 +84,7 @@ class EditCase extends EditRecord
                                 ->first()
                                 ?->getKey()
                             ?? Division::query()->first()?->getKey()
-                            ?? new Exception('No division found')
+                            ?? throw ValidationException::withMessages(['No division found'])
                     )
                     ->label('Division')
                     ->visible(fn (): bool => Division::count() > 1)
