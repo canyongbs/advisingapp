@@ -57,16 +57,27 @@ class SemesterGpaBelowThresholdPresetHandler implements AlertPresetHandler
         return [
             TextInput::make('gpa_threshold')
                 ->label('Semester GPA Threshold')
-                ->numeric()
-                ->minValue(0.0)
-                ->maxValue(5.0)
-                ->step(0.01)
+                ->inputMode('decimal')
+                ->rule('numeric')
+                ->rule('min:0.0')
+                ->rule('max:5.0')
+                ->formatStateUsing(function (float $state) {
+                    $value = (float) $state;
+                    $formatted = number_format($value, 2);
+
+                    if (str_ends_with($formatted, '.00')) {
+                        return number_format($value, 1);
+                    }
+
+                    return $formatted;
+                })
+                ->dehydrateStateUsing(fn ($state) => (float) $state)
                 ->required()
                 ->helperText('Students with a semester GPA below this value will trigger the alert.'),
         ];
     }
 
-    public function getConfigurationModel(): string
+    public function getConfigurationModel(): ?string
     {
         return SemesterGpaAlertConfiguration::class;
     }

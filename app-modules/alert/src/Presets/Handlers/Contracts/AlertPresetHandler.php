@@ -49,5 +49,8 @@ interface AlertPresetHandler
      */
     public function configurationForm(): array;
 
-    public function getConfigurationModel(): string;
+    /**
+     * @return class-string|null
+     */
+    public function getConfigurationModel(): ?string;
 }

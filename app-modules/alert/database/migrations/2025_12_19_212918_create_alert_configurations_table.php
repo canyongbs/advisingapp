@@ -50,7 +50,6 @@ return new class () extends Migration {
             $table->nullableUuidMorphs('configuration');
 
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

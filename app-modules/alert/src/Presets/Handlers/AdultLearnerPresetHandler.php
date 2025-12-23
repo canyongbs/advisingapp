@@ -64,7 +64,7 @@ class AdultLearnerPresetHandler implements AlertPresetHandler
         ];
     }
 
-    public function getConfigurationModel(): string
+    public function getConfigurationModel(): ?string
     {
         return AdultLearnerAlertConfiguration::class;
     }

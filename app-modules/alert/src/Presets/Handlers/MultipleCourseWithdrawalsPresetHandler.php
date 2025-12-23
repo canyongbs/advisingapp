@@ -55,8 +55,8 @@ class MultipleCourseWithdrawalsPresetHandler implements AlertPresetHandler
         return [];
     }
 
-    public function getConfigurationModel(): string
+    public function getConfigurationModel(): ?string
     {
-        return '';
+        return null;
     }
 }

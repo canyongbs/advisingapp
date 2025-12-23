@@ -64,18 +64,7 @@ enum AlertPreset: string implements HasLabel
 
     public function getLabel(): string
     {
-        return match ($this) {
-            self::DorfGrade => 'D or F Grade Posted',
-            self::MultipleDorfGrades => 'Multiple D or F Grades Posted',
-            self::CourseWithdrawal => 'Course Withdrawal',
-            self::MultipleCourseWithdrawals => 'Multiple Course Withdrawals',
-            self::RepeatedCourseAttempt => 'Repeated Course Attempt',
-            self::CumulativeGpaBelowThreshold => 'Cumulative GPA Below Threshold',
-            self::SemesterGpaBelowThreshold => 'Semester GPA Below Threshold',
-            self::FirstGenerationStudent => 'First-Generation Student',
-            self::AdultLearner => 'Adult Learner',
-            self::NewStudent => 'New Student (First Semester at Institution)',
-        };
+        return $this->getHandler()->getName();
     }
 
     /**
@@ -94,6 +83,28 @@ enum AlertPreset: string implements HasLabel
             self::FirstGenerationStudent => new FirstGenerationStudentPresetHandler(),
             self::AdultLearner => new AdultLearnerPresetHandler(),
             self::NewStudent => new NewStudentPresetHandler(),
+        };
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getDefaultConfigurationData(): array
+    {
+        return match ($this) {
+            self::CumulativeGpaBelowThreshold => [
+                'gpa_threshold' => 2.00,
+            ],
+            self::SemesterGpaBelowThreshold => [
+                'gpa_threshold' => 2.00,
+            ],
+            self::AdultLearner => [
+                'minimum_age' => 24,
+            ],
+            self::NewStudent => [
+                'number_of_semesters' => 1,
+            ],
+            default => [],
         };
     }
 }

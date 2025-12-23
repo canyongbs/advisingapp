@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Alert\Database\Seeders;
 
-use AdvisingApp\Alert\Presets\AlertPreset;
 use AdvisingApp\Alert\Models\AlertConfiguration;
+use AdvisingApp\Alert\Presets\AlertPreset;
 use Illuminate\Database\Seeder;
 
 class AlertConfigurationSeeder extends Seeder
@@ -45,41 +45,25 @@ class AlertConfigurationSeeder extends Seeder
     public function run(): void
     {
         foreach (AlertPreset::cases() as $preset) {
+            $presetValue = $preset->value;
+
+            if (AlertConfiguration::where('preset', $presetValue)->exists()) {
+                continue;
+            }
+
             $handler = $preset->getHandler();
             $configurationModelClass = $handler->getConfigurationModel();
 
             if (! empty($configurationModelClass)) {
-                $configuration = $configurationModelClass::create($this->getDefaultConfigurationData($preset));
+                $configuration = $configurationModelClass::create($preset->getDefaultConfigurationData());
                 $configuration->alertConfiguration()->create([
-                    'preset' => $preset,
+                    'preset' => $presetValue,
                 ]);
             } else {
                 AlertConfiguration::create([
-                    'preset' => $preset,
+                    'preset' => $presetValue,
                 ]);
             }
         }
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function getDefaultConfigurationData(AlertPreset $preset): array
-    {
-        return match ($preset) {
-            AlertPreset::CumulativeGpaBelowThreshold => [
-                'gpa_threshold' => 2.00,
-            ],
-            AlertPreset::SemesterGpaBelowThreshold => [
-                'gpa_threshold' => 2.00,
-            ],
-            AlertPreset::AdultLearner => [
-                'minimum_age' => 24,
-            ],
-            AlertPreset::NewStudent => [
-                'number_of_semesters' => 1,
-            ],
-            default => [],
-        };
     }
 }

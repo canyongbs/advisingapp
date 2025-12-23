@@ -52,6 +52,9 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\DB;
+use Throwable;
+use Illuminate\Validation\ValidationException;
 use UnitEnum;
 
 /**
@@ -65,13 +68,13 @@ class ManageAlerts extends Page implements HasForms
 
     protected static ?string $navigationLabel = 'Alerts';
 
+    protected string $view = 'alert::filament.pages.manage-alerts';
+
     protected static ?int $navigationSort = 50;
 
     protected static ?string $title = 'Student Alerts';
 
     protected static string | UnitEnum | null $navigationGroup = 'Students';
-
-    protected string $view = 'alert::filament.pages.manage-alerts';
 
     /** @var array<string, mixed> $data */
     public ?array $data = [];
@@ -104,42 +107,60 @@ class ManageAlerts extends Page implements HasForms
             return;
         }
 
-        $data = $this->form->getState();
+        DB::beginTransaction();
 
-        $alertConfigurations = AlertConfiguration::with('configuration')->get();
+        try {
+            $data = $this->form->getState();
 
-        foreach ($alertConfigurations as $config) {
-            $configId = (string) $config->id;
+            $alertConfigurations = AlertConfiguration::with('configuration')->orderBy('id')->get();
 
-            if (! isset($data[$configId])) {
-                continue;
-            }
+            foreach ($alertConfigurations as $config) {
+                $configId = (string) $config->id;
 
-            $configData = $data[$configId];
+                if (! isset($data[$configId])) {
+                    continue;
+                }
 
-            $config->is_enabled = $configData['is_enabled'] ?? false;
-            $config->save();
+                $configData = $data[$configId];
 
-            if ($config->configuration) {
-                $configurationData = [];
+                $config->is_enabled = $configData['is_enabled'] ?? false;
+                $config->save();
 
-                foreach ($config->configuration->getFillable() as $field) {
-                    if (isset($configData[$field])) {
-                        $configurationData[$field] = $configData[$field];
+                if ($config->configuration) {
+                    $configurationData = [];
+
+                    foreach ($config->configuration->getFillable() as $field) {
+                        if (isset($configData[$field])) {
+                            $configurationData[$field] = $configData[$field];
+                        }
+                    }
+
+                    if (! empty($configurationData)) {
+                        $config->configuration->update($configurationData);
                     }
                 }
-
-                if (! empty($configurationData)) {
-                    $config->configuration->update($configurationData);
-                }
             }
-        }
 
-        Notification::make()
-            ->success()
-            ->title('Alert configurations saved')
-            ->body('Your alert settings have been updated successfully.')
-            ->send();
+            DB::commit();
+
+            Notification::make()
+                ->success()
+                ->title('Alert configurations saved')
+                ->body('Your alert settings have been updated successfully.')
+                ->send();
+        } catch (ValidationException $exception) {
+            DB::rollBack();
+            throw $exception;
+        } catch (Throwable $exception) {
+            DB::rollBack();
+
+            report($exception);
+
+            Notification::make()
+                ->title('Something went wrong, if this continues please contact support.')
+                ->danger()
+                ->send();
+        }
     }
 
     /**
@@ -153,7 +174,7 @@ class ManageAlerts extends Page implements HasForms
 
         $data = [];
 
-        $alertConfigurations = AlertConfiguration::with('configuration')->get();
+        $alertConfigurations = AlertConfiguration::with('configuration')->orderBy('id')->get();
 
         foreach ($alertConfigurations as $config) {
             $configData = [
@@ -179,11 +200,11 @@ class ManageAlerts extends Page implements HasForms
      */
     protected function getFormSchema(): array
     {
-        if(! AlertConfigurationFeature::active()) {
+        if (! AlertConfigurationFeature::active()) {
             return [];
         }
 
-        $alertConfigurations = AlertConfiguration::with('configuration')->get();
+        $alertConfigurations = AlertConfiguration::with('configuration')->orderBy('id')->get();
         $innerSections = [];
 
         foreach ($alertConfigurations as $config) {

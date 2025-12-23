@@ -37,17 +37,18 @@
 namespace AdvisingApp\Alert\Models;
 
 use AdvisingApp\Alert\Presets\AlertPreset;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperAlertConfiguration
  */
-class AlertConfiguration extends BaseModel
+class AlertConfiguration extends BaseModel implements Auditable
 {
-    use SoftDeletes;
+    use AuditableTrait;
 
     protected $fillable = [
         'preset',
