@@ -135,6 +135,120 @@ it('can be accessed when confidential by users who have created a project the ta
     expect($tasks->pluck('id'))->not->toContain(...$otherProjectTasks->pluck('id'));
 });
 
+it('can be accessed when confidential by users who are managers on a project the task is associated with', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $project = Project::factory()->for($user, 'createdBy')->create();
+    $project->managerUsers()->attach($user);
+
+    actingAs($user);
+
+    $projectTasks = Task::factory()
+        ->hasAttached($project, [], 'confidentialAccessProjects')
+        ->count(10)
+        ->concerningStudent(Student::factory()->create())
+        ->create(['is_confidential' => true]);
+
+    $otherProjectTasks = Task::factory()
+        ->hasAttached(Project::factory()->for(User::factory()->licensed(LicenseType::cases())->create(), 'createdBy')->create(), [], 'confidentialAccessProjects')
+        ->count(10)
+        ->concerningStudent(Student::factory()->create())
+        ->create(['is_confidential' => true]);
+
+    $tasks = Task::query()->get();
+    expect($tasks)->toHaveCount(10);
+
+    expect($tasks->pluck('id'))->toContain(...$projectTasks->pluck('id'));
+
+    expect($tasks->pluck('id'))->not->toContain(...$otherProjectTasks->pluck('id'));
+});
+
+it('can be accessed when confidential by users on a team that is a manager on a project the task is associated with', function () {
+    $team = Team::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->team()->associate($team)->save();
+
+    $project = Project::factory()->for(User::factory()->licensed(LicenseType::cases())->create(), 'createdBy')->create();
+    $project->managerTeams()->attach($team);
+
+    actingAs($user);
+
+    $projectTasks = Task::factory()
+        ->hasAttached($project, [], 'confidentialAccessProjects')
+        ->count(10)
+        ->concerningStudent(Student::factory()->create())
+        ->create(['is_confidential' => true]);
+
+    $otherProjectTasks = Task::factory()
+        ->hasAttached(Project::factory()->for(User::factory()->licensed(LicenseType::cases())->create(), 'createdBy')->create(), [], 'confidentialAccessProjects')
+        ->count(10)
+        ->concerningStudent(Student::factory()->create())
+        ->create(['is_confidential' => true]);
+
+    $tasks = Task::query()->get();
+    expect($tasks)->toHaveCount(10);
+
+    expect($tasks->pluck('id'))->toContain(...$projectTasks->pluck('id'));
+
+    expect($tasks->pluck('id'))->not->toContain(...$otherProjectTasks->pluck('id'));
+});
+
+it('can be accessed when confidential by users who are auditors on a project the task is associated with', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $project = Project::factory()->for(User::factory()->licensed(LicenseType::cases())->create(), 'createdBy')->create();
+    $project->auditorUsers()->attach($user);
+
+    actingAs($user);
+
+    $projectTasks = Task::factory()
+        ->hasAttached($project, [], 'confidentialAccessProjects')
+        ->count(10)
+        ->concerningStudent(Student::factory()->create())
+        ->create(['is_confidential' => true]);
+
+    $otherProjectTasks = Task::factory()
+        ->hasAttached(Project::factory()->for(User::factory()->licensed(LicenseType::cases())->create(), 'createdBy')->create(), [], 'confidentialAccessProjects')
+        ->count(10)
+        ->concerningStudent(Student::factory()->create())
+        ->create(['is_confidential' => true]);
+
+    $tasks = Task::query()->get();
+    expect($tasks)->toHaveCount(10);
+
+    expect($tasks->pluck('id'))->toContain(...$projectTasks->pluck('id'));
+
+    expect($tasks->pluck('id'))->not->toContain(...$otherProjectTasks->pluck('id'));
+});
+
+it('can be accessed when confidential by users on a team that is an auditor on a project the task is associated with', function () {
+    $team = Team::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->team()->associate($team)->save();
+
+    $project = Project::factory()->for(User::factory()->licensed(LicenseType::cases())->create(), 'createdBy')->create();
+    $project->auditorTeams()->attach($team);
+
+    actingAs($user);
+
+    $projectTasks = Task::factory()
+        ->hasAttached($project, [], 'confidentialAccessProjects')
+        ->count(10)
+        ->concerningStudent(Student::factory()->create())
+        ->create(['is_confidential' => true]);
+
+    $otherProjectTasks = Task::factory()
+        ->hasAttached(Project::factory()->for(User::factory()->licensed(LicenseType::cases())->create(), 'createdBy')->create(), [], 'confidentialAccessProjects')
+        ->count(10)
+        ->concerningStudent(Student::factory()->create())
+        ->create(['is_confidential' => true]);
+
+    $tasks = Task::query()->get();
+    expect($tasks)->toHaveCount(10);
+
+    expect($tasks->pluck('id'))->toContain(...$projectTasks->pluck('id'));
+
+    expect($tasks->pluck('id'))->not->toContain(...$otherProjectTasks->pluck('id'));
+});
+
 it('can be accessed when confidential by super admins', function () {
     $confidentialTasks = Task::factory()->count(10)->concerningStudent(Student::factory()->create())->create(['is_confidential' => true]);
 
