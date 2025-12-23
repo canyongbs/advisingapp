@@ -46,6 +46,7 @@ use AdvisingApp\Division\Models\Division;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Closure;
+use Exception;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -81,6 +82,8 @@ class CaseBlock extends CampaignActionBlock
                             ->where('is_default', true)
                             ->first()
                             ?->getKey()
+                        ?? Division::query()->first()->getKey()
+                        ?? new Exception('No division found')
                 )
                 ->label('Division')
                 ->visible(fn (): bool => Division::count() > 1)

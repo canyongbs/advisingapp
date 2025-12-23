@@ -116,7 +116,9 @@ class EditInteraction extends EditRecord
                             ->preload()
                             ->label('Division')
                             ->required()
-                            ->exists((new Division())->getTable(), 'id'),
+                            ->exists((new Division())->getTable(), 'id')
+                            ->visible(fn (): bool => Division::count() > 1)
+                            ->dehydratedWhenHidden(),
                         Select::make('interaction_outcome_id')
                             ->relationship('outcome', 'name')
                             ->preload()

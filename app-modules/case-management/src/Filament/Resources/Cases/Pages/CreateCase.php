@@ -45,6 +45,7 @@ use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Division\Models\Division;
 use App\Filament\Forms\Components\EducatableSelect;
+use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\Pages\CreateRecord;
@@ -71,10 +72,12 @@ class CreateCase extends CreateRecord
                     ->model(CaseModel::class)
                     ->default(
                         fn () => auth()->user()->team?->division?->getKey()
-                            ?? Division::query()
-                                ->where('is_default', true)
-                                ->first()
-                                ?->getKey()
+                        ?? Division::query()
+                            ->where('is_default', true)
+                            ->first()
+                            ?->getKey()
+                        ?? Division::query()->first()->getKey()
+                        ?? new Exception('No division found')
                     )
                     ->label('Division')
                     ->visible(fn (): bool => Division::count() > 1)

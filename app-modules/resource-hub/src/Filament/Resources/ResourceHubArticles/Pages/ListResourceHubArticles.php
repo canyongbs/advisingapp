@@ -44,6 +44,7 @@ use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use App\Filament\Tables\Columns\IdColumn;
+use Exception;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
@@ -167,6 +168,19 @@ class ListResourceHubArticles extends ListRecords
                                     ->relationship('division', 'name')
                                     ->searchable(['name', 'code'])
                                     ->preload()
+                                    ->default(
+                                        fn () => [
+                                            auth()->user()->team?->division?->getKey()
+                                                ?? Division::query()
+                                                    ->where('is_default', true)
+                                                    ->first()
+                                                    ?->getKey()
+                                                ?? Division::query()->first()->getKey()
+                                                ?? new Exception('No division found'),
+                                        ]
+                                    )
+                                    ->saveRelationshipsWhenHidden()
+                                    ->visible(fn (): bool => Division::count() > 1)
                                     ->exists((new Division())->getTable(), (new Division())->getKeyName()),
                             ]),
                     ])

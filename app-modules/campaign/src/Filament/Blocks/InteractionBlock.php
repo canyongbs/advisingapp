@@ -48,6 +48,7 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use Carbon\CarbonImmutable;
 use Closure;
+use Exception;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -103,11 +104,11 @@ class InteractionBlock extends CampaignActionBlock
                                     ->where('is_default', true)
                                     ->first()
                                     ?->getKey()
+                                ?? Division::query()->first()->getKey()
+                                ?? new Exception('No division found')
                         )
                         ->label('Division')
-                        ->visible(function () {
-                            return Division::query()->where('is_default', false)->exists();
-                        })
+                        ->visible(fn (): bool => Division::count() > 1)
                         ->dehydratedWhenHidden()
                         ->required()
                         ->exists((new Division())->getTable(), 'id'),

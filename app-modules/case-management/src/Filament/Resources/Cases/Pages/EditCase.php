@@ -45,6 +45,7 @@ use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Division\Models\Division;
 use App\Filament\Forms\Components\EducatableSelect;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Exception;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -81,6 +82,8 @@ class EditCase extends EditRecord
                                 ->where('is_default', true)
                                 ->first()
                                 ?->getKey()
+                            ?? Division::query()->first()->getKey()
+                            ?? new Exception('No division found')
                     )
                     ->label('Division')
                     ->visible(fn (): bool => Division::count() > 1)

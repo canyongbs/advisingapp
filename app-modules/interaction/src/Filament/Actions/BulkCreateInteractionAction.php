@@ -93,15 +93,15 @@ class BulkCreateInteractionAction
                             ->preload()
                             ->default(
                                 fn () => auth()->user()->team?->division?->getKey()
-                                ?? Division::query()
-                                    ->where('is_default', true)
-                                    ->first()
-                                    ?->getKey()
+                                    ?? Division::query()
+                                        ->where('is_default', true)
+                                        ->first()
+                                        ?->getKey()
+                                    ?? Division::query()->first()->getKey()
+                                    ?? new Exception('No division found')
                             )
                             ->label('Division')
-                            ->visible(function () {
-                                return Division::query()->where('is_default', false)->exists();
-                            })
+                            ->visible(fn () => Division::count() > 1)
                             ->dehydratedWhenHidden()
                             ->required()
                             ->exists((new Division())->getTable(), 'id'),

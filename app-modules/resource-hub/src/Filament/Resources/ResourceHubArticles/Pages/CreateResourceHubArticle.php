@@ -42,6 +42,7 @@ use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use App\Models\User;
+use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -100,10 +101,15 @@ class CreateResourceHubArticle extends CreateRecord
                             ->searchable(['name', 'code'])
                             ->preload()
                             ->default(
-                                fn () => [auth()->user()->team?->division?->getKey()
-                                    ?? Division::query()
-                                        ->first()
-                                        ?->getKey()]
+                                fn () => [
+                                    auth()->user()->team?->division?->getKey()
+                                        ?? Division::query()
+                                            ->where('is_default', true)
+                                            ->first()
+                                            ?->getKey()
+                                        ?? Division::query()->first()->getKey()
+                                        ?? new Exception('No division found'),
+                                ]
                             )
                             ->saveRelationshipsWhenHidden()
                             ->visible(fn (): bool => Division::count() > 1)

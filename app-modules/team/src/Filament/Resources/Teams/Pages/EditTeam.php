@@ -39,6 +39,7 @@ namespace AdvisingApp\Team\Filament\Resources\Teams\Pages;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Team\Filament\Resources\Teams\TeamResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Exception;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -68,7 +69,17 @@ class EditTeam extends EditRecord
                     ->relationship('division', 'name', modifyQueryUsing: fn (Builder $query) => $query->orderBy('is_default', 'DESC'))
                     ->searchable()
                     ->preload()
-                    ->default(fn () => Division::query()->where('is_default', true)->first()?->getKey()),
+                    ->default(
+                        fn () => fn () => auth()->user()->team?->division?->getKey()
+                        ?? Division::query()
+                            ->where('is_default', true)
+                            ->first()
+                            ?->getKey()
+                        ?? Division::query()->first()->getKey()
+                        ?? new Exception('No division found')
+                    )
+                    ->visible(fn (): bool => Division::count() > 1)
+                    ->dehydratedWhenHidden(),
             ]);
     }
 
