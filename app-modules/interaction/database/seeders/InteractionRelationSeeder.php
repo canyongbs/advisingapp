@@ -46,11 +46,16 @@ class InteractionRelationSeeder extends Seeder
         InteractionRelation::factory()
             ->createMany(
                 [
-                    ['name' => 'Self'],
-                    ['name' => 'Parent'],
-                    ['name' => 'Spouse'],
-                    ['name' => 'Sibling'],
-                    ['name' => 'Other'],
+                    ['name' => 'Self', 'interactable_type' => 'student'],
+                    ['name' => 'Parent', 'interactable_type' => 'student'],
+                    ['name' => 'Spouse', 'interactable_type' => 'student'],
+                    ['name' => 'Sibling', 'interactable_type' => 'student'],
+                    ['name' => 'Other', 'interactable_type' => 'student'],
+                    ['name' => 'Self', 'interactable_type' => 'prospect'],
+                    ['name' => 'Parent', 'interactable_type' => 'prospect'],
+                    ['name' => 'Spouse', 'interactable_type' => 'prospect'],
+                    ['name' => 'Sibling', 'interactable_type' => 'prospect'],
+                    ['name' => 'Other', 'interactable_type' => 'prospect'],
                 ]
             );
     }
