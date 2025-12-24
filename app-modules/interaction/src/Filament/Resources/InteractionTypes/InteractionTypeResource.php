@@ -72,10 +72,9 @@ class InteractionTypeResource extends Resource
                     ->placeholder('Interaction Type Name')
                     ->unique(
                         ignoreRecord: true,
-                        modifyRuleUsing: fn (Unique $rule, Get $get) 
-                            => InteractableTypeFeature::active() ? $rule->where('interactable_type', $get('interactable_type')) : $rule
+                        modifyRuleUsing: fn (Unique $rule, Get $get) => InteractableTypeFeature::active() ? $rule->where('interactable_type', $get('interactable_type')) : $rule
                     ),
-                  Select::make('interactable_type')
+                Select::make('interactable_type')
                     ->visible(InteractableTypeFeature::active())
                     ->label('Type')
                     ->required()

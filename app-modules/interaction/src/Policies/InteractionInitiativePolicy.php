@@ -87,7 +87,7 @@ class InteractionInitiativePolicy
 
     public function delete(Authenticatable $authenticatable, InteractionInitiative $initiative): Response
     {
-        if($initiative->interactions->count() > 0) {
+        if ($initiative->interactions->count() > 0) {
             return Response::deny("This initiative cannot be deleted because it is being used by {$initiative->interactions->count()} interaction(s).");
         }
 
