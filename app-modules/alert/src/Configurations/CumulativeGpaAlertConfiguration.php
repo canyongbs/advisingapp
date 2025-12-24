@@ -43,6 +43,9 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use OwenIt\Auditing\Contracts\Auditable;
 
+/**
+ * @mixin IdeHelperCumulativeGpaAlertConfiguration
+ */
 class CumulativeGpaAlertConfiguration extends BaseModel implements AlertPresetConfiguration, Auditable
 {
     use AuditableTrait;
