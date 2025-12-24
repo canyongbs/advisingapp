@@ -44,6 +44,7 @@ class InteractionDriverObserver
     {
         if ($interactionDrivers->is_default) {
             InteractionDriver::query()
+                ->where('interactable_type', $interactionDrivers->interactable_type)
                 ->where('is_default', true)
                 ->update(['is_default' => false]);
         }
