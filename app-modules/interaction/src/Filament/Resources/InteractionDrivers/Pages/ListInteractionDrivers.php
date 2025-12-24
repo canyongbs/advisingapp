@@ -156,7 +156,7 @@ class ListInteractionDrivers extends ListRecords
                     ->visible(InteractableTypeFeature::active())
                     ->label('Uses')
                     ->counts('interactions')
-                    ->sortable()
+                    ->sortable(),
             ])
             ->filters([
                 Filter::make('is_default')

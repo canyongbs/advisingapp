@@ -73,8 +73,7 @@ class InteractionStatusResource extends Resource
                     ->placeholder('Interaction Status Name')
                     ->unique(
                         ignoreRecord: true,
-                        modifyRuleUsing: fn (Unique $rule, Get $get) 
-                            => InteractableTypeFeature::active() ? $rule->where('interactable_type', $get('interactable_type')) : $rule
+                        modifyRuleUsing: fn (Unique $rule, Get $get) => InteractableTypeFeature::active() ? $rule->where('interactable_type', $get('interactable_type')) : $rule
                     ),
                 Select::make('color')
                     ->label('Color')

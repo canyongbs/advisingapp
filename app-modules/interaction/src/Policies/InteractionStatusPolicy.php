@@ -87,7 +87,7 @@ class InteractionStatusPolicy
 
     public function delete(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
-        if($status->interactions->count() > 0) {
+        if ($status->interactions->count() > 0) {
             return Response::deny("This status cannot be deleted because it is being used by {$status->interactions->count()} interaction(s).");
         }
 

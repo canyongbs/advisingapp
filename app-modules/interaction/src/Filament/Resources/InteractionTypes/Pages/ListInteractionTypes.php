@@ -157,7 +157,7 @@ class ListInteractionTypes extends ListRecords
                     ->visible(InteractableTypeFeature::active())
                     ->label('Uses')
                     ->counts('interactions')
-                    ->sortable()
+                    ->sortable(),
             ])
             ->filters([
                 Filter::make('is_default')
@@ -173,10 +173,10 @@ class ListInteractionTypes extends ListRecords
                 ]),
             ]);
 
-            // During InteractableTypeFeature cleanup, we can put the default group on the table definition above and just return that
-            return InteractableTypeFeature::active() ?
-                $table->defaultGroup('interactable_type') :
-                $table;
+        // During InteractableTypeFeature cleanup, we can put the default group on the table definition above and just return that
+        return InteractableTypeFeature::active() ?
+            $table->defaultGroup('interactable_type') :
+            $table;
     }
 
     protected function getHeaderActions(): array

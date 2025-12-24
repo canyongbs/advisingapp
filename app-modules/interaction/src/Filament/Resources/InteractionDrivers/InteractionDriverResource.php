@@ -72,8 +72,7 @@ class InteractionDriverResource extends Resource
                     ->placeholder('Interaction Driver Name')
                     ->unique(
                         ignoreRecord: true,
-                        modifyRuleUsing: fn (Unique $rule, Get $get) 
-                            => InteractableTypeFeature::active() ? $rule->where('interactable_type', $get('interactable_type')) : $rule
+                        modifyRuleUsing: fn (Unique $rule, Get $get) => InteractableTypeFeature::active() ? $rule->where('interactable_type', $get('interactable_type')) : $rule
                     ),
                 Select::make('interactable_type')
                     ->visible(InteractableTypeFeature::active())
@@ -85,7 +84,7 @@ class InteractionDriverResource extends Resource
                     ->label('Default')
                     ->live()
                     ->hint(function (?InteractionDriver $record, $state): ?string {
-                      $basicHint = InteractableTypeFeature::active() ? 'This will only affect interactions for the selected type.' : null;
+                        $basicHint = InteractableTypeFeature::active() ? 'This will only affect interactions for the selected type.' : null;
 
                         if ($record?->is_default) {
                             return $basicHint;
