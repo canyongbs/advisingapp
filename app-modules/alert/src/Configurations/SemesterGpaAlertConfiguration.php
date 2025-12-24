@@ -38,11 +38,15 @@ namespace AdvisingApp\Alert\Configurations;
 
 use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class SemesterGpaAlertConfiguration extends BaseModel implements AlertPresetConfiguration
+class SemesterGpaAlertConfiguration extends BaseModel implements AlertPresetConfiguration, Auditable
 {
+    use AuditableTrait;
+
     protected $fillable = [
         'gpa_threshold',
     ];
