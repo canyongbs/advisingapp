@@ -36,11 +36,14 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages;
 
+use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\CalendarEventResource;
+use App\Features\EventTransparencyFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -66,6 +69,12 @@ class EditCalendarEvent extends EditRecord
                 ->required(),
             DateTimePicker::make('ends_at')
                 ->required(),
+            Select::make('transparency')
+                ->options(EventTransparency::class)
+                ->enum(EventTransparency::class)
+                ->default(EventTransparency::Busy)
+                ->required()
+                ->visible(EventTransparencyFeature::active()),
             TagsInput::make('attendees')
                 ->placeholder('Add attendee email')
                 ->nestedRecursiveRules(['email']),

@@ -34,46 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\CalendarEventResource;
-use App\Features\EventTransparencyFeature;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
-
-class ViewCalendarEvent extends ViewRecord
-{
-    protected static string $resource = CalendarEventResource::class;
-
-    public function infolist(Schema $schema): Schema
+return new class () extends Migration {
+    public function up(): void
     {
-        return $schema
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('title'),
-                        TextEntry::make('description'),
-                        TextEntry::make('starts_at'),
-                        TextEntry::make('ends_at'),
-                        TextEntry::make('transparency')
-                            ->badge()
-                            ->visible(EventTransparencyFeature::active()),
-                        TextEntry::make('attendees')
-                            ->badge(),
-                    ])
-                    ->columns(),
-            ]);
+        Schema::table('calendar_events', function (Blueprint $table) {
+            $table->string('transparency')->nullable();
+        });
     }
 
-    protected function getHeaderActions(): array
+    public function down(): void
     {
-        return [
-            EditAction::make(),
-            DeleteAction::make(),
-        ];
+        Schema::table('calendar_events', function (Blueprint $table) {
+            $table->dropColumn('transparency');
+        });
     }
-}
+};

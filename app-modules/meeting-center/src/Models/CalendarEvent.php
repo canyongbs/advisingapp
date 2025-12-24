@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
+use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Observers\CalendarEventObserver;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -55,12 +56,14 @@ class CalendarEvent extends BaseModel
         'provider_id',
         'calendar_id',
         'attendees',
+        'transparency',
     ];
 
     protected $casts = [
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
         'attendees' => 'array',
+        'transparency' => EventTransparency::class,
     ];
 
     /**

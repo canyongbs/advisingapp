@@ -34,46 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages;
-
-use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\CalendarEventResource;
 use App\Features\EventTransparencyFeature;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
+use Illuminate\Database\Migrations\Migration;
 
-class ViewCalendarEvent extends ViewRecord
-{
-    protected static string $resource = CalendarEventResource::class;
-
-    public function infolist(Schema $schema): Schema
+return new class () extends Migration {
+    public function up(): void
     {
-        return $schema
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('title'),
-                        TextEntry::make('description'),
-                        TextEntry::make('starts_at'),
-                        TextEntry::make('ends_at'),
-                        TextEntry::make('transparency')
-                            ->badge()
-                            ->visible(EventTransparencyFeature::active()),
-                        TextEntry::make('attendees')
-                            ->badge(),
-                    ])
-                    ->columns(),
-            ]);
+        EventTransparencyFeature::activate();
     }
 
-    protected function getHeaderActions(): array
+    public function down(): void
     {
-        return [
-            EditAction::make(),
-            DeleteAction::make(),
-        ];
+        EventTransparencyFeature::deactivate();
     }
-}
+};
