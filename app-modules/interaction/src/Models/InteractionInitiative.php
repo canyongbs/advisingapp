@@ -65,7 +65,7 @@ class InteractionInitiative extends BaseModel implements Auditable
     ];
 
     protected $casts = [
-      'is_default' => 'boolean',
-      'interactable_type' => InteractableType::class,
+        'is_default' => 'boolean',
+        'interactable_type' => InteractableType::class,
     ];
 }
