@@ -42,6 +42,7 @@ use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Notifications\CalendarRequiresReconnectNotification;
 use AdvisingApp\MeetingCenter\Settings\GoogleCalendarSettings;
+use App\Features\EventTransparencyFeature;
 use DateTime;
 use DateTimeInterface;
 use Exception;
@@ -167,6 +168,18 @@ class GoogleCalendarManager implements CalendarInterface
         $events
             ->each(
                 function (Event $event) use ($calendar) {
+                    // TODO EventTransparencyFeature: When removing the feature flag, replace lines 183-195 with:
+                    // $data = [
+                    //     'title' => $event->summary,
+                    //     'description' => $event->description,
+                    //     'starts_at' => $event->start->dateTime,
+                    //     'ends_at' => $event->end->dateTime,
+                    //     'attendees' => collect($event->getAttendees())
+                    //         ->map(fn (EventAttendee $attendee) => $attendee->getEmail())
+                    //         ->prepend($calendar->provider_email),
+                    //     'transparency' => EventTransparency::fromGoogleTransparency($event->getTransparency()),
+                    // ];
+
                     $data = [
                         'title' => $event->summary,
                         'description' => $event->description,
@@ -175,8 +188,11 @@ class GoogleCalendarManager implements CalendarInterface
                         'attendees' => collect($event->getAttendees())
                             ->map(fn (EventAttendee $attendee) => $attendee->getEmail())
                             ->prepend($calendar->provider_email),
-                        'transparency' => EventTransparency::fromGoogleTransparency($event->getTransparency()),
                     ];
+
+                    if (EventTransparencyFeature::active()) {
+                        $data['transparency'] = EventTransparency::fromGoogleTransparency($event->getTransparency());
+                    }
 
                     $userEvent = $calendar->events()->where('provider_id', $event->id)->first();
 
@@ -323,7 +339,7 @@ class GoogleCalendarManager implements CalendarInterface
 
         $googleEvent->setAttendees($attendees);
 
-        if ($event->transparency) {
+        if (EventTransparencyFeature::active() && $event->transparency) {
             $googleEvent->setTransparency($event->transparency->toGoogleTransparency());
         }
 
