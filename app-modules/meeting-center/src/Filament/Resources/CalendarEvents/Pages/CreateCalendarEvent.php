@@ -67,6 +67,7 @@ class CreateCalendarEvent extends CreateRecord
                 ->required(),
             Select::make('transparency')
                 ->options(EventTransparency::class)
+                ->enum(EventTransparency::class)
                 ->default(EventTransparency::Busy)
                 ->required()
                 ->visible(EventTransparencyFeature::active()),
