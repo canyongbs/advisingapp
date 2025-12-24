@@ -46,9 +46,12 @@ class InteractionStatusSeeder extends Seeder
         InteractionStatus::factory()
             ->createMany(
                 [
-                    ['name' => 'Planned'],
-                    ['name' => 'Held'],
-                    ['name' => 'Not Held'],
+                    ['name' => 'Planned', 'interactable_type' => 'student'],
+                    ['name' => 'Held', 'interactable_type' => 'student'],
+                    ['name' => 'Not Held', 'interactable_type' => 'student'],
+                    ['name' => 'Planned', 'interactable_type' => 'prospect'],
+                    ['name' => 'Held', 'interactable_type' => 'prospect'],
+                    ['name' => 'Not Held', 'interactable_type' => 'prospect'],
                 ]
             );
     }

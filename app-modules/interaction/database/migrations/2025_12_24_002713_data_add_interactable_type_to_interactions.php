@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use App\Features\InteractableTypeFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -278,6 +279,8 @@ return new class () extends Migration {
                 $table->unique(['name', 'interactable_type']);
             });
         });
+
+        InteractableTypeFeature::activate();
     }
 
     public function down(): void
@@ -472,5 +475,7 @@ return new class () extends Migration {
                 $table->unique('name');
             });
         });
+
+        InteractableTypeFeature::deactivate();
     }
 };
