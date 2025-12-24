@@ -68,7 +68,7 @@ class EditTeam extends EditRecord
                     ->relationship('division', 'name', modifyQueryUsing: fn (Builder $query) => $query->orderBy('is_default', 'DESC'))
                     ->searchable()
                     ->preload()
-                    ->default(fn () => Division::query()->where('is_default', true)->first()?->getKey()),
+                    ->visible(fn (): bool => Division::count() > 1),
             ]);
     }
 

@@ -54,6 +54,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Fieldset;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 
 class InteractionBlock extends CampaignActionBlock
 {
@@ -103,11 +104,11 @@ class InteractionBlock extends CampaignActionBlock
                                     ->where('is_default', true)
                                     ->first()
                                     ?->getKey()
+                                ?? Division::query()->first()?->getKey()
+                                ?? throw ValidationException::withMessages(['No division found'])
                         )
                         ->label('Division')
-                        ->visible(function () {
-                            return Division::query()->where('is_default', false)->exists();
-                        })
+                        ->visible(fn (): bool => Division::count() > 1)
                         ->dehydratedWhenHidden()
                         ->required()
                         ->exists((new Division())->getTable(), 'id'),

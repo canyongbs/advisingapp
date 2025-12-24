@@ -57,6 +57,7 @@ use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
 
 class CreateCase extends CreateRecord
 {
@@ -71,13 +72,16 @@ class CreateCase extends CreateRecord
                     ->model(CaseModel::class)
                     ->default(
                         fn () => auth()->user()->team?->division?->getKey()
-                            ?? Division::query()
-                                ->where('is_default', true)
-                                ->first()
-                                ?->getKey()
+                        ?? Division::query()
+                            ->where('is_default', true)
+                            ->first()
+                            ?->getKey()
+                        ?? Division::query()->first()?->getKey()
+                        ?? throw ValidationException::withMessages(['No division found'])
                     )
                     ->label('Division')
                     ->visible(fn (): bool => Division::count() > 1)
+                    ->dehydratedWhenHidden()
                     ->required()
                     ->exists((new Division())->getTable(), 'id'),
                 Select::make('status_id')

@@ -67,6 +67,7 @@ use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class InteractionForm
 {
@@ -153,11 +154,21 @@ class InteractionForm
                         ->exists((new InteractionDriver())->getTable(), 'id'),
                     Select::make('division_id')
                         ->relationship('division', 'name')
-                        ->default(fn () => auth()->user()->team?->division?->getKey())
+                        ->default(
+                            fn () => auth()->user()->team?->division?->getKey()
+                                ?? Division::query()
+                                    ->where('is_default', true)
+                                    ->first()
+                                    ?->getKey()
+                                ?? Division::query()->first()?->getKey()
+                                ?? throw ValidationException::withMessages(['No division found'])
+                        )
                         ->preload()
                         ->label('Division')
                         ->required()
-                        ->exists((new Division())->getTable(), 'id'),
+                        ->exists((new Division())->getTable(), 'id')
+                        ->visible(fn (): bool => Division::count() > 1)
+                        ->dehydratedWhenHidden(),
                     Select::make('interaction_outcome_id')
                         ->relationship('outcome', 'name')
                         ->default(fn () => InteractionOutcome::query()

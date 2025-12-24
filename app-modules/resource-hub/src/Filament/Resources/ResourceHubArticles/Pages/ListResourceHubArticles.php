@@ -61,6 +61,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 
 class ListResourceHubArticles extends ListRecords
 {
@@ -167,6 +168,19 @@ class ListResourceHubArticles extends ListRecords
                                     ->relationship('division', 'name')
                                     ->searchable(['name', 'code'])
                                     ->preload()
+                                    ->default(
+                                        fn () => [
+                                            auth()->user()->team?->division?->getKey()
+                                                ?? Division::query()
+                                                    ->where('is_default', true)
+                                                    ->first()
+                                                    ?->getKey()
+                                                ?? Division::query()->first()?->getKey()
+                                                ?? throw ValidationException::withMessages(['No division found']),
+                                        ]
+                                    )
+                                    ->saveRelationshipsWhenHidden()
+                                    ->visible(fn (): bool => Division::count() > 1)
                                     ->exists((new Division())->getTable(), (new Division())->getKeyName()),
                             ]),
                     ])

@@ -49,6 +49,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\ValidationException;
 
 class CreateResourceHubArticle extends CreateRecord
 {
@@ -100,10 +101,15 @@ class CreateResourceHubArticle extends CreateRecord
                             ->searchable(['name', 'code'])
                             ->preload()
                             ->default(
-                                fn () => [auth()->user()->team?->division?->getKey()
-                                    ?? Division::query()
-                                        ->first()
-                                        ?->getKey()]
+                                fn () => [
+                                    auth()->user()->team?->division?->getKey()
+                                        ?? Division::query()
+                                            ->where('is_default', true)
+                                            ->first()
+                                            ?->getKey()
+                                        ?? Division::query()->first()?->getKey()
+                                        ?? throw ValidationException::withMessages(['No division found']),
+                                ]
                             )
                             ->saveRelationshipsWhenHidden()
                             ->visible(fn (): bool => Division::count() > 1)

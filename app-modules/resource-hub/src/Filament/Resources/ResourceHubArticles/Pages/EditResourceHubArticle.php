@@ -152,6 +152,7 @@ class EditResourceHubArticle extends EditRecord
                                     ->relationship('division', 'name')
                                     ->searchable(['name', 'code'])
                                     ->preload()
+                                    ->visible(fn (): bool => Division::count() > 1)
                                     ->exists((new Division())->getTable(), (new Division())->getKeyName()),
                                 Section::make()
                                     ->schema([
