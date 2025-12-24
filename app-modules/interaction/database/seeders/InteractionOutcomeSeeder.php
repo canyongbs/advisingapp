@@ -46,11 +46,16 @@ class InteractionOutcomeSeeder extends Seeder
         InteractionOutcome::factory()
             ->createMany(
                 [
-                    ['name' => 'Does Not Apply'],
-                    ['name' => 'Live Contact'],
-                    ['name' => 'Voicemail'],
-                    ['name' => 'No Voicemail'],
-                    ['name' => 'Dropped Call'],
+                    ['name' => 'Does Not Apply', 'interactable_type' => 'student'],
+                    ['name' => 'Live Contact', 'interactable_type' => 'student'],
+                    ['name' => 'Voicemail', 'interactable_type' => 'student'],
+                    ['name' => 'No Voicemail', 'interactable_type' => 'student'],
+                    ['name' => 'Dropped Call', 'interactable_type' => 'student'],
+                    ['name' => 'Does Not Apply', 'interactable_type' => 'prospect'],
+                    ['name' => 'Live Contact', 'interactable_type' => 'prospect'],
+                    ['name' => 'Voicemail', 'interactable_type' => 'prospect'],
+                    ['name' => 'No Voicemail', 'interactable_type' => 'prospect'],
+                    ['name' => 'Dropped Call', 'interactable_type' => 'prospect'],
                 ]
             );
     }
