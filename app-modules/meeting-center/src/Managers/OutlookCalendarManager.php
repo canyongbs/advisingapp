@@ -85,7 +85,7 @@ class OutlookCalendarManager implements CalendarInterface
 
         $events = [];
 
-        // TODO EventTransparencyFeature: When removing the feature flag, replace lines 98-112 with:
+        // TODO EventTransparencyFeature: When removing the feature flag, replace lines 99-113 with:
         // $request = $client->createCollectionRequest(
         //     requestType: 'GET',
         //     endpoint: '/me/calendar/calendarView?' . http_build_query([
@@ -233,7 +233,7 @@ class OutlookCalendarManager implements CalendarInterface
             ->each(function (Event $providerEvent) use ($calendar) {
                 $userEvent = $calendar->events()->where('provider_id', $providerEvent->getId())->first() ?? $calendar->events()->make();
 
-                // TODO EventTransparencyFeature: When removing the feature flag, replace lines 248-263 with:
+                // TODO EventTransparencyFeature: When removing the feature flag, replace lines 249-264 with:
                 // $userEvent->fill([
                 //     'provider_id' => $providerEvent->getId(),
                 //     'title' => $providerEvent->getSubject(),
