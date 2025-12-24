@@ -87,6 +87,10 @@ class InteractionRelationPolicy
 
     public function delete(Authenticatable $authenticatable, InteractionRelation $relation): Response
     {
+        if($relation->interactions->count() > 0) {
+            return Response::deny("This relation cannot be deleted because it is being used by {$relation->interactions->count()} interaction(s).");
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'settings.*.delete',
             denyResponse: 'You do not have permission to delete this interaction relation.'

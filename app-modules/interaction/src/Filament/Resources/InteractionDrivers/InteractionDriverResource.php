@@ -36,15 +36,20 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionDrivers;
 
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\Pages\CreateInteractionDriver;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\Pages\EditInteractionDriver;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\Pages\ListInteractionDrivers;
 use AdvisingApp\Interaction\Models\InteractionDriver;
+use App\Features\InteractableTypeFeature;
 use App\Filament\Clusters\InteractionManagement;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class InteractionDriverResource extends Resource
 {
@@ -64,17 +69,30 @@ class InteractionDriverResource extends Resource
                     ->autofocus()
                     ->required()
                     ->maxLength(255)
-                    ->placeholder('Interaction Driver Name'),
+                    ->placeholder('Interaction Driver Name')
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule, Get $get) 
+                            => InteractableTypeFeature::active() ? $rule->where('interactable_type', $get('interactable_type')) : $rule
+                    ),
+                Select::make('interactable_type')
+                    ->visible(InteractableTypeFeature::active())
+                    ->label('Type')
+                    ->required()
+                    ->options(InteractableType::class)
+                    ->enum(InteractableType::class),
                 Toggle::make('is_default')
                     ->label('Default')
                     ->live()
                     ->hint(function (?InteractionDriver $record, $state): ?string {
+                      $basicHint = InteractableTypeFeature::active() ? 'This will only affect interactions for the selected type.' : null;
+
                         if ($record?->is_default) {
-                            return null;
+                            return $basicHint;
                         }
 
                         if (! $state) {
-                            return null;
+                            return $basicHint;
                         }
 
                         $currentDefault = InteractionDriver::query()
@@ -82,10 +100,10 @@ class InteractionDriverResource extends Resource
                             ->value('name');
 
                         if (blank($currentDefault)) {
-                            return null;
+                            return $basicHint;
                         }
 
-                        return "The current default status is '{$currentDefault}', you are replacing it.";
+                        return $basicHint . " The current default status is '{$currentDefault}', you are replacing it.";
                     })
                     ->hintColor('danger')
                     ->columnStart(1),
