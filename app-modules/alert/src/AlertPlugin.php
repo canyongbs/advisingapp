@@ -34,36 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Concern\Filament\Resources\ConcernStatuses;
+namespace AdvisingApp\Alert;
 
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\CreateConcernStatus;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\EditConcernStatus;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ListConcernStatuses;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ViewConcernStatus;
-use AdvisingApp\Concern\Models\ConcernStatus;
-use App\Filament\Clusters\ConstituentManagement;
-use Filament\Resources\Resource;
-use UnitEnum;
+use Filament\Contracts\Plugin;
+use Filament\Panel;
 
-class ConcernStatusResource extends Resource
+class AlertPlugin implements Plugin
 {
-    protected static ?string $model = ConcernStatus::class;
-
-    protected static ?string $navigationLabel = 'Statuses';
-
-    protected static ?string $cluster = ConstituentManagement::class;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Concern';
-
-    protected static ?int $navigationSort = 120;
-
-    public static function getPages(): array
+    public function getId(): string
     {
-        return [
-            'index' => ListConcernStatuses::route('/'),
-            'create' => CreateConcernStatus::route('/create'),
-            'view' => ViewConcernStatus::route('/{record}'),
-            'edit' => EditConcernStatus::route('/{record}/edit'),
-        ];
+        return 'alert';
     }
+
+    public function register(Panel $panel): void
+    {
+        $panel->discoverResources(
+            in: __DIR__ . '/Filament/Resources',
+            for: 'AdvisingApp\\Alert\\Filament\\Resources'
+        )->discoverPages(
+            in: __DIR__ . '/Filament/Pages',
+            for: 'AdvisingApp\\Alert\\Filament\\Pages'
+        );
+    }
+
+    public function boot(Panel $panel): void {}
 }

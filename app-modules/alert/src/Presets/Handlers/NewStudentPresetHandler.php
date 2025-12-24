@@ -34,36 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Concern\Filament\Resources\ConcernStatuses;
+namespace AdvisingApp\Alert\Presets\Handlers;
 
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\CreateConcernStatus;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\EditConcernStatus;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ListConcernStatuses;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ViewConcernStatus;
-use AdvisingApp\Concern\Models\ConcernStatus;
-use App\Filament\Clusters\ConstituentManagement;
-use Filament\Resources\Resource;
-use UnitEnum;
+use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
+use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;
+use Filament\Forms\Components\TextInput;
 
-class ConcernStatusResource extends Resource
+class NewStudentPresetHandler implements AlertPresetHandler
 {
-    protected static ?string $model = ConcernStatus::class;
+    public function getName(): string
+    {
+        return 'New Student (First Semester at Institution)';
+    }
 
-    protected static ?string $navigationLabel = 'Statuses';
+    public function getDescription(): string
+    {
+        return 'This alert is turned on for students who are in their first semester at the institution, or within the configured number of semesters considered as the new student period. It is intended to ensure that new students receive proactive outreach, orientation to key systems, and early academic support while they are still adjusting to college.';
+    }
 
-    protected static ?string $cluster = ConstituentManagement::class;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Concern';
-
-    protected static ?int $navigationSort = 120;
-
-    public static function getPages(): array
+    public function configurationForm(): array
     {
         return [
-            'index' => ListConcernStatuses::route('/'),
-            'create' => CreateConcernStatus::route('/create'),
-            'view' => ViewConcernStatus::route('/{record}'),
-            'edit' => EditConcernStatus::route('/{record}/edit'),
+            TextInput::make('number_of_semesters')
+                ->label('Number of Semesters')
+                ->numeric()
+                ->minValue(1)
+                ->required()
+                ->helperText('Students within this many semesters will be considered new students.'),
         ];
+    }
+
+    public function getConfigurationModel(): ?string
+    {
+        return NewStudentAlertConfiguration::class;
     }
 }

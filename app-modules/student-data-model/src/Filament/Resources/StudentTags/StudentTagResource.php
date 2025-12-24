@@ -55,7 +55,7 @@ class StudentTagResource extends Resource
 
     protected static ?string $navigationLabel = 'Tags';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 20;
 
     protected static ?string $cluster = ConstituentManagement::class;
 

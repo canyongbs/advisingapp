@@ -34,36 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Concern\Filament\Resources\ConcernStatuses;
+namespace AdvisingApp\Alert\Configurations;
 
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\CreateConcernStatus;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\EditConcernStatus;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ListConcernStatuses;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ViewConcernStatus;
-use AdvisingApp\Concern\Models\ConcernStatus;
-use App\Filament\Clusters\ConstituentManagement;
-use Filament\Resources\Resource;
-use UnitEnum;
+use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
+use AdvisingApp\Alert\Models\AlertConfiguration;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ConcernStatusResource extends Resource
+/**
+ * @mixin IdeHelperSemesterGpaAlertConfiguration
+ */
+class SemesterGpaAlertConfiguration extends BaseModel implements AlertPresetConfiguration, Auditable
 {
-    protected static ?string $model = ConcernStatus::class;
+    use AuditableTrait;
 
-    protected static ?string $navigationLabel = 'Statuses';
+    protected $fillable = [
+        'gpa_threshold',
+    ];
 
-    protected static ?string $cluster = ConstituentManagement::class;
+    protected $casts = [
+        'gpa_threshold' => 'decimal:2',
+    ];
 
-    protected static string | UnitEnum | null $navigationGroup = 'Concern';
-
-    protected static ?int $navigationSort = 120;
-
-    public static function getPages(): array
+    /**
+     * @return MorphOne<AlertConfiguration, $this>
+     */
+    public function alertConfiguration(): MorphOne
     {
-        return [
-            'index' => ListConcernStatuses::route('/'),
-            'create' => CreateConcernStatus::route('/create'),
-            'view' => ViewConcernStatus::route('/{record}'),
-            'edit' => EditConcernStatus::route('/{record}/edit'),
-        ];
+        return $this->morphOne(AlertConfiguration::class, 'configuration');
     }
 }

@@ -34,36 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Concern\Filament\Resources\ConcernStatuses;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\CreateConcernStatus;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\EditConcernStatus;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ListConcernStatuses;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ViewConcernStatus;
-use AdvisingApp\Concern\Models\ConcernStatus;
-use App\Filament\Clusters\ConstituentManagement;
-use Filament\Resources\Resource;
-use UnitEnum;
-
-class ConcernStatusResource extends Resource
-{
-    protected static ?string $model = ConcernStatus::class;
-
-    protected static ?string $navigationLabel = 'Statuses';
-
-    protected static ?string $cluster = ConstituentManagement::class;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Concern';
-
-    protected static ?int $navigationSort = 120;
-
-    public static function getPages(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'index' => ListConcernStatuses::route('/'),
-            'create' => CreateConcernStatus::route('/create'),
-            'view' => ViewConcernStatus::route('/{record}'),
-            'edit' => EditConcernStatus::route('/{record}/edit'),
-        ];
+        Schema::create('alert_configurations', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+
+            $table->string('preset');
+            $table->boolean('is_enabled')->default(false);
+
+            $table->nullableUuidMorphs('configuration');
+
+            $table->timestamps();
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::dropIfExists('alert_configurations');
+    }
+};

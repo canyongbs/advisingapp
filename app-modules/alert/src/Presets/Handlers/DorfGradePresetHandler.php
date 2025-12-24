@@ -34,36 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Concern\Filament\Resources\ConcernStatuses;
+namespace AdvisingApp\Alert\Presets\Handlers;
 
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\CreateConcernStatus;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\EditConcernStatus;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ListConcernStatuses;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ViewConcernStatus;
-use AdvisingApp\Concern\Models\ConcernStatus;
-use App\Filament\Clusters\ConstituentManagement;
-use Filament\Resources\Resource;
-use UnitEnum;
+use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;
 
-class ConcernStatusResource extends Resource
+class DorfGradePresetHandler implements AlertPresetHandler
 {
-    protected static ?string $model = ConcernStatus::class;
-
-    protected static ?string $navigationLabel = 'Statuses';
-
-    protected static ?string $cluster = ConstituentManagement::class;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Concern';
-
-    protected static ?int $navigationSort = 120;
-
-    public static function getPages(): array
+    public function getName(): string
     {
-        return [
-            'index' => ListConcernStatuses::route('/'),
-            'create' => CreateConcernStatus::route('/create'),
-            'view' => ViewConcernStatus::route('/{record}'),
-            'edit' => EditConcernStatus::route('/{record}/edit'),
-        ];
+        return 'D or F Grade Posted';
+    }
+
+    public function getDescription(): string
+    {
+        return 'This alert is turned on when a student receives a final course grade of D or F in any semester. It is intended to highlight students who may be struggling in at least one course so advisors can review the situation and offer academic support.';
+    }
+
+    public function configurationForm(): array
+    {
+        return [];
+    }
+
+    public function getConfigurationModel(): ?string
+    {
+        return null;
     }
 }

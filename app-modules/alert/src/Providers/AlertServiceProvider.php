@@ -34,36 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Concern\Filament\Resources\ConcernStatuses;
+namespace AdvisingApp\Alert\Providers;
 
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\CreateConcernStatus;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\EditConcernStatus;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ListConcernStatuses;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ViewConcernStatus;
-use AdvisingApp\Concern\Models\ConcernStatus;
-use App\Filament\Clusters\ConstituentManagement;
-use Filament\Resources\Resource;
-use UnitEnum;
+use AdvisingApp\Alert\AlertPlugin;
+use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
+use AdvisingApp\Alert\Configurations\CumulativeGpaAlertConfiguration;
+use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
+use AdvisingApp\Alert\Configurations\SemesterGpaAlertConfiguration;
+use AdvisingApp\Alert\Models\AlertConfiguration;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
 
-class ConcernStatusResource extends Resource
+class AlertServiceProvider extends ServiceProvider
 {
-    protected static ?string $model = ConcernStatus::class;
-
-    protected static ?string $navigationLabel = 'Statuses';
-
-    protected static ?string $cluster = ConstituentManagement::class;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Concern';
-
-    protected static ?int $navigationSort = 120;
-
-    public static function getPages(): array
+    public function register()
     {
-        return [
-            'index' => ListConcernStatuses::route('/'),
-            'create' => CreateConcernStatus::route('/create'),
-            'view' => ViewConcernStatus::route('/{record}'),
-            'edit' => EditConcernStatus::route('/{record}/edit'),
-        ];
+        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new AlertPlugin()));
+    }
+
+    public function boot(): void
+    {
+        Relation::morphMap([
+            'alert_configuration' => AlertConfiguration::class,
+            'cumulative_gpa_alert_configuration' => CumulativeGpaAlertConfiguration::class,
+            'semester_gpa_alert_configuration' => SemesterGpaAlertConfiguration::class,
+            'adult_learner_alert_configuration' => AdultLearnerAlertConfiguration::class,
+            'new_student_alert_configuration' => NewStudentAlertConfiguration::class,
+        ]);
     }
 }

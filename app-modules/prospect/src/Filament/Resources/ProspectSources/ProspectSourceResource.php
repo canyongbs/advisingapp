@@ -51,7 +51,7 @@ class ProspectSourceResource extends Resource
 
     protected static ?string $navigationLabel = 'Sources';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 70;
 
     protected static ?string $cluster = ConstituentManagement::class;
 

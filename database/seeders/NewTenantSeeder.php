@@ -36,6 +36,7 @@
 
 namespace Database\Seeders;
 
+use AdvisingApp\Alert\Database\Seeders\AlertConfigurationSeeder;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Authorization\Console\Commands\SetupRoles;
 use AdvisingApp\CaseManagement\Database\Seeders\CaseStatusSeeder;
@@ -83,6 +84,7 @@ class NewTenantSeeder extends Seeder
             ApplicationSubmissionStateSeeder::class,
             ConcernStatusSeeder::class,
             ProjectMilestoneStatusSeeder::class,
+            AlertConfigurationSeeder::class,
         ]);
     }
 }

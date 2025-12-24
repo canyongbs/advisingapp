@@ -175,6 +175,7 @@ return [
         'app',
         'app-modules/*/src/Models',
         'app-modules/*/src/Histories',
+        'app-modules/alert/src/Configurations',
     ],
 
     /*

@@ -1,0 +1,26 @@
+{
+    "name": "canyon-gbs/alert",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\Alert\\": "src/",
+            "AdvisingApp\\Alert\\Tests\\": "tests/",
+            "AdvisingApp\\Alert\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\Alert\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\Alert\\Providers\\AlertServiceProvider"
+            ]
+        }
+    }
+}

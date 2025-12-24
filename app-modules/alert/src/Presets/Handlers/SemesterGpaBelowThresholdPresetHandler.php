@@ -34,55 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectTags;
+namespace AdvisingApp\Alert\Presets\Handlers;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectTags\Pages\CreateProspectTag;
-use AdvisingApp\Prospect\Filament\Resources\ProspectTags\Pages\EditProspectTag;
-use AdvisingApp\Prospect\Filament\Resources\ProspectTags\Pages\ListProspectTags;
-use AdvisingApp\Prospect\Filament\Resources\ProspectTags\Pages\ViewProspectTag;
-use AdvisingApp\Prospect\Models\Prospect;
-use App\Enums\TagType;
-use App\Filament\Clusters\ConstituentManagement;
-use App\Models\Tag;
-use App\Models\User;
-use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Builder;
-use UnitEnum;
+use AdvisingApp\Alert\Configurations\SemesterGpaAlertConfiguration;
+use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;
+use Filament\Forms\Components\TextInput;
 
-class ProspectTagResource extends Resource
+class SemesterGpaBelowThresholdPresetHandler implements AlertPresetHandler
 {
-    protected static ?string $model = Tag::class;
-
-    protected static ?string $navigationLabel = 'Tags';
-
-    protected static ?int $navigationSort = 90;
-
-    protected static ?string $cluster = ConstituentManagement::class;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
-
-    public static function canAccess(): bool
+    public function getName(): string
     {
-        $user = auth()->user();
-
-        assert($user instanceof User);
-
-        return $user->hasLicense(Prospect::getLicenseType()) && parent::canAccess();
+        return 'Semester GPA Below Threshold';
     }
 
-    public static function getPages(): array
+    public function getDescription(): string
+    {
+        return 'This alert is turned on when a student\'s GPA for the current or most recently completed semester is below the configured threshold. It is intended to highlight recent academic difficulties even when the cumulative GPA may still appear acceptable.';
+    }
+
+    public function configurationForm(): array
     {
         return [
-            'index' => ListProspectTags::route('/'),
-            'create' => CreateProspectTag::route('/create'),
-            'view' => ViewProspectTag::route('/{record}'),
-            'edit' => EditProspectTag::route('/{record}/edit'),
+            TextInput::make('gpa_threshold')
+                ->label('Semester GPA Threshold')
+                ->inputMode('decimal')
+                ->rule('numeric')
+                ->rule('min:0.0')
+                ->rule('max:5.0')
+                ->formatStateUsing(function (float $state) {
+                    $value = (float) $state;
+                    $formatted = number_format($value, 2);
+
+                    if (str_ends_with($formatted, '.00')) {
+                        return number_format($value, 1);
+                    }
+
+                    return $formatted;
+                })
+                ->dehydrateStateUsing(fn ($state) => (float) $state)
+                ->required()
+                ->helperText('Students with a semester GPA below this value will trigger the alert.'),
         ];
     }
 
-    public static function getEloquentQuery(): Builder
+    public function getConfigurationModel(): ?string
     {
-        return parent::getEloquentQuery()
-            ->where('type', TagType::Prospect);
+        return SemesterGpaAlertConfiguration::class;
     }
 }

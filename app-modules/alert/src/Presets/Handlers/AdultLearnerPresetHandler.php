@@ -34,36 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Concern\Filament\Resources\ConcernStatuses;
+namespace AdvisingApp\Alert\Presets\Handlers;
 
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\CreateConcernStatus;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\EditConcernStatus;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ListConcernStatuses;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ViewConcernStatus;
-use AdvisingApp\Concern\Models\ConcernStatus;
-use App\Filament\Clusters\ConstituentManagement;
-use Filament\Resources\Resource;
-use UnitEnum;
+use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
+use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;
+use Filament\Forms\Components\TextInput;
 
-class ConcernStatusResource extends Resource
+class AdultLearnerPresetHandler implements AlertPresetHandler
 {
-    protected static ?string $model = ConcernStatus::class;
+    public function getName(): string
+    {
+        return 'Adult Learner';
+    }
 
-    protected static ?string $navigationLabel = 'Statuses';
+    public function getDescription(): string
+    {
+        return 'This alert is turned on for students whose age is at or above the configured minimum age. It is intended to help institutions identify adult learners who may be balancing school with work and family responsibilities and may benefit from flexible scheduling and tailored support.';
+    }
 
-    protected static ?string $cluster = ConstituentManagement::class;
-
-    protected static string | UnitEnum | null $navigationGroup = 'Concern';
-
-    protected static ?int $navigationSort = 120;
-
-    public static function getPages(): array
+    public function configurationForm(): array
     {
         return [
-            'index' => ListConcernStatuses::route('/'),
-            'create' => CreateConcernStatus::route('/create'),
-            'view' => ViewConcernStatus::route('/{record}'),
-            'edit' => EditConcernStatus::route('/{record}/edit'),
+            TextInput::make('minimum_age')
+                ->label('Minimum Age')
+                ->numeric()
+                ->minValue(1)
+                ->required()
+                ->helperText('Students at or above this age will be considered adult learners.'),
         ];
+    }
+
+    public function getConfigurationModel(): ?string
+    {
+        return AdultLearnerAlertConfiguration::class;
     }
 }

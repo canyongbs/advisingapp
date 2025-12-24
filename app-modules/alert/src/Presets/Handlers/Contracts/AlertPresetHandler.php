@@ -34,36 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Concern\Filament\Resources\ConcernStatuses;
+namespace AdvisingApp\Alert\Presets\Handlers\Contracts;
 
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\CreateConcernStatus;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\EditConcernStatus;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ListConcernStatuses;
-use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ViewConcernStatus;
-use AdvisingApp\Concern\Models\ConcernStatus;
-use App\Filament\Clusters\ConstituentManagement;
-use Filament\Resources\Resource;
-use UnitEnum;
+use Filament\Schemas\Components\Component;
 
-class ConcernStatusResource extends Resource
+interface AlertPresetHandler
 {
-    protected static ?string $model = ConcernStatus::class;
+    public function getName(): string;
 
-    protected static ?string $navigationLabel = 'Statuses';
+    public function getDescription(): string;
 
-    protected static ?string $cluster = ConstituentManagement::class;
+    /**
+     * @return array<Component>
+     */
+    public function configurationForm(): array;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Concern';
-
-    protected static ?int $navigationSort = 120;
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListConcernStatuses::route('/'),
-            'create' => CreateConcernStatus::route('/create'),
-            'view' => ViewConcernStatus::route('/{record}'),
-            'edit' => EditConcernStatus::route('/{record}/edit'),
-        ];
-    }
+    /**
+     * @return class-string|null
+     */
+    public function getConfigurationModel(): ?string;
 }
