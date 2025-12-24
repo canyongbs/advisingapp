@@ -87,6 +87,7 @@ class CaseBlock extends CampaignActionBlock
                 )
                 ->label('Division')
                 ->visible(fn (): bool => Division::count() > 1)
+                ->dehydratedWhenHidden()
                 ->required()
                 ->exists((new Division())->getTable(), 'id'),
             Select::make($fieldPrefix . 'status_id')

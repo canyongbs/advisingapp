@@ -81,6 +81,7 @@ class BulkCreateCaseAction
                     )
                     ->label('Division')
                     ->visible(fn (): bool => Division::count() > 1)
+                    ->dehydratedWhenHidden()
                     ->required()
                     ->exists((new Division())->getTable(), 'id'),
                 Select::make('status_id')

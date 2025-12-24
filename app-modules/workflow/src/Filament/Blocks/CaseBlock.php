@@ -86,7 +86,7 @@ class CaseBlock extends WorkflowActionBlock
                     ?? Division::query()->first()?->getKey()
                     ?? throw ValidationException::withMessages(['No division found']))
                 ->label('Division')
-                ->hidden(fn () => Division::count() === 1 || Division::where('is_default', true)->exists())
+                ->visible(fn (): bool => Division::count() > 1)
                 ->required()
                 ->exists((new Division())->getTable(), 'id')
                 ->dehydratedWhenHidden(),

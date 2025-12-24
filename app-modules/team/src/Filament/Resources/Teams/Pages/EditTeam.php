@@ -69,17 +69,7 @@ class EditTeam extends EditRecord
                     ->relationship('division', 'name', modifyQueryUsing: fn (Builder $query) => $query->orderBy('is_default', 'DESC'))
                     ->searchable()
                     ->preload()
-                    ->default(
-                        fn () => fn () => auth()->user()->team?->division?->getKey()
-                        ?? Division::query()
-                            ->where('is_default', true)
-                            ->first()
-                            ?->getKey()
-                        ?? Division::query()->first()?->getKey()
-                        ?? throw ValidationException::withMessages(['No division found'])
-                    )
-                    ->visible(fn (): bool => Division::count() > 1)
-                    ->dehydratedWhenHidden(),
+                    ->visible(fn (): bool => Division::count() > 1),
             ]);
     }
 
