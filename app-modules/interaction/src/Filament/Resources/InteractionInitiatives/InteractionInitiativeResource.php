@@ -36,15 +36,20 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionInitiatives;
 
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiatives\Pages\CreateInteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiatives\Pages\EditInteractionInitiative;
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiatives\Pages\ListInteractionInitiatives;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
+use App\Features\InteractableTypeFeature;
 use App\Filament\Clusters\InteractionManagement;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class InteractionInitiativeResource extends Resource
 {
@@ -64,17 +69,30 @@ class InteractionInitiativeResource extends Resource
                     ->autofocus()
                     ->required()
                     ->maxLength(255)
-                    ->placeholder('Interaction Initiative Name'),
+                    ->placeholder('Interaction Initiative Name')
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule, Get $get) 
+                            => InteractableTypeFeature::active() ? $rule->where('interactable_type', $get('interactable_type')) : $rule
+                    ),
+                Select::make('interactable_type')
+                    ->visible(InteractableTypeFeature::active())
+                    ->label('Type')
+                    ->required()
+                    ->options(InteractableType::class)
+                    ->enum(InteractableType::class),
                 Toggle::make('is_default')
                     ->label('Default')
                     ->live()
                     ->hint(function (?InteractionInitiative $record, $state): ?string {
+                      $basicHint = InteractableTypeFeature::active() ? 'This will only affect interactions for the selected type.' : null;
+
                         if ($record?->is_default) {
-                            return null;
+                            return $basicHint;
                         }
 
                         if (! $state) {
-                            return null;
+                            return $basicHint;
                         }
 
                         $currentDefault = InteractionInitiative::query()
@@ -82,10 +100,10 @@ class InteractionInitiativeResource extends Resource
                             ->value('name');
 
                         if (blank($currentDefault)) {
-                            return null;
+                            return $basicHint;
                         }
 
-                        return "The current default status is '{$currentDefault}', you are replacing it.";
+                        return $basicHint . " The current default status is '{$currentDefault}', you are replacing it.";
                     })
                     ->hintColor('danger')
                     ->columnStart(1),

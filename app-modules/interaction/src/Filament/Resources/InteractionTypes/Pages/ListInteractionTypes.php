@@ -38,6 +38,7 @@ namespace AdvisingApp\Interaction\Filament\Resources\InteractionTypes\Pages;
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypes\InteractionTypeResource;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
+use App\Features\InteractableTypeFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -54,6 +55,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -143,7 +145,7 @@ class ListInteractionTypes extends ListRecords
 
     public function table(Table $table): Table
     {
-        return $table
+        $table
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name')
@@ -151,6 +153,11 @@ class ListInteractionTypes extends ListRecords
                 IconColumn::make('is_default')
                     ->label('Default')
                     ->boolean(),
+                TextColumn::make('interactions_count')
+                    ->visible(InteractableTypeFeature::active())
+                    ->label('Uses')
+                    ->counts('interactions')
+                    ->sortable()
             ])
             ->filters([
                 Filter::make('is_default')
@@ -165,6 +172,11 @@ class ListInteractionTypes extends ListRecords
                     DeleteBulkAction::make(),
                 ]),
             ]);
+
+            // During InteractableTypeFeature cleanup, we can put the default group on the table definition above and just return that
+            return InteractableTypeFeature::active() ?
+                $table->defaultGroup('interactable_type') :
+                $table;
     }
 
     protected function getHeaderActions(): array
