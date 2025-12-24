@@ -37,48 +37,71 @@
 namespace AdvisingApp\Interaction\Database\Seeders;
 
 use AdvisingApp\Interaction\Models\InteractionInitiative;
+use App\Features\InteractableTypeFeature;
 use Illuminate\Database\Seeder;
 
 class InteractionInitiativeSeeder extends Seeder
 {
     public function run(): void
     {
-        InteractionInitiative::factory()
-            ->createMany(
-                [
-                    ['name' => 'N/A', 'interactable_type' => 'student'],
-                    ['name' => 'College Applicant to Matriculation', 'interactable_type' => 'student'],
-                    ['name' => 'College Inquiry to Applicant', 'interactable_type' => 'student'],
-                    ['name' => 'College Matriculation to Enroll', 'interactable_type' => 'student'],
-                    ['name' => 'College RFI', 'interactable_type' => 'student'],
-                    ['name' => 'District Inquiry to Applicant', 'interactable_type' => 'student'],
-                    ['name' => 'Dual Reengagement', 'interactable_type' => 'student'],
-                    ['name' => 'Early College Plan Update', 'interactable_type' => 'student'],
-                    ['name' => 'Early College Transition', 'interactable_type' => 'student'],
-                    ['name' => 'Enrollment Cancellation Outreach', 'interactable_type' => 'student'],
-                    ['name' => 'Enrollment Cancellation Recovery', 'interactable_type' => 'student'],
-                    ['name' => 'Financial Aid Awarded Not Enrolled', 'interactable_type' => 'student'],
-                    ['name' => 'Financial Aid Task List', 'interactable_type' => 'student'],
-                    ['name' => 'MIH Follow Up', 'interactable_type' => 'student'],
-                    ['name' => 'MIH Text', 'interactable_type' => 'student'],
-                    ['name' => 'Third Party SEM', 'interactable_type' => 'student'],
-                    ['name' => 'N/A', 'interactable_type' => 'prospect'],
-                    ['name' => 'College Applicant to Matriculation', 'interactable_type' => 'prospect'],
-                    ['name' => 'College Inquiry to Applicant', 'interactable_type' => 'prospect'],
-                    ['name' => 'College Matriculation to Enroll', 'interactable_type' => 'prospect'],
-                    ['name' => 'College RFI', 'interactable_type' => 'prospect'],
-                    ['name' => 'District Inquiry to Applicant', 'interactable_type' => 'prospect'],
-                    ['name' => 'Dual Reengagement', 'interactable_type' => 'prospect'],
-                    ['name' => 'Early College Plan Update', 'interactable_type' => 'prospect'],
-                    ['name' => 'Early College Transition', 'interactable_type' => 'prospect'],
-                    ['name' => 'Enrollment Cancellation Outreach', 'interactable_type' => 'prospect'],
-                    ['name' => 'Enrollment Cancellation Recovery', 'interactable_type' => 'prospect'],
-                    ['name' => 'Financial Aid Awarded Not Enrolled', 'interactable_type' => 'prospect'],
-                    ['name' => 'Financial Aid Task List', 'interactable_type' => 'prospect'],
-                    ['name' => 'MIH Follow Up', 'interactable_type' => 'prospect'],
-                    ['name' => 'MIH Text', 'interactable_type' => 'prospect'],
-                    ['name' => 'Third Party SEM', 'interactable_type' => 'prospect'],
-                ]
-            );
+        InteractableTypeFeature::active() ? 
+          InteractionInitiative::factory()
+              ->createMany(
+                  [
+                      ['name' => 'N/A', 'interactable_type' => 'student'],
+                      ['name' => 'College Applicant to Matriculation', 'interactable_type' => 'student'],
+                      ['name' => 'College Inquiry to Applicant', 'interactable_type' => 'student'],
+                      ['name' => 'College Matriculation to Enroll', 'interactable_type' => 'student'],
+                      ['name' => 'College RFI', 'interactable_type' => 'student'],
+                      ['name' => 'District Inquiry to Applicant', 'interactable_type' => 'student'],
+                      ['name' => 'Dual Reengagement', 'interactable_type' => 'student'],
+                      ['name' => 'Early College Plan Update', 'interactable_type' => 'student'],
+                      ['name' => 'Early College Transition', 'interactable_type' => 'student'],
+                      ['name' => 'Enrollment Cancellation Outreach', 'interactable_type' => 'student'],
+                      ['name' => 'Enrollment Cancellation Recovery', 'interactable_type' => 'student'],
+                      ['name' => 'Financial Aid Awarded Not Enrolled', 'interactable_type' => 'student'],
+                      ['name' => 'Financial Aid Task List', 'interactable_type' => 'student'],
+                      ['name' => 'MIH Follow Up', 'interactable_type' => 'student'],
+                      ['name' => 'MIH Text', 'interactable_type' => 'student'],
+                      ['name' => 'Third Party SEM', 'interactable_type' => 'student'],
+                      ['name' => 'N/A', 'interactable_type' => 'prospect'],
+                      ['name' => 'College Applicant to Matriculation', 'interactable_type' => 'prospect'],
+                      ['name' => 'College Inquiry to Applicant', 'interactable_type' => 'prospect'],
+                      ['name' => 'College Matriculation to Enroll', 'interactable_type' => 'prospect'],
+                      ['name' => 'College RFI', 'interactable_type' => 'prospect'],
+                      ['name' => 'District Inquiry to Applicant', 'interactable_type' => 'prospect'],
+                      ['name' => 'Dual Reengagement', 'interactable_type' => 'prospect'],
+                      ['name' => 'Early College Plan Update', 'interactable_type' => 'prospect'],
+                      ['name' => 'Early College Transition', 'interactable_type' => 'prospect'],
+                      ['name' => 'Enrollment Cancellation Outreach', 'interactable_type' => 'prospect'],
+                      ['name' => 'Enrollment Cancellation Recovery', 'interactable_type' => 'prospect'],
+                      ['name' => 'Financial Aid Awarded Not Enrolled', 'interactable_type' => 'prospect'],
+                      ['name' => 'Financial Aid Task List', 'interactable_type' => 'prospect'],
+                      ['name' => 'MIH Follow Up', 'interactable_type' => 'prospect'],
+                      ['name' => 'MIH Text', 'interactable_type' => 'prospect'],
+                      ['name' => 'Third Party SEM', 'interactable_type' => 'prospect'],
+                  ]
+              ) :
+          InteractionInitiative::factory()
+              ->createMany(
+                  [
+                      ['name' => 'N/A'],
+                      ['name' => 'College Applicant to Matriculation'],
+                      ['name' => 'College Inquiry to Applicant'],
+                      ['name' => 'College Matriculation to Enroll'],
+                      ['name' => 'College RFI'],
+                      ['name' => 'District Inquiry to Applicant'],
+                      ['name' => 'Dual Reengagement'],
+                      ['name' => 'Early College Plan Update'],
+                      ['name' => 'Early College Transition'],
+                      ['name' => 'Enrollment Cancellation Outreach'],
+                      ['name' => 'Enrollment Cancellation Recovery'],
+                      ['name' => 'Financial Aid Awarded Not Enrolled'],
+                      ['name' => 'Financial Aid Task List'],
+                      ['name' => 'MIH Follow Up'],
+                      ['name' => 'MIH Text'],
+                      ['name' => 'Third Party SEM'],
+                  ]
+              );
     }
 }

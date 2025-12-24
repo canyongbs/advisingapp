@@ -37,22 +37,32 @@
 namespace AdvisingApp\Interaction\Database\Seeders;
 
 use AdvisingApp\Interaction\Models\InteractionStatus;
+use App\Features\InteractableTypeFeature;
 use Illuminate\Database\Seeder;
 
 class InteractionStatusSeeder extends Seeder
 {
     public function run(): void
     {
-        InteractionStatus::factory()
-            ->createMany(
-                [
-                    ['name' => 'Planned', 'interactable_type' => 'student'],
-                    ['name' => 'Held', 'interactable_type' => 'student'],
-                    ['name' => 'Not Held', 'interactable_type' => 'student'],
-                    ['name' => 'Planned', 'interactable_type' => 'prospect'],
-                    ['name' => 'Held', 'interactable_type' => 'prospect'],
-                    ['name' => 'Not Held', 'interactable_type' => 'prospect'],
-                ]
-            );
+        InteractableTypeFeature::active() ?
+          InteractionStatus::factory()
+              ->createMany(
+                  [
+                      ['name' => 'Planned', 'interactable_type' => 'student'],
+                      ['name' => 'Held', 'interactable_type' => 'student'],
+                      ['name' => 'Not Held', 'interactable_type' => 'student'],
+                      ['name' => 'Planned', 'interactable_type' => 'prospect'],
+                      ['name' => 'Held', 'interactable_type' => 'prospect'],
+                      ['name' => 'Not Held', 'interactable_type' => 'prospect'],
+                  ]
+              ) :
+          InteractionStatus::factory()
+              ->createMany(
+                  [
+                      ['name' => 'Planned'],
+                      ['name' => 'Held'],
+                      ['name' => 'Not Held'],
+                  ]
+              );
     }
 }
