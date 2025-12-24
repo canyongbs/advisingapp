@@ -37,7 +37,7 @@
 namespace AdvisingApp\Interaction\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Advisingapp\Interaction\Enums\InteractableType;
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
 use AdvisingApp\Interaction\Observers\InteractionDriverObserver;
 use App\Models\BaseModel;
