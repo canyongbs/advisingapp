@@ -37,26 +37,38 @@
 namespace AdvisingApp\Interaction\Database\Seeders;
 
 use AdvisingApp\Interaction\Models\InteractionRelation;
+use App\Features\InteractableTypeFeature;
 use Illuminate\Database\Seeder;
 
 class InteractionRelationSeeder extends Seeder
 {
     public function run(): void
     {
-        InteractionRelation::factory()
-            ->createMany(
-                [
-                    ['name' => 'Self', 'interactable_type' => 'student'],
-                    ['name' => 'Parent', 'interactable_type' => 'student'],
-                    ['name' => 'Spouse', 'interactable_type' => 'student'],
-                    ['name' => 'Sibling', 'interactable_type' => 'student'],
-                    ['name' => 'Other', 'interactable_type' => 'student'],
-                    ['name' => 'Self', 'interactable_type' => 'prospect'],
-                    ['name' => 'Parent', 'interactable_type' => 'prospect'],
-                    ['name' => 'Spouse', 'interactable_type' => 'prospect'],
-                    ['name' => 'Sibling', 'interactable_type' => 'prospect'],
-                    ['name' => 'Other', 'interactable_type' => 'prospect'],
-                ]
-            );
+        InteractableTypeFeature::active() ? 
+          InteractionRelation::factory()
+              ->createMany(
+                  [
+                      ['name' => 'Self', 'interactable_type' => 'student'],
+                      ['name' => 'Parent', 'interactable_type' => 'student'],
+                      ['name' => 'Spouse', 'interactable_type' => 'student'],
+                      ['name' => 'Sibling', 'interactable_type' => 'student'],
+                      ['name' => 'Other', 'interactable_type' => 'student'],
+                      ['name' => 'Self', 'interactable_type' => 'prospect'],
+                      ['name' => 'Parent', 'interactable_type' => 'prospect'],
+                      ['name' => 'Spouse', 'interactable_type' => 'prospect'],
+                      ['name' => 'Sibling', 'interactable_type' => 'prospect'],
+                      ['name' => 'Other', 'interactable_type' => 'prospect'],
+                  ]
+              ) :
+          InteractionRelation::factory()
+              ->createMany(
+                  [
+                      ['name' => 'Self'],
+                      ['name' => 'Parent'],
+                      ['name' => 'Spouse'],
+                      ['name' => 'Sibling'],
+                      ['name' => 'Other'],
+                  ]
+              );
     }
 }

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Advisingapp\Interaction\Enums;
+namespace AdvisingApp\Interaction\Enums;
 
 use Exception;
 use Filament\Support\Contracts\HasLabel;
