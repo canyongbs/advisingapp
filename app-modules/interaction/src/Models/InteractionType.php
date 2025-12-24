@@ -37,6 +37,7 @@
 namespace AdvisingApp\Interaction\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Advisingapp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
 use AdvisingApp\Interaction\Observers\InteractionTypesObserver;
 use App\Models\BaseModel;
@@ -58,6 +59,12 @@ class InteractionType extends BaseModel implements Auditable
     protected $fillable = [
         'name',
         'is_default',
+        'interactable_type',
+    ];
+
+    protected $casts = [
+      'is_default' => 'boolean',
+      'interactable_type' => InteractableType::class,
     ];
 
     /**
