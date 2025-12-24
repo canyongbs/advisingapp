@@ -44,7 +44,7 @@ class InteractionOutcomeSeeder extends Seeder
 {
     public function run(): void
     {
-        InteractableTypeFeature::active() ? 
+        InteractableTypeFeature::active() ?
           InteractionOutcome::factory()
               ->createMany(
                   [

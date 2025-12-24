@@ -44,7 +44,7 @@ class InteractionDriverSeeder extends Seeder
 {
     public function run(): void
     {
-        InteractableTypeFeature::active() ? 
+        InteractableTypeFeature::active() ?
           InteractionDriver::factory()
               ->createMany(
                   [

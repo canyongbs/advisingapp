@@ -44,7 +44,7 @@ class InteractionRelationSeeder extends Seeder
 {
     public function run(): void
     {
-        InteractableTypeFeature::active() ? 
+        InteractableTypeFeature::active() ?
           InteractionRelation::factory()
               ->createMany(
                   [
