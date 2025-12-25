@@ -49,6 +49,7 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\InteractableTypeFeature;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
@@ -101,6 +102,7 @@ class InteractionForm
                                 ->label('Case')
                                 ->titleAttribute('case_number'),
                         ])
+                        ->live()
                         ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
                     Fieldset::make('Confidentiality')
                         ->schema([
@@ -127,7 +129,11 @@ class InteractionForm
             Step::make('Details')
                 ->schema([
                     Select::make('interaction_initiative_id')
-                        ->relationship('initiative', 'name')
+                        ->relationship(
+                            'initiative',
+                            'name',
+                            fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable_type')) : $query //TODO: figure out how to actually read the type
+                        )
                         ->preload()
                         ->label('Initiative')
                         ->required(fn () => $settings->is_initiative_required)
@@ -140,7 +146,11 @@ class InteractionForm
                         )
                         ->exists((new InteractionInitiative())->getTable(), 'id'),
                     Select::make('interaction_driver_id')
-                        ->relationship('driver', 'name')
+                        ->relationship(
+                            'driver',
+                            'name',
+                            fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable.type')) : $query
+                        )
                         ->preload()
                         ->label('Driver')
                         ->required(fn () => $settings->is_driver_required)
@@ -170,7 +180,11 @@ class InteractionForm
                         ->visible(fn (): bool => Division::count() > 1)
                         ->dehydratedWhenHidden(),
                     Select::make('interaction_outcome_id')
-                        ->relationship('outcome', 'name')
+                        ->relationship(
+                            'outcome',
+                            'name',
+                            fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable.type')) : $query
+                        )
                         ->default(fn () => InteractionOutcome::query()
                             ->where('is_default', true)
                             ->first()
@@ -181,7 +195,11 @@ class InteractionForm
                         ->visible(fn () => $settings->is_outcome_enabled)
                         ->exists((new InteractionOutcome())->getTable(), 'id'),
                     Select::make('interaction_relation_id')
-                        ->relationship('relation', 'name')
+                        ->relationship(
+                            'relation',
+                            'name',
+                            fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable.type')) : $query
+                        )
                         ->default(fn () => InteractionRelation::query()
                             ->where('is_default', true)
                             ->first()
@@ -192,7 +210,11 @@ class InteractionForm
                         ->visible(fn () => $settings->is_relation_enabled)
                         ->exists((new InteractionRelation())->getTable(), 'id'),
                     Select::make('interaction_status_id')
-                        ->relationship('status', 'name')
+                        ->relationship(
+                            'status',
+                            'name',
+                            fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable.type')) : $query
+                        )
                         ->default(fn () => InteractionStatus::query()
                             ->where('is_default', true)
                             ->first()
@@ -203,7 +225,11 @@ class InteractionForm
                         ->visible(fn () => $settings->is_status_enabled)
                         ->exists((new InteractionStatus())->getTable(), 'id'),
                     Select::make('interaction_type_id')
-                        ->relationship('type', 'name')
+                        ->relationship(
+                            'type',
+                            'name',
+                            fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable.type')) : $query
+                        )
                         ->preload()
                         ->default(
                             fn () => InteractionType::query()
