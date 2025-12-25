@@ -34,35 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+namespace App\Features;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Interaction\Enums\InteractableType;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Interaction\Observers\InteractionOutcomeObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @mixin IdeHelperInteractionOutcome
- */
-#[ObservedBy([InteractionOutcomeObserver::class])]
-class InteractionOutcome extends BaseModel implements Auditable
+class InteractableTypeFeature extends AbstractFeatureFlag
 {
-    use AuditableTrait;
-    use HasManyInteractions;
-    use SoftDeletes;
-
-    protected $fillable = [
-        'name',
-        'is_default',
-        'interactable_type',
-    ];
-
-    protected $casts = [
-        'is_default' => 'boolean',
-        'interactable_type' => InteractableType::class,
-    ];
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
 }

@@ -44,6 +44,7 @@ class InteractionRelationObserver
     {
         if ($interactionRelation->is_default) {
             InteractionRelation::query()
+                ->where('interactable_type', $interactionRelation->interactable_type)
                 ->where('is_default', true)
                 ->update(['is_default' => false]);
         }

@@ -87,6 +87,10 @@ class InteractionTypePolicy
 
     public function delete(Authenticatable $authenticatable, InteractionType $type): Response
     {
+        if ($type->interactions->count() > 0) {
+            return Response::deny("This type cannot be deleted because it is being used by {$type->interactions->count()} interaction(s).");
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'settings.*.delete',
             denyResponse: 'You do not have permission to delete this interaction type.'

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Interaction\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
 use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
 use AdvisingApp\Interaction\Observers\InteractionStatusObserver;
@@ -60,11 +61,13 @@ class InteractionStatus extends BaseModel implements Auditable
         'name',
         'color',
         'is_default',
+        'interactable_type',
     ];
 
     protected $casts = [
         'color' => InteractionStatusColorOptions::class,
         'is_default' => 'boolean',
+        'interactable_type' => InteractableType::class,
     ];
 
     /**
