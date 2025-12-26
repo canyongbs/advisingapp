@@ -34,7 +34,7 @@
 import { defaultConfig, plugin } from '@formkit/vue';
 import { createPinia } from 'pinia';
 import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import App from './App.vue';
+import App from './App.ce.vue';
 import config from './formkit.config.js';
 import styles from './widget.css?inline';
 
