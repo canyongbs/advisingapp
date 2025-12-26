@@ -509,7 +509,7 @@
                         />
                     </div>
 
-                    <div class="advisor flex-1 text-center md:text-left">
+                    <div class="flex-1 text-center md:text-left">
                         <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 title">
                             {{ advisor.name }}
                         </h1>
