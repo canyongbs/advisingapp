@@ -35,9 +35,7 @@
 <x-mail::layout :settings="$settings">
     {{-- Header --}}
     <x-slot:header>
-        <x-mail::header :url="config('app.url')" :settings="$settings">
-            {{ config('app.name') }}
-        </x-mail::header>
+        <x-mail::header :url="config('app.url')" :settings="$settings"></x-mail::header>
     </x-slot:header>
 
     {{-- Body --}}
