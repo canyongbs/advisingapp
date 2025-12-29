@@ -38,12 +38,17 @@ namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
 
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns\HasSharedFormConfiguration;
+use AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns\ValidatesProspectGenerationFields;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
 
 class CreateForm extends CreateRecord
 {
     use HasSharedFormConfiguration;
+    use ValidatesProspectGenerationFields {
+        ValidatesProspectGenerationFields::afterCreate insteadof HasSharedFormConfiguration;
+        ValidatesProspectGenerationFields::afterSave insteadof HasSharedFormConfiguration;
+    }
 
     protected static string $resource = FormResource::class;
 

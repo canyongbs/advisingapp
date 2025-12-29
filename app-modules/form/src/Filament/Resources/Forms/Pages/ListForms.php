@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Actions\DuplicateForm;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Models\Form;
@@ -107,15 +108,23 @@ class ListForms extends ListRecords
             Action::make('create')
                 ->label('New')
                 ->requiresConfirmation()
-                ->modalHeading('New form')
-                ->modalDescription('Before creating the form, please specify whether it requires authentication. This setting cannot be changed later.')
-                ->modalSubmitActionLabel('New form')
+                ->modalHeading('Create New Form')
+                ->modalDescription('Before creating your form, choose how people will access and submit it. These settings are permanent and cannot be changed later.')
+                ->modalSubmitActionLabel('Continue')
                 ->schema([
                     Toggle::make('is_authenticated')
                         ->label('Requires authentication')
-                        ->helperText('If enabled, only students and prospects can submit this form, and they must verify their email address first.'),
+                        ->helperText('If enabled, students and prospects must verify their email address before they can open and submit this form. When someone verifies their email, the form will automatically link their submission to their existing student or prospect record.'),
+                    Toggle::make('generate_prospects')
+                        ->label('Generate Prospects')
+                        ->helperText('If enabled, the system will check the primary email address submitted on the form. If it matches an existing student or prospect, the form submission will be linked to that record. If no match is found, a new prospect will be created automatically. Forms that generate prospects must include an email address field.')
+                        ->disabled(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm))
+                        ->hintIcon(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm) ? 'heroicon-m-lock-closed' : null),
                 ])
-                ->action(fn (array $data) => redirect(FormResource::getUrl('create', ['is_authenticated' => $data['is_authenticated']]))),
+                ->action(fn (array $data) => redirect(FormResource::getUrl('create', [
+                    'is_authenticated' => $data['is_authenticated'] ?? false,
+                    'generate_prospects' => $data['generate_prospects'] ?? false,
+                ]))),
         ];
     }
 }

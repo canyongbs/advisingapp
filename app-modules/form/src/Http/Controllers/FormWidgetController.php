@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Form\Http\Controllers;
 
+use AdvisingApp\Form\Actions\CreateProspectFromSubmission;
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidator;
 use AdvisingApp\Form\Actions\ProcessSubmissionField;
@@ -256,6 +257,7 @@ class FormWidgetController extends Controller
         Request $request,
         GenerateSubmissibleValidator $generateSubmissibleValidator,
         ProcessSubmissionField $processSubmissionField,
+        CreateProspectFromSubmission $createProspectFromSubmission,
         Form $form,
     ): JsonResponse {
         $authentication = $request->query('authentication');
@@ -329,6 +331,10 @@ class FormWidgetController extends Controller
                         $formFields,
                     );
                 }
+            }
+
+            if (! $form->is_authenticated && $form->generate_prospects && ! $submission->author) {
+                $createProspectFromSubmission($submission);
             }
 
             $submission->save();

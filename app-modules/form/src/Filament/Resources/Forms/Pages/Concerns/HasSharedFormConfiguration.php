@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Models\Form;
@@ -102,17 +101,16 @@ trait HasSharedFormConfiguration
                 ->columnSpanFull(),
             Toggle::make('is_authenticated')
                 ->label('Requires authentication')
-                ->helperText('If enabled, only students and prospects can submit this form, and they must verify their email address first.')
+                ->helperText('If enabled, students and prospects must verify their email address before they can open and submit this form.')
                 ->default((bool) request()->query('is_authenticated'))
                 ->disabled()
                 ->dehydrated(),
             Toggle::make('generate_prospects')
                 ->label('Generate Prospects')
-                ->helperText('If enabled, a request to submit by an unknown prospect will result in a new prospect being created.')
-                ->hidden(fn (Get $get) => ! $get('is_authenticated'))
-                ->disabled(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm))
-                ->hintIcon(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm) ? 'heroicon-m-lock-closed' : null)
-                ->dehydratedWhenHidden(),
+                ->helperText('If enabled, the system will check the primary email address submitted on the form and create a prospect if no match is found.')
+                ->default((bool) request()->query('generate_prospects'))
+                ->disabled()
+                ->dehydrated(),
             Toggle::make('is_wizard')
                 ->label('Multi-step form')
                 ->live()
@@ -142,7 +140,10 @@ trait HasSharedFormConfiguration
                         ->autocomplete(false)
                         ->columnSpanFull()
                         ->lazy(),
-                    $this->fieldBuilder(isAuthenticatedPath: '../../is_authenticated'),
+                    $this->fieldBuilder(
+                        isAuthenticatedPath: '../../is_authenticated',
+                        generateProspectsPath: '../../generate_prospects'
+                    ),
                 ])
                 ->addActionLabel('New step')
                 ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
@@ -164,10 +165,12 @@ trait HasSharedFormConfiguration
         ];
     }
 
-    public function fieldBuilder(string $isAuthenticatedPath = 'is_authenticated'): TiptapEditor
+    public function fieldBuilder(string $isAuthenticatedPath = 'is_authenticated', string $generateProspectsPath = 'generate_prospects'): TiptapEditor
     {
         return TiptapEditor::make('content')
-            ->blocks(fn (Get $get): array => FormFieldBlockRegistry::get($get($isAuthenticatedPath) ?? false))
+            ->blocks(fn (Get $get): array => FormFieldBlockRegistry::get(
+                ($get($isAuthenticatedPath) ?? false) || ($get($generateProspectsPath) ?? false)
+            ))
             ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
             ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()
