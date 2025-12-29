@@ -70,6 +70,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
 
+use function Sentry\logger;
+
 class InteractionForm
 {
     public static function configure(Schema $form): Schema
@@ -129,38 +131,50 @@ class InteractionForm
             Step::make('Details')
                 ->schema([
                     Select::make('interaction_initiative_id')
+                        ->reactive()
+                        // ->relationship(
+                        //     'initiative',
+                        //     'name',
+                        //     fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable_type')) : $query
+                        // )
                         ->relationship(
                             'initiative',
                             'name',
-                            fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable_type')) : $query //TODO: figure out how to actually read the type
+                            function (Builder $query, Get $get) {
+                                // logger()->info('LOOK HERE: ' . print_r($get('../*'), true));
+
+                                return InteractableTypeFeature::active() ? $query->where('interactable_type', $get('../interactable_type')) : $query;
+                                // return $query;
+                            } 
                         )
                         ->preload()
                         ->label('Initiative')
                         ->required(fn () => $settings->is_initiative_required)
                         ->visible(fn () => $settings->is_initiative_enabled)
-                        ->default(
-                            fn () => InteractionInitiative::query()
-                                ->where('is_default', true)
-                                ->first()
-                                ?->getKey()
-                        )
+                        // ->default(
+                        //     fn () => InteractionInitiative::query()
+                        //         ->where('is_default', true)
+                        //         ->first()
+                        //         ?->getKey()
+                        // )
                         ->exists((new InteractionInitiative())->getTable(), 'id'),
                     Select::make('interaction_driver_id')
+                        ->reactive()
                         ->relationship(
                             'driver',
                             'name',
-                            fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable.type')) : $query
+                            // fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable_type')) : $query
                         )
                         ->preload()
                         ->label('Driver')
                         ->required(fn () => $settings->is_driver_required)
                         ->visible(fn () => $settings->is_driver_enabled)
-                        ->default(
-                            fn () => InteractionDriver::query()
-                                ->where('is_default', true)
-                                ->first()
-                                ?->getKey()
-                        )
+                        // ->default(
+                        //     fn () => InteractionDriver::query()
+                        //         ->where('is_default', true)
+                        //         ->first()
+                        //         ?->getKey()
+                        // )
                         ->exists((new InteractionDriver())->getTable(), 'id'),
                     Select::make('division_id')
                         ->relationship('division', 'name')
@@ -180,63 +194,67 @@ class InteractionForm
                         ->visible(fn (): bool => Division::count() > 1)
                         ->dehydratedWhenHidden(),
                     Select::make('interaction_outcome_id')
+                        ->reactive()
                         ->relationship(
                             'outcome',
                             'name',
-                            fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable.type')) : $query
+                            // fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable_type')) : $query
                         )
-                        ->default(fn () => InteractionOutcome::query()
-                            ->where('is_default', true)
-                            ->first()
-                            ?->getKey())
+                        // ->default(fn () => InteractionOutcome::query()
+                        //     ->where('is_default', true)
+                        //     ->first()
+                        //     ?->getKey())
                         ->preload()
                         ->label('Outcome')
                         ->required(fn () => $settings->is_outcome_required)
                         ->visible(fn () => $settings->is_outcome_enabled)
                         ->exists((new InteractionOutcome())->getTable(), 'id'),
                     Select::make('interaction_relation_id')
+                        ->reactive()
                         ->relationship(
                             'relation',
                             'name',
-                            fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable.type')) : $query
+                            // fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable_type')) : $query
                         )
-                        ->default(fn () => InteractionRelation::query()
-                            ->where('is_default', true)
-                            ->first()
-                            ?->getKey())
+                        // ->default(fn () => InteractionRelation::query()
+                        //     ->where('is_default', true)
+                        //     ->first()
+                        //     ?->getKey())
                         ->preload()
                         ->label('Relation')
                         ->required(fn () => $settings->is_relation_required)
                         ->visible(fn () => $settings->is_relation_enabled)
                         ->exists((new InteractionRelation())->getTable(), 'id'),
                     Select::make('interaction_status_id')
+                        ->reactive()
                         ->relationship(
                             'status',
                             'name',
-                            fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable.type')) : $query
+                            // fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable_type')) : $query
                         )
-                        ->default(fn () => InteractionStatus::query()
-                            ->where('is_default', true)
-                            ->first()
-                            ?->getKey())
+                        // ->default(fn () => InteractionStatus::query()
+                        //     ->where('is_default', true)
+                        //     ->first()
+                        //     ?->getKey())
                         ->preload()
                         ->label('Status')
                         ->required(fn () => $settings->is_status_required)
                         ->visible(fn () => $settings->is_status_enabled)
                         ->exists((new InteractionStatus())->getTable(), 'id'),
                     Select::make('interaction_type_id')
+                        ->reactive()
                         ->relationship(
                             'type',
                             'name',
-                            fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable.type')) : $query
+                            // fn (Builder $query, Get $get) => InteractableTypeFeature::active() ? $query->where('interactable_type', $get('interactable_type')) : $query
                         )
                         ->preload()
-                        ->default(
-                            fn () => InteractionType::query()
-                                ->where('is_default', true)
-                                ->first()
-                                ?->getKey()
-                        )
+                        // ->default(
+                        //     fn () => InteractionType::query()
+                        //         ->where('is_default', true)
+                        //         ->first()
+                        //         ?->getKey()
+                        // )
                         ->label('Type')
                         ->required(fn () => $settings->is_type_required)
                         ->visible(fn () => $settings->is_type_enabled)
