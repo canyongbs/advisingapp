@@ -145,7 +145,7 @@ class InteractionForm
 
                                 return InteractableTypeFeature::active() ? $query->where('interactable_type', $get('../interactable_type')) : $query;
                                 // return $query;
-                            } 
+                            }
                         )
                         ->preload()
                         ->label('Initiative')
