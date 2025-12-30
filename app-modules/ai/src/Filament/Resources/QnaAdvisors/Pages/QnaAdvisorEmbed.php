@@ -41,10 +41,12 @@ use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Form\Rules\IsDomain;
 use App\Features\QnaAdvisorCardViewFeature;
+use App\Features\QnaAdvisorThemeFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
@@ -109,6 +111,15 @@ class QnaAdvisorEmbed extends EditRecord
                             ->label('Generate Prospects')
                             ->helperText('If enabled, the QnA Advisor will allow for the registration of an unrecognized prospect.')
                             ->hidden(fn (Get $get) => ! $get('is_embed_enabled') || ! $get('is_requires_authentication_enabled')),
+                        Radio::make('default_theme')
+                            ->label('Theme')
+                            ->options([
+                                'light' => 'Light',
+                                'dark' => 'Dark',
+                            ])
+                            ->default('light')
+                            ->visible(fn (Get $get) => QnaAdvisorThemeFeature::active() && $get('is_embed_enabled'))
+                            ->inline(),
                         Grid::make()
                             ->schema([
                                 ColorPicker::make('title_text_color')
