@@ -42,14 +42,14 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('ai_threads', function (Blueprint $table) {
-                $table->string('locked_reason')->nullable();
-            });
+            $table->string('locked_reason')->nullable();
+        });
     }
 
     public function down(): void
     {
         Schema::table('ai_threads', function (Blueprint $table) {
-                $table->dropColumn('locked_reason');
-            });
+            $table->dropColumn('locked_reason');
+        });
     }
 };
