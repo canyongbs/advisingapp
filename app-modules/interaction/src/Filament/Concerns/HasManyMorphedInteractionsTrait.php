@@ -36,10 +36,12 @@
 
 namespace AdvisingApp\Interaction\Filament\Concerns;
 
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Schemas\InteractionForm;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\CarbonInterface;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -177,7 +179,15 @@ trait HasManyMorphedInteractionsTrait
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->steps(InteractionForm::getSteps())
+                    ->steps(function () {
+                        assert(
+                            $this->getOwnerRecord() instanceof Student ||
+                            $this->getOwnerRecord() instanceof Prospect ||
+                            $this->getOwnerRecord() instanceof CaseModel
+                        );
+
+                        return InteractionForm::getSteps($this->getOwnerRecord());
+                    })
                     ->authorize(function () {
                         $ownerRecord = $this->getOwnerRecord();
 
@@ -193,7 +203,15 @@ trait HasManyMorphedInteractionsTrait
                             ->cancelParentActions(),
                     ]),
                 EditAction::make()
-                    ->steps(InteractionForm::getSteps())
+                    ->steps(function () {
+                        assert(
+                            $this->getOwnerRecord() instanceof Student ||
+                            $this->getOwnerRecord() instanceof Prospect ||
+                            $this->getOwnerRecord() instanceof CaseModel
+                        );
+
+                        return InteractionForm::getSteps($this->getOwnerRecord());
+                    })
                     ->modalHeading('Edit Interaction'),
             ])
             ->filters([
