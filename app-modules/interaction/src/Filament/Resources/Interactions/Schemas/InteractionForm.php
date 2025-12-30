@@ -86,7 +86,7 @@ class InteractionForm
 
         $type = $ownerRecord->getMorphClass();
 
-        if($ownerRecord instanceof CaseModel) {
+        if ($ownerRecord instanceof CaseModel) {
             $type = $ownerRecord->respondent->getMorphClass();
         }
 
