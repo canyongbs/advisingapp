@@ -47,7 +47,7 @@
 //                // Setup data before migration
 //
 //                // Run the migration
-//                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/service-management/database/migrations/2025_09_26_165527_add_created_by_columns_and_remove_direction_in_service_request_updates_table.php']);
+//                $migrate = Artisan::call('migrate', ['--path' => 'app/database/migrations/2025_01_01_165527_tmp_data_do_a_thing.php']);
 //                // Confirm migration ran successfully
 //                expect($migrate)->toBe(Command::SUCCESS);
 //
