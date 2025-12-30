@@ -52,8 +52,6 @@
 
     {{-- Footer --}}
     <x-slot:footer>
-        <x-mail::footer>
-            This email was sent using Advising App™. <br /> <br /> © 2016-{{ date('Y') }} Canyon GBS LLC. All Rights Reserved. Canyon GBS™ and Advising App™ are trademarks of Canyon GBS LLC.
-        </x-mail::footer>
+        <x-mail::footer></x-mail::footer>
     </x-slot:footer>
 </x-mail::layout>
