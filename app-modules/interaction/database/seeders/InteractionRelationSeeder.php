@@ -44,7 +44,6 @@ class InteractionRelationSeeder extends Seeder
 {
     public function run(): void
     {
-        InteractableTypeFeature::active() ?
           InteractionRelation::factory()
               ->createMany(
                   [
@@ -58,16 +57,6 @@ class InteractionRelationSeeder extends Seeder
                       ['name' => 'Spouse', 'interactable_type' => 'prospect'],
                       ['name' => 'Sibling', 'interactable_type' => 'prospect'],
                       ['name' => 'Other', 'interactable_type' => 'prospect'],
-                  ]
-              ) :
-          InteractionRelation::factory()
-              ->createMany(
-                  [
-                      ['name' => 'Self'],
-                      ['name' => 'Parent'],
-                      ['name' => 'Spouse'],
-                      ['name' => 'Sibling'],
-                      ['name' => 'Other'],
                   ]
               );
     }
