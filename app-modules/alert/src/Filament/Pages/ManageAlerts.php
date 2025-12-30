@@ -37,7 +37,6 @@
 namespace AdvisingApp\Alert\Filament\Pages;
 
 use AdvisingApp\Alert\Models\AlertConfiguration;
-use App\Features\AlertConfigurationFeature;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Filament\Forms\Components\Heading;
 use App\Filament\Forms\Components\Paragraph;
@@ -85,7 +84,7 @@ class ManageAlerts extends Page implements HasForms
 
         assert($user instanceof User);
 
-        return AlertConfigurationFeature::active() && $user->can(['settings.view-any']);
+        return $user->can(['settings.view-any']);
     }
 
     public function mount(): void
@@ -169,10 +168,6 @@ class ManageAlerts extends Page implements HasForms
      */
     protected function getFormData(): array
     {
-        if (! AlertConfigurationFeature::active()) {
-            return [];
-        }
-
         $data = [];
 
         $alertConfigurations = AlertConfiguration::with('configuration')->orderBy('id')->get();
@@ -201,10 +196,6 @@ class ManageAlerts extends Page implements HasForms
      */
     protected function getFormSchema(): array
     {
-        if (! AlertConfigurationFeature::active()) {
-            return [];
-        }
-
         $alertConfigurations = AlertConfiguration::with('configuration')->orderBy('id')->get();
         $innerSections = [];
 

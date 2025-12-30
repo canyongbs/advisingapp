@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiThreadLockedReason;
 use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
 use AdvisingApp\Ai\Models\AiAssistant;
-use App\Features\LockAiThreadsAfterAssistantUpdateFeature;
 
 class AiAssistantObserver
 {
@@ -59,7 +58,7 @@ class AiAssistantObserver
 
     public function updated(AiAssistant $assistant): void
     {
-        if (LockAiThreadsAfterAssistantUpdateFeature::active() && $assistant->wasChanged('instructions')) {
+        if ($assistant->wasChanged('instructions')) {
             $assistant->threads()->whereHas('messages')->update([
                 'locked_at' => now(),
                 'locked_reason' => AiThreadLockedReason::AssistantUpdated,

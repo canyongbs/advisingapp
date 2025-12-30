@@ -38,7 +38,6 @@ use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
 use AdvisingApp\Alert\Configurations\CumulativeGpaAlertConfiguration;
 use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
 use AdvisingApp\Alert\Configurations\SemesterGpaAlertConfiguration;
-use App\Features\AlertConfigurationFeature;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
@@ -145,8 +144,6 @@ return new class () extends Migration {
                     'updated_at' => now(),
                 ]);
             }
-
-            AlertConfigurationFeature::activate();
         });
     }
 
@@ -168,8 +165,6 @@ return new class () extends Migration {
             }
 
             DB::table('alert_configurations')->truncate();
-
-            AlertConfigurationFeature::deactivate();
         });
     }
 
