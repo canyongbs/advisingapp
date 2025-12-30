@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd" bootstrap="vendor/autoload.php" colors="true" failOnDeprecation="true">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd" bootstrap="vendor/autoload.php"
+         colors="true" failOnDeprecation="true">
     <testsuites>
         <testsuite name="Landlord">
             <directory suffix="Test.php">./tests/Landlord</directory>
@@ -8,6 +10,7 @@
         <testsuite name="Tenant">
             <directory suffix="Test.php">./tests/Tenant</directory>
             <directory suffix="Test.php">./app-modules/*/tests/Tenant</directory>
+            <file>./tests/TenantMigrationTests.php</file>
         </testsuite>
         <testsuite name="Modules">
             <directory suffix="Test.php">./app-modules/*/tests</directory>
