@@ -37,27 +37,26 @@
 namespace AdvisingApp\Interaction\Database\Seeders;
 
 use AdvisingApp\Interaction\Models\InteractionOutcome;
-use App\Features\InteractableTypeFeature;
 use Illuminate\Database\Seeder;
 
 class InteractionOutcomeSeeder extends Seeder
 {
     public function run(): void
     {
-          InteractionOutcome::factory()
-              ->createMany(
-                  [
-                      ['name' => 'Does Not Apply', 'interactable_type' => 'student'],
-                      ['name' => 'Live Contact', 'interactable_type' => 'student'],
-                      ['name' => 'Voicemail', 'interactable_type' => 'student'],
-                      ['name' => 'No Voicemail', 'interactable_type' => 'student'],
-                      ['name' => 'Dropped Call', 'interactable_type' => 'student'],
-                      ['name' => 'Does Not Apply', 'interactable_type' => 'prospect'],
-                      ['name' => 'Live Contact', 'interactable_type' => 'prospect'],
-                      ['name' => 'Voicemail', 'interactable_type' => 'prospect'],
-                      ['name' => 'No Voicemail', 'interactable_type' => 'prospect'],
-                      ['name' => 'Dropped Call', 'interactable_type' => 'prospect'],
-                  ]
-              );
+        InteractionOutcome::factory()
+            ->createMany(
+                [
+                    ['name' => 'Does Not Apply', 'interactable_type' => 'student'],
+                    ['name' => 'Live Contact', 'interactable_type' => 'student'],
+                    ['name' => 'Voicemail', 'interactable_type' => 'student'],
+                    ['name' => 'No Voicemail', 'interactable_type' => 'student'],
+                    ['name' => 'Dropped Call', 'interactable_type' => 'student'],
+                    ['name' => 'Does Not Apply', 'interactable_type' => 'prospect'],
+                    ['name' => 'Live Contact', 'interactable_type' => 'prospect'],
+                    ['name' => 'Voicemail', 'interactable_type' => 'prospect'],
+                    ['name' => 'No Voicemail', 'interactable_type' => 'prospect'],
+                    ['name' => 'Dropped Call', 'interactable_type' => 'prospect'],
+                ]
+            );
     }
 }

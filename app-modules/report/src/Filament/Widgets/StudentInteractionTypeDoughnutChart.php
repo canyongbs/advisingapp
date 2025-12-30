@@ -137,21 +137,21 @@ class StudentInteractionTypeDoughnutChart extends ChartReportWidget
     {
         $query = InteractableTypeFeature::active() ?
             InteractionType::where('interactable_type', InteractableType::Student)
-            ->withCount([
-                'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId) {
-                    $query
-                        ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId) {
-                            $query->when(
-                                $groupId,
-                                fn (Builder $query) => $this->groupFilter($query, $groupId)
+                ->withCount([
+                    'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId) {
+                        $query
+                            ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId) {
+                                $query->when(
+                                    $groupId,
+                                    fn (Builder $query) => $this->groupFilter($query, $groupId)
+                                );
+                            })
+                            ->when(
+                                $startDate && $endDate,
+                                fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                             );
-                        })
-                        ->when(
-                            $startDate && $endDate,
-                            fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
-                        );
-                },
-            ])->get(['id', 'name']) :
+                    },
+                ])->get(['id', 'name']) :
             InteractionType::withCount([
                 'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId) {
                     $query

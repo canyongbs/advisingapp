@@ -133,40 +133,40 @@ class StudentInteractionStatusPolarAreaChart extends ChartReportWidget
         return InteractableTypeFeature::active() ?
             InteractionStatus::where('interactable_type', InteractableType::Student)
                 ->withCount([
-                'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId) {
-                    $query
-                        ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId) {
-                            $query->when(
-                                $groupId,
-                                fn (Builder $query) => $this->groupFilter($query, $groupId)
-                            );
-                        })
-                        ->when($startDate && $endDate, function (Builder $query) use ($startDate, $endDate) {
-                            $query->whereBetween('created_at', [$startDate, $endDate]);
-                        });
-                },
-            ])->get(['id', 'name'])->map(function (InteractionStatus $interactionStatus) {
-                $interactionStatus['bg_color'] = $interactionStatus->color->getRgbString();
+                    'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId) {
+                        $query
+                            ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId) {
+                                $query->when(
+                                    $groupId,
+                                    fn (Builder $query) => $this->groupFilter($query, $groupId)
+                                );
+                            })
+                            ->when($startDate && $endDate, function (Builder $query) use ($startDate, $endDate) {
+                                $query->whereBetween('created_at', [$startDate, $endDate]);
+                            });
+                    },
+                ])->get(['id', 'name'])->map(function (InteractionStatus $interactionStatus) {
+                    $interactionStatus['bg_color'] = $interactionStatus->color->getRgbString();
 
-                return $interactionStatus;
-            }) :
+                    return $interactionStatus;
+                }) :
             InteractionStatus::withCount([
-                'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId) {
-                    $query
-                        ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId) {
-                            $query->when(
-                                $groupId,
-                                fn (Builder $query) => $this->groupFilter($query, $groupId)
-                            );
-                        })
-                        ->when($startDate && $endDate, function (Builder $query) use ($startDate, $endDate) {
-                            $query->whereBetween('created_at', [$startDate, $endDate]);
-                        });
-                },
-            ])->get(['id', 'name'])->map(function (InteractionStatus $interactionStatus) {
-                $interactionStatus['bg_color'] = $interactionStatus->color->getRgbString();
+                    'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId) {
+                        $query
+                            ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId) {
+                                $query->when(
+                                    $groupId,
+                                    fn (Builder $query) => $this->groupFilter($query, $groupId)
+                                );
+                            })
+                            ->when($startDate && $endDate, function (Builder $query) use ($startDate, $endDate) {
+                                $query->whereBetween('created_at', [$startDate, $endDate]);
+                            });
+                    },
+                ])->get(['id', 'name'])->map(function (InteractionStatus $interactionStatus) {
+                    $interactionStatus['bg_color'] = $interactionStatus->color->getRgbString();
 
-                return $interactionStatus;
-            });
+                    return $interactionStatus;
+                });
     }
 }

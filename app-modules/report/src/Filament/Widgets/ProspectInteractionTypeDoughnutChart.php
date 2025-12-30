@@ -137,20 +137,20 @@ class ProspectInteractionTypeDoughnutChart extends ChartReportWidget
     {
         $query = InteractableTypeFeature::active() ?
             InteractionType::where('interactable_type', InteractableType::Prospect)
-            ->withCount([
-                'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId) {
-                    $query->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($groupId) {
-                        $query->when(
-                            $groupId,
-                            fn (Builder $query) => $this->groupFilter($query, $groupId)
-                        );
-                    })
-                        ->when(
-                            $startDate && $endDate,
-                            fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
-                        );
-                },
-            ])->get(['id', 'name']) :
+                ->withCount([
+                    'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId) {
+                        $query->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($groupId) {
+                            $query->when(
+                                $groupId,
+                                fn (Builder $query) => $this->groupFilter($query, $groupId)
+                            );
+                        })
+                            ->when(
+                                $startDate && $endDate,
+                                fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
+                            );
+                    },
+                ])->get(['id', 'name']) :
             InteractionType::withCount([
                 'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId) {
                     $query->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($groupId) {
