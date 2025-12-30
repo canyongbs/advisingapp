@@ -72,90 +72,90 @@ use Symfony\Component\Console\Command\Command;
 
 describe('2025_12_24_002713_data_add_interactable_type_to_interactions', function () {
     it('properly duplicates existing meta interaction model records', function () {
-      isolatedMigration(
-        '2025_12_24_002713_data_add_interactable_type_to_interactions',
-        function() {
-          //Setup data
-          $interactionDriver = InteractionDriver::factory()->create();
-          $interactionInitiative = InteractionInitiative::factory()->create();
-          $interactionOutcome = InteractionOutcome::factory()->create();
-          $interactionRelation = InteractionRelation::factory()->create();
-          $interactionStatus = InteractionStatus::factory()->create();
-          $interactionType = InteractionType::factory()->create();
+        isolatedMigration(
+            '2025_12_24_002713_data_add_interactable_type_to_interactions',
+            function () {
+                //Setup data
+                $interactionDriver = InteractionDriver::factory()->create();
+                $interactionInitiative = InteractionInitiative::factory()->create();
+                $interactionOutcome = InteractionOutcome::factory()->create();
+                $interactionRelation = InteractionRelation::factory()->create();
+                $interactionStatus = InteractionStatus::factory()->create();
+                $interactionType = InteractionType::factory()->create();
 
-          expect(InteractionDriver::count())->toBe(1);
-          expect(InteractionInitiative::count())->toBe(1);
-          expect(InteractionOutcome::count())->toBe(1);
-          expect(InteractionRelation::count())->toBe(1);
-          expect(InteractionStatus::count())->toBe(1);
-          expect(InteractionType::count())->toBe(1);
+                expect(InteractionDriver::count())->toBe(1);
+                expect(InteractionInitiative::count())->toBe(1);
+                expect(InteractionOutcome::count())->toBe(1);
+                expect(InteractionRelation::count())->toBe(1);
+                expect(InteractionStatus::count())->toBe(1);
+                expect(InteractionType::count())->toBe(1);
 
-          $student = Student::factory()->create();
-          $prospect = Prospect::factory()->create();
+                $student = Student::factory()->create();
+                $prospect = Prospect::factory()->create();
 
-          $studentInteraction = Interaction::factory()->for($student, 'interactable')->create([
-            'interaction_driver_id' => $interactionDriver,
-            'interaction_initiative_id' => $interactionInitiative,
-            'interaction_outcome_id' => $interactionOutcome,
-            'interaction_relation_id' => $interactionRelation,
-            'interaction_status_id' => $interactionStatus,
-            'interaction_type_id' => $interactionType,
-          ]);
-          
-          $prospectInteraction = Interaction::factory()->for($prospect, 'interactable')->create([
-            'interaction_driver_id' => $interactionDriver,
-            'interaction_initiative_id' => $interactionInitiative,
-            'interaction_outcome_id' => $interactionOutcome,
-            'interaction_relation_id' => $interactionRelation,
-            'interaction_status_id' => $interactionStatus,
-            'interaction_type_id' => $interactionType,
-          ]);
+                $studentInteraction = Interaction::factory()->for($student, 'interactable')->create([
+                    'interaction_driver_id' => $interactionDriver,
+                    'interaction_initiative_id' => $interactionInitiative,
+                    'interaction_outcome_id' => $interactionOutcome,
+                    'interaction_relation_id' => $interactionRelation,
+                    'interaction_status_id' => $interactionStatus,
+                    'interaction_type_id' => $interactionType,
+                ]);
 
-          //Run the migration
-          $migrate = Artisan::call('migrate', ['--path' => 'app-modules/interaction/database/migrations/2025_12_24_002713_data_add_interactable_type_to_interactions.php']);
+                $prospectInteraction = Interaction::factory()->for($prospect, 'interactable')->create([
+                    'interaction_driver_id' => $interactionDriver,
+                    'interaction_initiative_id' => $interactionInitiative,
+                    'interaction_outcome_id' => $interactionOutcome,
+                    'interaction_relation_id' => $interactionRelation,
+                    'interaction_status_id' => $interactionStatus,
+                    'interaction_type_id' => $interactionType,
+                ]);
 
-          //Confirm migration successful
-          expect($migrate)->toBe(Command::SUCCESS);
+                //Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/interaction/database/migrations/2025_12_24_002713_data_add_interactable_type_to_interactions.php']);
 
-          //Assert records duplicated
-          expect(InteractionDriver::count())->toBe(2);
-          expect(InteractionInitiative::count())->toBe(2);
-          expect(InteractionOutcome::count())->toBe(2);
-          expect(InteractionRelation::count())->toBe(2);
-          expect(InteractionStatus::count())->toBe(2);
-          expect(InteractionType::count())->toBe(2);
+                //Confirm migration successful
+                expect($migrate)->toBe(Command::SUCCESS);
 
-          //Assert originals are student records
-          expect($interactionDriver->interactable_type)->toBe('student');
-          expect($interactionInitiative->interactable_type)->toBe('student');
-          expect($interactionOutcome->interactable_type)->toBe('student');
-          expect($interactionRelation->interactable_type)->toBe('student');
-          expect($interactionStatus->interactable_type)->toBe('student');
-          expect($interactionType->interactable_type)->toBe('student');
+                //Assert records duplicated
+                expect(InteractionDriver::count())->toBe(2);
+                expect(InteractionInitiative::count())->toBe(2);
+                expect(InteractionOutcome::count())->toBe(2);
+                expect(InteractionRelation::count())->toBe(2);
+                expect(InteractionStatus::count())->toBe(2);
+                expect(InteractionType::count())->toBe(2);
 
-          //Assert duplicates are prospect records
-          expect(InteractionDriver::where('id', '!=', $interactionDriver->id)->first()->interactable_type)->toBe('prospect');
-          expect(InteractionInitiative::where('id', '!=', $interactionInitiative->id)->first()->interactable_type)->toBe('prospect');
-          expect(InteractionOutcome::where('id', '!=', $interactionOutcome->id)->first()->interactable_type)->toBe('prospect');
-          expect(InteractionRelation::where('id', '!=', $interactionRelation->id)->first()->interactable_type)->toBe('prospect');
-          expect(InteractionStatus::where('id', '!=', $interactionStatus->id)->first()->interactable_type)->toBe('prospect');
-          expect(InteractionType::where('id', '!=', $interactionType->id)->first()->interactable_type)->toBe('prospect');
+                //Assert originals are student records
+                expect($interactionDriver->interactable_type)->toBe('student');
+                expect($interactionInitiative->interactable_type)->toBe('student');
+                expect($interactionOutcome->interactable_type)->toBe('student');
+                expect($interactionRelation->interactable_type)->toBe('student');
+                expect($interactionStatus->interactable_type)->toBe('student');
+                expect($interactionType->interactable_type)->toBe('student');
 
-          //Assert interactions now reference correct models
-          expect($studentInteraction->interaction_driver_id)->toBe($interactionDriver->id);
-          expect($studentInteraction->interaction_initiative_id)->toBe($interactionInitiative->id);
-          expect($studentInteraction->interaction_outcome_id)->toBe($interactionOutcome->id);
-          expect($studentInteraction->interaction_relation_id)->toBe($interactionRelation->id);
-          expect($studentInteraction->interaction_status_id)->toBe($interactionStatus->id);
-          expect($studentInteraction->interaction_type_id)->toBe($interactionType->id);
-          
-          expect($prospectInteraction->interaction_driver_id)->not()->toBe($interactionDriver->id);
-          expect($prospectInteraction->interaction_initiative_id)->not()->toBe($interactionInitiative->id);
-          expect($prospectInteraction->interaction_outcome_id)->not()->toBe($interactionOutcome->id);
-          expect($prospectInteraction->interaction_relation_id)->not()->toBe($interactionRelation->id);
-          expect($prospectInteraction->interaction_status_id)->not()->toBe($interactionStatus->id);
-          expect($prospectInteraction->interaction_type_id)->not()->toBe($interactionType->id);
-        }
-      );
+                //Assert duplicates are prospect records
+                expect(InteractionDriver::where('id', '!=', $interactionDriver->id)->first()->interactable_type)->toBe('prospect');
+                expect(InteractionInitiative::where('id', '!=', $interactionInitiative->id)->first()->interactable_type)->toBe('prospect');
+                expect(InteractionOutcome::where('id', '!=', $interactionOutcome->id)->first()->interactable_type)->toBe('prospect');
+                expect(InteractionRelation::where('id', '!=', $interactionRelation->id)->first()->interactable_type)->toBe('prospect');
+                expect(InteractionStatus::where('id', '!=', $interactionStatus->id)->first()->interactable_type)->toBe('prospect');
+                expect(InteractionType::where('id', '!=', $interactionType->id)->first()->interactable_type)->toBe('prospect');
+
+                //Assert interactions now reference correct models
+                expect($studentInteraction->interaction_driver_id)->toBe($interactionDriver->id);
+                expect($studentInteraction->interaction_initiative_id)->toBe($interactionInitiative->id);
+                expect($studentInteraction->interaction_outcome_id)->toBe($interactionOutcome->id);
+                expect($studentInteraction->interaction_relation_id)->toBe($interactionRelation->id);
+                expect($studentInteraction->interaction_status_id)->toBe($interactionStatus->id);
+                expect($studentInteraction->interaction_type_id)->toBe($interactionType->id);
+
+                expect($prospectInteraction->interaction_driver_id)->not()->toBe($interactionDriver->id);
+                expect($prospectInteraction->interaction_initiative_id)->not()->toBe($interactionInitiative->id);
+                expect($prospectInteraction->interaction_outcome_id)->not()->toBe($interactionOutcome->id);
+                expect($prospectInteraction->interaction_relation_id)->not()->toBe($interactionRelation->id);
+                expect($prospectInteraction->interaction_status_id)->not()->toBe($interactionStatus->id);
+                expect($prospectInteraction->interaction_type_id)->not()->toBe($interactionType->id);
+            }
+        );
     });
 });
