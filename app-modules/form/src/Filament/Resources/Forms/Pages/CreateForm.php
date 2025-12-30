@@ -45,10 +45,7 @@ use Filament\Schemas\Schema;
 class CreateForm extends CreateRecord
 {
     use HasSharedFormConfiguration;
-    use ValidatesProspectGenerationFields {
-        ValidatesProspectGenerationFields::afterCreate insteadof HasSharedFormConfiguration;
-        ValidatesProspectGenerationFields::afterSave insteadof HasSharedFormConfiguration;
-    }
+    use ValidatesProspectGenerationFields;
 
     protected static string $resource = FormResource::class;
 

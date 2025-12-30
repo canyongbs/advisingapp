@@ -160,16 +160,6 @@ trait ValidatesProspectGenerationFields
         }
     }
 
-    protected function afterCreate(): void
-    {
-        $this->clearFormContentForWizard();
-    }
-
-    protected function afterSave(): void
-    {
-        $this->clearFormContentForWizard();
-    }
-
     /**
      * @param array<int, mixed> $content
      *

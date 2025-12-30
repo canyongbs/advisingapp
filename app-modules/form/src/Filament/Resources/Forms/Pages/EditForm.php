@@ -47,10 +47,7 @@ use Filament\Schemas\Schema;
 class EditForm extends EditRecord
 {
     use HasSharedFormConfiguration;
-    use ValidatesProspectGenerationFields {
-        ValidatesProspectGenerationFields::afterCreate insteadof HasSharedFormConfiguration;
-        ValidatesProspectGenerationFields::afterSave insteadof HasSharedFormConfiguration;
-    }
+    use ValidatesProspectGenerationFields;
     use EditPageRedirection;
 
     protected static string $resource = FormResource::class;
