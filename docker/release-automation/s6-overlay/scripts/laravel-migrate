@@ -26,8 +26,6 @@ fi
 
 if [ "${TENANT_MIGRATE:="true"}" == "true" ]; then
   output=$(s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" tenants:artisan "migrate --database=tenant --force --isolated" 2>&1)
-
-  output=$(s6-setuidgid webuser php "$WEBUSER_HOME/artisan" tenants:artisan "migrate --database=tenant --force --isolated" 2>&1)
   exit_code=$?
 
   echo "$output"
