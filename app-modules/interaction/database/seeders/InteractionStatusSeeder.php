@@ -44,7 +44,6 @@ class InteractionStatusSeeder extends Seeder
 {
     public function run(): void
     {
-        InteractableTypeFeature::active() ?
           InteractionStatus::factory()
               ->createMany(
                   [
@@ -54,14 +53,6 @@ class InteractionStatusSeeder extends Seeder
                       ['name' => 'Planned', 'interactable_type' => 'prospect'],
                       ['name' => 'Held', 'interactable_type' => 'prospect'],
                       ['name' => 'Not Held', 'interactable_type' => 'prospect'],
-                  ]
-              ) :
-          InteractionStatus::factory()
-              ->createMany(
-                  [
-                      ['name' => 'Planned'],
-                      ['name' => 'Held'],
-                      ['name' => 'Not Held'],
                   ]
               );
     }

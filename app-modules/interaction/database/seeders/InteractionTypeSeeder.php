@@ -44,7 +44,6 @@ class InteractionTypeSeeder extends Seeder
 {
     public function run(): void
     {
-        InteractableTypeFeature::active() ?
           InteractionType::factory()
               ->createMany(
                   [
@@ -62,18 +61,6 @@ class InteractionTypeSeeder extends Seeder
                       ['name' => 'Virtual Meeting', 'interactable_type' => 'prospect'],
                       ['name' => 'Email (Outside Advising App)', 'interactable_type' => 'prospect'],
                       ['name' => 'Postal Mail', 'interactable_type' => 'prospect'],
-                  ]
-              ) :
-          InteractionType::factory()
-              ->createMany(
-                  [
-                      ['name' => 'Phone'],
-                      ['name' => 'Live Chat'],
-                      ['name' => 'SMS (Outside Advising App)'],
-                      ['name' => 'In-Person'],
-                      ['name' => 'Virtual Meeting'],
-                      ['name' => 'Email (Outside Advising App)'],
-                      ['name' => 'Postal Mail'],
                   ]
               );
     }

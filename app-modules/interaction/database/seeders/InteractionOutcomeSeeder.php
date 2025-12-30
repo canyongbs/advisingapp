@@ -44,7 +44,6 @@ class InteractionOutcomeSeeder extends Seeder
 {
     public function run(): void
     {
-        InteractableTypeFeature::active() ?
           InteractionOutcome::factory()
               ->createMany(
                   [
@@ -58,16 +57,6 @@ class InteractionOutcomeSeeder extends Seeder
                       ['name' => 'Voicemail', 'interactable_type' => 'prospect'],
                       ['name' => 'No Voicemail', 'interactable_type' => 'prospect'],
                       ['name' => 'Dropped Call', 'interactable_type' => 'prospect'],
-                  ]
-              ) :
-          InteractionOutcome::factory()
-              ->createMany(
-                  [
-                      ['name' => 'Does Not Apply'],
-                      ['name' => 'Live Contact'],
-                      ['name' => 'Voicemail'],
-                      ['name' => 'No Voicemail'],
-                      ['name' => 'Dropped Call'],
                   ]
               );
     }
