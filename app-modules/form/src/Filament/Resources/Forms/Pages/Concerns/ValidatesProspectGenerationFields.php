@@ -38,64 +38,102 @@ namespace AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns;
 
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableNameFormFieldBlock;
+use Closure;
 use FilamentTiptapEditor\TiptapEditor;
-use Illuminate\Validation\ValidationException;
 
 trait ValidatesProspectGenerationFields
 {
-    protected function beforeCreate(): void
+    public function validateNormalFormFromRules(Closure $fail): void
     {
-        $this->validateProspectGenerationRequirements();
-    }
+        $contentComponent = $this->form->getComponent('content');
 
-    protected function beforeSave(): void
-    {
-        $this->validateProspectGenerationRequirements();
-    }
+        if (! $contentComponent instanceof TiptapEditor) {
+            $fail('Forms that generate prospects must include required email and name fields.');
 
-    protected function afterCreate(): void
-    {
-        $this->clearFormContentForWizard();
-    }
-
-    protected function afterSave(): void
-    {
-        $this->clearFormContentForWizard();
-    }
-
-    protected function validateProspectGenerationRequirements(): void
-    {
-        $formState = $this->form->getRawState();
-
-        $isAuthenticated = $formState['is_authenticated'] ?? false;
-        $generateProspects = $formState['generate_prospects'] ?? false;
-
-        if (! $generateProspects || $isAuthenticated) {
             return;
         }
 
-        $isWizard = $formState['is_wizard'] ?? false;
+        $componentState = $contentComponent->getState();
 
-        if ($isWizard) {
-            $this->validateWizardSteps($formState);
-        } else {
-            $this->validateNormalForm();
+        if (! filled($componentState)) {
+            $fail('Forms that generate prospects must include required email and name fields.');
+
+            return;
+        }
+
+        $content = $contentComponent->decodeBlocks($contentComponent->getJSON(decoded: true));
+
+        if (! $content || ! isset($content['content'])) {
+            $fail('Forms that generate prospects must include required email and name fields.');
+
+            return;
+        }
+
+        $result = $this->checkContentForRequiredFields($content['content']);
+
+        if (! $result['email'] || ! $result['name']) {
+            $missingFields = [];
+
+            if (! $result['email']) {
+                $missingFields[] = 'a required Educatable Email field';
+            }
+
+            if (! $result['name']) {
+                $missingFields[] = 'an Educatable Name field';
+            }
+
+            $message = 'Forms that generate prospects must include ' . implode(' and ', $missingFields) . '.';
+            $fail($message);
         }
     }
 
-    /**
-     * @param array<string, mixed> $data
-     */
-    protected function validateWizardSteps(array $data): void
+    public function validateWizardStepsFromRules(mixed $steps, Closure $fail): void
     {
-        $steps = $data['steps'] ?? [];
+        if (empty($steps) || ! is_array($steps)) {
+            $fail('Forms that generate prospects must include required email and name fields.');
+
+            return;
+        }
+
         $hasRequiredEmail = false;
         $hasRequiredName = false;
 
-        foreach ($steps as $step) {
-            $content = $step['content']['content'] ?? [];
+        $stepsComponent = $this->form->getComponent('steps');
 
-            $result = $this->checkContentForRequiredFields($content);
+        if (! $stepsComponent) {
+            $fail('Forms that generate prospects must include required email and name fields.');
+
+            return;
+        }
+
+        foreach ($steps as $stepIndex => $step) {
+            $childContainer = $stepsComponent->getChildComponentContainer($stepIndex);
+
+            if (! $childContainer) {
+                continue;
+            }
+
+            $contentComponent = $childContainer->getComponent('content');
+
+            if (! $contentComponent instanceof TiptapEditor) {
+                continue;
+            }
+
+            $stepContent = $step['content'] ?? null;
+
+            if (! filled($stepContent)) {
+                continue;
+            }
+
+            $decoded = $contentComponent->decodeBlocks(
+                is_string($stepContent) ? json_decode($stepContent, true) : $stepContent
+            );
+
+            if (! $decoded || ! isset($decoded['content'])) {
+                continue;
+            }
+
+            $result = $this->checkContentForRequiredFields($decoded['content']);
 
             if ($result['email']) {
                 $hasRequiredEmail = true;
@@ -118,58 +156,18 @@ trait ValidatesProspectGenerationFields
             }
 
             $message = 'Forms that generate prospects must include ' . implode(' and ', $missingFields) . '.';
-
-            throw ValidationException::withMessages([
-                'steps' => $message,
-            ]);
+            $fail($message);
         }
     }
 
-    protected function validateNormalForm(): void
+    protected function afterCreate(): void
     {
-        $contentComponent = $this->form->getComponent('content');
+        $this->clearFormContentForWizard();
+    }
 
-        if (! $contentComponent instanceof TiptapEditor) {
-            throw ValidationException::withMessages([
-                'data.content' => 'Forms that generate prospects must include required email and name fields.',
-            ]);
-        }
-
-        $componentState = $contentComponent->getState();
-
-        if (! filled($componentState)) {
-            throw ValidationException::withMessages([
-                'data.content' => 'Forms that generate prospects must include required email and name fields.',
-            ]);
-        }
-
-        $content = $contentComponent->decodeBlocks($contentComponent->getJSON(decoded: true));
-
-        if (! $content || ! isset($content['content'])) {
-            throw ValidationException::withMessages([
-                'data.content' => 'Forms that generate prospects must include required email and name fields.',
-            ]);
-        }
-
-        $result = $this->checkContentForRequiredFields($content['content']);
-
-        if (! $result['email'] || ! $result['name']) {
-            $missingFields = [];
-
-            if (! $result['email']) {
-                $missingFields[] = 'a required Educatable Email field';
-            }
-
-            if (! $result['name']) {
-                $missingFields[] = 'an Educatable Name field';
-            }
-
-            $message = 'Forms that generate prospects must include ' . implode(' and ', $missingFields) . '.';
-
-            throw ValidationException::withMessages([
-                'data.content' => $message,
-            ]);
-        }
+    protected function afterSave(): void
+    {
+        $this->clearFormContentForWizard();
     }
 
     /**

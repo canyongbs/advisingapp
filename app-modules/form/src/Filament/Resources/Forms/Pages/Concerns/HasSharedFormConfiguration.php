@@ -45,6 +45,7 @@ use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use App\Enums\FontWeight;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
+use Closure;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -127,7 +128,21 @@ trait HasSharedFormConfiguration
                 }),
             Section::make('Fields')
                 ->schema([
-                    $this->fieldBuilder(),
+                    $this->fieldBuilder()
+                        ->rules([
+                            function (Get $get): Closure {
+                                return function (string $attribute, mixed $value, Closure $fail) use ($get): void {
+                                    $isAuthenticated = $get('is_authenticated');
+                                    $generateProspects = $get('generate_prospects');
+
+                                    if (! $generateProspects || $isAuthenticated) {
+                                        return;
+                                    }
+
+                                    $this->validateNormalFormFromRules($fail);
+                                };
+                            },
+                        ]),
                 ])
                 ->hidden(fn (Get $get) => $get('is_wizard'))
                 ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists()),
@@ -151,7 +166,22 @@ trait HasSharedFormConfiguration
                 ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists())
                 ->relationship()
                 ->reorderable()
-                ->columnSpanFull(),
+                ->columnSpanFull()
+                ->validationAttribute('steps')
+                ->rules([
+                    function (Get $get): Closure {
+                        return function (string $attribute, mixed $value, Closure $fail) use ($get): void {
+                            $isAuthenticated = $get('is_authenticated');
+                            $generateProspects = $get('generate_prospects');
+
+                            if (! $generateProspects || $isAuthenticated) {
+                                return;
+                            }
+
+                            $this->validateWizardStepsFromRules($value, $fail);
+                        };
+                    },
+                ]),
             Section::make('Appearance')
                 ->schema([
                     Select::make('title_font_weight')

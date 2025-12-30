@@ -40,13 +40,16 @@ use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableNameFormFieldBlock;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\Submission;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
+use Illuminate\Support\Facades\DB;
 
 class CreateProspectFromSubmission
 {
+    public function __construct(
+        protected ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail,
+        protected CreateProspect $createProspect
+    ) {}
+
     public function __invoke(Submission $submission): ?Prospect
     {
         $submissible = $submission->submissible;
@@ -66,43 +69,28 @@ class CreateProspectFromSubmission
             return null;
         }
 
-        $prospect = Prospect::query()->make([
-            'first_name' => $nameData['first_name'],
-            'last_name' => $nameData['last_name'],
-            'preferred' => $nameData['preferred'] ?? null,
-            'full_name' => "{$nameData['first_name']} {$nameData['last_name']}",
-        ]);
+        $existingAuthor = ($this->resolveSubmissionAuthorFromEmail)($email);
 
-        $status = ProspectStatus::query()
-            ->where('classification', SystemProspectClassification::New)
-            ->first();
+        if ($existingAuthor) {
+            $submission->author()->associate($existingAuthor);
+            $submission->save();
 
-        if ($status) {
-            $prospect->status()->associate($status);
+            return null;
         }
 
-        $source = ProspectSource::query()
-            ->where('name', 'Advising App')
-            ->first();
+        return DB::transaction(function () use ($email, $nameData, $submission) {
+            $prospect = ($this->createProspect)([
+                'first_name' => $nameData['first_name'],
+                'last_name' => $nameData['last_name'],
+                'preferred' => $nameData['preferred'],
+                'email' => $email,
+            ]);
 
-        if ($source) {
-            $prospect->source()->associate($source);
-        }
+            $submission->author()->associate($prospect);
+            $submission->save();
 
-        $prospect->save();
-
-        $emailAddress = $prospect->emailAddresses()->create([
-            'address' => $email,
-            'order' => 1,
-        ]);
-
-        $prospect->primaryEmailAddress()->associate($emailAddress);
-        $prospect->save();
-
-        $submission->author()->associate($prospect);
-        $submission->save();
-
-        return $prospect;
+            return $prospect;
+        });
     }
 
     protected function extractEmailFromSubmission(Submission $submission, Form $form): ?string
