@@ -31,11 +31,10 @@
 
 </COPYRIGHT>
 --}}
-@props(['settings' => null])
-<x-mail::layout :settings="$settings">
+<x-mail::layout>
     {{-- Header --}}
     <x-slot:header>
-        <x-mail::header :url="config('app.url')" :settings="$settings"></x-mail::header>
+        <x-mail::header :url="config('app.url')"></x-mail::header>
     </x-slot:header>
 
     {{-- Body --}}

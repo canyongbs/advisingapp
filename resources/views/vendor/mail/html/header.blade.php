@@ -46,15 +46,15 @@
                 {{-- TODO: Don't use temporary urls? --}}
                 <img src="{{ $settings?->getFirstTemporaryUrl(now()->addDays(6), 'logo') }}"
                      style="height: 75px; max-height: 75px; max-width: 100vw;"
-                     alt="{{ config('app.name') }}">
+                     alt="Logo">
             @elseif ($themeSettings->is_logo_active && $logo)
                 <img src="{{ $logo->getTemporaryUrl(now()->addDays(6)) }}"
                      style="height: 75px; max-height: 75px; max-width: 100vw;"
-                     alt="{{ config('app.name') }}">
+                     alt="Logo">
             @else
                 <img src="{{ url(Vite::asset('resources/images/default-logo-light-201124.svg')) }}"
                      style="height: 75px; max-height: 75px; max-width: 100vw;"
-                     alt="{{ config('app.name') }}">
+                     alt="Logo">
             @endif
         </a>
     </td>
