@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Models;
 
+use AdvisingApp\Alert\Models\StudentAlert;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -489,6 +490,14 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     public function additionalAddresses(): HasMany
     {
         return $this->addresses()->whereKeyNot($this->primary_address_id);
+    }
+
+    /**
+     * @return HasMany<StudentAlert, $this>
+     */
+    public function studentAlerts(): HasMany
+    {
+        return $this->hasMany(StudentAlert::class, 'sisid', 'sisid');
     }
 
     public static function getLabel(): string

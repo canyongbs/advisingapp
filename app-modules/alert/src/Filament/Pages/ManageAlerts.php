@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Alert\Filament\Pages;
 
+use AdvisingApp\Alert\Actions\GenerateStudentAlertsView;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Filament\Forms\Components\Heading;
@@ -141,6 +142,8 @@ class ManageAlerts extends Page implements HasForms
             }
 
             DB::commit();
+
+            app(GenerateStudentAlertsView::class)->execute();
 
             Notification::make()
                 ->success()

@@ -37,8 +37,11 @@
 namespace AdvisingApp\Alert\Presets\Handlers;
 
 use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
+use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
 use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 
 class NewStudentPresetHandler implements AlertPresetHandler
 {
@@ -67,5 +70,17 @@ class NewStudentPresetHandler implements AlertPresetHandler
     public function getConfigurationModel(): ?string
     {
         return NewStudentAlertConfiguration::class;
+    }
+
+    public function getStudentAlertQuery(?AlertPresetConfiguration $configuration): Builder
+    {
+        $numberOfSemesters = $configuration?->number_of_semesters ?? 1;
+
+        return DB::table('enrollments')
+            ->select('sisid')
+            ->whereNotNull('semester_code')
+            ->whereNull('deleted_at')
+            ->groupBy('sisid')
+            ->havingRaw('COUNT(DISTINCT semester_code) <= ?', [$numberOfSemesters]);
     }
 }

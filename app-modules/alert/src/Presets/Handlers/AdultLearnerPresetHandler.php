@@ -37,8 +37,11 @@
 namespace AdvisingApp\Alert\Presets\Handlers;
 
 use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
+use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
 use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 
 class AdultLearnerPresetHandler implements AlertPresetHandler
 {
@@ -67,5 +70,18 @@ class AdultLearnerPresetHandler implements AlertPresetHandler
     public function getConfigurationModel(): ?string
     {
         return AdultLearnerAlertConfiguration::class;
+    }
+
+    public function getStudentAlertQuery(?AlertPresetConfiguration $configuration): Builder
+    {
+        $minimumAge = $configuration?->minimum_age ?? 24;
+        $maxBirthYear = now()->year - $minimumAge;
+
+        return DB::table('students')
+            ->select('sisid')
+            ->whereNotNull('birthdate')
+            ->whereRaw("EXTRACT(YEAR FROM birthdate) <= ?", [$maxBirthYear])
+            ->whereNull('deleted_at')
+            ->distinct();
     }
 }

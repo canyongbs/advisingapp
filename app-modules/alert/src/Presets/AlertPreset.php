@@ -39,14 +39,12 @@ namespace AdvisingApp\Alert\Presets;
 use AdvisingApp\Alert\Presets\Handlers\AdultLearnerPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\CourseWithdrawalPresetHandler;
-use AdvisingApp\Alert\Presets\Handlers\CumulativeGpaBelowThresholdPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\DorfGradePresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\FirstGenerationStudentPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\MultipleCourseWithdrawalsPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\MultipleDorfGradesPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\NewStudentPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\RepeatedCourseAttemptPresetHandler;
-use AdvisingApp\Alert\Presets\Handlers\SemesterGpaBelowThresholdPresetHandler;
 use Filament\Support\Contracts\HasLabel;
 
 enum AlertPreset: string implements HasLabel
@@ -56,8 +54,6 @@ enum AlertPreset: string implements HasLabel
     case CourseWithdrawal = 'course_withdrawal';
     case MultipleCourseWithdrawals = 'multiple_course_withdrawals';
     case RepeatedCourseAttempt = 'repeated_course_attempt';
-    case CumulativeGpaBelowThreshold = 'cumulative_gpa_below_threshold';
-    case SemesterGpaBelowThreshold = 'semester_gpa_below_threshold';
     case FirstGenerationStudent = 'first_generation_student';
     case AdultLearner = 'adult_learner';
     case NewStudent = 'new_student';
@@ -78,8 +74,6 @@ enum AlertPreset: string implements HasLabel
             self::CourseWithdrawal => new CourseWithdrawalPresetHandler(),
             self::MultipleCourseWithdrawals => new MultipleCourseWithdrawalsPresetHandler(),
             self::RepeatedCourseAttempt => new RepeatedCourseAttemptPresetHandler(),
-            self::CumulativeGpaBelowThreshold => new CumulativeGpaBelowThresholdPresetHandler(),
-            self::SemesterGpaBelowThreshold => new SemesterGpaBelowThresholdPresetHandler(),
             self::FirstGenerationStudent => new FirstGenerationStudentPresetHandler(),
             self::AdultLearner => new AdultLearnerPresetHandler(),
             self::NewStudent => new NewStudentPresetHandler(),
@@ -92,12 +86,6 @@ enum AlertPreset: string implements HasLabel
     public function getDefaultConfigurationData(): array
     {
         return match ($this) {
-            self::CumulativeGpaBelowThreshold => [
-                'gpa_threshold' => 2.00,
-            ],
-            self::SemesterGpaBelowThreshold => [
-                'gpa_threshold' => 2.00,
-            ],
             self::AdultLearner => [
                 'minimum_age' => 24,
             ],

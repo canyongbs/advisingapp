@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Alert\Presets\Handlers\Contracts;
 
+use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
 use Filament\Schemas\Components\Component;
+use Illuminate\Database\Query\Builder;
 
 interface AlertPresetHandler
 {
@@ -53,4 +55,13 @@ interface AlertPresetHandler
      * @return class-string|null
      */
     public function getConfigurationModel(): ?string;
+
+    /**
+     * Returns a query builder that selects sisid for students matching this alert.
+     * The query MUST only select the 'sisid' column and return distinct values.
+     *
+     * @param AlertPresetConfiguration|null $configuration The configuration model instance if this preset has one
+     * @return Builder A query builder selecting sisid values
+     */
+    public function getStudentAlertQuery(?AlertPresetConfiguration $configuration): Builder;
 }

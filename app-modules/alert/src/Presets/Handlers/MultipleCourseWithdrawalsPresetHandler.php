@@ -36,7 +36,10 @@
 
 namespace AdvisingApp\Alert\Presets\Handlers;
 
+use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
 use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 
 class MultipleCourseWithdrawalsPresetHandler implements AlertPresetHandler
 {
@@ -58,5 +61,15 @@ class MultipleCourseWithdrawalsPresetHandler implements AlertPresetHandler
     public function getConfigurationModel(): ?string
     {
         return null;
+    }
+
+    public function getStudentAlertQuery(?AlertPresetConfiguration $configuration): Builder
+    {
+        return DB::table('enrollments')
+            ->select('sisid')
+            ->where(DB::raw('UPPER(crse_grade_off)'), 'W')
+            ->whereNull('deleted_at')
+            ->groupBy('sisid')
+            ->havingRaw('COUNT(*) > 1');
     }
 }

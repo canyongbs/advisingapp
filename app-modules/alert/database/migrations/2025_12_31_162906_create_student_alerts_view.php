@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,35 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Configurations;
+use AdvisingApp\Alert\Actions\GenerateStudentAlertsView;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
-use AdvisingApp\Alert\Models\AlertConfiguration;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use OwenIt\Auditing\Contracts\Auditable;
-
-/**
- * @mixin IdeHelperCumulativeGpaAlertConfiguration
- */
-class CumulativeGpaAlertConfiguration extends BaseModel implements AlertPresetConfiguration, Auditable
-{
-    use AuditableTrait;
-
-    protected $fillable = [
-        'gpa_threshold',
-    ];
-
-    protected $casts = [
-        'gpa_threshold' => 'decimal:2',
-    ];
-
-    /**
-     * @return MorphOne<AlertConfiguration, $this>
-     */
-    public function alertConfiguration(): MorphOne
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->morphOne(AlertConfiguration::class, 'configuration');
+        app(GenerateStudentAlertsView::class)->execute();
     }
-}
+
+    public function down(): void
+    {
+        DB::statement('DROP VIEW IF EXISTS student_alerts');
+    }
+};
