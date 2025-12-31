@@ -42,6 +42,7 @@ use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\InteractableTypeFeature;
 use Carbon\CarbonInterface;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -53,6 +54,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 trait HasManyMorphedInteractionsTrait
 {
@@ -216,22 +218,50 @@ trait HasManyMorphedInteractionsTrait
             ])
             ->filters([
                 SelectFilter::make('interaction_initiative_id')
-                    ->relationship('initiative', 'name')
+                    ->relationship(
+                        'initiative',
+                        'name',
+                        fn(Builder $query) => 
+                            (InteractableTypeFeature::active() && ($this->getOwnerRecord() instanceof Student || $this->getOwnerRecord() instanceof Prospect)) ?
+                                $query->where('interactable_type', $this->getOwnerRecord()->getMorphClass()) :
+                                $query
+                        )
                     ->label('Initiative')
                     ->multiple()
                     ->visible(fn () => $this->getSettings()->is_initiative_enabled),
                 SelectFilter::make('interaction_driver_id')
-                    ->relationship('driver', 'name')
+                    ->relationship(
+                        'driver',
+                        'name',
+                        fn(Builder $query) => 
+                            (InteractableTypeFeature::active() && ($this->getOwnerRecord() instanceof Student || $this->getOwnerRecord() instanceof Prospect)) ?
+                                $query->where('interactable_type', $this->getOwnerRecord()->getMorphClass()) :
+                                $query
+                        )
                     ->label('Driver')
                     ->multiple()
                     ->visible(fn () => $this->getSettings()->is_driver_enabled),
                 SelectFilter::make('interaction_type_id')
                     ->label('Type')
-                    ->relationship('type', 'name')
+                    ->relationship(
+                        'type',
+                        'name',
+                        fn(Builder $query) => 
+                            (InteractableTypeFeature::active() && ($this->getOwnerRecord() instanceof Student || $this->getOwnerRecord() instanceof Prospect)) ?
+                                $query->where('interactable_type', $this->getOwnerRecord()->getMorphClass()) :
+                                $query
+                        )
                     ->multiple()
                     ->visible(fn () => $this->getSettings()->is_type_enabled),
                 SelectFilter::make('interaction_status_id')
-                    ->relationship('status', 'name')
+                    ->relationship(
+                        'status',
+                        'name',
+                        fn(Builder $query) => 
+                            (InteractableTypeFeature::active() && ($this->getOwnerRecord() instanceof Student || $this->getOwnerRecord() instanceof Prospect)) ?
+                                $query->where('interactable_type', $this->getOwnerRecord()->getMorphClass()) :
+                                $query
+                        )
                     ->label('Status')
                     ->multiple()
                     ->visible(fn () => $this->getSettings()->is_status_enabled),
