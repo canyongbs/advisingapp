@@ -65,97 +65,97 @@ test('CreateInteractionDriver is gated with proper access control', function () 
 });
 
 test('it can successfully create for student or for prospect', function () {
-  asSuperAdmin();
+    asSuperAdmin();
 
-  $studentInteractionDriver = InteractionDriver::factory()->make(['interactable_type' => InteractableType::Student]);
-  $prospectInteractionDriver = InteractionDriver::factory()->make(['interactable_type' => InteractableType::Prospect]);
+    $studentInteractionDriver = InteractionDriver::factory()->make(['interactable_type' => InteractableType::Student]);
+    $prospectInteractionDriver = InteractionDriver::factory()->make(['interactable_type' => InteractableType::Prospect]);
 
-  assertDatabaseCount(InteractionDriver::class, 0);
+    assertDatabaseCount(InteractionDriver::class, 0);
 
-  livewire(CreateInteractionDriver::class)
-    ->assertSuccessful()
-    ->fillForm($studentInteractionDriver->toArray())
-    ->call('create')
-    ->assertHasNoFormErrors();  
-  livewire(CreateInteractionDriver::class)
-    ->assertSuccessful()
-    ->fillForm($prospectInteractionDriver->toArray())
-    ->call('create')
-    ->assertHasNoFormErrors(); 
-    
-  assertDatabaseCount(InteractionDriver::class, 2);
+    livewire(CreateInteractionDriver::class)
+        ->assertSuccessful()
+        ->fillForm($studentInteractionDriver->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+    livewire(CreateInteractionDriver::class)
+        ->assertSuccessful()
+        ->fillForm($prospectInteractionDriver->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
 
-  assertDatabaseHas(InteractionDriver::class, $studentInteractionDriver->toArray());
-  assertDatabaseHas(InteractionDriver::class, $prospectInteractionDriver->toArray());
+    assertDatabaseCount(InteractionDriver::class, 2);
+
+    assertDatabaseHas(InteractionDriver::class, $studentInteractionDriver->toArray());
+    assertDatabaseHas(InteractionDriver::class, $prospectInteractionDriver->toArray());
 });
 
 test('it can only create if the name is unique per type', function () {
-  asSuperAdmin();
+    asSuperAdmin();
 
-  $interactionDriver1 = InteractionDriver::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Student]);
-  $interactionDriver2 = InteractionDriver::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Student]);
+    $interactionDriver1 = InteractionDriver::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Student]);
+    $interactionDriver2 = InteractionDriver::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Student]);
 
-  assertDatabaseCount(InteractionDriver::class, 0);
+    assertDatabaseCount(InteractionDriver::class, 0);
 
-  livewire(CreateInteractionDriver::class)
-    ->fillForm($interactionDriver1->toArray())
-    ->call('create')
-    ->assertHasNoFormErrors();
-  
-  livewire(CreateInteractionDriver::class)
-    ->fillForm($interactionDriver2->toArray())
-    ->call('create')
-    ->assertHasFormErrors();
+    livewire(CreateInteractionDriver::class)
+        ->fillForm($interactionDriver1->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
 
-  assertDatabaseCount(InteractionDriver::class, 1);
+    livewire(CreateInteractionDriver::class)
+        ->fillForm($interactionDriver2->toArray())
+        ->call('create')
+        ->assertHasFormErrors();
+
+    assertDatabaseCount(InteractionDriver::class, 1);
 });
 
 test('it can successfully create with the same name for different types', function () {
-  asSuperAdmin();
+    asSuperAdmin();
 
-  $studentInteractionDriver = InteractionDriver::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Student]);
-  $prospectInteractionDriver = InteractionDriver::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Prospect]);
+    $studentInteractionDriver = InteractionDriver::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Student]);
+    $prospectInteractionDriver = InteractionDriver::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Prospect]);
 
-  assertDatabaseCount(InteractionDriver::class, 0);
+    assertDatabaseCount(InteractionDriver::class, 0);
 
-  livewire(CreateInteractionDriver::class)
-    ->assertSuccessful()
-    ->fillForm($studentInteractionDriver->toArray())
-    ->call('create')
-    ->assertHasNoFormErrors();  
-  livewire(CreateInteractionDriver::class)
-    ->assertSuccessful()
-    ->fillForm($prospectInteractionDriver->toArray())
-    ->call('create')
-    ->assertHasNoFormErrors(); 
-    
-  assertDatabaseCount(InteractionDriver::class, 2);
+    livewire(CreateInteractionDriver::class)
+        ->assertSuccessful()
+        ->fillForm($studentInteractionDriver->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+    livewire(CreateInteractionDriver::class)
+        ->assertSuccessful()
+        ->fillForm($prospectInteractionDriver->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
 
-  assertDatabaseHas(InteractionDriver::class, $studentInteractionDriver->toArray());
-  assertDatabaseHas(InteractionDriver::class, $prospectInteractionDriver->toArray());
+    assertDatabaseCount(InteractionDriver::class, 2);
+
+    assertDatabaseHas(InteractionDriver::class, $studentInteractionDriver->toArray());
+    assertDatabaseHas(InteractionDriver::class, $prospectInteractionDriver->toArray());
 });
 
 test('it can successfully set a default per type', function () {
-  asSuperAdmin();
+    asSuperAdmin();
 
-  $studentInteractionDriver = InteractionDriver::factory()->make(['is_default' => true, 'interactable_type' => InteractableType::Student]);
-  $prospectInteractionDriver = InteractionDriver::factory()->make(['is_default' => true, 'interactable_type' => InteractableType::Prospect]);
+    $studentInteractionDriver = InteractionDriver::factory()->make(['is_default' => true, 'interactable_type' => InteractableType::Student]);
+    $prospectInteractionDriver = InteractionDriver::factory()->make(['is_default' => true, 'interactable_type' => InteractableType::Prospect]);
 
-  assertDatabaseCount(InteractionDriver::class, 0);
+    assertDatabaseCount(InteractionDriver::class, 0);
 
-  livewire(CreateInteractionDriver::class)
-    ->assertSuccessful()
-    ->fillForm($studentInteractionDriver->toArray())
-    ->call('create')
-    ->assertHasNoFormErrors();  
-  livewire(CreateInteractionDriver::class)
-    ->assertSuccessful()
-    ->fillForm($prospectInteractionDriver->toArray())
-    ->call('create')
-    ->assertHasNoFormErrors(); 
-    
-  assertDatabaseCount(InteractionDriver::class, 2);
+    livewire(CreateInteractionDriver::class)
+        ->assertSuccessful()
+        ->fillForm($studentInteractionDriver->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+    livewire(CreateInteractionDriver::class)
+        ->assertSuccessful()
+        ->fillForm($prospectInteractionDriver->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
 
-  assertDatabaseHas(InteractionDriver::class, $studentInteractionDriver->toArray());
-  assertDatabaseHas(InteractionDriver::class, $prospectInteractionDriver->toArray());
+    assertDatabaseCount(InteractionDriver::class, 2);
+
+    assertDatabaseHas(InteractionDriver::class, $studentInteractionDriver->toArray());
+    assertDatabaseHas(InteractionDriver::class, $prospectInteractionDriver->toArray());
 });
