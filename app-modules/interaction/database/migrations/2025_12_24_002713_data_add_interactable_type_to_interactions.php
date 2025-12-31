@@ -58,6 +58,9 @@ return new class () extends Migration {
 
             Schema::table('interaction_outcomes', function (Blueprint $table) {
                 $table->dropUniqueIfExists(['name']);
+                DB::statement('DROP INDEX IF EXISTS interaction_outcomes_is_default_unique;');
+                DB::statement('DROP INDEX IF EXISTS interaction_relations_is_default_unique;');
+                DB::statement('DROP INDEX IF EXISTS interaction_statuses_is_default_unique;');
                 $table->string('interactable_type')->nullable();
             });
 
@@ -457,6 +460,11 @@ return new class () extends Migration {
 
             Schema::table('interaction_outcomes', function (Blueprint $table) {
                 $table->dropColumn('interactable_type');
+                DB::statement('
+                    CREATE UNIQUE INDEX interaction_outcomes_is_default_unique 
+                    ON interaction_outcomes (is_default) 
+                    WHERE is_default = true AND deleted_at IS NULL;
+                ');
                 $table->unique('name');
             });
 

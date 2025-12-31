@@ -49,6 +49,7 @@ class InteractionOutcomeFactory extends Factory
     {
         return [
             'name' => $this->faker->word(),
+            'is_default' => $this->faker->boolean(),
             'interactable_type' => $this->faker->randomElement(InteractableType::cases())->value,
         ];
     }
