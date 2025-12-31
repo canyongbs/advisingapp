@@ -56,3 +56,11 @@ test('CreateInteractionDriver is gated with proper access control', function () 
             InteractionDriverResource::getUrl('create')
         )->assertSuccessful();
 });
+
+test('it can successfully create for student or for prospect', function () {})->todo();
+
+test('it can only create if the name is unique per type', function () {})->todo();
+
+test('it can successfully create with the same name for different types', function () {})->todo();
+
+test('it can successfully set a default per type', function () {})->todo();
