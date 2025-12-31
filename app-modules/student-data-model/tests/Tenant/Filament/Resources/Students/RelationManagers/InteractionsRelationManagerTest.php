@@ -34,12 +34,9 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Interaction\Models\InteractionOutcome;
-use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
@@ -49,7 +46,6 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-use function Tests\asSuperAdmin;
 
 it('renders the InteractionsRelationManager based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -268,21 +264,3 @@ it('renders the created by select filter', function () {
         ->assertCanSeeTableRecords([$selectableInteractions, $nonSelectableInteractions]);
 });
 
-it('restrictes related models by interactable type', function () {
-    InteractionDriver::factory()->create(['interactable_type' => InteractableType::Student]);
-    InteractionDriver::factory()->create(['interactable_type' => InteractableType::Prospect]);
-    InteractionInitiative::factory()->create(['interactable_type' => InteractableType::Student]);
-    InteractionInitiative::factory()->create(['interactable_type' => InteractableType::Prospect]);
-    InteractionOutcome::factory()->create(['interactable_type' => InteractableType::Student]);
-    InteractionOutcome::factory()->create(['interactable_type' => InteractableType::Prospect]);
-    InteractionRelation::factory()->create(['interactable_type' => InteractableType::Student]);
-    InteractionRelation::factory()->create(['interactable_type' => InteractableType::Prospect]);
-    InteractionStatus::factory()->create(['interactable_type' => InteractableType::Student]);
-    InteractionStatus::factory()->create(['interactable_type' => InteractableType::Prospect]);
-    InteractionType::factory()->create(['interactable_type' => InteractableType::Student]);
-    InteractionType::factory()->create(['interactable_type' => InteractableType::Prospect]);
-
-    $student = Student::factory()->create();
-
-    asSuperAdmin();
-});
