@@ -62,17 +62,17 @@ test('ListInteractionOutcomes is gated with proper access control', function () 
 });
 
 test('it can filter by interactable type', function () {
-  asSuperAdmin();
+    asSuperAdmin();
 
-  $studentOutcomes = InteractionOutcome::factory()->count(3)->create(['interactable_type' => InteractableType::Student]);
-  $prospectOutcomes = InteractionOutcome::factory()->count(3)->create(['interactable_type' => InteractableType::Prospect]);
+    $studentOutcomes = InteractionOutcome::factory()->count(3)->create(['interactable_type' => InteractableType::Student]);
+    $prospectOutcomes = InteractionOutcome::factory()->count(3)->create(['interactable_type' => InteractableType::Prospect]);
 
-  livewire(ListInteractionOutcomes::class)
-    ->assertCanSeeTableRecords($studentOutcomes->merge($prospectOutcomes))
-    ->filterTable('interactable_type', InteractableType::Student->value)
-    ->assertCanSeeTableRecords($studentOutcomes)
-    ->assertCanNotSeeTableRecords($prospectOutcomes)
-    ->filterTable('interactable_type', InteractableType::Prospect->value)
-    ->assertCanSeeTableRecords($prospectOutcomes)
-    ->assertCanNotSeeTableRecords($studentOutcomes);
+    livewire(ListInteractionOutcomes::class)
+        ->assertCanSeeTableRecords($studentOutcomes->merge($prospectOutcomes))
+        ->filterTable('interactable_type', InteractableType::Student->value)
+        ->assertCanSeeTableRecords($studentOutcomes)
+        ->assertCanNotSeeTableRecords($prospectOutcomes)
+        ->filterTable('interactable_type', InteractableType::Prospect->value)
+        ->assertCanSeeTableRecords($prospectOutcomes)
+        ->assertCanNotSeeTableRecords($studentOutcomes);
 });
