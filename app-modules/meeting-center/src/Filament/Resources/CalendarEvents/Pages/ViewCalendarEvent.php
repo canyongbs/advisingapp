@@ -37,7 +37,6 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\CalendarEventResource;
-use App\Features\EventTransparencyFeature;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
@@ -60,8 +59,7 @@ class ViewCalendarEvent extends ViewRecord
                         TextEntry::make('starts_at'),
                         TextEntry::make('ends_at'),
                         TextEntry::make('transparency')
-                            ->badge()
-                            ->visible(EventTransparencyFeature::active()),
+                            ->badge(),
                         TextEntry::make('attendees')
                             ->badge(),
                     ])

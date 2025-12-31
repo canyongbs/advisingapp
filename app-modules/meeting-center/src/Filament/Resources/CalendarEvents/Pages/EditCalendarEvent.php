@@ -38,7 +38,6 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages;
 
 use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\CalendarEventResource;
-use App\Features\EventTransparencyFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -73,8 +72,7 @@ class EditCalendarEvent extends EditRecord
                 ->options(EventTransparency::class)
                 ->enum(EventTransparency::class)
                 ->default(EventTransparency::Busy)
-                ->required()
-                ->visible(EventTransparencyFeature::active()),
+                ->required(),
             TagsInput::make('attendees')
                 ->placeholder('Add attendee email')
                 ->nestedRecursiveRules(['email']),

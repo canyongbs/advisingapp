@@ -38,7 +38,6 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages;
 
 use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\CalendarEventResource;
-use App\Features\EventTransparencyFeature;
 use App\Models\User;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -69,8 +68,7 @@ class CreateCalendarEvent extends CreateRecord
                 ->options(EventTransparency::class)
                 ->enum(EventTransparency::class)
                 ->default(EventTransparency::Busy)
-                ->required()
-                ->visible(EventTransparencyFeature::active()),
+                ->required(),
             TagsInput::make('attendees')
                 ->placeholder('Add attendee email')
                 ->default([auth()->user()->calendar->provider_email])
