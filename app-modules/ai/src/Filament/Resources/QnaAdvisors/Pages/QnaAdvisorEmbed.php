@@ -112,7 +112,7 @@ class QnaAdvisorEmbed extends EditRecord
                         Grid::make()
                             ->schema([
                                 ColorPicker::make('title_text_color')
-                                    ->label('Text Color'),
+                                    ->label('Title Text Color'),
                                 ColorPicker::make('description_text_color')
                                     ->label('Description Text Color'),
                                 ColorPicker::make('button_text_color')
