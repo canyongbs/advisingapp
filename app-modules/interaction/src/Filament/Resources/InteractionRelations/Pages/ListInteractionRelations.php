@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionRelations\Pages;
 
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionRelations\InteractionRelationResource;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use App\Features\InteractableTypeFeature;
@@ -55,6 +56,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -153,7 +155,6 @@ class ListInteractionRelations extends ListRecords
                     ->label('Default')
                     ->boolean(),
                 TextColumn::make('interactions_count')
-                    ->visible(InteractableTypeFeature::active())
                     ->label('Uses')
                     ->counts('interactions')
                     ->sortable(),
@@ -162,6 +163,10 @@ class ListInteractionRelations extends ListRecords
                 Filter::make('is_default')
                     ->label('Default')
                     ->query(fn (Builder $query) => $query->where('is_default', true)),
+                SelectFilter::make('interactable_type')
+                    ->visible(InteractableTypeFeature::active())
+                    ->label('Type')
+                    ->options(InteractableType::class),
             ])
             ->recordActions([
                 EditAction::make(),

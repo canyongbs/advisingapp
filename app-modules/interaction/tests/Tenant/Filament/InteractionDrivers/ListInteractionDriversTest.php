@@ -35,10 +35,15 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\InteractionDriverResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\Pages\ListInteractionDrivers;
+use AdvisingApp\Interaction\Models\InteractionDriver;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 test('ListInteractionDrivers is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -54,4 +59,20 @@ test('ListInteractionDrivers is gated with proper access control', function () {
         ->get(
             InteractionDriverResource::getUrl('index')
         )->assertSuccessful();
+});
+
+test('it can filter by interactable type', function () {
+  asSuperAdmin();
+
+  $studentDrivers = InteractionDriver::factory()->count(3)->create(['interactable_type' => InteractableType::Student]);
+  $prospectDrivers = InteractionDriver::factory()->count(3)->create(['interactable_type' => InteractableType::Prospect]);
+
+  livewire(ListInteractionDrivers::class)
+    ->assertCanSeeTableRecords($studentDrivers->merge($prospectDrivers))
+    ->filterTable('interactable_type', InteractableType::Student->value)
+    ->assertCanSeeTableRecords($studentDrivers)
+    ->assertCanNotSeeTableRecords($prospectDrivers)
+    ->filterTable('interactable_type', InteractableType::Prospect->value)
+    ->assertCanSeeTableRecords($prospectDrivers)
+    ->assertCanNotSeeTableRecords($studentDrivers);
 });
