@@ -179,6 +179,15 @@ class EditResourceHubArticle extends EditRecord
     {
         return [
             $this->getSubmitFormAction()->label('Save'),
+            BaseAction::make('cancel')
+                ->label(__('filament-panels::resources/pages/edit-record.form.actions.cancel.label'))
+                ->color('gray')
+                ->requiresConfirmation()
+                ->modalHeading('Discard Changes?')
+                ->modalDescription('You have unsaved changes to this Resource Hub article. If you cancel now, all changes made during this editing session will be lost. This action cannot be undone.')
+                ->modalSubmitActionLabel('Discard Changes')
+                ->modalCancelActionLabel('Continue Editing')
+                ->action(fn () => $this->redirect(ResourceHubArticleResource::getUrl('view', ['record' => $this->record]))),
         ];
     }
 
