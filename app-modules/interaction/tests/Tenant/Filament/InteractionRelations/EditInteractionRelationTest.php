@@ -36,10 +36,14 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionRelations\InteractionRelationResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionRelations\Pages\EditInteractionRelation;
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 test('EditInteractionRelation is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -58,4 +62,15 @@ test('EditInteractionRelation is gated with proper access control', function () 
         ->get(
             InteractionRelationResource::getUrl('edit', ['record' => $relation])
         )->assertSuccessful();
+});
+
+test('it cannot delete instances used by an interaction', function () {
+    asSuperAdmin();
+
+    $relation = InteractionRelation::factory()->create();
+
+    Interaction::factory()->for($relation, 'relation')->create();
+
+    livewire(EditInteractionRelation::class, ['record' => $relation->id])
+        ->assertActionHidden('delete');
 });
