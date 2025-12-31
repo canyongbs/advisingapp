@@ -35,10 +35,17 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\InteractionStatusResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\Pages\CreateInteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionStatus;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseCount;
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 test('CreateInteractionStatus is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -55,4 +62,100 @@ test('CreateInteractionStatus is gated with proper access control', function () 
         ->get(
             InteractionStatusResource::getUrl('create')
         )->assertSuccessful();
+});
+
+test('it can successfully create for student or for prospect', function () {
+  asSuperAdmin();
+
+  $studentInteractionStatus = InteractionStatus::factory()->make(['interactable_type' => InteractableType::Student]);
+  $prospectInteractionStatus = InteractionStatus::factory()->make(['interactable_type' => InteractableType::Prospect]);
+
+  assertDatabaseCount(InteractionStatus::class, 0);
+
+  livewire(CreateInteractionStatus::class)
+    ->assertSuccessful()
+    ->fillForm($studentInteractionStatus->toArray())
+    ->call('create')
+    ->assertHasNoFormErrors();  
+  livewire(CreateInteractionStatus::class)
+    ->assertSuccessful()
+    ->fillForm($prospectInteractionStatus->toArray())
+    ->call('create')
+    ->assertHasNoFormErrors(); 
+    
+  assertDatabaseCount(InteractionStatus::class, 2);
+
+  assertDatabaseHas(InteractionStatus::class, $studentInteractionStatus->toArray());
+  assertDatabaseHas(InteractionStatus::class, $prospectInteractionStatus->toArray());
+});
+
+test('it can only create if the name is unique per type', function () {
+  asSuperAdmin();
+
+  $interactionStatus1 = InteractionStatus::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Student]);
+  $interactionStatus2 = InteractionStatus::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Student]);
+
+  assertDatabaseCount(InteractionStatus::class, 0);
+
+  livewire(CreateInteractionStatus::class)
+    ->fillForm($interactionStatus1->toArray())
+    ->call('create')
+    ->assertHasNoFormErrors();
+  
+  livewire(CreateInteractionStatus::class)
+    ->fillForm($interactionStatus2->toArray())
+    ->call('create')
+    ->assertHasFormErrors();
+
+  assertDatabaseCount(InteractionStatus::class, 1);
+});
+
+test('it can successfully create with the same name for different types', function () {
+  asSuperAdmin();
+
+  $studentInteractionStatus = InteractionStatus::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Student]);
+  $prospectInteractionStatus = InteractionStatus::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Prospect]);
+
+  assertDatabaseCount(InteractionStatus::class, 0);
+
+  livewire(CreateInteractionStatus::class)
+    ->assertSuccessful()
+    ->fillForm($studentInteractionStatus->toArray())
+    ->call('create')
+    ->assertHasNoFormErrors();  
+  livewire(CreateInteractionStatus::class)
+    ->assertSuccessful()
+    ->fillForm($prospectInteractionStatus->toArray())
+    ->call('create')
+    ->assertHasNoFormErrors(); 
+    
+  assertDatabaseCount(InteractionStatus::class, 2);
+
+  assertDatabaseHas(InteractionStatus::class, $studentInteractionStatus->toArray());
+  assertDatabaseHas(InteractionStatus::class, $prospectInteractionStatus->toArray());
+});
+
+test('it can successfully set a default per type', function () {
+  asSuperAdmin();
+
+    $studentInteractionStatus = InteractionStatus::factory()->make(['is_default' => true, 'interactable_type' => InteractableType::Student]);
+    $prospectInteractionStatus = InteractionStatus::factory()->make(['is_default' => true, 'interactable_type' => InteractableType::Prospect]);
+
+    assertDatabaseCount(InteractionStatus::class, 0);
+
+    livewire(CreateInteractionStatus::class)
+        ->assertSuccessful()
+        ->fillForm($studentInteractionStatus->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+    livewire(CreateInteractionStatus::class)
+        ->assertSuccessful()
+        ->fillForm($prospectInteractionStatus->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    assertDatabaseCount(InteractionStatus::class, 2);
+
+    assertDatabaseHas(InteractionStatus::class, $studentInteractionStatus->toArray());
+    assertDatabaseHas(InteractionStatus::class, $prospectInteractionStatus->toArray());
 });
