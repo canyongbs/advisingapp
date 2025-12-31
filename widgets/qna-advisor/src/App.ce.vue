@@ -458,24 +458,22 @@
 <template>
     <div
         class="h-full ring-1 ring-gray-300/50 rounded"
-        style="
-            --primary-50: 255, 251, 235;
-            --primary-100: 254, 243, 199;
-            --primary-200: 253, 230, 138;
-            --primary-300: 252, 211, 77;
-            --primary-400: 251, 191, 36;
-            --primary-500: 245, 158, 11;
-            --primary-600: 217, 119, 6;
-            --primary-700: 180, 83, 9;
-            --primary-800: 146, 64, 14;
-            --primary-900: 120, 53, 15;
-            --rounding-sm: 0.25rem;
-            --rounding: 0.375rem;
-            --rounding-md: 0.5rem;
-            --rounding-lg: 0.75rem;
-            --rounding-full: 9999px;
-        "
         :style="{
+            '--primary-50': '255, 251, 235',
+            '--primary-100': '254, 243, 199',
+            '--primary-200': '253, 230, 138',
+            '--primary-300': '252, 211, 77',
+            '--primary-400': '251, 191, 36',
+            '--primary-500': '245, 158, 11',
+            '--primary-600': '217, 119, 6',
+            '--primary-700': '180, 83, 9',
+            '--primary-800': '146, 64, 14',
+            '--primary-900': '120, 53, 15',
+            '--rounding-sm': '0.25rem',
+            '--rounding': '0.375rem',
+            '--rounding-md': '0.5rem',
+            '--rounding-lg': '0.75rem',
+            '--rounding-full': '9999px',
             '--text-title-color': advisor.title_text_color,
             '--text-description-color': advisor.description_text_color,
             '--button-text-color': advisor.button_text_color,
@@ -510,16 +508,16 @@
                     </div>
 
                     <div class="flex-1 text-center md:text-left">
-                        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 title">
+                        <h1 class="text-3xl md:text-4xl font-bold mb-4 title">
                             {{ advisor.name }}
                         </h1>
-                        <p class="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed description">
+                        <p class="text-lg mb-8 leading-relaxed description">
                             {{ advisor.description }}
                         </p>
                         <button
                             @click="startNewChat"
                             :disabled="isStartingThread"
-                            class="start_chat_button inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-primary-500 hover:bg-primary-400 focus:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-400/50 rounded-md shadow-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                            class="start_chat_button inline-flex items-center px-4 py-2 text-sm font-semibold focus:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-400/50 rounded-md shadow-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <svg
                                 v-if="isStartingThread"
@@ -793,20 +791,20 @@
 </template>
 <style scoped>
     :host .title {
-        color: var(--text-title-color) !important;
+        color: var(--text-title-color);
     }
 
     :host .description {
-        color: var(--text-description-color) !important;
+        color: var(--text-description-color);
     }
 
     :host .start_chat_button {
-        color: var(--button-text-color) !important;
-        background-color: var(--button-background-color) !important;
+        color: var(--button-text-color);
+        background-color: var(--button-background-color);
     }
 
     :host .start_chat_button:hover {
-        color: var(--button-text-hover-color) !important;
-        background-color: var(--button-background-hover-color) !important;
+        color: var(--button-text-hover-color);
+        background-color: var(--button-background-hover-color);
     }
 </style>
