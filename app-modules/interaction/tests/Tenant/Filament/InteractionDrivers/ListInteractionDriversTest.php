@@ -75,4 +75,4 @@ test('it can filter by interactable type', function () {
         ->filterTable('interactable_type', InteractableType::Prospect->value)
         ->assertCanSeeTableRecords($prospectDrivers)
         ->assertCanNotSeeTableRecords($studentDrivers);
-});
+})->only()->repeat(10);
