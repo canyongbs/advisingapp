@@ -65,97 +65,97 @@ test('CreateInteractionInitiative is gated with proper access control', function
 });
 
 test('it can successfully create for student or for prospect', function () {
-  asSuperAdmin();
+    asSuperAdmin();
 
-  $studentInteractionInitiative = InteractionInitiative::factory()->make(['interactable_type' => InteractableType::Student]);
-  $prospectInteractionInitiative = InteractionInitiative::factory()->make(['interactable_type' => InteractableType::Prospect]);
+    $studentInteractionInitiative = InteractionInitiative::factory()->make(['interactable_type' => InteractableType::Student]);
+    $prospectInteractionInitiative = InteractionInitiative::factory()->make(['interactable_type' => InteractableType::Prospect]);
 
-  assertDatabaseCount(InteractionInitiative::class, 0);
+    assertDatabaseCount(InteractionInitiative::class, 0);
 
-  livewire(CreateInteractionInitiative::class)
-    ->assertSuccessful()
-    ->fillForm($studentInteractionInitiative->toArray())
-    ->call('create')
-    ->assertHasNoFormErrors();  
-  livewire(CreateInteractionInitiative::class)
-    ->assertSuccessful()
-    ->fillForm($prospectInteractionInitiative->toArray())
-    ->call('create')
-    ->assertHasNoFormErrors(); 
-    
-  assertDatabaseCount(InteractionInitiative::class, 2);
+    livewire(CreateInteractionInitiative::class)
+        ->assertSuccessful()
+        ->fillForm($studentInteractionInitiative->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+    livewire(CreateInteractionInitiative::class)
+        ->assertSuccessful()
+        ->fillForm($prospectInteractionInitiative->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
 
-  assertDatabaseHas(InteractionInitiative::class, $studentInteractionInitiative->toArray());
-  assertDatabaseHas(InteractionInitiative::class, $prospectInteractionInitiative->toArray());
+    assertDatabaseCount(InteractionInitiative::class, 2);
+
+    assertDatabaseHas(InteractionInitiative::class, $studentInteractionInitiative->toArray());
+    assertDatabaseHas(InteractionInitiative::class, $prospectInteractionInitiative->toArray());
 });
 
 test('it can only create if the name is unique per type', function () {
-  asSuperAdmin();
+    asSuperAdmin();
 
-  $interactionInitiative1 = InteractionInitiative::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Student]);
-  $interactionInitiative2 = InteractionInitiative::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Student]);
+    $interactionInitiative1 = InteractionInitiative::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Student]);
+    $interactionInitiative2 = InteractionInitiative::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Student]);
 
-  assertDatabaseCount(InteractionInitiative::class, 0);
+    assertDatabaseCount(InteractionInitiative::class, 0);
 
-  livewire(CreateInteractionInitiative::class)
-    ->fillForm($interactionInitiative1->toArray())
-    ->call('create')
-    ->assertHasNoFormErrors();
-  
-  livewire(CreateInteractionInitiative::class)
-    ->fillForm($interactionInitiative2->toArray())
-    ->call('create')
-    ->assertHasFormErrors();
+    livewire(CreateInteractionInitiative::class)
+        ->fillForm($interactionInitiative1->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
 
-  assertDatabaseCount(InteractionInitiative::class, 1);
+    livewire(CreateInteractionInitiative::class)
+        ->fillForm($interactionInitiative2->toArray())
+        ->call('create')
+        ->assertHasFormErrors();
+
+    assertDatabaseCount(InteractionInitiative::class, 1);
 });
 
 test('it can successfully create with the same name for different types', function () {
-  asSuperAdmin();
+    asSuperAdmin();
 
-  $studentInteractionInitiative = InteractionInitiative::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Student]);
-  $prospectInteractionInitiative = InteractionInitiative::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Prospect]);
+    $studentInteractionInitiative = InteractionInitiative::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Student]);
+    $prospectInteractionInitiative = InteractionInitiative::factory()->make(['name' => 'test', 'interactable_type' => InteractableType::Prospect]);
 
-  assertDatabaseCount(InteractionInitiative::class, 0);
+    assertDatabaseCount(InteractionInitiative::class, 0);
 
-  livewire(CreateInteractionInitiative::class)
-    ->assertSuccessful()
-    ->fillForm($studentInteractionInitiative->toArray())
-    ->call('create')
-    ->assertHasNoFormErrors();  
-  livewire(CreateInteractionInitiative::class)
-    ->assertSuccessful()
-    ->fillForm($prospectInteractionInitiative->toArray())
-    ->call('create')
-    ->assertHasNoFormErrors(); 
-    
-  assertDatabaseCount(InteractionInitiative::class, 2);
+    livewire(CreateInteractionInitiative::class)
+        ->assertSuccessful()
+        ->fillForm($studentInteractionInitiative->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+    livewire(CreateInteractionInitiative::class)
+        ->assertSuccessful()
+        ->fillForm($prospectInteractionInitiative->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
 
-  assertDatabaseHas(InteractionInitiative::class, $studentInteractionInitiative->toArray());
-  assertDatabaseHas(InteractionInitiative::class, $prospectInteractionInitiative->toArray());
+    assertDatabaseCount(InteractionInitiative::class, 2);
+
+    assertDatabaseHas(InteractionInitiative::class, $studentInteractionInitiative->toArray());
+    assertDatabaseHas(InteractionInitiative::class, $prospectInteractionInitiative->toArray());
 });
 
 test('it can successfully set a default per type', function () {
-  asSuperAdmin();
+    asSuperAdmin();
 
-  $studentInteractionInitiative = InteractionInitiative::factory()->make(['is_default' => true, 'interactable_type' => InteractableType::Student]);
-  $prospectInteractionInitiative = InteractionInitiative::factory()->make(['is_default' => true, 'interactable_type' => InteractableType::Prospect]);
+    $studentInteractionInitiative = InteractionInitiative::factory()->make(['is_default' => true, 'interactable_type' => InteractableType::Student]);
+    $prospectInteractionInitiative = InteractionInitiative::factory()->make(['is_default' => true, 'interactable_type' => InteractableType::Prospect]);
 
-  assertDatabaseCount(InteractionInitiative::class, 0);
+    assertDatabaseCount(InteractionInitiative::class, 0);
 
-  livewire(CreateInteractionInitiative::class)
-    ->assertSuccessful()
-    ->fillForm($studentInteractionInitiative->toArray())
-    ->call('create')
-    ->assertHasNoFormErrors();  
-  livewire(CreateInteractionInitiative::class)
-    ->assertSuccessful()
-    ->fillForm($prospectInteractionInitiative->toArray())
-    ->call('create')
-    ->assertHasNoFormErrors(); 
-    
-  assertDatabaseCount(InteractionInitiative::class, 2);
+    livewire(CreateInteractionInitiative::class)
+        ->assertSuccessful()
+        ->fillForm($studentInteractionInitiative->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+    livewire(CreateInteractionInitiative::class)
+        ->assertSuccessful()
+        ->fillForm($prospectInteractionInitiative->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
 
-  assertDatabaseHas(InteractionInitiative::class, $studentInteractionInitiative->toArray());
-  assertDatabaseHas(InteractionInitiative::class, $prospectInteractionInitiative->toArray());
+    assertDatabaseCount(InteractionInitiative::class, 2);
+
+    assertDatabaseHas(InteractionInitiative::class, $studentInteractionInitiative->toArray());
+    assertDatabaseHas(InteractionInitiative::class, $prospectInteractionInitiative->toArray());
 });
