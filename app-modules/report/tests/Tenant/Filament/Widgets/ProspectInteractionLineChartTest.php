@@ -37,12 +37,6 @@
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Interaction\Models\InteractionDriver;
-use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Interaction\Models\InteractionOutcome;
-use AdvisingApp\Interaction\Models\InteractionRelation;
-use AdvisingApp\Interaction\Models\InteractionStatus;
-use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionLineChart;
 
@@ -50,13 +44,6 @@ beforeEach()->skip('Skipping these tests as there are currently issues with thes
 
 it('checks prospect interactions monthly line chart', function () {
     $prospectCount = 5;
-
-    $driver = InteractionDriver::factory()->create();
-    $initiative = InteractionInitiative::factory()->create();
-    $outcome = InteractionOutcome::factory()->create();
-    $relation = InteractionRelation::factory()->create();
-    $status = InteractionStatus::factory()->create();
-    $type = InteractionType::factory()->create();
 
     Prospect::factory()->count($prospectCount)->has(Interaction::factory()->count(5)->state([
         'created_at' => now()->subMonthsNoOverflow(1)->startOfMonth()->addDays(10),
@@ -107,13 +94,6 @@ it('returns correct data for prospect interactions based on group filter', funct
     $interactionStartDate = now()->subMonths(3)->startOfMonth()->addDays(10);
     $interactionEndDate = now()->subDays(5);
 
-    $driver = InteractionDriver::factory()->create();
-    $initiative = InteractionInitiative::factory()->create();
-    $outcome = InteractionOutcome::factory()->create();
-    $relation = InteractionRelation::factory()->create();
-    $status = InteractionStatus::factory()->create();
-    $type = InteractionType::factory()->create();
-
     $group = Group::factory()->create([
         'model' => GroupModel::Prospect,
         'filters' => [
@@ -137,12 +117,6 @@ it('returns correct data for prospect interactions based on group filter', funct
         Interaction::factory()
             ->count(5)
             ->state([
-                'interaction_driver_id' => $driver,
-                'interaction_initiative_id' => $initiative,
-                'interaction_outcome_id' => $outcome,
-                'interaction_relation_id' => $relation,
-                'interaction_status_id' => $status,
-                'interaction_type_id' => $type,
                 'created_at' => $interactionStartDate,
             ]),
         'interactions'
@@ -154,12 +128,6 @@ it('returns correct data for prospect interactions based on group filter', funct
         Interaction::factory()
             ->count(5)
             ->state([
-                'interaction_driver_id' => $driver,
-                'interaction_initiative_id' => $initiative,
-                'interaction_outcome_id' => $outcome,
-                'interaction_relation_id' => $relation,
-                'interaction_status_id' => $status,
-                'interaction_type_id' => $type,
                 'created_at' => $interactionEndDate,
             ]),
         'interactions'
