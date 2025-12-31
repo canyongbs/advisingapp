@@ -263,4 +263,3 @@ it('renders the created by select filter', function () {
         ->removeTableFilter('user_id')
         ->assertCanSeeTableRecords([$selectableInteractions, $nonSelectableInteractions]);
 });
-
