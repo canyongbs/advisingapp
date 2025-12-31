@@ -86,6 +86,7 @@
         name: null,
         description: null,
         avatar_url: null,
+        default_theme: 'light',
     });
     let websocketChannel = null;
 
@@ -457,7 +458,8 @@
 
 <template>
     <div
-        class="h-full ring-1 ring-gray-300/50 rounded"
+        class="h-full ring-1 ring-gray-300/50 rounded bg-white text-gray-900 dark:bg-gray-900 dark:text-white"
+        :class="advisor.default_theme"
         :style="{
             '--primary-50': '255, 251, 235',
             '--primary-100': '254, 243, 199',
@@ -560,7 +562,7 @@
                     />
 
                     <div v-if="authentication.registrationAllowed">
-                        <p class="text-gray-700 font-medium text-xs my-3">
+                        <p class="text-gray-700 dark:text-gray-300 font-medium text-xs my-3">
                             You are not registered yet. Please fill in the form below to register.
                         </p>
                         <div class="flex flex-wrap -mx-3 mb-6">
@@ -713,7 +715,7 @@
                                     :title="message.from === 'advisor' ? advisor.name : 'User'"
                                 />
                             </div>
-                            <div class="relative flex w-full flex-col gap-1 md:gap-3 tex-gray-900 dark:text-white">
+                            <div class="relative flex w-full flex-col gap-1 md:gap-3 text-gray-900 dark:text-white">
                                 {{ message.content }}
                             </div>
                         </div>
@@ -725,7 +727,7 @@
                 >
                     <div
                         v-if="isLoading"
-                        class="justify-center px-4 py-4 text-base md:gap-6 md:py-6 tex-gray-900 dark:text-white"
+                        class="justify-center px-4 py-4 text-base md:gap-6 md:py-6 text-gray-900 dark:text-white"
                     >
                         <p>AI is typing...</p>
                     </div>
@@ -806,5 +808,30 @@
     :host .start_chat_button:hover {
         color: var(--button-text-hover-color);
         background-color: var(--button-background-hover-color);
+    }
+
+    :host .dark .formkit-label {
+        color: #ffffff;
+    }
+
+    :host .dark .formkit-inner {
+        background-color: #374151;
+        box-shadow: 0 0 0 1px #4b5563;
+    }
+
+    :host .dark .formkit-input {
+        color: #ffffff;
+    }
+
+    :host .dark .formkit-help {
+        color: #9ca3af;
+    }
+
+    :host .dark .formkit-input::placeholder {
+        color: #9ca3af;
+    }
+
+    :host .dark .formkit-message {
+        color: #f87171;
     }
 </style>

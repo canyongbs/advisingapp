@@ -77,6 +77,7 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
         'button_text_hover_color',
         'button_background_color',
         'button_background_hover_color',
+        'default_theme',
     ];
 
     protected $casts = [
