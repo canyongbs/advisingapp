@@ -38,7 +38,6 @@ namespace AdvisingApp\MeetingCenter\Actions;
 
 use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
-use App\Features\EventTransparencyFeature;
 use App\Models\User;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Builder;
@@ -86,36 +85,18 @@ class GetAvailableAppointmentSlots
      */
     protected function getCalendarEventsFor(User $user, Carbon $start, Carbon $end): Collection
     {
-        // TODO EventTransparencyFeature: When removing the feature flag, replace lines 103-118 with:
-        // return CalendarEvent::query()
-        //     ->whereHas('calendar', fn (Builder $query) => $query->whereBelongsTo($user))
-        //     ->where(fn (Builder $query) => $this->wherePeriodOverlaps($query, $start, $end))
-        //     ->where(function (Builder $query) {
-        //         $query->whereIn('transparency', [
-        //             EventTransparency::Busy->value,
-        //             EventTransparency::Tentative->value,
-        //             EventTransparency::OutOfOffice->value,
-        //             EventTransparency::WorkingElsewhere->value,
-        //         ]);
-        //     })
-        //     ->get();
-
-        $query = CalendarEvent::query()
+        return CalendarEvent::query()
             ->whereHas('calendar', fn (Builder $query) => $query->whereBelongsTo($user))
-            ->where(fn (Builder $query) => $this->wherePeriodOverlaps($query, $start, $end));
-
-        if (EventTransparencyFeature::active()) {
-            $query->where(function (Builder $query) {
+            ->where(fn (Builder $query) => $this->wherePeriodOverlaps($query, $start, $end))
+            ->where(function (Builder $query) {
                 $query->whereIn('transparency', [
                     EventTransparency::Busy->value,
                     EventTransparency::Tentative->value,
                     EventTransparency::OutOfOffice->value,
                     EventTransparency::WorkingElsewhere->value,
                 ]);
-            });
-        }
-
-        return $query->get();
+            })
+            ->get();
     }
 
     /**

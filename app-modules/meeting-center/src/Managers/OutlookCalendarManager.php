@@ -42,7 +42,6 @@ use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Notifications\CalendarRequiresReconnectNotification;
 use AdvisingApp\MeetingCenter\Settings\AzureCalendarSettings;
-use App\Features\EventTransparencyFeature;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeInterface;
@@ -85,30 +84,13 @@ class OutlookCalendarManager implements CalendarInterface
 
         $events = [];
 
-        // TODO EventTransparencyFeature: When removing the feature flag, replace lines 99-113 with:
-        // $request = $client->createCollectionRequest(
-        //     requestType: 'GET',
-        //     endpoint: '/me/calendar/calendarView?' . http_build_query([
-        //         '$top' => $perPage ?? GraphConstants::MAX_PAGE_SIZE,
-        //         'startDateTime' => $start->format(DateTimeInterface::ATOM),
-        //         'endDateTime' => $end->format(DateTimeInterface::ATOM),
-        //         '$select' => 'id,subject,bodyPreview,start,end,attendees,showAs',
-        //     ])
-        // );
-
-        $selectFields = ['id', 'subject', 'bodyPreview', 'start', 'end', 'attendees'];
-
-        if (EventTransparencyFeature::active()) {
-            $selectFields[] = 'showAs';
-        }
-
         $request = $client->createCollectionRequest(
             requestType: 'GET',
             endpoint: '/me/calendar/calendarView?' . http_build_query([
                 '$top' => $perPage ?? GraphConstants::MAX_PAGE_SIZE,
                 'startDateTime' => $start->format(DateTimeInterface::ATOM),
                 'endDateTime' => $end->format(DateTimeInterface::ATOM),
-                '$select' => implode(',', $selectFields),
+                '$select' => 'id,subject,bodyPreview,start,end,attendees,showAs',
             ])
         );
 
@@ -233,20 +215,7 @@ class OutlookCalendarManager implements CalendarInterface
             ->each(function (Event $providerEvent) use ($calendar) {
                 $userEvent = $calendar->events()->where('provider_id', $providerEvent->getId())->first() ?? $calendar->events()->make();
 
-                // TODO EventTransparencyFeature: When removing the feature flag, replace lines 249-264 with:
-                // $userEvent->fill([
-                //     'provider_id' => $providerEvent->getId(),
-                //     'title' => $providerEvent->getSubject(),
-                //     'description' => $providerEvent->getBodyPreview(),
-                //     'starts_at' => Carbon::parse($providerEvent->getStart()->getDateTime(), $providerEvent->getStart()->getTimeZone()),
-                //     'ends_at' => Carbon::parse($providerEvent->getEnd()->getDateTime(), $providerEvent->getEnd()->getTimeZone()),
-                //     'attendees' => collect($providerEvent->getAttendees())
-                //         ->map(fn ($attendee) => $attendee['emailAddress']['address'])
-                //         ->prepend($calendar->provider_email),
-                //     'transparency' => EventTransparency::fromOutlookShowAs($providerEvent->getShowAs()?->value()),
-                // ]);
-
-                $data = [
+                $userEvent->fill([
                     'provider_id' => $providerEvent->getId(),
                     'title' => $providerEvent->getSubject(),
                     'description' => $providerEvent->getBodyPreview(),
@@ -255,13 +224,8 @@ class OutlookCalendarManager implements CalendarInterface
                     'attendees' => collect($providerEvent->getAttendees())
                         ->map(fn ($attendee) => $attendee['emailAddress']['address'])
                         ->prepend($calendar->provider_email),
-                ];
-
-                if (EventTransparencyFeature::active()) {
-                    $data['transparency'] = EventTransparency::fromOutlookShowAs($providerEvent->getShowAs()?->value());
-                }
-
-                $userEvent->fill($data);
+                    'transparency' => EventTransparency::fromOutlookShowAs($providerEvent->getShowAs()?->value()),
+                ]);
 
                 if ($userEvent->isDirty()) {
                     $userEvent->saveQuietly();
@@ -374,7 +338,7 @@ class OutlookCalendarManager implements CalendarInterface
                     ->toArray()
             );
 
-        if (EventTransparencyFeature::active() && $event->transparency) {
+        if ($event->transparency) {
             $microsoftEvent->setShowAs(new FreeBusyStatus($event->transparency->toOutlookShowAs()));
         }
 
