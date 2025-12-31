@@ -36,7 +36,10 @@
 
 namespace AdvisingApp\Alert\Presets\Handlers;
 
+use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
 use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 
 class RepeatedCourseAttemptPresetHandler implements AlertPresetHandler
 {
@@ -58,5 +61,12 @@ class RepeatedCourseAttemptPresetHandler implements AlertPresetHandler
     public function getConfigurationModel(): ?string
     {
         return null;
+    }
+
+    public function getStudentAlertQuery(?AlertPresetConfiguration $configuration): Builder
+    {
+        return DB::table(DB::raw('(SELECT sisid, class_nbr, COUNT(*) as attempt_count FROM enrollments WHERE deleted_at IS NULL GROUP BY sisid, class_nbr HAVING COUNT(*) > 1) as repeated_courses'))
+            ->select('sisid')
+            ->distinct();
     }
 }

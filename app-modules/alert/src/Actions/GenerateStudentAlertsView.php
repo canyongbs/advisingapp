@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,35 +34,48 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Configurations;
+namespace AdvisingApp\Alert\Actions;
 
-use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Support\Facades\DB;
 
-/**
- * @mixin IdeHelperSemesterGpaAlertConfiguration
- */
-class SemesterGpaAlertConfiguration extends BaseModel implements AlertPresetConfiguration, Auditable
+class GenerateStudentAlertsView
 {
-    use AuditableTrait;
-
-    protected $fillable = [
-        'gpa_threshold',
-    ];
-
-    protected $casts = [
-        'gpa_threshold' => 'decimal:2',
-    ];
-
-    /**
-     * @return MorphOne<AlertConfiguration, $this>
-     */
-    public function alertConfiguration(): MorphOne
+    public function execute(): void
     {
-        return $this->morphOne(AlertConfiguration::class, 'configuration');
+        $alertConfigurations = AlertConfiguration::with('configuration')
+            ->where('is_enabled', true)
+            ->get();
+
+        if ($alertConfigurations->isEmpty()) {
+            DB::statement(<<<'SQL'
+                CREATE OR REPLACE VIEW student_alerts AS
+                SELECT
+                    NULL::text AS sisid,
+                    NULL::uuid AS alert_configuration_id
+                WHERE false
+            SQL);
+
+            return;
+        }
+
+        $unionQueries = [];
+        $allBindings = [];
+
+        foreach ($alertConfigurations as $config) {
+            $handler = $config->preset->getHandler();
+            $studentQuery = $handler->getStudentAlertQuery($config->configuration);
+
+            $alertId = $config->id;
+
+            $subquerySql = $studentQuery->toSql();
+            $unionQueries[] = "SELECT sisid, '{$alertId}'::uuid AS alert_configuration_id FROM ({$subquerySql}) AS subquery_{$config->id}";
+
+            $allBindings = array_merge($allBindings, $studentQuery->getBindings());
+        }
+
+        $viewSql = 'CREATE OR REPLACE VIEW student_alerts AS ' . implode(' UNION ALL ', $unionQueries);
+
+        DB::statement($viewSql, $allBindings);
     }
 }

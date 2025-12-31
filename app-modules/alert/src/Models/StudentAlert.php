@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,24 +34,51 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+namespace AdvisingApp\Alert\Models;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+
+// /**
+//  * Represents a student alert from the student_alerts PostgreSQL view.
+//  *
+//  * This model provides a read-only interface to query which students
+//  * match which alert configurations. The underlying view is automatically
+//  * updated when alert configurations are changed.
+//  *
+//  * @property string $sisid
+//  * @property string $alert_configuration_id
+//  */
+class StudentAlert extends Model
+{
+    use UsesTenantConnection;
+
+    protected $table = 'student_alerts';
+
+    public $timestamps = false;
+
+    public $incrementing = false;
+
+    protected $fillable = [
+        'sisid',
+        'alert_configuration_id',
+    ];
+
+    /**
+     * @return BelongsTo<Student, $this>
+     */
+    public function student(): BelongsTo
     {
-        Schema::create('semester_gpa_alert_configurations', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-
-            $table->decimal('gpa_threshold', 4, 2);
-
-            $table->timestamps();
-        });
+        return $this->belongsTo(Student::class, 'sisid', 'sisid');
     }
 
-    public function down(): void
+    /**
+     * @return BelongsTo<AlertConfiguration, $this>
+     */
+    public function alertConfiguration(): BelongsTo
     {
-        Schema::dropIfExists('semester_gpa_alert_configurations');
+        return $this->belongsTo(AlertConfiguration::class, 'alert_configuration_id');
     }
-};
+}
