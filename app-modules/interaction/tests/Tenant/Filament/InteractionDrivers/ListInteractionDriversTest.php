@@ -62,17 +62,17 @@ test('ListInteractionDrivers is gated with proper access control', function () {
 });
 
 test('it can filter by interactable type', function () {
-  asSuperAdmin();
+    asSuperAdmin();
 
-  $studentDrivers = InteractionDriver::factory()->count(3)->create(['interactable_type' => InteractableType::Student]);
-  $prospectDrivers = InteractionDriver::factory()->count(3)->create(['interactable_type' => InteractableType::Prospect]);
+    $studentDrivers = InteractionDriver::factory()->count(3)->create(['interactable_type' => InteractableType::Student]);
+    $prospectDrivers = InteractionDriver::factory()->count(3)->create(['interactable_type' => InteractableType::Prospect]);
 
-  livewire(ListInteractionDrivers::class)
-    ->assertCanSeeTableRecords($studentDrivers->merge($prospectDrivers))
-    ->filterTable('interactable_type', InteractableType::Student->value)
-    ->assertCanSeeTableRecords($studentDrivers)
-    ->assertCanNotSeeTableRecords($prospectDrivers)
-    ->filterTable('interactable_type', InteractableType::Prospect->value)
-    ->assertCanSeeTableRecords($prospectDrivers)
-    ->assertCanNotSeeTableRecords($studentDrivers);
+    livewire(ListInteractionDrivers::class)
+        ->assertCanSeeTableRecords($studentDrivers->merge($prospectDrivers))
+        ->filterTable('interactable_type', InteractableType::Student->value)
+        ->assertCanSeeTableRecords($studentDrivers)
+        ->assertCanNotSeeTableRecords($prospectDrivers)
+        ->filterTable('interactable_type', InteractableType::Prospect->value)
+        ->assertCanSeeTableRecords($prospectDrivers)
+        ->assertCanNotSeeTableRecords($studentDrivers);
 });
