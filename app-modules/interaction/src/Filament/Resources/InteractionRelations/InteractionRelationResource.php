@@ -83,7 +83,7 @@ class InteractionRelationResource extends Resource
                 Toggle::make('is_default')
                     ->label('Default')
                     ->live()
-                    ->hint(function (?InteractionRelation $record, $state): ?string {
+                    ->hint(function (?InteractionRelation $record, $state, Get $get): ?string {
                         $basicHint = InteractableTypeFeature::active() ? 'This will only affect interactions for the selected type.' : null;
 
                         if ($record?->is_default) {
@@ -94,9 +94,14 @@ class InteractionRelationResource extends Resource
                             return $basicHint;
                         }
 
-                        $currentDefault = InteractionRelation::query()
-                            ->where('is_default', true)
-                            ->value('name');
+                        $currentDefault = InteractableTypeFeature::active() ?
+                            InteractionRelation::query()
+                                ->where('is_default', true)
+                                ->where('interactable_type', $get('interactable_type'))
+                                ->value('name') :
+                            InteractionRelation::query()
+                                ->where('is_default', true)
+                                ->value('name');
 
                         if (blank($currentDefault)) {
                             return $basicHint;
