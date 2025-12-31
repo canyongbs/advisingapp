@@ -80,7 +80,8 @@ class EducatableNameFormFieldBlock extends FormFieldBlock
             Checkbox::make('firstNameRequired')
                 ->label('First Name Required')
                 ->default(true)
-                ->disabled(),
+                ->disabled()
+                ->dehydrated(),
             FilamentTextInput::make('lastNameLabel')
                 ->label('Last Name Label')
                 ->required()
@@ -90,7 +91,8 @@ class EducatableNameFormFieldBlock extends FormFieldBlock
             Checkbox::make('lastNameRequired')
                 ->label('Last Name Required')
                 ->default(true)
-                ->disabled(),
+                ->disabled()
+                ->dehydrated(),
             FilamentTextInput::make('preferredNameLabel')
                 ->label('Preferred Name Label')
                 ->required()

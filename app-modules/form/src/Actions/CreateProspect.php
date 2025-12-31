@@ -34,24 +34,53 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
+namespace AdvisingApp\Form\Actions;
 
-use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
-use AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns\HasSharedFormConfiguration;
-use AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns\ValidatesProspectGenerationFields;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Schemas\Schema;
+use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 
-class CreateForm extends CreateRecord
+class CreateProspect
 {
-    use HasSharedFormConfiguration;
-    use ValidatesProspectGenerationFields;
-
-    protected static string $resource = FormResource::class;
-
-    public function form(Schema $schema): Schema
+    /**
+     * @param array{first_name: string, last_name: string, preferred: string|null, email: string} $data
+     */
+    public function __invoke(array $data): Prospect
     {
-        return $schema
-            ->components($this->fields());
+        $prospect = Prospect::query()->make([
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'preferred' => $data['preferred'] ?? null,
+            'full_name' => "{$data['first_name']} {$data['last_name']}",
+        ]);
+
+        $status = ProspectStatus::query()
+            ->where('classification', SystemProspectClassification::New)
+            ->first();
+
+        if ($status) {
+            $prospect->status()->associate($status);
+        }
+
+        $source = ProspectSource::query()
+            ->where('name', 'Advising App')
+            ->first();
+
+        if ($source) {
+            $prospect->source()->associate($source);
+        }
+
+        $prospect->save();
+
+        $emailAddress = $prospect->emailAddresses()->create([
+            'address' => $data['email'],
+            'order' => 1,
+        ]);
+
+        $prospect->primaryEmailAddress()->associate($emailAddress);
+        $prospect->save();
+
+        return $prospect;
     }
 }

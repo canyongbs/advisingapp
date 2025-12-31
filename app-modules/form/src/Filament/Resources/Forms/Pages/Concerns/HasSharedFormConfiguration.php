@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Models\Form;
@@ -46,6 +45,7 @@ use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use App\Enums\FontWeight;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
+use Closure;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -102,17 +102,16 @@ trait HasSharedFormConfiguration
                 ->columnSpanFull(),
             Toggle::make('is_authenticated')
                 ->label('Requires authentication')
-                ->helperText('If enabled, only students and prospects can submit this form, and they must verify their email address first.')
+                ->helperText('If enabled, students and prospects must verify their email address before they can open and submit this form.')
                 ->default((bool) request()->query('is_authenticated'))
                 ->disabled()
                 ->dehydrated(),
             Toggle::make('generate_prospects')
                 ->label('Generate Prospects')
-                ->helperText('If enabled, a request to submit by an unknown prospect will result in a new prospect being created.')
-                ->hidden(fn (Get $get) => ! $get('is_authenticated'))
-                ->disabled(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm))
-                ->hintIcon(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm) ? 'heroicon-m-lock-closed' : null)
-                ->dehydratedWhenHidden(),
+                ->helperText('If enabled, the system will check the primary email address submitted on the form and create a prospect if no match is found.')
+                ->default((bool) request()->query('generate_prospects'))
+                ->disabled()
+                ->dehydrated(),
             Toggle::make('is_wizard')
                 ->label('Multi-step form')
                 ->live()
@@ -129,7 +128,21 @@ trait HasSharedFormConfiguration
                 }),
             Section::make('Fields')
                 ->schema([
-                    $this->fieldBuilder(),
+                    $this->fieldBuilder()
+                        ->rules([
+                            function (Get $get): Closure {
+                                return function (string $attribute, mixed $value, Closure $fail) use ($get): void {
+                                    $isAuthenticated = $get('is_authenticated');
+                                    $generateProspects = $get('generate_prospects');
+
+                                    if (! $generateProspects || $isAuthenticated) {
+                                        return;
+                                    }
+
+                                    $this->validateNormalFormFromRules($fail);
+                                };
+                            },
+                        ]),
                 ])
                 ->hidden(fn (Get $get) => $get('is_wizard'))
                 ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists()),
@@ -142,7 +155,10 @@ trait HasSharedFormConfiguration
                         ->autocomplete(false)
                         ->columnSpanFull()
                         ->lazy(),
-                    $this->fieldBuilder(isAuthenticatedPath: '../../is_authenticated'),
+                    $this->fieldBuilder(
+                        isAuthenticatedPath: '../../is_authenticated',
+                        generateProspectsPath: '../../generate_prospects'
+                    ),
                 ])
                 ->addActionLabel('New step')
                 ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
@@ -150,7 +166,22 @@ trait HasSharedFormConfiguration
                 ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists())
                 ->relationship()
                 ->reorderable()
-                ->columnSpanFull(),
+                ->columnSpanFull()
+                ->validationAttribute('steps')
+                ->rules([
+                    function (Get $get): Closure {
+                        return function (string $attribute, mixed $value, Closure $fail) use ($get): void {
+                            $isAuthenticated = $get('is_authenticated');
+                            $generateProspects = $get('generate_prospects');
+
+                            if (! $generateProspects || $isAuthenticated) {
+                                return;
+                            }
+
+                            $this->validateWizardStepsFromRules($value, $fail);
+                        };
+                    },
+                ]),
             Section::make('Appearance')
                 ->schema([
                     Select::make('title_font_weight')
@@ -164,10 +195,12 @@ trait HasSharedFormConfiguration
         ];
     }
 
-    public function fieldBuilder(string $isAuthenticatedPath = 'is_authenticated'): TiptapEditor
+    public function fieldBuilder(string $isAuthenticatedPath = 'is_authenticated', string $generateProspectsPath = 'generate_prospects'): TiptapEditor
     {
         return TiptapEditor::make('content')
-            ->blocks(fn (Get $get): array => FormFieldBlockRegistry::get($get($isAuthenticatedPath) ?? false))
+            ->blocks(fn (Get $get): array => FormFieldBlockRegistry::get(
+                ($get($isAuthenticatedPath) ?? false) || ($get($generateProspectsPath) ?? false)
+            ))
             ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
             ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()
