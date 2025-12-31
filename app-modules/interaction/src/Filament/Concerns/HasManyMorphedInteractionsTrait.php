@@ -215,8 +215,8 @@ trait HasManyMorphedInteractionsTrait
                     ->relationship(
                         'initiative',
                         'name',
-                        function(Builder $query) use ($ownerRecord) {
-                            if(! InteractableTypeFeature::active()) {
+                        function (Builder $query) use ($ownerRecord) {
+                            if (! InteractableTypeFeature::active()) {
                                 return $query;
                             }
 
@@ -236,8 +236,8 @@ trait HasManyMorphedInteractionsTrait
                     ->relationship(
                         'driver',
                         'name',
-                        function(Builder $query) use ($ownerRecord) {
-                            if(! InteractableTypeFeature::active()) {
+                        function (Builder $query) use ($ownerRecord) {
+                            if (! InteractableTypeFeature::active()) {
                                 return $query;
                             }
 
@@ -258,8 +258,8 @@ trait HasManyMorphedInteractionsTrait
                     ->relationship(
                         'type',
                         'name',
-                        function(Builder $query) use ($ownerRecord) {
-                            if(! InteractableTypeFeature::active()) {
+                        function (Builder $query) use ($ownerRecord) {
+                            if (! InteractableTypeFeature::active()) {
                                 return $query;
                             }
 
@@ -278,8 +278,8 @@ trait HasManyMorphedInteractionsTrait
                     ->relationship(
                         'status',
                         'name',
-                        function(Builder $query) use ($ownerRecord) {
-                            if(! InteractableTypeFeature::active()) {
+                        function (Builder $query) use ($ownerRecord) {
+                            if (! InteractableTypeFeature::active()) {
                                 return $query;
                             }
 
