@@ -36,10 +36,14 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypes\InteractionTypeResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionTypes\Pages\EditInteractionType;
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionType;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 test('EditInteractionType is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -58,4 +62,15 @@ test('EditInteractionType is gated with proper access control', function () {
         ->get(
             InteractionTypeResource::getUrl('edit', ['record' => $type])
         )->assertSuccessful();
+});
+
+test('it cannot delete instances used by an interaction', function () {
+    asSuperAdmin();
+
+    $type = InteractionType::factory()->create();
+
+    Interaction::factory()->for($type, 'type')->create();
+
+    livewire(EditInteractionType::class, ['record' => $type->id])
+        ->assertActionHidden('delete');
 });
