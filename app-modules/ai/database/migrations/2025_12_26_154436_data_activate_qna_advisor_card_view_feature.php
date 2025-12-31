@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,32 +33,18 @@
 
 </COPYRIGHT>
 */
-import { defaultConfig, plugin } from '@formkit/vue';
-import { createPinia } from 'pinia';
-import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import App from './App.ce.vue';
-import config from './formkit.config.js';
-import styles from './widget.css?inline';
 
-customElements.define(
-    'qna-advisor-embed',
-    defineCustomElement({
-        styles: [styles],
-        setup(props) {
-            const app = createApp();
-            const pinia = createPinia();
+use App\Features\QnaAdvisorCardViewFeature;
+use Illuminate\Database\Migrations\Migration;
 
-            app.use(pinia);
-            app.use(plugin, defaultConfig(config));
+return new class () extends Migration {
+    public function up(): void
+    {
+        QnaAdvisorCardViewFeature::activate();
+    }
 
-            app.config.devtools = true;
-
-            const inst = getCurrentInstance();
-            Object.assign(inst.appContext, app._context);
-            Object.assign(inst.provides, app._context.provides);
-
-            return () => h(App, props);
-        },
-        props: ['url'],
-    }),
-);
+    public function down(): void
+    {
+        QnaAdvisorCardViewFeature::deactivate();
+    }
+};

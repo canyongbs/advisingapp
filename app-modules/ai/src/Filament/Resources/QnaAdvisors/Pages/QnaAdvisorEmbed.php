@@ -40,14 +40,17 @@ use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Form\Rules\IsDomain;
+use App\Features\QnaAdvisorCardViewFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\Action;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -106,6 +109,22 @@ class QnaAdvisorEmbed extends EditRecord
                             ->label('Generate Prospects')
                             ->helperText('If enabled, the QnA Advisor will allow for the registration of an unrecognized prospect.')
                             ->hidden(fn (Get $get) => ! $get('is_embed_enabled') || ! $get('is_requires_authentication_enabled')),
+                        Grid::make()
+                            ->schema([
+                                ColorPicker::make('title_text_color')
+                                    ->label('Title Text Color'),
+                                ColorPicker::make('description_text_color')
+                                    ->label('Description Text Color'),
+                                ColorPicker::make('button_text_color')
+                                    ->label('Button Text Color'),
+                                ColorPicker::make('button_text_hover_color')
+                                    ->label('Button Hover Text Color'),
+                                ColorPicker::make('button_background_color')
+                                    ->label('Button Background Color'),
+                                ColorPicker::make('button_background_hover_color')
+                                    ->label('Button Hover Background Color'),
+                            ])
+                            ->visible(fn (Get $get) => QnaAdvisorCardViewFeature::active() && $get('is_embed_enabled')),
                         Actions::make([
                             Action::make('embed_snippet')
                                 ->label('Embed Snippet')
