@@ -130,6 +130,14 @@ trait HasManyMorphedInteractionsTrait
 
     public function table(Table $table): Table
     {
+        $ownerRecord = $this->getOwnerRecord();
+
+        assert(
+            $ownerRecord instanceof Student ||
+            $ownerRecord instanceof Prospect ||
+            $ownerRecord instanceof CaseModel
+        );
+
         return $table
             ->recordTitleAttribute('id')
             ->defaultSort('end_datetime', 'desc')
@@ -181,18 +189,10 @@ trait HasManyMorphedInteractionsTrait
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->steps(function () {
-                        assert(
-                            $this->getOwnerRecord() instanceof Student ||
-                            $this->getOwnerRecord() instanceof Prospect ||
-                            $this->getOwnerRecord() instanceof CaseModel
-                        );
-
-                        return InteractionForm::getSteps($this->getOwnerRecord());
+                    ->steps(function () use ($ownerRecord) {
+                        return InteractionForm::getSteps($ownerRecord);
                     })
-                    ->authorize(function () {
-                        $ownerRecord = $this->getOwnerRecord();
-
+                    ->authorize(function () use ($ownerRecord) {
                         return auth()->user()?->can('create', [Interaction::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
                     }),
             ])
@@ -205,14 +205,8 @@ trait HasManyMorphedInteractionsTrait
                             ->cancelParentActions(),
                     ]),
                 EditAction::make()
-                    ->steps(function () {
-                        assert(
-                            $this->getOwnerRecord() instanceof Student ||
-                            $this->getOwnerRecord() instanceof Prospect ||
-                            $this->getOwnerRecord() instanceof CaseModel
-                        );
-
-                        return InteractionForm::getSteps($this->getOwnerRecord());
+                    ->steps(function () use ($ownerRecord) {
+                        return InteractionForm::getSteps($ownerRecord);
                     })
                     ->modalHeading('Edit Interaction'),
             ])
@@ -221,9 +215,19 @@ trait HasManyMorphedInteractionsTrait
                     ->relationship(
                         'initiative',
                         'name',
-                        fn (Builder $query) => (InteractableTypeFeature::active() && ($this->getOwnerRecord() instanceof Student || $this->getOwnerRecord() instanceof Prospect)) ?
-                                $query->where('interactable_type', $this->getOwnerRecord()->getMorphClass()) :
-                                $query
+                        function(Builder $query) use ($ownerRecord) {
+                            if(! InteractableTypeFeature::active()) {
+                                return $query;
+                            }
+
+                            $type = $ownerRecord->getMorphClass();
+
+                            if ($ownerRecord instanceof CaseModel) {
+                                $type = $ownerRecord->respondent->getMorphClass();
+                            }
+
+                            return $query->where('interactable_type', $type);
+                        }
                     )
                     ->label('Initiative')
                     ->multiple()
@@ -232,9 +236,19 @@ trait HasManyMorphedInteractionsTrait
                     ->relationship(
                         'driver',
                         'name',
-                        fn (Builder $query) => (InteractableTypeFeature::active() && ($this->getOwnerRecord() instanceof Student || $this->getOwnerRecord() instanceof Prospect)) ?
-                                $query->where('interactable_type', $this->getOwnerRecord()->getMorphClass()) :
-                                $query
+                        function(Builder $query) use ($ownerRecord) {
+                            if(! InteractableTypeFeature::active()) {
+                                return $query;
+                            }
+
+                            $type = $ownerRecord->getMorphClass();
+
+                            if ($ownerRecord instanceof CaseModel) {
+                                $type = $ownerRecord->respondent->getMorphClass();
+                            }
+
+                            return $query->where('interactable_type', $type);
+                        }
                     )
                     ->label('Driver')
                     ->multiple()
@@ -244,9 +258,19 @@ trait HasManyMorphedInteractionsTrait
                     ->relationship(
                         'type',
                         'name',
-                        fn (Builder $query) => (InteractableTypeFeature::active() && ($this->getOwnerRecord() instanceof Student || $this->getOwnerRecord() instanceof Prospect)) ?
-                                $query->where('interactable_type', $this->getOwnerRecord()->getMorphClass()) :
-                                $query
+                        function(Builder $query) use ($ownerRecord) {
+                            if(! InteractableTypeFeature::active()) {
+                                return $query;
+                            }
+
+                            $type = $ownerRecord->getMorphClass();
+
+                            if ($ownerRecord instanceof CaseModel) {
+                                $type = $ownerRecord->respondent->getMorphClass();
+                            }
+
+                            return $query->where('interactable_type', $type);
+                        }
                     )
                     ->multiple()
                     ->visible(fn () => $this->getSettings()->is_type_enabled),
@@ -254,9 +278,19 @@ trait HasManyMorphedInteractionsTrait
                     ->relationship(
                         'status',
                         'name',
-                        fn (Builder $query) => (InteractableTypeFeature::active() && ($this->getOwnerRecord() instanceof Student || $this->getOwnerRecord() instanceof Prospect)) ?
-                                $query->where('interactable_type', $this->getOwnerRecord()->getMorphClass()) :
-                                $query
+                        function(Builder $query) use ($ownerRecord) {
+                            if(! InteractableTypeFeature::active()) {
+                                return $query;
+                            }
+
+                            $type = $ownerRecord->getMorphClass();
+
+                            if ($ownerRecord instanceof CaseModel) {
+                                $type = $ownerRecord->respondent->getMorphClass();
+                            }
+
+                            return $query->where('interactable_type', $type);
+                        }
                     )
                     ->label('Status')
                     ->multiple()
