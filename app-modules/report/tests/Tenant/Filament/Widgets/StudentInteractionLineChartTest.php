@@ -39,8 +39,43 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionLineChart;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
 
-beforeEach()->skip('Skipping these tests as there are currently issues with these tests or the underlying functionality having to do with overflow dates that needs to be resolved');
+use function Pest\Laravel\travelTo;
+
+it('returns correct data on an overflow-safe day', function () {
+    travelTo(Carbon::parse('2024-12-15'));
+
+    Student::factory()
+        ->has(
+            Interaction::factory()->count(13)->sequence(
+                // Add interaction on Dec 31st of previous year to test that it should not be counted
+                ['created_at' => Carbon::parse('2023-12-31')],
+                ['created_at' => Carbon::parse('2024-01-15')],
+                ['created_at' => Carbon::parse('2024-02-15')],
+                // Add interaction on Feb 29th to test leap year handling
+                ['created_at' => Carbon::parse('2024-02-29')],
+                ['created_at' => Carbon::parse('2024-03-15')],
+                // Add multiple interactions in March to test aggregation and throw in some days not all months have
+                ['created_at' => Carbon::parse('2024-03-29')],
+                ['created_at' => Carbon::parse('2024-03-30')],
+                ['created_at' => Carbon::parse('2024-03-31')],
+                ['created_at' => Carbon::parse('2024-04-15')],
+                ['created_at' => Carbon::parse('2024-05-15')],
+                // Add a gap in between in which no interactions occur
+                ['created_at' => Carbon::parse('2024-10-15')],
+                ['created_at' => Carbon::parse('2024-11-15')],
+                ['created_at' => Carbon::parse('2024-12-01')],
+            ),
+            'interactions'
+        )
+        ->create();
+
+    $widgetInstance = new StudentInteractionLineChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
+
+    expect($widgetInstance->getData())->toMatchSnapshot();
+});
 
 it('checks student interactions monthly line chart', function () {
     $studentCount = 5;
@@ -56,7 +91,7 @@ it('checks student interactions monthly line chart', function () {
     $widgetInstance->cacheTag = 'report-student-interaction';
 
     expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
-});
+})->skip();
 
 it('returns correct data for student interactions within the given date range', function () {
     $interactionStartDate = now()->subMonths(3);
@@ -88,7 +123,7 @@ it('returns correct data for student interactions within the given date range', 
     ];
 
     expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
-});
+})->skip();
 
 it('returns correct data for student interactions based on group filter', function () {
     $interactionStartDate = now()->subMonths(3);
@@ -142,4 +177,4 @@ it('returns correct data for student interactions based on group filter', functi
     ];
 
     expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
-});
+})->skip();
