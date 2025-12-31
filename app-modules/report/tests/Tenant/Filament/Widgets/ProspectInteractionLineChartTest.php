@@ -44,10 +44,10 @@ it('checks prospect interactions monthly line chart', function () {
     $prospectCount = 5;
 
     Prospect::factory()->count($prospectCount)->has(Interaction::factory()->count(5)->state([
-        'created_at' => now()->subMonths(1),
+        'created_at' => now()->subMonthsNoOverflow(1),
     ]), 'interactions')->create();
     Prospect::factory()->count($prospectCount)->has(Interaction::factory()->count(5)->state([
-        'created_at' => now()->subMonths(6),
+        'created_at' => now()->subMonthsNoOverflow(6),
     ]), 'interactions')->create();
 
     $widgetInstance = new ProspectInteractionLineChart();
@@ -57,8 +57,8 @@ it('checks prospect interactions monthly line chart', function () {
 });
 
 it('returns correct data for prospect interactions within the given date range', function () {
-    $interactionStartDate = now()->subMonths(3);
-    $interactionEndDate = now()->subDays(5);
+    $interactionStartDate = now()->subMonthsNoOverflow(3);
+    $interactionEndDate = now()->subMonthsNoOverflow(5);
 
     Prospect::factory()->count(5)->has(
         Interaction::factory()
