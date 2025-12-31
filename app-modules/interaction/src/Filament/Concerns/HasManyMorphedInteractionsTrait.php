@@ -36,10 +36,13 @@
 
 namespace AdvisingApp\Interaction\Filament\Concerns;
 
+use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Schemas\InteractionForm;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\InteractableTypeFeature;
 use Carbon\CarbonInterface;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -51,6 +54,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 trait HasManyMorphedInteractionsTrait
 {
@@ -126,6 +130,14 @@ trait HasManyMorphedInteractionsTrait
 
     public function table(Table $table): Table
     {
+        $ownerRecord = $this->getOwnerRecord();
+
+        assert(
+            $ownerRecord instanceof Student ||
+            $ownerRecord instanceof Prospect ||
+            $ownerRecord instanceof CaseModel
+        );
+
         return $table
             ->recordTitleAttribute('id')
             ->defaultSort('end_datetime', 'desc')
@@ -177,10 +189,10 @@ trait HasManyMorphedInteractionsTrait
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->steps(InteractionForm::getSteps())
-                    ->authorize(function () {
-                        $ownerRecord = $this->getOwnerRecord();
-
+                    ->steps(function () use ($ownerRecord) {
+                        return InteractionForm::getSteps($ownerRecord);
+                    })
+                    ->authorize(function () use ($ownerRecord) {
                         return auth()->user()?->can('create', [Interaction::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
                     }),
             ])
@@ -193,27 +205,93 @@ trait HasManyMorphedInteractionsTrait
                             ->cancelParentActions(),
                     ]),
                 EditAction::make()
-                    ->steps(InteractionForm::getSteps())
+                    ->steps(function () use ($ownerRecord) {
+                        return InteractionForm::getSteps($ownerRecord);
+                    })
                     ->modalHeading('Edit Interaction'),
             ])
             ->filters([
                 SelectFilter::make('interaction_initiative_id')
-                    ->relationship('initiative', 'name')
+                    ->relationship(
+                        'initiative',
+                        'name',
+                        function (Builder $query) use ($ownerRecord) {
+                            if (! InteractableTypeFeature::active()) {
+                                return $query;
+                            }
+
+                            $type = $ownerRecord->getMorphClass();
+
+                            if ($ownerRecord instanceof CaseModel) {
+                                $type = $ownerRecord->respondent->getMorphClass();
+                            }
+
+                            return $query->where('interactable_type', $type);
+                        }
+                    )
                     ->label('Initiative')
                     ->multiple()
                     ->visible(fn () => $this->getSettings()->is_initiative_enabled),
                 SelectFilter::make('interaction_driver_id')
-                    ->relationship('driver', 'name')
+                    ->relationship(
+                        'driver',
+                        'name',
+                        function (Builder $query) use ($ownerRecord) {
+                            if (! InteractableTypeFeature::active()) {
+                                return $query;
+                            }
+
+                            $type = $ownerRecord->getMorphClass();
+
+                            if ($ownerRecord instanceof CaseModel) {
+                                $type = $ownerRecord->respondent->getMorphClass();
+                            }
+
+                            return $query->where('interactable_type', $type);
+                        }
+                    )
                     ->label('Driver')
                     ->multiple()
                     ->visible(fn () => $this->getSettings()->is_driver_enabled),
                 SelectFilter::make('interaction_type_id')
                     ->label('Type')
-                    ->relationship('type', 'name')
+                    ->relationship(
+                        'type',
+                        'name',
+                        function (Builder $query) use ($ownerRecord) {
+                            if (! InteractableTypeFeature::active()) {
+                                return $query;
+                            }
+
+                            $type = $ownerRecord->getMorphClass();
+
+                            if ($ownerRecord instanceof CaseModel) {
+                                $type = $ownerRecord->respondent->getMorphClass();
+                            }
+
+                            return $query->where('interactable_type', $type);
+                        }
+                    )
                     ->multiple()
                     ->visible(fn () => $this->getSettings()->is_type_enabled),
                 SelectFilter::make('interaction_status_id')
-                    ->relationship('status', 'name')
+                    ->relationship(
+                        'status',
+                        'name',
+                        function (Builder $query) use ($ownerRecord) {
+                            if (! InteractableTypeFeature::active()) {
+                                return $query;
+                            }
+
+                            $type = $ownerRecord->getMorphClass();
+
+                            if ($ownerRecord instanceof CaseModel) {
+                                $type = $ownerRecord->respondent->getMorphClass();
+                            }
+
+                            return $query->where('interactable_type', $type);
+                        }
+                    )
                     ->label('Status')
                     ->multiple()
                     ->visible(fn () => $this->getSettings()->is_status_enabled),

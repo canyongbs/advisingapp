@@ -34,35 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+namespace Tests\Exceptions;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Interaction\Enums\InteractableType;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Interaction\Observers\InteractionOutcomeObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use Exception;
 
-/**
- * @mixin IdeHelperInteractionOutcome
- */
-#[ObservedBy([InteractionOutcomeObserver::class])]
-class InteractionOutcome extends BaseModel implements Auditable
+class StopMigration extends Exception
 {
-    use AuditableTrait;
-    use HasManyInteractions;
-    use SoftDeletes;
-
-    protected $fillable = [
-        'name',
-        'is_default',
-        'interactable_type',
-    ];
-
-    protected $casts = [
-        'is_default' => 'boolean',
-        'interactable_type' => InteractableType::class,
-    ];
+    public function __construct(string $message = 'Stop migrations')
+    {
+        parent::__construct($message);
+    }
 }

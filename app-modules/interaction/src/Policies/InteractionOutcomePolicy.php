@@ -87,6 +87,10 @@ class InteractionOutcomePolicy
 
     public function delete(Authenticatable $authenticatable, InteractionOutcome $outcome): Response
     {
+        if ($outcome->interactions->count() > 0) {
+            return Response::deny("This outcome cannot be deleted because it is being used by {$outcome->interactions->count()} interaction(s).");
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'settings.*.delete',
             denyResponse: 'You do not have permission to delete this interaction outcome.'

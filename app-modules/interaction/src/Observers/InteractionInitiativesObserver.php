@@ -44,6 +44,7 @@ class InteractionInitiativesObserver
     {
         if ($interactionInitiative->is_default) {
             InteractionInitiative::query()
+                ->where('interactable_type', $interactionInitiative->interactable_type)
                 ->where('is_default', true)
                 ->update(['is_default' => false]);
         }

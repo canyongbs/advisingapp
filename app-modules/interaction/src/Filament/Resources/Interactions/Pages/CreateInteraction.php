@@ -36,10 +36,38 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\Interactions\Pages;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Interaction\Filament\Actions\DraftInteractionWithAiAction;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\InteractionResource;
-use AdvisingApp\Interaction\Filament\Resources\Interactions\Schemas\InteractionForm;
+use AdvisingApp\Interaction\Models\InteractionDriver;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
+use AdvisingApp\Interaction\Models\InteractionOutcome;
+use AdvisingApp\Interaction\Models\InteractionRelation;
+use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionType;
+use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\Scopes\ExcludeConvertedProspects;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\MorphToSelect\Type;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Wizard\Step;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class CreateInteraction extends CreateRecord
 {
@@ -52,6 +80,211 @@ class CreateInteraction extends CreateRecord
      */
     public function getSteps(): array
     {
-        return InteractionForm::getSteps();
+        $settings = resolve(InteractionManagementSettings::class);
+
+        return [
+            Step::make('Confidentiality')
+                ->schema([
+                    MorphToSelect::make('interactable')
+                        ->label('Related To')
+                        ->searchable()
+                        ->required()
+                        ->types([
+                            ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [Type::make(Student::class)
+                                ->titleAttribute(Student::displayNameKey())] : []),
+                            ...(auth()->user()->hasLicense(Prospect::getLicenseType()) ? [Type::make(Prospect::class)
+                                ->titleAttribute(Prospect::displayNameKey())
+                                ->modifyOptionsQueryUsing(fn (Builder $query) => $query->tap(new ExcludeConvertedProspects())),
+                            ] : []),
+                            Type::make(CaseModel::class)
+                                ->label('Case')
+                                ->titleAttribute('case_number'),
+                        ])
+                        ->live(),
+                    Fieldset::make('Confidentiality')
+                        ->schema([
+                            Checkbox::make('is_confidential')
+                                ->label('Confidential')
+                                ->live()
+                                ->columnSpanFull(),
+                            Select::make('interaction_confidential_users')
+                                ->relationship('confidentialAccessUsers', 'name')
+                                ->preload()
+                                ->label('Users')
+                                ->multiple()
+                                ->exists('users', 'id')
+                                ->visible(fn (Get $get) => $get('is_confidential')),
+                            Select::make('interaction_confidential_teams')
+                                ->relationship('confidentialAccessTeams', 'name')
+                                ->preload()
+                                ->label('Teams')
+                                ->multiple()
+                                ->exists('teams', 'id')
+                                ->visible(fn (Get $get) => $get('is_confidential')),
+                        ]),
+                ]),
+            Step::make('Details')
+                ->schema([
+                    Select::make('interaction_initiative_id')
+                        ->reactive()
+                        ->relationship('initiative', 'name')
+                        ->preload()
+                        ->label('Initiative')
+                        ->required(fn () => $settings->is_initiative_required)
+                        ->visible(fn () => $settings->is_initiative_enabled)
+                        ->default(
+                            fn () => InteractionInitiative::query()
+                                ->where('is_default', true)
+                                ->first()
+                                ?->getKey()
+                        )
+                        ->exists((new InteractionInitiative())->getTable(), 'id'),
+                    Select::make('interaction_driver_id')
+                        ->reactive()
+                        ->relationship('driver', 'name')
+                        ->preload()
+                        ->label('Driver')
+                        ->required(fn () => $settings->is_driver_required)
+                        ->visible(fn () => $settings->is_driver_enabled)
+                        ->default(
+                            fn () => InteractionDriver::query()
+                                ->where('is_default', true)
+                                ->first()
+                                ?->getKey()
+                        )
+                        ->exists((new InteractionDriver())->getTable(), 'id'),
+                    Select::make('division_id')
+                        ->relationship('division', 'name')
+                        ->default(
+                            fn () => auth()->user()->team?->division?->getKey()
+                                ?? Division::query()
+                                    ->where('is_default', true)
+                                    ->first()
+                                    ?->getKey()
+                                ?? Division::query()->first()?->getKey()
+                                ?? throw ValidationException::withMessages(['No division found'])
+                        )
+                        ->preload()
+                        ->label('Division')
+                        ->required()
+                        ->exists((new Division())->getTable(), 'id')
+                        ->visible(fn (): bool => Division::count() > 1)
+                        ->dehydratedWhenHidden(),
+                    Select::make('interaction_outcome_id')
+                        ->reactive()
+                        ->relationship('outcome', 'name')
+                        ->default(
+                            fn () => InteractionOutcome::query()
+                                ->where('is_default', true)
+                                ->first()
+                                ?->getKey()
+                        )
+                        ->preload()
+                        ->label('Outcome')
+                        ->required(fn () => $settings->is_outcome_required)
+                        ->visible(fn () => $settings->is_outcome_enabled)
+                        ->exists((new InteractionOutcome())->getTable(), 'id'),
+                    Select::make('interaction_relation_id')
+                        ->reactive()
+                        ->relationship('relation', 'name')
+                        ->default(
+                            fn () => InteractionRelation::query()
+                                ->where('is_default', true)
+                                ->first()
+                                ?->getKey()
+                        )
+                        ->preload()
+                        ->label('Relation')
+                        ->required(fn () => $settings->is_relation_required)
+                        ->visible(fn () => $settings->is_relation_enabled)
+                        ->exists((new InteractionRelation())->getTable(), 'id'),
+                    Select::make('interaction_status_id')
+                        ->reactive()
+                        ->relationship('status', 'name')
+                        ->default(
+                            fn () => InteractionStatus::query()
+                                ->where('is_default', true)
+                                ->first()
+                                ?->getKey()
+                        )
+                        ->preload()
+                        ->label('Status')
+                        ->required(fn () => $settings->is_status_required)
+                        ->visible(fn () => $settings->is_status_enabled)
+                        ->exists((new InteractionStatus())->getTable(), 'id'),
+                    Select::make('interaction_type_id')
+                        ->reactive()
+                        ->relationship('type', 'name')
+                        ->preload()
+                        ->default(
+                            fn () => InteractionType::query()
+                                ->where('is_default', true)
+                                ->first()
+                                ?->getKey()
+                        )
+                        ->label('Type')
+                        ->required(fn () => $settings->is_type_required)
+                        ->visible(fn () => $settings->is_type_enabled)
+                        ->exists((new InteractionType())->getTable(), 'id'),
+                ])
+                ->columns(2),
+            Step::make('Time')
+                ->schema([
+                    DateTimePicker::make('start_datetime')
+                        ->label('Start Date and Time')
+                        ->seconds(false)
+                        ->default(fn () => now()->toDateTimeString())
+                        ->required()
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(static::calculateEndDateTime(...)),
+                    TextInput::make('duration')
+                        ->label('Duration (Minutes)')
+                        ->integer()
+                        ->minValue(0)
+                        ->required()
+                        ->dehydrated(false)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(static::calculateEndDateTime(...)),
+                    DateTimePicker::make('end_datetime')
+                        ->label('End Date and Time')
+                        ->seconds(false)
+                        ->disabled()
+                        ->dehydrated()
+                        ->required(),
+                ]),
+            Step::make('Notes')
+                ->schema([
+                    TextInput::make('subject')
+                        ->required(),
+                    Textarea::make('description')
+                        ->required(),
+                    Actions::make([DraftInteractionWithAiAction::make()])
+                        ->visible(auth()->user()->hasLicense(LicenseType::ConversationalAi)),
+                ])
+                ->columns(1),
+        ];
+    }
+
+    private static function calculateEndDateTime(Get $get, Set $set): void
+    {
+        $startDateTime = $get('start_datetime');
+
+        if (blank($startDateTime)) {
+            $set('end_datetime', null);
+
+            return;
+        }
+
+        $duration = $get('duration');
+
+        if (blank($duration)) {
+            $set('end_datetime', null);
+
+            return;
+        }
+
+        $set('end_datetime', Carbon::parse($startDateTime)
+            ->addMinutes((int) $duration)
+            ->toDateTimeString());
     }
 }

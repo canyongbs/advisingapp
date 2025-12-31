@@ -35,10 +35,15 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomes\InteractionOutcomeResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomes\Pages\ListInteractionOutcomes;
+use AdvisingApp\Interaction\Models\InteractionOutcome;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 test('ListInteractionOutcomes is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -54,4 +59,20 @@ test('ListInteractionOutcomes is gated with proper access control', function () 
         ->get(
             InteractionOutcomeResource::getUrl('index')
         )->assertSuccessful();
+});
+
+test('it can filter by interactable type', function () {
+    asSuperAdmin();
+
+    $studentOutcomes = InteractionOutcome::factory()->count(3)->create(['interactable_type' => InteractableType::Student]);
+    $prospectOutcomes = InteractionOutcome::factory()->count(3)->create(['interactable_type' => InteractableType::Prospect]);
+
+    livewire(ListInteractionOutcomes::class)
+        ->assertCanSeeTableRecords($studentOutcomes->merge($prospectOutcomes))
+        ->filterTable('interactable_type', InteractableType::Student->value)
+        ->assertCanSeeTableRecords($studentOutcomes)
+        ->assertCanNotSeeTableRecords($prospectOutcomes)
+        ->filterTable('interactable_type', InteractableType::Prospect->value)
+        ->assertCanSeeTableRecords($prospectOutcomes)
+        ->assertCanNotSeeTableRecords($studentOutcomes);
 });

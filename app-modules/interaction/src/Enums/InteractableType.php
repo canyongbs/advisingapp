@@ -34,35 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+namespace AdvisingApp\Interaction\Enums;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Interaction\Enums\InteractableType;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Interaction\Observers\InteractionOutcomeObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use Exception;
+use Filament\Support\Contracts\HasLabel;
 
-/**
- * @mixin IdeHelperInteractionOutcome
- */
-#[ObservedBy([InteractionOutcomeObserver::class])]
-class InteractionOutcome extends BaseModel implements Auditable
+enum InteractableType: string implements HasLabel
 {
-    use AuditableTrait;
-    use HasManyInteractions;
-    use SoftDeletes;
+    case Prospect = 'prospect';
 
-    protected $fillable = [
-        'name',
-        'is_default',
-        'interactable_type',
-    ];
+    case Student = 'student';
 
-    protected $casts = [
-        'is_default' => 'boolean',
-        'interactable_type' => InteractableType::class,
-    ];
+    public function getLabel(): string
+    {
+        return $this->name;
+    }
+
+    public static function fromMorphClass(string $morphClass): self
+    {
+        return match ($morphClass) {
+            'prospect' => InteractableType::Prospect,
+            'student' => InteractableType::Student,
+            default => throw new Exception('Invalid interactable type'),
+        };
+    }
 }

@@ -34,35 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiatives\InteractionInitiativeResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiatives\Pages\EditInteractionInitiative;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
+use App\Models\User;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Interaction\Enums\InteractableType;
-use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Interaction\Observers\InteractionOutcomeObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
-/**
- * @mixin IdeHelperInteractionOutcome
- */
-#[ObservedBy([InteractionOutcomeObserver::class])]
-class InteractionOutcome extends BaseModel implements Auditable
-{
-    use AuditableTrait;
-    use HasManyInteractions;
-    use SoftDeletes;
+test('EditInteractionInitative is gated with proper access control', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    protected $fillable = [
-        'name',
-        'is_default',
-        'interactable_type',
-    ];
+    $initiative = InteractionInitiative::factory()->create();
 
-    protected $casts = [
-        'is_default' => 'boolean',
-        'interactable_type' => InteractableType::class,
-    ];
-}
+    actingAs($user)
+        ->get(
+            InteractionInitiativeResource::getUrl('edit', ['record' => $initiative])
+        )->assertForbidden();
+
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.*.update');
+
+    actingAs($user)
+        ->get(
+            InteractionInitiativeResource::getUrl('edit', ['record' => $initiative])
+        )->assertSuccessful();
+});
+
+test('it cannot delete instances used by an interaction', function () {
+    asSuperAdmin();
+
+    $initiative = InteractionInitiative::factory()->create();
+
+    Interaction::factory()->for($initiative, 'initiative')->create();
+
+    livewire(EditInteractionInitiative::class, ['record' => $initiative->id])
+        ->assertActionHidden('delete');
+});
