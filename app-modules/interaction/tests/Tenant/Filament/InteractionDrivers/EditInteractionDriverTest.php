@@ -65,12 +65,12 @@ test('EditInteractionDriver is gated with proper access control', function () {
 });
 
 test('it cannot delete instances used by an interaction', function () {
-  asSuperAdmin();
+    asSuperAdmin();
 
-  $driver = InteractionDriver::factory()->create();
+    $driver = InteractionDriver::factory()->create();
 
-  Interaction::factory()->for($driver, 'driver')->create();
+    Interaction::factory()->for($driver, 'driver')->create();
 
-  livewire(EditInteractionDriver::class, ['record' => $driver->id])
-    ->assertActionHidden('delete');
+    livewire(EditInteractionDriver::class, ['record' => $driver->id])
+        ->assertActionHidden('delete');
 });
