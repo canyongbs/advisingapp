@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Interaction\Database\Factories;
 
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -48,6 +49,7 @@ class InteractionOutcomeFactory extends Factory
     {
         return [
             'name' => $this->faker->word(),
+            'interactable_type' => $this->faker->randomElement(InteractableType::cases())->value,
         ];
     }
 }
