@@ -36,10 +36,14 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\InteractionDriverResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\Pages\EditInteractionDriver;
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 test('EditInteractionDriver is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -60,4 +64,13 @@ test('EditInteractionDriver is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-test('it cannot delete instances used by an interaction', function () {})->todo();
+test('it cannot delete instances used by an interaction', function () {
+  asSuperAdmin();
+
+  $driver = InteractionDriver::factory()->create();
+
+  Interaction::factory()->for($driver, 'driver')->create();
+
+  livewire(EditInteractionDriver::class, ['record' => $driver->id])
+    ->assertActionHidden('delete');
+});
