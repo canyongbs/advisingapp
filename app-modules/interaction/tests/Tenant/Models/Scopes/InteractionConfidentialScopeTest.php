@@ -36,6 +36,12 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Interaction\Models\InteractionDriver;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
+use AdvisingApp\Interaction\Models\InteractionOutcome;
+use AdvisingApp\Interaction\Models\InteractionRelation;
+use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Models\Scopes\InteractionConfidentialScope;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
@@ -52,17 +58,42 @@ test('Interaction model has applied global scope', function () {
 test('Interactions model with fetch data for created user', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
+    $driver = InteractionDriver::factory()->create();
+    $initiative = InteractionInitiative::factory()->create();
+    $outcome = InteractionOutcome::factory()->create();
+    $relation = InteractionRelation::factory()->create();
+    $status = InteractionStatus::factory()->create();
+    $type = InteractionType::factory()->create();
+
     actingAs($user);
     $ownedConfidentialInteractions = Interaction::factory()->count(10)->create([
+        'interaction_driver_id' => $driver,
+        'interaction_initiative_id' => $initiative,
+        'interaction_outcome_id' => $outcome,
+        'interaction_relation_id' => $relation,
+        'interaction_status_id' => $status,
+        'interaction_type_id' => $type,
         'is_confidential' => true,
         'user_id' => $user,
     ]);
 
     $privateInteractions = Interaction::factory()->count(10)->create([
+        'interaction_driver_id' => $driver,
+        'interaction_initiative_id' => $initiative,
+        'interaction_outcome_id' => $outcome,
+        'interaction_relation_id' => $relation,
+        'interaction_status_id' => $status,
+        'interaction_type_id' => $type,
         'is_confidential' => true,
     ]);
 
     $publicInteractions = Interaction::factory()->count(10)->create([
+        'interaction_driver_id' => $driver,
+        'interaction_initiative_id' => $initiative,
+        'interaction_outcome_id' => $outcome,
+        'interaction_relation_id' => $relation,
+        'interaction_status_id' => $status,
+        'interaction_type_id' => $type,
         'is_confidential' => false,
     ]);
 
@@ -87,20 +118,45 @@ test('Interactions model with fetch data for team user', function () {
 
     $teamUser->team()->associate($team)->save();
 
+    $driver = InteractionDriver::factory()->create();
+    $initiative = InteractionInitiative::factory()->create();
+    $outcome = InteractionOutcome::factory()->create();
+    $relation = InteractionRelation::factory()->create();
+    $status = InteractionStatus::factory()->create();
+    $type = InteractionType::factory()->create();
+
     actingAs($teamUser);
 
     $ownedConfidentialInteractions = Interaction::factory()
         ->hasAttached($team, [], 'confidentialAccessTeams')
         ->count(10)
         ->create([
+            'interaction_driver_id' => $driver,
+            'interaction_initiative_id' => $initiative,
+            'interaction_outcome_id' => $outcome,
+            'interaction_relation_id' => $relation,
+            'interaction_status_id' => $status,
+            'interaction_type_id' => $type,
             'is_confidential' => true,
         ]);
 
     $privateInteractions = Interaction::factory()->count(10)->create([
+        'interaction_driver_id' => $driver,
+        'interaction_initiative_id' => $initiative,
+        'interaction_outcome_id' => $outcome,
+        'interaction_relation_id' => $relation,
+        'interaction_status_id' => $status,
+        'interaction_type_id' => $type,
         'is_confidential' => true,
     ]);
 
     $publicInteractions = Interaction::factory()->count(10)->create([
+        'interaction_driver_id' => $driver,
+        'interaction_initiative_id' => $initiative,
+        'interaction_outcome_id' => $outcome,
+        'interaction_relation_id' => $relation,
+        'interaction_status_id' => $status,
+        'interaction_type_id' => $type,
         'is_confidential' => false,
     ]);
 
@@ -121,17 +177,42 @@ test('Interactions model with fetch data for team user', function () {
 test('Interactions model with fetch data for assigned user', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
+    $driver = InteractionDriver::factory()->create();
+    $initiative = InteractionInitiative::factory()->create();
+    $outcome = InteractionOutcome::factory()->create();
+    $relation = InteractionRelation::factory()->create();
+    $status = InteractionStatus::factory()->create();
+    $type = InteractionType::factory()->create();
+
     actingAs($user);
 
     $ownedConfidentialInteractions = Interaction::factory()->hasAttached($user, [], 'confidentialAccessUsers')->count(10)->create([
+        'interaction_driver_id' => $driver,
+        'interaction_initiative_id' => $initiative,
+        'interaction_outcome_id' => $outcome,
+        'interaction_relation_id' => $relation,
+        'interaction_status_id' => $status,
+        'interaction_type_id' => $type,
         'is_confidential' => true,
     ]);
 
     $privateInteractions = Interaction::factory()->count(10)->create([
+        'interaction_driver_id' => $driver,
+        'interaction_initiative_id' => $initiative,
+        'interaction_outcome_id' => $outcome,
+        'interaction_relation_id' => $relation,
+        'interaction_status_id' => $status,
+        'interaction_type_id' => $type,
         'is_confidential' => true,
     ]);
 
     $publicInteractions = Interaction::factory()->count(10)->create([
+        'interaction_driver_id' => $driver,
+        'interaction_initiative_id' => $initiative,
+        'interaction_outcome_id' => $outcome,
+        'interaction_relation_id' => $relation,
+        'interaction_status_id' => $status,
+        'interaction_type_id' => $type,
         'is_confidential' => false,
     ]);
 
@@ -152,11 +233,30 @@ test('Interactions model with fetch data for assigned user', function () {
 test('Interactions model with fetch data for superadmin user', function () {
     asSuperAdmin();
 
+    $driver = InteractionDriver::factory()->create();
+    $initiative = InteractionInitiative::factory()->create();
+    $outcome = InteractionOutcome::factory()->create();
+    $relation = InteractionRelation::factory()->create();
+    $status = InteractionStatus::factory()->create();
+    $type = InteractionType::factory()->create();
+
     $privateInteractions = Interaction::factory()->count(10)->create([
+        'interaction_driver_id' => $driver,
+        'interaction_initiative_id' => $initiative,
+        'interaction_outcome_id' => $outcome,
+        'interaction_relation_id' => $relation,
+        'interaction_status_id' => $status,
+        'interaction_type_id' => $type,
         'is_confidential' => true,
     ]);
 
     $publicInteractions = Interaction::factory()->count(10)->create([
+        'interaction_driver_id' => $driver,
+        'interaction_initiative_id' => $initiative,
+        'interaction_outcome_id' => $outcome,
+        'interaction_relation_id' => $relation,
+        'interaction_status_id' => $status,
+        'interaction_type_id' => $type,
         'is_confidential' => false,
     ]);
 
