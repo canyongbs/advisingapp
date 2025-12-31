@@ -178,7 +178,6 @@ class EditResourceHubArticle extends EditRecord
     protected function getFormActions(): array
     {
         return [
-            $this->getSubmitFormAction()->label('Save'),
             BaseAction::make('cancel')
                 ->label(__('filament-panels::resources/pages/edit-record.form.actions.cancel.label'))
                 ->color('gray')
@@ -188,6 +187,7 @@ class EditResourceHubArticle extends EditRecord
                 ->modalSubmitActionLabel('Discard Changes')
                 ->modalCancelActionLabel('Continue Editing')
                 ->action(fn () => $this->redirect(ResourceHubArticleResource::getUrl('view', ['record' => $this->record]))),
+            $this->getSubmitFormAction()->label('Save'),
         ];
     }
 
