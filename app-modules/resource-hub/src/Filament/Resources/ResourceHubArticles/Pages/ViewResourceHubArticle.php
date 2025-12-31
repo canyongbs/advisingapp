@@ -83,9 +83,9 @@ class ViewResourceHubArticle extends ViewRecord
                 Tabs::make()
                     ->tabs([
                         Tab::make('Content')
+                            ->label('Resource')
                             ->schema([
                                 ViewEntry::make('article_details')
-                                    ->label('Article Details')
                                     ->columnSpanFull()
                                     ->view('filament.infolists.components.html'),
                             ])

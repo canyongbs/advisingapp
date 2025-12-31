@@ -72,9 +72,10 @@ class EditResourceHubArticle extends EditRecord
                 Tabs::make()
                     ->tabs([
                         Tab::make('Content')
+                            ->label('Resource')
                             ->schema([
                                 TiptapEditor::make('article_details')
-                                    ->label('Article Details')
+                                    ->hiddenLabel()
                                     ->columnSpanFull()
                                     ->extraInputAttributes([
                                         'style' => 'min-height: 32rem;',
