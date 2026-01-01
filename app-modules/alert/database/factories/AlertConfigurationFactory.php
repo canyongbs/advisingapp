@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,40 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Configurations;
+namespace AdvisingApp\Alert\Database\Factories;
 
-use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
-use AdvisingApp\Alert\Database\Factories\Configurations\NewStudentAlertConfigurationFactory;
 use AdvisingApp\Alert\Models\AlertConfiguration;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Alert\Presets\AlertPreset;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperNewStudentAlertConfiguration
+ * @extends Factory<AlertConfiguration>
  */
-class NewStudentAlertConfiguration extends BaseModel implements AlertPresetConfiguration, Auditable
+class AlertConfigurationFactory extends Factory
 {
-    use AuditableTrait;
-
-    /** @use HasFactory<NewStudentAlertConfigurationFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'number_of_semesters',
-    ];
-
-    protected $casts = [
-        'number_of_semesters' => 'integer',
-    ];
-
-    /**
-     * @return MorphOne<AlertConfiguration, $this>
-     */
-    public function alertConfiguration(): MorphOne
+    public function definition(): array
     {
-        return $this->morphOne(AlertConfiguration::class, 'configuration');
+        return [
+            'preset' => $this->faker->randomElement(AlertPreset::cases()),
+            'is_enabled' => $this->faker->boolean(80),
+            'configuration_id' => null,
+            'configuration_type' => null,
+        ];
+    }
+
+    public function enabled(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_enabled' => true,
+        ]);
+    }
+
+    public function disabled(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_enabled' => false,
+        ]);
     }
 }

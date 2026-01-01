@@ -41,16 +41,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
-// /**
-//  * Represents a student alert from the student_alerts PostgreSQL view.
-//  *
-//  * This model provides a read-only interface to query which students
-//  * match which alert configurations. The underlying view is automatically
-//  * updated when alert configurations are changed.
-//  *
-//  * @property string $sisid
-//  * @property string $alert_configuration_id
-//  */
+/**
+ * @mixin IdeHelperStudentAlert
+ */
 class StudentAlert extends Model
 {
     use UsesTenantConnection;

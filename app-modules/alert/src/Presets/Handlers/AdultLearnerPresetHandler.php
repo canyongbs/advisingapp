@@ -74,13 +74,13 @@ class AdultLearnerPresetHandler implements AlertPresetHandler
 
     public function getStudentAlertQuery(?AlertPresetConfiguration $configuration): Builder
     {
-        $minimumAge = $configuration?->minimum_age ?? 24;
+        $minimumAge = $configuration->minimum_age ?? 24;
         $maxBirthYear = now()->year - $minimumAge;
 
         return DB::table('students')
             ->select('sisid')
             ->whereNotNull('birthdate')
-            ->whereRaw("EXTRACT(YEAR FROM birthdate) <= ?", [$maxBirthYear])
+            ->whereRaw('EXTRACT(YEAR FROM birthdate) <= ?', [$maxBirthYear])
             ->whereNull('deleted_at')
             ->distinct();
     }
