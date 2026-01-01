@@ -74,7 +74,7 @@ class NewStudentPresetHandler implements AlertPresetHandler
 
     public function getStudentAlertQuery(?AlertPresetConfiguration $configuration): Builder
     {
-        $numberOfSemesters = $configuration?->number_of_semesters ?? 1;
+        $numberOfSemesters = $configuration->number_of_semesters ?? 1;
 
         return DB::table('enrollments')
             ->select('sisid')

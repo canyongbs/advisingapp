@@ -37,9 +37,11 @@
 namespace AdvisingApp\Alert\Configurations;
 
 use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
+use AdvisingApp\Alert\Database\Factories\Configurations\NewStudentAlertConfigurationFactory;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -49,6 +51,9 @@ use OwenIt\Auditing\Contracts\Auditable;
 class NewStudentAlertConfiguration extends BaseModel implements AlertPresetConfiguration, Auditable
 {
     use AuditableTrait;
+
+    /** @use HasFactory<NewStudentAlertConfigurationFactory> */
+    use HasFactory;
 
     protected $fillable = [
         'number_of_semesters',

@@ -57,11 +57,9 @@ interface AlertPresetHandler
     public function getConfigurationModel(): ?string;
 
     /**
-     * Returns a query builder that selects sisid for students matching this alert.
-     * The query MUST only select the 'sisid' column and return distinct values.
+     * @param AlertPresetConfiguration|null $configuration
      *
-     * @param AlertPresetConfiguration|null $configuration The configuration model instance if this preset has one
-     * @return Builder A query builder selecting sisid values
+     * @return Builder
      */
     public function getStudentAlertQuery(?AlertPresetConfiguration $configuration): Builder;
 }

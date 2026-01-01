@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Alert\Actions;
 
+use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 class GenerateStudentAlertsView
@@ -60,22 +62,50 @@ class GenerateStudentAlertsView
         }
 
         $unionQueries = [];
-        $allBindings = [];
 
         foreach ($alertConfigurations as $config) {
             $handler = $config->preset->getHandler();
-            $studentQuery = $handler->getStudentAlertQuery($config->configuration);
+
+            /** @var AlertPresetConfiguration|null $configuration */
+            $configuration = $config->configuration;
+            $studentQuery = $handler->getStudentAlertQuery($configuration);
 
             $alertId = $config->id;
 
-            $subquerySql = $studentQuery->toSql();
-            $unionQueries[] = "SELECT sisid, '{$alertId}'::uuid AS alert_configuration_id FROM ({$subquerySql}) AS subquery_{$config->id}";
+            $safeAlias = 'subquery_' . str_replace('-', '_', $config->id);
 
-            $allBindings = array_merge($allBindings, $studentQuery->getBindings());
+            $subquerySql = $this->getInlinedSql($studentQuery);
+            $unionQueries[] = "SELECT sisid, '{$alertId}'::uuid AS alert_configuration_id FROM ({$subquerySql}) AS {$safeAlias}";
         }
 
         $viewSql = 'CREATE OR REPLACE VIEW student_alerts AS ' . implode(' UNION ALL ', $unionQueries);
 
-        DB::statement($viewSql, $allBindings);
+        DB::statement($viewSql);
+    }
+
+    private function getInlinedSql(Builder $query): string
+    {
+        $sql = $query->toSql();
+        $bindings = $query->getBindings();
+
+        foreach ($bindings as $binding) {
+            if (is_null($binding)) {
+                $value = 'NULL';
+            } elseif (is_int($binding) || is_float($binding)) {
+                $value = $binding;
+            } elseif (is_bool($binding)) {
+                $value = $binding ? 'TRUE' : 'FALSE';
+            } else {
+                $value = "'" . str_replace("'", "''", $binding) . "'";
+            }
+
+            $pos = strpos($sql, '?');
+
+            if ($pos !== false) {
+                $sql = substr_replace($sql, $value, $pos, 1);
+            }
+        }
+
+        return $sql;
     }
 }

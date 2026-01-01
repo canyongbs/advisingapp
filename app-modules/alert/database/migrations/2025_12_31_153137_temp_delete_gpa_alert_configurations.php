@@ -42,41 +42,12 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-            $gpaAlertConfigurations = DB::table('alert_configurations')
-                ->whereIn('preset', ['cumulative_gpa_below_threshold', 'semester_gpa_below_threshold'])
-                ->get();
-
-            foreach ($gpaAlertConfigurations as $alertConfig) {
-                if ($alertConfig->configuration_id && $alertConfig->configuration_type) {
-                    if ($alertConfig->configuration_type === 'cumulative_gpa_alert_configuration') {
-                        if (Schema::hasTable('cumulative_gpa_alert_configurations')) {
-                            DB::table('cumulative_gpa_alert_configurations')
-                                ->where('id', $alertConfig->configuration_id)
-                                ->delete();
-                        }
-                    }
-
-                    if ($alertConfig->configuration_type === 'semester_gpa_alert_configuration') {
-                        if (Schema::hasTable('semester_gpa_alert_configurations')) {
-                            DB::table('semester_gpa_alert_configurations')
-                                ->where('id', $alertConfig->configuration_id)
-                                ->delete();
-                        }
-                    }
-                }
-            }
-
             DB::table('alert_configurations')
                 ->whereIn('preset', ['cumulative_gpa_below_threshold', 'semester_gpa_below_threshold'])
                 ->delete();
 
-            if (Schema::hasTable('cumulative_gpa_alert_configurations')) {
-                Schema::dropIfExists('cumulative_gpa_alert_configurations');
-            }
-
-            if (Schema::hasTable('semester_gpa_alert_configurations')) {
-                Schema::dropIfExists('semester_gpa_alert_configurations');
-            }
+            Schema::dropIfExists('cumulative_gpa_alert_configurations');
+            Schema::dropIfExists('semester_gpa_alert_configurations');
         });
     }
 };

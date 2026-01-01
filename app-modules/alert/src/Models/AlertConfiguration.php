@@ -36,9 +36,11 @@
 
 namespace AdvisingApp\Alert\Models;
 
+use AdvisingApp\Alert\Database\Factories\AlertConfigurationFactory;
 use AdvisingApp\Alert\Presets\AlertPreset;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -50,6 +52,9 @@ use OwenIt\Auditing\Contracts\Auditable;
 class AlertConfiguration extends BaseModel implements Auditable
 {
     use AuditableTrait;
+
+    /** @use HasFactory<AlertConfigurationFactory> */
+    use HasFactory;
 
     protected $fillable = [
         'preset',
