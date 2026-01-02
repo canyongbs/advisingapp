@@ -751,3 +751,41 @@ it('excludes students with no enrollments from enrollment-based alerts', functio
 
     expect(StudentAlert::where('sisid', $studentWithoutEnrollments->sisid)->exists())->toBeFalse();
 });
+
+it('handles empty database scenario (no students at all)', function () {
+    AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::DorfGrade])
+        ->enabled()
+        ->create();
+
+    AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::FirstGenerationStudent])
+        ->enabled()
+        ->create();
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    expect(StudentAlert::count())->toBe(0);
+
+    $result = DB::select('SELECT * FROM student_alerts');
+    expect($result)->toBeArray()->toBeEmpty();
+});
+
+it('handles scenario where alerts are enabled but no students match criteria', function () {
+    AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::DorfGrade])
+        ->enabled()
+        ->create();
+
+    Student::factory()
+        ->count(5)
+        ->has(Enrollment::factory()->state(['crse_grade_off' => 'A']), 'enrollments')
+        ->create();
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    expect(StudentAlert::count())->toBe(0);
+
+    $result = DB::select('SELECT * FROM student_alerts');
+    expect($result)->toBeArray()->toBeEmpty();
+});
