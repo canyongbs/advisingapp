@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Models;
 
+use AdvisingApp\Alert\Models\StudentAlert;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -489,6 +490,14 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     public function additionalAddresses(): HasMany
     {
         return $this->addresses()->whereKeyNot($this->primary_address_id);
+    }
+
+    /**
+     * @return HasMany<StudentAlert, $this>
+     */
+    public function studentAlerts(): HasMany
+    {
+        return $this->hasMany(StudentAlert::class, 'sisid', 'sisid');
     }
 
     public static function getLabel(): string

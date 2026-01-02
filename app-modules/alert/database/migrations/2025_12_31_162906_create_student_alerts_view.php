@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -34,24 +34,18 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Alert\Actions\GenerateStudentAlertsView;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('semester_gpa_alert_configurations', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-
-            $table->decimal('gpa_threshold', 4, 2);
-
-            $table->timestamps();
-        });
+        app(GenerateStudentAlertsView::class)->execute();
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('semester_gpa_alert_configurations');
+        DB::statement('DROP VIEW IF EXISTS student_alerts');
     }
 };

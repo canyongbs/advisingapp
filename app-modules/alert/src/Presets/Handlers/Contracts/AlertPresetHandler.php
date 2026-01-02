@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Alert\Presets\Handlers\Contracts;
 
+use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
 use Filament\Schemas\Components\Component;
+use Illuminate\Database\Query\Builder;
 
 interface AlertPresetHandler
 {
@@ -53,4 +55,11 @@ interface AlertPresetHandler
      * @return class-string|null
      */
     public function getConfigurationModel(): ?string;
+
+    /**
+     * @param AlertPresetConfiguration|null $configuration
+     *
+     * @return Builder
+     */
+    public function getStudentAlertQuery(?AlertPresetConfiguration $configuration): Builder;
 }

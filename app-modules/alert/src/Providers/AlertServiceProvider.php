@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -38,9 +38,7 @@ namespace AdvisingApp\Alert\Providers;
 
 use AdvisingApp\Alert\AlertPlugin;
 use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
-use AdvisingApp\Alert\Configurations\CumulativeGpaAlertConfiguration;
 use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
-use AdvisingApp\Alert\Configurations\SemesterGpaAlertConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -57,8 +55,6 @@ class AlertServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'alert_configuration' => AlertConfiguration::class,
-            'cumulative_gpa_alert_configuration' => CumulativeGpaAlertConfiguration::class,
-            'semester_gpa_alert_configuration' => SemesterGpaAlertConfiguration::class,
             'adult_learner_alert_configuration' => AdultLearnerAlertConfiguration::class,
             'new_student_alert_configuration' => NewStudentAlertConfiguration::class,
         ]);

@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -37,9 +37,11 @@
 namespace AdvisingApp\Alert\Configurations;
 
 use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
+use AdvisingApp\Alert\Database\Factories\Configurations\AdultLearnerAlertConfigurationFactory;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -49,6 +51,9 @@ use OwenIt\Auditing\Contracts\Auditable;
 class AdultLearnerAlertConfiguration extends BaseModel implements AlertPresetConfiguration, Auditable
 {
     use AuditableTrait;
+
+    /** @use HasFactory<AdultLearnerAlertConfigurationFactory> */
+    use HasFactory;
 
     protected $fillable = [
         'minimum_age',

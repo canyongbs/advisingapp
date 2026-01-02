@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Alert\Filament\Pages;
 
+use AdvisingApp\Alert\Actions\GenerateStudentAlertsView;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Filament\Forms\Components\Heading;
@@ -141,6 +142,8 @@ class ManageAlerts extends Page implements HasForms
             }
 
             DB::commit();
+
+            app(GenerateStudentAlertsView::class)->execute();
 
             Notification::make()
                 ->success()

@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -36,7 +36,10 @@
 
 namespace AdvisingApp\Alert\Presets\Handlers;
 
+use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
 use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 
 class CourseWithdrawalPresetHandler implements AlertPresetHandler
 {
@@ -58,5 +61,14 @@ class CourseWithdrawalPresetHandler implements AlertPresetHandler
     public function getConfigurationModel(): ?string
     {
         return null;
+    }
+
+    public function getStudentAlertQuery(?AlertPresetConfiguration $configuration): Builder
+    {
+        return DB::table('enrollments')
+            ->select('sisid')
+            ->where(DB::raw('UPPER(crse_grade_off)'), 'W')
+            ->whereNull('deleted_at')
+            ->distinct();
     }
 }
