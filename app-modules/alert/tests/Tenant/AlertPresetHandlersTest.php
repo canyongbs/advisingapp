@@ -676,3 +676,78 @@ it('has correct StudentAlert model relationships', function () {
     expect($alerts->count())->toBe(1);
     expect($alerts->first()->alert_configuration_id)->toBe($alertConfig->id);
 });
+
+it('has correct inverse relationships from Student and AlertConfiguration', function () {
+    $alertConfig = AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::DorfGrade])
+        ->enabled()
+        ->create();
+
+    $student = Student::factory()
+        ->has(Enrollment::factory()->state(['crse_grade_off' => 'D']), 'enrollments')
+        ->create();
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    $studentAlerts = $student->studentAlerts;
+    expect($studentAlerts)->toHaveCount(1);
+    expect($studentAlerts->first()->alert_configuration_id)->toBe($alertConfig->id);
+
+    $configAlerts = $alertConfig->studentAlerts;
+    expect($configAlerts)->toHaveCount(1);
+    expect($configAlerts->first()->sisid)->toBe($student->sisid);
+});
+
+it('excludes students with null semester_code from new student detection', function () {
+    $config = NewStudentAlertConfiguration::factory()->create(['number_of_semesters' => 1]);
+
+    AlertConfiguration::factory()
+        ->state([
+            'preset' => AlertPreset::NewStudent,
+            'configuration_id' => $config->id,
+            'configuration_type' => $config->getMorphClass(),
+        ])
+        ->enabled()
+        ->create();
+
+    $studentWithNullSemester = Student::factory()
+        ->has(Enrollment::factory()->state(['semester_code' => null]), 'enrollments')
+        ->create();
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    expect(StudentAlert::where('sisid', $studentWithNullSemester->sisid)->exists())->toBeFalse();
+});
+
+it('regenerates view correctly when execute is called multiple times', function () {
+    $config1 = AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::DorfGrade])
+        ->enabled()
+        ->create();
+
+    Student::factory()
+        ->has(Enrollment::factory()->state(['crse_grade_off' => 'D']), 'enrollments')
+        ->create();
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    expect(StudentAlert::count())->toBe(1);
+
+    $config1->update(['is_enabled' => false]);
+    app(GenerateStudentAlertsView::class)->execute();
+
+    expect(StudentAlert::count())->toBe(0);
+});
+
+it('excludes students with no enrollments from enrollment-based alerts', function () {
+    AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::DorfGrade])
+        ->enabled()
+        ->create();
+
+    $studentWithoutEnrollments = Student::factory()->create();
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    expect(StudentAlert::where('sisid', $studentWithoutEnrollments->sisid)->exists())->toBeFalse();
+});

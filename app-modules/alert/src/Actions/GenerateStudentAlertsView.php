@@ -40,49 +40,63 @@ use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 
 class GenerateStudentAlertsView
 {
     public function execute(): void
     {
-        $alertConfigurations = AlertConfiguration::with('configuration')
-            ->where('is_enabled', true)
-            ->get();
+        DB::transaction(function () {
+            $alertConfigurations = AlertConfiguration::with('configuration')
+                ->where('is_enabled', true)
+                ->get();
 
-        if ($alertConfigurations->isEmpty()) {
-            DB::statement(<<<'SQL'
-                CREATE OR REPLACE VIEW student_alerts AS
-                SELECT
-                    NULL::text AS sisid,
-                    NULL::uuid AS alert_configuration_id
-                WHERE false
-            SQL);
+            if ($alertConfigurations->isEmpty()) {
+                DB::statement('DROP VIEW IF EXISTS student_alerts');
+                DB::statement(<<<'SQL'
+                    CREATE VIEW student_alerts AS
+                    SELECT
+                        NULL::character varying(255) AS sisid,
+                        NULL::uuid AS alert_configuration_id
+                    WHERE false
+                SQL);
 
-            return;
-        }
+                return;
+            }
 
-        $unionQueries = [];
+            $unionQueries = [];
 
-        foreach ($alertConfigurations as $config) {
-            $handler = $config->preset->getHandler();
+            foreach ($alertConfigurations as $config) {
+                $handler = $config->preset->getHandler();
 
-            /** @var AlertPresetConfiguration|null $configuration */
-            $configuration = $config->configuration;
-            $studentQuery = $handler->getStudentAlertQuery($configuration);
+                /** @var AlertPresetConfiguration|null $configuration */
+                $configuration = $config->configuration;
+                $studentQuery = $handler->getStudentAlertQuery($configuration);
 
-            $alertId = $config->id;
+                $alertId = $config->id;
 
-            $safeAlias = 'subquery_' . str_replace('-', '_', $config->id);
+                if (! preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $alertId)) {
+                    throw new InvalidArgumentException("Invalid UUID format for alert configuration ID: {$alertId}");
+                }
 
-            $subquerySql = $this->getInlinedSql($studentQuery);
-            $unionQueries[] = "SELECT sisid, '{$alertId}'::uuid AS alert_configuration_id FROM ({$subquerySql}) AS {$safeAlias}";
-        }
+                $safeAlias = 'subquery_' . str_replace('-', '_', $config->id);
 
-        $viewSql = 'CREATE OR REPLACE VIEW student_alerts AS ' . implode(' UNION ALL ', $unionQueries);
+                $subquerySql = $this->getInlinedSql($studentQuery);
+                $unionQueries[] = "SELECT sisid, '{$alertId}'::uuid AS alert_configuration_id FROM ({$subquerySql}) AS {$safeAlias}";
+            }
 
-        DB::statement($viewSql);
+            DB::statement('DROP VIEW IF EXISTS student_alerts');
+            $viewSql = 'CREATE VIEW student_alerts AS ' . implode(' UNION ALL ', $unionQueries);
+
+            DB::statement($viewSql);
+        });
     }
 
+    /**
+     * @param Builder $query
+     *
+     * @return string
+     */
     private function getInlinedSql(Builder $query): string
     {
         $sql = $query->toSql();
