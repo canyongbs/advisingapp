@@ -43,12 +43,12 @@ use AdvisingApp\Report\Filament\Widgets\ProspectInteractionLineChart;
 beforeEach()->skip('Skipping these tests as there are currently issues with these tests or the underlying functionality having to do with overflow dates that needs to be resolved');
 
 it('checks prospect interactions monthly line chart', function () {
-    $prospectCount = 5;
+    $prospectCount = 3;
 
-    Prospect::factory()->count($prospectCount)->has(Interaction::factory()->count(5)->state([
+    Prospect::factory()->count($prospectCount)->has(Interaction::factory()->count(3)->state([
         'created_at' => now()->subMonthsNoOverflow(1)->startOfMonth()->addDays(10),
     ]), 'interactions')->create();
-    Prospect::factory()->count($prospectCount)->has(Interaction::factory()->count(5)->state([
+    Prospect::factory()->count($prospectCount)->has(Interaction::factory()->count(3)->state([
         'created_at' => now()->subMonthsNoOverflow(5)->startOfMonth()->addDays(10),
     ]), 'interactions')->create();
 
@@ -62,18 +62,18 @@ it('returns correct data for prospect interactions within the given date range',
     $interactionStartDate = now()->subMonthsNoOverflow(5)->startOfMonth();
     $interactionEndDate = now()->subMonthsNoOverflow(3)->endOfMonth();
 
-    Prospect::factory()->count(5)->has(
+    Prospect::factory()->count(3)->has(
         Interaction::factory()
-            ->count(5)
+            ->count(3)
             ->state([
                 'created_at' => $interactionStartDate->copy()->addDays(10),
             ]),
         'interactions'
     )->create();
 
-    Prospect::factory()->count(5)->has(
+    Prospect::factory()->count(3)->has(
         Interaction::factory()
-            ->count(5)
+            ->count(3)
             ->state([
                 'created_at' => $interactionEndDate->copy()->subDays(10),
             ]),
@@ -113,9 +113,9 @@ it('returns correct data for prospect interactions based on group filter', funct
         ],
     ]);
 
-    Prospect::factory()->count(5)->has(
+    Prospect::factory()->count(3)->has(
         Interaction::factory()
-            ->count(5)
+            ->count(3)
             ->state([
                 'created_at' => $interactionStartDate,
             ]),
@@ -124,9 +124,9 @@ it('returns correct data for prospect interactions based on group filter', funct
         'last_name' => 'John',
     ]);
 
-    Prospect::factory()->count(5)->has(
+    Prospect::factory()->count(3)->has(
         Interaction::factory()
-            ->count(5)
+            ->count(3)
             ->state([
                 'created_at' => $interactionEndDate,
             ]),
