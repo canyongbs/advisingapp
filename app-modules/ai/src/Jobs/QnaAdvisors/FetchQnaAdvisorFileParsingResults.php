@@ -37,7 +37,12 @@
 namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
 
 use AdvisingApp\Ai\Actions\FetchFileParsingResults;
+use AdvisingApp\Ai\Enums\FileParsingError;
+use AdvisingApp\Ai\Exceptions\FileParsingFailedException;
+use AdvisingApp\Ai\Exceptions\FileParsingTooManyPagesException;
 use AdvisingApp\Ai\Models\QnaAdvisorFile;
+use AdvisingApp\Ai\Notifications\FileParsingFailedNotification;
+use App\Features\AiFileUserTrackingFeature;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -65,10 +70,22 @@ class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, Sho
             return;
         }
 
-        $result = $fetchFileParsingResults->execute(
-            fileId: $this->file->file_id,
-            mimeType: $this->file->mime_type,
-        );
+        try {
+            $result = $fetchFileParsingResults->execute(
+                fileId: $this->file->file_id,
+                mimeType: $this->file->mime_type,
+            );
+        } catch (FileParsingTooManyPagesException $exception) {
+            $this->notifyUser(FileParsingError::TooManyPages);
+            $this->file->delete();
+
+            return;
+        } catch (FileParsingFailedException $exception) {
+            $this->notifyUser(FileParsingError::Generic);
+            $this->file->delete();
+
+            return;
+        }
 
         if (blank($result->parsingResults)) {
             return;
@@ -81,5 +98,22 @@ class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, Sho
     public function uniqueId(): string
     {
         return $this->file->id;
+    }
+
+    /**
+     * TODO: Remove the AiFileUserTrackingFeature check when the feature flag is cleaned up.
+     */
+    protected function notifyUser(FileParsingError $error): void
+    {
+        if (! AiFileUserTrackingFeature::active()) {
+            return;
+        }
+
+        if ($user = $this->file->createdBy) {
+            $user->notify(new FileParsingFailedNotification(
+                fileName: $this->file->name,
+                error: $error,
+            ));
+        }
     }
 }

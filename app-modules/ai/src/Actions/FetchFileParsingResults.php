@@ -37,7 +37,10 @@
 namespace AdvisingApp\Ai\Actions;
 
 use AdvisingApp\Ai\DataTransferObjects\FileParsingResult;
+use AdvisingApp\Ai\Exceptions\FileParsingFailedException;
+use AdvisingApp\Ai\Exceptions\FileParsingTooManyPagesException;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Throwable;
 
@@ -49,15 +52,64 @@ class FetchFileParsingResults
 
     public function execute(string $fileId, string $mimeType): FileParsingResult
     {
-        // TODO: Check the status of the file parsing job, if it is not completed, return null. If it is in an ERROR state then throw an exeception that upstream needs to handle.
+        $statusResponse = $this->checkJobStatus($fileId);
 
+        if ($statusResponse === null) {
+            return new FileParsingResult(
+                fileId: $fileId,
+                parsingResults: null,
+            );
+        }
+
+        $status = $statusResponse->json('status');
+
+        if ($status === 'PENDING') {
+            return new FileParsingResult(
+                fileId: $fileId,
+                parsingResults: null,
+            );
+        }
+
+        if ($status === 'ERROR' || $status === 'CANCELLED') {
+            $errorCode = $statusResponse->json('error_code');
+
+            if ($errorCode === 'TOO_MANY_PAGES') {
+                throw new FileParsingTooManyPagesException($fileId);
+            }
+
+            throw new FileParsingFailedException($fileId, $errorCode);
+        }
+
+        return $this->fetchResults($fileId, $mimeType);
+    }
+
+    protected function checkJobStatus(string $fileId): ?Response
+    {
+        try {
+            $response = Http::withToken($this->aiIntegrationsSettings->llamaparse_api_key)
+                ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$fileId}");
+
+            if (! $response->successful()) {
+                return null;
+            }
+
+            return $response;
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return null;
+        }
+    }
+
+    protected function fetchResults(string $fileId, string $mimeType): FileParsingResult
+    {
         $outputFormat = match (true) {
             str($mimeType)->startsWith(['audio/', 'video/']) => 'text',
             default => 'markdown',
         };
 
         try {
-            $response = Http::withToken(app(AiIntegrationsSettings::class)->llamaparse_api_key)
+            $response = Http::withToken($this->aiIntegrationsSettings->llamaparse_api_key)
                 ->get("https://api.cloud.llamaindex.ai/api/v1/parsing/job/{$fileId}/result/{$outputFormat}");
         } catch (Throwable $exception) {
             report($exception);

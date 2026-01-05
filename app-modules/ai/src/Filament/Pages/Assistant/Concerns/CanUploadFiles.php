@@ -38,6 +38,9 @@ namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
 use AdvisingApp\Ai\Actions\FetchFileParsingResults;
 use AdvisingApp\Ai\Actions\UploadFileForParsing;
+use AdvisingApp\Ai\Enums\FileParsingError;
+use AdvisingApp\Ai\Exceptions\FileParsingFailedException;
+use AdvisingApp\Ai\Exceptions\FileParsingTooManyPagesException;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -91,7 +94,17 @@ trait CanUploadFiles
                 continue;
             }
 
-            $result = app(FetchFileParsingResults::class)->execute($file->file_id, $file->mime_type);
+            try {
+                $result = app(FetchFileParsingResults::class)->execute($file->file_id, $file->mime_type);
+            } catch (FileParsingTooManyPagesException $exception) {
+                $this->handleParsingError($file, FileParsingError::TooManyPages);
+
+                continue;
+            } catch (FileParsingFailedException $exception) {
+                $this->handleParsingError($file, FileParsingError::Generic);
+
+                continue;
+            }
 
             if (blank($result->parsingResults)) {
                 $hasFilesWithoutParsingResults = true;
@@ -181,5 +194,18 @@ trait CanUploadFiles
 
                 $this->files[] = $file->getKey();
             });
+    }
+
+    protected function handleParsingError(AiMessageFile $file, FileParsingError $error): void
+    {
+        $this->removeUploadedFile($file->getKey());
+
+        $file->delete();
+
+        Notification::make()
+            ->title('File Upload Failed')
+            ->body($error->getNotificationBody())
+            ->danger()
+            ->send();
     }
 }
