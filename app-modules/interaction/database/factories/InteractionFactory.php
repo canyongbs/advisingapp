@@ -38,6 +38,7 @@ namespace AdvisingApp\Interaction\Database\Factories;
 
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -71,18 +72,18 @@ class InteractionFactory extends Factory
             ]),
         };
 
-        return [
+        return  [
             'description' => $this->faker->paragraph(),
             'division_id' => Division::factory(),
             'end_datetime' => now()->addMinutes(5),
             'interactable_id' => $interactable->getKey(),
             'interactable_type' => $interactable->getMorphClass(),
-            'interaction_driver_id' => InteractionDriver::factory(),
-            'interaction_initiative_id' => InteractionInitiative::factory(),
-            'interaction_outcome_id' => InteractionOutcome::factory(),
-            'interaction_relation_id' => InteractionRelation::factory(),
-            'interaction_status_id' => InteractionStatus::factory(),
-            'interaction_type_id' => InteractionType::factory(),
+            'interaction_driver_id' => InteractionDriver::factory(['interactable_type' => ($interactable instanceof Prospect ? InteractableType::Prospect : InteractableType::Student)]),
+            'interaction_initiative_id' => InteractionInitiative::factory(['interactable_type' => ($interactable instanceof Prospect ? InteractableType::Prospect : InteractableType::Student)]),
+            'interaction_outcome_id' => InteractionOutcome::factory(['interactable_type' => ($interactable instanceof Prospect ? InteractableType::Prospect : InteractableType::Student)]),
+            'interaction_relation_id' => InteractionRelation::factory(['interactable_type' => ($interactable instanceof Prospect ? InteractableType::Prospect : InteractableType::Student)]),
+            'interaction_status_id' => InteractionStatus::factory(['interactable_type' => ($interactable instanceof Prospect ? InteractableType::Prospect : InteractableType::Student)]),
+            'interaction_type_id' => InteractionType::factory(['interactable_type' => ($interactable instanceof Prospect ? InteractableType::Prospect : InteractableType::Student)]),
             'start_datetime' => now(),
             'subject' => $this->faker->sentence(),
             'user_id' => User::factory(),

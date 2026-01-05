@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -102,7 +103,7 @@ it('renders only the interactions associated with student', function () {
 it('renders the initiative select filter', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
-    $initiatives = InteractionInitiative::factory()->count(2)->create();
+    $initiatives = InteractionInitiative::factory(['interactable_type' => InteractableType::Student])->count(2)->create();
     $selectableInteractions = Interaction::factory([
         'interaction_initiative_id' => $initiatives->first()->getKey(),
     ])->create();
@@ -135,7 +136,7 @@ it('renders the initiative select filter', function () {
 it('renders the driver select filter', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
-    $drivers = InteractionDriver::factory()->count(2)->create();
+    $drivers = InteractionDriver::factory(['interactable_type' => InteractableType::Student])->count(2)->create();
     $selectableInteractions = Interaction::factory([
         'interaction_driver_id' => $drivers->first()->getKey(),
     ])->create();
@@ -168,7 +169,7 @@ it('renders the driver select filter', function () {
 it('renders the type select filter', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
-    $types = InteractionType::factory()->count(2)->create();
+    $types = InteractionType::factory(['interactable_type' => InteractableType::Student])->count(2)->create();
     $selectableInteractions = Interaction::factory([
         'interaction_type_id' => $types->first()->getKey(),
     ])->create();
@@ -201,7 +202,7 @@ it('renders the type select filter', function () {
 it('renders the status select filter', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
-    $statuses = InteractionStatus::factory()->count(5)->create();
+    $statuses = InteractionStatus::factory(['interactable_type' => InteractableType::Student])->count(5)->create();
     $selectableInteractions = Interaction::factory([
         'interaction_status_id' => $statuses->first()->getKey(),
     ])->create();

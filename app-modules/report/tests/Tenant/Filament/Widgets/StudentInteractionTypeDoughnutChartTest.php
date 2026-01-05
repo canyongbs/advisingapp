@@ -36,17 +36,18 @@
 
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionTypeDoughnutChart;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('checks student interaction types doughnut chart', function () {
-    $interactionsCount = rand(1, 10);
+    $interactionsCount = rand(1, 5);
 
-    $interactionTypeFirst = InteractionType::factory()->create();
-    $interactionTypeSecond = InteractionType::factory()->create();
-    $interactionTypeThird = InteractionType::factory()->create();
+    $interactionTypeFirst = InteractionType::factory()->create(['interactable_type' => InteractableType::Student]);
+    $interactionTypeSecond = InteractionType::factory()->create(['interactable_type' => InteractableType::Student]);
+    $interactionTypeThird = InteractionType::factory()->create(['interactable_type' => InteractableType::Student]);
 
     Student::factory()->has(Interaction::factory()->count($interactionsCount)->for($interactionTypeFirst, 'type'), 'interactions')->create();
     Student::factory()->has(Interaction::factory()->count($interactionsCount)->for($interactionTypeSecond, 'type'), 'interactions')->create();
@@ -63,14 +64,14 @@ it('checks student interaction types doughnut chart', function () {
 });
 
 it('returns correct interaction counts by type for students within the selected date range', function () {
-    $interactionsCount = rand(1, 10);
+    $interactionsCount = rand(1, 5);
 
     $interactionStartDate = now()->subDays(90);
     $interactionEndDate = now()->subDays(5);
 
-    $interactionTypeFirst = InteractionType::factory()->create();
-    $interactionTypeSecond = InteractionType::factory()->create();
-    $interactionTypeThird = InteractionType::factory()->create();
+    $interactionTypeFirst = InteractionType::factory()->create(['interactable_type' => InteractableType::Student]);
+    $interactionTypeSecond = InteractionType::factory()->create(['interactable_type' => InteractableType::Student]);
+    $interactionTypeThird = InteractionType::factory()->create(['interactable_type' => InteractableType::Student]);
 
     Student::factory()
         ->has(
@@ -132,8 +133,8 @@ it('returns correct interaction counts by type for students based on group filte
     $interactionsCount = random_int(1, 10);
     $interactionsCountForDoe = random_int(1, 10);
 
-    $interactionTypeFirst = InteractionType::factory()->create();
-    $interactionTypeSecond = InteractionType::factory()->create();
+    $interactionTypeFirst = InteractionType::factory()->create(['interactable_type' => InteractableType::Student]);
+    $interactionTypeSecond = InteractionType::factory()->create(['interactable_type' => InteractableType::Student]);
 
     $group = Group::factory()->create([
         'model' => GroupModel::Student,

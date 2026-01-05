@@ -111,8 +111,8 @@ it('Check unique students with interactions', function () {
 });
 
 it('returns correct total and unique student interaction counts within the given date range', function () {
-    $studentsWithStartDateInteractions = random_int(1, 10);
-    $studentsWithEndDateInteractions = random_int(1, 10);
+    $studentsWithStartDateInteractions = random_int(1, 5);
+    $studentsWithEndDateInteractions = random_int(1, 5);
     $interactionStartDate = now()->subDays(10);
     $interactionEndDate = now()->subDays(5);
 

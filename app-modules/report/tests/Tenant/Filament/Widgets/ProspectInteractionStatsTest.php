@@ -107,18 +107,9 @@ it('Check unique prospects with interactions', function () {
     $prospectInteractionStats = new ProspectInteractionStats();
     $prospectInteractionStats->cacheTag = 'report-prospect-interaction';
 
-    $state = [
-        'interaction_driver_id' => InteractionDriver::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
-        'interaction_initiative_id' => InteractionInitiative::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
-        'interaction_outcome_id' => InteractionOutcome::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
-        'interaction_relation_id' => InteractionRelation::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
-        'interaction_status_id' => InteractionStatus::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
-        'interaction_type_id' => InteractionType::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
-    ];
-
     Prospect::factory()
         ->count($interactionCount)
-        ->has(Interaction::factory($state)->count(1), 'interactions')
+        ->has(Interaction::factory()->count(1), 'interactions')
         ->create();
 
     $stats = $prospectInteractionStats->getStats();
@@ -127,28 +118,15 @@ it('Check unique prospects with interactions', function () {
 });
 
 it('returns correct total and unique prospect interaction counts within the given date range', function () {
-    $prospectsWithStartDateInteractions = random_int(1, 10);
-    $prospectsWithEndDateInteractions = random_int(1, 10);
+    $prospectsWithStartDateInteractions = random_int(1, 5);
+    $prospectsWithEndDateInteractions = random_int(1, 5);
     $interactionStartDate = now()->subDays(10);
     $interactionEndDate = now()->subDays(5);
-
-    $driver = InteractionDriver::factory(['interactable_type' => InteractableType::Prospect])->create();
-    $initiative = InteractionInitiative::factory(['interactable_type' => InteractableType::Prospect])->create();
-    $outcome = InteractionOutcome::factory(['interactable_type' => InteractableType::Prospect])->create();
-    $relation = InteractionRelation::factory(['interactable_type' => InteractableType::Prospect])->create();
-    $status = InteractionStatus::factory(['interactable_type' => InteractableType::Prospect])->create();
-    $type = InteractionType::factory(['interactable_type' => InteractableType::Prospect])->create();
 
     Prospect::factory()->count($prospectsWithStartDateInteractions)
         ->has(
             Interaction::factory()->state([
                 'created_at' => $interactionStartDate,
-                'interaction_driver_id' => $driver->id,
-                'interaction_initiative_id' => $initiative->id,
-                'interaction_outcome_id' => $outcome->id,
-                'interaction_relation_id' => $relation->id,
-                'interaction_status_id' => $status->id,
-                'interaction_type_id' => $type->id,
             ]),
             'interactions'
         )->create();
@@ -157,12 +135,6 @@ it('returns correct total and unique prospect interaction counts within the give
         ->has(
             Interaction::factory()->state([
                 'created_at' => $interactionEndDate,
-                'interaction_driver_id' => $driver->id,
-                'interaction_initiative_id' => $initiative->id,
-                'interaction_outcome_id' => $outcome->id,
-                'interaction_relation_id' => $relation->id,
-                'interaction_status_id' => $status->id,
-                'interaction_type_id' => $type->id,
             ]),
             'interactions'
         )->create();
@@ -171,12 +143,6 @@ it('returns correct total and unique prospect interaction counts within the give
         ->has(
             Interaction::factory()->count(2)->state([
                 'created_at' => $interactionStartDate,
-                'interaction_driver_id' => $driver->id,
-                'interaction_initiative_id' => $initiative->id,
-                'interaction_outcome_id' => $outcome->id,
-                'interaction_relation_id' => $relation->id,
-                'interaction_status_id' => $status->id,
-                'interaction_type_id' => $type->id,
             ]),
             'interactions'
         )->create();
@@ -205,15 +171,6 @@ it('returns correct total and unique prospect interaction counts based on group 
     $prospectsWithJohnNameInteractions = random_int(1, 10);
     $prospectsWithDoeNameInteractions = random_int(1, 10);
 
-    $state = [
-        'interaction_driver_id' => InteractionDriver::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
-        'interaction_initiative_id' => InteractionInitiative::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
-        'interaction_outcome_id' => InteractionOutcome::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
-        'interaction_relation_id' => InteractionRelation::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
-        'interaction_status_id' => InteractionStatus::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
-        'interaction_type_id' => InteractionType::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
-    ];
-
     $group = Group::factory()->create([
         'model' => GroupModel::Prospect,
         'filters' => [
@@ -235,7 +192,7 @@ it('returns correct total and unique prospect interaction counts based on group 
 
     Prospect::factory()->count($prospectsWithJohnNameInteractions)
         ->has(
-            Interaction::factory($state),
+            Interaction::factory(),
             'interactions'
         )->create([
             'last_name' => 'John',
@@ -243,7 +200,7 @@ it('returns correct total and unique prospect interaction counts based on group 
 
     Prospect::factory()->count($prospectsWithDoeNameInteractions)
         ->has(
-            Interaction::factory($state),
+            Interaction::factory(),
             'interactions'
         )->create([
             'last_name' => 'Doe',

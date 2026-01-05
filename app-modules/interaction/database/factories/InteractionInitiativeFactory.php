@@ -50,7 +50,7 @@ class InteractionInitiativeFactory extends Factory
         return [
             'name' => $this->faker->unique()->word(),
             'is_default' => $this->faker->boolean(),
-            'interactable_type' => $this->faker->randomElement(InteractableType::cases())->value,
+            'interactable_type' => $this->faker->randomElement(InteractableType::cases()),
         ];
     }
 }

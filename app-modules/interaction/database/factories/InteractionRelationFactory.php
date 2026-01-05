@@ -48,9 +48,9 @@ class InteractionRelationFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word(),
+            'name' => $this->faker->unique()->word(),
             'is_default' => $this->faker->boolean(),
-            'interactable_type' => $this->faker->randomElement(InteractableType::cases())->value,
+            'interactable_type' => $this->faker->randomElement(InteractableType::cases()),
         ];
     }
 }

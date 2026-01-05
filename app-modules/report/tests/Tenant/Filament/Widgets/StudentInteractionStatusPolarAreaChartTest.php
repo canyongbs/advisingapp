@@ -36,17 +36,18 @@
 
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionStatusPolarAreaChart;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('checks student interaction status polar area chart', function () {
-    $interactionsCount = rand(1, 10);
+    $interactionsCount = rand(1, 5);
 
-    $interactionStatusFirst = InteractionStatus::factory()->create();
-    $interactionStatusSecond = InteractionStatus::factory()->create();
-    $interactionStatusThird = InteractionStatus::factory()->create();
+    $interactionStatusFirst = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Student]);
+    $interactionStatusSecond = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Student]);
+    $interactionStatusThird = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Student]);
 
     Student::factory()->has(Interaction::factory()->count($interactionsCount)->for($interactionStatusFirst, 'status'), 'interactions')->create();
     Student::factory()->has(Interaction::factory()->count($interactionsCount)->for($interactionStatusSecond, 'status'), 'interactions')->create();
@@ -63,14 +64,14 @@ it('checks student interaction status polar area chart', function () {
 });
 
 it('returns correct interaction counts by status for students within the selected date range', function () {
-    $interactionsCount = rand(1, 10);
+    $interactionsCount = rand(1, 5);
 
     $interactionStartDate = now()->subDays(90);
     $interactionEndDate = now()->subDays(5);
 
-    $interactionStatusFirst = InteractionStatus::factory()->create();
-    $interactionStatusSecond = InteractionStatus::factory()->create();
-    $interactionStatusThird = InteractionStatus::factory()->create();
+    $interactionStatusFirst = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Student]);
+    $interactionStatusSecond = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Student]);
+    $interactionStatusThird = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Student]);
 
     Student::factory()
         ->has(
@@ -132,8 +133,8 @@ it('returns correct interaction counts by status for students based on group fil
     $interactionsCount = random_int(1, 10);
     $interactionsCountForDoe = random_int(1, 10);
 
-    $interactionStatusFirst = InteractionStatus::factory()->create();
-    $interactionStatusSecond = InteractionStatus::factory()->create();
+    $interactionStatusFirst = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Student]);
+    $interactionStatusSecond = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Student]);
 
     $group = Group::factory()->create([
         'model' => GroupModel::Student,
