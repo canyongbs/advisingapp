@@ -112,11 +112,9 @@ class FetchResearchRequestFileParsingResults implements ShouldQueue
     {
         assert($this->media->model instanceof ResearchRequest);
 
-        if ($user = $this->media->model->user) {
-            $user->notify(new FileParsingFailedNotification(
-                fileName: $this->media->file_name,
-                error: $error,
-            ));
-        }
+        $this->media->model->user->notify(new FileParsingFailedNotification(
+            fileName: $this->media->file_name,
+            error: $error,
+        ));
     }
 }

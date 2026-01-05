@@ -41,7 +41,6 @@ use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use App\Features\AiFileUserTrackingFeature;
 use App\Models\BaseModel;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -123,7 +122,7 @@ class QnaAdvisorFile extends BaseModel implements AiFile, HasMedia
      */
     protected static function bootHasUserSaveTracking(): void
     {
-        static::creating(function (Model $model): void {
+        static::creating(function (self $model): void {
             if (! AiFileUserTrackingFeature::active()) {
                 return;
             }
@@ -143,7 +142,7 @@ class QnaAdvisorFile extends BaseModel implements AiFile, HasMedia
             }
         });
 
-        static::updating(function (Model $model): void {
+        static::updating(function (self $model): void {
             if (! AiFileUserTrackingFeature::active()) {
                 return;
             }
