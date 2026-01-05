@@ -36,7 +36,14 @@
 
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Interaction\Models\InteractionDriver;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
+use AdvisingApp\Interaction\Models\InteractionOutcome;
+use AdvisingApp\Interaction\Models\InteractionRelation;
+use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionUsersTable;
 use AdvisingApp\Team\Models\Team;
@@ -54,12 +61,25 @@ it('can see prospect interaction users table', function () {
 
     $prospect = Prospect::factory()->create();
 
+    $driver = InteractionDriver::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $initiative = InteractionInitiative::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $outcome = InteractionOutcome::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $relation = InteractionRelation::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $status = InteractionStatus::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $type = InteractionType::factory(['interactable_type' => InteractableType::Prospect])->create();
+
     Interaction::factory()
         ->count(5)
         ->for($prospect, 'interactable')
         ->for($user1, 'user')
         ->create([
             'created_at' => now(),
+            'interaction_driver_id' => $driver->id,
+            'interaction_initiative_id' => $initiative->id,
+            'interaction_outcome_id' => $outcome->id,
+            'interaction_relation_id' => $relation->id,
+            'interaction_status_id' => $status->id,
+            'interaction_type_id' => $type->id,
         ]);
 
     Interaction::factory()
@@ -68,6 +88,12 @@ it('can see prospect interaction users table', function () {
         ->for($user2, 'user')
         ->create([
             'created_at' => now(),
+            'interaction_driver_id' => $driver->id,
+            'interaction_initiative_id' => $initiative->id,
+            'interaction_outcome_id' => $outcome->id,
+            'interaction_relation_id' => $relation->id,
+            'interaction_status_id' => $status->id,
+            'interaction_type_id' => $type->id,
         ]);
 
     $firstUserInteractionAt = $user1->interactions->sortBy('created_at')->first();
@@ -137,6 +163,13 @@ it('can filter users by name', function () {
         'job_title' => 'CEO',
     ]);
 
+    $driver = InteractionDriver::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $initiative = InteractionInitiative::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $outcome = InteractionOutcome::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $relation = InteractionRelation::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $status = InteractionStatus::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $type = InteractionType::factory(['interactable_type' => InteractableType::Prospect])->create();
+
     $prospect = Prospect::factory()->create();
 
     Interaction::factory()
@@ -145,6 +178,12 @@ it('can filter users by name', function () {
         ->for($user1, 'user')
         ->create([
             'created_at' => now(),
+            'interaction_driver_id' => $driver->id,
+            'interaction_initiative_id' => $initiative->id,
+            'interaction_outcome_id' => $outcome->id,
+            'interaction_relation_id' => $relation->id,
+            'interaction_status_id' => $status->id,
+            'interaction_type_id' => $type->id,
         ]);
 
     Interaction::factory()
@@ -153,6 +192,12 @@ it('can filter users by name', function () {
         ->for($user2, 'user')
         ->create([
             'created_at' => now(),
+            'interaction_driver_id' => $driver->id,
+            'interaction_initiative_id' => $initiative->id,
+            'interaction_outcome_id' => $outcome->id,
+            'interaction_relation_id' => $relation->id,
+            'interaction_status_id' => $status->id,
+            'interaction_type_id' => $type->id,
         ]);
 
     livewire(ProspectInteractionUsersTable::class, ['cacheTag' => 'report-prospect-interaction'])
@@ -178,6 +223,13 @@ it('can filter users by job title', function () {
         'job_title' => 'CEO',
     ]);
 
+    $driver = InteractionDriver::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $initiative = InteractionInitiative::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $outcome = InteractionOutcome::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $relation = InteractionRelation::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $status = InteractionStatus::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $type = InteractionType::factory(['interactable_type' => InteractableType::Prospect])->create();
+
     $prospect = Prospect::factory()->create();
 
     Interaction::factory()
@@ -186,6 +238,12 @@ it('can filter users by job title', function () {
         ->for($user1, 'user')
         ->create([
             'created_at' => now(),
+            'interaction_driver_id' => $driver->id,
+            'interaction_initiative_id' => $initiative->id,
+            'interaction_outcome_id' => $outcome->id,
+            'interaction_relation_id' => $relation->id,
+            'interaction_status_id' => $status->id,
+            'interaction_type_id' => $type->id,
         ]);
 
     Interaction::factory()
@@ -194,6 +252,12 @@ it('can filter users by job title', function () {
         ->for($user2, 'user')
         ->create([
             'created_at' => now(),
+            'interaction_driver_id' => $driver->id,
+            'interaction_initiative_id' => $initiative->id,
+            'interaction_outcome_id' => $outcome->id,
+            'interaction_relation_id' => $relation->id,
+            'interaction_status_id' => $status->id,
+            'interaction_type_id' => $type->id,
         ]);
 
     livewire(ProspectInteractionUsersTable::class, ['cacheTag' => 'report-prospect-interaction'])
@@ -219,6 +283,13 @@ it('can filter users by team', function () {
         'job_title' => 'CEO',
     ]);
 
+    $driver = InteractionDriver::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $initiative = InteractionInitiative::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $outcome = InteractionOutcome::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $relation = InteractionRelation::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $status = InteractionStatus::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $type = InteractionType::factory(['interactable_type' => InteractableType::Prospect])->create();
+
     $prospect = Prospect::factory()->create();
 
     Interaction::factory()
@@ -227,6 +298,12 @@ it('can filter users by team', function () {
         ->for($user1, 'user')
         ->create([
             'created_at' => now(),
+            'interaction_driver_id' => $driver->id,
+            'interaction_initiative_id' => $initiative->id,
+            'interaction_outcome_id' => $outcome->id,
+            'interaction_relation_id' => $relation->id,
+            'interaction_status_id' => $status->id,
+            'interaction_type_id' => $type->id,
         ]);
 
     Interaction::factory()
@@ -235,6 +312,12 @@ it('can filter users by team', function () {
         ->for($user2, 'user')
         ->create([
             'created_at' => now(),
+            'interaction_driver_id' => $driver->id,
+            'interaction_initiative_id' => $initiative->id,
+            'interaction_outcome_id' => $outcome->id,
+            'interaction_relation_id' => $relation->id,
+            'interaction_status_id' => $status->id,
+            'interaction_type_id' => $type->id,
         ]);
 
     livewire(ProspectInteractionUsersTable::class, ['cacheTag' => 'report-prospect-interaction'])
@@ -257,6 +340,13 @@ it('displays only users with prospect interactions within the selected date rang
 
     $userWithoutInteractions = User::factory()->create();
 
+    $driver = InteractionDriver::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $initiative = InteractionInitiative::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $outcome = InteractionOutcome::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $relation = InteractionRelation::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $status = InteractionStatus::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $type = InteractionType::factory(['interactable_type' => InteractableType::Prospect])->create();
+
     $prospect = Prospect::factory()->create();
 
     Interaction::factory()
@@ -265,6 +355,12 @@ it('displays only users with prospect interactions within the selected date rang
         ->for($userWithOldInteractions, 'user')
         ->state([
             'created_at' => $interactionStartDate,
+            'interaction_driver_id' => $driver->id,
+            'interaction_initiative_id' => $initiative->id,
+            'interaction_outcome_id' => $outcome->id,
+            'interaction_relation_id' => $relation->id,
+            'interaction_status_id' => $status->id,
+            'interaction_type_id' => $type->id,
         ])
         ->create();
 
@@ -274,6 +370,12 @@ it('displays only users with prospect interactions within the selected date rang
         ->for($userWithRecentAndOtherInteractions, 'user')
         ->state([
             'created_at' => $interactionEndDate,
+            'interaction_driver_id' => $driver->id,
+            'interaction_initiative_id' => $initiative->id,
+            'interaction_outcome_id' => $outcome->id,
+            'interaction_relation_id' => $relation->id,
+            'interaction_status_id' => $status->id,
+            'interaction_type_id' => $type->id,
         ])
         ->create();
 
@@ -281,6 +383,14 @@ it('displays only users with prospect interactions within the selected date rang
         ->count(10)
         ->for($prospect, 'interactable')
         ->for($userWithRecentAndOtherInteractions, 'user')
+        ->state([
+            'interaction_driver_id' => $driver->id,
+            'interaction_initiative_id' => $initiative->id,
+            'interaction_outcome_id' => $outcome->id,
+            'interaction_relation_id' => $relation->id,
+            'interaction_status_id' => $status->id,
+            'interaction_type_id' => $type->id,
+        ])
         ->create();
 
     $filters = [
@@ -335,13 +445,22 @@ it('displays only users with prospect interactions based on group filter', funct
         'last_name' => 'Doe',
     ]);
 
-    Interaction::factory()
+    $state = [
+        'interaction_driver_id' => InteractionDriver::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
+        'interaction_initiative_id' => InteractionInitiative::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
+        'interaction_outcome_id' => InteractionOutcome::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
+        'interaction_relation_id' => InteractionRelation::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
+        'interaction_status_id' => InteractionStatus::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
+        'interaction_type_id' => InteractionType::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
+    ];
+
+    Interaction::factory($state)
         ->count(5)
         ->for($prospectOne, 'interactable')
         ->for($userWithOldInteractions, 'user')
         ->create();
 
-    Interaction::factory()
+    Interaction::factory($state)
         ->count(10)
         ->for($prospectTwo, 'interactable')
         ->for($userWithRecentAndOtherInteractions, 'user')

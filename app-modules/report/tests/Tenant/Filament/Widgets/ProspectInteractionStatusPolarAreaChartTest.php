@@ -36,21 +36,36 @@
 
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Interaction\Models\InteractionDriver;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
+use AdvisingApp\Interaction\Models\InteractionOutcome;
+use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionStatusPolarAreaChart;
 
 it('checks prospect interaction status polar area chart', function () {
     $interactionsCount = rand(1, 10);
 
-    $interactionStatusFirst = InteractionStatus::factory()->create();
-    $interactionStatusSecond = InteractionStatus::factory()->create();
-    $interactionStatusThird = InteractionStatus::factory()->create();
+    $state = [
+        'interaction_driver_id' => InteractionDriver::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
+        'interaction_initiative_id' => InteractionInitiative::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
+        'interaction_outcome_id' => InteractionOutcome::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
+        'interaction_relation_id' => InteractionRelation::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
+        'interaction_type_id' => InteractionType::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
+    ];
+    
 
-    Prospect::factory()->has(Interaction::factory()->count($interactionsCount)->for($interactionStatusFirst, 'status'), 'interactions')->create();
-    Prospect::factory()->has(Interaction::factory()->count($interactionsCount)->for($interactionStatusSecond, 'status'), 'interactions')->create();
-    Prospect::factory()->has(Interaction::factory()->count($interactionsCount)->for($interactionStatusThird, 'status'), 'interactions')->create();
+    $interactionStatusFirst = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Prospect]);
+    $interactionStatusSecond = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Prospect]);
+    $interactionStatusThird = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Prospect]);
+
+    Prospect::factory()->has(Interaction::factory($state)->count($interactionsCount)->for($interactionStatusFirst, 'status'), 'interactions')->create();
+    Prospect::factory()->has(Interaction::factory($state)->count($interactionsCount)->for($interactionStatusSecond, 'status'), 'interactions')->create();
+    Prospect::factory()->has(Interaction::factory($state)->count($interactionsCount)->for($interactionStatusThird, 'status'), 'interactions')->create();
 
     $widgetInstance = new ProspectInteractionStatusPolarAreaChart();
     $widgetInstance->cacheTag = 'report-prospect-interaction';
@@ -65,12 +80,18 @@ it('checks prospect interaction status polar area chart', function () {
 it('returns correct interaction counts by status for prospects within the selected date range', function () {
     $interactionsCount = rand(1, 10);
 
+    $driver = InteractionDriver::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $initiative = InteractionInitiative::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $outcome = InteractionOutcome::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $relation = InteractionRelation::factory(['interactable_type' => InteractableType::Prospect])->create();
+    $type = InteractionType::factory(['interactable_type' => InteractableType::Prospect])->create();
+
     $interactionStartDate = now()->subDays(90);
     $interactionEndDate = now()->subDays(5);
 
-    $interactionStatusFirst = InteractionStatus::factory()->create();
-    $interactionStatusSecond = InteractionStatus::factory()->create();
-    $interactionStatusThird = InteractionStatus::factory()->create();
+    $interactionStatusFirst = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Prospect]);
+    $interactionStatusSecond = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Prospect]);
+    $interactionStatusThird = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Prospect]);
 
     Prospect::factory()
         ->has(
@@ -78,6 +99,11 @@ it('returns correct interaction counts by status for prospects within the select
                 ->count($interactionsCount)
                 ->state([
                     'created_at' => $interactionStartDate,
+                    'interaction_driver_id' => $driver->id,
+                    'interaction_initiative_id' => $initiative->id,
+                    'interaction_outcome_id' => $outcome->id,
+                    'interaction_relation_id' => $relation->id,
+                    'interaction_type_id' => $type->id,
                 ])
                 ->for(
                     $interactionStatusFirst,
@@ -92,6 +118,11 @@ it('returns correct interaction counts by status for prospects within the select
                 ->count($interactionsCount)
                 ->state([
                     'created_at' => $interactionEndDate,
+                    'interaction_driver_id' => $driver->id,
+                    'interaction_initiative_id' => $initiative->id,
+                    'interaction_outcome_id' => $outcome->id,
+                    'interaction_relation_id' => $relation->id,
+                    'interaction_type_id' => $type->id,
                 ])
                 ->for(
                     $interactionStatusSecond,
@@ -106,6 +137,11 @@ it('returns correct interaction counts by status for prospects within the select
                 ->count($interactionsCount)
                 ->state([
                     'created_at' => now()->subDays(180),
+                    'interaction_driver_id' => $driver->id,
+                    'interaction_initiative_id' => $initiative->id,
+                    'interaction_outcome_id' => $outcome->id,
+                    'interaction_relation_id' => $relation->id,
+                    'interaction_type_id' => $type->id,
                 ])
                 ->for(
                     $interactionStatusThird,
@@ -132,8 +168,16 @@ it('returns correct interaction counts by status for prospects based on group fi
     $interactionsCount = random_int(1, 10);
     $interactionsCountForDoe = random_int(1, 10);
 
-    $interactionStatusFirst = InteractionStatus::factory()->create();
-    $interactionStatusSecond = InteractionStatus::factory()->create();
+    $state = [
+        'interaction_driver_id' => InteractionDriver::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
+        'interaction_initiative_id' => InteractionInitiative::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
+        'interaction_outcome_id' => InteractionOutcome::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
+        'interaction_relation_id' => InteractionRelation::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
+        'interaction_type_id' => InteractionType::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
+    ];
+
+    $interactionStatusFirst = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Prospect]);
+    $interactionStatusSecond = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Prospect]);
 
     $group = Group::factory()->create([
         'model' => GroupModel::Prospect,
@@ -156,7 +200,7 @@ it('returns correct interaction counts by status for prospects based on group fi
 
     Prospect::factory()
         ->has(
-            Interaction::factory()
+            Interaction::factory($state)
                 ->count($interactionsCount)
                 ->for(
                     $interactionStatusFirst,
@@ -169,7 +213,7 @@ it('returns correct interaction counts by status for prospects based on group fi
 
     Prospect::factory()
         ->has(
-            Interaction::factory()
+            Interaction::factory($state)
                 ->count($interactionsCountForDoe)
                 ->for(
                     $interactionStatusSecond,
