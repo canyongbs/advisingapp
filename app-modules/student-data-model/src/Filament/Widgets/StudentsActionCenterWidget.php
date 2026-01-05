@@ -68,11 +68,15 @@ class StudentsActionCenterWidget extends TableWidget
 
         return $table
             ->heading('Action Center Records')
-            ->query(function () use ($groupId, $startDate, $endDate) {
-                $query = Student::query()->when(
-                    $startDate && $endDate,
-                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
-                );
+            ->query(function () use ($groupId, $startDate, $endDate): Builder {
+                $query = Student::query()
+                    ->withCount([
+                        'studentAlerts as alerts_count' => fn (Builder $query): Builder => $query->selectRaw('COUNT(DISTINCT alert_configuration_id)'),
+                    ])
+                    ->when(
+                        $startDate && $endDate,
+                        fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
+                    );
 
                 if ($groupId) {
                     $this->groupFilter($query, $groupId);
@@ -86,21 +90,24 @@ class StudentsActionCenterWidget extends TableWidget
                     ->searchable()
                     ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record]))
                     ->openUrlInNewTab(),
+                TextColumn::make('alerts_count')
+                    ->label('Alerts')
+                    ->sortable(),
                 TextColumn::make('engagement_responses_count')
                     ->label('New Messages')
-                    ->counts(['engagementResponses' => fn (Builder $query) => $query->where('status', EngagementResponseStatus::New)])
+                    ->counts(['engagementResponses' => fn (Builder $query): Builder => $query->where('status', EngagementResponseStatus::New)])
                     ->sortable(),
                 TextColumn::make('concerns_count')
                     ->label('Open Concerns')
-                    ->counts(['concerns' => fn (Builder $query) => $query->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]))])
+                    ->counts(['concerns' => fn (Builder $query): Builder => $query->whereHas('status', fn (Builder $query): Builder => $query->whereNotIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]))])
                     ->sortable(),
                 TextColumn::make('tasks_count')
                     ->label('Open Tasks')
-                    ->counts(['tasks' => fn (Builder $query) => $query->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled])])
+                    ->counts(['tasks' => fn (Builder $query): Builder => $query->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled])])
                     ->sortable(),
                 TextColumn::make('cases_count')
                     ->label('Open Cases')
-                    ->counts(['cases' => fn (Builder $query) => $query->whereRelation('status', 'classification', '!=', SystemCaseClassification::Closed)])
+                    ->counts(['cases' => fn (Builder $query): Builder => $query->whereRelation('status', 'classification', '!=', SystemCaseClassification::Closed)])
                     ->sortable(),
             ])
             ->filters([
@@ -141,11 +148,11 @@ class StudentsActionCenterWidget extends TableWidget
 
                         return $query->whereHas('concerns', function (Builder $query) use ($data): Builder {
                             if ($data['value'] === 'open') {
-                                return $query->whereHas('status', fn (Builder $query) => $query->whereNotIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]));
+                                return $query->whereHas('status', fn (Builder $query): Builder => $query->whereNotIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]));
                             }
 
                             if ($data['value'] === 'closed') {
-                                return $query->whereHas('status', fn (Builder $query) => $query->whereIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]));
+                                return $query->whereHas('status', fn (Builder $query): Builder => $query->whereIn('classification', [SystemConcernStatusClassification::Resolved, SystemConcernStatusClassification::Canceled]));
                             }
 
                             return $query;

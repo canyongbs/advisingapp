@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
+use AdvisingApp\Alert\Filament\Widgets\AlertStats;
 use AdvisingApp\Report\Abstract\StudentReport;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentStats;
@@ -64,6 +65,8 @@ class RetentionCrmDashboard extends StudentReport
 
     protected string $cacheTag = 'report-student-action-center';
 
+    protected string $view = 'student-data-model::filament.pages.retention-crm-dashboard';
+
     public static function shouldRegisterNavigation(): bool
     {
         /** @var User $user */
@@ -84,6 +87,7 @@ class RetentionCrmDashboard extends StudentReport
     {
         return [
             StudentStats::make(),
+            AlertStats::make(),
             StudentsActionCenterWidget::make(),
         ];
     }

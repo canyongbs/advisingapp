@@ -54,6 +54,9 @@ class AlertPlugin implements Plugin
         )->discoverPages(
             in: __DIR__ . '/Filament/Pages',
             for: 'AdvisingApp\\Alert\\Filament\\Pages'
+        )->discoverWidgets(
+            in: __DIR__ . '/Filament/Widgets',
+            for: 'AdvisingApp\\Alert\\Filament\\Widgets'
         );
     }
 
