@@ -57,7 +57,6 @@ it('checks prospect interaction status polar area chart', function () {
         'interaction_relation_id' => InteractionRelation::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
         'interaction_type_id' => InteractionType::factory(['interactable_type' => InteractableType::Prospect])->create()->id,
     ];
-    
 
     $interactionStatusFirst = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Prospect]);
     $interactionStatusSecond = InteractionStatus::factory()->create(['interactable_type' => InteractableType::Prospect]);
