@@ -281,8 +281,6 @@ it('displays only users with prospect interactions within the selected date rang
         ->count(10)
         ->for($prospect, 'interactable')
         ->for($userWithRecentAndOtherInteractions, 'user')
-        ->state([
-        ])
         ->create();
 
     $filters = [
