@@ -48,7 +48,7 @@ class InteractionDriverFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->unique()->word(),
+            'name' => $this->faker->unique()->sentence(),
             'is_default' => $this->faker->boolean(),
             'interactable_type' => $this->faker->randomElement(InteractableType::cases()),
         ];
