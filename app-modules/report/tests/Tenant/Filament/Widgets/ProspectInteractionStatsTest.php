@@ -111,8 +111,8 @@ it('Check unique prospects with interactions', function () {
 });
 
 it('returns correct total and unique prospect interaction counts within the given date range', function () {
-    $prospectsWithStartDateInteractions = random_int(1, 5);
-    $prospectsWithEndDateInteractions = random_int(1, 5);
+    $prospectsWithStartDateInteractions = random_int(1, 10);
+    $prospectsWithEndDateInteractions = random_int(1, 10);
     $interactionStartDate = now()->subDays(10);
     $interactionEndDate = now()->subDays(5);
 
@@ -159,7 +159,6 @@ it('returns correct total and unique prospect interaction counts within the give
     expect($prospectsWithInteractionsStat->getValue())
         ->toEqual($prospectsWithStartDateInteractions + $prospectsWithEndDateInteractions + $prospectsWithEndDateInteractions);
 });
-
 it('returns correct total and unique prospect interaction counts based on group filter', function () {
     $prospectsWithJohnNameInteractions = random_int(1, 10);
     $prospectsWithDoeNameInteractions = random_int(1, 10);

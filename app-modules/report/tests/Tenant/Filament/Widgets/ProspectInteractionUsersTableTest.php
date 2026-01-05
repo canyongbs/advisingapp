@@ -269,7 +269,7 @@ it('displays only users with prospect interactions within the selected date rang
         ->create();
 
     Interaction::factory()
-        ->count(5)
+        ->count(10)
         ->for($prospect, 'interactable')
         ->for($userWithRecentAndOtherInteractions, 'user')
         ->state([
@@ -278,7 +278,7 @@ it('displays only users with prospect interactions within the selected date rang
         ->create();
 
     Interaction::factory()
-        ->count(5)
+        ->count(10)
         ->for($prospect, 'interactable')
         ->for($userWithRecentAndOtherInteractions, 'user')
         ->state([

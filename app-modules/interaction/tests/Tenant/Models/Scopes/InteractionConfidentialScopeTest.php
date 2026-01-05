@@ -53,22 +53,22 @@ test('Interactions model with fetch data for created user', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user);
-    $ownedConfidentialInteractions = Interaction::factory()->count(5)->create([
+    $ownedConfidentialInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => true,
         'user_id' => $user,
     ]);
 
-    $privateInteractions = Interaction::factory()->count(5)->create([
+    $privateInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => true,
     ]);
 
-    $publicInteractions = Interaction::factory()->count(5)->create([
+    $publicInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => false,
     ]);
 
     $interactions = Interaction::query()->get();
 
-    expect($interactions)->toHaveCount(10);
+    expect($interactions)->toHaveCount(20);
 
     expect($interactions->pluck('id'))
         ->toContain(...$publicInteractions->pluck('id'))
@@ -91,22 +91,22 @@ test('Interactions model with fetch data for team user', function () {
 
     $ownedConfidentialInteractions = Interaction::factory()
         ->hasAttached($team, [], 'confidentialAccessTeams')
-        ->count(5)
+        ->count(10)
         ->create([
             'is_confidential' => true,
         ]);
 
-    $privateInteractions = Interaction::factory()->count(5)->create([
+    $privateInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => true,
     ]);
 
-    $publicInteractions = Interaction::factory()->count(5)->create([
+    $publicInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => false,
     ]);
 
     $interactions = Interaction::query()->get();
 
-    expect($interactions)->toHaveCount(10);
+    expect($interactions)->toHaveCount(20);
 
     expect($interactions->pluck('id'))
         ->toContain(...$publicInteractions->pluck('id'))
@@ -123,21 +123,21 @@ test('Interactions model with fetch data for assigned user', function () {
 
     actingAs($user);
 
-    $ownedConfidentialInteractions = Interaction::factory()->hasAttached($user, [], 'confidentialAccessUsers')->count(5)->create([
+    $ownedConfidentialInteractions = Interaction::factory()->hasAttached($user, [], 'confidentialAccessUsers')->count(10)->create([
         'is_confidential' => true,
     ]);
 
-    $privateInteractions = Interaction::factory()->count(5)->create([
+    $privateInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => true,
     ]);
 
-    $publicInteractions = Interaction::factory()->count(5)->create([
+    $publicInteractions = Interaction::factory()->count(10)->create([
         'is_confidential' => false,
     ]);
 
     $interactions = Interaction::query()->get();
 
-    expect($interactions)->toHaveCount(10);
+    expect($interactions)->toHaveCount(20);
 
     expect($interactions->pluck('id'))
         ->toContain(...$publicInteractions->pluck('id'))

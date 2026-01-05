@@ -43,7 +43,7 @@ use AdvisingApp\Report\Filament\Widgets\StudentInteractionTypeDoughnutChart;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('checks student interaction types doughnut chart', function () {
-    $interactionsCount = rand(1, 5);
+    $interactionsCount = rand(1, 10);
 
     $interactionTypeFirst = InteractionType::factory()->create(['interactable_type' => InteractableType::Student]);
     $interactionTypeSecond = InteractionType::factory()->create(['interactable_type' => InteractableType::Student]);
@@ -64,7 +64,7 @@ it('checks student interaction types doughnut chart', function () {
 });
 
 it('returns correct interaction counts by type for students within the selected date range', function () {
-    $interactionsCount = rand(1, 5);
+    $interactionsCount = rand(1, 10);
 
     $interactionStartDate = now()->subDays(90);
     $interactionEndDate = now()->subDays(5);

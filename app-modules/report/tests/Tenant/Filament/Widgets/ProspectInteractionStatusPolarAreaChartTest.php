@@ -64,7 +64,7 @@ it('checks prospect interaction status polar area chart', function () {
 });
 
 it('returns correct interaction counts by status for prospects within the selected date range', function () {
-    $interactionsCount = rand(1, 5);
+    $interactionsCount = rand(1, 10);
 
     $interactionStartDate = now()->subDays(90);
     $interactionEndDate = now()->subDays(5);

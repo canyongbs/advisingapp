@@ -43,7 +43,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionTypeDoughnutChart;
 
 it('checks prospect interaction types doughnut chart', function () {
-    $interactionsCount = rand(1, 5);
+    $interactionsCount = rand(1, 10);
 
     $interactionTypeFirst = InteractionType::factory()->create(['interactable_type' => InteractableType::Prospect]);
     $interactionTypeSecond = InteractionType::factory()->create(['interactable_type' => InteractableType::Prospect]);
@@ -64,7 +64,7 @@ it('checks prospect interaction types doughnut chart', function () {
 });
 
 it('returns correct interaction counts by type for prospects within the selected date range', function () {
-    $interactionsCount = rand(1, 5);
+    $interactionsCount = rand(1, 10);
 
     $interactionStartDate = now()->subDays(90);
     $interactionEndDate = now()->subDays(5);
