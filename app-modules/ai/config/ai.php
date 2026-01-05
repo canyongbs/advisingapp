@@ -35,7 +35,7 @@
 */
 
 return [
-    'file_size_limit' => '20MB',
+    'file_size_limit_kb' => 20480,
 
     /**
      * @see https://docs.cloud.llamaindex.ai/llamaparse/features/supported_document_types

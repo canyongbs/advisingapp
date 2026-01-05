@@ -46,6 +46,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Number;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -155,8 +156,8 @@ trait CanUploadFiles
                 FileUpload::make('attachment')
                     ->acceptedFileTypes(config('ai.supported_file_types'))
                     ->storeFiles(false)
-                    ->helperText('The maximum file size is 20MB.')
-                    ->maxSize(20000)
+                    ->helperText('The maximum file size is ' . Number::fileSize(config('ai.file_size_limit_kb') * 1000) . '.')
+                    ->maxSize(config('ai.file_size_limit_kb'))
                     ->required(),
             ])
             ->action(function (Action $action, array $data) {

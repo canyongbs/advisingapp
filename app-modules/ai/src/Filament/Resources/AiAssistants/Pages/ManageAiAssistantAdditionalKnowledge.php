@@ -51,6 +51,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use UnitEnum;
 
@@ -141,12 +142,12 @@ class ManageAiAssistantAdditionalKnowledge extends EditRecord
                             ->storeFiles(false)
                             ->helperText(function (AiAssistant $record): string {
                                 if ($record->files->count() < 25) {
-                                    return 'You may upload a total of 25 files to this AI Assistant. Files must be less than 20MB.';
+                                    return 'You may upload a total of 25 files to this AI Assistant. Files must be less than ' . Number::fileSize(config('ai.file_size_limit_kb') * 1000) . '.';
                                 }
 
                                 return "You've reached the maximum file upload limit of 25 for this Custom Advisor. Please delete a file if you wish to upload another.";
                             })
-                            ->maxSize(20000)
+                            ->maxSize(config('ai.file_size_limit_kb'))
                             ->columnSpan(function (Get $get) {
                                 $files = $get('files');
                                 $firstFile = reset($files);
