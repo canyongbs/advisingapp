@@ -72,7 +72,7 @@ class InteractionFactory extends Factory
             ]),
         };
 
-        return  [
+        return [
             'description' => $this->faker->paragraph(),
             'division_id' => Division::factory(),
             'end_datetime' => now()->addMinutes(5),

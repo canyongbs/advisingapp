@@ -36,14 +36,7 @@
 
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
-use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Interaction\Models\InteractionDriver;
-use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Interaction\Models\InteractionOutcome;
-use AdvisingApp\Interaction\Models\InteractionRelation;
-use AdvisingApp\Interaction\Models\InteractionStatus;
-use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionUsersTable;
 use AdvisingApp\Team\Models\Team;

@@ -36,12 +36,6 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Interaction\Models\InteractionDriver;
-use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Interaction\Models\InteractionOutcome;
-use AdvisingApp\Interaction\Models\InteractionRelation;
-use AdvisingApp\Interaction\Models\InteractionStatus;
-use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Models\Scopes\InteractionConfidentialScope;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
