@@ -43,12 +43,12 @@ use AdvisingApp\StudentDataModel\Models\Student;
 beforeEach()->skip('Skipping these tests as there are currently issues with these tests or the underlying functionality having to do with overflow dates that needs to be resolved');
 
 it('checks student interactions monthly line chart', function () {
-    $studentCount = 3;
+    $studentCount = 5;
 
-    Student::factory()->count($studentCount)->has(Interaction::factory()->count(3)->state([
+    Student::factory()->count($studentCount)->has(Interaction::factory()->count(5)->state([
         'created_at' => now()->subMonths(1),
     ]), 'interactions')->create();
-    Student::factory()->count($studentCount)->has(Interaction::factory()->count(3)->state([
+    Student::factory()->count($studentCount)->has(Interaction::factory()->count(5)->state([
         'created_at' => now()->subMonths(6),
     ]), 'interactions')->create();
 
@@ -62,18 +62,18 @@ it('returns correct data for student interactions within the given date range', 
     $interactionStartDate = now()->subMonths(3);
     $interactionEndDate = now()->subDays(5);
 
-    Student::factory()->count(3)->has(
+    Student::factory()->count(5)->has(
         Interaction::factory()
-            ->count(3)
+            ->count(5)
             ->state([
                 'created_at' => $interactionStartDate,
             ]),
         'interactions'
     )->create();
 
-    Student::factory()->count(3)->has(
+    Student::factory()->count(5)->has(
         Interaction::factory()
-            ->count(3)
+            ->count(5)
             ->state([
                 'created_at' => $interactionEndDate,
             ]),
@@ -113,9 +113,9 @@ it('returns correct data for student interactions based on group filter', functi
         ],
     ]);
 
-    Student::factory()->count(3)->has(
+    Student::factory()->count(5)->has(
         Interaction::factory()
-            ->count(3)
+            ->count(5)
             ->state([
                 'created_at' => $interactionStartDate,
             ]),
@@ -124,9 +124,9 @@ it('returns correct data for student interactions based on group filter', functi
         'last' => 'John',
     ]);
 
-    Student::factory()->count(3)->has(
+    Student::factory()->count(5)->has(
         Interaction::factory()
-            ->count(3)
+            ->count(5)
             ->state([
                 'created_at' => $interactionEndDate,
             ]),
