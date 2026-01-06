@@ -178,54 +178,6 @@ it('returns correct data when filtered by non-standard days', function () {
     expect($widgetInstance->getData())->toMatchSnapshot();
 });
 
-it('checks student interactions monthly line chart', function () {
-    $studentCount = 5;
-
-    Student::factory()->count($studentCount)->has(Interaction::factory()->count(5)->state([
-        'created_at' => now()->subMonths(1),
-    ]), 'interactions')->create();
-    Student::factory()->count($studentCount)->has(Interaction::factory()->count(5)->state([
-        'created_at' => now()->subMonths(6),
-    ]), 'interactions')->create();
-
-    $widgetInstance = new StudentInteractionLineChart();
-    $widgetInstance->cacheTag = 'report-student-interaction';
-
-    expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
-})->skip();
-
-it('returns correct data for student interactions within the given date range', function () {
-    $interactionStartDate = now()->subMonths(3);
-    $interactionEndDate = now()->subDays(5);
-
-    Student::factory()->count(5)->has(
-        Interaction::factory()
-            ->count(5)
-            ->state([
-                'created_at' => $interactionStartDate,
-            ]),
-        'interactions'
-    )->create();
-
-    Student::factory()->count(5)->has(
-        Interaction::factory()
-            ->count(5)
-            ->state([
-                'created_at' => $interactionEndDate,
-            ]),
-        'interactions'
-    )->create();
-
-    $widgetInstance = new StudentInteractionLineChart();
-    $widgetInstance->cacheTag = 'report-student-interaction';
-    $widgetInstance->pageFilters = [
-        'startDate' => $interactionStartDate->toDateString(),
-        'endDate' => $interactionEndDate->toDateString(),
-    ];
-
-    expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
-})->skip();
-
 it('returns correct data for student interactions based on group filter', function () {
     $interactionStartDate = now()->subMonths(3);
     $interactionEndDate = now()->subDays(5);
