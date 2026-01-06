@@ -49,14 +49,14 @@ it('returns correct data on a standard day', function () {
     Student::factory()
         ->has(
             Interaction::factory()->count(13)->sequence(
-                // Add interaction on Dec 31st of previous year to test that it should not be counted
+                // Add record on Dec 31st of previous year to test that it should not be counted
                 ['created_at' => Carbon::parse('2023-12-31')],
                 ['created_at' => Carbon::parse('2024-01-15')],
                 ['created_at' => Carbon::parse('2024-02-15')],
                 // Add record on Feb 29th to test leap year handling
                 ['created_at' => Carbon::parse('2024-02-29')],
                 ['created_at' => Carbon::parse('2024-03-15')],
-                // Add multiple interactions in March to test aggregation and throw in some days not all months have
+                // Add multiple records in March to test aggregation and throw in some days not all months have
                 ['created_at' => Carbon::parse('2024-03-29')],
                 ['created_at' => Carbon::parse('2024-03-30')],
                 ['created_at' => Carbon::parse('2024-03-31')],
