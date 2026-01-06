@@ -15,6 +15,8 @@ Carbon's date manipulation can cause unexpected behavior when subtracting months
 
 This causes tests to fail intermittently depending on when they run. A test that passes on the 15th may fail on the 31st.
 
+**Note:** Carbon provides `subMonthNoOverflow()` and other "NoOverflow" methods which clamps to the last day of the target month instead of overflowing. This can be useful in production code or niche scenarios where you need to stay within the correct month boundary.
+
 ## Required Test Cases
 
 ### 1. Standard Date (No Filters)
@@ -29,7 +31,7 @@ Tests when the current date falls on the 29th, 30th, or 31st of a month.
 
 **Purpose:** Ensures month boundary calculations work correctly when looking back from a date that doesn't exist in all months.
 
-**Implementation:** Use a parameterized test with multiple date scenarios (29th, 30th, 31st).
+**Implementation:** Use a test with a dataset containing multiple date scenarios (29th, 30th, 31st).
 
 ### 3. February Edge Cases (No Filters)
 
@@ -39,6 +41,12 @@ Two specific tests:
 - **Feb 29th in a leap year** - Tests a date that only exists every 4 years
 
 **Purpose:** February is the shortest month and requires special handling when calculating month-based lookbacks.
+
+---
+
+**Note:** Test cases #4 and #5 below are only required if the feature being tested supports user-defined date filters. If the feature only uses a fixed rolling period (e.g., always the last 12 months), you can skip these.
+
+---
 
 ### 4. Standard Filter Boundaries
 
@@ -138,7 +146,7 @@ it('returns correct data when today falls on an overflow-risk date', function (C
         '31st of month' => [Carbon::parse('2024-08-31')],
         '30th of month' => [Carbon::parse('2024-08-30')],
         '29th of month' => [Carbon::parse('2024-08-29')],
-    ]);
+    ]); // Pest dataset
 ```
 
 ## Reference Implementation
