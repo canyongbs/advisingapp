@@ -43,7 +43,7 @@ use Carbon\Carbon;
 
 use function Pest\Laravel\travelTo;
 
-it('returns correct data on an overflow-safe day', function () {
+it('returns correct data on a standard day', function () {
     travelTo(Carbon::parse('2024-12-15'));
 
     Student::factory()
@@ -76,6 +76,45 @@ it('returns correct data on an overflow-safe day', function () {
 
     expect($widgetInstance->getData())->toMatchSnapshot();
 });
+
+it('returns correct data on a non-standard day', function (Carbon $testDate) {
+    travelTo($testDate);
+
+    Student::factory()
+        ->has(
+            Interaction::factory()->count(13)->sequence(
+                // Add interaction on in a month prior to test that it should not be counted
+                ['created_at' => Carbon::parse('2023-08-31')],
+                ['created_at' => Carbon::parse('2023-09-15')],
+                ['created_at' => Carbon::parse('2023-10-15')],
+                // Add a gap in between in which no interactions occur
+                // Add interaction on Feb 29th to test leap year handling
+                ['created_at' => Carbon::parse('2024-02-29')],
+                ['created_at' => Carbon::parse('2024-03-15')],
+                // Add multiple interactions in March to test aggregation and throw in some days not all months have
+                ['created_at' => Carbon::parse('2024-03-29')],
+                ['created_at' => Carbon::parse('2024-03-30')],
+                ['created_at' => Carbon::parse('2024-03-31')],
+                ['created_at' => Carbon::parse('2024-04-15')],
+                ['created_at' => Carbon::parse('2024-05-15')],
+                ['created_at' => Carbon::parse('2024-06-15')],
+                ['created_at' => Carbon::parse('2024-07-15')],
+                ['created_at' => Carbon::parse('2024-08-01')],
+            ),
+            'interactions'
+        )
+        ->create();
+
+    $widgetInstance = new StudentInteractionLineChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
+
+    expect($widgetInstance->getData())->toMatchSnapshot();
+})
+    ->with([
+        '31st of month' => [Carbon::parse('2024-08-31')],
+        '30th of month' => [Carbon::parse('2024-08-30')],
+        '29th of month' => [Carbon::parse('2024-08-29')],
+    ]);
 
 it('checks student interactions monthly line chart', function () {
     $studentCount = 5;
