@@ -61,6 +61,10 @@
     @apply bg-trout-50 dark:bg-gray-950;
 }
 
+.fi-resource-resource-hub-articles.fi-resource-view-record-page .fi-header {
+    @apply sm:flex-col sm:items-start sm:justify-center;
+}
+
 .fi-sidebar-nav > ul {
     @apply gap-y-4;
 }
