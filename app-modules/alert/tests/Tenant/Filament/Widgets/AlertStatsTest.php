@@ -108,7 +108,11 @@ it('displays correct count for new student alerts', function () {
         ->has(
             Enrollment::factory()
                 ->count($numberOfSemesters)
-                ->sequence(fn ($sequence) => ['semester_code' => '420' . ($sequence->index + 1)]),
+                ->sequence(
+                    ['semester_code' => '4201'],
+                    ['semester_code' => '4202'],
+                    ['semester_code' => '4203']
+                ),
             'enrollments'
         )
         ->create();
@@ -118,7 +122,13 @@ it('displays correct count for new student alerts', function () {
         ->has(
             Enrollment::factory()
                 ->count($numberOfSemesters + 2)
-                ->sequence(fn ($sequence) => ['semester_code' => '420' . ($sequence->index + 1)]),
+                ->sequence(
+                    ['semester_code' => '4201'],
+                    ['semester_code' => '4202'],
+                    ['semester_code' => '4203'],
+                    ['semester_code' => '4204'],
+                    ['semester_code' => '4205']
+                ),
             'enrollments'
         )
         ->create();
