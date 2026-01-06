@@ -239,8 +239,7 @@ it('returns correct data when filtered by non-standard days', function () {
 });
 
 it('returns correct data for student interactions based on group filter', function () {
-    $interactionStartDate = now()->subMonths(3);
-    $interactionEndDate = now()->subDays(5);
+    travelTo(Carbon::parse('2024-12-15'));
 
     $group = Group::factory()->create([
         'model' => GroupModel::Student,
@@ -261,23 +260,29 @@ it('returns correct data for student interactions based on group filter', functi
         ],
     ]);
 
-    Student::factory()->count(5)->has(
+    // Students with last name 'John' - should be included by group filter
+    Student::factory()->count(2)->has(
         Interaction::factory()
-            ->count(5)
-            ->state([
-                'created_at' => $interactionStartDate,
-            ]),
+            ->count(3)
+            ->sequence(
+                ['created_at' => Carbon::parse('2024-09-15')],
+                ['created_at' => Carbon::parse('2024-10-15')],
+                ['created_at' => Carbon::parse('2024-12-10')],
+            ),
         'interactions'
     )->create([
         'last' => 'John',
     ]);
 
-    Student::factory()->count(5)->has(
+    // Students with last name 'Doe' - should be excluded by group filter
+    Student::factory()->count(2)->has(
         Interaction::factory()
-            ->count(5)
-            ->state([
-                'created_at' => $interactionEndDate,
-            ]),
+            ->count(3)
+            ->sequence(
+                ['created_at' => Carbon::parse('2024-09-15')],
+                ['created_at' => Carbon::parse('2024-11-15')],
+                ['created_at' => Carbon::parse('2024-12-10')],
+            ),
         'interactions'
     )->create([
         'last' => 'Doe',
@@ -290,4 +295,4 @@ it('returns correct data for student interactions based on group filter', functi
     ];
 
     expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
-})->skip();
+});
