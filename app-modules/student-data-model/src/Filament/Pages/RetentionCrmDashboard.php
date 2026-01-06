@@ -44,6 +44,9 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\ReportLibrary;
 use App\Models\User;
 use BackedEnum;
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Symfony\Component\HttpFoundation\Response;
 use UnitEnum;
 
@@ -83,6 +86,25 @@ class RetentionCrmDashboard extends StudentReport
         abort_unless($user->hasLicense(Student::getLicenseType()), Response::HTTP_FORBIDDEN);
     }
 
+    public function filtersForm(Schema $schema): Schema
+    {
+        $groupModel = $this->groupModel();
+
+        return $schema
+            ->components([
+                Section::make()
+                    ->schema([
+                        Select::make('populationGroup')
+                            ->label('Select Group')
+                            ->options(fn (): array => $this->getGroupOptions($groupModel))
+                            ->getSearchResultsUsing(fn (string $search): array => $this->getGroupOptions($groupModel, $search))
+                            ->searchable(),
+                    ])
+                    ->heading('Advanced Filtering')
+                    ->columns(1),
+            ]);
+    }
+
     public function getWidgets(): array
     {
         return [
@@ -95,7 +117,11 @@ class RetentionCrmDashboard extends StudentReport
     public function getWidgetData(): array
     {
         return [
-            'filters' => $this->filters,
+            'filters' => array_merge([
+                'startDate' => null,
+                'endDate' => null,
+                'populationGroup' => null,
+            ], $this->filters),
         ];
     }
 }
