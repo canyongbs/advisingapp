@@ -62,7 +62,7 @@ it('returns correct data on a standard day', function () {
                 ['created_at' => Carbon::parse('2024-03-31')],
                 ['created_at' => Carbon::parse('2024-04-15')],
                 ['created_at' => Carbon::parse('2024-05-15')],
-                // Add a gap in between in which no interactions occur
+                // Add a gap in between in which no records occur
                 ['created_at' => Carbon::parse('2024-10-15')],
                 ['created_at' => Carbon::parse('2024-11-15')],
                 ['created_at' => Carbon::parse('2024-12-01')],
@@ -87,7 +87,7 @@ it('returns correct data on a non-standard day', function (Carbon $testDate) {
                 ['created_at' => Carbon::parse('2023-08-31')],
                 ['created_at' => Carbon::parse('2023-09-15')],
                 ['created_at' => Carbon::parse('2023-10-15')],
-                // Add a gap in between in which no interactions occur
+                // Add a gap in between in which no records occur
                 // Add record on Feb 29th to test leap year handling
                 ['created_at' => Carbon::parse('2024-02-29')],
                 ['created_at' => Carbon::parse('2024-03-15')],
@@ -119,7 +119,7 @@ it('returns correct data on a non-standard day', function (Carbon $testDate) {
 it('returns correct data when filtered by standard days', function () {
     Student::factory()
         ->has(
-            Interaction::factory()->count(13)->sequence(
+            Interaction::factory()->count(11)->sequence(
                 // Add record out of bounds to test that it should not be counted
                 ['created_at' => Carbon::parse('2024-02-09')],
                 ['created_at' => Carbon::parse('2024-02-15')],
@@ -132,7 +132,7 @@ it('returns correct data when filtered by standard days', function () {
                 ['created_at' => Carbon::parse('2024-03-31')],
                 ['created_at' => Carbon::parse('2024-04-15')],
                 ['created_at' => Carbon::parse('2024-05-15')],
-                // Add a gap in between in which no interactions occur
+                // Add a gap in between in which no records occur
                 ['created_at' => Carbon::parse('2024-07-15')],
                 // Add record out of bounds to test that it should not be counted
                 ['created_at' => Carbon::parse('2024-08-01')],
@@ -146,6 +146,33 @@ it('returns correct data when filtered by standard days', function () {
     $widgetInstance->pageFilters = [
         'startDate' => Carbon::parse('2024-02-10')->toDateString(),
         'endDate' => Carbon::parse('2024-07-15')->toDateString(),
+    ];
+
+    expect($widgetInstance->getData())->toMatchSnapshot();
+});
+
+it('returns correct data when filtered by non-standard days', function () {
+    Student::factory()
+        ->has(
+            Interaction::factory()->count(5)->sequence(
+                // Add record out of bounds to test that it should not be counted
+                ['created_at' => Carbon::parse('2024-10-30')],
+                ['created_at' => Carbon::parse('2024-10-31')],
+                // Add a gap in between in which no records occur
+                ['created_at' => Carbon::parse('2024-12-01')],
+                ['created_at' => Carbon::parse('2024-12-15')],
+                // Add record out of bounds to test that it should not be counted
+                ['created_at' => Carbon::parse('2025-01-01')],
+            ),
+            'interactions'
+        )
+        ->create();
+
+    $widgetInstance = new StudentInteractionLineChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
+    $widgetInstance->pageFilters = [
+        'startDate' => Carbon::parse('2024-10-31')->toDateString(),
+        'endDate' => Carbon::parse('2024-12-31')->toDateString(),
     ];
 
     expect($widgetInstance->getData())->toMatchSnapshot();
