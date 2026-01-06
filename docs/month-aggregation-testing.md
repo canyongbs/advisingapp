@@ -94,7 +94,7 @@ Create test records on dates that stress the boundaries:
 
 ### Use Snapshots Carefully
 
-Use `->toMatchSnapshot()` for data assertions. This captures the full data structure and makes it easy to verify correct behavior.
+You can use `->toMatchSnapshot()` for data assertions. This captures the full data structure and makes it easy to verify correct behavior.
 
 **⚠️ Important:** When a snapshot is first generated or updated, you must carefully validate that the output is correct. A snapshot only asserts that output matches a previous run—it does not inherently verify correctness. Ensure that:
 
