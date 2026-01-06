@@ -53,6 +53,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use UnitEnum;
@@ -143,12 +144,12 @@ class ManageQnaAdditionalKnowledge extends EditRecord
                             ->storeFiles(false)
                             ->helperText(function (QnaAdvisor $record): string {
                                 if ($record->files->count() < 25) {
-                                    return 'You may upload a total of 25 files to this QnA Advisor. Files must be less than 20MB.';
+                                    return 'You may upload a total of 25 files to this QnA Advisor. Files must be less than ' . Number::fileSize(config('ai.file_size_limit_kb') * 1000) . '.';
                                 }
 
                                 return "You've reached the maximum file upload limit of 25 for this QnA Advisor. Please delete a file if you wish to upload another.";
                             })
-                            ->maxSize(20000)
+                            ->maxSize(config('ai.file_size_limit_kb'))
                             ->columnSpan(function (Get $get) {
                                 $files = $get('files');
                                 $firstFile = reset($files);

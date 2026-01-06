@@ -37,6 +37,10 @@
 namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Ai\Actions\FetchFileParsingResults;
+use AdvisingApp\Ai\Enums\FileParsingError;
+use AdvisingApp\Ai\Exceptions\FileParsingFailedException;
+use AdvisingApp\Ai\Exceptions\FileParsingTooManyPagesException;
+use AdvisingApp\Ai\Notifications\FileParsingFailedNotification;
 use AdvisingApp\Research\Events\ResearchRequestFileParsed;
 use AdvisingApp\Research\Events\ResearchRequestProgress;
 use AdvisingApp\Research\Models\ResearchRequest;
@@ -66,7 +70,17 @@ class FetchResearchRequestFileParsingResults implements ShouldQueue
 
     public function handle(FetchFileParsingResults $fetchFileParsingResults): void
     {
-        $result = $fetchFileParsingResults->execute($this->fileId, $this->media->mime_type);
+        try {
+            $result = $fetchFileParsingResults->execute($this->fileId, $this->media->mime_type);
+        } catch (FileParsingTooManyPagesException $exception) {
+            $this->notifyUser(FileParsingError::TooManyPages);
+
+            return;
+        } catch (FileParsingFailedException $exception) {
+            $this->notifyUser(FileParsingError::Generic);
+
+            return;
+        }
 
         if (blank($result->parsingResults)) {
             $this->release(delay: 5);
@@ -91,6 +105,16 @@ class FetchResearchRequestFileParsingResults implements ShouldQueue
 
         broadcast(new ResearchRequestProgress(
             researchRequest: $this->media->model,
+        ));
+    }
+
+    protected function notifyUser(FileParsingError $error): void
+    {
+        assert($this->media->model instanceof ResearchRequest);
+
+        $this->media->model->user->notify(new FileParsingFailedNotification(
+            fileName: $this->media->file_name,
+            error: $error,
         ));
     }
 }

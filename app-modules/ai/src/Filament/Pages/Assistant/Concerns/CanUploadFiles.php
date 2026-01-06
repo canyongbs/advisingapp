@@ -38,11 +38,15 @@ namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
 use AdvisingApp\Ai\Actions\FetchFileParsingResults;
 use AdvisingApp\Ai\Actions\UploadFileForParsing;
+use AdvisingApp\Ai\Enums\FileParsingError;
+use AdvisingApp\Ai\Exceptions\FileParsingFailedException;
+use AdvisingApp\Ai\Exceptions\FileParsingTooManyPagesException;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Number;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -91,7 +95,17 @@ trait CanUploadFiles
                 continue;
             }
 
-            $result = app(FetchFileParsingResults::class)->execute($file->file_id, $file->mime_type);
+            try {
+                $result = app(FetchFileParsingResults::class)->execute($file->file_id, $file->mime_type);
+            } catch (FileParsingTooManyPagesException $exception) {
+                $this->handleParsingError($file, FileParsingError::TooManyPages);
+
+                continue;
+            } catch (FileParsingFailedException $exception) {
+                $this->handleParsingError($file, FileParsingError::Generic);
+
+                continue;
+            }
 
             if (blank($result->parsingResults)) {
                 $hasFilesWithoutParsingResults = true;
@@ -142,8 +156,8 @@ trait CanUploadFiles
                 FileUpload::make('attachment')
                     ->acceptedFileTypes(config('ai.supported_file_types'))
                     ->storeFiles(false)
-                    ->helperText('The maximum file size is 20MB.')
-                    ->maxSize(20000)
+                    ->helperText('The maximum file size is ' . Number::fileSize(config('ai.file_size_limit_kb') * 1000) . '.')
+                    ->maxSize(config('ai.file_size_limit_kb'))
                     ->required(),
             ])
             ->action(function (Action $action, array $data) {
@@ -181,5 +195,18 @@ trait CanUploadFiles
 
                 $this->files[] = $file->getKey();
             });
+    }
+
+    protected function handleParsingError(AiMessageFile $file, FileParsingError $error): void
+    {
+        $this->removeUploadedFile($file->getKey());
+
+        $file->delete();
+
+        Notification::make()
+            ->title('File Upload Failed')
+            ->body($error->getNotificationBody())
+            ->danger()
+            ->send();
     }
 }
