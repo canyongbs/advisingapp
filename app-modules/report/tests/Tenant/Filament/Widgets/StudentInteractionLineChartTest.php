@@ -43,7 +43,7 @@ use Carbon\Carbon;
 
 use function Pest\Laravel\travelTo;
 
-it('returns correct data on a standard day', function () {
+it('returns correct data when today is a safe mid-month date', function () {
     travelTo(Carbon::parse('2024-12-15'));
 
     Student::factory()
@@ -77,7 +77,7 @@ it('returns correct data on a standard day', function () {
     expect($widgetInstance->getData())->toMatchSnapshot();
 });
 
-it('returns correct data on a non-standard day', function (Carbon $testDate) {
+it('returns correct data when today falls on an overflow-risk date', function (Carbon $testDate) {
     travelTo($testDate);
 
     Student::factory()
