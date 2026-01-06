@@ -83,7 +83,7 @@ it('returns correct data when today falls on an overflow-risk date', function (C
     Student::factory()
         ->has(
             Interaction::factory()->count(13)->sequence(
-                // Add interaction on in a month prior to test that it should not be counted
+                // Add record on in a month prior to test that it should not be counted
                 ['created_at' => Carbon::parse('2023-08-31')],
                 ['created_at' => Carbon::parse('2023-09-15')],
                 ['created_at' => Carbon::parse('2023-10-15')],
@@ -91,7 +91,7 @@ it('returns correct data when today falls on an overflow-risk date', function (C
                 // Add record on Feb 29th to test leap year handling
                 ['created_at' => Carbon::parse('2024-02-29')],
                 ['created_at' => Carbon::parse('2024-03-15')],
-                // Add multiple interactions in March to test aggregation and throw in some days not all months have
+                // Add multiple records in March to test aggregation and throw in some days not all months have
                 ['created_at' => Carbon::parse('2024-03-29')],
                 ['created_at' => Carbon::parse('2024-03-30')],
                 ['created_at' => Carbon::parse('2024-03-31')],
@@ -115,6 +115,66 @@ it('returns correct data when today falls on an overflow-risk date', function (C
         '30th of month' => [Carbon::parse('2024-08-30')],
         '29th of month' => [Carbon::parse('2024-08-29')],
     ]);
+
+it('returns correct data when today is Feb 28th in a non-leap year', function () {
+    travelTo(Carbon::parse('2025-02-28'));
+
+    Student::factory()
+        ->has(
+            Interaction::factory()->count(10)->sequence(
+                // Add record in a month prior to test that it should not be counted
+                ['created_at' => Carbon::parse('2024-02-28')],
+                ['created_at' => Carbon::parse('2024-03-15')],
+                // Add records on days that don't exist in all months
+                ['created_at' => Carbon::parse('2024-03-31')],
+                ['created_at' => Carbon::parse('2024-04-30')],
+                ['created_at' => Carbon::parse('2024-05-31')],
+                ['created_at' => Carbon::parse('2024-06-15')],
+                // Add a gap in between in which no records occur
+                ['created_at' => Carbon::parse('2024-10-15')],
+                ['created_at' => Carbon::parse('2024-11-30')],
+                ['created_at' => Carbon::parse('2025-01-31')],
+                ['created_at' => Carbon::parse('2025-02-15')],
+            ),
+            'interactions'
+        )
+        ->create();
+
+    $widgetInstance = new StudentInteractionLineChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
+
+    expect($widgetInstance->getData())->toMatchSnapshot();
+});
+
+it('returns correct data when today is Feb 29th in a leap year', function () {
+    travelTo(Carbon::parse('2024-02-29'));
+
+    Student::factory()
+        ->has(
+            Interaction::factory()->count(10)->sequence(
+                // Add record in a month prior to test that it should not be counted
+                ['created_at' => Carbon::parse('2023-02-28')],
+                ['created_at' => Carbon::parse('2023-03-15')],
+                // Add records on days that don't exist in all months
+                ['created_at' => Carbon::parse('2023-03-31')],
+                ['created_at' => Carbon::parse('2023-04-30')],
+                ['created_at' => Carbon::parse('2023-05-31')],
+                ['created_at' => Carbon::parse('2023-06-15')],
+                // Add a gap in between in which no records occur
+                ['created_at' => Carbon::parse('2023-10-15')],
+                ['created_at' => Carbon::parse('2023-11-30')],
+                ['created_at' => Carbon::parse('2024-01-31')],
+                ['created_at' => Carbon::parse('2024-02-15')],
+            ),
+            'interactions'
+        )
+        ->create();
+
+    $widgetInstance = new StudentInteractionLineChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
+
+    expect($widgetInstance->getData())->toMatchSnapshot();
+});
 
 it('returns correct data when filtered by standard days', function () {
     Student::factory()
