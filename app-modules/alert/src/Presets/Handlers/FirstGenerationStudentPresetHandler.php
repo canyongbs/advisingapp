@@ -67,7 +67,7 @@ class FirstGenerationStudentPresetHandler implements AlertPresetHandler
     {
         return DB::table('students')
             ->select('sisid')
-            ->where('firstgen', true)
+            ->whereRaw('firstgen = TRUE')
             ->whereNull('deleted_at')
             ->distinct();
     }
