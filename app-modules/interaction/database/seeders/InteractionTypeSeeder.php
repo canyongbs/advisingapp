@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Interaction\Database\Seeders;
 
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionType;
 use Illuminate\Database\Seeder;
 
@@ -43,24 +44,24 @@ class InteractionTypeSeeder extends Seeder
 {
     public function run(): void
     {
+        $typeNames = [
+                    ['name' => 'Phone'],
+                    ['name' => 'Live Chat'],
+                    ['name' => 'SMS (Outside Advising App)'],
+                    ['name' => 'In-Person'],
+                    ['name' => 'Virtual Meeting'],
+                    ['name' => 'Email (Outside Advising App)'],
+                    ['name' => 'Postal Mail'],
+        ];
+
+        $types = [];
+
+        foreach ($typeNames as $item) {
+            $types[] = ['name' => $item['name'], 'interactable_type' => InteractableType::Student];
+            $types[] = ['name' => $item['name'], 'interactable_type' => InteractableType::Prospect];
+        }
+
         InteractionType::factory()
-            ->createMany(
-                [
-                    ['name' => 'Phone', 'interactable_type' => 'student'],
-                    ['name' => 'Live Chat', 'interactable_type' => 'student'],
-                    ['name' => 'SMS (Outside Advising App)', 'interactable_type' => 'student'],
-                    ['name' => 'In-Person', 'interactable_type' => 'student'],
-                    ['name' => 'Virtual Meeting', 'interactable_type' => 'student'],
-                    ['name' => 'Email (Outside Advising App)', 'interactable_type' => 'student'],
-                    ['name' => 'Postal Mail', 'interactable_type' => 'student'],
-                    ['name' => 'Phone', 'interactable_type' => 'prospect'],
-                    ['name' => 'Live Chat', 'interactable_type' => 'prospect'],
-                    ['name' => 'SMS (Outside Advising App)', 'interactable_type' => 'prospect'],
-                    ['name' => 'In-Person', 'interactable_type' => 'prospect'],
-                    ['name' => 'Virtual Meeting', 'interactable_type' => 'prospect'],
-                    ['name' => 'Email (Outside Advising App)', 'interactable_type' => 'prospect'],
-                    ['name' => 'Postal Mail', 'interactable_type' => 'prospect'],
-                ]
-            );
+            ->createMany($types);
     }
 }

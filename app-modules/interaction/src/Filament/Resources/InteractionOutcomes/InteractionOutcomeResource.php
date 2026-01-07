@@ -65,6 +65,12 @@ class InteractionOutcomeResource extends Resource
     {
         return $schema
             ->components([
+                Select::make('interactable_type')
+                    ->visible(InteractableTypeFeature::active())
+                    ->label('Type')
+                    ->required()
+                    ->options(InteractableType::class)
+                    ->enum(InteractableType::class),
                 TextInput::make('name')
                     ->autofocus()
                     ->required()
@@ -74,12 +80,6 @@ class InteractionOutcomeResource extends Resource
                         ignoreRecord: true,
                         modifyRuleUsing: fn (Unique $rule, Get $get) => InteractableTypeFeature::active() ? $rule->where('interactable_type', $get('interactable_type')) : $rule
                     ),
-                Select::make('interactable_type')
-                    ->visible(InteractableTypeFeature::active())
-                    ->label('Type')
-                    ->required()
-                    ->options(InteractableType::class)
-                    ->enum(InteractableType::class),
                 Toggle::make('is_default')
                     ->label('Default')
                     ->live()

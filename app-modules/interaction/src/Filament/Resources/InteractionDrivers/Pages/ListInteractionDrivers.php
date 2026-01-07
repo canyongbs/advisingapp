@@ -177,7 +177,7 @@ class ListInteractionDrivers extends ListRecords
                 ]),
             ]);
 
-        // During InteractableTypeFeature cleanup, we can put the default group on the table definition above and just return that
+        // TODO: InteractableTypeFeature cleanup, apply defaultGroup() to $table and directly return it
         return InteractableTypeFeature::active() ?
             $table->defaultGroup('interactable_type') :
             $table;

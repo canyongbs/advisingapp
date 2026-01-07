@@ -66,6 +66,12 @@ class InteractionStatusResource extends Resource
     {
         return $schema
             ->components([
+                Select::make('interactable_type')
+                    ->visible(InteractableTypeFeature::active())
+                    ->label('Type')
+                    ->required()
+                    ->options(InteractableType::class)
+                    ->enum(InteractableType::class),
                 TextInput::make('name')
                     ->autofocus()
                     ->required()
@@ -81,12 +87,6 @@ class InteractionStatusResource extends Resource
                     ->options(InteractionStatusColorOptions::class)
                     ->required()
                     ->enum(InteractionStatusColorOptions::class),
-                Select::make('interactable_type')
-                    ->visible(InteractableTypeFeature::active())
-                    ->label('Type')
-                    ->required()
-                    ->options(InteractableType::class)
-                    ->enum(InteractableType::class),
                 Toggle::make('is_default')
                     ->label('Default')
                     ->live()

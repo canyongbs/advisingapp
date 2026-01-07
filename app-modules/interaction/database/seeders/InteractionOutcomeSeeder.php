@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Interaction\Database\Seeders;
 
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use Illuminate\Database\Seeder;
 
@@ -43,20 +44,22 @@ class InteractionOutcomeSeeder extends Seeder
 {
     public function run(): void
     {
+        $outcomeNames = [
+                    ['name' => 'Does Not Apply'],
+                    ['name' => 'Live Contact'],
+                    ['name' => 'Voicemail'],
+                    ['name' => 'No Voicemail'],
+                    ['name' => 'Dropped Call'],
+        ];
+
+        $outcomes = [];
+
+        foreach ($outcomeNames as $item) {
+            $outcomes[] = ['name' => $item['name'], 'interactable_type' => InteractableType::Student];
+            $outcomes[] = ['name' => $item['name'], 'interactable_type' => InteractableType::Prospect];
+        }
+
         InteractionOutcome::factory()
-            ->createMany(
-                [
-                    ['name' => 'Does Not Apply', 'interactable_type' => 'student'],
-                    ['name' => 'Live Contact', 'interactable_type' => 'student'],
-                    ['name' => 'Voicemail', 'interactable_type' => 'student'],
-                    ['name' => 'No Voicemail', 'interactable_type' => 'student'],
-                    ['name' => 'Dropped Call', 'interactable_type' => 'student'],
-                    ['name' => 'Does Not Apply', 'interactable_type' => 'prospect'],
-                    ['name' => 'Live Contact', 'interactable_type' => 'prospect'],
-                    ['name' => 'Voicemail', 'interactable_type' => 'prospect'],
-                    ['name' => 'No Voicemail', 'interactable_type' => 'prospect'],
-                    ['name' => 'Dropped Call', 'interactable_type' => 'prospect'],
-                ]
-            );
+            ->createMany($outcomes);
     }
 }

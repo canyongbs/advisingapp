@@ -49,13 +49,4 @@ enum InteractableType: string implements HasLabel
     {
         return $this->name;
     }
-
-    public static function fromMorphClass(string $morphClass): self
-    {
-        return match ($morphClass) {
-            'prospect' => InteractableType::Prospect,
-            'student' => InteractableType::Student,
-            default => throw new Exception('Invalid interactable type'),
-        };
-    }
 }

@@ -79,7 +79,7 @@ return new class () extends Migration {
                 $table->string('interactable_type')->nullable();
             });
 
-            //Remove during cleanup
+            // TODO: InteractableTypeFeature cleanup, remove this section (lines 82-173)
             //Duplicate existing records and set as prospect type, set originals as student type
             DB::table('interaction_statuses')
                 ->chunkById(100, function (Collection $interactionStatuses) {
@@ -172,7 +172,7 @@ return new class () extends Migration {
                     }
                 });
 
-            //Remove during cleanup
+            // TODO: InteractableTypeFeature cleanup, remove this section (lines 175-252)
             //Ensure interactions now have the correct foriegn key
             DB::table('interactions')
                 ->chunkById(100, function (Collection $interactions) {
@@ -254,36 +254,66 @@ return new class () extends Migration {
             //Make interactable_type non nullable, add unique index
             Schema::table('interaction_statuses', function (Blueprint $table) {
                 $table->string('interactable_type')->nullable(false)->change();
-                $table->unique(['name', 'interactable_type']);
+                $table->unique(['name', 'interactable_type'])->where("deleted_at IS NULL");
+                DB::statement('
+                    CREATE UNIQUE INDEX interaction_statuses_is_default_unique 
+                    ON interaction_statuses (is_default) 
+                    WHERE is_default = true AND deleted_at IS NULL;
+                ');
             });
 
             Schema::table('interaction_types', function (Blueprint $table) {
                 $table->string('interactable_type')->nullable(false)->change();
-                $table->unique(['name', 'interactable_type']);
+                $table->unique(['name', 'interactable_type'])->where("deleted_at IS NULL");
+                DB::statement('
+                    CREATE UNIQUE INDEX interaction_types_is_default_unique 
+                    ON interaction_types (is_default) 
+                    WHERE is_default = true AND deleted_at IS NULL;
+                ');
             });
 
             Schema::table('interaction_outcomes', function (Blueprint $table) {
                 $table->string('interactable_type')->nullable(false)->change();
-                $table->unique(['name', 'interactable_type']);
+                $table->unique(['name', 'interactable_type'])->where("deleted_at IS NULL");
+                DB::statement('
+                    CREATE UNIQUE INDEX interaction_outcomes_is_default_unique 
+                    ON interaction_outcomes (is_default) 
+                    WHERE is_default = true AND deleted_at IS NULL;
+                ');
             });
 
             Schema::table('interaction_relations', function (Blueprint $table) {
                 $table->string('interactable_type')->nullable(false)->change();
-                $table->unique(['name', 'interactable_type']);
+                $table->unique(['name', 'interactable_type'])->where("deleted_at IS NULL");
+                DB::statement('
+                    CREATE UNIQUE INDEX interaction_relations_is_default_unique 
+                    ON interaction_relations (is_default) 
+                    WHERE is_default = true AND deleted_at IS NULL;
+                ');
             });
 
             Schema::table('interaction_drivers', function (Blueprint $table) {
                 $table->string('interactable_type')->nullable(false)->change();
-                $table->unique(['name', 'interactable_type']);
+                $table->unique(['name', 'interactable_type'])->where("deleted_at IS NULL");
+                DB::statement('
+                    CREATE UNIQUE INDEX interaction_drivers_is_default_unique 
+                    ON interaction_drivers (is_default) 
+                    WHERE is_default = true AND deleted_at IS NULL;
+                ');
             });
 
             Schema::table('interaction_initiatives', function (Blueprint $table) {
                 $table->string('interactable_type')->nullable(false)->change();
-                $table->unique(['name', 'interactable_type']);
+                $table->unique(['name', 'interactable_type'])->where("deleted_at IS NULL");
+                DB::statement('
+                    CREATE UNIQUE INDEX interaction_initiatives_is_default_unique 
+                    ON interaction_initiatives (is_default) 
+                    WHERE is_default = true AND deleted_at IS NULL;
+                ');
             });
-        });
 
-        InteractableTypeFeature::activate();
+            InteractableTypeFeature::activate();
+        });
     }
 
     public function down(): void
@@ -482,8 +512,8 @@ return new class () extends Migration {
                 $table->dropColumn('interactable_type');
                 $table->unique('name');
             });
-        });
 
-        InteractableTypeFeature::deactivate();
+            InteractableTypeFeature::deactivate();
+        });
     }
 };
