@@ -51,7 +51,6 @@ class InteractionStatusFactory extends Factory
         return [
             'name' => $this->faker->unique()->sentence(),
             'color' => $this->faker->randomElement(ColumnColorOptions::cases())->value,
-            'is_default' => $this->faker->boolean(),
             'interactable_type' => $this->faker->randomElement(InteractableType::cases()),
         ];
     }
