@@ -34,35 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Configurations;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
-use AdvisingApp\Alert\Models\AlertConfiguration;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use OwenIt\Auditing\Contracts\Auditable;
-
-/**
- * @mixin IdeHelperCumulativeGpaAlertConfiguration
- */
-class CumulativeGpaAlertConfiguration extends BaseModel implements AlertPresetConfiguration, Auditable
-{
-    use AuditableTrait;
-
-    protected $fillable = [
-        'gpa_threshold',
-    ];
-
-    protected $casts = [
-        'gpa_threshold' => 'decimal:2',
-    ];
-
-    /**
-     * @return MorphOne<AlertConfiguration, $this>
-     */
-    public function alertConfiguration(): MorphOne
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->morphOne(AlertConfiguration::class, 'configuration');
+        DB::transaction(function () {
+            DB::table('alert_configurations')
+                ->whereIn('preset', ['cumulative_gpa_below_threshold', 'semester_gpa_below_threshold'])
+                ->delete();
+
+            Schema::dropIfExists('cumulative_gpa_alert_configurations');
+            Schema::dropIfExists('semester_gpa_alert_configurations');
+        });
     }
-}
+};

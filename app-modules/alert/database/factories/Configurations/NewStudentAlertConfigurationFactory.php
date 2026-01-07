@@ -34,35 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Configurations;
+namespace AdvisingApp\Alert\Database\Factories\Configurations;
 
-use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
-use AdvisingApp\Alert\Models\AlertConfiguration;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperSemesterGpaAlertConfiguration
+ * @extends Factory<NewStudentAlertConfiguration>
  */
-class SemesterGpaAlertConfiguration extends BaseModel implements AlertPresetConfiguration, Auditable
+class NewStudentAlertConfigurationFactory extends Factory
 {
-    use AuditableTrait;
+    protected $model = NewStudentAlertConfiguration::class;
 
-    protected $fillable = [
-        'gpa_threshold',
-    ];
-
-    protected $casts = [
-        'gpa_threshold' => 'decimal:2',
-    ];
-
-    /**
-     * @return MorphOne<AlertConfiguration, $this>
-     */
-    public function alertConfiguration(): MorphOne
+    public function definition(): array
     {
-        return $this->morphOne(AlertConfiguration::class, 'configuration');
+        return [
+            'number_of_semesters' => $this->faker->numberBetween(1, 8),
+        ];
     }
 }

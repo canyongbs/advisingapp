@@ -34,24 +34,22 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+namespace AdvisingApp\Alert\Database\Factories\Configurations;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<AdultLearnerAlertConfiguration>
+ */
+class AdultLearnerAlertConfigurationFactory extends Factory
+{
+    protected $model = AdultLearnerAlertConfiguration::class;
+
+    public function definition(): array
     {
-        Schema::create('semester_gpa_alert_configurations', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-
-            $table->decimal('gpa_threshold', 4, 2);
-
-            $table->timestamps();
-        });
+        return [
+            'minimum_age' => $this->faker->numberBetween(18, 65),
+        ];
     }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('semester_gpa_alert_configurations');
-    }
-};
+}

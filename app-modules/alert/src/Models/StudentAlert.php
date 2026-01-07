@@ -34,24 +34,44 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+namespace AdvisingApp\Alert\Models;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+
+/**
+ * @mixin IdeHelperStudentAlert
+ */
+class StudentAlert extends Model
+{
+    use UsesTenantConnection;
+
+    protected $table = 'student_alerts';
+
+    public $timestamps = false;
+
+    public $incrementing = false;
+
+    protected $fillable = [
+        'sisid',
+        'alert_configuration_id',
+    ];
+
+    /**
+     * @return BelongsTo<Student, $this>
+     */
+    public function student(): BelongsTo
     {
-        Schema::create('cumulative_gpa_alert_configurations', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-
-            $table->decimal('gpa_threshold', 4, 2);
-
-            $table->timestamps();
-        });
+        return $this->belongsTo(Student::class, 'sisid', 'sisid');
     }
 
-    public function down(): void
+    /**
+     * @return BelongsTo<AlertConfiguration, $this>
+     */
+    public function alertConfiguration(): BelongsTo
     {
-        Schema::dropIfExists('cumulative_gpa_alert_configurations');
+        return $this->belongsTo(AlertConfiguration::class, 'alert_configuration_id');
     }
-};
+}

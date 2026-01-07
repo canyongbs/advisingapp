@@ -34,29 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Providers;
+namespace AdvisingApp\Alert\Database\Factories;
 
-use AdvisingApp\Alert\AlertPlugin;
 use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
 use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Alert\Presets\AlertPreset;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class AlertServiceProvider extends ServiceProvider
+/**
+ * @extends Factory<AlertConfiguration>
+ */
+class AlertConfigurationFactory extends Factory
 {
-    public function register()
+    public function definition(): array
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new AlertPlugin()));
+        return [
+            'preset' => $this->faker->randomElement(AlertPreset::cases()),
+            'is_enabled' => $this->faker->boolean(80),
+            'configuration_type' => function (array $attributes) {
+                return match ($attributes['preset']) {
+                    AlertPreset::AdultLearner => new AdultLearnerAlertConfiguration()->getMorphClass(),
+                    AlertPreset::NewStudent => new NewStudentAlertConfiguration()->getMorphClass(),
+                    default => null,
+                };
+            },
+            'configuration_id' => function (array $attributes) {
+                return match ($attributes['preset']) {
+                    AlertPreset::AdultLearner => AdultLearnerAlertConfiguration::factory(),
+                    AlertPreset::NewStudent => NewStudentAlertConfiguration::factory(),
+                    default => null,
+                };
+            },
+        ];
     }
 
-    public function boot(): void
+    public function enabled(): static
     {
-        Relation::morphMap([
-            'alert_configuration' => AlertConfiguration::class,
-            'adult_learner_alert_configuration' => AdultLearnerAlertConfiguration::class,
-            'new_student_alert_configuration' => NewStudentAlertConfiguration::class,
+        return $this->state(fn (array $attributes) => [
+            'is_enabled' => true,
+        ]);
+    }
+
+    public function disabled(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_enabled' => false,
         ]);
     }
 }

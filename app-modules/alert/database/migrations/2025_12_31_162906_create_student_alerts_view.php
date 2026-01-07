@@ -34,42 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Presets\Handlers;
-
-use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
-use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-class MultipleCourseWithdrawalsPresetHandler implements AlertPresetHandler
-{
-    public function getName(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'Multiple Course Withdrawals';
+        DB::statement(<<<'SQL'
+            CREATE OR REPLACE VIEW student_alerts AS
+            SELECT
+                NULL::character varying(255) AS sisid,
+                NULL::uuid AS alert_configuration_id
+            WHERE false
+        SQL);
     }
 
-    public function getDescription(): string
+    public function down(): void
     {
-        return 'This alert is turned on when a student has withdrawn from two or more courses across their enrollment history. It is intended to highlight students who repeatedly withdraw from courses and may be at higher risk of delayed completion or stop-out.';
+        DB::statement('DROP VIEW IF EXISTS student_alerts');
     }
-
-    public function configurationForm(): array
-    {
-        return [];
-    }
-
-    public function getConfigurationModel(): ?string
-    {
-        return null;
-    }
-
-    public function getStudentAlertQuery(?AlertPresetConfiguration $configuration): Builder
-    {
-        return DB::table('enrollments')
-            ->select('sisid')
-            ->where(DB::raw('UPPER(crse_grade_off)'), 'W')
-            ->whereNull('deleted_at')
-            ->groupBy('sisid')
-            ->havingRaw('COUNT(*) > 1');
-    }
-}
+};
