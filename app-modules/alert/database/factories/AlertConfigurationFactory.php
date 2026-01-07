@@ -52,27 +52,21 @@ class AlertConfigurationFactory extends Factory
         return [
             'preset' => $this->faker->randomElement(AlertPreset::cases()),
             'is_enabled' => $this->faker->boolean(80),
-            'configuration_id' => null,
-            'configuration_type' => null,
+            'configuration_type' => function (array $attributes) {
+                return match ($attributes['preset']) {
+                    AlertPreset::AdultLearner => new AdultLearnerAlertConfiguration()->getMorphClass(),
+                    AlertPreset::NewStudent => new NewStudentAlertConfiguration()->getMorphClass(),
+                    default => null,
+                };
+            },
+            'configuration_id' => function (array $attributes) {
+                return match ($attributes['preset']) {
+                    AlertPreset::AdultLearner => AdultLearnerAlertConfiguration::factory(),
+                    AlertPreset::NewStudent => NewStudentAlertConfiguration::factory(),
+                    default => null,
+                };
+            },
         ];
-    }
-
-    public function configure(): static
-    {
-        return $this->afterMaking(function (AlertConfiguration $alertConfiguration) {
-            if ($alertConfiguration->configuration_id === null) {
-                $config = $this->createConfigurationForPreset($alertConfiguration->preset);
-
-                if ($config) {
-                    $alertConfiguration->configuration_id = $config->id;
-                    $alertConfiguration->configuration_type = $config->getMorphClass();
-                }
-            }
-        })->afterCreating(function (AlertConfiguration $alertConfiguration) {
-            if ($alertConfiguration->isDirty(['configuration_id', 'configuration_type'])) {
-                $alertConfiguration->save();
-            }
-        });
     }
 
     public function enabled(): static
@@ -87,14 +81,5 @@ class AlertConfigurationFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'is_enabled' => false,
         ]);
-    }
-
-    protected function createConfigurationForPreset(AlertPreset $preset): ?object
-    {
-        return match ($preset) {
-            AlertPreset::AdultLearner => AdultLearnerAlertConfiguration::factory()->create(),
-            AlertPreset::NewStudent => NewStudentAlertConfiguration::factory()->create(),
-            default => null,
-        };
     }
 }
