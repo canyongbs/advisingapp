@@ -49,6 +49,7 @@ class InteractionTypeFactory extends Factory
     {
         return [
             'name' => $this->faker->unique()->sentence(),
+            'is_default' => false,
             'interactable_type' => $this->faker->randomElement(InteractableType::cases()),
         ];
     }
