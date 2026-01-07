@@ -95,32 +95,10 @@ class GenerateStudentAlertsView
 
     /**
      * @param Builder $query
-     *
      * @return string
      */
     private function getInlinedSql(Builder $query): string
     {
-        $sql = $query->toSql();
-        $bindings = $query->getBindings();
-
-        foreach ($bindings as $binding) {
-            if (is_null($binding)) {
-                $value = 'NULL';
-            } elseif (is_int($binding) || is_float($binding)) {
-                $value = $binding;
-            } elseif (is_bool($binding)) {
-                $value = $binding ? 'TRUE' : 'FALSE';
-            } else {
-                $value = "'" . str_replace("'", "''", $binding) . "'";
-            }
-
-            $pos = strpos($sql, '?');
-
-            if ($pos !== false) {
-                $sql = substr_replace($sql, $value, $pos, 1);
-            }
-        }
-
-        return $sql;
+        return $query->toRawSql();
     }
 }

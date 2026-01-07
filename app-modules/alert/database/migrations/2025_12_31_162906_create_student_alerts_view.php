@@ -34,14 +34,19 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Alert\Actions\GenerateStudentAlertsView;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     public function up(): void
     {
-        app(GenerateStudentAlertsView::class)->execute();
+        DB::statement(<<<'SQL'
+            CREATE VIEW student_alerts AS
+            SELECT
+                NULL::character varying(255) AS sisid,
+                NULL::uuid AS alert_configuration_id
+            WHERE false
+        SQL);
     }
 
     public function down(): void
