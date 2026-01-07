@@ -41,7 +41,7 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::statement(<<<'SQL'
-            CREATE VIEW student_alerts AS
+            CREATE OR REPLACE VIEW student_alerts AS
             SELECT
                 NULL::character varying(255) AS sisid,
                 NULL::uuid AS alert_configuration_id
