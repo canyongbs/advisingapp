@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
+use AdvisingApp\Alert\Filament\Widgets\AlertStats;
 use AdvisingApp\Report\Abstract\StudentReport;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentStats;
@@ -43,6 +44,9 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\ReportLibrary;
 use App\Models\User;
 use BackedEnum;
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Symfony\Component\HttpFoundation\Response;
 use UnitEnum;
 
@@ -64,6 +68,8 @@ class RetentionCrmDashboard extends StudentReport
 
     protected string $cacheTag = 'report-student-action-center';
 
+    protected string $view = 'student-data-model::filament.pages.retention-crm-dashboard';
+
     public static function shouldRegisterNavigation(): bool
     {
         /** @var User $user */
@@ -80,10 +86,30 @@ class RetentionCrmDashboard extends StudentReport
         abort_unless($user->hasLicense(Student::getLicenseType()), Response::HTTP_FORBIDDEN);
     }
 
+    public function filtersForm(Schema $schema): Schema
+    {
+        $groupModel = $this->groupModel();
+
+        return $schema
+            ->components([
+                Section::make()
+                    ->schema([
+                        Select::make('populationGroup')
+                            ->label('Select Group')
+                            ->options(fn (): array => $this->getGroupOptions($groupModel))
+                            ->getSearchResultsUsing(fn (string $search): array => $this->getGroupOptions($groupModel, $search))
+                            ->searchable(),
+                    ])
+                    ->heading('Advanced Filtering')
+                    ->columns(1),
+            ]);
+    }
+
     public function getWidgets(): array
     {
         return [
             StudentStats::make(),
+            AlertStats::make(),
             StudentsActionCenterWidget::make(),
         ];
     }
@@ -91,7 +117,11 @@ class RetentionCrmDashboard extends StudentReport
     public function getWidgetData(): array
     {
         return [
-            'filters' => $this->filters,
+            'filters' => array_merge([
+                'startDate' => null,
+                'endDate' => null,
+                'populationGroup' => null,
+            ], $this->filters),
         ];
     }
 }
