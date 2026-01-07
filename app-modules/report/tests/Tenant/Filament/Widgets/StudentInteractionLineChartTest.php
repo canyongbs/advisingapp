@@ -39,60 +39,207 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionLineChart;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
 
-beforeEach()->skip('Skipping these tests as there are currently issues with these tests or the underlying functionality having to do with overflow dates that needs to be resolved');
+use function Pest\Laravel\travelTo;
 
-it('checks student interactions monthly line chart', function () {
-    $studentCount = 5;
+it('returns correct data when today is a safe mid-month date', function () {
+    travelTo(Carbon::parse('2024-12-15'));
 
-    Student::factory()->count($studentCount)->has(Interaction::factory()->count(5)->state([
-        'created_at' => now()->subMonths(1),
-    ]), 'interactions')->create();
-    Student::factory()->count($studentCount)->has(Interaction::factory()->count(5)->state([
-        'created_at' => now()->subMonths(6),
-    ]), 'interactions')->create();
+    Student::factory()
+        ->has(
+            Interaction::factory()->count(13)->sequence(
+                // Add record on Dec 31st of previous year to test that it should not be counted
+                ['created_at' => Carbon::parse('2023-12-31')],
+                ['created_at' => Carbon::parse('2024-01-15')],
+                ['created_at' => Carbon::parse('2024-02-15')],
+                // Add record on Feb 29th to test leap year handling
+                ['created_at' => Carbon::parse('2024-02-29')],
+                ['created_at' => Carbon::parse('2024-03-15')],
+                // Add multiple records in March to test aggregation and throw in some days not all months have
+                ['created_at' => Carbon::parse('2024-03-29')],
+                ['created_at' => Carbon::parse('2024-03-30')],
+                ['created_at' => Carbon::parse('2024-03-31')],
+                ['created_at' => Carbon::parse('2024-04-15')],
+                ['created_at' => Carbon::parse('2024-05-15')],
+                // Add a gap in between in which no records occur
+                ['created_at' => Carbon::parse('2024-10-15')],
+                ['created_at' => Carbon::parse('2024-11-15')],
+                ['created_at' => Carbon::parse('2024-12-01')],
+            ),
+            'interactions'
+        )
+        ->create();
 
     $widgetInstance = new StudentInteractionLineChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
 
-    expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
+    expect($widgetInstance->getData())->toMatchSnapshot();
 });
 
-it('returns correct data for student interactions within the given date range', function () {
-    $interactionStartDate = now()->subMonths(3);
-    $interactionEndDate = now()->subDays(5);
+it('returns correct data when today falls on an overflow-risk date', function (Carbon $testDate) {
+    travelTo($testDate);
 
-    Student::factory()->count(5)->has(
-        Interaction::factory()
-            ->count(5)
-            ->state([
-                'created_at' => $interactionStartDate,
-            ]),
-        'interactions'
-    )->create();
+    Student::factory()
+        ->has(
+            Interaction::factory()->count(13)->sequence(
+                // Add record on in a month prior to test that it should not be counted
+                ['created_at' => Carbon::parse('2023-08-31')],
+                ['created_at' => Carbon::parse('2023-09-15')],
+                ['created_at' => Carbon::parse('2023-10-15')],
+                // Add a gap in between in which no records occur
+                // Add record on Feb 29th to test leap year handling
+                ['created_at' => Carbon::parse('2024-02-29')],
+                ['created_at' => Carbon::parse('2024-03-15')],
+                // Add multiple records in March to test aggregation and throw in some days not all months have
+                ['created_at' => Carbon::parse('2024-03-29')],
+                ['created_at' => Carbon::parse('2024-03-30')],
+                ['created_at' => Carbon::parse('2024-03-31')],
+                ['created_at' => Carbon::parse('2024-04-15')],
+                ['created_at' => Carbon::parse('2024-05-15')],
+                ['created_at' => Carbon::parse('2024-06-15')],
+                ['created_at' => Carbon::parse('2024-07-15')],
+                ['created_at' => Carbon::parse('2024-08-01')],
+            ),
+            'interactions'
+        )
+        ->create();
 
-    Student::factory()->count(5)->has(
-        Interaction::factory()
-            ->count(5)
-            ->state([
-                'created_at' => $interactionEndDate,
-            ]),
-        'interactions'
-    )->create();
+    $widgetInstance = new StudentInteractionLineChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
+
+    expect($widgetInstance->getData())->toMatchSnapshot();
+})
+    ->with([
+        '31st of month' => [Carbon::parse('2024-08-31')],
+        '30th of month' => [Carbon::parse('2024-08-30')],
+        '29th of month' => [Carbon::parse('2024-08-29')],
+    ]);
+
+it('returns correct data when today is Feb 28th in a non-leap year', function () {
+    travelTo(Carbon::parse('2025-02-28'));
+
+    Student::factory()
+        ->has(
+            Interaction::factory()->count(10)->sequence(
+                // Add record in a month prior to test that it should not be counted
+                ['created_at' => Carbon::parse('2024-02-28')],
+                ['created_at' => Carbon::parse('2024-03-15')],
+                // Add records on days that don't exist in all months
+                ['created_at' => Carbon::parse('2024-03-31')],
+                ['created_at' => Carbon::parse('2024-04-30')],
+                ['created_at' => Carbon::parse('2024-05-31')],
+                ['created_at' => Carbon::parse('2024-06-15')],
+                // Add a gap in between in which no records occur
+                ['created_at' => Carbon::parse('2024-10-15')],
+                ['created_at' => Carbon::parse('2024-11-30')],
+                ['created_at' => Carbon::parse('2025-01-31')],
+                ['created_at' => Carbon::parse('2025-02-15')],
+            ),
+            'interactions'
+        )
+        ->create();
+
+    $widgetInstance = new StudentInteractionLineChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
+
+    expect($widgetInstance->getData())->toMatchSnapshot();
+});
+
+it('returns correct data when today is Feb 29th in a leap year', function () {
+    travelTo(Carbon::parse('2024-02-29'));
+
+    Student::factory()
+        ->has(
+            Interaction::factory()->count(10)->sequence(
+                // Add record in a month prior to test that it should not be counted
+                ['created_at' => Carbon::parse('2023-02-28')],
+                ['created_at' => Carbon::parse('2023-03-15')],
+                // Add records on days that don't exist in all months
+                ['created_at' => Carbon::parse('2023-03-31')],
+                ['created_at' => Carbon::parse('2023-04-30')],
+                ['created_at' => Carbon::parse('2023-05-31')],
+                ['created_at' => Carbon::parse('2023-06-15')],
+                // Add a gap in between in which no records occur
+                ['created_at' => Carbon::parse('2023-10-15')],
+                ['created_at' => Carbon::parse('2023-11-30')],
+                ['created_at' => Carbon::parse('2024-01-31')],
+                ['created_at' => Carbon::parse('2024-02-15')],
+            ),
+            'interactions'
+        )
+        ->create();
+
+    $widgetInstance = new StudentInteractionLineChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
+
+    expect($widgetInstance->getData())->toMatchSnapshot();
+});
+
+it('returns correct data when filtered by standard days', function () {
+    Student::factory()
+        ->has(
+            Interaction::factory()->count(11)->sequence(
+                // Add record out of bounds to test that it should not be counted
+                ['created_at' => Carbon::parse('2024-02-09')],
+                ['created_at' => Carbon::parse('2024-02-15')],
+                // Add record on Feb 29th to test leap year handling
+                ['created_at' => Carbon::parse('2024-02-29')],
+                ['created_at' => Carbon::parse('2024-03-15')],
+                // Add multiple records in March to test aggregation and throw in some days not all months have
+                ['created_at' => Carbon::parse('2024-03-29')],
+                ['created_at' => Carbon::parse('2024-03-30')],
+                ['created_at' => Carbon::parse('2024-03-31')],
+                ['created_at' => Carbon::parse('2024-04-15')],
+                ['created_at' => Carbon::parse('2024-05-15')],
+                // Add a gap in between in which no records occur
+                ['created_at' => Carbon::parse('2024-07-15')],
+                // Add record out of bounds to test that it should not be counted
+                ['created_at' => Carbon::parse('2024-08-01')],
+            ),
+            'interactions'
+        )
+        ->create();
 
     $widgetInstance = new StudentInteractionLineChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
     $widgetInstance->pageFilters = [
-        'startDate' => $interactionStartDate->toDateString(),
-        'endDate' => $interactionEndDate->toDateString(),
+        'startDate' => Carbon::parse('2024-02-10')->toDateString(),
+        'endDate' => Carbon::parse('2024-07-15')->toDateString(),
     ];
 
-    expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
+    expect($widgetInstance->getData())->toMatchSnapshot();
+});
+
+it('returns correct data when filtered by non-standard days', function () {
+    Student::factory()
+        ->has(
+            Interaction::factory()->count(5)->sequence(
+                // Add record out of bounds to test that it should not be counted
+                ['created_at' => Carbon::parse('2024-10-30')],
+                ['created_at' => Carbon::parse('2024-10-31')],
+                // Add a gap in between in which no records occur
+                ['created_at' => Carbon::parse('2024-12-01')],
+                ['created_at' => Carbon::parse('2024-12-15')],
+                // Add record out of bounds to test that it should not be counted
+                ['created_at' => Carbon::parse('2025-01-01')],
+            ),
+            'interactions'
+        )
+        ->create();
+
+    $widgetInstance = new StudentInteractionLineChart();
+    $widgetInstance->cacheTag = 'report-student-interaction';
+    $widgetInstance->pageFilters = [
+        'startDate' => Carbon::parse('2024-10-31')->toDateString(),
+        'endDate' => Carbon::parse('2024-12-31')->toDateString(),
+    ];
+
+    expect($widgetInstance->getData())->toMatchSnapshot();
 });
 
 it('returns correct data for student interactions based on group filter', function () {
-    $interactionStartDate = now()->subMonths(3);
-    $interactionEndDate = now()->subDays(5);
+    travelTo(Carbon::parse('2024-12-15'));
 
     $group = Group::factory()->create([
         'model' => GroupModel::Student,
@@ -113,23 +260,29 @@ it('returns correct data for student interactions based on group filter', functi
         ],
     ]);
 
-    Student::factory()->count(5)->has(
+    // Students with last name 'John' - should be included by group filter
+    Student::factory()->count(2)->has(
         Interaction::factory()
-            ->count(5)
-            ->state([
-                'created_at' => $interactionStartDate,
-            ]),
+            ->count(3)
+            ->sequence(
+                ['created_at' => Carbon::parse('2024-09-15')],
+                ['created_at' => Carbon::parse('2024-10-15')],
+                ['created_at' => Carbon::parse('2024-12-10')],
+            ),
         'interactions'
     )->create([
         'last' => 'John',
     ]);
 
-    Student::factory()->count(5)->has(
+    // Students with last name 'Doe' - should be excluded by group filter
+    Student::factory()->count(2)->has(
         Interaction::factory()
-            ->count(5)
-            ->state([
-                'created_at' => $interactionEndDate,
-            ]),
+            ->count(3)
+            ->sequence(
+                ['created_at' => Carbon::parse('2024-09-15')],
+                ['created_at' => Carbon::parse('2024-11-15')],
+                ['created_at' => Carbon::parse('2024-12-10')],
+            ),
         'interactions'
     )->create([
         'last' => 'Doe',
