@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Alert\Database\Factories;
 
+use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
+use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Alert\Presets\AlertPreset;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -55,6 +57,24 @@ class AlertConfigurationFactory extends Factory
         ];
     }
 
+    public function configure(): static
+    {
+        return $this->afterMaking(function (AlertConfiguration $alertConfiguration) {
+            if ($alertConfiguration->configuration_id === null) {
+                $config = $this->createConfigurationForPreset($alertConfiguration->preset);
+
+                if ($config) {
+                    $alertConfiguration->configuration_id = $config->id;
+                    $alertConfiguration->configuration_type = $config->getMorphClass();
+                }
+            }
+        })->afterCreating(function (AlertConfiguration $alertConfiguration) {
+            if ($alertConfiguration->isDirty(['configuration_id', 'configuration_type'])) {
+                $alertConfiguration->save();
+            }
+        });
+    }
+
     public function enabled(): static
     {
         return $this->state(fn (array $attributes) => [
@@ -67,5 +87,14 @@ class AlertConfigurationFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'is_enabled' => false,
         ]);
+    }
+
+    protected function createConfigurationForPreset(AlertPreset $preset): ?object
+    {
+        return match ($preset) {
+            AlertPreset::AdultLearner => AdultLearnerAlertConfiguration::factory()->create(),
+            AlertPreset::NewStudent => NewStudentAlertConfiguration::factory()->create(),
+            default => null,
+        };
     }
 }

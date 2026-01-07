@@ -141,9 +141,9 @@ class ManageAlerts extends Page implements HasForms
                 }
             }
 
-            DB::commit();
-
             app(GenerateStudentAlertsView::class)->execute();
+
+            DB::commit();
 
             Notification::make()
                 ->success()

@@ -40,6 +40,7 @@ use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 class GenerateStudentAlertsView
@@ -75,7 +76,7 @@ class GenerateStudentAlertsView
 
                 $alertId = $config->id;
 
-                if (! preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $alertId)) {
+                if (! Str::isUuid($alertId)) {
                     throw new InvalidArgumentException("Invalid UUID format for alert configuration ID: {$alertId}");
                 }
 
