@@ -1,7 +1,7 @@
 {{--
 <COPYRIGHT>
 
-    Copyright © 2016-2025, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
 
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
@@ -15,7 +15,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor's trademarks is subject
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -37,12 +37,16 @@
     use AdvisingApp\Alert\Filament\Widgets\AlertStats;
     use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 
-    $visibleWidgets = collect($this->getVisibleWidgets())
-        ->reject(fn($widget) => $widget->widget === RefreshWidget::class);
-    
+    $visibleWidgets = collect($this->getVisibleWidgets())->reject(
+        fn($widget) => $widget->widget === RefreshWidget::class,
+    );
+
     $activityWidgets = $visibleWidgets->filter(fn($widget) => $widget->widget === StudentStats::class)->values()->all();
     $alertWidgets = $visibleWidgets->filter(fn($widget) => $widget->widget === AlertStats::class)->values()->all();
-    $tableWidgets = $visibleWidgets->filter(fn($widget) => $widget->widget === StudentsActionCenterWidget::class)->values()->all();
+    $tableWidgets = $visibleWidgets
+        ->filter(fn($widget) => $widget->widget === StudentsActionCenterWidget::class)
+        ->values()
+        ->all();
 @endphp
 
 <x-filament-panels::page class="fi-dashboard-page">
