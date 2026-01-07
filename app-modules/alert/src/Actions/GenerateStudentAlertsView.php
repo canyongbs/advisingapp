@@ -38,7 +38,6 @@ namespace AdvisingApp\Alert\Actions;
 
 use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -82,7 +81,7 @@ class GenerateStudentAlertsView
 
                 $safeAlias = 'subquery_' . str_replace('-', '_', $config->id);
 
-                $subquerySql = $this->getInlinedSql($studentQuery);
+                $subquerySql = $studentQuery->toRawSql();
                 $unionQueries[] = "SELECT sisid, '{$alertId}'::uuid AS alert_configuration_id FROM ({$subquerySql}) AS {$safeAlias}";
             }
 
@@ -91,15 +90,5 @@ class GenerateStudentAlertsView
 
             DB::statement($viewSql);
         });
-    }
-
-    /**
-     * @param Builder $query
-     *
-     * @return string
-     */
-    private function getInlinedSql(Builder $query): string
-    {
-        return $query->toRawSql();
     }
 }
