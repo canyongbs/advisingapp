@@ -45,13 +45,13 @@ class InteractionTypeSeeder extends Seeder
     public function run(): void
     {
         $typeNames = [
-                    ['name' => 'Phone'],
-                    ['name' => 'Live Chat'],
-                    ['name' => 'SMS (Outside Advising App)'],
-                    ['name' => 'In-Person'],
-                    ['name' => 'Virtual Meeting'],
-                    ['name' => 'Email (Outside Advising App)'],
-                    ['name' => 'Postal Mail'],
+            ['name' => 'Phone'],
+            ['name' => 'Live Chat'],
+            ['name' => 'SMS (Outside Advising App)'],
+            ['name' => 'In-Person'],
+            ['name' => 'Virtual Meeting'],
+            ['name' => 'Email (Outside Advising App)'],
+            ['name' => 'Postal Mail'],
         ];
 
         $types = [];

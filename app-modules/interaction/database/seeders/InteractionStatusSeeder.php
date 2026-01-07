@@ -45,9 +45,9 @@ class InteractionStatusSeeder extends Seeder
     public function run(): void
     {
         $statusNames = [
-                    ['name' => 'Planned'],
-                    ['name' => 'Held'],
-                    ['name' => 'Not Held'],
+            ['name' => 'Planned'],
+            ['name' => 'Held'],
+            ['name' => 'Not Held'],
         ];
 
         $statuses = [];

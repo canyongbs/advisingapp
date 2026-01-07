@@ -254,7 +254,7 @@ return new class () extends Migration {
             //Make interactable_type non nullable, add unique index
             Schema::table('interaction_statuses', function (Blueprint $table) {
                 $table->string('interactable_type')->nullable(false)->change();
-                $table->unique(['name', 'interactable_type'])->where("deleted_at IS NULL");
+                $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
                     CREATE UNIQUE INDEX interaction_statuses_is_default_unique 
                     ON interaction_statuses (is_default) 
@@ -264,7 +264,7 @@ return new class () extends Migration {
 
             Schema::table('interaction_types', function (Blueprint $table) {
                 $table->string('interactable_type')->nullable(false)->change();
-                $table->unique(['name', 'interactable_type'])->where("deleted_at IS NULL");
+                $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
                     CREATE UNIQUE INDEX interaction_types_is_default_unique 
                     ON interaction_types (is_default) 
@@ -274,7 +274,7 @@ return new class () extends Migration {
 
             Schema::table('interaction_outcomes', function (Blueprint $table) {
                 $table->string('interactable_type')->nullable(false)->change();
-                $table->unique(['name', 'interactable_type'])->where("deleted_at IS NULL");
+                $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
                     CREATE UNIQUE INDEX interaction_outcomes_is_default_unique 
                     ON interaction_outcomes (is_default) 
@@ -284,7 +284,7 @@ return new class () extends Migration {
 
             Schema::table('interaction_relations', function (Blueprint $table) {
                 $table->string('interactable_type')->nullable(false)->change();
-                $table->unique(['name', 'interactable_type'])->where("deleted_at IS NULL");
+                $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
                     CREATE UNIQUE INDEX interaction_relations_is_default_unique 
                     ON interaction_relations (is_default) 
@@ -294,7 +294,7 @@ return new class () extends Migration {
 
             Schema::table('interaction_drivers', function (Blueprint $table) {
                 $table->string('interactable_type')->nullable(false)->change();
-                $table->unique(['name', 'interactable_type'])->where("deleted_at IS NULL");
+                $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
                     CREATE UNIQUE INDEX interaction_drivers_is_default_unique 
                     ON interaction_drivers (is_default) 
@@ -304,7 +304,7 @@ return new class () extends Migration {
 
             Schema::table('interaction_initiatives', function (Blueprint $table) {
                 $table->string('interactable_type')->nullable(false)->change();
-                $table->unique(['name', 'interactable_type'])->where("deleted_at IS NULL");
+                $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
                     CREATE UNIQUE INDEX interaction_initiatives_is_default_unique 
                     ON interaction_initiatives (is_default) 

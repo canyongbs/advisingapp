@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Interaction\Enums;
 
-use Exception;
 use Filament\Support\Contracts\HasLabel;
 
 enum InteractableType: string implements HasLabel

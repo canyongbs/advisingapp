@@ -45,11 +45,11 @@ class InteractionRelationSeeder extends Seeder
     public function run(): void
     {
         $relationNames = [
-                    ['name' => 'Self'],
-                    ['name' => 'Parent'],
-                    ['name' => 'Spouse'],
-                    ['name' => 'Sibling'],
-                    ['name' => 'Other'],
+            ['name' => 'Self'],
+            ['name' => 'Parent'],
+            ['name' => 'Spouse'],
+            ['name' => 'Sibling'],
+            ['name' => 'Other'],
         ];
 
         $relations = [];

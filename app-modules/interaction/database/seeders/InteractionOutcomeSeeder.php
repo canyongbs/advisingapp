@@ -45,11 +45,11 @@ class InteractionOutcomeSeeder extends Seeder
     public function run(): void
     {
         $outcomeNames = [
-                    ['name' => 'Does Not Apply'],
-                    ['name' => 'Live Contact'],
-                    ['name' => 'Voicemail'],
-                    ['name' => 'No Voicemail'],
-                    ['name' => 'Dropped Call'],
+            ['name' => 'Does Not Apply'],
+            ['name' => 'Live Contact'],
+            ['name' => 'Voicemail'],
+            ['name' => 'No Voicemail'],
+            ['name' => 'Dropped Call'],
         ];
 
         $outcomes = [];
