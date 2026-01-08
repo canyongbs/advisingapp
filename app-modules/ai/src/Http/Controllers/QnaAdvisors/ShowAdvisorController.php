@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\Concerns\CanRefreshQnaAdvisorTokens;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use App\Features\QnaAdvisorCardViewFeature;
 use App\Features\QnaAdvisorThemeFeature;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -73,12 +72,12 @@ class ShowAdvisorController
                 'name' => $advisor->name,
                 'description' => $advisor->description,
                 'avatar_url' => $advisor->getFirstTemporaryUrl(now()->addHour(), 'avatar') ?: null,
-                'title_text_color' => QnaAdvisorCardViewFeature::active() && $advisor->title_text_color ? $advisor->title_text_color : '#000000',
-                'description_text_color' => QnaAdvisorCardViewFeature::active() && $advisor->description_text_color ? $advisor->description_text_color : '#000000',
-                'button_text_color' => QnaAdvisorCardViewFeature::active() && $advisor->button_text_color ? $advisor->button_text_color : '#ffffff',
-                'button_text_hover_color' => QnaAdvisorCardViewFeature::active() && $advisor->button_text_hover_color ? $advisor->button_text_hover_color : '#ffffff',
-                'button_background_color' => QnaAdvisorCardViewFeature::active() && $advisor->button_background_color ? $advisor->button_background_color : '#f59e0b',
-                'button_background_hover_color' => QnaAdvisorCardViewFeature::active() && $advisor->button_background_hover_color ? $advisor->button_background_hover_color : '#ffc159',
+                'title_text_color' => $advisor->title_text_color ? $advisor->title_text_color : '#000000',
+                'description_text_color' => $advisor->description_text_color ? $advisor->description_text_color : '#000000',
+                'button_text_color' => $advisor->button_text_color ? $advisor->button_text_color : '#ffffff',
+                'button_text_hover_color' => $advisor->button_text_hover_color ? $advisor->button_text_hover_color : '#ffffff',
+                'button_background_color' => $advisor->button_background_color ? $advisor->button_background_color : '#f59e0b',
+                'button_background_hover_color' => $advisor->button_background_hover_color ? $advisor->button_background_hover_color : '#ffc159',
                 'default_theme' => QnaAdvisorThemeFeature::active() ? $advisor->default_theme : 'light',
             ],
         ];
