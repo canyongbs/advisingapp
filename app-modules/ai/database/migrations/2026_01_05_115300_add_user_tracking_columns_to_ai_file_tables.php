@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\AiFileUserTrackingFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -53,16 +52,12 @@ return new class () extends Migration {
                 $table->foreignUuid('created_by_id')->nullable()->constrained('users')->nullOnDelete();
                 $table->foreignUuid('last_updated_by_id')->nullable()->constrained('users')->nullOnDelete();
             });
-
-            AiFileUserTrackingFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            AiFileUserTrackingFeature::deactivate();
-
             Schema::table('ai_assistant_files', function (Blueprint $table) {
                 $table->dropConstrainedForeignId('created_by_id');
                 $table->dropConstrainedForeignId('last_updated_by_id');

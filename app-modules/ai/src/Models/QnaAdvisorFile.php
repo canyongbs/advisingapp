@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
-use App\Features\AiFileUserTrackingFeature;
 use App\Models\BaseModel;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -115,45 +114,5 @@ class QnaAdvisorFile extends BaseModel implements AiFile, HasMedia
     public function openAiVectorStore(): MorphOne
     {
         return $this->morphOne(OpenAiVectorStore::class, 'file');
-    }
-
-    /**
-     * TODO: Remove this method when AiFileUserTrackingFeature is cleaned up.
-     */
-    protected static function bootHasUserSaveTracking(): void
-    {
-        static::creating(function (self $model): void {
-            if (! AiFileUserTrackingFeature::active()) {
-                return;
-            }
-
-            $user = auth()->user();
-
-            if (! $user) {
-                return;
-            }
-
-            if (! $model->createdBy) {
-                $model->createdBy()->associate($user);
-            }
-
-            if (! $model->lastUpdatedBy) {
-                $model->lastUpdatedBy()->associate($user);
-            }
-        });
-
-        static::updating(function (self $model): void {
-            if (! AiFileUserTrackingFeature::active()) {
-                return;
-            }
-
-            $user = auth()->user();
-
-            if (! $user) {
-                return;
-            }
-
-            $model->lastUpdatedBy()->associate($user);
-        });
     }
 }

@@ -42,7 +42,6 @@ use AdvisingApp\Ai\Exceptions\FileParsingFailedException;
 use AdvisingApp\Ai\Exceptions\FileParsingTooManyPagesException;
 use AdvisingApp\Ai\Models\QnaAdvisorFile;
 use AdvisingApp\Ai\Notifications\FileParsingFailedNotification;
-use App\Features\AiFileUserTrackingFeature;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -100,15 +99,8 @@ class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, Sho
         return $this->file->id;
     }
 
-    /**
-     * TODO: Remove the AiFileUserTrackingFeature check when the feature flag is cleaned up.
-     */
     protected function notifyUser(FileParsingError $error): void
     {
-        if (! AiFileUserTrackingFeature::active()) {
-            return;
-        }
-
         if ($user = $this->file->createdBy) {
             $user->notify(new FileParsingFailedNotification(
                 fileName: $this->file->name,
