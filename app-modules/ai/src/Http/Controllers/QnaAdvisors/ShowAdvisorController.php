@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\Concerns\CanRefreshQnaAdvisorTokens;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use App\Features\QnaAdvisorThemeFeature;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
@@ -78,7 +77,7 @@ class ShowAdvisorController
                 'button_text_hover_color' => $advisor->button_text_hover_color ? $advisor->button_text_hover_color : '#ffffff',
                 'button_background_color' => $advisor->button_background_color ? $advisor->button_background_color : '#f59e0b',
                 'button_background_hover_color' => $advisor->button_background_hover_color ? $advisor->button_background_hover_color : '#ffc159',
-                'default_theme' => QnaAdvisorThemeFeature::active() ? $advisor->default_theme : 'light',
+                'default_theme' => $advisor->default_theme,
             ],
         ];
 

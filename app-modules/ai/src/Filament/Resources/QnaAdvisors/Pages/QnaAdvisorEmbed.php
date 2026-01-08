@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Form\Rules\IsDomain;
-use App\Features\QnaAdvisorThemeFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -117,7 +116,7 @@ class QnaAdvisorEmbed extends EditRecord
                                 'dark' => 'Dark',
                             ])
                             ->default('light')
-                            ->visible(fn (Get $get) => QnaAdvisorThemeFeature::active() && $get('is_embed_enabled'))
+                            ->visible(fn (Get $get) => $get('is_embed_enabled'))
                             ->inline(),
                         Grid::make()
                             ->schema([
