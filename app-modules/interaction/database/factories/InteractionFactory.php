@@ -75,43 +75,43 @@ class InteractionFactory extends Factory
                     default => null,
                 };
             },
-            'interaction_driver_id' => function(array $attributes) {
-              return match ($attributes['interactable_type']) {
+            'interaction_driver_id' => function (array $attributes) {
+                return match ($attributes['interactable_type']) {
                     (new Prospect())->getMorphClass() => InteractionDriver::factory(['interactable_type' => InteractableType::Prospect]),
                     (new Student())->getMorphClass(), (new CaseModel())->getMorphClass() => InteractionDriver::factory(['interactable_type' => InteractableType::Student]),
                     default => null,
                 };
             },
-            'interaction_initiative_id' => function(array $attributes) {
-              return match ($attributes['interactable_type']) {
+            'interaction_initiative_id' => function (array $attributes) {
+                return match ($attributes['interactable_type']) {
                     (new Prospect())->getMorphClass() => InteractionInitiative::factory(['interactable_type' => InteractableType::Prospect]),
                     (new Student())->getMorphClass(), (new CaseModel())->getMorphClass() => InteractionInitiative::factory(['interactable_type' => InteractableType::Student]),
                     default => null,
                 };
             },
-            'interaction_outcome_id' => function(array $attributes) {
-              return match ($attributes['interactable_type']) {
+            'interaction_outcome_id' => function (array $attributes) {
+                return match ($attributes['interactable_type']) {
                     (new Prospect())->getMorphClass() => InteractionOutcome::factory(['interactable_type' => InteractableType::Prospect]),
                     (new Student())->getMorphClass(), (new CaseModel())->getMorphClass() => InteractionOutcome::factory(['interactable_type' => InteractableType::Student]),
                     default => null,
                 };
             },
-            'interaction_relation_id' => function(array $attributes) {
-              return match ($attributes['interactable_type']) {
+            'interaction_relation_id' => function (array $attributes) {
+                return match ($attributes['interactable_type']) {
                     (new Prospect())->getMorphClass() => InteractionRelation::factory(['interactable_type' => InteractableType::Prospect]),
                     (new Student())->getMorphClass(), (new CaseModel())->getMorphClass() => InteractionRelation::factory(['interactable_type' => InteractableType::Student]),
                     default => null,
                 };
             },
-            'interaction_status_id' => function(array $attributes) {
-              return match ($attributes['interactable_type']) {
+            'interaction_status_id' => function (array $attributes) {
+                return match ($attributes['interactable_type']) {
                     (new Prospect())->getMorphClass() => InteractionStatus::factory(['interactable_type' => InteractableType::Prospect]),
                     (new Student())->getMorphClass(), (new CaseModel())->getMorphClass() => InteractionStatus::factory(['interactable_type' => InteractableType::Student]),
                     default => null,
                 };
             },
-            'interaction_type_id' => function(array $attributes) {
-              return match ($attributes['interactable_type']) {
+            'interaction_type_id' => function (array $attributes) {
+                return match ($attributes['interactable_type']) {
                     (new Prospect())->getMorphClass() => InteractionType::factory(['interactable_type' => InteractableType::Prospect]),
                     (new Student())->getMorphClass(), (new CaseModel())->getMorphClass() => InteractionType::factory(['interactable_type' => InteractableType::Student]),
                     default => null,
