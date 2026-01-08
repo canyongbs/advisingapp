@@ -68,7 +68,7 @@ class QnaAdvisorFile extends BaseModel implements AiFile, HasMedia
      * @return BelongsTo<QnaAdvisor, $this>
      */
     public function advisor(): BelongsTo
-    {
+    { 
         return $this->belongsTo(QnaAdvisor::class, 'advisor_id');
     }
 
