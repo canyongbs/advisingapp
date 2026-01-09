@@ -40,8 +40,6 @@ use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Form\Rules\IsDomain;
-use App\Features\QnaAdvisorCardViewFeature;
-use App\Features\QnaAdvisorThemeFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -118,7 +116,7 @@ class QnaAdvisorEmbed extends EditRecord
                                 'dark' => 'Dark',
                             ])
                             ->default('light')
-                            ->visible(fn (Get $get) => QnaAdvisorThemeFeature::active() && $get('is_embed_enabled'))
+                            ->visible(fn (Get $get) => $get('is_embed_enabled'))
                             ->inline(),
                         Grid::make()
                             ->schema([
@@ -135,7 +133,7 @@ class QnaAdvisorEmbed extends EditRecord
                                 ColorPicker::make('button_background_hover_color')
                                     ->label('Button Hover Background Color'),
                             ])
-                            ->visible(fn (Get $get) => QnaAdvisorCardViewFeature::active() && $get('is_embed_enabled')),
+                            ->visible(fn (Get $get) => $get('is_embed_enabled')),
                         Actions::make([
                             Action::make('embed_snippet')
                                 ->label('Embed Snippet')
