@@ -40,12 +40,12 @@ use AdvisingApp\Application\Actions\DuplicateApplication;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
 use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Schema;
@@ -64,7 +64,8 @@ class ListApplications extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('name'),
+                TextColumn::make('name')
+                    ->description(fn (Application $record) => $record->title),
                 TextColumn::make('submissions_count')
                     ->label('Submissions')
                     ->counts('submissions'),
@@ -74,11 +75,7 @@ class ListApplications extends ListRecords
                     ->sortable(),
             ])
             ->recordActions([
-                Action::make('Respond')
-                    ->url(fn (Application $application) => route('applications.show', ['application' => $application]))
-                    ->icon('heroicon-m-arrow-top-right-on-square')
-                    ->openUrlInNewTab()
-                    ->color('gray'),
+                ViewAction::make(),
                 EditAction::make(),
                 ReplicateAction::make('Duplicate')
                     ->modalHeading('Duplicate Application')

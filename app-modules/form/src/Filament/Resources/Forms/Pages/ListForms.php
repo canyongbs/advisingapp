@@ -46,6 +46,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\ListRecords;
@@ -65,14 +66,11 @@ class ListForms extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('name'),
+                TextColumn::make('name')
+                    ->description(fn (Form $record) => $record->title),
             ])
             ->recordActions([
-                Action::make('Respond')
-                    ->url(fn (Form $form) => route('forms.show', ['form' => $form]))
-                    ->icon('heroicon-m-arrow-top-right-on-square')
-                    ->openUrlInNewTab()
-                    ->color('gray'),
+                ViewAction::make(),
                 EditAction::make(),
                 ReplicateAction::make('Duplicate')
                     ->modalHeading('Duplicate Form')
