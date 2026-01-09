@@ -40,7 +40,6 @@ use AdvisingApp\Application\Actions\DuplicateApplication;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
 use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
@@ -66,7 +65,7 @@ class ListApplications extends ListRecords
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name')
-                    ->description(fn(Application $record) => $record->title),
+                    ->description(fn (Application $record) => $record->title),
                 TextColumn::make('submissions_count')
                     ->label('Submissions')
                     ->counts('submissions'),
