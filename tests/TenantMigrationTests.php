@@ -125,21 +125,31 @@ describe('2025_12_24_002713_data_add_interactable_type_to_interactions', functio
                 expect(InteractionStatus::count())->toBe(2);
                 expect(InteractionType::count())->toBe(2);
 
+                $interactionDriver->refresh();
+                $interactionInitiative->refresh();
+                $interactionOutcome->refresh();
+                $interactionRelation->refresh();
+                $interactionStatus->refresh();
+                $interactionType->refresh();
+
                 //Assert originals are student records
-                expect($interactionDriver->interactable_type)->toBe('student');
-                expect($interactionInitiative->interactable_type)->toBe('student');
-                expect($interactionOutcome->interactable_type)->toBe('student');
-                expect($interactionRelation->interactable_type)->toBe('student');
-                expect($interactionStatus->interactable_type)->toBe('student');
-                expect($interactionType->interactable_type)->toBe('student');
+                expect($interactionDriver->interactable_type->value)->toBe('student');
+                expect($interactionInitiative->interactable_type->value)->toBe('student');
+                expect($interactionOutcome->interactable_type->value)->toBe('student');
+                expect($interactionRelation->interactable_type->value)->toBe('student');
+                expect($interactionStatus->interactable_type->value)->toBe('student');
+                expect($interactionType->interactable_type->value)->toBe('student');
 
                 //Assert duplicates are prospect records
-                expect(InteractionDriver::where('id', '!=', $interactionDriver->id)->first()->interactable_type)->toBe('prospect');
-                expect(InteractionInitiative::where('id', '!=', $interactionInitiative->id)->first()->interactable_type)->toBe('prospect');
-                expect(InteractionOutcome::where('id', '!=', $interactionOutcome->id)->first()->interactable_type)->toBe('prospect');
-                expect(InteractionRelation::where('id', '!=', $interactionRelation->id)->first()->interactable_type)->toBe('prospect');
-                expect(InteractionStatus::where('id', '!=', $interactionStatus->id)->first()->interactable_type)->toBe('prospect');
-                expect(InteractionType::where('id', '!=', $interactionType->id)->first()->interactable_type)->toBe('prospect');
+                expect(InteractionDriver::where('id', '!=', $interactionDriver->id)->first()->interactable_type->value)->toBe('prospect');
+                expect(InteractionInitiative::where('id', '!=', $interactionInitiative->id)->first()->interactable_type->value)->toBe('prospect');
+                expect(InteractionOutcome::where('id', '!=', $interactionOutcome->id)->first()->interactable_type->value)->toBe('prospect');
+                expect(InteractionRelation::where('id', '!=', $interactionRelation->id)->first()->interactable_type->value)->toBe('prospect');
+                expect(InteractionStatus::where('id', '!=', $interactionStatus->id)->first()->interactable_type->value)->toBe('prospect');
+                expect(InteractionType::where('id', '!=', $interactionType->id)->first()->interactable_type->value)->toBe('prospect');
+
+                $studentInteraction->refresh();
+                $prospectInteraction->refresh();
 
                 //Assert interactions now reference correct models
                 expect($studentInteraction->interaction_driver_id)->toBe($interactionDriver->id);

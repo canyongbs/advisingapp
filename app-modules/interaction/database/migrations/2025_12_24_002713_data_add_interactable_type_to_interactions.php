@@ -38,6 +38,7 @@ use App\Features\InteractableTypeFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
@@ -85,6 +86,7 @@ return new class () extends Migration {
                 ->chunkById(100, function (Collection $interactionStatuses) {
                     foreach ($interactionStatuses as $interactionStatus) {
                         DB::table('interaction_statuses')->insert([
+                            'id' => Str::orderedUuid(),
                             'name' => $interactionStatus->name,
                             'color' => $interactionStatus->color,
                             'is_default' => $interactionStatus->is_default,
@@ -101,6 +103,7 @@ return new class () extends Migration {
                 ->chunkById(100, function (Collection $interactionTypes) {
                     foreach ($interactionTypes as $interactionType) {
                         DB::table('interaction_types')->insert([
+                            'id' => Str::orderedUuid(),
                             'name' => $interactionType->name,
                             'is_default' => $interactionType->is_default,
                             'interactable_type' => 'prospect',
@@ -116,6 +119,7 @@ return new class () extends Migration {
                 ->chunkById(100, function (Collection $interactionOutcomes) {
                     foreach ($interactionOutcomes as $interactionOutcome) {
                         DB::table('interaction_outcomes')->insert([
+                            'id' => Str::orderedUuid(),
                             'name' => $interactionOutcome->name,
                             'is_default' => $interactionOutcome->is_default,
                             'interactable_type' => 'prospect',
@@ -131,6 +135,7 @@ return new class () extends Migration {
                 ->chunkById(100, function (Collection $interactionRelations) {
                     foreach ($interactionRelations as $interactionRelation) {
                         DB::table('interaction_relations')->insert([
+                            'id' => Str::orderedUuid(),
                             'name' => $interactionRelation->name,
                             'is_default' => $interactionRelation->is_default,
                             'interactable_type' => 'prospect',
@@ -146,6 +151,7 @@ return new class () extends Migration {
                 ->chunkById(100, function (Collection $interactionDrivers) {
                     foreach ($interactionDrivers as $interactionDriver) {
                         DB::table('interaction_drivers')->insert([
+                            'id' => Str::orderedUuid(),
                             'name' => $interactionDriver->name,
                             'is_default' => $interactionDriver->is_default,
                             'interactable_type' => 'prospect',
@@ -161,6 +167,7 @@ return new class () extends Migration {
                 ->chunkById(100, function (Collection $interactionInitiatives) {
                     foreach ($interactionInitiatives as $interactionInitiative) {
                         DB::table('interaction_initiatives')->insert([
+                            'id' => Str::orderedUuid(),
                             'name' => $interactionInitiative->name,
                             'is_default' => $interactionInitiative->is_default,
                             'interactable_type' => 'prospect',
