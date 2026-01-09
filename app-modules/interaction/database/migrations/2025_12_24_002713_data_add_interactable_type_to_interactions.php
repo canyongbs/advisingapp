@@ -34,6 +34,8 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Interaction\Models\InteractionDriver;
 use App\Features\InteractableTypeFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Collection;
@@ -150,6 +152,23 @@ return new class () extends Migration {
             DB::table('interaction_drivers')
                 ->chunkById(100, function (Collection $interactionDrivers) {
                     foreach ($interactionDrivers as $interactionDriver) {
+                        // There was a bug in interaction drivers where in a seeder we had accidentlly created duplicates for "Fast Track Certificates"
+                        // This now needs to be addressed in order for the unique index to be applied properly later in this migration
+                        $drivers = InteractionDriver::query()->where('name', 'Fast Track Certificates')->get();
+
+                        if ($drivers->count() > 1) {
+                            // Keep the first one, delete the rest
+                            $keptDriver = $drivers->shift();
+
+                            foreach ($drivers as $duplicateDriver) {
+                                Interaction::query()
+                                    ->where('interaction_driver_id', $duplicateDriver->id)
+                                    ->update(['interaction_driver_id' => $keptDriver->id]);
+
+                                $duplicateDriver->forceDelete();
+                            }
+                        }
+
                         DB::table('interaction_drivers')->insert([
                             'id' => Str::orderedUuid(),
                             'name' => $interactionDriver->name,
