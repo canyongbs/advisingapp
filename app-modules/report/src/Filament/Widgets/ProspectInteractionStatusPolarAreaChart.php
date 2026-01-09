@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Features\InteractableTypeFeature;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -128,22 +130,41 @@ class ProspectInteractionStatusPolarAreaChart extends ChartReportWidget
      */
     protected function getInteractionStatusData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $groupId = null): Collection
     {
-        return InteractionStatus::withCount([
-            'interactions' => function ($query) use ($startDate, $endDate, $groupId) {
-                $query->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($groupId) {
-                    $query->when(
-                        $groupId,
-                        fn (Builder $query) => $this->groupFilter($query, $groupId)
-                    );
-                })
-                    ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-                        $query->whereBetween('created_at', [$startDate, $endDate]);
-                    });
-            },
-        ])->get(['id', 'name'])->map(function (InteractionStatus $interactionStatus) {
-            $interactionStatus['bg_color'] = $interactionStatus->color->getRgbString();
+        return InteractableTypeFeature::active() ?
+            InteractionStatus::where('interactable_type', InteractableType::Prospect)
+                ->withCount([
+                    'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId) {
+                        $query->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($groupId) {
+                            $query->when(
+                                $groupId,
+                                fn (Builder $query) => $this->groupFilter($query, $groupId)
+                            );
+                        })
+                            ->when($startDate && $endDate, function (Builder $query) use ($startDate, $endDate) {
+                                $query->whereBetween('created_at', [$startDate, $endDate]);
+                            });
+                    },
+                ])->get(['id', 'name'])->map(function (InteractionStatus $interactionStatus) {
+                    $interactionStatus['bg_color'] = $interactionStatus->color->getRgbString();
 
-            return $interactionStatus;
-        });
+                    return $interactionStatus;
+                }) :
+            InteractionStatus::withCount([
+                'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId) {
+                    $query->whereHasMorph('interactable', Prospect::class, function (Builder $query) use ($groupId) {
+                        $query->when(
+                            $groupId,
+                            fn (Builder $query) => $this->groupFilter($query, $groupId)
+                        );
+                    })
+                        ->when($startDate && $endDate, function (Builder $query) use ($startDate, $endDate) {
+                            $query->whereBetween('created_at', [$startDate, $endDate]);
+                        });
+                },
+            ])->get(['id', 'name'])->map(function (InteractionStatus $interactionStatus) {
+                $interactionStatus['bg_color'] = $interactionStatus->color->getRgbString();
+
+                return $interactionStatus;
+            });
     }
 }

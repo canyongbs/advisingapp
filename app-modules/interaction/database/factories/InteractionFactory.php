@@ -38,6 +38,7 @@ namespace AdvisingApp\Interaction\Database\Factories;
 
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -57,32 +58,65 @@ class InteractionFactory extends Factory
 {
     public function definition(): array
     {
-        $interactable = $this->faker->randomElement([
-            Student::class,
-            Prospect::class,
-            CaseModel::class,
-        ]);
-
-        $interactable = match ($interactable) {
-            Student::class => Student::inRandomOrder()->first() ?? Student::factory()->create(),
-            Prospect::class => Prospect::factory()->create(),
-            CaseModel::class => CaseModel::factory()->create([
-                'case_number' => $this->faker->randomNumber(8),
-            ]),
-        };
-
         return [
             'description' => $this->faker->paragraph(),
             'division_id' => Division::factory(),
             'end_datetime' => now()->addMinutes(5),
-            'interactable_id' => $interactable->getKey(),
-            'interactable_type' => $interactable->getMorphClass(),
-            'interaction_driver_id' => InteractionDriver::factory(),
-            'interaction_initiative_id' => InteractionInitiative::factory(),
-            'interaction_outcome_id' => InteractionOutcome::factory(),
-            'interaction_relation_id' => InteractionRelation::factory(),
-            'interaction_status_id' => InteractionStatus::factory(),
-            'interaction_type_id' => InteractionType::factory(),
+            'interactable_type' => $this->faker->randomElement([
+                (new Student())->getMorphClass(),
+                (new Prospect())->getMorphClass(),
+                (new CaseModel())->getMorphClass(),
+            ]),
+            'interactable_id' => function (array $attributes) {
+                return match ($attributes['interactable_type']) {
+                    (new Student())->getMorphClass() => Student::factory(),
+                    (new Prospect())->getMorphClass() => Prospect::factory(),
+                    (new CaseModel())->getMorphClass() => CaseModel::factory(),
+                    default => null,
+                };
+            },
+            'interaction_driver_id' => function (array $attributes) {
+                return match ($attributes['interactable_type']) {
+                    (new Prospect())->getMorphClass() => InteractionDriver::factory(['interactable_type' => InteractableType::Prospect]),
+                    (new Student())->getMorphClass(), (new CaseModel())->getMorphClass() => InteractionDriver::factory(['interactable_type' => InteractableType::Student]),
+                    default => null,
+                };
+            },
+            'interaction_initiative_id' => function (array $attributes) {
+                return match ($attributes['interactable_type']) {
+                    (new Prospect())->getMorphClass() => InteractionInitiative::factory(['interactable_type' => InteractableType::Prospect]),
+                    (new Student())->getMorphClass(), (new CaseModel())->getMorphClass() => InteractionInitiative::factory(['interactable_type' => InteractableType::Student]),
+                    default => null,
+                };
+            },
+            'interaction_outcome_id' => function (array $attributes) {
+                return match ($attributes['interactable_type']) {
+                    (new Prospect())->getMorphClass() => InteractionOutcome::factory(['interactable_type' => InteractableType::Prospect]),
+                    (new Student())->getMorphClass(), (new CaseModel())->getMorphClass() => InteractionOutcome::factory(['interactable_type' => InteractableType::Student]),
+                    default => null,
+                };
+            },
+            'interaction_relation_id' => function (array $attributes) {
+                return match ($attributes['interactable_type']) {
+                    (new Prospect())->getMorphClass() => InteractionRelation::factory(['interactable_type' => InteractableType::Prospect]),
+                    (new Student())->getMorphClass(), (new CaseModel())->getMorphClass() => InteractionRelation::factory(['interactable_type' => InteractableType::Student]),
+                    default => null,
+                };
+            },
+            'interaction_status_id' => function (array $attributes) {
+                return match ($attributes['interactable_type']) {
+                    (new Prospect())->getMorphClass() => InteractionStatus::factory(['interactable_type' => InteractableType::Prospect]),
+                    (new Student())->getMorphClass(), (new CaseModel())->getMorphClass() => InteractionStatus::factory(['interactable_type' => InteractableType::Student]),
+                    default => null,
+                };
+            },
+            'interaction_type_id' => function (array $attributes) {
+                return match ($attributes['interactable_type']) {
+                    (new Prospect())->getMorphClass() => InteractionType::factory(['interactable_type' => InteractableType::Prospect]),
+                    (new Student())->getMorphClass(), (new CaseModel())->getMorphClass() => InteractionType::factory(['interactable_type' => InteractableType::Student]),
+                    default => null,
+                };
+            },
             'start_datetime' => now(),
             'subject' => $this->faker->sentence(),
             'user_id' => User::factory(),

@@ -34,43 +34,56 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\InteractionDriverResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\Pages\EditInteractionDriver;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Interaction\Models\InteractionDriver;
-use App\Models\User;
+namespace Tests;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-use function Tests\asSuperAdmin;
+use App\Models\Tenant;
+use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabaseState;
 
-test('EditInteractionDriver is gated with proper access control', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
+abstract class TenantMigrationTestCase extends TestCase
+{
+    use DatabaseMigrations;
 
-    $driver = InteractionDriver::factory()->create();
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-    actingAs($user)
-        ->get(
-            InteractionDriverResource::getUrl('edit', ['record' => $driver])
-        )->assertForbidden();
+        Tenant::first()->makeCurrent();
+    }
 
-    $user->givePermissionTo('settings.view-any');
-    $user->givePermissionTo('settings.*.update');
+    /**
+     * Define hooks to migrate the database before and after each test.
+     *
+     * @return void
+     */
+    public function runDatabaseMigrations(): void
+    {
+        $this->beforeRefreshingDatabase();
+        $this->refreshTestDatabase();
+        $this->afterRefreshingDatabase();
 
-    actingAs($user)
-        ->get(
-            InteractionDriverResource::getUrl('edit', ['record' => $driver])
-        )->assertSuccessful();
-});
+        $this->beforeApplicationDestroyed(function () {
+            $this->refreshTenantTestingEnvironment();
+        });
+    }
 
-test('it cannot delete instances used by an interaction', function () {
-    asSuperAdmin();
+    protected function refreshTestDatabase(): void
+    {
+        if (! RefreshDatabaseState::$migrated) {
+            $this->createLandlordTestingEnvironment();
 
-    $driver = InteractionDriver::factory()->create();
+            $this->app[Kernel::class]->setArtisan(null);
 
-    Interaction::factory()->for($driver, 'driver')->create();
+            RefreshDatabaseState::$migrated = true;
+        }
 
-    livewire(EditInteractionDriver::class, ['record' => $driver->id])
-        ->assertActionHidden('delete');
-});
+        $beginLandlordTransaction = function () {
+            $this->beginDatabaseTransactionOnConnection($this->landlordDatabaseConnectionName());
+        };
+
+        if (! in_array($beginLandlordTransaction, $this->afterApplicationCreatedCallbacks)) {
+            $this->afterApplicationCreated($beginLandlordTransaction);
+        }
+    }
+}

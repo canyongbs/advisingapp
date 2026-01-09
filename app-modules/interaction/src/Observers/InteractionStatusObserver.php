@@ -44,6 +44,7 @@ class InteractionStatusObserver
     {
         if ($interactionStatus->is_default) {
             InteractionStatus::query()
+                ->where('interactable_type', $interactionStatus->interactable_type)
                 ->where('is_default', true)
                 ->update(['is_default' => false]);
         }

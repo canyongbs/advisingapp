@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Interaction\Database\Factories;
 
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
+use App\Features\InteractableTypeFeature;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -47,7 +49,9 @@ class InteractionInitiativeFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->unique()->word(),
+            'name' => $this->faker->unique()->sentence(),
+            'is_default' => false,
+            ...(InteractableTypeFeature::active() ? ['interactable_type' => $this->faker->randomElement(InteractableType::cases())] : []),
         ];
     }
 }

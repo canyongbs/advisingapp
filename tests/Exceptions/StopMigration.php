@@ -34,43 +34,14 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\InteractionDriverResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\Pages\EditInteractionDriver;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Interaction\Models\InteractionDriver;
-use App\Models\User;
+namespace Tests\Exceptions;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-use function Tests\asSuperAdmin;
+use Exception;
 
-test('EditInteractionDriver is gated with proper access control', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
-
-    $driver = InteractionDriver::factory()->create();
-
-    actingAs($user)
-        ->get(
-            InteractionDriverResource::getUrl('edit', ['record' => $driver])
-        )->assertForbidden();
-
-    $user->givePermissionTo('settings.view-any');
-    $user->givePermissionTo('settings.*.update');
-
-    actingAs($user)
-        ->get(
-            InteractionDriverResource::getUrl('edit', ['record' => $driver])
-        )->assertSuccessful();
-});
-
-test('it cannot delete instances used by an interaction', function () {
-    asSuperAdmin();
-
-    $driver = InteractionDriver::factory()->create();
-
-    Interaction::factory()->for($driver, 'driver')->create();
-
-    livewire(EditInteractionDriver::class, ['record' => $driver->id])
-        ->assertActionHidden('delete');
-});
+class StopMigration extends Exception
+{
+    public function __construct(string $message = 'Stop migrations')
+    {
+        parent::__construct($message);
+    }
+}

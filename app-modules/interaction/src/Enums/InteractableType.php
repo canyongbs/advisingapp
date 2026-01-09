@@ -34,43 +34,18 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\InteractionDriverResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\Pages\EditInteractionDriver;
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Interaction\Models\InteractionDriver;
-use App\Models\User;
+namespace AdvisingApp\Interaction\Enums;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-use function Tests\asSuperAdmin;
+use Filament\Support\Contracts\HasLabel;
 
-test('EditInteractionDriver is gated with proper access control', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
+enum InteractableType: string implements HasLabel
+{
+    case Prospect = 'prospect';
 
-    $driver = InteractionDriver::factory()->create();
+    case Student = 'student';
 
-    actingAs($user)
-        ->get(
-            InteractionDriverResource::getUrl('edit', ['record' => $driver])
-        )->assertForbidden();
-
-    $user->givePermissionTo('settings.view-any');
-    $user->givePermissionTo('settings.*.update');
-
-    actingAs($user)
-        ->get(
-            InteractionDriverResource::getUrl('edit', ['record' => $driver])
-        )->assertSuccessful();
-});
-
-test('it cannot delete instances used by an interaction', function () {
-    asSuperAdmin();
-
-    $driver = InteractionDriver::factory()->create();
-
-    Interaction::factory()->for($driver, 'driver')->create();
-
-    livewire(EditInteractionDriver::class, ['record' => $driver->id])
-        ->assertActionHidden('delete');
-});
+    public function getLabel(): string
+    {
+        return $this->name;
+    }
+}

@@ -36,6 +36,7 @@
 
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -44,9 +45,9 @@ use AdvisingApp\Report\Filament\Widgets\ProspectInteractionTypeDoughnutChart;
 it('checks prospect interaction types doughnut chart', function () {
     $interactionsCount = rand(1, 10);
 
-    $interactionTypeFirst = InteractionType::factory()->create();
-    $interactionTypeSecond = InteractionType::factory()->create();
-    $interactionTypeThird = InteractionType::factory()->create();
+    $interactionTypeFirst = InteractionType::factory()->create(['interactable_type' => InteractableType::Prospect]);
+    $interactionTypeSecond = InteractionType::factory()->create(['interactable_type' => InteractableType::Prospect]);
+    $interactionTypeThird = InteractionType::factory()->create(['interactable_type' => InteractableType::Prospect]);
 
     Prospect::factory()->has(Interaction::factory()->count($interactionsCount)->for($interactionTypeFirst, 'type'), 'interactions')->create();
     Prospect::factory()->has(Interaction::factory()->count($interactionsCount)->for($interactionTypeSecond, 'type'), 'interactions')->create();
@@ -68,9 +69,9 @@ it('returns correct interaction counts by type for prospects within the selected
     $interactionStartDate = now()->subDays(90);
     $interactionEndDate = now()->subDays(5);
 
-    $interactionTypeFirst = InteractionType::factory()->create();
-    $interactionTypeSecond = InteractionType::factory()->create();
-    $interactionTypeThird = InteractionType::factory()->create();
+    $interactionTypeFirst = InteractionType::factory()->create(['interactable_type' => InteractableType::Prospect]);
+    $interactionTypeSecond = InteractionType::factory()->create(['interactable_type' => InteractableType::Prospect]);
+    $interactionTypeThird = InteractionType::factory()->create(['interactable_type' => InteractableType::Prospect]);
 
     Prospect::factory()
         ->has(
@@ -132,8 +133,8 @@ it('returns correct interaction counts by type for prospects based on group filt
     $interactionsCount = random_int(1, 10);
     $interactionsCountForDoe = random_int(1, 10);
 
-    $interactionTypeFirst = InteractionType::factory()->create();
-    $interactionTypeSecond = InteractionType::factory()->create();
+    $interactionTypeFirst = InteractionType::factory()->create(['interactable_type' => InteractableType::Prospect]);
+    $interactionTypeSecond = InteractionType::factory()->create(['interactable_type' => InteractableType::Prospect]);
 
     $group = Group::factory()->create([
         'model' => GroupModel::Prospect,

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Interaction\Database\Seeders;
 
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use Illuminate\Database\Seeder;
 
@@ -43,15 +44,22 @@ class InteractionRelationSeeder extends Seeder
 {
     public function run(): void
     {
+        $relationNames = [
+            ['name' => 'Self'],
+            ['name' => 'Parent'],
+            ['name' => 'Spouse'],
+            ['name' => 'Sibling'],
+            ['name' => 'Other'],
+        ];
+
+        $relations = [];
+
+        foreach ($relationNames as $item) {
+            $relations[] = ['name' => $item['name'], 'interactable_type' => InteractableType::Student];
+            $relations[] = ['name' => $item['name'], 'interactable_type' => InteractableType::Prospect];
+        }
+
         InteractionRelation::factory()
-            ->createMany(
-                [
-                    ['name' => 'Self'],
-                    ['name' => 'Parent'],
-                    ['name' => 'Spouse'],
-                    ['name' => 'Sibling'],
-                    ['name' => 'Other'],
-                ]
-            );
+            ->createMany($relations);
     }
 }

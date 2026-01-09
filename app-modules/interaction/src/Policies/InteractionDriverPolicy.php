@@ -87,6 +87,10 @@ class InteractionDriverPolicy
 
     public function delete(Authenticatable $authenticatable, InteractionDriver $driver): Response
     {
+        if ($driver->interactions->count() > 0) {
+            return Response::deny("This driver cannot be deleted because it is being used by {$driver->interactions->count()} interaction(s).");
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'settings.*.delete',
             denyResponse: 'You do not have permission to delete this interaction driver.'

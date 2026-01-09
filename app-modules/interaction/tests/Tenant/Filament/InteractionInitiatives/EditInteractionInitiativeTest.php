@@ -35,24 +35,24 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\InteractionDriverResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\Pages\EditInteractionDriver;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiatives\InteractionInitiativeResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionInitiatives\Pages\EditInteractionInitiative;
 use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Interaction\Models\InteractionDriver;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-test('EditInteractionDriver is gated with proper access control', function () {
+test('EditInteractionInitative is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $driver = InteractionDriver::factory()->create();
+    $initiative = InteractionInitiative::factory()->create();
 
     actingAs($user)
         ->get(
-            InteractionDriverResource::getUrl('edit', ['record' => $driver])
+            InteractionInitiativeResource::getUrl('edit', ['record' => $initiative])
         )->assertForbidden();
 
     $user->givePermissionTo('settings.view-any');
@@ -60,17 +60,17 @@ test('EditInteractionDriver is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            InteractionDriverResource::getUrl('edit', ['record' => $driver])
+            InteractionInitiativeResource::getUrl('edit', ['record' => $initiative])
         )->assertSuccessful();
 });
 
 test('it cannot delete instances used by an interaction', function () {
     asSuperAdmin();
 
-    $driver = InteractionDriver::factory()->create();
+    $initiative = InteractionInitiative::factory()->create();
 
-    Interaction::factory()->for($driver, 'driver')->create();
+    Interaction::factory()->for($initiative, 'initiative')->create();
 
-    livewire(EditInteractionDriver::class, ['record' => $driver->id])
+    livewire(EditInteractionInitiative::class, ['record' => $initiative->id])
         ->assertActionHidden('delete');
 });

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Interaction\Database\Seeders;
 
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use Illuminate\Database\Seeder;
 
@@ -43,15 +44,22 @@ class InteractionOutcomeSeeder extends Seeder
 {
     public function run(): void
     {
+        $outcomeNames = [
+            ['name' => 'Does Not Apply'],
+            ['name' => 'Live Contact'],
+            ['name' => 'Voicemail'],
+            ['name' => 'No Voicemail'],
+            ['name' => 'Dropped Call'],
+        ];
+
+        $outcomes = [];
+
+        foreach ($outcomeNames as $item) {
+            $outcomes[] = ['name' => $item['name'], 'interactable_type' => InteractableType::Student];
+            $outcomes[] = ['name' => $item['name'], 'interactable_type' => InteractableType::Prospect];
+        }
+
         InteractionOutcome::factory()
-            ->createMany(
-                [
-                    ['name' => 'Does Not Apply'],
-                    ['name' => 'Live Contact'],
-                    ['name' => 'Voicemail'],
-                    ['name' => 'No Voicemail'],
-                    ['name' => 'Dropped Call'],
-                ]
-            );
+            ->createMany($outcomes);
     }
 }

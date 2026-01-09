@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Interaction\Database\Seeders;
 
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use Illuminate\Database\Seeder;
 
@@ -43,13 +44,20 @@ class InteractionStatusSeeder extends Seeder
 {
     public function run(): void
     {
+        $statusNames = [
+            ['name' => 'Planned'],
+            ['name' => 'Held'],
+            ['name' => 'Not Held'],
+        ];
+
+        $statuses = [];
+
+        foreach ($statusNames as $item) {
+            $statuses[] = ['name' => $item['name'], 'interactable_type' => InteractableType::Student];
+            $statuses[] = ['name' => $item['name'], 'interactable_type' => InteractableType::Prospect];
+        }
+
         InteractionStatus::factory()
-            ->createMany(
-                [
-                    ['name' => 'Planned'],
-                    ['name' => 'Held'],
-                    ['name' => 'Not Held'],
-                ]
-            );
+            ->createMany($statuses);
     }
 }

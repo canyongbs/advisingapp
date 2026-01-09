@@ -37,7 +37,9 @@
 namespace AdvisingApp\Interaction\Database\Factories;
 
 use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionStatus;
+use App\Features\InteractableTypeFeature;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -48,8 +50,10 @@ class InteractionStatusFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word(),
+            'name' => $this->faker->unique()->sentence(),
             'color' => $this->faker->randomElement(ColumnColorOptions::cases())->value,
+            'is_default' => false,
+            ...(InteractableTypeFeature::active() ? ['interactable_type' => $this->faker->randomElement(InteractableType::cases())] : []),
         ];
     }
 }

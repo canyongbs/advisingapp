@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Interaction\Database\Seeders;
 
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use Illuminate\Database\Seeder;
 
@@ -43,26 +44,33 @@ class InteractionInitiativeSeeder extends Seeder
 {
     public function run(): void
     {
+        $initiativeNames = [
+            ['name' => 'N/A'],
+            ['name' => 'College Applicant to Matriculation'],
+            ['name' => 'College Inquiry to Applicant'],
+            ['name' => 'College Matriculation to Enroll'],
+            ['name' => 'College RFI'],
+            ['name' => 'District Inquiry to Applicant'],
+            ['name' => 'Dual Reengagement'],
+            ['name' => 'Early College Plan Update'],
+            ['name' => 'Early College Transition'],
+            ['name' => 'Enrollment Cancellation Outreach'],
+            ['name' => 'Enrollment Cancellation Recovery'],
+            ['name' => 'Financial Aid Awarded Not Enrolled'],
+            ['name' => 'Financial Aid Task List'],
+            ['name' => 'MIH Follow Up'],
+            ['name' => 'MIH Text'],
+            ['name' => 'Third Party SEM'],
+        ];
+
+        $initiatives = [];
+
+        foreach ($initiativeNames as $item) {
+            $initiatives[] = ['name' => $item['name'], 'interactable_type' => InteractableType::Student];
+            $initiatives[] = ['name' => $item['name'], 'interactable_type' => InteractableType::Prospect];
+        }
+
         InteractionInitiative::factory()
-            ->createMany(
-                [
-                    ['name' => 'N/A'],
-                    ['name' => 'College Applicant to Matriculation'],
-                    ['name' => 'College Inquiry to Applicant'],
-                    ['name' => 'College Matriculation to Enroll'],
-                    ['name' => 'College RFI'],
-                    ['name' => 'District Inquiry to Applicant'],
-                    ['name' => 'Dual Reengagement'],
-                    ['name' => 'Early College Plan Update'],
-                    ['name' => 'Early College Transition'],
-                    ['name' => 'Enrollment Cancellation Outreach'],
-                    ['name' => 'Enrollment Cancellation Recovery'],
-                    ['name' => 'Financial Aid Awarded Not Enrolled'],
-                    ['name' => 'Financial Aid Task List'],
-                    ['name' => 'MIH Follow Up'],
-                    ['name' => 'MIH Text'],
-                    ['name' => 'Third Party SEM'],
-                ]
-            );
+            ->createMany($initiatives);
     }
 }
