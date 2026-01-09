@@ -50,6 +50,8 @@ use AdvisingApp\Authorization\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Events\MigrationStarted;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Event;
 use Tests\Exceptions\StopMigration;
 use Tests\LandlordTestCase;
 use Tests\TenantMigrationTestCase;
