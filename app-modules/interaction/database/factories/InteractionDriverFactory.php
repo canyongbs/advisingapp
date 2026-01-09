@@ -38,6 +38,7 @@ namespace AdvisingApp\Interaction\Database\Factories;
 
 use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionDriver;
+use App\Features\InteractableTypeFeature;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -50,7 +51,7 @@ class InteractionDriverFactory extends Factory
         return [
             'name' => $this->faker->unique()->sentence(),
             'is_default' => false,
-            'interactable_type' => $this->faker->randomElement(InteractableType::cases()),
+            ...(InteractableTypeFeature::active() ? ['interactable_type' => $this->faker->randomElement(InteractableType::cases())] : []),
         ];
     }
 }
