@@ -63,6 +63,34 @@ enum AlertPreset: string implements HasLabel
         return $this->getHandler()->getName();
     }
 
+    public function getDisplayOrder(): int
+    {
+        return match ($this) {
+            self::DorfGrade => 1,
+            self::MultipleDorfGrades => 2,
+            self::CourseWithdrawal => 3,
+            self::MultipleCourseWithdrawals => 4,
+            self::RepeatedCourseAttempt => 5,
+            self::NewStudent => 6,
+            self::AdultLearner => 7,
+            self::FirstGenerationStudent => 8,
+        };
+    }
+
+    public function getInsightsPaneTitle(): string
+    {
+        return match ($this) {
+            self::DorfGrade => 'D or F Grade',
+            self::MultipleDorfGrades => 'Repeated D or F Grade',
+            self::CourseWithdrawal => 'Course Withdrawal',
+            self::MultipleCourseWithdrawals => 'Repeated Course Withdrawal',
+            self::RepeatedCourseAttempt => 'Repeated Course',
+            self::NewStudent => 'New Student',
+            self::AdultLearner => 'Adult Learner',
+            self::FirstGenerationStudent => 'First Gen Student',
+        };
+    }
+
     /**
      * @return AlertPresetHandler
      */
