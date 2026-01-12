@@ -81,7 +81,7 @@ it('displays correct count for adult learner alerts', function () {
     $stats = $widget->getStats();
 
     expect($stats)->toHaveCount(1)
-        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getLabel())
+        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
         ->and($stats[0]->getValue())->toBe((string) $matchingCount);
 });
 
@@ -139,7 +139,7 @@ it('displays correct count for new student alerts', function () {
     $stats = $widget->getStats();
 
     expect($stats)->toHaveCount(1)
-        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getLabel())
+        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
         ->and($stats[0]->getValue())->toBe((string) $matchingCount);
 });
 
@@ -168,7 +168,7 @@ it('displays correct count for first generation student alerts', function () {
     $stats = $widget->getStats();
 
     expect($stats)->toHaveCount(1)
-        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getLabel())
+        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
         ->and($stats[0]->getValue())->toBe((string) $firstGenCount);
 });
 
@@ -203,7 +203,7 @@ it('displays correct count for D or F grade alerts', function () {
     $stats = $widget->getStats();
 
     expect($stats)->toHaveCount(1)
-        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getLabel())
+        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
         ->and($stats[0]->getValue())->toBe((string) $matchingCount);
 });
 
@@ -243,7 +243,7 @@ it('displays correct count for multiple D or F grades alerts', function () {
     $stats = $widget->getStats();
 
     expect($stats)->toHaveCount(1)
-        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getLabel())
+        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
         ->and($stats[0]->getValue())->toBe((string) $matchingCount);
 });
 
@@ -278,7 +278,7 @@ it('displays correct count for course withdrawal alerts', function () {
     $stats = $widget->getStats();
 
     expect($stats)->toHaveCount(1)
-        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getLabel())
+        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
         ->and($stats[0]->getValue())->toBe((string) $matchingCount);
 });
 
@@ -318,7 +318,7 @@ it('displays correct count for multiple course withdrawals alerts', function () 
     $stats = $widget->getStats();
 
     expect($stats)->toHaveCount(1)
-        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getLabel())
+        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
         ->and($stats[0]->getValue())->toBe((string) $matchingCount);
 });
 
@@ -363,7 +363,7 @@ it('displays correct count for repeated course attempt alerts', function () {
     $stats = $widget->getStats();
 
     expect($stats)->toHaveCount(1)
-        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getLabel())
+        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
         ->and($stats[0]->getValue())->toBe((string) $matchingCount);
 });
 
@@ -439,6 +439,6 @@ it('filters alerts by population group', function () {
     $stats = $widget->getStats();
 
     expect($stats)->toHaveCount(1)
-        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getLabel())
+        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
         ->and($stats[0]->getValue())->toBe((string) $inGroupCount);
 });
