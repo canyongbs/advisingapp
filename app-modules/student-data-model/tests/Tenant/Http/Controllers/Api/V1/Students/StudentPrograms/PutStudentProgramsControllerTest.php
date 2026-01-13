@@ -158,7 +158,7 @@ it('creates a student program', function () {
         'sisid' => $student->sisid,
         'declare_dt' => Carbon::parse($createStudentProgramRequestData['programs'][0]['declare_dt'])->toDateTimeString(),
     ]);
-})->repeat(50)->only();
+});
 
 it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null) {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
