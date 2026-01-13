@@ -125,6 +125,12 @@ trait HasSharedEventFormConfiguration
                                 ),
                         ])
                         ->columnSpanFull(),
+                    Toggle::make('is_authenticated')
+                        ->label('Requires authentication')
+                        ->helperText('If enabled, students and prospects must verify their email address before they can open and submit this form.')
+                        ->live()
+                        ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists())
+                        ->afterStateUpdated(fn ($set) => $set('content', null)),
                     Toggle::make('is_wizard')
                         ->label('Multi-step form')
                         ->live()
@@ -134,7 +140,8 @@ trait HasSharedEventFormConfiguration
                             $this->fieldBuilder(),
                         ])
                         ->hidden(fn (Get $get) => $get('is_wizard'))
-                        ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
+                        ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists())
+                        ->key(fn (Get $get) => 'fields-' . ($get('is_authenticated') ? 'authenticated' : 'unauthenticated')),
                     Repeater::make('steps')
                         ->schema([
                             TextInput::make('label')
@@ -144,7 +151,9 @@ trait HasSharedEventFormConfiguration
                                 ->autocomplete(false)
                                 ->columnSpanFull()
                                 ->lazy(),
-                            $this->fieldBuilder(),
+                            $this->fieldBuilder(
+                                isAuthenticatedPath: '../../is_authenticated'
+                            ),
                         ])
                         ->addActionLabel('New step')
                         ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
@@ -164,7 +173,7 @@ trait HasSharedEventFormConfiguration
         ];
     }
 
-    public function fieldBuilder(): TiptapEditor
+    public function fieldBuilder(string $isAuthenticatedPath = 'is_authenticated'): TiptapEditor
     {
         return TiptapEditor::make('content')
             ->blocks(FormFieldBlockRegistry::getForEvents())
