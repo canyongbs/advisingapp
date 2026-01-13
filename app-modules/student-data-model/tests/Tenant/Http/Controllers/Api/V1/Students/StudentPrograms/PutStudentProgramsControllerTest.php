@@ -138,7 +138,7 @@ it('creates a student program', function () {
         ->toBe($createStudentProgramRequestData['programs'][0]['prog_status']);
 
     expect($response['data'][0]['cum_gpa'])
-        ->toBe($createStudentProgramRequestData['programs'][0]['cum_gpa']);
+        ->toBe((float) $createStudentProgramRequestData['programs'][0]['cum_gpa']);
 
     expect($response['data'][0]['semester'])
         ->toBe($createStudentProgramRequestData['programs'][0]['semester']);
@@ -158,7 +158,7 @@ it('creates a student program', function () {
         'sisid' => $student->sisid,
         'declare_dt' => Carbon::parse($createStudentProgramRequestData['programs'][0]['declare_dt'])->toDateTimeString(),
     ]);
-});
+})->repeat(50)->only();
 
 it('validates', function (array $requestAttributes, string $invalidAttribute, string $validationMessage, ?Closure $before = null) {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
