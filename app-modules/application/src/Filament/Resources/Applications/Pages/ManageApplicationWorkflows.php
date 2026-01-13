@@ -72,7 +72,7 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
                     ->label('Enabled')
                     ->boolean(),
                 TextColumn::make('steps')
-                    ->getStateUsing(fn(Workflow $record) => $record->workflowSteps->count()),
+                    ->getStateUsing(fn (Workflow $record) => $record->workflowSteps->count()),
             ])
             ->recordActions([
                 EditAction::make()
