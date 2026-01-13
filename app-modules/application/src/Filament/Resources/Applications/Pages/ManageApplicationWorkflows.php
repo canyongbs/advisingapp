@@ -76,7 +76,7 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
                 EditAction::make()
                     ->url(fn (Workflow $record) => WorkflowResource::getUrl('edit', [$record])),
                 DeleteAction::make()
-                    ->modalHeading(fn(Workflow $record) => 'Delete ' . $record->name),
+                    ->modalHeading(fn (Workflow $record) => 'Delete ' . $record->name),
             ])
             ->recordUrl(fn (Workflow $record) => WorkflowResource::getUrl('edit', [$record]));
     }
