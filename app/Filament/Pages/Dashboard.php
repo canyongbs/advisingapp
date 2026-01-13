@@ -45,7 +45,7 @@ class Dashboard extends BasePage
 
     protected static ?string $navigationLabel = 'Home';
 
-    protected ?string $heading = 'Home';
+    protected ?string $heading = '';
 
     protected string $view = 'filament.pages.dashboard';
 
