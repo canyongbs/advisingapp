@@ -45,6 +45,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
@@ -109,7 +110,7 @@ class ListBasicNeedsPrograms extends ListRecords
                     ->relationship('basicNeedsCategories', 'name')
                     ->searchable()
                     ->preload(),
-            ])
+            ], layout: FiltersLayout::BeforeContent)
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),

@@ -53,6 +53,8 @@ class BasicNeedsProgramResource extends Resource
 
     protected static ?string $modelLabel = 'Support Programs';
 
+    protected static ?string $slug = 'support-programs';
+
     protected static ?int $navigationSort = 20;
 
     protected static string | UnitEnum | null $navigationGroup = 'Knowledge Management';
