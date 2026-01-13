@@ -91,7 +91,7 @@ class GenerateFormKitSchema
                 'small' => ['$el' => 'small', 'children' => $this->content($blocks, $component['content'] ?? [], $submissible, $fields)],
                 'text' => $this->text($component),
                 'image' => $this->getImageSrc($component, $submissible),
-                'tiptapBlock' => ($field = ($fields[$component['attrs']['id']] ?? null)) ? $blocks[$component['attrs']['type']]::getFormKitSchema($field, $actualSubmissible, $this->author) : [],
+                'tiptapBlock' => ($field = ($fields[$component['attrs']['id']] ?? null)) ? (isset($blocks[$component['attrs']['type']]) ? $blocks[$component['attrs']['type']]::getFormKitSchema($field, $actualSubmissible, $this->author) : []) : [],
                 default => [],
             },
             $content,

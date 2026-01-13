@@ -82,7 +82,7 @@ class EventRegistrationFormSubmission extends Submission
     }
 
     /**
-     * @return BelongsToMany<EventRegistrationFormField, $this>
+     * @return BelongsToMany<EventRegistrationFormField, $this, covariant EventRegistrationFormFieldSubmission>
      */
     public function fields(): BelongsToMany
     {
@@ -92,6 +92,7 @@ class EventRegistrationFormSubmission extends Submission
             'submission_id',
             'field_id',
         )
+            ->using(EventRegistrationFormFieldSubmission::class)
             ->withPivot(['id', 'response']);
     }
 

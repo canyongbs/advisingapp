@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -36,71 +36,49 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
-use AdvisingApp\Form\Enums\Rounding;
-use AdvisingApp\Form\Models\Submissible;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
- * @mixin IdeHelperEventRegistrationForm
+ * @mixin IdeHelperEventRegistrationFormFieldSubmission
  */
-class EventRegistrationForm extends Submissible
+class EventRegistrationFormFieldSubmission extends Pivot implements HasMedia
 {
-    use SoftDeletes;
+    use HasUuids;
+    use InteractsWithMedia;
+
+    protected $table = 'event_registration_form_field_submission';
 
     protected $fillable = [
-        'form_id',
-        'embed_enabled',
-        'allowed_domains',
-        'is_authenticated',
-        'is_wizard',
-        'recaptcha_enabled',
-        'primary_color',
-        'rounding',
-        'content',
+        'response',
+        'id',
     ];
 
     protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_authenticated' => 'boolean',
-        'is_wizard' => 'boolean',
-        'recaptcha_enabled' => 'boolean',
-        'rounding' => Rounding::class,
+        'response' => 'array',
     ];
 
     /**
-     * @return BelongsTo<Event, $this>
+     * @return BelongsTo<EventRegistrationFormField, $this>
      */
-    public function event(): BelongsTo
+    public function field(): BelongsTo
     {
-        return $this
-            ->belongsTo(Event::class, 'event_id');
+        return $this->belongsTo(EventRegistrationFormField::class, 'field_id');
     }
 
     /**
-     * @return HasMany<EventRegistrationFormField, $this>
+     * @return BelongsTo<EventRegistrationFormSubmission, $this>
      */
-    public function fields(): HasMany
+    public function submission(): BelongsTo
     {
-        return $this->hasMany(EventRegistrationFormField::class, 'form_id');
+        return $this->belongsTo(EventRegistrationFormSubmission::class, 'submission_id');
     }
 
-    /**
-     * @return HasMany<EventRegistrationFormStep, $this>
-     */
-    public function steps(): HasMany
+    public function registerMediaCollections(): void
     {
-        return $this->hasMany(EventRegistrationFormStep::class, 'form_id');
-    }
-
-    /**
-     * @return HasMany<EventRegistrationFormSubmission, $this>
-     */
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(EventRegistrationFormSubmission::class, 'form_id');
+        $this->addMediaCollection('files');
     }
 }
