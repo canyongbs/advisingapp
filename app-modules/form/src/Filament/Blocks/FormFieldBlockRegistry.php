@@ -109,12 +109,8 @@ class FormFieldBlockRegistry
     /**
      * @return array<class-string<FormFieldBlock> | array<class-string<FormFieldBlock>>>
      */
-    public static function getForEvents(bool $isAuthenticated = true): array
+    public static function getForEvents(): array
     {
-        if (! $isAuthenticated) {
-            return static::getUnmappedBlocksForEvents();
-        }
-
         return [
             'Mapped Blocks' => static::getMappedBlocks(),
             'Unmapped Blocks' => static::getUnmappedBlocksForEvents(),
@@ -124,9 +120,19 @@ class FormFieldBlockRegistry
     /**
      * @return array<string, class-string<FormFieldBlock>>
      */
+    public static function keyByTypeForEvents(): array
+    {
+        return collect(static::getForEvents())
+            ->flatten()
+            ->mapWithKeys(fn (string $block): array => [$block::type() => $block])
+            ->all();
+    }
+
+    /**
+     * @return array<string, class-string<FormFieldBlock>>
+     */
     public static function keyByType(): array
     {
-        /** @var FormFieldBlock $block */
         return collect(static::get())
             ->flatten()
             ->mapWithKeys(fn (string $block): array => [$block::type() => $block])

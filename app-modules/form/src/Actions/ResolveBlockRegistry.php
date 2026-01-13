@@ -53,7 +53,8 @@ class ResolveBlockRegistry
         return match ($submissible::class) {
             Form::class, Application::class => FormFieldBlockRegistry::keyByType(),
             Survey::class => SurveyFieldBlockRegistry::keyByType(),
-            EventRegistrationForm::class, CaseForm::class => DefaultFieldBlockRegistry::keyByType(),
+            EventRegistrationForm::class => FormFieldBlockRegistry::keyByTypeForEvents(),
+            CaseForm::class => DefaultFieldBlockRegistry::keyByType(),
         };
     }
 }
