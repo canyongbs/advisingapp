@@ -71,6 +71,8 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
                 IconColumn::make('is_enabled')
                     ->label('Enabled')
                     ->boolean(),
+                TextColumn::make('steps')
+                    ->getStateUsing(fn(Workflow $record) => $record->workflowSteps->count()),
             ])
             ->recordActions([
                 EditAction::make()
