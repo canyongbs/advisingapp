@@ -199,7 +199,9 @@ class ManageAlerts extends Page implements HasForms
      */
     protected function getFormSchema(): array
     {
-        $alertConfigurations = AlertConfiguration::with('configuration')->get()->sortBy(fn (AlertConfiguration $config) => $config->preset->getDisplayOrder());
+        $alertConfigurations = AlertConfiguration::with('configuration')
+            ->get()
+            ->sortBy(fn (AlertConfiguration $config) => $config->preset->getDisplayOrder());
         $innerSections = [];
 
         foreach ($alertConfigurations as $config) {
