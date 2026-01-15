@@ -79,6 +79,7 @@ enum AlertPreset: string implements HasLabel
             self::AdultLearner => 7,
             self::FirstGenerationStudent => 8,
             self::ConcernRaised => 10,
+            self::NewInboundMessage => 9,
         };
     }
 
@@ -94,6 +95,7 @@ enum AlertPreset: string implements HasLabel
             self::AdultLearner => 'Adult Learner',
             self::FirstGenerationStudent => 'First Gen Student',
             self::ConcernRaised => '',
+            self::NewInboundMessage => 'New Inbound Message',
         };
     }
 
