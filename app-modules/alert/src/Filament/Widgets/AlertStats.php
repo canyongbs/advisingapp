@@ -62,7 +62,8 @@ class AlertStats extends StatsOverviewWidget
 
         $alertConfigurations = AlertConfiguration::query()
             ->where('is_enabled', true)
-            ->get();
+            ->get()
+            ->sortBy(fn ($config) => $config->preset->getDisplayOrder());
 
         if ($alertConfigurations->isEmpty()) {
             return [
@@ -76,7 +77,7 @@ class AlertStats extends StatsOverviewWidget
 
         foreach ($alertConfigurations as $config) {
             $stats[] = Stat::make(
-                $config->preset->getLabel(),
+                $config->preset->getInsightsPaneTitle(),
                 Number::format(StudentAlert::query()
                     ->whereHas('student', $studentQuery)
                     ->where('alert_configuration_id', $config->id)
