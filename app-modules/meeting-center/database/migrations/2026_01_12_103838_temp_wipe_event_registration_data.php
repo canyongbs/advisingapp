@@ -40,17 +40,17 @@ use Illuminate\Support\Facades\DB;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::table('event_registration_form_field_submission')->delete();
-        DB::table('event_attendees_entities')->delete();
+        DB::table('event_registration_form_field_submission')->truncate();
+        DB::table('event_attendees_entities')->truncate();
 
-        DB::table('event_registration_form_submissions')->delete();
-        DB::table('event_registration_form_authentications')->delete();
-        DB::table('event_attendees')->delete();
+        DB::table('event_registration_form_submissions')->truncate();
+        DB::table('event_registration_form_authentications')->truncate();
+        DB::table('event_attendees')->truncate();
 
-        DB::table('event_registration_form_fields')->delete();
-        DB::table('event_registration_form_steps')->delete();
-        DB::table('event_registration_forms')->delete();
+        DB::table('event_registration_form_fields')->truncate();
+        DB::table('event_registration_form_steps')->truncate();
+        DB::table('event_registration_forms')->truncate();
 
-        DB::table('events')->delete();
+        DB::table('events')->truncate();
     }
 };
