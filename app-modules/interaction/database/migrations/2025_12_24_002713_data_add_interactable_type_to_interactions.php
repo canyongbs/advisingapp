@@ -229,7 +229,7 @@ return new class () extends Migration {
 
                         $interactionOutcome = DB::table('interaction_outcomes')->where('id', $interaction->interaction_outcome_id)->first();
 
-                        if ($interaction->interactable_type !== $interactionOutcome->interactable_type) {
+                        if (! is_null($interactionOutcome) && $interaction->interactable_type !== $interactionOutcome->interactable_type) {
                             $newOutcomeId = DB::table('interaction_outcomes')
                                 ->where('name', $interactionOutcome->name)
                                 ->where('interactable_type', $interaction->interactable_type)
@@ -241,7 +241,7 @@ return new class () extends Migration {
 
                         $interactionRelation = DB::table('interaction_relations')->where('id', $interaction->interaction_relation_id)->first();
 
-                        if ($interaction->interactable_type !== $interactionRelation->interactable_type) {
+                        if (! is_null($interactionRelation) && $interaction->interactable_type !== $interactionRelation->interactable_type) {
                             $newRelationId = DB::table('interaction_relations')
                                 ->where('name', $interactionRelation->name)
                                 ->where('interactable_type', $interaction->interactable_type)
@@ -253,7 +253,7 @@ return new class () extends Migration {
 
                         $interactionDriver = DB::table('interaction_drivers')->where('id', $interaction->interaction_driver_id)->first();
 
-                        if ($interaction->interactable_type !== $interactionDriver->interactable_type) {
+                        if (! is_null($interactionDriver) && $interaction->interactable_type !== $interactionDriver->interactable_type) {
                             $newDriverId = DB::table('interaction_drivers')
                                 ->where('name', $interactionDriver->name)
                                 ->where('interactable_type', $interaction->interactable_type)
@@ -265,7 +265,7 @@ return new class () extends Migration {
 
                         $interactionInitiative = DB::table('interaction_initiatives')->where('id', $interaction->interaction_initiative_id)->first();
 
-                        if ($interaction->interactable_type !== $interactionInitiative->interactable_type) {
+                        if (! is_null($interactionInitiative) && $interaction->interactable_type !== $interactionInitiative->interactable_type) {
                             $newInitiativeId = DB::table('interaction_initiatives')
                                 ->where('name', $interactionInitiative->name)
                                 ->where('interactable_type', $interaction->interactable_type)
