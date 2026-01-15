@@ -40,6 +40,20 @@ use Illuminate\Support\Facades\DB;
 return new class () extends Migration {
     public function up(): void
     {
+        $castExists = DB::selectOne(<<<'SQL'
+            SELECT 1
+            FROM pg_cast c
+            JOIN pg_type s ON c.castsource = s.oid
+            JOIN pg_type t ON c.casttarget = t.oid
+            WHERE s.typname = 'varchar'
+              AND t.typname = 'uuid'
+            LIMIT 1
+        SQL);
+
+        if ($castExists) {
+            return;
+        }
+
         DB::unprepared('ALTER TYPE uuid OWNER TO CURRENT_USER;');
 
         DB::unprepared('DROP CAST IF EXISTS (VARCHAR AS uuid)');
