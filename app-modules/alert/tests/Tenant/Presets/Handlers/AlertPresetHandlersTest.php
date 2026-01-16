@@ -42,6 +42,9 @@ use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Alert\Models\StudentAlert;
 use AdvisingApp\Alert\Presets\AlertPreset;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
+use AdvisingApp\Concern\Models\Concern;
+use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Facades\DB;
@@ -788,4 +791,264 @@ it('handles scenario where alerts are enabled but no students match criteria', f
 
     $result = DB::select('SELECT * FROM student_alerts');
     expect($result)->toBeArray()->toBeEmpty();
+});
+
+it('can identify students with active concerns (ConcernRaisedPresetHandler)', function () {
+    $alertConfig = AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::ConcernRaised])
+        ->enabled()
+        ->create();
+
+    $activeStatus = ConcernStatus::factory()->create([
+        'classification' => SystemConcernStatusClassification::Active,
+        'name' => 'Active',
+    ]);
+
+    $resolvedStatus = ConcernStatus::factory()->create([
+        'classification' => SystemConcernStatusClassification::Resolved,
+        'name' => 'Resolved',
+    ]);
+
+    $canceledStatus = ConcernStatus::factory()->create([
+        'classification' => SystemConcernStatusClassification::Canceled,
+        'name' => 'Canceled',
+    ]);
+
+    $studentWithActiveConcern = Student::factory()->create();
+    Concern::factory()->create([
+        'concern_type' => $studentWithActiveConcern->getMorphClass(),
+        'concern_id' => $studentWithActiveConcern->getKey(),
+        'status_id' => $activeStatus->id,
+        'description' => 'Test active concern',
+    ]);
+
+    $studentWithResolvedConcern = Student::factory()->create();
+    Concern::factory()->create([
+        'concern_type' => $studentWithResolvedConcern->getMorphClass(),
+        'concern_id' => $studentWithResolvedConcern->getKey(),
+        'status_id' => $resolvedStatus->id,
+        'description' => 'Test resolved concern',
+    ]);
+
+    $studentWithCanceledConcern = Student::factory()->create();
+    Concern::factory()->create([
+        'concern_type' => $studentWithCanceledConcern->getMorphClass(),
+        'concern_id' => $studentWithCanceledConcern->getKey(),
+        'status_id' => $canceledStatus->id,
+        'description' => 'Test canceled concern',
+    ]);
+
+    $studentWithNoConcern = Student::factory()->create();
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $studentWithActiveConcern->sisid,
+        'alert_configuration_id' => $alertConfig->id,
+    ]);
+
+    expect(StudentAlert::where('sisid', $studentWithResolvedConcern->sisid)->exists())->toBeFalse();
+    expect(StudentAlert::where('sisid', $studentWithCanceledConcern->sisid)->exists())->toBeFalse();
+    expect(StudentAlert::where('sisid', $studentWithNoConcern->sisid)->exists())->toBeFalse();
+});
+
+it('can identify students with multiple active concerns (ConcernRaisedPresetHandler)', function () {
+    $alertConfig = AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::ConcernRaised])
+        ->enabled()
+        ->create();
+
+    $activeStatus = ConcernStatus::factory()->create([
+        'classification' => SystemConcernStatusClassification::Active,
+        'name' => 'Active',
+    ]);
+
+    $studentWithMultipleConcerns = Student::factory()->create();
+    Concern::factory()
+        ->count(3)
+        ->create([
+            'concern_type' => $studentWithMultipleConcerns->getMorphClass(),
+            'concern_id' => $studentWithMultipleConcerns->getKey(),
+            'status_id' => $activeStatus->id,
+        ]);
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $studentWithMultipleConcerns->sisid,
+        'alert_configuration_id' => $alertConfig->id,
+    ]);
+
+    expect(StudentAlert::where('sisid', $studentWithMultipleConcerns->sisid)->count())->toBe(1);
+});
+
+it('excludes soft-deleted concerns from concern raised detection (ConcernRaisedPresetHandler)', function () {
+    $alertConfig = AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::ConcernRaised])
+        ->enabled()
+        ->create();
+
+    $activeStatus = ConcernStatus::factory()->create([
+        'classification' => SystemConcernStatusClassification::Active,
+        'name' => 'Active',
+    ]);
+
+    $studentWithDeletedConcern = Student::factory()->create();
+    $concern = Concern::factory()->create([
+        'concern_type' => $studentWithDeletedConcern->getMorphClass(),
+        'concern_id' => $studentWithDeletedConcern->getKey(),
+        'status_id' => $activeStatus->id,
+        'description' => 'Test concern to be deleted',
+    ]);
+    $concern->delete();
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    expect(StudentAlert::where('sisid', $studentWithDeletedConcern->sisid)->exists())->toBeFalse();
+});
+
+it('identifies students with concerns of various active classifications (ConcernRaisedPresetHandler)', function () {
+    $alertConfig = AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::ConcernRaised])
+        ->enabled()
+        ->create();
+
+    $activeStatus1 = ConcernStatus::factory()->create([
+        'classification' => SystemConcernStatusClassification::Active,
+        'name' => 'New',
+    ]);
+
+    $activeStatus2 = ConcernStatus::factory()->create([
+        'classification' => SystemConcernStatusClassification::Active,
+        'name' => 'In Progress',
+    ]);
+
+    $student1 = Student::factory()->create();
+    Concern::factory()->create([
+        'concern_type' => $student1->getMorphClass(),
+        'concern_id' => $student1->getKey(),
+        'status_id' => $activeStatus1->id,
+    ]);
+
+    $student2 = Student::factory()->create();
+    Concern::factory()->create([
+        'concern_type' => $student2->getMorphClass(),
+        'concern_id' => $student2->getKey(),
+        'status_id' => $activeStatus2->id,
+    ]);
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $student1->sisid,
+        'alert_configuration_id' => $alertConfig->id,
+    ]);
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $student2->sisid,
+        'alert_configuration_id' => $alertConfig->id,
+    ]);
+});
+
+it('handles students with mixed concern statuses (ConcernRaisedPresetHandler)', function () {
+    $alertConfig = AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::ConcernRaised])
+        ->enabled()
+        ->create();
+
+    $activeStatus = ConcernStatus::factory()->create([
+        'classification' => SystemConcernStatusClassification::Active,
+        'name' => 'Active',
+    ]);
+
+    $resolvedStatus = ConcernStatus::factory()->create([
+        'classification' => SystemConcernStatusClassification::Resolved,
+        'name' => 'Resolved',
+    ]);
+
+    $studentWithMixedConcerns = Student::factory()->create();
+    Concern::factory()->create([
+        'concern_type' => $studentWithMixedConcerns->getMorphClass(),
+        'concern_id' => $studentWithMixedConcerns->getKey(),
+        'status_id' => $activeStatus->id,
+        'description' => 'Active concern',
+    ]);
+    Concern::factory()->create([
+        'concern_type' => $studentWithMixedConcerns->getMorphClass(),
+        'concern_id' => $studentWithMixedConcerns->getKey(),
+        'status_id' => $resolvedStatus->id,
+        'description' => 'Resolved concern',
+    ]);
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $studentWithMixedConcerns->sisid,
+        'alert_configuration_id' => $alertConfig->id,
+    ]);
+
+    expect(StudentAlert::where('sisid', $studentWithMixedConcerns->sisid)->count())->toBe(1);
+});
+
+it('correctly combines concern raised alerts with other alert types', function () {
+    $concernAlertConfig = AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::ConcernRaised])
+        ->enabled()
+        ->create();
+
+    $dorfConfig = AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::DorfGrade])
+        ->enabled()
+        ->create();
+
+    $activeStatus = ConcernStatus::factory()->create([
+        'classification' => SystemConcernStatusClassification::Active,
+        'name' => 'Active',
+    ]);
+
+    $studentWithBoth = Student::factory()
+        ->has(Enrollment::factory()->state(['crse_grade_off' => 'D']), 'enrollments')
+        ->create();
+    Concern::factory()->create([
+        'concern_type' => $studentWithBoth->getMorphClass(),
+        'concern_id' => $studentWithBoth->getKey(),
+        'status_id' => $activeStatus->id,
+    ]);
+
+    $studentWithConcernOnly = Student::factory()->create();
+    Concern::factory()->create([
+        'concern_type' => $studentWithConcernOnly->getMorphClass(),
+        'concern_id' => $studentWithConcernOnly->getKey(),
+        'status_id' => $activeStatus->id,
+    ]);
+
+    $studentWithGradeOnly = Student::factory()
+        ->has(Enrollment::factory()->state(['crse_grade_off' => 'F']), 'enrollments')
+        ->create();
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $studentWithBoth->sisid,
+        'alert_configuration_id' => $concernAlertConfig->id,
+    ]);
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $studentWithBoth->sisid,
+        'alert_configuration_id' => $dorfConfig->id,
+    ]);
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $studentWithConcernOnly->sisid,
+        'alert_configuration_id' => $concernAlertConfig->id,
+    ]);
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $studentWithGradeOnly->sisid,
+        'alert_configuration_id' => $dorfConfig->id,
+    ]);
+
+    expect(StudentAlert::where('sisid', $studentWithBoth->sisid)->count())->toBe(2);
+    expect(StudentAlert::where('sisid', $studentWithConcernOnly->sisid)->count())->toBe(1);
+    expect(StudentAlert::where('sisid', $studentWithGradeOnly->sisid)->count())->toBe(1);
 });
