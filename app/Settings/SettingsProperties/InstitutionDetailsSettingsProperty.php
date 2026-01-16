@@ -40,26 +40,26 @@ use App\Models\SettingsPropertyWithMedia;
 
 class InstitutionDetailsSettingsProperty extends SettingsPropertyWithMedia
 {
-  public function registerMediaCollections(): void
-  {
-    $this->addMediaCollection('dark_logo')
-      ->singleFile()
-      ->acceptsMimeTypes([
-        'image/png',
-        'image/jpeg',
-        'image/webp',
-        'image/jpg',
-        'image/svg+xml',
-      ]);
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('dark_logo')
+            ->singleFile()
+            ->acceptsMimeTypes([
+                'image/png',
+                'image/jpeg',
+                'image/webp',
+                'image/jpg',
+                'image/svg+xml',
+            ]);
 
-    $this->addMediaCollection('light_logo')
-      ->singleFile()
-      ->acceptsMimeTypes([
-        'image/png',
-        'image/jpeg',
-        'image/webp',
-        'image/jpg',
-        'image/svg+xml',
-      ]);
-  }
+        $this->addMediaCollection('light_logo')
+            ->singleFile()
+            ->acceptsMimeTypes([
+                'image/png',
+                'image/jpeg',
+                'image/webp',
+                'image/jpg',
+                'image/svg+xml',
+            ]);
+    }
 }
