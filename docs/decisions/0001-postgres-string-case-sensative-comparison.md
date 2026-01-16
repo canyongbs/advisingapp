@@ -9,9 +9,9 @@ consulted: Kevin Ullyott, Dan Harrin, Payal Baldaniya
 
 ## Context and Problem Statement
 
-By default in Postgres, strings are compared case-insensative, meaning "ABC" != "abc".
+By default in Postgres, strings are compared case-sensative, meaning "ABC" != "abc".
 
-This is problematic when we NEED some things to be case-sensative. For example, if we need email addresses in the system to be unique and we want to consider "Example@email.com" to violate "example@email.com".
+This is problematic when we NEED some comparisons to be case-insensative. For example, if we need email addresses in the system to be unique and we want to consider "Example@email.com" to violate "example@email.com" in a unique index.
 
 Though there may be areas where this is managed ad hoc, there is a desire for there to be a general strategy for enabling this functionality
 
@@ -23,51 +23,96 @@ Though there may be areas where this is managed ad hoc, there is a desire for th
 
 ## Decision Outcome
 
-Chosen option: "{title of option 1}", because {justification. e.g., only option, which meets k.o. criterion decision driver | which resolves force {force} | … | comes out best (see below)}.
-
-<!-- This is an optional element. Feel free to remove. -->
+Chosen option: "citext data type", because it provides transparent case-insensitive comparison at the database level without requiring application-level handling, works seamlessly with existing queries and unique constraints, and is a well-supported PostgreSQL extension.
 
 ### Consequences
 
-- Good, because {positive consequence, e.g., improvement of one or more desired qualities, …}
-- Bad, because {negative consequence, e.g., compromising one or more desired qualities, …}
-- … <!-- numbers of consequences can vary -->
-
-<!-- This is an optional element. Feel free to remove. -->
+- Good, because case-insensitive uniqueness is enforced at the database level, preventing duplicates regardless of how data is inserted
+- Good, because existing queries work without modification—no need to wrap comparisons in `LOWER()` or `ILIKE`
+- Good, because it integrates naturally with Laravel's Eloquent ORM and unique validation rules
+- Good, because it reduces cognitive overhead for developers who don't need to remember to handle case sensitivity manually
+- Bad, because it requires the `citext` extension to be enabled in PostgreSQL (`CREATE EXTENSION citext`)
+- Neutral, because there is a minor performance overhead compared to standard `text`, but it is negligible for most use cases
 
 ### Confirmation
 
-{Describe how the implementation of/compliance with the ADR can/will be confirmed. Are the design that was decided for and its implementation in line with the decision made? E.g., a design/code review or a test with a library such as ArchUnit can help validate this. Not that although we classify this element as optional, it is included in many ADRs.}
+Compliance with this ADR can be confirmed through:
 
-<!-- This is an optional element. Feel free to remove. -->
+1. **Database schema review**: Verify that columns requiring case-insensitive comparison (e.g., email addresses) use the `citext` data type
+2. **Migration audits**: Ensure new migrations for case-insensitive columns specify `citext` rather than `string` or `text`
+3. **Integration tests**: Write tests that attempt to insert duplicate values with different casing to confirm uniqueness constraints work correctly
 
 ## Pros and Cons of the Options
 
-### {title of option 1}
+### citext data type
 
-<!-- This is an optional element. Feel free to remove. -->
+The `citext` extension provides a case-insensitive text data type. Internally, it stores text as-is but performs case-insensitive comparisons using `LOWER()` transparently.
 
-{example | description | pointer to more information | …}
+```sql
+CREATE EXTENSION citext;
+ALTER TABLE users ALTER COLUMN email TYPE citext;
+```
 
-- Good, because {argument a}
-- Good, because {argument b}
-  <!-- use "neutral" if the given argument weights neither for good nor bad -->
-- Neutral, because {argument c}
-- Bad, because {argument d}
-- … <!-- numbers of pros and cons can vary -->
+- Good, because comparison is handled transparently at the database level
+- Good, because unique constraints automatically enforce case-insensitive uniqueness
+- Good, because no changes needed to application queries or validation logic
+- Good, because the original case is preserved in storage (e.g., "Example@Email.com" is stored as entered)
+- Neutral, because it requires enabling a PostgreSQL extension (but `citext` is a trusted, built-in extension)
+- Bad, because it is PostgreSQL-specific and reduces portability to other databases
+- Bad, because there is a slight performance cost compared to `text` (though typically negligible)
 
-### {title of other option}
+### Functional (Expression) Index
 
-{example | description | pointer to more information | …}
+Create a unique index on a lowercase expression of the column to enforce case-insensitive uniqueness.
 
-- Good, because {argument a}
-- Good, because {argument b}
-- Neutral, because {argument c}
-- Bad, because {argument d}
-- …
+```sql
+CREATE UNIQUE INDEX users_email_unique ON users (LOWER(email));
+```
 
-<!-- This is an optional element. Feel free to remove. -->
+- Good, because it doesn't require any extension
+- Good, because the column remains standard `text` or `varchar`
+- Good, because it works well for uniqueness enforcement
+- Bad, because queries must explicitly use `LOWER()` to leverage the index (e.g., `WHERE LOWER(email) = LOWER(?)`)
+- Bad, because developers must remember to apply `LOWER()` consistently in application code
+- Bad, because Laravel's built-in unique validation rules don't automatically use the functional index
+- Bad, because it's easy to accidentally bypass the case-insensitive logic
+
+### Manual handling in code/queries
+
+Handle case-insensitivity entirely in application code by normalizing values before storage and using `LOWER()` or `ILIKE` in queries.
+
+```php
+$user->email = strtolower($request->email);
+```
+
+- Good, because it doesn't require any database-specific features
+- Good, because it provides maximum control over normalization logic
+- Good, because it is portable across different database systems
+- Bad, because it requires consistent discipline across the entire codebase
+- Bad, because it's error-prone—easy to forget normalization in some code paths
+- Bad, because it doesn't protect against direct database inserts that bypass application logic
+- Bad, because existing data may need migration to normalize case
+- Bad, because the original casing entered by the user is lost
 
 ## More Information
 
-{You might want to provide additional evidence/confidence for the decision outcome here and/or document the team agreement on the decision and/or define when/how this decision the decision should be realized and if/when it should be re-visited. Links to other decisions and resources might appear here as well.}
+### Implementation Notes
+
+1. The `citext` extension should be enabled in a database migration:
+
+    ```php
+    DB::statement('CREATE EXTENSION IF NOT EXISTS citext');
+    ```
+
+2. For Laravel migrations, use raw SQL or a custom column type to define `citext` columns:
+
+    ```php
+    $table->addColumn('citext', 'email');
+    ```
+
+3. Consider creating a reusable migration helper or custom Blueprint macro for `citext` columns.
+
+### References
+
+- [PostgreSQL citext documentation](https://www.postgresql.org/docs/current/citext.html)
+- [PostgreSQL Functional Indexes](https://www.postgresql.org/docs/current/indexes-expressional.html)
