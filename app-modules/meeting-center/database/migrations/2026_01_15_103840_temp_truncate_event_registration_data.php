@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,57 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-use App\Models\BaseModel;
-use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
-/**
- * @mixin IdeHelperEvent
- */
-class Event extends BaseModel
-{
-    use SoftDeletes;
-    use HasUserSaveTracking;
-
-    protected $fillable = [
-        'title',
-        'description',
-        'location',
-        'capacity',
-        'starts_at',
-        'ends_at',
-        'hero_image',
-        'show_registration_popup',
-        'embed_enabled',
-        'allowed_domains',
-    ];
-
-    protected $casts = [
-        'starts_at' => 'datetime',
-        'ends_at' => 'datetime',
-        'description' => 'array',
-        'show_registration_popup' => 'boolean',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-    ];
-
-    /**
-     * @return HasOne<EventRegistrationForm, $this>
-     */
-    public function eventRegistrationForm(): HasOne
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->hasOne(EventRegistrationForm::class, 'event_id');
-    }
+        DB::table('event_registration_form_field_submission')->truncate();
+        DB::table('event_attendees_entities')->truncate();
 
-    /**
-     * @return HasMany<EventAttendee, $this>
-     */
-    public function attendees(): HasMany
-    {
-        return $this->hasMany(EventAttendee::class, 'event_id');
+        DB::table('event_registration_form_submissions')->truncate();
+        DB::table('event_registration_form_authentications')->truncate();
+        DB::table('event_attendees')->truncate();
+
+        DB::table('event_registration_form_fields')->truncate();
+        DB::table('event_registration_form_steps')->truncate();
+        DB::table('event_registration_forms')->truncate();
+
+        DB::table('events')->truncate();
     }
-}
+};

@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -37,19 +37,48 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
-use Filament\Resources\Pages\Page;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 
-class EditEvent extends Page
+class EditEventDetails extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = EventResource::class;
 
-    protected static ?string $navigationLabel = 'Edit';
+    protected static ?string $navigationLabel = 'Event Details';
 
-    public function mount(int | string $record): void
+    public function form(Schema $schema): Schema
     {
-        parent::mount($record);
-
-        $this->redirect(EventResource::getUrl('edit-details', ['record' => $record]));
+        return $schema->components([
+            TextInput::make('title')
+                ->label('Title')
+                ->string()
+                ->required()
+                ->maxLength(255)
+                ->columnSpanFull(),
+            TextInput::make('location')
+                ->label('Location')
+                ->string()
+                ->nullable()
+                ->columnSpanFull(),
+            TextInput::make('capacity')
+                ->label('Capacity')
+                ->integer()
+                ->minValue(1)
+                ->nullable(),
+            DateTimePicker::make('starts_at')
+                ->label('Starts at')
+                ->seconds(false)
+                ->required(),
+            DateTimePicker::make('ends_at')
+                ->label('Ends at')
+                ->seconds(false)
+                ->required(),
+        ]);
     }
 
     protected function getHeaderActions(): array

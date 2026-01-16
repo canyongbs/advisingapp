@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,57 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-use App\Models\BaseModel;
-use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
-/**
- * @mixin IdeHelperEvent
- */
-class Event extends BaseModel
-{
-    use SoftDeletes;
-    use HasUserSaveTracking;
-
-    protected $fillable = [
-        'title',
-        'description',
-        'location',
-        'capacity',
-        'starts_at',
-        'ends_at',
-        'hero_image',
-        'show_registration_popup',
-        'embed_enabled',
-        'allowed_domains',
-    ];
-
-    protected $casts = [
-        'starts_at' => 'datetime',
-        'ends_at' => 'datetime',
-        'description' => 'array',
-        'show_registration_popup' => 'boolean',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-    ];
-
-    /**
-     * @return HasOne<EventRegistrationForm, $this>
-     */
-    public function eventRegistrationForm(): HasOne
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->hasOne(EventRegistrationForm::class, 'event_id');
+        Schema::table('events', function (Blueprint $table) {
+            $table->foreignUuid('created_by_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignUuid('last_updated_by_id')->nullable()->constrained('users')->nullOnDelete();
+
+            $table->string('hero_image')->nullable();
+            $table->boolean('show_registration_popup')->default(true);
+            $table->boolean('embed_enabled')->default(false);
+            $table->json('allowed_domains')->nullable();
+        });
+
+        DB::statement('ALTER TABLE events ALTER COLUMN description TYPE jsonb USING description::jsonb');
     }
 
-    /**
-     * @return HasMany<EventAttendee, $this>
-     */
-    public function attendees(): HasMany
+    public function down(): void
     {
-        return $this->hasMany(EventAttendee::class, 'event_id');
+        Schema::table('events', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('created_by_id');
+            $table->dropConstrainedForeignId('last_updated_by_id');
+            $table->dropColumn('hero_image');
+            $table->dropColumn('show_registration_popup');
+            $table->dropColumn('embed_enabled');
+            $table->dropColumn('allowed_domains');
+            $table->text('description')->nullable()->change();
+        });
     }
-}
+};

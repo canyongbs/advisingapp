@@ -38,6 +38,9 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\Events;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\CreateEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEvent;
+use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventDetails;
+use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventPage;
+use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventRegistration;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ListEvents;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ManageEventAttendees;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ViewEvent;
@@ -67,7 +70,9 @@ class EventResource extends Resource
     {
         return $page->generateNavigationItems([
             ViewEvent::class,
-            EditEvent::class,
+            EditEventDetails::class,
+            EditEventPage::class,
+            EditEventRegistration::class,
             ManageEventAttendees::class,
         ]);
     }
@@ -84,6 +89,9 @@ class EventResource extends Resource
             'create' => CreateEvent::route('/create'),
             'view' => ViewEvent::route('/{record}'),
             'edit' => EditEvent::route('/{record}/edit'),
+            'edit-details' => EditEventDetails::route('/{record}/edit-details'),
+            'edit-page' => EditEventPage::route('/{record}/edit-page'),
+            'edit-registration' => EditEventRegistration::route('/{record}/edit-registration'),
             'manage-attendees' => ManageEventAttendees::route('/{record}/manage-attendees'),
         ];
     }
