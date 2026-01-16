@@ -95,7 +95,7 @@ enum AlertPreset: string implements HasLabel
             self::AdultLearner => 'Adult Learner',
             self::FirstGenerationStudent => 'First Gen Student',
             self::ConcernRaised => '',
-            self::NewInboundMessage => 'New Inbound Message',
+            self::NewInboundMessage => '',
         };
     }
 
