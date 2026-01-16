@@ -5,13 +5,13 @@ decision-makers: Kevin Ullyott, Dan Harrin, Payal Baldaniya
 consulted: Kevin Ullyott, Dan Harrin, Payal Baldaniya
 ---
 
-# How to Ensure Case-Sensative String Comparision in Postgres
+# How to Ensure Case-sensitive String Comparision in Postgres
 
 ## Context and Problem Statement
 
-By default in Postgres, strings are compared case-sensative, meaning "ABC" != "abc".
+By default in Postgres, strings are compared case-sensitive, meaning "ABC" != "abc".
 
-This is problematic when we NEED some comparisons to be case-insensative. For example, if we need email addresses in the system to be unique and we want to consider "Example@email.com" to violate "example@email.com" in a unique index.
+This is problematic when we NEED some comparisons to be case-insensitive. For example, if we need email addresses in the system to be unique and we want to consider "Example@email.com" to violate "example@email.com" in a unique index.
 
 Though there may be areas where this is managed ad hoc, there is a desire for there to be a general strategy for enabling this functionality
 
