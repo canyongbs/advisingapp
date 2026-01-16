@@ -847,6 +847,7 @@ it('can identify students with active concerns (ConcernRaisedPresetHandler)', fu
         'alert_configuration_id' => $alertConfig->id,
     ]);
 
+    expect(StudentAlert::where('sisid', $studentWithActiveConcern->sisid)->exists())->toBeTrue();
     expect(StudentAlert::where('sisid', $studentWithResolvedConcern->sisid)->exists())->toBeFalse();
     expect(StudentAlert::where('sisid', $studentWithCanceledConcern->sisid)->exists())->toBeFalse();
     expect(StudentAlert::where('sisid', $studentWithNoConcern->sisid)->exists())->toBeFalse();
