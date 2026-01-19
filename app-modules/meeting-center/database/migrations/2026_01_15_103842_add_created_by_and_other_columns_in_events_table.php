@@ -45,11 +45,6 @@ return new class () extends Migration {
         Schema::table('events', function (Blueprint $table) {
             $table->foreignUuid('created_by_id')->constrained('users')->cascadeOnDelete();
             $table->foreignUuid('last_updated_by_id')->nullable()->constrained('users')->nullOnDelete();
-
-            $table->string('hero_image')->nullable();
-            $table->boolean('show_registration_popup')->default(true);
-            $table->boolean('embed_enabled')->default(false);
-            $table->json('allowed_domains')->nullable();
         });
 
         DB::statement('ALTER TABLE events ALTER COLUMN description TYPE jsonb USING description::jsonb');
@@ -60,10 +55,6 @@ return new class () extends Migration {
         Schema::table('events', function (Blueprint $table) {
             $table->dropConstrainedForeignId('created_by_id');
             $table->dropConstrainedForeignId('last_updated_by_id');
-            $table->dropColumn('hero_image');
-            $table->dropColumn('show_registration_popup');
-            $table->dropColumn('embed_enabled');
-            $table->dropColumn('allowed_domains');
             $table->text('description')->nullable()->change();
         });
     }

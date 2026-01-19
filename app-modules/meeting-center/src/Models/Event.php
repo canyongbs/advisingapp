@@ -57,19 +57,12 @@ class Event extends BaseModel
         'capacity',
         'starts_at',
         'ends_at',
-        'hero_image',
-        'show_registration_popup',
-        'embed_enabled',
-        'allowed_domains',
     ];
 
     protected $casts = [
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
         'description' => 'array',
-        'show_registration_popup' => 'boolean',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
     ];
 
     /**

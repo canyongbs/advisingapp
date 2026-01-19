@@ -47,6 +47,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use FilamentTiptapEditor\Enums\TiptapOutput;
 use FilamentTiptapEditor\TiptapEditor;
 
 class EditEventPage extends EditRecord
@@ -55,86 +56,42 @@ class EditEventPage extends EditRecord
 
     protected static string $resource = EventResource::class;
 
-    protected static ?string $navigationLabel = 'Event Page';
+    protected static ?string $navigationLabel = 'Page Description';
 
     public function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Hero Image')
-                ->description('Upload a hero image for your event page')
+            Section::make('Page Description')
+                ->description('Configure your event page with hero image and description content')
                 ->schema([
                     FileUpload::make('hero_image')
                         ->label('Hero Image')
                         ->image()
-                        ->disk('public')
-                        ->directory('event-images')
-                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
-                        ->maxSize(5120) // 5MB
+                        ->disk('s3-public')
+                        ->directory('event-hero-images')
+                        ->visibility('public')
+                        ->acceptedFileTypes([
+                            'image/jpeg',
+                            'image/png', 
+                            'image/webp',
+                            'image/svg+xml',
+                        ])
+                        // ->imageEditor()
+                        // ->imagePreviewHeight('250')
+                        // ->maxSize(5120) // 5MB in KB
                         ->columnSpanFull(),
-                ]),
+                        // ->helperText('Upload a hero image that will be displayed at the top of your event page. Recommended size: 1200x675 pixels (16:9 ratio).'),
 
-            Section::make('Page Description')
-                ->description('Create the content that will appear on your event page')
-                ->schema([
                     TiptapEditor::make('description')
                         ->label('Description')
-                        ->tools([
-                            'bold',
-                            'italic',
-                            'strike',
-                            '|',
-                            'heading',
-                            '|',
-                            'bullet-list',
-                            'ordered-list',
-                            '|',
-                            'link',
-                            'blockquote',
-                            'hr',
-                        ])
-                        ->placeholder('Enter your event description...')
-                        ->columnSpanFull(),
-                ]),
-
-            Section::make('Registration Settings')
-                ->description('Configure how registration is presented to users')
-                ->schema([
-                    Grid::make(2)
-                        ->schema([
-                            Toggle::make('show_registration_popup')
-                                ->label('Show Registration in Popup')
-                                ->helperText('When enabled, registration will appear in a popup modal. When disabled, users will go to a full registration page.')
-                                ->default(true),
-                        ]),
-                ]),
-
-            Section::make('Embed Settings')
-                ->description('Configure embedding options for this event page')
-                ->schema([
-                    Grid::make()
-                        ->schema([
-                            Toggle::make('embed_enabled')
-                                ->label('Allow Event Page Embedding')
-                                ->live()
-                                ->helperText('If enabled, this event page can be embedded on other websites.'),
-                            TagsInput::make('allowed_domains')
-                                ->label('Allowed Domains')
-                                ->helperText('Only these domains will be allowed to embed this event page.')
-                                ->placeholder('example.com')
-                                ->hidden(fn (Get $get) => ! $get('embed_enabled'))
-                                ->disabled(fn (Get $get) => ! $get('embed_enabled'))
-                                ->nestedRecursiveRules([
-                                    'string',
-                                    new IsDomain(),
-                                ]),
-                        ])
+                        ->profile('default')
+                        ->output(TiptapOutput::Json)
+                        ->disk('s3-public')
+                        ->directory('event-content-images')
+                        ->placeholder('Create engaging content for your event page. You can add headings, lists, images, links, and more...')
+                        ->extraInputAttributes(['style' => 'min-height: 20rem;'])
                         ->columnSpanFull(),
                 ]),
         ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [];
     }
 }

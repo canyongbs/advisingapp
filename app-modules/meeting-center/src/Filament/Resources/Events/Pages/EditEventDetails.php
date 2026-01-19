@@ -63,8 +63,7 @@ class EditEventDetails extends EditRecord
             TextInput::make('location')
                 ->label('Location')
                 ->string()
-                ->nullable()
-                ->columnSpanFull(),
+                ->nullable(),
             TextInput::make('capacity')
                 ->label('Capacity')
                 ->integer()
