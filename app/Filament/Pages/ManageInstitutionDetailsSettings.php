@@ -55,6 +55,8 @@ class ManageInstitutionDetailsSettings extends SettingsPage
 
     protected static string $settings = InstitutionDetailsSettings::class;
 
+    protected static ?string $title = 'Profile';
+
     public static function canAccess(): bool
     {
         $user = auth()->user();
@@ -69,8 +71,10 @@ class ManageInstitutionDetailsSettings extends SettingsPage
             ->components([
                 TextInput::make('ipeds_id')
                     ->label('IPEDS ID')
+                    ->nullable()
                     ->maxLength(255),
                 TextInput::make('name')
+                    ->nullable()
                     ->maxLength(255),
                 SpatieMediaLibraryFileUpload::make('dark_logo')
                     ->label('Dark Logo')
