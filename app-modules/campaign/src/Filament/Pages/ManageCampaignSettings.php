@@ -37,12 +37,12 @@
 namespace AdvisingApp\Campaign\Filament\Pages;
 
 use AdvisingApp\Campaign\Settings\CampaignSettings;
+use App\Filament\Forms\Components\TimezoneSelect;
 use App\Models\User;
 use App\Settings\DisplaySettings;
 use BackedEnum;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
-use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
 class ManageCampaignSettings extends SettingsPage
 {

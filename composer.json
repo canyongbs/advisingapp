@@ -116,7 +116,6 @@
         "staudenmeir/eloquent-has-many-deep": "^1.19",
         "stechstudio/filament-impersonate": "^4.0",
         "talkroute/message-segment-calculator": "^1.0",
-        "tapp/filament-timezone-field": "^3.0",
         "telnyx/telnyx-php": "^3.0",
         "tpetry/laravel-postgresql-enhanced": "^3.0",
         "twilio/sdk": "^8.5.0",
