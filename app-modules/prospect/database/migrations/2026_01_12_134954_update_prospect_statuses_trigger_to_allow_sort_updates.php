@@ -54,7 +54,7 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::table('allow_sort_updates', function (Blueprint $table) {
+        Schema::table('prospect_statuses', function (Blueprint $table) {
             $table->trigger(
                 name: 'prevent_modification_of_system_protected_rows',
                 action: 'prevent_modification_of_system_protected_rows()',
