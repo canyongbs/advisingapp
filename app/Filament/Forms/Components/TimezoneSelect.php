@@ -49,8 +49,8 @@ class TimezoneSelect
 
         $identifiers = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
 
-        $us = [];
-        $other = [];
+        $usTimezones = [];
+        $otherTimezones = [];
 
         foreach ($identifiers as $id) {
             if (! self::isCanonical($id)) {
@@ -67,9 +67,9 @@ class TimezoneSelect
             ];
 
             if (in_array($id, self::US_TIMEZONES, true)) {
-                $us[] = $entry;
+                $usTimezones[] = $entry;
             } else {
-                $other[] = $entry;
+                $otherTimezones[] = $entry;
             }
         }
 
@@ -78,15 +78,15 @@ class TimezoneSelect
                 ?: strcmp($first['id'], $second['id']);
         };
 
-        usort($us, $sortByOffset);
-        usort($other, $sortByOffset);
+        usort($usTimezones, $sortByOffset);
+        usort($otherTimezones, $sortByOffset);
 
         return Select::make($name)
             ->searchable()
             ->optionsLimit(PHP_INT_MAX)
             ->options([
-                'United States' => self::toOptions($us),
-                'Other Timezones' => self::toOptions($other),
+                'United States' => self::toOptions($usTimezones),
+                'Other Timezones' => self::toOptions($otherTimezones),
             ]);
     }
 
