@@ -76,8 +76,14 @@ class AlertStats extends StatsOverviewWidget
         $stats = [];
 
         foreach ($alertConfigurations as $config) {
+            $insightsPaneTitle = $config->preset->getInsightsPaneTitle();
+
+            if (empty($insightsPaneTitle)) {
+                continue;
+            }
+
             $stats[] = Stat::make(
-                $config->preset->getInsightsPaneTitle(),
+                $insightsPaneTitle,
                 Number::format(StudentAlert::query()
                     ->whereHas('student', $studentQuery)
                     ->where('alert_configuration_id', $config->id)
