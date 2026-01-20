@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -40,7 +40,6 @@ use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Models\Event;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
@@ -59,11 +58,33 @@ class ViewEvent extends ViewRecord
                 Section::make()
                     ->schema([
                         TextEntry::make('title'),
-                        TextEntry::make('description'),
+                        TextEntry::make('description')
+                            ->label('Description')
+                            ->state(function (Event $record): string {
+                                $description = $record->description;
+
+                                if (empty($description)) {
+                                    return '-';
+                                }
+
+                                if (is_array($description) && isset($description['type']) && isset($description['content'])) {
+                                    return tiptap_converter()->record($record, attribute: 'description')->asHTML($description);
+                                }
+
+                                return '-';
+                            })
+                            ->html()
+                            ->columnSpanFull(),
                         TextEntry::make('location'),
                         TextEntry::make('capacity'),
-                        TextEntry::make('starts_at'),
-                        TextEntry::make('ends_at'),
+                        TextEntry::make('starts_at')
+                            ->dateTime(),
+                        TextEntry::make('ends_at')
+                            ->dateTime(),
+                        TextEntry::make('createdBy.name')
+                            ->label('Created By'),
+                        TextEntry::make('lastUpdatedBy.name')
+                            ->label('Last Updated By'),
                     ])
                     ->columns(),
             ]);
@@ -72,12 +93,47 @@ class ViewEvent extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('view')
-                ->url(fn (Event $event) => route('event-registration.show', ['event' => $event]))
-                ->icon('heroicon-m-arrow-top-right-on-square')
-                ->openUrlInNewTab(),
-            EditAction::make(),
+            Action::make('view_event_page')
+                ->label('View Event Page')
+                ->icon('heroicon-o-arrow-top-right-on-square')
+                ->color('primary')
+                ->url(fn (Event $record): string => route('event-registration.show', ['event' => $record]))
+                ->openUrlInNewTab()
+                ->outlined(),
+            Action::make('embed_snippet')
+                ->label('Embed Snippet')
+                ->icon('heroicon-o-code-bracket')
+                ->schema([
+                    TextEntry::make('snippet')
+                        ->label('Click to Copy')
+                        ->state(function (Event $record): string {
+                            $code = $this->generateEmbedCode($record);
+
+                            $state = <<<EOD
+                            ```
+                            {$code}
+                            ```
+                            EOD;
+
+                            return str($state)->markdown()->toHtmlString();
+                        })
+                        ->copyable()
+                        ->copyableState(fn (Event $record): string => $this->generateEmbedCode($record))
+                        ->copyMessage('Copied!')
+                        ->copyMessageDuration(1500)
+                        ->extraAttributes(['class' => 'embed-code-snippet']),
+                ])
+                ->modalSubmitAction(false)
+                ->modalCancelActionLabel('Close')
+                ->hidden(fn (Event $record): bool => ! $record->eventRegistrationForm?->embed_enabled),
             DeleteAction::make(),
         ];
+    }
+
+    protected function generateEmbedCode(Event $event): string
+    {
+        $url = route('event-registration.show', ['event' => $event]);
+
+        return '<iframe src="' . $url . '" width="100%" height="800" frameborder="0" style="border: none;"></iframe>';
     }
 }

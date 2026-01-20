@@ -37,7 +37,6 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\CreateEvent;
-use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventDetails;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventPage;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventRegistration;
@@ -88,7 +87,6 @@ class EventResource extends Resource
             'index' => ListEvents::route('/'),
             'create' => CreateEvent::route('/create'),
             'view' => ViewEvent::route('/{record}'),
-            'edit' => EditEvent::route('/{record}/edit'),
             'edit-details' => EditEventDetails::route('/{record}/edit-details'),
             'edit-page' => EditEventPage::route('/{record}/edit-page'),
             'edit-registration' => EditEventRegistration::route('/{record}/edit-registration'),

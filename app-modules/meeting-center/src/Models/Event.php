@@ -41,14 +41,17 @@ use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @mixin IdeHelperEvent
  */
-class Event extends BaseModel
+class Event extends BaseModel implements HasMedia
 {
     use SoftDeletes;
     use HasUserSaveTracking;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'title',
@@ -57,6 +60,8 @@ class Event extends BaseModel
         'capacity',
         'starts_at',
         'ends_at',
+        'created_by_id',
+        'last_updated_by_id',
     ];
 
     protected $casts = [
@@ -64,6 +69,18 @@ class Event extends BaseModel
         'ends_at' => 'datetime',
         'description' => 'array',
     ];
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('hero_image')
+            ->useDisk('s3-public')
+            ->singleFile()
+            ->acceptsMimeTypes([
+                'image/jpeg',
+                'image/png',
+                'image/gif',
+            ]);
+    }
 
     /**
      * @return HasOne<EventRegistrationForm, $this>

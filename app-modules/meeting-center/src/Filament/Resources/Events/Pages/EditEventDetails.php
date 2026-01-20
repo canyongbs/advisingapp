@@ -36,11 +36,20 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
+use AdvisingApp\Form\Enums\Rounding;
+use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class EditEventDetails extends EditRecord
@@ -49,34 +58,68 @@ class EditEventDetails extends EditRecord
 
     protected static string $resource = EventResource::class;
 
-    protected static ?string $navigationLabel = 'Event Details';
+    protected static ?string $navigationLabel = 'Details';
 
     public function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('title')
-                ->label('Title')
-                ->string()
-                ->required()
-                ->maxLength(255)
-                ->columnSpanFull(),
-            TextInput::make('location')
-                ->label('Location')
-                ->string()
-                ->nullable(),
-            TextInput::make('capacity')
-                ->label('Capacity')
-                ->integer()
-                ->minValue(1)
-                ->nullable(),
-            DateTimePicker::make('starts_at')
-                ->label('Starts at')
-                ->seconds(false)
-                ->required(),
-            DateTimePicker::make('ends_at')
-                ->label('Ends at')
-                ->seconds(false)
-                ->required(),
+            Section::make('Event Details')
+                ->schema([
+                    TextInput::make('title')
+                        ->label('Title')
+                        ->string()
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make('location')
+                        ->label('Location')
+                        ->string()
+                        ->nullable(),
+                    TextInput::make('capacity')
+                        ->label('Capacity')
+                        ->integer()
+                        ->minValue(1)
+                        ->nullable(),
+                    DateTimePicker::make('starts_at')
+                        ->label('Starts at')
+                        ->seconds(false)
+                        ->required(),
+                    DateTimePicker::make('ends_at')
+                        ->label('Ends at')
+                        ->seconds(false)
+                        ->required(),
+                ])
+                ->columns(2),
+
+            Fieldset::make('Embed Settings')
+                ->relationship('eventRegistrationForm')
+                ->schema([
+                    Toggle::make('embed_enabled')
+                        ->label('Embed Enabled')
+                        ->live()
+                        ->helperText('If enabled, this event page can be embedded on other websites.'),
+                    TagsInput::make('allowed_domains')
+                        ->label('Allowed Domains')
+                        ->helperText('Only these domains will be allowed to embed this event page.')
+                        ->placeholder('example.com')
+                        ->hidden(fn (Get $get): bool => ! $get('embed_enabled'))
+                        ->disabled(fn (Get $get): bool => ! $get('embed_enabled'))
+                        ->nestedRecursiveRules([
+                            'string',
+                            new IsDomain(),
+                        ]),
+                ])
+                ->columns(1),
+
+            Fieldset::make('Appearance Settings')
+                ->relationship('eventRegistrationForm')
+                ->schema([
+                    ColorSelect::make('primary_color')
+                        ->label('Primary Color'),
+                    Select::make('rounding')
+                        ->label('Rounding')
+                        ->options(Rounding::class),
+                ])
+                ->columns(2),
         ]);
     }
 

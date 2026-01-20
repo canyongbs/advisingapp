@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,36 +34,22 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\MeetingCenter\Http\Controllers\EventRegistrationFormEmbedController;
-use AdvisingApp\MeetingCenter\Http\Controllers\GoogleCalendarController;
-use AdvisingApp\MeetingCenter\Http\Controllers\OutlookCalendarController;
-use AdvisingApp\MeetingCenter\Http\Controllers\PersonalBookingPageViewController;
-use AdvisingApp\MeetingCenter\Livewire\RenderEventRegistrationForm;
-use Illuminate\Support\Facades\Route;
+namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
-Route::middleware(['web', 'auth'])
-    ->name('calendar.')
-    ->prefix('/calendar')
-    ->group(function () {
-        provider_routes(CalendarProvider::Google, GoogleCalendarController::class);
-        provider_routes(CalendarProvider::Outlook, OutlookCalendarController::class);
-    });
+use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
+use AdvisingApp\MeetingCenter\Models\Event;
+use App\Http\Controllers\Controller;
+use Illuminate\View\View;
 
-Route::middleware('web')
-    ->prefix('event-registration')
-    ->name('event-registration.')
-    ->group(function () {
-        Route::get('/{event}/respond', RenderEventRegistrationForm::class)
-            ->name('show');
-        Route::get('/{event}/form-embed', EventRegistrationFormEmbedController::class)
-            ->name('form-embed');
-    });
-
-Route::middleware('web')
-    ->prefix('direct-booking')
-    ->name('direct-booking.')
-    ->group(function () {
-        Route::get('/{slug}', PersonalBookingPageViewController::class)
-            ->name('show');
-    });
+class EventRegistrationFormEmbedController extends Controller
+{
+    public function __invoke(Event $event, GenerateSubmissibleEmbedCode $generateEmbedCode): View
+    {
+        return view('meeting-center::event-registration-embed', [
+            'title' => $event->title,
+            'embedCode' => $event->eventRegistrationForm
+                ? $generateEmbedCode->handle($event->eventRegistrationForm)
+                : null,
+        ]);
+    }
+}

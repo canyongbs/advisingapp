@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -42,6 +42,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class RenderEventRegistrationForm extends Component implements HasForms, HasActions
@@ -49,15 +50,63 @@ class RenderEventRegistrationForm extends Component implements HasForms, HasActi
     use InteractsWithActions;
     use InteractsWithForms;
 
-    public bool $show = true;
+    public bool $showRegistrationModal = false;
 
     public Event $event;
 
-    public ?array $data = [];
+    #[Computed]
+    public function heroImageUrl(): ?string
+    {
+        return $this->event->getFirstMediaUrl('hero_image') ?: null;
+    }
+
+    #[Computed]
+    public function descriptionHtml(): ?string
+    {
+        $description = $this->event->description;
+
+        if (empty($description)) {
+            return null;
+        }
+
+        // Handle tiptap JSON format (array with type and content)
+        if (is_array($description) && isset($description['type']) && isset($description['content'])) {
+            return tiptap_converter()->record($this->event, attribute: 'description')->asHTML($description);
+        }
+
+        // Handle plain string (legacy data or simple text)
+        if (is_string($description)) {
+            // Check if it's a JSON string that needs to be decoded
+            $decoded = json_decode($description, true);
+            if (is_array($decoded) && isset($decoded['type']) && isset($decoded['content'])) {
+                return tiptap_converter()->record($this->event, attribute: 'description')->asHTML($decoded);
+            }
+            // Return plain string as HTML (escaped)
+            return nl2br(e($description));
+        }
+
+        return null;
+    }
+
+    #[Computed]
+    public function createdByName(): ?string
+    {
+        return $this->event->createdBy?->name;
+    }
+
+    public function openRegistrationModal(): void
+    {
+        $this->showRegistrationModal = true;
+    }
+
+    public function closeRegistrationModal(): void
+    {
+        $this->showRegistrationModal = false;
+    }
 
     public function render(): View
     {
         return view('meeting-center::livewire.render-event-registration-form')
-            ->title("{$this->event->title} Registration");
+            ->title($this->event->title);
     }
 }

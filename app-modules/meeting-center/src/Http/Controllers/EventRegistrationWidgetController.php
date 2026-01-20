@@ -111,7 +111,7 @@ class EventRegistrationWidgetController extends Controller
         return response()->json(
             [
                 'name' => $form->event->title,
-                'description' => $form->event->description,
+                'description' => null, // Description is shown on the landing page, not needed in the registration form widget
                 'is_authenticated' => true,
                 'authentication_url' => URL::signedRoute(
                     name: 'widgets.event-registration.api.request-authentication',

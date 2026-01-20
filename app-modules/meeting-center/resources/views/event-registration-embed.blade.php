@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
@@ -17,7 +15,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -32,38 +30,31 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
-use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\MeetingCenter\Http\Controllers\EventRegistrationFormEmbedController;
-use AdvisingApp\MeetingCenter\Http\Controllers\GoogleCalendarController;
-use AdvisingApp\MeetingCenter\Http\Controllers\OutlookCalendarController;
-use AdvisingApp\MeetingCenter\Http\Controllers\PersonalBookingPageViewController;
-use AdvisingApp\MeetingCenter\Livewire\RenderEventRegistrationForm;
-use Illuminate\Support\Facades\Route;
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-Route::middleware(['web', 'auth'])
-    ->name('calendar.')
-    ->prefix('/calendar')
-    ->group(function () {
-        provider_routes(CalendarProvider::Google, GoogleCalendarController::class);
-        provider_routes(CalendarProvider::Outlook, OutlookCalendarController::class);
-    });
+    <title>{{ $title }} - Registration</title>
 
-Route::middleware('web')
-    ->prefix('event-registration')
-    ->name('event-registration.')
-    ->group(function () {
-        Route::get('/{event}/respond', RenderEventRegistrationForm::class)
-            ->name('show');
-        Route::get('/{event}/form-embed', EventRegistrationFormEmbedController::class)
-            ->name('form-embed');
-    });
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: transparent;
+        }
+    </style>
+</head>
 
-Route::middleware('web')
-    ->prefix('direct-booking')
-    ->name('direct-booking.')
-    ->group(function () {
-        Route::get('/{slug}', PersonalBookingPageViewController::class)
-            ->name('show');
-    });
+<body>
+    @if ($embedCode)
+        {!! $embedCode !!}
+    @endif
+</body>
+
+</html>

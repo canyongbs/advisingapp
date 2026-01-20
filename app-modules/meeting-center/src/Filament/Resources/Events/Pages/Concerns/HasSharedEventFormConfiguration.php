@@ -48,7 +48,6 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Component;
@@ -68,9 +67,6 @@ trait HasSharedEventFormConfiguration
             TextInput::make('title')
                 ->string()
                 ->required(),
-            Textarea::make('description')
-                ->string()
-                ->nullable(),
             TextInput::make('location')
                 ->string()
                 ->nullable(),

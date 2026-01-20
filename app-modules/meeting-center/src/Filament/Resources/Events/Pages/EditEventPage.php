@@ -36,16 +36,11 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
-use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use FilamentTiptapEditor\TiptapEditor;
@@ -56,31 +51,21 @@ class EditEventPage extends EditRecord
 
     protected static string $resource = EventResource::class;
 
-    protected static ?string $navigationLabel = 'Page Description';
+    protected static ?string $navigationLabel = 'Landing Page';
 
     public function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Page Description')
-                ->description('Configure your event page with hero image and description content')
+            Section::make('Landing Page')
+                ->description('Configure your event landing page with a hero image and description content.')
                 ->schema([
-                    FileUpload::make('hero_image')
+                    SpatieMediaLibraryFileUpload::make('hero_image')
                         ->label('Hero Image')
-                        ->image()
                         ->disk('s3-public')
-                        ->directory('event-hero-images')
-                        ->visibility('public')
-                        ->acceptedFileTypes([
-                            'image/jpeg',
-                            'image/png', 
-                            'image/webp',
-                            'image/svg+xml',
-                        ])
-                        // ->imageEditor()
-                        // ->imagePreviewHeight('250')
-                        // ->maxSize(5120) // 5MB in KB
+                        ->collection('hero_image')
+                        ->image()
+                        ->maxSize(5120)
                         ->columnSpanFull(),
-                        // ->helperText('Upload a hero image that will be displayed at the top of your event page. Recommended size: 1200x675 pixels (16:9 ratio).'),
 
                     TiptapEditor::make('description')
                         ->label('Description')
@@ -88,10 +73,14 @@ class EditEventPage extends EditRecord
                         ->output(TiptapOutput::Json)
                         ->disk('s3-public')
                         ->directory('event-content-images')
-                        ->placeholder('Create engaging content for your event page. You can add headings, lists, images, links, and more...')
-                        ->extraInputAttributes(['style' => 'min-height: 20rem;'])
+                        ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                         ->columnSpanFull(),
                 ]),
         ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [];
     }
 }

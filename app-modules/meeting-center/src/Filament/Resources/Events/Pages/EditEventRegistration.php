@@ -36,16 +36,13 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
-use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
@@ -120,14 +117,6 @@ class EditEventRegistration extends EditRecord
                         ->relationship()
                         ->reorderable()
                         ->columnSpanFull(),
-                    
-                    Section::make('Appearance')
-                        ->schema([
-                            ColorSelect::make('primary_color'),
-                            Select::make('rounding')
-                                ->options(Rounding::class),
-                        ])
-                        ->columns(),
                 ]),
         ]);
     }
