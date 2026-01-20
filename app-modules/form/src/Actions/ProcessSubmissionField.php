@@ -91,11 +91,11 @@ class ProcessSubmissionField
                     continue;
                 }
 
-                try{
+                try {
                     $media = $fieldSubmission
-                    ->addMediaFromDisk($key, 's3')
-                    ->usingFileName($file['originalFileName'] ?? basename($key))
-                    ->toMediaCollection('files', 's3');
+                        ->addMediaFromDisk($key, 's3')
+                        ->usingFileName($file['originalFileName'] ?? basename($key))
+                        ->toMediaCollection('files', 's3');
 
                     $fieldSubmission->update([
                         'response' => [
@@ -106,7 +106,7 @@ class ProcessSubmissionField
                     ]);
                 } finally {
                     Storage::disk('s3')->delete($key);
-                }                
+                }
             }
         }
 
@@ -149,7 +149,7 @@ class ProcessSubmissionField
             throw new InvalidArgumentException('Invalid path: does not match expected format');
         }
     }
-    
+
     protected function handleEducatableEmailField(Submission $submission, mixed $response): void
     {
         $submissible = $submission->submissible;
