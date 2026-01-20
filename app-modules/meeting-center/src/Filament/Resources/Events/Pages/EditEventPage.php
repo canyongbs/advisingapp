@@ -72,7 +72,6 @@ class EditEventPage extends EditRecord
                         ->profile('default')
                         ->output(TiptapOutput::Json)
                         ->disk('s3-public')
-                        ->directory('event-content-images')
                         ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                         ->columnSpanFull(),
                 ]),
