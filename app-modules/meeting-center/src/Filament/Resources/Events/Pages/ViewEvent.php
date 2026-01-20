@@ -67,7 +67,7 @@ class ViewEvent extends ViewRecord
                                     return '-';
                                 }
 
-                                if (is_array($description) && isset($description['type']) && isset($description['content'])) {
+                                if (isset($description['type']) && isset($description['content'])) {
                                     return tiptap_converter()->record($record, attribute: 'description')->asHTML($description);
                                 }
 
@@ -93,47 +93,11 @@ class ViewEvent extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('view_event_page')
-                ->label('View Event Page')
-                ->icon('heroicon-o-arrow-top-right-on-square')
-                ->color('primary')
+            Action::make('view')
                 ->url(fn (Event $record): string => route('event-registration.show', ['event' => $record]))
-                ->openUrlInNewTab()
-                ->outlined(),
-            Action::make('embed_snippet')
-                ->label('Embed Snippet')
-                ->icon('heroicon-o-code-bracket')
-                ->schema([
-                    TextEntry::make('snippet')
-                        ->label('Click to Copy')
-                        ->state(function (Event $record): string {
-                            $code = $this->generateEmbedCode($record);
-
-                            $state = <<<EOD
-                            ```
-                            {$code}
-                            ```
-                            EOD;
-
-                            return str($state)->markdown()->toHtmlString();
-                        })
-                        ->copyable()
-                        ->copyableState(fn (Event $record): string => $this->generateEmbedCode($record))
-                        ->copyMessage('Copied!')
-                        ->copyMessageDuration(1500)
-                        ->extraAttributes(['class' => 'embed-code-snippet']),
-                ])
-                ->modalSubmitAction(false)
-                ->modalCancelActionLabel('Close')
-                ->hidden(fn (Event $record): bool => ! $record->eventRegistrationForm?->embed_enabled),
+                ->icon('heroicon-m-arrow-top-right-on-square')
+                ->openUrlInNewTab(),
             DeleteAction::make(),
         ];
-    }
-
-    protected function generateEmbedCode(Event $event): string
-    {
-        $url = route('event-registration.show', ['event' => $event]);
-
-        return '<iframe src="' . $url . '" width="100%" height="800" frameborder="0" style="border: none;"></iframe>';
     }
 }

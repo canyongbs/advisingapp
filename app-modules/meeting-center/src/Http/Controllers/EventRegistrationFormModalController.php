@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
@@ -30,31 +32,24 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+*/
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
-    <title>{{ $title }} - Registration</title>
+use AdvisingApp\MeetingCenter\Models\Event;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: transparent;
-        }
-    </style>
-</head>
+class EventRegistrationFormModalController
+{
+    public function __invoke(Request $request, Event $event): View
+    {
+        $eventRegistrationForm = $event->eventRegistrationForm;
 
-<body>
-    @if ($embedCode)
-        {!! $embedCode !!}
-    @endif
-</body>
+        abort_if(is_null($eventRegistrationForm), 404);
 
-</html>
+        return view('meeting-center::event-registration-form-modal', [
+            'eventRegistrationForm' => $eventRegistrationForm,
+        ]);
+    }
+}

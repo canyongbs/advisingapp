@@ -47,8 +47,6 @@ class EditEvent extends Page
 
     public function mount(int | string $record): void
     {
-        parent::mount($record);
-
         $this->redirect(EventResource::getUrl('edit-details', ['record' => $record]));
     }
 

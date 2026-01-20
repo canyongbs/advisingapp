@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\MeetingCenter\Http\Controllers\EventRegistrationFormEmbedController;
+use AdvisingApp\MeetingCenter\Http\Controllers\EventRegistrationFormModalController;
 use AdvisingApp\MeetingCenter\Http\Controllers\GoogleCalendarController;
 use AdvisingApp\MeetingCenter\Http\Controllers\OutlookCalendarController;
 use AdvisingApp\MeetingCenter\Http\Controllers\PersonalBookingPageViewController;
@@ -56,8 +56,8 @@ Route::middleware('web')
     ->group(function () {
         Route::get('/{event}/respond', RenderEventRegistrationForm::class)
             ->name('show');
-        Route::get('/{event}/form-embed', EventRegistrationFormEmbedController::class)
-            ->name('form-embed');
+        Route::get('/{event}/form-modal', EventRegistrationFormModalController::class)
+            ->name('form-modal');
     });
 
 Route::middleware('web')

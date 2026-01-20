@@ -38,8 +38,6 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\Concerns\HasSharedEventFormConfiguration;
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
 
@@ -52,51 +50,5 @@ class CreateEvent extends CreateRecord
     public function form(Schema $schema): Schema
     {
         return $schema->components($this->fields());
-    }
-
-    protected function afterCreate(): void
-    {
-        /** @var Event $event */
-        $event = $this->getRecord();
-
-        // Create a default registration form for the event
-        $event->eventRegistrationForm()->create([
-            'embed_enabled' => false,
-            'is_wizard' => false,
-            'recaptcha_enabled' => false,
-            'content' => [
-                'type' => 'doc',
-                'content' => [
-                    [
-                        'type' => 'grid',
-                        'attrs' => [
-                            'cols' => 2,
-                            'stack' => 'at-lg',
-                        ],
-                        'content' => [
-                            [
-                                'type' => 'gridColumn',
-                                'attrs' => [
-                                    'span' => 1,
-                                ],
-                                'content' => [
-                                    [
-                                        'type' => 'tiptapBlock',
-                                        'attrs' => [
-                                            'id' => 'primary_email_address',
-                                            'type' => 'primary_email_address',
-                                            'data' => [
-                                                'label' => 'Email Address',
-                                                'isRequired' => true,
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ]);
     }
 }

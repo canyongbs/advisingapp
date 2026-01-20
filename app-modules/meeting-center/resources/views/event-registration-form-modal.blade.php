@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
@@ -32,24 +30,13 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
+@endphp
 
-namespace AdvisingApp\MeetingCenter\Http\Controllers;
-
-use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
-use AdvisingApp\MeetingCenter\Models\Event;
-use App\Http\Controllers\Controller;
-use Illuminate\View\View;
-
-class EventRegistrationFormEmbedController extends Controller
-{
-    public function __invoke(Event $event, GenerateSubmissibleEmbedCode $generateEmbedCode): View
-    {
-        return view('meeting-center::event-registration-embed', [
-            'title' => $event->title,
-            'embedCode' => $event->eventRegistrationForm
-                ? $generateEmbedCode->handle($event->eventRegistrationForm)
-                : null,
-        ]);
-    }
-}
+<div class="flex items-center justify-center px-4 py-16">
+    <div class="w-full max-w-4xl">
+        {!! resolve(GenerateSubmissibleEmbedCode::class)->handle($eventRegistrationForm) !!}
+    </div>
+</div>

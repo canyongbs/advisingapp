@@ -38,6 +38,7 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
+use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
@@ -91,14 +92,14 @@ class EditEventRegistration extends EditRecord
                         ->label('Multi-step form')
                         ->live()
                         ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
-                    
+
                     Section::make('Form Fields')
                         ->schema([
                             $this->fieldBuilder(),
                         ])
                         ->hidden(fn (Get $get) => $get('is_wizard'))
                         ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
-                    
+
                     Repeater::make('steps')
                         ->schema([
                             TextInput::make('label')
@@ -136,6 +137,7 @@ class EditEventRegistration extends EditRecord
                 $record->wasRecentlyCreated && $component->processImages();
 
                 $form = $record instanceof EventRegistrationForm ? $record : $record->submissible;
+                assert($form instanceof EventRegistrationForm);
                 $formStep = $record instanceof EventRegistrationFormStep ? $record : null;
 
                 EventRegistrationFormField::query()
@@ -163,6 +165,11 @@ class EditEventRegistration extends EditRecord
             ->extraInputAttributes(['style' => 'min-height: 12rem;']);
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $components
+     *
+     * @return array<int, array<string, mixed>>
+     */
     public function saveFieldsFromComponents(EventRegistrationForm $form, array $components, ?EventRegistrationFormStep $eventRegistrationFormStep): array
     {
         foreach ($components as $componentKey => $component) {
@@ -220,7 +227,8 @@ class EditEventRegistration extends EditRecord
 
     protected function clearFormContentForWizard(): void
     {
-        $event = $this->record;
+        $event = $this->getRecord();
+        assert($event instanceof Event);
         $form = $event->eventRegistrationForm;
 
         if ($form?->is_wizard) {

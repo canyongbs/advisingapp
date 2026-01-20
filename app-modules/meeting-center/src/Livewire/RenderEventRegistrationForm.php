@@ -69,29 +69,17 @@ class RenderEventRegistrationForm extends Component implements HasForms, HasActi
             return null;
         }
 
-        // Handle tiptap JSON format (array with type and content)
-        if (is_array($description) && isset($description['type']) && isset($description['content'])) {
+        if (isset($description['type']) && isset($description['content'])) {
             return tiptap_converter()->record($this->event, attribute: 'description')->asHTML($description);
-        }
-
-        // Handle plain string (legacy data or simple text)
-        if (is_string($description)) {
-            // Check if it's a JSON string that needs to be decoded
-            $decoded = json_decode($description, true);
-            if (is_array($decoded) && isset($decoded['type']) && isset($decoded['content'])) {
-                return tiptap_converter()->record($this->event, attribute: 'description')->asHTML($decoded);
-            }
-            // Return plain string as HTML (escaped)
-            return nl2br(e($description));
         }
 
         return null;
     }
 
     #[Computed]
-    public function createdByName(): ?string
+    public function createdByName(): string
     {
-        return $this->event->createdBy?->name;
+        return $this->event->createdBy->name;
     }
 
     public function openRegistrationModal(): void
