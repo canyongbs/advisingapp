@@ -42,6 +42,7 @@ use AdvisingApp\Workflow\Filament\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Columns\IconColumn;
@@ -70,10 +71,14 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
                 IconColumn::make('is_enabled')
                     ->label('Enabled')
                     ->boolean(),
+                TextColumn::make('steps')
+                    ->getStateUsing(fn (Workflow $record) => $record->workflowSteps()->count()),
             ])
             ->recordActions([
                 EditAction::make()
                     ->url(fn (Workflow $record) => WorkflowResource::getUrl('edit', [$record])),
+                DeleteAction::make()
+                    ->modalHeading(fn (Workflow $record) => 'Delete ' . $record->name),
             ])
             ->recordUrl(fn (Workflow $record) => WorkflowResource::getUrl('edit', [$record]));
     }
