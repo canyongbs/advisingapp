@@ -37,12 +37,14 @@
 namespace AdvisingApp\Campaign\Filament\Pages;
 
 use AdvisingApp\Campaign\Settings\CampaignSettings;
+use App\Filament\Forms\Components\TimezoneSelect;
 use App\Models\User;
 use App\Settings\DisplaySettings;
 use BackedEnum;
+use Filament\Forms\Components\Select;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
-use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
+use Illuminate\Support\Arr;
 
 class ManageCampaignSettings extends SettingsPage
 {
@@ -72,7 +74,7 @@ class ManageCampaignSettings extends SettingsPage
             ->components([
                 TimezoneSelect::make('action_execution_timezone')
                     ->label('Journey step execution timezone')
-                    ->placeholder(fn (TimezoneSelect $component): string => $component->getOptions()[app(DisplaySettings::class)->timezone ?? config('app.timezone')]),
+                    ->placeholder(fn (Select $component): string => Arr::flatten($component->getOptions())[app(DisplaySettings::class)->timezone ?? config('app.timezone')] ?? app(DisplaySettings::class)->timezone ?? config('app.timezone')),
             ]);
     }
 }

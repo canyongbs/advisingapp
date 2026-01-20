@@ -36,10 +36,10 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Forms\Components\TimezoneSelect;
 use App\Settings\DisplaySettings;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
 /**
  * @property Schema $form

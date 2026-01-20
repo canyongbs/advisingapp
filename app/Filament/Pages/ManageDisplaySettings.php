@@ -37,13 +37,13 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Clusters\DisplaySettings as DisplaySettingsCluster;
+use App\Filament\Forms\Components\TimezoneSelect;
 use App\Models\User;
 use App\Settings\DisplaySettings;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
-use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
 class ManageDisplaySettings extends SettingsPage
 {
