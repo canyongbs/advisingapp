@@ -440,8 +440,8 @@ class ProcessSubmissionField
                 ->preservingOriginal()
                 ->toMediaCollection('file', 's3');
 
-            // @phpstan-ignore-next-line function.alreadyNarrowedType, instanceof.alwaysTrue, booleanOr.alwaysTrue
-            if (($author instanceof Student || $author instanceof Prospect) && method_exists($author, 'engagementFiles')) {
+            // @phpstan-ignore instanceof.alwaysTrue, booleanOr.alwaysTrue (EventAttendee excluded - doesn't have engagementFiles)
+            if ($author instanceof Student || $author instanceof Prospect) {
                 $author->engagementFiles()->attach($engagementFile);
             }
 
