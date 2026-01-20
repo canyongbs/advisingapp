@@ -68,6 +68,10 @@ class ListForms extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('name')
                     ->description(fn (Form $record) => $record->title),
+                TextColumn::make('submissions')
+                    ->label('Submissions')
+                    ->counts('submissions')
+                    ->default(0),
             ])
             ->recordActions([
                 ViewAction::make(),
