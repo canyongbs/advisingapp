@@ -89,6 +89,20 @@ class GenerateSubmissibleValidation
                     $field->getKey() => $rules->merge($blockRules)->all(),
                 ];
 
+                // Security: Add file upload path validation for upload fields
+                if ($field->type === 'upload' || $field->type === 'educatable-upload') {
+                    $nestedRules['*.path'] = [
+                        'required_with:' . $field->getKey(),
+                        'string',
+                        'regex:/^tmp\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.[a-zA-Z0-9]+$/i',
+                    ];
+                    $nestedRules['*.originalFileName'] = [
+                        'required_with:' . $field->getKey(),
+                        'string',
+                        'max:255',
+                    ];
+                }
+
                 foreach ($nestedRules as $nestedKey => $nestedRule) {
                     $result[$field->getKey() . '.' . $nestedKey] = $nestedRule;
                 }
