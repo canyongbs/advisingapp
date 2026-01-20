@@ -78,6 +78,7 @@ class ListForms extends ListRecords
                 EditAction::make(),
                 ReplicateAction::make('Duplicate')
                     ->modalHeading('Duplicate Form')
+                    ->excludeAttributes(['submissions_count'])
                     ->mutateRecordDataUsing(function (array $data): array {
                         $data['name'] = "Copy - {$data['name']}";
 
