@@ -78,9 +78,4 @@ class EditEventPage extends EditRecord
                 ]),
         ]);
     }
-
-    protected function getHeaderActions(): array
-    {
-        return [];
-    }
 }

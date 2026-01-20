@@ -40,7 +40,6 @@
 <div class="flex items-center justify-center px-4 py-8 sm:py-16">
     <div class="w-full max-w-4xl">
         <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-            {{-- Hero Image (only show if available) --}}
             @if ($this->heroImageUrl)
                 <div class="relative h-48 w-full overflow-hidden sm:h-64 md:h-80">
                     <img
@@ -51,9 +50,7 @@
                 </div>
             @endif
 
-            {{-- Event Content --}}
             <div class="p-6 sm:p-8">
-                {{-- Event Title and Register Button --}}
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div class="flex-1">
                         <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">
@@ -75,7 +72,6 @@
                     @endif
                 </div>
 
-                {{-- Event Details (location and date/time) --}}
                 @if ($event->location || ($event->starts_at && $event->ends_at))
                     <div class="mt-6 space-y-2 text-sm text-gray-600">
                         @if ($event->location)
@@ -91,7 +87,6 @@
                     </div>
                 @endif
 
-                {{-- Event Description (only show section if description exists) --}}
                 @if ($this->descriptionHtml)
                     <hr class="my-6 border-gray-200">
                     <div class="space-y-4">
@@ -102,7 +97,6 @@
                     </div>
                 @endif
 
-                {{-- Bottom Register Button --}}
                 <div class="mt-8">
                     <button
                         wire:click="openRegistrationModal"
@@ -115,7 +109,6 @@
         </div>
     </div>
 
-    {{-- Registration Modal --}}
     @if ($showRegistrationModal)
         <div
             class="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -123,16 +116,13 @@
             role="dialog"
             aria-modal="true"
         >
-            {{-- Background overlay --}}
             <div
                 class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
                 aria-hidden="true"
                 wire:click="closeRegistrationModal"
             ></div>
 
-            {{-- Modal panel --}}
             <div class="relative flex w-full max-w-[95vw] flex-col overflow-hidden rounded-lg bg-white shadow-xl sm:max-w-[90vw] md:max-w-[85vw] lg:max-w-5xl" style="max-height: 90vh;">
-                {{-- Close button --}}
                 <button
                     wire:click="closeRegistrationModal"
                     class="absolute right-4 top-4 z-10 rounded-full bg-white p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-sky-500"
@@ -143,7 +133,6 @@
                     </svg>
                 </button>
 
-                {{-- Modal content --}}
                 <div class="flex-1 overflow-y-auto">
                     @if ($this->event->eventRegistrationForm)
                         <iframe

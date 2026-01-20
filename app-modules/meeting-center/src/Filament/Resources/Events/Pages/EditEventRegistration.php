@@ -215,11 +215,6 @@ class EditEventRegistration extends EditRecord
         return $components;
     }
 
-    protected function getHeaderActions(): array
-    {
-        return [];
-    }
-
     protected function afterSave(): void
     {
         $this->clearFormContentForWizard();

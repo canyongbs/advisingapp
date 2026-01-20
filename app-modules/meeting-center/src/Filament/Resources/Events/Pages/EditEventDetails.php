@@ -122,9 +122,4 @@ class EditEventDetails extends EditRecord
                 ->columns(2),
         ]);
     }
-
-    protected function getHeaderActions(): array
-    {
-        return [];
-    }
 }

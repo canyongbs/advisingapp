@@ -49,9 +49,4 @@ class EditEvent extends Page
     {
         $this->redirect(EventResource::getUrl('edit-details', ['record' => $record]));
     }
-
-    protected function getHeaderActions(): array
-    {
-        return [];
-    }
 }
