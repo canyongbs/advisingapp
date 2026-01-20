@@ -68,12 +68,17 @@ class ListForms extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('name')
                     ->description(fn (Form $record) => $record->title),
+                TextColumn::make('submissions_count')
+                    ->label('Submissions')
+                    ->counts('submissions')
+                    ->default(0),
             ])
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
                 ReplicateAction::make('Duplicate')
                     ->modalHeading('Duplicate Form')
+                    ->excludeAttributes(['submissions_count'])
                     ->mutateRecordDataUsing(function (array $data): array {
                         $data['name'] = "Copy - {$data['name']}";
 
