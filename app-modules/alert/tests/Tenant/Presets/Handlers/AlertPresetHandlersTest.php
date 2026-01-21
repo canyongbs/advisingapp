@@ -45,6 +45,9 @@ use AdvisingApp\Alert\Presets\AlertPreset;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Concern\Models\ConcernStatus;
+use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Facades\DB;
@@ -791,6 +794,250 @@ it('handles scenario where alerts are enabled but no students match criteria', f
 
     $result = DB::select('SELECT * FROM student_alerts');
     expect($result)->toBeArray()->toBeEmpty();
+});
+
+it('can identify students with new inbound messages (NewInboundMessagePresetHandler)', function () {
+    $alertConfig = AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::NewInboundMessage])
+        ->enabled()
+        ->create();
+
+    $studentWithNewMessage = Student::factory()->create();
+
+    EngagementResponse::factory()
+        ->create([
+            'sender_type' => 'student',
+            'sender_id' => $studentWithNewMessage->sisid,
+            'status' => EngagementResponseStatus::New,
+        ]);
+
+    $studentWithActionedMessage = Student::factory()->create();
+
+    EngagementResponse::factory()
+        ->create([
+            'sender_type' => 'student',
+            'sender_id' => $studentWithActionedMessage->sisid,
+            'status' => EngagementResponseStatus::Actioned,
+        ]);
+
+    $studentWithoutMessages = Student::factory()->create();
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $studentWithNewMessage->sisid,
+        'alert_configuration_id' => $alertConfig->id,
+    ]);
+
+    expect(StudentAlert::where('sisid', $studentWithNewMessage->sisid)->exists())->toBeTrue();
+    expect(StudentAlert::where('sisid', $studentWithActionedMessage->sisid)->exists())->toBeFalse();
+    expect(StudentAlert::where('sisid', $studentWithoutMessages->sisid)->exists())->toBeFalse();
+});
+
+it('can identify students with multiple new inbound messages (NewInboundMessagePresetHandler)', function () {
+    $alertConfig = AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::NewInboundMessage])
+        ->enabled()
+        ->create();
+
+    $studentWithMultipleNewMessages = Student::factory()->create();
+
+    EngagementResponse::factory()
+        ->count(3)
+        ->create([
+            'sender_type' => 'student',
+            'sender_id' => $studentWithMultipleNewMessages->sisid,
+            'status' => EngagementResponseStatus::New,
+        ]);
+
+    $studentWithMixedMessages = Student::factory()->create();
+
+    EngagementResponse::factory()
+        ->create([
+            'sender_type' => 'student',
+            'sender_id' => $studentWithMixedMessages->sisid,
+            'status' => EngagementResponseStatus::New,
+        ]);
+
+    EngagementResponse::factory()
+        ->count(2)
+        ->create([
+            'sender_type' => 'student',
+            'sender_id' => $studentWithMixedMessages->sisid,
+            'status' => EngagementResponseStatus::Actioned,
+        ]);
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $studentWithMultipleNewMessages->sisid,
+        'alert_configuration_id' => $alertConfig->id,
+    ]);
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $studentWithMixedMessages->sisid,
+        'alert_configuration_id' => $alertConfig->id,
+    ]);
+
+    expect(StudentAlert::where('sisid', $studentWithMultipleNewMessages->sisid)->count())->toBe(1);
+    expect(StudentAlert::where('sisid', $studentWithMixedMessages->sisid)->count())->toBe(1);
+});
+
+it('excludes deleted engagement responses from new inbound message alerts (NewInboundMessagePresetHandler)', function () {
+    $alertConfig = AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::NewInboundMessage])
+        ->enabled()
+        ->create();
+
+    $studentWithDeletedMessage = Student::factory()->create();
+
+    $deletedResponse = EngagementResponse::factory()
+        ->create([
+            'sender_type' => 'student',
+            'sender_id' => $studentWithDeletedMessage->sisid,
+            'status' => EngagementResponseStatus::New,
+        ]);
+
+    $deletedResponse->delete();
+
+    $studentWithActiveMessage = Student::factory()->create();
+
+    EngagementResponse::factory()
+        ->create([
+            'sender_type' => 'student',
+            'sender_id' => $studentWithActiveMessage->sisid,
+            'status' => EngagementResponseStatus::New,
+        ]);
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    expect(StudentAlert::where('sisid', $studentWithDeletedMessage->sisid)->exists())->toBeFalse();
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $studentWithActiveMessage->sisid,
+        'alert_configuration_id' => $alertConfig->id,
+    ]);
+});
+
+it('excludes deleted students from new inbound message alerts (NewInboundMessagePresetHandler)', function () {
+    $alertConfig = AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::NewInboundMessage])
+        ->enabled()
+        ->create();
+
+    $deletedStudent = Student::factory()->create();
+
+    EngagementResponse::factory()
+        ->create([
+            'sender_type' => 'student',
+            'sender_id' => $deletedStudent->sisid,
+            'status' => EngagementResponseStatus::New,
+        ]);
+
+    $deletedStudent->delete();
+
+    $activeStudent = Student::factory()->create();
+
+    EngagementResponse::factory()
+        ->create([
+            'sender_type' => 'student',
+            'sender_id' => $activeStudent->sisid,
+            'status' => EngagementResponseStatus::New,
+        ]);
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    expect(StudentAlert::where('sisid', $deletedStudent->sisid)->exists())->toBeFalse();
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $activeStudent->sisid,
+        'alert_configuration_id' => $alertConfig->id,
+    ]);
+});
+
+it('only includes messages from students not prospects (NewInboundMessagePresetHandler)', function () {
+    $alertConfig = AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::NewInboundMessage])
+        ->enabled()
+        ->create();
+
+    $student = Student::factory()->create();
+
+    EngagementResponse::factory()
+        ->create([
+            'sender_type' => 'student',
+            'sender_id' => $student->sisid,
+            'status' => EngagementResponseStatus::New,
+        ]);
+
+    $prospect = Prospect::factory()->create();
+
+    EngagementResponse::factory()
+        ->create([
+            'sender_type' => 'prospect',
+            'sender_id' => $prospect->id,
+            'status' => EngagementResponseStatus::New,
+        ]);
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $student->sisid,
+        'alert_configuration_id' => $alertConfig->id,
+    ]);
+
+    expect(StudentAlert::count())->toBe(1);
+});
+
+it('handles scenario when new inbound message alert is disabled (NewInboundMessagePresetHandler)', function () {
+    AlertConfiguration::factory()
+        ->state([
+            'preset' => AlertPreset::NewInboundMessage,
+            'is_enabled' => false,
+        ])
+        ->create();
+
+    $student = Student::factory()->create();
+
+    EngagementResponse::factory()
+        ->create([
+            'sender_type' => 'student',
+            'sender_id' => $student->sisid,
+            'status' => EngagementResponseStatus::New,
+        ]);
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    expect(StudentAlert::count())->toBe(0);
+});
+
+it('correctly updates alerts when engagement response status changes (NewInboundMessagePresetHandler)', function () {
+    $alertConfig = AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::NewInboundMessage])
+        ->enabled()
+        ->create();
+
+    $student = Student::factory()->create();
+
+    $response = EngagementResponse::factory()
+        ->create([
+            'sender_type' => 'student',
+            'sender_id' => $student->sisid,
+            'status' => EngagementResponseStatus::New,
+        ]);
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $student->sisid,
+        'alert_configuration_id' => $alertConfig->id,
+    ]);
+
+    $response->update(['status' => EngagementResponseStatus::Actioned]);
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    expect(StudentAlert::where('sisid', $student->sisid)->exists())->toBeFalse();
 });
 
 it('can identify students with active concerns (ConcernRaisedPresetHandler)', function () {

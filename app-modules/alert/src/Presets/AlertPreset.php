@@ -44,6 +44,7 @@ use AdvisingApp\Alert\Presets\Handlers\DorfGradePresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\FirstGenerationStudentPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\MultipleCourseWithdrawalsPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\MultipleDorfGradesPresetHandler;
+use AdvisingApp\Alert\Presets\Handlers\NewInboundMessagePresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\NewStudentPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\RepeatedCourseAttemptPresetHandler;
 use Filament\Support\Contracts\HasLabel;
@@ -58,6 +59,7 @@ enum AlertPreset: string implements HasLabel
     case FirstGenerationStudent = 'first_generation_student';
     case AdultLearner = 'adult_learner';
     case NewStudent = 'new_student';
+    case NewInboundMessage = 'new_inbound_message';
     case ConcernRaised = 'concern_raised';
 
     public function getLabel(): string
@@ -76,6 +78,7 @@ enum AlertPreset: string implements HasLabel
             self::NewStudent => 6,
             self::AdultLearner => 7,
             self::FirstGenerationStudent => 8,
+            self::NewInboundMessage => 9,
             self::ConcernRaised => 10,
         };
     }
@@ -91,6 +94,7 @@ enum AlertPreset: string implements HasLabel
             self::NewStudent => 'New Student',
             self::AdultLearner => 'Adult Learner',
             self::FirstGenerationStudent => 'First Gen Student',
+            self::NewInboundMessage => '',
             self::ConcernRaised => '',
         };
     }
@@ -109,6 +113,7 @@ enum AlertPreset: string implements HasLabel
             self::FirstGenerationStudent => new FirstGenerationStudentPresetHandler(),
             self::AdultLearner => new AdultLearnerPresetHandler(),
             self::NewStudent => new NewStudentPresetHandler(),
+            self::NewInboundMessage => new NewInboundMessagePresetHandler(),
             self::ConcernRaised => new ConcernRaisedPresetHandler(),
         };
     }
