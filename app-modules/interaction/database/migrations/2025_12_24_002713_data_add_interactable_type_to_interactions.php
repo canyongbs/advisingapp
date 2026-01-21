@@ -205,7 +205,7 @@ return new class () extends Migration {
                     foreach ($interactions as $interaction) {
                         $interactionStatus = DB::table('interaction_statuses')->where('id', $interaction->interaction_status_id)->first();
 
-                         if (! is_null($interactionStatus) && $interaction->interactable_type !== $interactionStatus->interactable_type) {
+                        if (! is_null($interactionStatus) && $interaction->interactable_type !== $interactionStatus->interactable_type) {
                             $newStatusId = DB::table('interaction_statuses')
                                 ->where('name', $interactionStatus->name)
                                 ->where('interactable_type', $interaction->interactable_type)
