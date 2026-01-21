@@ -36,6 +36,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
@@ -45,10 +46,12 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::table('tenants', function (Blueprint $table) {
-            $table->dropUnique('tenants_domain_unique');
+        DB::transaction(function () {
+            Schema::table('tenants', function (Blueprint $table) {
+                $table->dropUnique('tenants_domain_unique');
 
-            $table->uniqueIndex('domain')->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
+                $table->uniqueIndex('domain', 'tenants_domain_unique')->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
+            });
         });
     }
 
@@ -57,9 +60,11 @@ return new class () extends Migration {
      */
     public function down(): void
     {
-        Schema::table('tenants', function (Blueprint $table) {
-            $table->dropUnique('tenants_domain_unique');
-            $table->unique('domain');
+        DB::transaction(function () {
+            Schema::table('tenants', function (Blueprint $table) {
+                $table->dropIndex('tenants_domain_unique');
+                $table->unique('domain');
+            });
         });
     }
 };
