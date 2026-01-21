@@ -280,7 +280,7 @@ class OutlookCalendarManager implements CalendarInterface
 
                 $calendar->user->notify(new CalendarRequiresReconnectNotification($calendar));
 
-                throw new CouldNotRefreshToken();
+                throw new CouldNotRefreshToken(previous: $response->toException());
             }
 
             if (
@@ -299,7 +299,7 @@ class OutlookCalendarManager implements CalendarInterface
 
                 $calendar->user->notify(new CalendarRequiresReconnectNotification($calendar));
 
-                throw new CouldNotRefreshToken();
+                throw new CouldNotRefreshToken(previous: $response->toException());
             }
 
             $response->throw();
