@@ -58,6 +58,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Settings\ImportSettings;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
@@ -84,20 +85,28 @@ class ProcessSubmissionField
 
             foreach ($response as $file) {
                 $key = ltrim($file['path'], '/');
+                $this->validatePath($key);
 
-                $media = $fieldSubmission
-                    ->addMediaFromDisk($key, 's3')
-                    ->usingFileName($file['originalFileName'] ?? basename($key))
-                    ->toMediaCollection('files', 's3');
+                if (! Storage::exists($key)) {
+                    continue;
+                }
 
-                Storage::disk('s3')->delete($key);
-                $fieldSubmission->update([
-                    'response' => [
-                        'media_id' => $media->id,
-                        'file_name' => $media->file_name,
-                        'original_name' => $file['originalFileName'] ?? $media->file_name,
-                    ],
-                ]);
+                try {
+                    $media = $fieldSubmission
+                        ->addMediaFromDisk($key, 's3')
+                        ->usingFileName($file['originalFileName'] ?? basename($key))
+                        ->toMediaCollection('files', 's3');
+
+                    $fieldSubmission->update([
+                        'response' => [
+                            'media_id' => $media->id,
+                            'file_name' => $media->file_name,
+                            'original_name' => $file['originalFileName'] ?? $media->file_name,
+                        ],
+                    ]);
+                } finally {
+                    Storage::disk('s3')->delete($key);
+                }
             }
         }
 
@@ -123,6 +132,21 @@ class ProcessSubmissionField
 
         if ($fields[$fieldId] === EducatableNameFormFieldBlock::type()) {
             $this->handleEducatableNameField($submission, $response);
+        }
+    }
+
+    protected function validatePath(string $path): void
+    {
+        if (str_contains($path, '..') || str_contains($path, '//')) {
+            throw new InvalidArgumentException('Invalid path: path traversal not allowed');
+        }
+
+        if (! str_starts_with($path, 'tmp/')) {
+            throw new InvalidArgumentException('Invalid path: must be within tmp/ directory');
+        }
+
+        if (! preg_match('/^tmp\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.[a-zA-Z0-9]+$/i', $path)) {
+            throw new InvalidArgumentException('Invalid path: does not match expected format');
         }
     }
 
