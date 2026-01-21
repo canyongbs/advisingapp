@@ -168,7 +168,7 @@ class GoogleCalendarManager implements CalendarInterface
             ->each(
                 function (Event $event) use ($calendar) {
                     $data = [
-                        'title' => $event->summary,
+                        'title' => filled($event->summary) ? $event->summary : '(No Subject)',
                         'description' => $event->description,
                         'starts_at' => $event->start->dateTime,
                         'ends_at' => $event->end->dateTime,
