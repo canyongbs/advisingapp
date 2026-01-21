@@ -34,11 +34,16 @@
 @php
     use AdvisingApp\Engagement\Models\Engagement;
     use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+    use AdvisingApp\StudentDataModel\Enums\EmailHealthStatus;
     use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 
-    $isBounced =
-        ($emailAddress instanceof StudentEmailAddress || $emailAddress instanceof ProspectEmailAddress) &&
-        $emailAddress->bounced()->exists();
+    $healthStatus = ($emailAddress instanceof StudentEmailAddress || $emailAddress instanceof ProspectEmailAddress)
+        ? $emailAddress->getHealthStatus()
+        : EmailHealthStatus::Healthy;
+
+    $isBounced = $healthStatus === EmailHealthStatus::Bounced;
+    $isOptedOut = $healthStatus === EmailHealthStatus::OptedOut;
+    $isDisabled = $isBounced || $isOptedOut;
 @endphp
 
 <button
@@ -47,9 +52,9 @@
     x-data="{ isLoading: false }"
     x-on:engage-action-finished-loading.window="isLoading = false"
     x-on:click="isLoading = true; $dispatch('send-email', { emailAddressKey: @js($emailAddress->getKey()) })"
-    @if (!$isBounced) x-tooltip.raw="Click to send an email" @endif
+    @if (!$isDisabled) x-tooltip.raw="Click to send an email" @endif
     @disabled(
-        $isBounced ||
+        $isDisabled ||
             !auth()->user()->can('create', [
                     Engagement::class,
                     $emailAddress instanceof ProspectEmailAddress ? $emailAddress->prospect : null,
@@ -71,11 +76,11 @@
         ({{ $emailAddress->type }})
     @endif
 
-    @if ($isBounced)
-        <x-filament::icon
-            class="text-danger-500 ml-1 h-6 w-6"
-            icon="heroicon-s-x-circle"
-            x-tooltip.raw="Email Bounced"
-        />
-    @endif
+    <x-filament::icon
+        class="ml-1 h-6 w-6"
+        style="color: {{ $healthStatus->getLightModeColor() }};"
+        x-bind:style="$store.theme === 'dark' ? 'color: {{ $healthStatus->getDarkModeColor() }};' : 'color: {{ $healthStatus->getLightModeColor() }};'"
+        icon="{{ $healthStatus->getIcon() }}"
+        x-tooltip.raw="{{ $healthStatus->getTooltipText() }}"
+    />
 </button>

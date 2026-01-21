@@ -60,6 +60,7 @@ use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Prospect\Database\Factories\ProspectFactory;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Observers\ProspectObserver;
+use AdvisingApp\StudentDataModel\Enums\EmailHealthStatus;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
@@ -445,7 +446,13 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
 
     public function canReceiveEmail(): bool
     {
-        return filled($this->primaryEmailAddress?->address) && (! $this->primaryEmailAddress->bounced()->exists());
+        if (blank($this->primaryEmailAddress?->address)) {
+            return false;
+        }
+
+        $healthStatus = $this->primaryEmailAddress->getHealthStatus();
+
+        return $healthStatus === EmailHealthStatus::Healthy;
     }
 
     public function canReceiveSms(): bool
