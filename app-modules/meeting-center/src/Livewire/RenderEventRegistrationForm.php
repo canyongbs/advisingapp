@@ -42,6 +42,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class RenderEventRegistrationForm extends Component implements HasForms, HasActions
@@ -49,15 +50,51 @@ class RenderEventRegistrationForm extends Component implements HasForms, HasActi
     use InteractsWithActions;
     use InteractsWithForms;
 
-    public bool $show = true;
+    public bool $showRegistrationModal = false;
 
     public Event $event;
 
-    public ?array $data = [];
+    #[Computed]
+    public function heroImageUrl(): ?string
+    {
+        return $this->event->getFirstMediaUrl('hero_image') ?: null;
+    }
+
+    #[Computed]
+    public function descriptionHtml(): ?string
+    {
+        $description = $this->event->description;
+
+        if (empty($description)) {
+            return null;
+        }
+
+        if (isset($description['type']) && isset($description['content'])) {
+            return tiptap_converter()->record($this->event, attribute: 'description')->asHTML($description);
+        }
+
+        return null;
+    }
+
+    #[Computed]
+    public function createdByName(): string
+    {
+        return $this->event->createdBy->name;
+    }
+
+    public function openRegistrationModal(): void
+    {
+        $this->showRegistrationModal = true;
+    }
+
+    public function closeRegistrationModal(): void
+    {
+        $this->showRegistrationModal = false;
+    }
 
     public function render(): View
     {
         return view('meeting-center::livewire.render-event-registration-form')
-            ->title("{$this->event->title} Registration");
+            ->title($this->event->title);
     }
 }

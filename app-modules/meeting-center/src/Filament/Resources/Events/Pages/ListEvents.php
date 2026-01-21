@@ -44,7 +44,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
@@ -79,11 +78,24 @@ class ListEvents extends ListRecords
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('title')
-                    ->sortable(),
+                    ->searchable(),
+                TextColumn::make('location')
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('starts_at')
-                    ->sortable(),
+                    ->label('Starts At')
+                    ->dateTime(),
                 TextColumn::make('ends_at')
-                    ->sortable(),
+                    ->label('Ends At')
+                    ->dateTime(),
+                TextColumn::make('createdBy.name')
+                    ->label('Created By')
+                    ->searchable()
+                    ->toggleable(),
+                TextColumn::make('created_at')
+                    ->label('Created At')
+                    ->dateTime()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Filter::make('pastEvents')
@@ -93,7 +105,6 @@ class ListEvents extends ListRecords
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
                 DeleteAction::make(),
                 ReplicateAction::make('Duplicate')
                     ->modalHeading('Duplicate Event')

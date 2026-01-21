@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
@@ -32,69 +30,13 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
+@endphp
 
-namespace AdvisingApp\MeetingCenter\Models;
-
-use App\Models\BaseModel;
-use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-
-/**
- * @mixin IdeHelperEvent
- */
-class Event extends BaseModel implements HasMedia
-{
-    use SoftDeletes;
-    use HasUserSaveTracking;
-    use InteractsWithMedia;
-
-    protected $fillable = [
-        'title',
-        'description',
-        'location',
-        'capacity',
-        'starts_at',
-        'ends_at',
-        'created_by_id',
-        'last_updated_by_id',
-    ];
-
-    protected $casts = [
-        'starts_at' => 'datetime',
-        'ends_at' => 'datetime',
-        'description' => 'array',
-    ];
-
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('hero_image')
-            ->useDisk('s3-public')
-            ->singleFile()
-            ->acceptsMimeTypes([
-                'image/jpeg',
-                'image/png',
-                'image/gif',
-            ]);
-    }
-
-    /**
-     * @return HasOne<EventRegistrationForm, $this>
-     */
-    public function eventRegistrationForm(): HasOne
-    {
-        return $this->hasOne(EventRegistrationForm::class, 'event_id');
-    }
-
-    /**
-     * @return HasMany<EventAttendee, $this>
-     */
-    public function attendees(): HasMany
-    {
-        return $this->hasMany(EventAttendee::class, 'event_id');
-    }
-}
+<div class="flex items-center justify-center px-4 py-16">
+    <div class="w-full max-w-4xl">
+        {!! resolve(GenerateSubmissibleEmbedCode::class)->handle($eventRegistrationForm) !!}
+    </div>
+</div>

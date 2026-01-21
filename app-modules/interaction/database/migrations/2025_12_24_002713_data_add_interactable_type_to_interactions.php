@@ -205,7 +205,7 @@ return new class () extends Migration {
                     foreach ($interactions as $interaction) {
                         $interactionStatus = DB::table('interaction_statuses')->where('id', $interaction->interaction_status_id)->first();
 
-                        if ($interaction->interactable_type !== $interactionStatus->interactable_type) {
+                        if (! is_null($interactionStatus) && $interaction->interactable_type !== $interactionStatus->interactable_type) {
                             $newStatusId = DB::table('interaction_statuses')
                                 ->where('name', $interactionStatus->name)
                                 ->where('interactable_type', $interaction->interactable_type)
@@ -217,7 +217,7 @@ return new class () extends Migration {
 
                         $interactionType = DB::table('interaction_types')->where('id', $interaction->interaction_type_id)->first();
 
-                        if ($interaction->interactable_type !== $interactionType->interactable_type) {
+                        if (! is_null($interactionType) && $interaction->interactable_type !== $interactionType->interactable_type) {
                             $newTypeId = DB::table('interaction_types')
                                 ->where('name', $interactionType->name)
                                 ->where('interactable_type', $interaction->interactable_type)
@@ -282,8 +282,8 @@ return new class () extends Migration {
                 $table->string('interactable_type')->nullable(false)->change();
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
-                    CREATE UNIQUE INDEX interaction_statuses_is_default_unique 
-                    ON interaction_statuses (interactable_type) 
+                    CREATE UNIQUE INDEX interaction_statuses_is_default_unique
+                    ON interaction_statuses (interactable_type)
                     WHERE is_default = true AND deleted_at IS NULL;
                 ');
             });
@@ -292,8 +292,8 @@ return new class () extends Migration {
                 $table->string('interactable_type')->nullable(false)->change();
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
-                    CREATE UNIQUE INDEX interaction_types_is_default_unique 
-                    ON interaction_types (interactable_type) 
+                    CREATE UNIQUE INDEX interaction_types_is_default_unique
+                    ON interaction_types (interactable_type)
                     WHERE is_default = true AND deleted_at IS NULL;
                 ');
             });
@@ -302,8 +302,8 @@ return new class () extends Migration {
                 $table->string('interactable_type')->nullable(false)->change();
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
-                    CREATE UNIQUE INDEX interaction_outcomes_is_default_unique 
-                    ON interaction_outcomes (interactable_type) 
+                    CREATE UNIQUE INDEX interaction_outcomes_is_default_unique
+                    ON interaction_outcomes (interactable_type)
                     WHERE is_default = true AND deleted_at IS NULL;
                 ');
             });
@@ -312,8 +312,8 @@ return new class () extends Migration {
                 $table->string('interactable_type')->nullable(false)->change();
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
-                    CREATE UNIQUE INDEX interaction_relations_is_default_unique 
-                    ON interaction_relations (interactable_type) 
+                    CREATE UNIQUE INDEX interaction_relations_is_default_unique
+                    ON interaction_relations (interactable_type)
                     WHERE is_default = true AND deleted_at IS NULL;
                 ');
             });
@@ -322,8 +322,8 @@ return new class () extends Migration {
                 $table->string('interactable_type')->nullable(false)->change();
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
-                    CREATE UNIQUE INDEX interaction_drivers_is_default_unique 
-                    ON interaction_drivers (interactable_type) 
+                    CREATE UNIQUE INDEX interaction_drivers_is_default_unique
+                    ON interaction_drivers (interactable_type)
                     WHERE is_default = true AND deleted_at IS NULL;
                 ');
             });
@@ -332,8 +332,8 @@ return new class () extends Migration {
                 $table->string('interactable_type')->nullable(false)->change();
                 $table->unique(['name', 'interactable_type'])->where('deleted_at IS NULL');
                 DB::statement('
-                    CREATE UNIQUE INDEX interaction_initiatives_is_default_unique 
-                    ON interaction_initiatives (interactable_type) 
+                    CREATE UNIQUE INDEX interaction_initiatives_is_default_unique
+                    ON interaction_initiatives (interactable_type)
                     WHERE is_default = true AND deleted_at IS NULL;
                 ');
             });
@@ -517,8 +517,8 @@ return new class () extends Migration {
             Schema::table('interaction_outcomes', function (Blueprint $table) {
                 $table->dropColumn('interactable_type');
                 DB::statement('
-                    CREATE UNIQUE INDEX interaction_outcomes_is_default_unique 
-                    ON interaction_outcomes (is_default) 
+                    CREATE UNIQUE INDEX interaction_outcomes_is_default_unique
+                    ON interaction_outcomes (is_default)
                     WHERE is_default = true AND deleted_at IS NULL;
                 ');
                 $table->unique('name');

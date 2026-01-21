@@ -34,67 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-use App\Models\BaseModel;
-use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-
-/**
- * @mixin IdeHelperEvent
- */
-class Event extends BaseModel implements HasMedia
-{
-    use SoftDeletes;
-    use HasUserSaveTracking;
-    use InteractsWithMedia;
-
-    protected $fillable = [
-        'title',
-        'description',
-        'location',
-        'capacity',
-        'starts_at',
-        'ends_at',
-        'created_by_id',
-        'last_updated_by_id',
-    ];
-
-    protected $casts = [
-        'starts_at' => 'datetime',
-        'ends_at' => 'datetime',
-        'description' => 'array',
-    ];
-
-    public function registerMediaCollections(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $this->addMediaCollection('hero_image')
-            ->useDisk('s3-public')
-            ->singleFile()
-            ->acceptsMimeTypes([
-                'image/jpeg',
-                'image/png',
-                'image/gif',
-            ]);
+        Schema::table('events', function (Blueprint $table) {
+            $table->foreignUuid('created_by_id')->constrained('users')->nullOnDelete();
+            $table->foreignUuid('last_updated_by_id')->nullable()->constrained('users')->nullOnDelete();
+        });
+
+        DB::statement('ALTER TABLE events ALTER COLUMN description TYPE jsonb USING description::jsonb');
     }
 
-    /**
-     * @return HasOne<EventRegistrationForm, $this>
-     */
-    public function eventRegistrationForm(): HasOne
+    public function down(): void
     {
-        return $this->hasOne(EventRegistrationForm::class, 'event_id');
+        Schema::table('events', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('created_by_id');
+            $table->dropConstrainedForeignId('last_updated_by_id');
+            $table->text('description')->nullable()->change();
+        });
     }
-
-    /**
-     * @return HasMany<EventAttendee, $this>
-     */
-    public function attendees(): HasMany
-    {
-        return $this->hasMany(EventAttendee::class, 'event_id');
-    }
-}
+};

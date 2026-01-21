@@ -34,67 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
-use App\Models\BaseModel;
-use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
+use AdvisingApp\MeetingCenter\Models\Event;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 
-/**
- * @mixin IdeHelperEvent
- */
-class Event extends BaseModel implements HasMedia
+class EventRegistrationFormModalController
 {
-    use SoftDeletes;
-    use HasUserSaveTracking;
-    use InteractsWithMedia;
-
-    protected $fillable = [
-        'title',
-        'description',
-        'location',
-        'capacity',
-        'starts_at',
-        'ends_at',
-        'created_by_id',
-        'last_updated_by_id',
-    ];
-
-    protected $casts = [
-        'starts_at' => 'datetime',
-        'ends_at' => 'datetime',
-        'description' => 'array',
-    ];
-
-    public function registerMediaCollections(): void
+    public function __invoke(Request $request, Event $event): View
     {
-        $this->addMediaCollection('hero_image')
-            ->useDisk('s3-public')
-            ->singleFile()
-            ->acceptsMimeTypes([
-                'image/jpeg',
-                'image/png',
-                'image/gif',
-            ]);
-    }
+        $eventRegistrationForm = $event->eventRegistrationForm;
 
-    /**
-     * @return HasOne<EventRegistrationForm, $this>
-     */
-    public function eventRegistrationForm(): HasOne
-    {
-        return $this->hasOne(EventRegistrationForm::class, 'event_id');
-    }
+        abort_if(is_null($eventRegistrationForm), 404);
 
-    /**
-     * @return HasMany<EventAttendee, $this>
-     */
-    public function attendees(): HasMany
-    {
-        return $this->hasMany(EventAttendee::class, 'event_id');
+        return view('meeting-center::event-registration-form-modal', [
+            'eventRegistrationForm' => $eventRegistrationForm,
+        ]);
     }
 }

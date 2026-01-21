@@ -34,52 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\Concerns;
+namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
-use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
-use AdvisingApp\Form\Rules\IsDomain;
+use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
-use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
-use Filament\Forms\Components\DateTimePicker;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
-trait HasSharedEventFormConfiguration
+class EditEventRegistration extends EditRecord
 {
-    public function fields(): array
+    use EditPageRedirection;
+
+    protected static string $resource = EventResource::class;
+
+    protected static ?string $navigationLabel = 'Registration Form';
+
+    public function form(Schema $schema): Schema
     {
-        return [
-            TextInput::make('title')
-                ->string()
-                ->required(),
-            TextInput::make('location')
-                ->string()
-                ->nullable(),
-            TextInput::make('capacity')
-                ->integer()
-                ->minValue(1)
-                ->nullable(),
-            DateTimePicker::make('starts_at')
-                ->seconds(false)
-                ->required(),
-            DateTimePicker::make('ends_at')
-                ->seconds(false)
-                ->required(),
+        return $schema->components([
             Fieldset::make('Registration Form')
                 ->relationship('eventRegistrationForm')
                 ->saveRelationshipsBeforeChildrenUsing(static function (Component | CanEntangleWithSingularRelationships $component): void {
@@ -101,36 +88,18 @@ trait HasSharedEventFormConfiguration
                 })
                 ->saveRelationshipsUsing(null)
                 ->schema([
-                    Grid::make()
-                        ->schema([
-                            Toggle::make('embed_enabled')
-                                ->label('Embed Enabled')
-                                ->live()
-                                ->helperText('If enabled, this form can be embedded on other websites.'),
-                            TagsInput::make('allowed_domains')
-                                ->label('Allowed Domains')
-                                ->helperText('Only these domains will be allowed to embed this form.')
-                                ->placeholder('example.com')
-                                ->hidden(fn (Get $get) => ! $get('embed_enabled'))
-                                ->disabled(fn (Get $get) => ! $get('embed_enabled'))
-                                ->nestedRecursiveRules(
-                                    [
-                                        'string',
-                                        new IsDomain(),
-                                    ]
-                                ),
-                        ])
-                        ->columnSpanFull(),
                     Toggle::make('is_wizard')
                         ->label('Multi-step form')
                         ->live()
                         ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
-                    Section::make('Fields')
+
+                    Section::make('Form Fields')
                         ->schema([
                             $this->fieldBuilder(),
                         ])
                         ->hidden(fn (Get $get) => $get('is_wizard'))
                         ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
+
                     Repeater::make('steps')
                         ->schema([
                             TextInput::make('label')
@@ -149,15 +118,8 @@ trait HasSharedEventFormConfiguration
                         ->relationship()
                         ->reorderable()
                         ->columnSpanFull(),
-                    Section::make('Appearance')
-                        ->schema([
-                            ColorSelect::make('primary_color'),
-                            Select::make('rounding')
-                                ->options(Rounding::class),
-                        ])
-                        ->columns(),
                 ]),
-        ];
+        ]);
     }
 
     public function fieldBuilder(): TiptapEditor
@@ -175,6 +137,7 @@ trait HasSharedEventFormConfiguration
                 $record->wasRecentlyCreated && $component->processImages();
 
                 $form = $record instanceof EventRegistrationForm ? $record : $record->submissible;
+                assert($form instanceof EventRegistrationForm);
                 $formStep = $record instanceof EventRegistrationFormStep ? $record : null;
 
                 EventRegistrationFormField::query()
@@ -202,6 +165,11 @@ trait HasSharedEventFormConfiguration
             ->extraInputAttributes(['style' => 'min-height: 12rem;']);
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $components
+     *
+     * @return array<int, array<string, mixed>>
+     */
     public function saveFieldsFromComponents(EventRegistrationForm $form, array $components, ?EventRegistrationFormStep $eventRegistrationFormStep): array
     {
         foreach ($components as $componentKey => $component) {
@@ -247,11 +215,6 @@ trait HasSharedEventFormConfiguration
         return $components;
     }
 
-    protected function afterCreate(): void
-    {
-        $this->clearFormContentForWizard();
-    }
-
     protected function afterSave(): void
     {
         $this->clearFormContentForWizard();
@@ -259,9 +222,8 @@ trait HasSharedEventFormConfiguration
 
     protected function clearFormContentForWizard(): void
     {
-        /** @var Event $event */
-        $event = $this->record;
-
+        $event = $this->getRecord();
+        assert($event instanceof Event);
         $form = $event->eventRegistrationForm;
 
         if ($form?->is_wizard) {

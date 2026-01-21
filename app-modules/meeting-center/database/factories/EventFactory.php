@@ -38,6 +38,7 @@ namespace AdvisingApp\MeetingCenter\Database\Factories;
 
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
@@ -58,6 +59,7 @@ class EventFactory extends Factory
             'capacity' => $this->faker->numberBetween(1, 5000),
             'starts_at' => $this->faker->dateTimeBetween('-1 week', '+1 week'),
             'ends_at' => fn (array $attributes) => Carbon::parse($attributes['starts_at'])->addHour(),
+            'created_by_id' => User::factory(),
         ];
     }
 

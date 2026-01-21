@@ -40,7 +40,6 @@ use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Models\Event;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
@@ -59,11 +58,33 @@ class ViewEvent extends ViewRecord
                 Section::make()
                     ->schema([
                         TextEntry::make('title'),
-                        TextEntry::make('description'),
+                        TextEntry::make('description')
+                            ->label('Description')
+                            ->state(function (Event $record): string {
+                                $description = $record->description;
+
+                                if (empty($description)) {
+                                    return '-';
+                                }
+
+                                if (isset($description['type']) && isset($description['content'])) {
+                                    return tiptap_converter()->record($record, attribute: 'description')->asHTML($description);
+                                }
+
+                                return '-';
+                            })
+                            ->html()
+                            ->columnSpanFull(),
                         TextEntry::make('location'),
                         TextEntry::make('capacity'),
-                        TextEntry::make('starts_at'),
-                        TextEntry::make('ends_at'),
+                        TextEntry::make('starts_at')
+                            ->dateTime(),
+                        TextEntry::make('ends_at')
+                            ->dateTime(),
+                        TextEntry::make('createdBy.name')
+                            ->label('Created By'),
+                        TextEntry::make('lastUpdatedBy.name')
+                            ->label('Last Updated By'),
                     ])
                     ->columns(),
             ]);
@@ -73,10 +94,9 @@ class ViewEvent extends ViewRecord
     {
         return [
             Action::make('view')
-                ->url(fn (Event $event) => route('event-registration.show', ['event' => $event]))
+                ->url(fn (Event $record): string => route('event-registration.show', ['event' => $record]))
                 ->icon('heroicon-m-arrow-top-right-on-square')
                 ->openUrlInNewTab(),
-            EditAction::make(),
             DeleteAction::make(),
         ];
     }

@@ -37,16 +37,44 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
-use Filament\Resources\Pages\Page;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use FilamentTiptapEditor\Enums\TiptapOutput;
+use FilamentTiptapEditor\TiptapEditor;
 
-class EditEvent extends Page
+class EditEventPage extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = EventResource::class;
 
-    protected static ?string $navigationLabel = 'Edit';
+    protected static ?string $navigationLabel = 'Landing Page';
 
-    public function mount(int | string $record): void
+    public function form(Schema $schema): Schema
     {
-        $this->redirect(EventResource::getUrl('edit-details', ['record' => $record]));
+        return $schema->components([
+            Section::make('Landing Page')
+                ->description('Configure your event landing page with a hero image and description content.')
+                ->schema([
+                    SpatieMediaLibraryFileUpload::make('hero_image')
+                        ->label('Hero Image')
+                        ->disk('s3-public')
+                        ->collection('hero_image')
+                        ->image()
+                        ->maxSize(5120)
+                        ->columnSpanFull(),
+
+                    TiptapEditor::make('description')
+                        ->label('Description')
+                        ->profile('default')
+                        ->output(TiptapOutput::Json)
+                        ->disk('s3-public')
+                        ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+                        ->columnSpanFull(),
+                ]),
+        ]);
     }
 }
