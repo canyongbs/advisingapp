@@ -113,7 +113,7 @@ class PersonalBookingPageWidgetController extends Controller
 
         $brandingSettings = app(CollegeBrandingSettings::class);
 
-        $colorName = $brandingSettings->color ?? 'blue';
+        $colorName = $brandingSettings->color->value ?? 'blue';
         $primaryColor = collect(Color::all()[$colorName])
             ->map(Color::convertToRgb(...))
             ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
