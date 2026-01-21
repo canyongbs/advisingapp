@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Managers;
 
 use AdvisingApp\MeetingCenter\Enums\EventTransparency;
+use AdvisingApp\MeetingCenter\Exceptions\CouldNotRefreshToken;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
@@ -217,7 +218,7 @@ class OutlookCalendarManager implements CalendarInterface
 
                 $userEvent->fill([
                     'provider_id' => $providerEvent->getId(),
-                    'title' => $providerEvent->getSubject(),
+                    'title' => filled($providerEvent->getSubject()) ? $providerEvent->getSubject() : '(No Subject)',
                     'description' => $providerEvent->getBodyPreview(),
                     'starts_at' => Carbon::parse($providerEvent->getStart()->getDateTime(), $providerEvent->getStart()->getTimeZone()),
                     'ends_at' => Carbon::parse($providerEvent->getEnd()->getDateTime(), $providerEvent->getEnd()->getTimeZone()),
@@ -278,6 +279,27 @@ class OutlookCalendarManager implements CalendarInterface
                 $calendar->save();
 
                 $calendar->user->notify(new CalendarRequiresReconnectNotification($calendar));
+
+                throw new CouldNotRefreshToken(previous: $response->toException());
+            }
+
+            if (
+                ($response->status() === Response::HTTP_BAD_REQUEST)
+                && ($response->json('error') === 'invalid_grant')
+                && (
+                    is_string($errorDescription = $response->json('error_description'))
+                    && str_contains($errorDescription, 'AADSTS50173')
+                )
+            ) {
+                $calendar->oauth_token = null;
+                $calendar->oauth_refresh_token = null;
+                $calendar->oauth_token_expires_at = null;
+
+                $calendar->save();
+
+                $calendar->user->notify(new CalendarRequiresReconnectNotification($calendar));
+
+                throw new CouldNotRefreshToken(previous: $response->toException());
             }
 
             $response->throw();
