@@ -42,14 +42,14 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('engagement_responses', function (Blueprint $table) {
-            $table->index(['sender_type', 'sender_id', 'status']);
+            $table->index(['sender_id', 'sender_type','status']);
         });
     }
 
     public function down(): void
     {
         Schema::table('engagement_responses', function (Blueprint $table) {
-            $table->dropIndex(['sender_type', 'sender_id', 'status']);
+            $table->dropIndex(['sender_id', 'sender_type','status']);
         });
     }
 };
