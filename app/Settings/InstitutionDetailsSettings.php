@@ -34,63 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Settings;
 
-use App\Filament\Clusters\InstitutionDetails;
-use App\Filament\Forms\Components\TimezoneSelect;
-use App\Models\User;
-use App\Settings\DisplaySettings;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Pages\SettingsPage;
-use Filament\Schemas\Schema;
+use App\Settings\SettingsProperties\InstitutionDetailsSettingsProperty;
 
-class ManageDisplaySettings extends SettingsPage
+class InstitutionDetailsSettings extends SettingsWithMedia
 {
-    protected static ?string $navigationLabel = 'Dates and Times';
+    public ?string $ipeds_id = null;
 
-    protected static ?int $navigationSort = 20;
+    public ?string $name = null;
 
-    protected static string $settings = DisplaySettings::class;
+    public null $dark_logo = null;
 
-    protected static ?string $cluster = InstitutionDetails::class;
+    public null $light_logo = null;
 
-    public static function canAccess(): bool
+    public static function getSettingsPropertyModelClass(): string
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can(['settings.view-any']);
+        return InstitutionDetailsSettingsProperty::class;
     }
 
-    public function form(Schema $schema): Schema
+    public static function group(): string
     {
-        return $schema
-            ->components([
-                TimezoneSelect::make('timezone')
-                    ->helperText('Default: ' . config('app.timezone')),
-            ])
-            ->disabled(! auth()->user()->can('product_admin.*.update'));
-    }
-
-    public function save(): void
-    {
-        if (! auth()->user()->can('product_admin.*.update')) {
-            return;
-        }
-
-        parent::save();
-    }
-
-    /**
-     * @return array<Action | ActionGroup>
-     */
-    public function getFormActions(): array
-    {
-        if (! auth()->user()->can('product_admin.*.update')) {
-            return [];
-        }
-
-        return parent::getFormActions();
+        return 'institution';
     }
 }

@@ -34,14 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+use App\Features\InstitutionDetailsSettingsFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Clusters\Cluster;
-use UnitEnum;
+return new class () extends Migration {
+    public function up(): void
+    {
+        InstitutionDetailsSettingsFeature::activate();
+    }
 
-class DisplaySettings extends Cluster
-{
-    protected static string | UnitEnum | null $navigationGroup = 'Settings';
-
-    protected static ?int $navigationSort = 110;
-}
+    public function down(): void
+    {
+        InstitutionDetailsSettingsFeature::deactivate();
+    }
+};

@@ -34,63 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Features;
 
-use App\Filament\Clusters\InstitutionDetails;
-use App\Filament\Forms\Components\TimezoneSelect;
-use App\Models\User;
-use App\Settings\DisplaySettings;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Pages\SettingsPage;
-use Filament\Schemas\Schema;
+use App\Support\AbstractFeatureFlag;
 
-class ManageDisplaySettings extends SettingsPage
+class InstitutionDetailsSettingsFeature extends AbstractFeatureFlag
 {
-    protected static ?string $navigationLabel = 'Dates and Times';
-
-    protected static ?int $navigationSort = 20;
-
-    protected static string $settings = DisplaySettings::class;
-
-    protected static ?string $cluster = InstitutionDetails::class;
-
-    public static function canAccess(): bool
+    public function resolve(mixed $scope): mixed
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can(['settings.view-any']);
-    }
-
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TimezoneSelect::make('timezone')
-                    ->helperText('Default: ' . config('app.timezone')),
-            ])
-            ->disabled(! auth()->user()->can('product_admin.*.update'));
-    }
-
-    public function save(): void
-    {
-        if (! auth()->user()->can('product_admin.*.update')) {
-            return;
-        }
-
-        parent::save();
-    }
-
-    /**
-     * @return array<Action | ActionGroup>
-     */
-    public function getFormActions(): array
-    {
-        if (! auth()->user()->can('product_admin.*.update')) {
-            return [];
-        }
-
-        return parent::getFormActions();
+        return false;
     }
 }

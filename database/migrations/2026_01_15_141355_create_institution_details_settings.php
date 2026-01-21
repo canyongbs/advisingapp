@@ -34,63 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use App\Filament\Clusters\InstitutionDetails;
-use App\Filament\Forms\Components\TimezoneSelect;
-use App\Models\User;
-use App\Settings\DisplaySettings;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Pages\SettingsPage;
-use Filament\Schemas\Schema;
-
-class ManageDisplaySettings extends SettingsPage
-{
-    protected static ?string $navigationLabel = 'Dates and Times';
-
-    protected static ?int $navigationSort = 20;
-
-    protected static string $settings = DisplaySettings::class;
-
-    protected static ?string $cluster = InstitutionDetails::class;
-
-    public static function canAccess(): bool
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can(['settings.view-any']);
-    }
-
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TimezoneSelect::make('timezone')
-                    ->helperText('Default: ' . config('app.timezone')),
-            ])
-            ->disabled(! auth()->user()->can('product_admin.*.update'));
-    }
-
-    public function save(): void
-    {
-        if (! auth()->user()->can('product_admin.*.update')) {
-            return;
+        try {
+            $this->migrator->add('institution.ipeds_id', null);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
         }
 
-        parent::save();
-    }
-
-    /**
-     * @return array<Action | ActionGroup>
-     */
-    public function getFormActions(): array
-    {
-        if (! auth()->user()->can('product_admin.*.update')) {
-            return [];
+        try {
+            $this->migrator->add('institution.name', null);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
         }
 
-        return parent::getFormActions();
+        try {
+            $this->migrator->add('institution.dark_logo', null);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
+
+        try {
+            $this->migrator->add('institution.light_logo', null);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
     }
-}
+
+    public function down(): void
+    {
+        $this->migrator->deleteIfExists('institution.ipeds_id');
+        $this->migrator->deleteIfExists('institution.name');
+        $this->migrator->deleteIfExists('institution.dark_logo');
+        $this->migrator->deleteIfExists('institution.light_logo');
+    }
+};
