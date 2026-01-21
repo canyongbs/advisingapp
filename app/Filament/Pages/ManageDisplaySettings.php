@@ -36,8 +36,8 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Forms\Components\TimezoneSelect;
 use App\Filament\Clusters\InstitutionDetails;
+use App\Filament\Forms\Components\TimezoneSelect;
 use App\Models\User;
 use App\Settings\DisplaySettings;
 use Filament\Actions\Action;
