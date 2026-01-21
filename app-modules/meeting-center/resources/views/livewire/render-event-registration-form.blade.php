@@ -15,7 +15,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor's trademarks is subject
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -43,9 +43,9 @@
             @if ($this->heroImageUrl)
                 <div class="relative h-48 w-full overflow-hidden sm:h-64 md:h-80">
                     <img
+                        class="h-full w-full object-contain"
                         src="{{ $this->heroImageUrl }}"
                         alt="{{ $event->title }}"
-                        class="h-full w-full object-contain"
                     >
                 </div>
             @endif
@@ -64,8 +64,8 @@
                     </div>
                     @if ($this->heroImageUrl)
                         <button
-                            wire:click="openRegistrationModal"
                             class="inline-flex items-center justify-center rounded-md bg-sky-500 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                            wire:click="openRegistrationModal"
                         >
                             Register
                         </button>
@@ -80,8 +80,10 @@
                         @if ($event->starts_at && $event->ends_at)
                             <p>
                                 {{ $event->starts_at->setTimezone($displaySettings->timezone ?: config('app.timezone', 'UTC'))->format('M d, Y') }}
-                                from {{ $event->starts_at->setTimezone($displaySettings->timezone ?: config('app.timezone', 'UTC'))->format('g:i a') }}
-                                to {{ $event->ends_at->setTimezone($displaySettings->timezone ?: config('app.timezone', 'UTC'))->format('g:i a T') }}
+                                from
+                                {{ $event->starts_at->setTimezone($displaySettings->timezone ?: config('app.timezone', 'UTC'))->format('g:i a') }}
+                                to
+                                {{ $event->ends_at->setTimezone($displaySettings->timezone ?: config('app.timezone', 'UTC'))->format('g:i a T') }}
                             </p>
                         @endif
                     </div>
@@ -99,8 +101,8 @@
 
                 <div class="mt-8">
                     <button
-                        wire:click="openRegistrationModal"
                         class="inline-flex items-center justify-center rounded-md bg-sky-500 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                        wire:click="openRegistrationModal"
                     >
                         Register
                     </button>
@@ -112,8 +114,8 @@
     @if ($showRegistrationModal)
         <div
             class="fixed inset-0 z-50 flex items-center justify-center p-4"
-            aria-labelledby="modal-title"
             role="dialog"
+            aria-labelledby="modal-title"
             aria-modal="true"
         >
             <div
@@ -122,30 +124,53 @@
                 wire:click="closeRegistrationModal"
             ></div>
 
-            <div class="relative flex w-full max-w-[95vw] flex-col overflow-hidden rounded-lg bg-white shadow-xl sm:max-w-[90vw] md:max-w-[85vw] lg:max-w-5xl" style="max-height: 90vh;">
+            <div
+                class="relative flex w-full max-w-[95vw] flex-col overflow-hidden rounded-lg bg-white shadow-xl sm:max-w-[90vw] md:max-w-[85vw] lg:max-w-5xl"
+                style="max-height: 90vh;"
+            >
                 <button
-                    wire:click="closeRegistrationModal"
                     class="absolute right-4 top-4 z-10 rounded-full bg-white p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    wire:click="closeRegistrationModal"
                 >
                     <span class="sr-only">Close</span>
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    <svg
+                        class="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
                     </svg>
                 </button>
 
                 <div class="flex-1 overflow-y-auto">
                     @if ($this->event->eventRegistrationForm)
                         <iframe
-                            src="{{ route('event-registration.form-modal', ['event' => $this->event]) }}"
                             class="h-full w-full border-0"
-                            style="min-height: calc(90vh - 3rem);"
+                            src="{{ route('event-registration.form-modal', ['event' => $this->event]) }}"
                             title="Event Registration Form"
+                            style="min-height: calc(90vh - 3rem);"
                         ></iframe>
                     @else
                         <div class="p-4 py-12 text-center sm:p-6">
                             <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-yellow-100">
-                                <svg class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                                <svg
+                                    class="h-6 w-6 text-yellow-600"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                                    />
                                 </svg>
                             </div>
                             <h3 class="mt-4 text-sm font-medium text-gray-900">Registration Form Not Available</h3>
@@ -154,8 +179,8 @@
                             </p>
                             <div class="mt-6">
                                 <button
+                                    class="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900"
                                     wire:click="closeRegistrationModal"
-                                    class="inline-flex items-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition ease-in-out duration-150 hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900"
                                 >
                                     Close
                                 </button>
