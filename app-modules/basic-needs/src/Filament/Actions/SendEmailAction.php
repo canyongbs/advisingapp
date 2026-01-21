@@ -77,6 +77,7 @@ class SendEmailAction
             ->authorize(fn () => Auth::user()->can('create', Engagement::class))
             ->steps(function (Action $action) use ($view): array {
                 $record = $action->getLivewire()->record;
+
                 return self::getSteps($view, $record);
             })
             ->action(fn (array $data, Schema $schema, Page $livewire) => self::handleAction($data, $schema, $livewire))
