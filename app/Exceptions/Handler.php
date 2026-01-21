@@ -36,6 +36,7 @@
 
 namespace App\Exceptions;
 
+use AdvisingApp\MeetingCenter\Exceptions\CouldNotRefreshToken;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Psr\Log\LogLevel;
@@ -56,7 +57,9 @@ class Handler extends ExceptionHandler
      *
      * @var array<int, class-string<Throwable>>
      */
-    protected $dontReport = [];
+    protected $dontReport = [
+        CouldNotRefreshToken::class,
+    ];
 
     /**
      * A list of the inputs that are never flashed to the session on validation exceptions.
