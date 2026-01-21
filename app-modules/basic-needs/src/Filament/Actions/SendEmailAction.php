@@ -60,6 +60,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class SendEmailAction
@@ -124,7 +125,9 @@ class SendEmailAction
                     ->options(fn (Get $get) => self::getRecipientOptions($get))
                     ->getSearchResultsUsing(fn (string $search, Get $get) => self::getRecipientSearchResults($search, $get))
                     ->getOptionLabelUsing(fn (string $value, Get $get) => self::getRecipientOptionLabel($value, $get))
-                    ->afterStateUpdated(function (Get $get, Set $set, mixed $record) use ($view) {
+                    ->afterStateUpdated(function (Get $get, Set $set, Component $livewire) use ($view) {
+                        $record = method_exists($livewire, 'getRecord') ? $livewire->getRecord() : null;
+
                         self::updateBodyAndRouteId($get, $set, $record, $view);
                     })
                     ->live()
@@ -157,7 +160,9 @@ class SendEmailAction
                         ->disk('s3-public')
                         ->label('Body')
                         ->profile('email')
-                        ->default(function (mixed $record) use ($educatable, $view) {
+                        ->default(function (Component $livewire) use ($educatable, $view) {
+                            $record = method_exists($livewire, 'getRecord') ? $livewire->getRecord() : null;
+
                             return view($view, [
                                 'recipient' => $educatable,
                                 'record' => $record,
