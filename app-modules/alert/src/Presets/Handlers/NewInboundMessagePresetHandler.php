@@ -68,14 +68,14 @@ class NewInboundMessagePresetHandler implements AlertPresetHandler
     public function getStudentAlertQuery(?AlertPresetConfiguration $configuration): Builder
     {
         return DB::table('students')
-          ->select('students.sisid')
-          ->join('engagement_responses', function (JoinClause $join) {
-          $join->on('students.sisid', '=', 'engagement_responses.sender_id')
-          ->where('engagement_responses.sender_type', '=', 'student')
-          ->where('engagement_responses.status', EngagementResponseStatus::New->value)
-          ->whereNull('engagement_responses.deleted_at');
-          })
-          ->whereNull('students.deleted_at')
-          ->distinct();
+            ->select('students.sisid')
+            ->join('engagement_responses', function (JoinClause $join) {
+                $join->on('students.sisid', '=', 'engagement_responses.sender_id')
+                    ->where('engagement_responses.sender_type', '=', 'student')
+                    ->where('engagement_responses.status', EngagementResponseStatus::New->value)
+                    ->whereNull('engagement_responses.deleted_at');
+            })
+            ->whereNull('students.deleted_at')
+            ->distinct();
     }
 }
