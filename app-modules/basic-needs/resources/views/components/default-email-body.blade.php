@@ -34,70 +34,70 @@
 <div>
     <p>Hi {{ $recipient?->full_name }},</p>
 
-    @if (filled($record->name))
+    @if (filled($record?->name))
         <p>
             <strong>Program Name:</strong><br>
             {{ $record->name }}
         </p>
     @endif
 
-    @if (filled($record->description))
+    @if (filled($record?->description))
         <p>
             <strong>Description:</strong><br>
             {{ $record->description }}
         </p>
     @endif
 
-    @if (filled($record->basicNeedsCategories?->name))
+    @if (filled($record?->basicNeedsCategories?->name))
         <p>
             <strong>Program Category:</strong><br>
             {{ $record->basicNeedsCategories?->name }}
         </p>
     @endif
 
-    @if (filled($record->contact_person))
+    @if (filled($record?->contact_person))
         <p>
             <strong>Contact Person:</strong><br>
             {{ $record->contact_person }}
         </p>
     @endif
 
-    @if (filled($record->contact_email))
+    @if (filled($record?->contact_email))
         <p>
             <strong>Email Address:</strong><br>
             {{ $record->contact_email }}
         </p>
     @endif
 
-    @if (filled($record->contact_phone))
+    @if (filled($record?->contact_phone))
         <p>
             <strong>Contact Phone:</strong><br>
             {{ $record->contact_phone }}
         </p>
     @endif
 
-    @if (filled($record->location))
+    @if (filled($record?->location))
         <p>
             <strong>Location:</strong><br>
             {{ $record->location }}
         </p>
     @endif
 
-    @if (filled($record->availability))
+    @if (filled($record?->availability))
         <p>
             <strong>Availability:</strong><br>
             {{ $record->availability }}
         </p>
     @endif
 
-    @if (filled($record->eligibility_criteria))
+    @if (filled($record?->eligibility_criteria))
         <p>
             <strong>Eligibility Criteria:</strong><br>
             {{ $record->eligibility_criteria }}
         </p>
     @endif
 
-    @if (filled($record->application_process))
+    @if (filled($record?->application_process))
         <p>
             <strong>Application Process:</strong><br>
             {{ $record->application_process }}
