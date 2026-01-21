@@ -39,7 +39,7 @@ namespace App\Filament\Clusters;
 use Filament\Clusters\Cluster;
 use UnitEnum;
 
-class DisplaySettings extends Cluster
+class InstitutionDetails extends Cluster
 {
     protected static string | UnitEnum | null $navigationGroup = 'Settings';
 

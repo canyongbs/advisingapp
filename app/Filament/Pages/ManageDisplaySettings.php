@@ -36,8 +36,8 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Clusters\DisplaySettings as DisplaySettingsCluster;
 use App\Filament\Forms\Components\TimezoneSelect;
+use App\Filament\Clusters\InstitutionDetails;
 use App\Models\User;
 use App\Settings\DisplaySettings;
 use Filament\Actions\Action;
@@ -53,7 +53,7 @@ class ManageDisplaySettings extends SettingsPage
 
     protected static string $settings = DisplaySettings::class;
 
-    protected static ?string $cluster = DisplaySettingsCluster::class;
+    protected static ?string $cluster = InstitutionDetails::class;
 
     public static function canAccess(): bool
     {

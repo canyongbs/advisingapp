@@ -37,7 +37,7 @@
 namespace App\Filament\Pages;
 
 use App\Features\InstitutionDetailsSettingsFeature;
-use App\Filament\Clusters\DisplaySettings;
+use App\Filament\Clusters\InstitutionDetails;
 use App\Models\User;
 use App\Settings\InstitutionDetailsSettings;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -51,7 +51,7 @@ class ManageInstitutionDetailsSettings extends SettingsPage
 
     protected static ?int $navigationSort = 10;
 
-    protected static ?string $cluster = DisplaySettings::class;
+    protected static ?string $cluster = InstitutionDetails::class;
 
     protected static string $settings = InstitutionDetailsSettings::class;
 

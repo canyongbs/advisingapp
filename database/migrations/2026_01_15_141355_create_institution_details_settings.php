@@ -41,13 +41,13 @@ return new class () extends SettingsMigration {
     public function up(): void
     {
         try {
-            $this->migrator->add('institution.ipeds_id', '');
+            $this->migrator->add('institution.ipeds_id', null);
         } catch (SettingAlreadyExists $exception) {
             // do nothing
         }
 
         try {
-            $this->migrator->add('institution.name', '');
+            $this->migrator->add('institution.name', null);
         } catch (SettingAlreadyExists $exception) {
             // do nothing
         }

@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Theme\Filament\Pages;
 
-use App\Filament\Clusters\DisplaySettings;
+use App\Filament\Clusters\InstitutionDetails;
 use App\Models\User;
 use App\Settings\CollegeBrandingSettings;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
@@ -58,7 +58,7 @@ class ManageCollegeBrandingSettings extends SettingsPage
 
     protected static ?string $title = 'Branding';
 
-    protected static ?string $cluster = DisplaySettings::class;
+    protected static ?string $cluster = InstitutionDetails::class;
 
     public static function canAccess(): bool
     {
