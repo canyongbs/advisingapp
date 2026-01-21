@@ -166,7 +166,7 @@ class CaseObserver
 
     public function saved(CaseModel $case): void
     {
-        CreateCaseHistory::dispatch($case, $case->getChanges(), $case->getOriginal());
+        CreateCaseHistory::dispatch($case, $case->getChanges(), $case->getPrevious());
 
         $customerEmailTemplate = $this->fetchTemplate(
             $case->priority->type,
