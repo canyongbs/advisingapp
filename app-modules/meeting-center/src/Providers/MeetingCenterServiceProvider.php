@@ -46,6 +46,7 @@ use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormFieldSubmission;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
@@ -74,6 +75,7 @@ class MeetingCenterServiceProvider extends ServiceProvider
             'event_registration_form' => EventRegistrationForm::class,
             'event_registration_form_authentication' => EventRegistrationFormAuthentication::class,
             'event_registration_form_field' => EventRegistrationFormField::class,
+            'event_registration_form_field_submission' => EventRegistrationFormFieldSubmission::class,
             'event_registration_form_step' => EventRegistrationFormStep::class,
             'event_registration_form_submission' => EventRegistrationFormSubmission::class,
             'personal_booking_page' => PersonalBookingPage::class,

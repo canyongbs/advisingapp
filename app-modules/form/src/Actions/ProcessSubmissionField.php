@@ -50,6 +50,9 @@ use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormFieldSubmission;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Form\Models\Submission;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormFieldSubmission;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Settings\ImportSettings;
@@ -77,7 +80,7 @@ class ProcessSubmissionField
 
         if ($field && $field->type === UploadFormFieldBlock::type() && is_array($response)) {
             $fieldSubmission = $field->pivot; /** @phpstan-ignore property.notFound */
-            assert($fieldSubmission instanceof FormFieldSubmission || $fieldSubmission instanceof ApplicationFieldSubmission);
+            assert($fieldSubmission instanceof FormFieldSubmission || $fieldSubmission instanceof ApplicationFieldSubmission || $fieldSubmission instanceof EventRegistrationFormFieldSubmission);
 
             foreach ($response as $file) {
                 $key = ltrim($file['path'], '/');
@@ -397,18 +400,19 @@ class ProcessSubmissionField
     {
         $submissible = $submission->submissible;
 
-        if (! in_array($submissible::class, [Form::class, Application::class])) {
+        if (! in_array($submissible::class, [Form::class, Application::class, EventRegistrationForm::class])) {
             return;
         }
 
         $author = $submission->author;
 
-        if (! $author instanceof Student && ! $author instanceof Prospect) {
+        // @phpstan-ignore-next-line instanceof.alwaysFalse
+        if (! ($author instanceof Student || $author instanceof Prospect || $author instanceof EventAttendee)) {
             return;
         }
 
         $fieldSubmission = $field->pivot; /** @phpstan-ignore property.notFound */
-        assert($fieldSubmission instanceof FormFieldSubmission);
+        assert($fieldSubmission instanceof FormFieldSubmission || $fieldSubmission instanceof EventRegistrationFormFieldSubmission);
 
         foreach ($response as $file) {
             $key = ltrim($file['path'], '/');
@@ -436,7 +440,10 @@ class ProcessSubmissionField
                 ->preservingOriginal()
                 ->toMediaCollection('file', 's3');
 
-            $author->engagementFiles()->attach($engagementFile);
+            // @phpstan-ignore instanceof.alwaysTrue, booleanOr.alwaysTrue (EventAttendee excluded - doesn't have engagementFiles)
+            if ($author instanceof Student || $author instanceof Prospect) {
+                $author->engagementFiles()->attach($engagementFile);
+            }
 
             Storage::disk('s3')->delete($key);
         }

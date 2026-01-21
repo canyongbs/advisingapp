@@ -77,6 +77,10 @@ class GenerateSubmissibleValidation
                     $rules->push('required');
                 }
 
+                if (! isset($blocks[$field->type])) {
+                    return [];
+                }
+
                 $blockClass = $blocks[$field->type];
                 $blockRules = $blockClass::getValidationRules($field);
                 $nestedRules = $blockClass::getNestedValidationRules($field);

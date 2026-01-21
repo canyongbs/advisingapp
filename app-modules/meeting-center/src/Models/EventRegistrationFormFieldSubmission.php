@@ -36,71 +36,49 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
-use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
-use AdvisingApp\Form\Models\Submission;
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
- * @mixin IdeHelperEventRegistrationFormSubmission
+ * @mixin IdeHelperEventRegistrationFormFieldSubmission
  */
-class EventRegistrationFormSubmission extends Submission
+class EventRegistrationFormFieldSubmission extends Pivot implements HasMedia
 {
+    use HasUuids;
+    use InteractsWithMedia;
+
+    protected $table = 'event_registration_form_field_submission';
+
     protected $fillable = [
-        'canceled_at',
-        'form_id',
-        'attendee_status',
-        'request_method',
-        'request_note',
-        'submitted_at',
+        'response',
+        'id',
     ];
 
     protected $casts = [
-        'submitted_at' => 'immutable_datetime',
-        'canceled_at' => 'immutable_datetime',
-        'request_method' => FormSubmissionRequestDeliveryMethod::class,
-        'attendee_status' => EventAttendeeStatus::class,
+        'response' => 'array',
     ];
 
     /**
-     * @return BelongsTo<EventRegistrationForm, $this>
+     * @return BelongsTo<EventRegistrationFormField, $this>
      */
-    public function submissible(): BelongsTo
+    public function field(): BelongsTo
     {
-        return $this
-            ->belongsTo(EventRegistrationForm::class, 'form_id');
+        return $this->belongsTo(EventRegistrationFormField::class, 'field_id');
     }
 
     /**
-     * @return BelongsTo<User, $this>
+     * @return BelongsTo<EventRegistrationFormSubmission, $this>
      */
-    public function requester(): BelongsTo
+    public function submission(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'requester_id');
+        return $this->belongsTo(EventRegistrationFormSubmission::class, 'submission_id');
     }
 
-    /**
-     * @return BelongsToMany<EventRegistrationFormField, $this, covariant EventRegistrationFormFieldSubmission>
-     */
-    public function fields(): BelongsToMany
+    public function registerMediaCollections(): void
     {
-        return $this->belongsToMany(
-            EventRegistrationFormField::class,
-            'event_registration_form_field_submission',
-            'submission_id',
-            'field_id',
-        )
-            ->using(EventRegistrationFormFieldSubmission::class)
-            ->withPivot(['id', 'response']);
-    }
-
-    /**
-     * @return BelongsTo<EventAttendee, $this>
-     */
-    public function author(): BelongsTo
-    {
-        return $this->belongsTo(EventAttendee::class, 'event_attendee_id');
+        $this->addMediaCollection('files');
     }
 }

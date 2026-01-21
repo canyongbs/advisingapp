@@ -35,33 +35,22 @@
 */
 
 use Illuminate\Database\Migrations\Migration;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('prospect_statuses', function (Blueprint $table) {
-            $table->trigger(
-                name: 'prevent_modification_of_system_protected_rows',
-                action: "prevent_modification_of_system_protected_rows('sort', 'updated_at')",
-                fire: 'BEFORE UPDATE OR DELETE',
-            )
-                ->forEachRow()
-                ->replace(true);
-        });
-    }
+        DB::table('event_registration_form_field_submission')->truncate();
+        DB::table('event_attendees_entities')->truncate();
 
-    public function down(): void
-    {
-        Schema::table('prospect_statuses', function (Blueprint $table) {
-            $table->trigger(
-                name: 'prevent_modification_of_system_protected_rows',
-                action: 'prevent_modification_of_system_protected_rows()',
-                fire: 'BEFORE UPDATE OR DELETE',
-            )
-                ->forEachRow()
-                ->replace(true);
-        });
+        DB::table('event_registration_form_submissions')->truncate();
+        DB::table('event_registration_form_authentications')->truncate();
+        DB::table('event_attendees')->truncate();
+
+        DB::table('event_registration_form_fields')->truncate();
+        DB::table('event_registration_form_steps')->truncate();
+        DB::table('event_registration_forms')->truncate();
+
+        DB::table('events')->truncate();
     }
 };

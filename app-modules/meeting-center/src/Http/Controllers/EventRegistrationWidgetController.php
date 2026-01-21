@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
+use AdvisingApp\Form\Actions\ProcessSubmissionField;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use AdvisingApp\MeetingCenter\Actions\GenerateEventRegistrationFormKitSchema;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
@@ -58,7 +59,6 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -207,6 +207,7 @@ class EventRegistrationWidgetController extends Controller
     public function store(
         Request $request,
         GenerateSubmissibleValidation $generateValidation,
+        ProcessSubmissionField $processSubmissionField,
         Event $event,
     ): JsonResponse {
         try {
@@ -270,18 +271,26 @@ class EventRegistrationWidgetController extends Controller
                             continue;
                         }
 
+                        $stepFields = $step->fields()->pluck('type', 'id')->all();
+
                         foreach ($data[$step->label] ?? [] as $fieldId => $response) {
-                            $submission->fields()->attach(
+                            $processSubmissionField(
+                                $submission,
                                 $fieldId,
-                                ['id' => Str::orderedUuid(), 'response' => $response],
+                                $response,
+                                $stepFields,
                             );
                         }
                     }
                 } else {
+                    $formFields = $form->fields()->pluck('type', 'id')->all();
+
                     foreach ($data as $fieldId => $response) {
-                        $submission->fields()->attach(
+                        $processSubmissionField(
+                            $submission,
                             $fieldId,
-                            ['id' => Str::orderedUuid(), 'response' => $response],
+                            $response,
+                            $formFields,
                         );
                     }
                 }

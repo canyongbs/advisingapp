@@ -92,11 +92,47 @@ class FormFieldBlockRegistry
     }
 
     /**
+     * @return array<class-string<FormFieldBlock>>
+     */
+    public static function getUnmappedBlocksForEvents(): array
+    {
+        return [
+            TextInputFormFieldBlock::class,
+            TextAreaFormFieldBlock::class,
+            SelectFormFieldBlock::class,
+            RadioFormFieldBlock::class,
+            UploadFormFieldBlock::class,
+            EventSignatureFormFieldBlock::class,
+        ];
+    }
+
+    /**
+     * @return array<class-string<FormFieldBlock> | array<class-string<FormFieldBlock>>>
+     */
+    public static function getForEvents(): array
+    {
+        return [
+            'Mapped Blocks' => static::getMappedBlocks(),
+            'Unmapped Blocks' => static::getUnmappedBlocksForEvents(),
+        ];
+    }
+
+    /**
+     * @return array<string, class-string<FormFieldBlock>>
+     */
+    public static function keyByTypeForEvents(): array
+    {
+        return collect(static::getForEvents())
+            ->flatten()
+            ->mapWithKeys(fn (string $block): array => [$block::type() => $block])
+            ->all();
+    }
+
+    /**
      * @return array<string, class-string<FormFieldBlock>>
      */
     public static function keyByType(): array
     {
-        /** @var FormFieldBlock $block */
         return collect(static::get())
             ->flatten()
             ->mapWithKeys(fn (string $block): array => [$block::type() => $block])
