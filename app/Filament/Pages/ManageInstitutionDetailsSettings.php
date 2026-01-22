@@ -62,7 +62,7 @@ class ManageInstitutionDetailsSettings extends SettingsPage
         $user = auth()->user();
         assert($user instanceof User);
 
-        return InstitutionDetailsSettingsFeature::active() && $user->can(['settings.view-any']);
+        return $user->can(['settings.view-any']);
     }
 
     public function form(Schema $schema): Schema
