@@ -44,6 +44,7 @@ use AdvisingApp\Interaction\Observers\InteractionInitiativesObserver;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -57,6 +58,8 @@ class InteractionInitiative extends BaseModel implements Auditable
 
     /** @use HasFactory<InteractionInitiativeFactory> */
     use HasFactory;
+
+    use SoftDeletes;
 
     protected $fillable = [
         'name',
