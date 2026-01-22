@@ -42,6 +42,10 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionTypeDoughnutChart;
 use AdvisingApp\StudentDataModel\Models\Student;
 
+beforeEach(function () {
+    InteractionType::query()->forceDelete();
+});
+
 it('checks student interaction types doughnut chart', function () {
     $interactionsCount = rand(1, 10);
 
@@ -56,11 +60,17 @@ it('checks student interaction types doughnut chart', function () {
     $widgetInstance = new StudentInteractionTypeDoughnutChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
 
-    $stats = $widgetInstance->getData()['datasets'][0]['data'];
+    $data = $widgetInstance->getData();
+    $labels = $data['labels'];
+    $stats = $data['datasets'][0]['data'];
 
-    expect($interactionsCount)->toEqual($stats[0])
-        ->and($interactionsCount)->toEqual($stats[1])
-        ->and($interactionsCount)->toEqual($stats[2]);
+    $firstIndex = $labels->search($interactionTypeFirst->name);
+    $secondIndex = $labels->search($interactionTypeSecond->name);
+    $thirdIndex = $labels->search($interactionTypeThird->name);
+
+    expect($stats[$firstIndex])->toEqual($interactionsCount)
+        ->and($stats[$secondIndex])->toEqual($interactionsCount)
+        ->and($stats[$thirdIndex])->toEqual($interactionsCount);
 });
 
 it('returns correct interaction counts by type for students within the selected date range', function () {
@@ -122,11 +132,17 @@ it('returns correct interaction counts by type for students within the selected 
         'endDate' => $interactionEndDate->toDateString(),
     ];
 
-    $stats = $widgetInstance->getData()['datasets'][0]['data'];
+    $data = $widgetInstance->getData();
+    $labels = $data['labels'];
+    $stats = $data['datasets'][0]['data'];
 
-    expect($interactionsCount)->toEqual($stats[0])
-        ->and($interactionsCount)->toEqual($stats[1])
-        ->and($interactionsCount)->not->toEqual($stats[2]);
+    $firstIndex = $labels->search($interactionTypeFirst->name);
+    $secondIndex = $labels->search($interactionTypeSecond->name);
+    $thirdIndex = $labels->search($interactionTypeThird->name);
+
+    expect($stats[$firstIndex])->toEqual($interactionsCount)
+        ->and($stats[$secondIndex])->toEqual($interactionsCount)
+        ->and($stats[$thirdIndex])->toEqual(0);
 });
 
 it('returns correct interaction counts by type for students based on group filter', function () {
@@ -188,19 +204,29 @@ it('returns correct interaction counts by type for students based on group filte
         'populationGroup' => $group->getKey(),
     ];
 
-    $stats = $widgetInstance->getData()['datasets'][0]['data'];
+    $data = $widgetInstance->getData();
+    $labels = $data['labels'];
+    $stats = $data['datasets'][0]['data'];
 
-    expect($interactionsCount)->toEqual($stats[0])
-        ->and($interactionsCount)->not->toEqual($stats[1]);
+    $firstIndex = $labels->search($interactionTypeFirst->name);
+    $secondIndex = $labels->search($interactionTypeSecond->name);
 
-    //  with group filter
+    expect($stats[$firstIndex])->toEqual($interactionsCount)
+        ->and($stats[$secondIndex])->toEqual(0);
+
+    // without group filter
     $widgetInstance = new StudentInteractionTypeDoughnutChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
     $widgetInstance->pageFilters = [];
 
-    $stats = $widgetInstance->getData()['datasets'][0]['data'];
+    $data = $widgetInstance->getData();
+    $labels = $data['labels'];
+    $stats = $data['datasets'][0]['data'];
 
-    expect($interactionsCount)->toEqual($stats[0])
-        ->and($interactionsCountForDoe)->toEqual($stats[1])
+    $firstIndex = $labels->search($interactionTypeFirst->name);
+    $secondIndex = $labels->search($interactionTypeSecond->name);
+
+    expect($stats[$firstIndex])->toEqual($interactionsCount)
+        ->and($stats[$secondIndex])->toEqual($interactionsCountForDoe)
         ->and($interactionsCount + $interactionsCountForDoe)->toEqual($stats->sum());
 });
