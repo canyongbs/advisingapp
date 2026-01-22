@@ -34,51 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+namespace AdvisingApp\StudentDataModel\Database\Factories;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Prospect\Models\ProspectEmailAddress;
-use AdvisingApp\StudentDataModel\Database\Factories\EmailAddressOptInOptOutFactory;
 use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperEmailAddressOptInOptOut
+ * @extends Factory<EmailAddressOptInOptOut>
  */
-class EmailAddressOptInOptOut extends BaseModel implements Auditable
+class EmailAddressOptInOptOutFactory extends Factory
 {
-    use HasUuids;
-    use AuditableTrait;
-
-    /** @use HasFactory<EmailAddressOptInOptOutFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'address',
-        'status',
-    ];
-
-    protected $casts = [
-        'status' => EmailAddressOptInOptOutStatus::class,
-    ];
-
     /**
-     * @return BelongsTo<StudentEmailAddress, $this>
+     * @return array<string, mixed>
      */
-    public function studentEmailAddress(): BelongsTo
+    public function definition(): array
     {
-        return $this->belongsTo(StudentEmailAddress::class, 'address', 'address');
+        return [
+            'address' => $this->faker->unique()->email(),
+            'status' => EmailAddressOptInOptOutStatus::OptedOut,
+        ];
     }
 
-    /**
-     * @return BelongsTo<ProspectEmailAddress, $this>
-     */
-    public function prospectEmailAddress(): BelongsTo
+    public function optedIn(): static
     {
-        return $this->belongsTo(ProspectEmailAddress::class, 'address', 'address');
+        return $this->state(fn (array $attributes) => [
+            'status' => EmailAddressOptInOptOutStatus::OptedIn,
+        ]);
+    }
+
+    public function optedOut(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => EmailAddressOptInOptOutStatus::OptedOut,
+        ]);
     }
 }

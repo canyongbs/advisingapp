@@ -52,7 +52,6 @@
     x-data="{ isLoading: false }"
     x-on:engage-action-finished-loading.window="isLoading = false"
     x-on:click="isLoading = true; $dispatch('send-email', { emailAddressKey: @js($emailAddress->getKey()) })"
-    @if (!$isDisabled) x-tooltip.raw="Click to send an email" @endif
     @disabled(
         $isDisabled ||
             !auth()->user()->can('create', [
@@ -70,11 +69,13 @@
         x-cloak
     />
 
-    {{ $emailAddress->address }}
+    <span @if (!$isDisabled) x-tooltip.raw="Click to send an email" @endif>
+        {{ $emailAddress->address }}
 
-    @if (filled($emailAddress->type))
-        ({{ $emailAddress->type }})
-    @endif
+        @if (filled($emailAddress->type))
+            ({{ $emailAddress->type }})
+        @endif
+    </span>
 
     <x-filament::icon
         class="ml-1 h-6 w-6"
