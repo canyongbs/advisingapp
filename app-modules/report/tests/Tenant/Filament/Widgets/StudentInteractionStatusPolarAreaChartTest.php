@@ -42,6 +42,10 @@ use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionStatusPolarAreaChart;
 use AdvisingApp\StudentDataModel\Models\Student;
 
+beforeEach(function () {
+    InteractionStatus::query()->forceDelete();
+});
+
 it('checks student interaction status polar area chart', function () {
     $interactionsCount = rand(1, 10);
 
@@ -56,11 +60,17 @@ it('checks student interaction status polar area chart', function () {
     $widgetInstance = new StudentInteractionStatusPolarAreaChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
 
-    $stats = $widgetInstance->getData()['datasets'][0]['data'];
+    $data = $widgetInstance->getData();
+    $labels = $data['labels'];
+    $stats = $data['datasets'][0]['data'];
 
-    expect($interactionsCount)->toEqual($stats[0])
-        ->and($interactionsCount)->toEqual($stats[1])
-        ->and($interactionsCount)->toEqual($stats[2]);
+    $firstIndex = $labels->search($interactionStatusFirst->name);
+    $secondIndex = $labels->search($interactionStatusSecond->name);
+    $thirdIndex = $labels->search($interactionStatusThird->name);
+
+    expect($stats[$firstIndex])->toEqual($interactionsCount)
+        ->and($stats[$secondIndex])->toEqual($interactionsCount)
+        ->and($stats[$thirdIndex])->toEqual($interactionsCount);
 });
 
 it('returns correct interaction counts by status for students within the selected date range', function () {
@@ -122,11 +132,17 @@ it('returns correct interaction counts by status for students within the selecte
         'endDate' => $interactionEndDate->toDateString(),
     ];
 
-    $stats = $widgetInstance->getData()['datasets'][0]['data'];
+    $data = $widgetInstance->getData();
+    $labels = $data['labels'];
+    $stats = $data['datasets'][0]['data'];
 
-    expect($interactionsCount)->toEqual($stats[0])
-        ->and($interactionsCount)->toEqual($stats[1])
-        ->and($interactionsCount)->not->toEqual($stats[2]);
+    $firstIndex = $labels->search($interactionStatusFirst->name);
+    $secondIndex = $labels->search($interactionStatusSecond->name);
+    $thirdIndex = $labels->search($interactionStatusThird->name);
+
+    expect($stats[$firstIndex])->toEqual($interactionsCount)
+        ->and($stats[$secondIndex])->toEqual($interactionsCount)
+        ->and($stats[$thirdIndex])->toEqual(0);
 });
 
 it('returns correct interaction counts by status for students based on group filter', function () {
@@ -187,18 +203,29 @@ it('returns correct interaction counts by status for students based on group fil
         'populationGroup' => $group->getKey(),
     ];
 
-    $stats = $widgetInstance->getData()['datasets'][0]['data'];
+    $data = $widgetInstance->getData();
+    $labels = $data['labels'];
+    $stats = $data['datasets'][0]['data'];
 
-    expect($interactionsCount)->toEqual($stats[0])
-        ->and($interactionsCount)->not->toEqual($stats[1]);
+    $firstIndex = $labels->search($interactionStatusFirst->name);
+    $secondIndex = $labels->search($interactionStatusSecond->name);
 
+    expect($stats[$firstIndex])->toEqual($interactionsCount)
+        ->and($stats[$secondIndex])->toEqual(0);
+
+    // without group filter
     $widgetInstance = new StudentInteractionStatusPolarAreaChart();
     $widgetInstance->cacheTag = 'report-student-interaction';
     $widgetInstance->pageFilters = [];
 
-    $stats = $widgetInstance->getData()['datasets'][0]['data'];
+    $data = $widgetInstance->getData();
+    $labels = $data['labels'];
+    $stats = $data['datasets'][0]['data'];
 
-    expect($interactionsCount)->toEqual($stats[0])
-        ->and($interactionsCountForDoe)->toEqual($stats[1])
+    $firstIndex = $labels->search($interactionStatusFirst->name);
+    $secondIndex = $labels->search($interactionStatusSecond->name);
+
+    expect($stats[$firstIndex])->toEqual($interactionsCount)
+        ->and($stats[$secondIndex])->toEqual($interactionsCountForDoe)
         ->and($interactionsCount + $interactionsCountForDoe)->toEqual($stats->sum());
 });
