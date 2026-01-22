@@ -42,7 +42,6 @@ use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\InteractableTypeFeature;
 use Carbon\CarbonInterface;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -216,10 +215,6 @@ trait HasManyMorphedInteractionsTrait
                         'initiative',
                         'name',
                         function (Builder $query) use ($ownerRecord) {
-                            if (! InteractableTypeFeature::active()) {
-                                return $query;
-                            }
-
                             $type = $ownerRecord->getMorphClass();
 
                             if ($ownerRecord instanceof CaseModel) {
@@ -237,10 +232,6 @@ trait HasManyMorphedInteractionsTrait
                         'driver',
                         'name',
                         function (Builder $query) use ($ownerRecord) {
-                            if (! InteractableTypeFeature::active()) {
-                                return $query;
-                            }
-
                             $type = $ownerRecord->getMorphClass();
 
                             if ($ownerRecord instanceof CaseModel) {
@@ -259,10 +250,6 @@ trait HasManyMorphedInteractionsTrait
                         'type',
                         'name',
                         function (Builder $query) use ($ownerRecord) {
-                            if (! InteractableTypeFeature::active()) {
-                                return $query;
-                            }
-
                             $type = $ownerRecord->getMorphClass();
 
                             if ($ownerRecord instanceof CaseModel) {
@@ -279,10 +266,6 @@ trait HasManyMorphedInteractionsTrait
                         'status',
                         'name',
                         function (Builder $query) use ($ownerRecord) {
-                            if (! InteractableTypeFeature::active()) {
-                                return $query;
-                            }
-
                             $type = $ownerRecord->getMorphClass();
 
                             if ($ownerRecord instanceof CaseModel) {

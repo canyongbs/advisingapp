@@ -38,6 +38,9 @@ namespace App\Settings\SettingsProperties;
 
 use App\Models\SettingsPropertyWithMedia;
 
+/**
+ * @mixin IdeHelperInstitutionDetailsSettingsProperty
+ */
 class InstitutionDetailsSettingsProperty extends SettingsPropertyWithMedia
 {
     public function registerMediaCollections(): void

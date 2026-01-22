@@ -42,7 +42,6 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\Pages\CreateI
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\Pages\EditInteractionStatus;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\Pages\ListInteractionStatuses;
 use AdvisingApp\Interaction\Models\InteractionStatus;
-use App\Features\InteractableTypeFeature;
 use App\Filament\Clusters\InteractionManagement;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -67,7 +66,6 @@ class InteractionStatusResource extends Resource
         return $schema
             ->components([
                 Select::make('interactable_type')
-                    ->visible(InteractableTypeFeature::active())
                     ->label('Type')
                     ->required()
                     ->options(InteractableType::class)
@@ -79,7 +77,7 @@ class InteractionStatusResource extends Resource
                     ->placeholder('Interaction Status Name')
                     ->unique(
                         ignoreRecord: true,
-                        modifyRuleUsing: fn (Unique $rule, Get $get) => InteractableTypeFeature::active() ? $rule->where('interactable_type', $get('interactable_type'))->whereNull('deleted_at') : $rule
+                        modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('interactable_type', $get('interactable_type'))->whereNull('deleted_at')
                     ),
                 Select::make('color')
                     ->label('Color')
@@ -90,8 +88,8 @@ class InteractionStatusResource extends Resource
                 Toggle::make('is_default')
                     ->label('Default')
                     ->live()
-                    ->hint(function (?InteractionStatus $record, $state, Get $get): ?string {
-                        $basicHint = InteractableTypeFeature::active() ? 'This will only affect interactions for the selected type.' : null;
+                    ->hint(function (?InteractionStatus $record, $state, Get $get): string {
+                        $basicHint = 'This will only affect interactions for the selected type.';
 
                         if ($record?->is_default) {
                             return $basicHint;
@@ -101,14 +99,10 @@ class InteractionStatusResource extends Resource
                             return $basicHint;
                         }
 
-                        $currentDefault = InteractableTypeFeature::active() ?
-                            InteractionStatus::query()
-                                ->where('is_default', true)
-                                ->where('interactable_type', $get('interactable_type'))
-                                ->value('name') :
-                            InteractionStatus::query()
-                                ->where('is_default', true)
-                                ->value('name');
+                        $currentDefault = InteractionStatus::query()
+                            ->where('is_default', true)
+                            ->where('interactable_type', $get('interactable_type'))
+                            ->value('name');
 
                         if (blank($currentDefault)) {
                             return $basicHint;
