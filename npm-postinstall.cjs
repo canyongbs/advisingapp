@@ -11,7 +11,7 @@ console.log('Running NPM Post Install...');
 // This file is only used for pusher-js development and causes false
 // positive security vulnerabilities in our dependency scans
 const pusherLockFile = path.join(
-    __dirname,
+    process.cwd(),
     'node_modules',
     'pusher-js',
     'integration_tests_server',
