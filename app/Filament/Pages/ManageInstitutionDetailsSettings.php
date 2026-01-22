@@ -36,7 +36,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Features\InstitutionDetailsSettingsFeature;
 use App\Filament\Clusters\InstitutionDetails;
 use App\Models\User;
 use App\Settings\InstitutionDetailsSettings;
