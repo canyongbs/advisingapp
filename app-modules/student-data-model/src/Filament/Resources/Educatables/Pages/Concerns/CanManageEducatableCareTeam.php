@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Pages\Concerns;
 
+use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberToEducatableAttachAction;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -83,53 +84,7 @@ trait CanManageEducatableCareTeam
                     ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0),
             ])
             ->headerActions([
-                AttachAction::make()
-                    ->label('New')
-                    ->modalHeading(function () {
-                        /** @var Student $student */
-                        $student = $this->getOwnerRecord();
-
-                        return "Add a User to {$student->display_name}'s Care Team";
-                    })
-                    ->modalSubmitActionLabel('Add')
-                    ->attachAnother(false)
-                    ->color('primary')
-                    ->mountUsing(fn (Schema $schema) => $schema->fill([
-                        'care_team_role_id' => CareTeamRoleType::studentDefault()?->id,
-                    ]))
-                    ->schema([
-                        Select::make('recordId')
-                            ->label('User')
-                            ->searchable()
-                            ->required()
-                            ->options(
-                                User::query()->tap(new HasLicense(Student::getLicenseType()))
-                                    ->whereDoesntHave(
-                                        'studentCareTeams',
-                                        fn ($query) => $query
-                                            ->where('educatable_type', $this->getOwnerRecord()->getMorphClass())
-                                            ->where('educatable_id', $this->getOwnerRecord()->getKey())
-                                    )
-                                    ->tap(new WithoutAnyAdmin())
-                                    ->pluck('name', 'id')
-                            ),
-                        Select::make('care_team_role_id')
-                            ->label('Role')
-                            ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Student)->orderByDesc('created_at'))
-                            ->preload()
-                            ->optionsLimit(20)
-                            ->searchable()
-                            ->model(CareTeam::class)
-                            ->visible(CareTeamRole::where('type', CareTeamRoleType::Student)->count() > 0),
-                    ])
-                    ->successNotificationTitle(function (array $data) {
-                        /** @var Student $student */
-                        $student = $this->getOwnerRecord();
-
-                        $record = User::find($data['recordId']);
-
-                        return "{$record->name} was added to {$student->display_name}'s Care Team";
-                    }),
+                AddCareTeamMemberToEducatableAttachAction::make(),
             ])
             ->recordActions([
                 DetachAction::make()
