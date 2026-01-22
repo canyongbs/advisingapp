@@ -40,7 +40,6 @@ use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\InteractionStatusResource;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
-use App\Features\InteractableTypeFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -152,29 +151,27 @@ class ListInteractionStatuses extends ListRecords
 
     public function table(Table $table): Table
     {
-        $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name')
-                    ->searchable(),
-                TextColumn::make('color')
-                    ->label('Color')
-                    ->badge()
-                    ->color(fn (InteractionStatus $interactionStatus) => $interactionStatus->color->value),
-                IconColumn::make('is_default')
-                    ->label('Default')
-                    ->boolean(),
-                TextColumn::make('interactions_count')
-                    ->label('Uses')
-                    ->counts('interactions')
-                    ->sortable(),
-            ])
+        return $table->columns([
+            IdColumn::make(),
+            TextColumn::make('name')
+                ->searchable(),
+            TextColumn::make('color')
+                ->label('Color')
+                ->badge()
+                ->color(fn (InteractionStatus $interactionStatus) => $interactionStatus->color->value),
+            IconColumn::make('is_default')
+                ->label('Default')
+                ->boolean(),
+            TextColumn::make('interactions_count')
+                ->label('Uses')
+                ->counts('interactions')
+                ->sortable(),
+        ])
             ->filters([
                 Filter::make('is_default')
                     ->label('Default')
                     ->query(fn (Builder $query) => $query->where('is_default', true)),
                 SelectFilter::make('interactable_type')
-                    ->visible(InteractableTypeFeature::active())
                     ->label('Type')
                     ->options(InteractableType::class),
             ])
@@ -185,12 +182,8 @@ class ListInteractionStatuses extends ListRecords
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
-
-        // TODO: InteractableTypeFeature cleanup, apply defaultGroup() to $table and directly return it
-        return InteractableTypeFeature::active() ?
-            $table->defaultGroup('interactable_type') :
-            $table;
+            ])
+            ->defaultGroup('interactable_type');
     }
 
     protected function getHeaderActions(): array

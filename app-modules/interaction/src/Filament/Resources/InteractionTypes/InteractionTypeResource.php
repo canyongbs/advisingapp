@@ -41,7 +41,6 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionTypes\Pages\CreateInte
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypes\Pages\EditInteractionType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypes\Pages\ListInteractionTypes;
 use AdvisingApp\Interaction\Models\InteractionType;
-use App\Features\InteractableTypeFeature;
 use App\Filament\Clusters\InteractionManagement;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -66,7 +65,6 @@ class InteractionTypeResource extends Resource
         return $schema
             ->components([
                 Select::make('interactable_type')
-                    ->visible(InteractableTypeFeature::active())
                     ->label('Type')
                     ->required()
                     ->options(InteractableType::class)
@@ -78,13 +76,13 @@ class InteractionTypeResource extends Resource
                     ->placeholder('Interaction Type Name')
                     ->unique(
                         ignoreRecord: true,
-                        modifyRuleUsing: fn (Unique $rule, Get $get) => InteractableTypeFeature::active() ? $rule->where('interactable_type', $get('interactable_type'))->whereNull('deleted_at') : $rule
+                        modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('interactable_type', $get('interactable_type'))->whereNull('deleted_at')
                     ),
                 Toggle::make('is_default')
                     ->label('Default')
                     ->live()
-                    ->hint(function (?InteractionType $record, $state, Get $get): ?string {
-                        $basicHint = InteractableTypeFeature::active() ? 'This will only affect interactions for the selected type.' : null;
+                    ->hint(function (?InteractionType $record, $state, Get $get): string {
+                        $basicHint = 'This will only affect interactions for the selected type.';
 
                         if ($record?->is_default) {
                             return $basicHint;
@@ -94,14 +92,10 @@ class InteractionTypeResource extends Resource
                             return $basicHint;
                         }
 
-                        $currentDefault = InteractableTypeFeature::active() ?
-                            InteractionType::query()
-                                ->where('is_default', true)
-                                ->where('interactable_type', $get('interactable_type'))
-                                ->value('name') :
-                            InteractionType::query()
-                                ->where('is_default', true)
-                                ->value('name');
+                        $currentDefault = InteractionType::query()
+                            ->where('is_default', true)
+                            ->where('interactable_type', $get('interactable_type'))
+                            ->value('name');
 
                         if (blank($currentDefault)) {
                             return $basicHint;

@@ -39,7 +39,6 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\InteractableTypeFeature;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -135,24 +134,8 @@ class StudentInteractionTypeDoughnutChart extends ChartReportWidget
      */
     protected function getInteractionTypeData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $groupId = null): Collection
     {
-        $query = InteractableTypeFeature::active() ?
-            InteractionType::where('interactable_type', InteractableType::Student)
-                ->withCount([
-                    'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId) {
-                        $query
-                            ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId) {
-                                $query->when(
-                                    $groupId,
-                                    fn (Builder $query) => $this->groupFilter($query, $groupId)
-                                );
-                            })
-                            ->when(
-                                $startDate && $endDate,
-                                fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
-                            );
-                    },
-                ])->get(['id', 'name']) :
-            InteractionType::withCount([
+        $query = InteractionType::where('interactable_type', InteractableType::Student)
+            ->withCount([
                 'interactions' => function (Builder $query) use ($startDate, $endDate, $groupId) {
                     $query
                         ->whereHasMorph('interactable', Student::class, function (Builder $query) use ($groupId) {
