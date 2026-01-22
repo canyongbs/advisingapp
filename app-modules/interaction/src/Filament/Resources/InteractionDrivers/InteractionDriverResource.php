@@ -78,7 +78,7 @@ class InteractionDriverResource extends Resource
                     ->placeholder('Interaction Driver Name')
                     ->unique(
                         ignoreRecord: true,
-                        modifyRuleUsing: fn (Unique $rule, Get $get) => InteractableTypeFeature::active() ? $rule->where('interactable_type', $get('interactable_type')) : $rule
+                        modifyRuleUsing: fn (Unique $rule, Get $get) => InteractableTypeFeature::active() ? $rule->where('interactable_type', $get('interactable_type'))->whereNull('deleted_at') : $rule
                     ),
                 Toggle::make('is_default')
                     ->label('Default')
