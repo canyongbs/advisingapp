@@ -39,7 +39,6 @@ namespace AdvisingApp\StudentDataModel\Filament\Pages;
 use AdvisingApp\Alert\Filament\Widgets\AlertStats;
 use AdvisingApp\Report\Abstract\StudentReport;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
-use AdvisingApp\StudentDataModel\Filament\Widgets\StudentStats;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\ReportLibrary;
 use App\Models\User;
@@ -108,7 +107,6 @@ class RetentionCrmDashboard extends StudentReport
     public function getWidgets(): array
     {
         return [
-            StudentStats::make(),
             AlertStats::make(),
             StudentsActionCenterWidget::make(),
         ];
