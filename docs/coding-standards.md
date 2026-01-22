@@ -1,4 +1,6 @@
-# PHP CS Fixer (PHP Files)
+# Coding Standards and Styles
+
+## PHP CS Fixer (PHP Files)
 
 This application comes with a PHP Coding Standards Fixer configuration [php-cs-fixer.php](../php-cs-fixer.php)
 
@@ -6,60 +8,26 @@ Within this configuration file is the agreed upon standards for the team.
 
 When setting up the project you should set up your IDE to automatically apply these rules to the current file you are working in on save. Common IDE configurations on how to do that are listed below.
 
-## IDE Configuration
+### IDE Configuration
 
-### PHPStorm / Jetbrains Products
+#### VS Code
 
-##### Inspections (fixer does not run, only highlights violations)
-
-1. Set the correct php cs fixer binary in:
-    - Language & Frameworks -> PHP -> Quality tools
-2. Within phpstorm, go to:
-    - Settings -> Editor -> Inspections -> PHP -> Quality tools
-    - Make sure PHP CS Fixer validation is checked
-    - In the right-hand pane, after selecting this option, click the browse (`...`) button and select the php-cs-fixer.php file previously saved in your home directory
-    - Click Apply and OK
-
-##### File Watcher (fixer runs on save action)
-
-1. In PHPStorm, create a file watcher (under "Preferences->Tools")
-2. Uncheck all the "Advanced Options"
-3. Edit the following settings:
-
-```
-Name: PHP Style fixer
-File type: PHP
-Scope: Current File
-Path: $ProjectFileDir$/vendor/friendsofphp/php-cs-fixer/php-cs-fixer
-Arguments: fix $FileDir$/$FileName$ --verbose --config=$ProjectFileDir$/php-cs-fixer.php
-```
-
-### VS Code
-
-1. Install [PHP CS Fixer](https://marketplace.visualstudio.com/items?itemName=fterrag.vscode-php-cs-fixer) extension
+1. Install [PHP CS Fixer](https://marketplace.visualstudio.com/items?itemName=junstyle.php-cs-fixer) extension
 2. Configure Extension, in `Settings as JSON`
     ```
-    "vscode-php-cs-fixer.config": "/{path_to_repository}/php-cs-fixer.php",
-    "vscode-php-cs-fixer.toolPath": "/{path_to_repository}/vendor/bin/php-cs-fixer",
+    "php-cs-fixer.executablePath": "${workspaceFolder}/vendor/bin/php-cs-fixer",
+    "php-cs-fixer.config": "php-cs-fixer.php",
+    "php-cs-fixer.onsave": true,
+    "php-cs-fixer.ignorePHPVersion": true,
+    "editor.tabSize": 4,
     "[php]": {
-        "editor.defaultFormatter": "fterrag.vscode-php-cs-fixer"
+        "editor.defaultFormatter": "junstyle.php-cs-fixer"
     },
-    ```
-
-### Sublime Text 3
-
-1. Find `PHP CS Fixer` using Package Control: Install Package (cmd-shift-p)
-2. Under Preferences -> Package Settings -> PHP CS Fixer -> Settings - User, configure the extension using the following JSON
-    ```
-    {
-        "config": "/{path_to_repository}/php-cs-fixer.php",
-        "on_save": true,
-    }
     ```
 
 ---
 
-# Prettier (CSS, JS, and \*.blade.php Files)
+## Prettier (CSS, JS, and \*.blade.php Files)
 
 This application comes with [Prettier](https://www.npmjs.com/package/prettier) and the [Prettier Blade Plugin](https://www.npmjs.com/package/@shufo/prettier-plugin-blade) to be used in order to set and automatically apply code formatting rules to our code-base blade files.
 
@@ -71,9 +39,9 @@ spinc prettier-lint
 
 When setting up the project you should set up your IDE to automatically apply these rules to the current file you are working in on save. Common IDE configurations on how to do that are listed below.
 
-## IDE Configuration
+### IDE Configuration
 
-### PHPStorm / Jetbrains Products
+#### PHPStorm / Jetbrains Products
 
 You can use Prettier Plugin for JetBrains IDE.
 
@@ -85,7 +53,7 @@ e.g.
 
 and turn on checkbox `On 'Reformat Code' action`
 
-### VSCode
+#### VSCode
 
 You can use [Prettier extension for VSCode](https://github.com/prettier/prettier-vscode) to format blade within VSCode. You must install this plugin as local dependencies. see [https://github.com/prettier/prettier-vscode#prettier-resolution](https://github.com/prettier/prettier-vscode#prettier-resolution)
 
@@ -93,7 +61,7 @@ If you want to use formatter without Prettier, please consider using [vscode-bla
 
 ---
 
-# LaraStan (PHP Files)
+## LaraStan (PHP Files)
 
 This application comes with a [LaraStan](https://github.com/nunomaduro/larastan) installed to provide static analysis (technically "code analysis" as it loads the Service Container) of the code-base.
 
@@ -119,7 +87,7 @@ parameters:
 
 ---
 
-# IDE Helper
+## IDE Helper
 
 This application comes with a [Laravel IDE Helper](https://github.com/barryvdh/laravel-ide-helper) installed to provide better auto-completion for Laravel Facades and other classes.
 
