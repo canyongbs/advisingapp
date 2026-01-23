@@ -36,7 +36,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Features\InstitutionDetailsSettingsFeature;
 use App\Filament\Clusters\InstitutionDetails;
 use App\Models\User;
 use App\Settings\InstitutionDetailsSettings;
@@ -62,7 +61,7 @@ class ManageInstitutionDetailsSettings extends SettingsPage
         $user = auth()->user();
         assert($user instanceof User);
 
-        return InstitutionDetailsSettingsFeature::active() && $user->can(['settings.view-any']);
+        return $user->can(['settings.view-any']);
     }
 
     public function form(Schema $schema): Schema
