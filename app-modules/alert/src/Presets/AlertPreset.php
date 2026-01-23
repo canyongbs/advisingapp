@@ -75,8 +75,8 @@ enum AlertPreset: string implements HasLabel
             self::CourseWithdrawal => 3,
             self::MultipleCourseWithdrawals => 4,
             self::RepeatedCourseAttempt => 5,
-            self::NewInboundMessage => 6,
-            self::ConcernRaised => 7,
+            self::ConcernRaised => 6,
+            self::NewInboundMessage => 7,
             self::NewStudent => 8,
             self::AdultLearner => 9,
             self::FirstGenerationStudent => 10,
@@ -110,11 +110,11 @@ enum AlertPreset: string implements HasLabel
             self::CourseWithdrawal => new CourseWithdrawalPresetHandler(),
             self::MultipleCourseWithdrawals => new MultipleCourseWithdrawalsPresetHandler(),
             self::RepeatedCourseAttempt => new RepeatedCourseAttemptPresetHandler(),
-            self::FirstGenerationStudent => new FirstGenerationStudentPresetHandler(),
-            self::AdultLearner => new AdultLearnerPresetHandler(),
-            self::NewStudent => new NewStudentPresetHandler(),
-            self::NewInboundMessage => new NewInboundMessagePresetHandler(),
             self::ConcernRaised => new ConcernRaisedPresetHandler(),
+            self::FirstGenerationStudent => new FirstGenerationStudentPresetHandler(),
+            self::NewInboundMessage => new NewInboundMessagePresetHandler(),
+            self::AdultLearner => new AdultLearnerPresetHandler(),
+            self::NewStudent => new NewStudentPresetHandler(),            
         };
     }
 
