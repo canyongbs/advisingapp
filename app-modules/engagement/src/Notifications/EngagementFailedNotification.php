@@ -39,6 +39,8 @@ namespace AdvisingApp\Engagement\Notifications;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\NotificationSetting;
 use App\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
@@ -64,12 +66,31 @@ class EngagementFailedNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
+        $sender = $this->engagement->user;
+        $fromName = $sender?->getDisplayName() ?? 'N/A';
+        $fromEmail = $sender?->getEmail() ?? 'N/A';
+
+        $recipient = $this->engagement->recipient;
+
+        $to = match (true) {
+            $recipient instanceof Student => (function () use ($recipient) {
+                return "{$recipient->full_name} <{$recipient->email}> (Student)";
+            })(),
+            $recipient instanceof Prospect => (function () use ($recipient) {
+                return "{$recipient->full_name} <{$recipient->email}> (Prospect)";
+            })(),
+            default => 'N/A',
+        };
+
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject('An engagement failed to deliver')
-            ->line("The engagement {$this->engagement->channel->getLabel()} failed to be delivered to {$this->engagement->recipient->display_name}:")
-            ->line('Subject: ' . $this->engagement->getSubject())
-            ->line('Body: ' . $this->engagement->getBody());
+            ->subject("Delivery Failed: {$this->engagement->getSubject()}")
+            ->markdown('engagement::mail.engagement-failed-notification', [
+                'from' => "{$fromName} <{$fromEmail}>",
+                'date' => $this->engagement->created_at?->format('l, F j, Y \a\t g:i A') ?? 'N/A',
+                'to' => $to,
+                'subject' => $this->engagement->getSubject(),
+            ]);
     }
 
     public function toDatabase(object $notifiable): array

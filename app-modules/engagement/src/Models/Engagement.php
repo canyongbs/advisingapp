@@ -99,6 +99,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'dispatched_at',
         'channel',
         'campaign_action_id',
+        'dispatch_failed_at',
     ];
 
     protected $casts = [
@@ -107,6 +108,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'dispatched_at' => 'datetime',
         'channel' => NotificationChannel::class,
         'subject' => 'array',
+        'dispatch_failed_at' => 'datetime',
     ];
 
     // TODO Consider changing this relationship if we ever needed to timeline something else where records might be shared across entities
