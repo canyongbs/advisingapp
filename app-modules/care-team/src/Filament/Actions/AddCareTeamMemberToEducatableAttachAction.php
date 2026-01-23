@@ -158,7 +158,7 @@ class AddCareTeamMemberToEducatableAttachAction extends AttachAction
                         assert($educatable instanceof Student || $educatable instanceof Prospect);
 
                         if ($educatable->careTeam()->where('user_id', $user->getKey())->doesntExist()) {
-                            $educatable->careTeam()->attach($user, ['care_team_role_id' => $careTeam['care_team_role_id']]);
+                            $educatable->careTeam()->attach($user, ['care_team_role_id' => $careTeam['care_team_role_id'] ?? null]);
                         }
                     }
 

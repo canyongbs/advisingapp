@@ -35,23 +35,30 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberToEducatableAttachAction;
-use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
+use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\CareTeam\Models\CareTeamRole;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectCareTeam;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudentCareTeam;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Enums\CareTeamRoleType;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\Repeater;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can attach users without a care team role to a student', function () {
+    Repeater::fake();
     asSuperAdmin();
 
     $student = Student::factory()->create();
     $user1 = User::factory()->licensed(LicenseType::cases())->create();
     $user2 = User::factory()->licensed(LicenseType::cases())->create();
 
-    livewire(ViewStudent::class, ['record' => $student->getKey()])
-        ->mountAction(AddCareTeamMemberToEducatableAttachAction::class)
+    livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+        ->mountAction(TestAction::make('attach')->table())
         ->fillForm([
             'careTeams' => [
                 [
@@ -64,9 +71,116 @@ it('can attach users without a care team role to a student', function () {
                 ],
             ],
         ])
-        ->callMountedAction();
+        ->callMountedAction()
+        ->assertHasNoFormErrors();
 
     $student->refresh();
 
     expect($student->careTeam()->count())->toBe(2);
+    expect($student->careTeam->pluck('id'))->toContain($user1->getKey());
+    expect($student->careTeam->pluck('id'))->toContain($user2->getKey());
+});
+
+it('can attach users without a care team role to a prospect', function () {
+    Repeater::fake();
+    asSuperAdmin();
+
+    $prospect = Prospect::factory()->create();
+    $user1 = User::factory()->licensed(LicenseType::cases())->create();
+    $user2 = User::factory()->licensed(LicenseType::cases())->create();
+
+    livewire(ManageProspectCareTeam::class, ['record' => $prospect->getKey()])
+        ->mountAction(TestAction::make('attach')->table())
+        ->fillForm([
+            'careTeams' => [
+                [
+                    'user_id' => $user1->getKey(),
+                    'care_team_role_id' => null,
+                ],
+                [
+                    'user_id' => $user2->getKey(),
+                    'care_team_role_id' => null,
+                ],
+            ],
+        ])
+        ->callMountedAction()
+        ->assertHasNoFormErrors();
+
+    $prospect->refresh();
+
+    expect($prospect->careTeam()->count())->toBe(2);
+    expect($prospect->careTeam->pluck('id'))->toContain($user1->getKey());
+    expect($prospect->careTeam->pluck('id'))->toContain($user2->getKey());
+});
+
+it('can attach users with care team roles to a student', function () {
+    Repeater::fake();
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+    $user1 = User::factory()->licensed(LicenseType::cases())->create();
+    $user2 = User::factory()->licensed(LicenseType::cases())->create();
+    $careTeamRole1 = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Student]);
+    $careTeamRole2 = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Student]);
+
+    livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+        ->mountAction(TestAction::make('attach')->table())
+        ->fillForm([
+            'careTeams' => [
+                [
+                    'user_id' => $user1->getKey(),
+                    'care_team_role_id' => $careTeamRole1->getKey(),
+                ],
+                [
+                    'user_id' => $user2->getKey(),
+                    'care_team_role_id' => $careTeamRole2->getKey(),
+                ],
+            ],
+        ])
+        ->callMountedAction()
+        ->assertHasNoFormErrors();
+
+    $student->refresh();
+
+    expect($student->careTeam()->count())->toBe(2);
+    expect($student->careTeam->pluck('id'))->toContain($user1->getKey());
+    expect($student->careTeam->pluck('id'))->toContain($user2->getKey());
+    expect(CareTeam::where('user_id', $user1->getKey())->where('educatable_id', $student->getKey())->first()->care_team_role_id)->toBe($careTeamRole1->getKey());
+    expect(CareTeam::where('user_id', $user2->getKey())->where('educatable_id', $student->getKey())->first()->care_team_role_id)->toBe($careTeamRole2->getKey());
+});
+
+it('can attach users with care team roles to a prospect', function () {
+    Repeater::fake();
+    asSuperAdmin();
+
+    $prospect = Prospect::factory()->create();
+    $user1 = User::factory()->licensed(LicenseType::cases())->create();
+    $user2 = User::factory()->licensed(LicenseType::cases())->create();
+    $careTeamRole1 = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Prospect]);
+    $careTeamRole2 = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Prospect]);
+
+    livewire(ManageProspectCareTeam::class, ['record' => $prospect->getKey()])
+        ->mountAction(TestAction::make('attach')->table())
+        ->fillForm([
+            'careTeams' => [
+                [
+                    'user_id' => $user1->getKey(),
+                    'care_team_role_id' => $careTeamRole1->getKey(),
+                ],
+                [
+                    'user_id' => $user2->getKey(),
+                    'care_team_role_id' => $careTeamRole2->getKey(),
+                ],
+            ],
+        ])
+        ->callMountedAction()
+        ->assertHasNoFormErrors();
+
+    $prospect->refresh();
+
+    expect($prospect->careTeam()->count())->toBe(2);
+    expect($prospect->careTeam->pluck('id'))->toContain($user1->getKey());
+    expect($prospect->careTeam->pluck('id'))->toContain($user2->getKey());
+    expect(CareTeam::where('user_id', $user1->getKey())->where('educatable_id', $prospect->getKey())->first()->care_team_role_id)->toBe($careTeamRole1->getKey());
+    expect(CareTeam::where('user_id', $user2->getKey())->where('educatable_id', $prospect->getKey())->first()->care_team_role_id)->toBe($careTeamRole2->getKey());
 });
