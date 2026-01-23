@@ -149,7 +149,7 @@ class AddCareTeamMemberToEducatableAttachAction extends AttachAction
             ->action(function (array $data) {
                 try {
                     DB::beginTransaction();
-                    
+
                     foreach ($data['careTeams'] as $careTeam) {
                         $user = User::findOrFail($careTeam['user_id']);
 
