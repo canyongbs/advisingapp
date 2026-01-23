@@ -58,7 +58,7 @@ class ChannelManager extends BaseChannelManager
         }
 
         if ($notification instanceof ShouldQueue && property_exists($notification, 'middleware')) {
-            $notification->middleware[] = new RateLimitedWithRedis('notification');
+            $notification->middleware[] = new RateLimitedWithRedis('notifications');
         }
 
         if ($notification instanceof ShouldQueue) {
@@ -66,7 +66,7 @@ class ChannelManager extends BaseChannelManager
         }
 
         if ($notification instanceof ShouldQueue) {
-            $notification->maxExceptions ??= 3; // @phpstan-ignore property.notFound
+            $notification->maxExceptions ??= 5; // @phpstan-ignore property.notFound
         }
 
         parent::send($notifiables, $notification);

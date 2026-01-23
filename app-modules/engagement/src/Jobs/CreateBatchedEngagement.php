@@ -71,7 +71,7 @@ class CreateBatchedEngagement implements ShouldQueue
      */
     public function middleware(): array
     {
-        return [new RateLimitedWithRedis('notification')];
+        return [new RateLimitedWithRedis('notifications')];
     }
 
     public function retryUntil(): DateTimeInterface
