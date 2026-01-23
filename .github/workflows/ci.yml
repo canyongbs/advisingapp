@@ -255,7 +255,6 @@ jobs:
             DB_USERNAME: root
             DB_PASSWORD: root
             DB_DATABASE: testing_landlord
-            PENNANT_STORE: array
             CACHE_DRIVER: array
             QUEUE_CONNECTION: sync
             AUDIT_QUEUE_CONNECTION: sync
