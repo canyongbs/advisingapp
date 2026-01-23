@@ -114,7 +114,7 @@ enum AlertPreset: string implements HasLabel
             self::FirstGenerationStudent => new FirstGenerationStudentPresetHandler(),
             self::NewInboundMessage => new NewInboundMessagePresetHandler(),
             self::AdultLearner => new AdultLearnerPresetHandler(),
-            self::NewStudent => new NewStudentPresetHandler(),            
+            self::NewStudent => new NewStudentPresetHandler(),
         };
     }
 
