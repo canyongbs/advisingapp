@@ -52,7 +52,9 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Throwable;
 
 class AddCareTeamMemberToEducatableAttachAction extends AttachAction
 {
@@ -145,16 +147,26 @@ class AddCareTeamMemberToEducatableAttachAction extends AttachAction
                     ]),
             ])
             ->action(function (array $data) {
-                foreach ($data['careTeams'] as $careTeam) {
-                    $user = User::find($careTeam['user_id']);
+                try {
+                    DB::beginTransaction();
+                    
+                    foreach ($data['careTeams'] as $careTeam) {
+                        $user = User::findOrFail($careTeam['user_id']);
 
-                    $educatable = $this->getLivewire()->getOwnerRecord();
+                        $educatable = $this->getLivewire()->getOwnerRecord();
 
-                    assert($educatable instanceof Student || $educatable instanceof Prospect);
+                        assert($educatable instanceof Student || $educatable instanceof Prospect);
 
-                    if ($educatable->careTeam()->where('user_id', $user->getKey())->doesntExist()) {
-                        $educatable->careTeam()->attach($user, ['care_team_role_id' => $careTeam['care_team_role_id']]);
+                        if ($educatable->careTeam()->where('user_id', $user->getKey())->doesntExist()) {
+                            $educatable->careTeam()->attach($user, ['care_team_role_id' => $careTeam['care_team_role_id']]);
+                        }
                     }
+
+                    DB::commit();
+                } catch (Throwable $throw) {
+                    DB::rollBack();
+
+                    throw $throw;
                 }
             })
             ->modalSubmitActionLabel('Confirm')
