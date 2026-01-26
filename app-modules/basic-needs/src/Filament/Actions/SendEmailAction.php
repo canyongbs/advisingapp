@@ -137,7 +137,7 @@ class SendEmailAction
                             ->live()
                             ->required(),
                     ]),
-                
+
                 Grid::make(1)
                     ->schema(fn (Get $get) => self::getRecipientRouteIdSchema($get))
                     ->hidden(fn (Get $get) => ! filled($get('recipient_type'))),
