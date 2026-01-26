@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Pages;
 
-use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberToEducatableAttachAction;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\Concerns\HasProspectHeader;
@@ -45,20 +45,14 @@ use AdvisingApp\Prospect\Models\Prospect;
 use App\Enums\CareTeamRoleType;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
-use App\Models\Scopes\HasLicense;
-use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use BackedEnum;
-use Filament\Actions\AttachAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DetachAction;
 use Filament\Actions\DetachBulkAction;
-use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class ManageProspectCareTeam extends ManageRelatedRecords
 {
@@ -96,50 +90,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                     ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0),
             ])
             ->headerActions([
-                AttachAction::make()
-                    ->label('New')
-                    ->modalHeading(function () {
-                        /** @var Prospect $prospect */
-                        $prospect = $this->getOwnerRecord();
-
-                        return "Add a User to {$prospect->display_name}'s Care Team";
-                    })
-                    ->modalSubmitActionLabel('Add')
-                    ->attachAnother(false)
-                    ->color('primary')
-                    ->mountUsing(fn (Schema $schema) => $schema->fill([
-                        'care_team_role_id' => CareTeamRoleType::prospectDefault()?->getKey(),
-                    ]))
-                    ->schema([
-                        Select::make('recordId')
-                            ->label('User')
-                            ->searchable()
-                            ->required()
-                            ->options(
-                                User::query()->tap(new HasLicense(Prospect::getLicenseType()))
-                                    ->whereDoesntHave('prospectCareTeams', fn ($query) => $query
-                                        ->where('educatable_type', $this->getOwnerRecord()->getMorphClass())
-                                        ->where('educatable_id', $this->getOwnerRecord()->getKey()))
-                                    ->tap(new WithoutAnyAdmin())
-                                    ->pluck('name', 'id')
-                            ),
-                        Select::make('care_team_role_id')
-                            ->label('Role')
-                            ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', CareTeamRoleType::Prospect)->orderByDesc('created_at'))
-                            ->preload()
-                            ->optionsLimit(20)
-                            ->searchable()
-                            ->model(CareTeam::class)
-                            ->visible(CareTeamRole::where('type', CareTeamRoleType::Prospect)->count() > 0),
-                    ])
-                    ->successNotificationTitle(function (array $data) {
-                        /** @var Prospect $prospect */
-                        $prospect = $this->getOwnerRecord();
-
-                        $record = User::find($data['recordId']);
-
-                        return "{$record->name} was added to {$prospect->display_name}'s Care Team";
-                    }),
+                AddCareTeamMemberToEducatableAttachAction::make(),
             ])
             ->recordActions([
                 DetachAction::make()
