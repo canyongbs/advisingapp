@@ -164,7 +164,7 @@ enum EngagementDisplayStatus implements HasLabel, HasColor
                 // until some of the other external events have already come in
                 SmsMessageEventType::Dispatched => $status = ($status === self::Pending || $status === self::Scheduled) ? self::Pending : $status,
 
-                SmsMessageEventType::FailedDispatch => $status = self::Failed,
+                SmsMessageEventType::FailedDispatch => $status = self::SystemDelayed,
                 SmsMessageEventType::RateLimited => $status = self::Failed,
 
                 // We will consider the message "delivered" if blocked by demo mode
