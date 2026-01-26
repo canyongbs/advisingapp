@@ -76,7 +76,7 @@ class RelationManagerSendEngagementAction extends CreateAction
 
         $this->icon('heroicon-m-chat-bubble-bottom-center-text')
             ->label('New')
-            ->modalHeading('Create new email or text')
+            ->modalHeading('Send Message')
             ->model(Engagement::class)
             ->authorize(function (RelationManager $livewire) {
                 $ownerRecord = $livewire->getOwnerRecord();
@@ -84,7 +84,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                 return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
             })
             ->steps(fn (): array => [
-                Step::make('Contact Information')
+                Step::make('Recipient Details')
                     ->schema([
                         Select::make('channel')
                             ->label('What would you like to send?')
@@ -199,7 +199,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                             ->required(),
                     ])
                     ->columns(2),
-                Step::make('Content')
+                Step::make('Message Details')
                     ->schema([
                         TiptapEditor::make('subject')
                             ->label('Subject')
@@ -318,7 +318,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                     ])
                     ->visible(auth()->user()->is_signature_enabled)
                     ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value),
-                Step::make('Send Your Message')
+                Step::make('Delivery Details')
                     ->schema([
                         Toggle::make('send_later')
                             ->reactive()

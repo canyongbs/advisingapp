@@ -77,7 +77,7 @@ class SendEngagementAction extends Action
         parent::setUp();
 
         $this->icon('heroicon-m-chat-bubble-bottom-center-text')
-            ->modalHeading('Send Engagement')
+            ->modalHeading('Send Message')
             ->modalDescription(function (): ?string {
                 $educatable = $this->getEducatable();
 
@@ -109,10 +109,11 @@ class SendEngagementAction extends Action
                 }
             })
             ->steps(fn (): array => [
-                Step::make('Contact Information')
+                Step::make('Recipient Details')
                     ->schema([
                         ...$this->getEducatable() ? [] : [
                             EducatableSelect::make('recipient', isExcludingConvertedProspects: true)
+                                ->label('Recipient Info')
                                 ->live()
                                 ->required()
                                 ->columns(2)
@@ -230,7 +231,7 @@ class SendEngagementAction extends Action
                                 ];
                             }),
                     ]),
-                Step::make('Content')
+                Step::make('Message Details')
                     ->schema(function (Get $get): array {
                         $educatable = $this->getEducatable() ?? match ($get('recipient_type')) {
                             'student' => Student::find($get('recipient_id')),
@@ -358,7 +359,7 @@ class SendEngagementAction extends Action
                     ])
                     ->visible(auth()->user()->is_signature_enabled)
                     ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value),
-                Step::make('Send Your Message')
+                Step::make('Delivery Details')
                     ->schema([
                         Toggle::make('send_later')
                             ->reactive()

@@ -50,6 +50,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard\Step;
@@ -73,7 +74,7 @@ class SendEmailAction
         return Action::make('send_email')
             ->label('Send Email')
             ->icon('heroicon-m-chat-bubble-bottom-center-text')
-            ->modalHeading('Send Engagement')
+            ->modalHeading('Send Message')
             ->model(Engagement::class)
             ->authorize(fn () => Auth::user()->can('create', Engagement::class))
             ->steps(fn (): array => self::getSteps($view))
@@ -107,32 +108,36 @@ class SendEmailAction
      */
     protected static function getContactInformationStep(string $view): Step
     {
-        return Step::make('Contact Information')
+        return Step::make('Recipient Details')
             ->schema([
-                Select::make('recipient_type')
-                    ->label('Recipient Type')
-                    ->options([
-                        'student' => 'Student',
-                        'prospect' => 'Prospect',
-                    ])
-                    ->live()
-                    ->afterStateUpdated(fn (Set $set) => $set('recipient_id', null))
-                    ->required(),
-                Select::make('recipient_id')
-                    ->label('Recipient')
-                    ->searchable()
-                    ->hidden(fn (Get $get) => ! filled($get('recipient_type')))
-                    ->options(fn (Get $get) => self::getRecipientOptions($get))
-                    ->getSearchResultsUsing(fn (string $search, Get $get) => self::getRecipientSearchResults($search, $get))
-                    ->getOptionLabelUsing(fn (string $value, Get $get) => self::getRecipientOptionLabel($value, $get))
-                    ->afterStateUpdated(function (Get $get, Set $set, Component $livewire) use ($view) {
-                        $record = method_exists($livewire, 'getRecord') ? $livewire->getRecord() : null;
+                Section::make()
+                    ->label('Recipient Info')
+                    ->schema([
+                        Select::make('recipient_type')
+                            ->label('Recipient Type')
+                            ->options([
+                                'student' => 'Student',
+                                'prospect' => 'Prospect',
+                            ])
+                            ->live()
+                            ->afterStateUpdated(fn (Set $set) => $set('recipient_id', null))
+                            ->required(),
+                        Select::make('recipient_id')
+                            ->label('Recipient')
+                            ->searchable()
+                            ->hidden(fn (Get $get) => ! filled($get('recipient_type')))
+                            ->options(fn (Get $get) => self::getRecipientOptions($get))
+                            ->getSearchResultsUsing(fn (string $search, Get $get) => self::getRecipientSearchResults($search, $get))
+                            ->getOptionLabelUsing(fn (string $value, Get $get) => self::getRecipientOptionLabel($value, $get))
+                            ->afterStateUpdated(function (Get $get, Set $set, Component $livewire) use ($view) {
+                                $record = method_exists($livewire, 'getRecord') ? $livewire->getRecord() : null;
 
-                        self::updateBodyAndRouteId($get, $set, $record, $view);
-                    })
-                    ->live()
-                    ->required(),
-
+                                self::updateBodyAndRouteId($get, $set, $record, $view);
+                            })
+                            ->live()
+                            ->required(),
+                    ]),
+                
                 Grid::make(1)
                     ->schema(fn (Get $get) => self::getRecipientRouteIdSchema($get))
                     ->hidden(fn (Get $get) => ! filled($get('recipient_type'))),
@@ -144,7 +149,7 @@ class SendEmailAction
      */
     protected static function getContentStep(string $view): Step
     {
-        return Step::make('Content')
+        return Step::make('Message Details')
             ->schema(function (Get $get) use ($view): array {
                 $educatable = self::resolveRecipient($get('recipient_type'), $get('recipient_id'));
 
@@ -197,7 +202,7 @@ class SendEmailAction
 
     protected static function getSendLaterStep(): Step
     {
-        return Step::make('Send Your Message')
+        return Step::make('Delivery Details')
             ->schema([
                 Toggle::make('send_later')
                     ->reactive()
