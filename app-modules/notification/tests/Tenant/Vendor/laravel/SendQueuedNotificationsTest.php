@@ -37,10 +37,9 @@
 use AdvisingApp\Notification\Tests\Fixtures\TestDualNotification;
 use AdvisingApp\Notification\Tests\Fixtures\TestEmailNotification;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Cache\RateLimiter;
 use Illuminate\Cache\RateLimiting\Unlimited;
-use Illuminate\Container\Container;
 use Illuminate\Notifications\SendQueuedNotifications;
+use Illuminate\Support\Facades\RateLimiter;
 
 it('has the notification rate limiting applied properly for email notifications', function () {
     $recipient = Student::factory()->create();
@@ -52,7 +51,7 @@ it('has the notification rate limiting applied properly for email notifications'
         ['mail'],
     );
 
-    $limiter = Container::getInstance()->make(RateLimiter::class)->limiter('notifications');
+    $limiter = RateLimiter::limiter('notifications');
 
     $limits = $limiter($job);
 
@@ -75,7 +74,7 @@ it('has the notification rate limiting applied properly for sms notifications', 
         ['sms'],
     );
 
-    $limiter = Container::getInstance()->make(RateLimiter::class)->limiter('notifications');
+    $limiter = RateLimiter::limiter('notifications');
 
     $limits = $limiter($job);
 
@@ -95,7 +94,7 @@ it('has the notification rate limiting applied properly for notifications that s
         ['mail', 'sms'],
     );
 
-    $limiter = Container::getInstance()->make(RateLimiter::class)->limiter('notifications');
+    $limiter = RateLimiter::limiter('notifications');
 
     $limits = $limiter($job);
 
