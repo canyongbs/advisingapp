@@ -59,12 +59,20 @@ class CreateBatchedEngagement implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public int $maxExceptions = 3;
+    public int $maxExceptions = 5;
 
     public function __construct(
         public EngagementBatch $engagementBatch,
         public CanBeNotified $recipient,
     ) {}
+
+    /**
+     * @return array<int, int>
+     */
+    public function backoff(): array
+    {
+        return [5, 30, 60, 300];
+    }
 
     /**
      * @return array<object>
