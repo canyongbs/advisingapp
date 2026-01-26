@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Notification\Models;
 
+use AdvisingApp\Notification\Database\Factories\EmailMessageEventFactory;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -45,7 +47,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class EmailMessageEvent extends BaseModel
 {
-    // TODO: Create Factory
+    /** @use HasFactory<EmailMessageEventFactory> */
+    use HasFactory;
 
     protected $fillable = [
         'type',
