@@ -47,8 +47,7 @@ return new class () extends Migration {
             $table->string('status');
             $table->timestamps();
 
-            $table->index('address');
-            $table->unique(['address', 'status']);
+            $table->unique('address');
         });
     }
 

@@ -37,9 +37,7 @@
     use AdvisingApp\StudentDataModel\Enums\EmailHealthStatus;
     use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 
-    $healthStatus = ($emailAddress instanceof StudentEmailAddress || $emailAddress instanceof ProspectEmailAddress)
-        ? $emailAddress->getHealthStatus()
-        : EmailHealthStatus::Healthy;
+    $healthStatus = $emailAddress->getHealthStatus();
 
     $isBounced = $healthStatus === EmailHealthStatus::Bounced;
     $isOptedOut = $healthStatus === EmailHealthStatus::OptedOut;
