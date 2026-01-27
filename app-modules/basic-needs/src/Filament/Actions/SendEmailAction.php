@@ -44,6 +44,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use App\Filament\Forms\Components\EducatableSelect;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -110,33 +111,33 @@ class SendEmailAction
     {
         return Step::make('Recipient Details')
             ->schema([
-                Section::make()
-                    ->label('Recipient Info')
-                    ->schema([
-                        Select::make('recipient_type')
-                            ->label('Recipient Type')
-                            ->options([
-                                'student' => 'Student',
-                                'prospect' => 'Prospect',
-                            ])
-                            ->live()
-                            ->afterStateUpdated(fn (Set $set) => $set('recipient_id', null))
-                            ->required(),
-                        Select::make('recipient_id')
-                            ->label('Recipient')
-                            ->searchable()
-                            ->hidden(fn (Get $get) => ! filled($get('recipient_type')))
-                            ->options(fn (Get $get) => self::getRecipientOptions($get))
-                            ->getSearchResultsUsing(fn (string $search, Get $get) => self::getRecipientSearchResults($search, $get))
-                            ->getOptionLabelUsing(fn (string $value, Get $get) => self::getRecipientOptionLabel($value, $get))
-                            ->afterStateUpdated(function (Get $get, Set $set, Component $livewire) use ($view) {
-                                $record = method_exists($livewire, 'getRecord') ? $livewire->getRecord() : null;
+                EducatableSelect::make('recipient', isExcludingConvertedProspects: false)
+                                ->label('Recipient Info')
+                                ->live()
+                                ->typeSelectToggleButtons()
+                                ->required()
+                                ->columns(2)
+                                ->afterStateUpdated(function (Get $get, Set $set) {
+                                    $educatable = match ($get('recipient_type')) {
+                                        'student' => Student::find($get('recipient_id')),
+                                        'prospect' => Prospect::find($get('recipient_id')),
+                                        default => null,
+                                    };
 
-                                self::updateBodyAndRouteId($get, $set, $record, $view);
-                            })
-                            ->live()
-                            ->required(),
-                    ]),
+                                    if ($educatable && $educatable->emailAddresses()->whereDoesntHave('bounced')->exists()) {
+                                        $set('channel', 'email');
+                                        $set('recipient_route_id', $educatable->emailAddresses()->whereDoesntHave('bounced')->orderBy('order')->first()?->getKey());
+
+                                        return;
+                                    }
+
+                                    if ($educatable && $educatable->phoneNumbers()->where('can_receive_sms', true)->whereDoesntHave('smsOptOut')->exists()) {
+                                        $set('channel', 'sms');
+                                        $set('recipient_route_id', $educatable->phoneNumbers()->where('can_receive_sms', true)->whereDoesntHave('smsOptOut')->orderBy('order')->first()?->getKey());
+
+                                        return;
+                                    }
+                                }),
 
                 Grid::make(1)
                     ->schema(fn (Get $get) => self::getRecipientRouteIdSchema($get))
