@@ -48,7 +48,6 @@ return new class () extends Migration {
                 ->whereNotNull('filters')
                 ->chunkById(100, function (Collection $segments) use ($obsoleteFilterTypes) {
                     foreach ($segments as $segment) {
-                        $originalFilters = $segment->filters;
                         $filters = json_decode($segment->filters, associative: true) ?? [];
 
                         if (empty($filters)) {
@@ -70,16 +69,10 @@ return new class () extends Migration {
                             continue;
                         }
 
-                        $updatedFilters = json_encode($filters);
-
-                        if ($updatedFilters === $originalFilters) {
-                            continue;
-                        }
-
                         DB::table('segments')
                             ->where('id', $segment->id)
                             ->update([
-                                'filters' => $updatedFilters,
+                                'filters' => json_encode($filters),
                             ]);
                     }
                 });
