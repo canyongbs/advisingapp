@@ -51,7 +51,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard\Step;
@@ -112,32 +111,32 @@ class SendEmailAction
         return Step::make('Recipient Details')
             ->schema([
                 EducatableSelect::make('recipient', isExcludingConvertedProspects: false)
-                                ->label('Recipient Info')
-                                ->live()
-                                ->typeSelectToggleButtons()
-                                ->required()
-                                ->columns(2)
-                                ->afterStateUpdated(function (Get $get, Set $set) {
-                                    $educatable = match ($get('recipient_type')) {
-                                        'student' => Student::find($get('recipient_id')),
-                                        'prospect' => Prospect::find($get('recipient_id')),
-                                        default => null,
-                                    };
+                    ->label('Recipient Info')
+                    ->live()
+                    ->typeSelectToggleButtons()
+                    ->required()
+                    ->columns(2)
+                    ->afterStateUpdated(function (Get $get, Set $set) {
+                        $educatable = match ($get('recipient_type')) {
+                            'student' => Student::find($get('recipient_id')),
+                            'prospect' => Prospect::find($get('recipient_id')),
+                            default => null,
+                        };
 
-                                    if ($educatable && $educatable->emailAddresses()->whereDoesntHave('bounced')->exists()) {
-                                        $set('channel', 'email');
-                                        $set('recipient_route_id', $educatable->emailAddresses()->whereDoesntHave('bounced')->orderBy('order')->first()?->getKey());
+                        if ($educatable && $educatable->emailAddresses()->whereDoesntHave('bounced')->exists()) {
+                            $set('channel', 'email');
+                            $set('recipient_route_id', $educatable->emailAddresses()->whereDoesntHave('bounced')->orderBy('order')->first()?->getKey());
 
-                                        return;
-                                    }
+                            return;
+                        }
 
-                                    if ($educatable && $educatable->phoneNumbers()->where('can_receive_sms', true)->whereDoesntHave('smsOptOut')->exists()) {
-                                        $set('channel', 'sms');
-                                        $set('recipient_route_id', $educatable->phoneNumbers()->where('can_receive_sms', true)->whereDoesntHave('smsOptOut')->orderBy('order')->first()?->getKey());
+                        if ($educatable && $educatable->phoneNumbers()->where('can_receive_sms', true)->whereDoesntHave('smsOptOut')->exists()) {
+                            $set('channel', 'sms');
+                            $set('recipient_route_id', $educatable->phoneNumbers()->where('can_receive_sms', true)->whereDoesntHave('smsOptOut')->orderBy('order')->first()?->getKey());
 
-                                        return;
-                                    }
-                                }),
+                            return;
+                        }
+                    }),
 
                 Grid::make(1)
                     ->schema(fn (Get $get) => self::getRecipientRouteIdSchema($get))
