@@ -81,7 +81,7 @@ class UploadQnaAdvisorFilesToVectorStore implements ShouldQueue, TenantAware, Sh
         if ($parsedFiles && (! $service->areFilesReady($parsedFiles))) {
             Log::info("The Qna Advisor [{$this->advisor->getKey()}] files and links are not ready for use yet.");
 
-            $this->release(now()->addMinute());
+            ($this->attempts() < 15) && $this->release(now()->addMinute());
 
             return;
         }
@@ -92,7 +92,7 @@ class UploadQnaAdvisorFilesToVectorStore implements ShouldQueue, TenantAware, Sh
         ) {
             Log::info("The Qna Advisor [{$this->advisor->getKey()}] has files or links that are not parsed yet.");
 
-            $this->release(now()->addMinute());
+            ($this->attempts() < 15) && $this->release(now()->addMinute());
         }
     }
 
