@@ -78,7 +78,8 @@
     <x-filament::icon
         class="ml-1 h-6 w-6"
         style="color: {{ $healthStatus->getLightModeColor() }};"
-        x-bind:style="$store.theme === 'dark' ? 'color: {{ $healthStatus->getDarkModeColor() }};' : 'color: {{ $healthStatus->getLightModeColor() }};'"
+        x-bind:style="$store.theme === 'dark' ? 'color: {{ $healthStatus->getDarkModeColor() }};' :
+            'color: {{ $healthStatus->getLightModeColor() }};'"
         icon="{{ $healthStatus->getIcon() }}"
         x-tooltip.raw="{{ $healthStatus->getTooltipText() }}"
     />
