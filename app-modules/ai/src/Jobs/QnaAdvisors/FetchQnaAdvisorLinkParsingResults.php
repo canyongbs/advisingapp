@@ -58,8 +58,6 @@ class FetchQnaAdvisorLinkParsingResults implements ShouldQueue, TenantAware, Sho
 
     public int $timeout = 600;
 
-    public int $tries = 60;
-
     public function __construct(
         protected QnaAdvisorLink $link,
     ) {}
@@ -77,8 +75,6 @@ class FetchQnaAdvisorLinkParsingResults implements ShouldQueue, TenantAware, Sho
             ->get("https://r.jina.ai/{$this->link->url}");
 
         if (! $response->successful()) {
-            $this->release();
-
             return;
         }
 

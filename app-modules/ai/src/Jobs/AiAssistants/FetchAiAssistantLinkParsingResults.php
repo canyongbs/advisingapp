@@ -58,8 +58,6 @@ class FetchAiAssistantLinkParsingResults implements ShouldQueue, TenantAware, Sh
 
     public int $timeout = 600;
 
-    public int $tries = 60;
-
     public function __construct(
         protected AiAssistantLink $link,
     ) {}
@@ -77,8 +75,6 @@ class FetchAiAssistantLinkParsingResults implements ShouldQueue, TenantAware, Sh
             ->get("https://r.jina.ai/{$this->link->url}");
 
         if (! $response->successful()) {
-            $this->release();
-
             return;
         }
 
