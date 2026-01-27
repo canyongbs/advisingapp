@@ -33,7 +33,6 @@
 --}}
 @php
     use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-    use AdvisingApp\StudentDataModel\Filament\Widgets\StudentStats;
     use AdvisingApp\Alert\Filament\Widgets\AlertStats;
     use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 
@@ -41,7 +40,6 @@
         fn($widget) => $widget->widget === RefreshWidget::class,
     );
 
-    $activityWidgets = $visibleWidgets->filter(fn($widget) => $widget->widget === StudentStats::class)->values()->all();
     $alertWidgets = $visibleWidgets->filter(fn($widget) => $widget->widget === AlertStats::class)->values()->all();
     $tableWidgets = $visibleWidgets
         ->filter(fn($widget) => $widget->widget === StudentsActionCenterWidget::class)
@@ -55,18 +53,6 @@
     </div>
 
     {{ $this->filtersForm }}
-
-    <x-filament::section>
-        <x-slot name="heading">
-            Activity Insights
-        </x-slot>
-
-        <x-filament-widgets::widgets
-            :columns="$this->getColumns()"
-            :data="['pageFilters' => $this->filters, ...$this->getWidgetData()]"
-            :widgets="$activityWidgets"
-        />
-    </x-filament::section>
 
     <x-filament::section>
         <x-slot name="heading">

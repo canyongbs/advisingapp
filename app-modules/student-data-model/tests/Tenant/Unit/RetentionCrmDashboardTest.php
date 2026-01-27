@@ -37,7 +37,6 @@
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
-use AdvisingApp\StudentDataModel\Filament\Widgets\StudentStats;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
@@ -73,13 +72,6 @@ it('renders all students correctly in the retention dashboard', function () {
         )
         ->count(1)
         ->create();
-
-    $statsWidget = new StudentStats();
-
-    $stats = $statsWidget->getStats();
-
-    $openTasksStat = $stats[2];
-    expect($openTasksStat->getValue())->toEqual($allStudents->count());
 
     livewire(StudentsActionCenterWidget::class)
         ->assertSuccessful()
