@@ -39,6 +39,7 @@ namespace AdvisingApp\StudentDataModel\Providers;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
 use AdvisingApp\StudentDataModel\Listeners\SaveBouncedEmailAddress;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
+use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Models\Program;
@@ -72,6 +73,7 @@ class StudentDataModelServiceProvider extends ServiceProvider
             'sms_opt_out_phone_number' => SmsOptOutPhoneNumber::class,
             'enrollment_semester' => EnrollmentSemester::class,
             'bounced_email_address' => BouncedEmailAddress::class,
+            'email_address_opt_in_opt_out' => EmailAddressOptInOptOut::class,
         ]);
 
         Event::listen(

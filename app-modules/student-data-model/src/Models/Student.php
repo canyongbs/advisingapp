@@ -61,6 +61,7 @@ use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Database\Factories\StudentFactory;
+use AdvisingApp\StudentDataModel\Enums\EmailHealthStatus;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Scopes\RetentionCrmRestrictionScope;
@@ -507,7 +508,13 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function canReceiveEmail(): bool
     {
-        return filled($this->primaryEmailAddress?->address) && (! $this->primaryEmailAddress->bounced()->exists());
+        if (blank($this->primaryEmailAddress?->address)) {
+            return false;
+        }
+
+        $healthStatus = $this->primaryEmailAddress->getHealthStatus();
+
+        return $healthStatus === EmailHealthStatus::Healthy;
     }
 
     public function canReceiveSms(): bool

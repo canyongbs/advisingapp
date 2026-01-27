@@ -37,69 +37,48 @@
 namespace AdvisingApp\StudentDataModel\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use AdvisingApp\StudentDataModel\Database\Factories\EmailAddressOptInOptOutFactory;
 use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
-use AdvisingApp\StudentDataModel\Enums\EmailHealthStatus;
-use AdvisingApp\StudentDataModel\Observers\StudentEmailAddressObserver;
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @mixin IdeHelperStudentEmailAddress
+ * @mixin IdeHelperEmailAddressOptInOptOut
  */
-#[ObservedBy([StudentEmailAddressObserver::class])]
-class StudentEmailAddress extends BaseModel implements Auditable
+class EmailAddressOptInOptOut extends BaseModel implements Auditable
 {
-    use AuditableTrait;
     use HasUuids;
+    use AuditableTrait;
+
+    /** @use HasFactory<EmailAddressOptInOptOutFactory> */
+    use HasFactory;
 
     protected $fillable = [
-        'sisid',
         'address',
-        'type',
-        'order',
+        'status',
+    ];
+
+    protected $casts = [
+        'status' => EmailAddressOptInOptOutStatus::class,
     ];
 
     /**
-     * @return BelongsTo<Student, $this>
+     * @return BelongsTo<StudentEmailAddress, $this>
      */
-    public function student(): BelongsTo
+    public function studentEmailAddress(): BelongsTo
     {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+        return $this->belongsTo(StudentEmailAddress::class, 'address', 'address');
     }
 
     /**
-     * @return HasOne<BouncedEmailAddress, $this>
+     * @return BelongsTo<ProspectEmailAddress, $this>
      */
-    public function bounced(): HasOne
+    public function prospectEmailAddress(): BelongsTo
     {
-        return $this->hasOne(BouncedEmailAddress::class, 'address', 'address');
-    }
-
-    /**
-     * @return HasOne<EmailAddressOptInOptOut, $this>
-     */
-    public function optedOut(): HasOne
-    {
-        return $this->hasOne(EmailAddressOptInOptOut::class, 'address', 'address');
-    }
-
-    public function getHealthStatus(): EmailHealthStatus
-    {
-        // Check in order: Bounced > OptedOut > Healthy
-        if ($this->bounced()->exists()) {
-            return EmailHealthStatus::Bounced;
-        }
-
-        $optOutRecord = $this->optedOut()->first();
-
-        if ($optOutRecord && $optOutRecord->status === EmailAddressOptInOptOutStatus::OptedOut) {
-            return EmailHealthStatus::OptedOut;
-        }
-
-        return EmailHealthStatus::Healthy;
+        return $this->belongsTo(ProspectEmailAddress::class, 'address', 'address');
     }
 }
