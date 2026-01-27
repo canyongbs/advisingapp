@@ -116,7 +116,7 @@ class SendEmailAction
                     ->typeSelectToggleButtons()
                     ->required()
                     ->columns(2)
-                    ->afterStateUpdated(function (Get $get, Set $set) {
+                    ->afterStateUpdated(function (Get $get, Set $set) { 
                         $educatable = match ($get('recipient_type')) {
                             'student' => Student::find($get('recipient_id')),
                             'prospect' => Prospect::find($get('recipient_id')),
