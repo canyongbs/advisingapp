@@ -47,21 +47,10 @@ return [
     |
     */
 
-    'mailgun' => [
-        'domain' => env('MAILGUN_DOMAIN'),
-        'secret' => env('MAILGUN_SECRET'),
-        'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
-        'scheme' => 'https',
-    ],
-
-    'postmark' => [
-        'token' => env('POSTMARK_TOKEN'),
-    ],
-
     'ses' => [
-        'key' => env('AWS_SES_KEY'),
-        'secret' => env('AWS_SES_SECRET'),
-        'region' => env('AWS_SES_DEFAULT_REGION', 'us-east-1'),
+        'key' => env('AWS_SES_ACCESS_KEY_ID'),
+        'secret' => env('AWS_SES_SECRET_ACCESS_KEY'),
+        'region' => env('AWS_SES_DEFAULT_REGION', 'us-west-2'),
     ],
 
     'kms' => [

@@ -34,41 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications;
+namespace App\Features;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\ChannelManager as BaseChannelManager;
-use Illuminate\Queue\Middleware\RateLimitedWithRedis;
-use Illuminate\Support\Collection;
+use App\Support\AbstractFeatureFlag;
 
-class ChannelManager extends BaseChannelManager
+class EngagementDispatchFailedAtFeature extends AbstractFeatureFlag
 {
-    /**
-     * Send the given notification to the given notifiable entities.
-     *
-     * @param  Collection|array|mixed  $notifiables
-     * @param  mixed  $notification
-     *
-     * @return void
-     */
-    public function send($notifiables, $notification)
+    public function resolve(mixed $scope): mixed
     {
-        if (property_exists($notification, 'queue')) {
-            $notification->queue ??= config('queue.outbound_communication_queue');
-        }
-
-        if ($notification instanceof ShouldQueue && property_exists($notification, 'middleware')) {
-            $notification->middleware[] = new RateLimitedWithRedis('notifications');
-        }
-
-        if ($notification instanceof ShouldQueue) {
-            $notification->retryUntil ??= now()->addHours(2); // @phpstan-ignore property.notFound
-        }
-
-        if ($notification instanceof ShouldQueue) {
-            $notification->maxExceptions ??= 5; // @phpstan-ignore property.notFound
-        }
-
-        parent::send($notifiables, $notification);
+        return false;
     }
 }

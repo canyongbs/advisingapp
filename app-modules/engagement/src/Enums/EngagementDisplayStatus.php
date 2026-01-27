@@ -40,6 +40,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
+use App\Features\EngagementDispatchFailedAtFeature;
 use Exception;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
@@ -49,6 +50,8 @@ enum EngagementDisplayStatus implements HasLabel, HasColor
     // Internal
     case Scheduled;
     case Pending;
+    case SystemDelayed;
+    case SystemFailed;
 
     // Email specific
     case Bounced;
@@ -70,7 +73,11 @@ enum EngagementDisplayStatus implements HasLabel, HasColor
 
     public function getLabel(): string
     {
-        return $this->name;
+        return match ($this) {
+            self::SystemDelayed => 'System Delayed',
+            self::SystemFailed => 'System Failed',
+            default => $this->name,
+        };
     }
 
     public static function getStatus(Engagement $engagement): self
@@ -87,13 +94,18 @@ enum EngagementDisplayStatus implements HasLabel, HasColor
         return match ($this) {
             self::Delivered, self::Read, self::Clicked => 'success',
             self::Scheduled, self::Delayed, self::Pending, self::Accepted, self::Queued, self::Sending => 'info',
-            self::Failed, self::Bounced, self::Complaint => 'danger',
+            self::Failed, self::Bounced, self::Complaint, self::SystemFailed => 'danger',
             self::Sent, self::Unsubscribed => 'gray',
+            self::SystemDelayed => 'warning',
         };
     }
 
     protected static function parseEmailStatus(Engagement $engagement): self
     {
+        if (EngagementDispatchFailedAtFeature::active() && ! is_null($engagement->dispatch_failed_at)) {
+            return self::SystemFailed;
+        }
+
         $status = self::Pending;
 
         if (! is_null($engagement->scheduled_at)) {
@@ -108,7 +120,7 @@ enum EngagementDisplayStatus implements HasLabel, HasColor
                 // until some of the other external events have already come in
                 EmailMessageEventType::Dispatched => $status = ($status === self::Pending || $status === self::Scheduled) ? self::Pending : $status,
 
-                EmailMessageEventType::FailedDispatch => $status = self::Failed,
+                EmailMessageEventType::FailedDispatch => $status = self::SystemDelayed,
                 EmailMessageEventType::RateLimited => $status = self::Failed,
 
                 // We will consider the message "delivered" if blocked by demo mode
@@ -134,6 +146,10 @@ enum EngagementDisplayStatus implements HasLabel, HasColor
 
     protected static function parseSmsStatus(Engagement $engagement): self
     {
+        if (EngagementDispatchFailedAtFeature::active() && ! is_null($engagement->dispatch_failed_at)) {
+            return self::SystemFailed;
+        }
+
         $status = self::Pending;
 
         if (! is_null($engagement->scheduled_at)) {
@@ -148,7 +164,7 @@ enum EngagementDisplayStatus implements HasLabel, HasColor
                 // until some of the other external events have already come in
                 SmsMessageEventType::Dispatched => $status = ($status === self::Pending || $status === self::Scheduled) ? self::Pending : $status,
 
-                SmsMessageEventType::FailedDispatch => $status = self::Failed,
+                SmsMessageEventType::FailedDispatch => $status = self::SystemDelayed,
                 SmsMessageEventType::RateLimited => $status = self::Failed,
 
                 // We will consider the message "delivered" if blocked by demo mode

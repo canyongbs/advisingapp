@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
@@ -32,43 +30,21 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<x-mail::message>
+**This is an automated message from Advising App.**
 
-namespace AdvisingApp\Notification\Notifications;
+We attempted to deliver the following message but were unsuccessful due to an internal system failure:
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\ChannelManager as BaseChannelManager;
-use Illuminate\Queue\Middleware\RateLimitedWithRedis;
-use Illuminate\Support\Collection;
+**From:** {{ $from }}
 
-class ChannelManager extends BaseChannelManager
-{
-    /**
-     * Send the given notification to the given notifiable entities.
-     *
-     * @param  Collection|array|mixed  $notifiables
-     * @param  mixed  $notification
-     *
-     * @return void
-     */
-    public function send($notifiables, $notification)
-    {
-        if (property_exists($notification, 'queue')) {
-            $notification->queue ??= config('queue.outbound_communication_queue');
-        }
+**Date:** {{ $date }}
 
-        if ($notification instanceof ShouldQueue && property_exists($notification, 'middleware')) {
-            $notification->middleware[] = new RateLimitedWithRedis('notifications');
-        }
+**To:** {{ $to }}
 
-        if ($notification instanceof ShouldQueue) {
-            $notification->retryUntil ??= now()->addHours(2); // @phpstan-ignore property.notFound
-        }
+**Subject:** {{ $subject }}
 
-        if ($notification instanceof ShouldQueue) {
-            $notification->maxExceptions ??= 5; // @phpstan-ignore property.notFound
-        }
+The status of the message in sent items has been updated to **System Failed**.
 
-        parent::send($notifiables, $notification);
-    }
-}
+Please retry sending the message and if this issue continues, report the problem to your system administrator.
+</x-mail::message>

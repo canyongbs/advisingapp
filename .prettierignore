@@ -10,3 +10,4 @@ resources/views/vendor/mail/**/*.blade.php
 resources/views/mail/**/*.blade.php
 resources/lang/**/*.php
 **/vendor
+app-modules/**/resources/views/mail/**/*.blade.php

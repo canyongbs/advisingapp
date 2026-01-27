@@ -34,41 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications;
+use App\Features\EngagementDispatchFailedAtFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\ChannelManager as BaseChannelManager;
-use Illuminate\Queue\Middleware\RateLimitedWithRedis;
-use Illuminate\Support\Collection;
-
-class ChannelManager extends BaseChannelManager
-{
-    /**
-     * Send the given notification to the given notifiable entities.
-     *
-     * @param  Collection|array|mixed  $notifiables
-     * @param  mixed  $notification
-     *
-     * @return void
-     */
-    public function send($notifiables, $notification)
+return new class () extends Migration {
+    public function up(): void
     {
-        if (property_exists($notification, 'queue')) {
-            $notification->queue ??= config('queue.outbound_communication_queue');
-        }
+        DB::transaction(function () {
+            Schema::table('engagements', function (Blueprint $table) {
+                $table->timestamp('dispatch_failed_at')->nullable();
+            });
 
-        if ($notification instanceof ShouldQueue && property_exists($notification, 'middleware')) {
-            $notification->middleware[] = new RateLimitedWithRedis('notifications');
-        }
-
-        if ($notification instanceof ShouldQueue) {
-            $notification->retryUntil ??= now()->addHours(2); // @phpstan-ignore property.notFound
-        }
-
-        if ($notification instanceof ShouldQueue) {
-            $notification->maxExceptions ??= 5; // @phpstan-ignore property.notFound
-        }
-
-        parent::send($notifiables, $notification);
+            EngagementDispatchFailedAtFeature::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            EngagementDispatchFailedAtFeature::deactivate();
+
+            Schema::table('engagements', function (Blueprint $table) {
+                $table->dropColumn('dispatch_failed_at');
+            });
+        });
+    }
+};

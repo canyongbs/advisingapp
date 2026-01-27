@@ -56,7 +56,7 @@ class EngagementCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
     {
         return [
             ...parent::middleware(),
-            new RateLimitedWithRedis('notification'),
+            new RateLimitedWithRedis('notifications'),
         ];
     }
 

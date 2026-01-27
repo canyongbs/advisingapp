@@ -59,7 +59,7 @@ class CreateBatchedEngagement implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public int $maxExceptions = 3;
+    public int $maxExceptions = 5;
 
     public function __construct(
         public EngagementBatch $engagementBatch,
@@ -67,11 +67,19 @@ class CreateBatchedEngagement implements ShouldQueue
     ) {}
 
     /**
+     * @return array<int, int>
+     */
+    public function backoff(): array
+    {
+        return [5, 30, 60, 300];
+    }
+
+    /**
      * @return array<object>
      */
     public function middleware(): array
     {
-        return [new RateLimitedWithRedis('notification')];
+        return [new RateLimitedWithRedis('notifications')];
     }
 
     public function retryUntil(): DateTimeInterface

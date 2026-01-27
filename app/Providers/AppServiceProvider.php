@@ -198,8 +198,7 @@ class AppServiceProvider extends ServiceProvider
 
                 return match ($channel) {
                     'mail', 'email' => Limit::perSecond(14)->by('mail'),
-                    'sms' => Limit::none()->by('sms'),
-                    default => throw new Exception('Invalid channel'),
+                    default => Limit::none()->by($channel),
                 };
             })
                 ->toArray();

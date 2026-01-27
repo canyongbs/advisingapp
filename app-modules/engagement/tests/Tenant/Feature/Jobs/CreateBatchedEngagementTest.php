@@ -39,10 +39,9 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Cache\RateLimiter;
 use Illuminate\Cache\RateLimiting\Unlimited;
-use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\RateLimiter;
 
 use function Pest\Laravel\assertDatabaseCount;
 
@@ -121,7 +120,7 @@ it('has the notification rate limiting applied properly for email batched engage
         $recipient
     );
 
-    $limiter = Container::getInstance()->make(RateLimiter::class)->limiter('notifications');
+    $limiter = RateLimiter::limiter('notifications');
 
     $limits = $limiter($job);
 
@@ -143,7 +142,7 @@ it('has the notification rate limiting applied properly for sms batched engageme
         $recipient
     );
 
-    $limiter = Container::getInstance()->make(RateLimiter::class)->limiter('notifications');
+    $limiter = RateLimiter::limiter('notifications');
 
     $limits = $limiter($job);
 

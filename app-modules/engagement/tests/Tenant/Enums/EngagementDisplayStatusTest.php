@@ -148,7 +148,7 @@ it('returns the correct case given a particular Engagement', function (Engagemen
             ->email()
             ->deliverNow()
             ->create(),
-        EngagementDisplayStatus::Failed,
+        EngagementDisplayStatus::SystemDelayed,
     ],
     'email | rateLimited' => [
         fn () => Engagement::factory()
@@ -504,7 +504,7 @@ it('returns the correct case given a particular Engagement', function (Engagemen
             ->sms()
             ->deliverNow()
             ->create(),
-        EngagementDisplayStatus::Failed,
+        EngagementDisplayStatus::SystemDelayed,
     ],
     'sms | rateLimited' => [
         fn () => Engagement::factory()
