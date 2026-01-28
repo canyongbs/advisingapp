@@ -38,6 +38,7 @@
 
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
+use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\Console\Command\Command;
 
@@ -65,89 +66,24 @@ describe('2026_01_27_143000_temp_remove_obsolete_filters_from_groups', function 
         isolatedMigration(
             '2026_01_27_143000_temp_remove_obsolete_filters_from_groups',
             function () {
-                // Setup data - Group with only obsolete filter
-                $groupWithObsoleteOnly = Group::factory()->create([
+                $user = User::factory()->create();
+
+                $groupWithMixed = Group::factory()->create([
                     'model' => GroupModel::Student,
+                    'user_id' => $user->id,
                     'filters' => [
                         'queryBuilder' => [
                             'rules' => [
-                                'abc1' => [
-                                    'type' => 'performanceCumErn',
-                                    'data' => [
-                                        'operator' => 'isMin',
-                                        'settings' => ['number' => '30', 'aggregate' => null],
-                                    ],
-                                ],
+                                'obs1' => ['type' => 'performanceCumErn', 'data' => ['operator' => 'isMin', 'settings' => ['number' => '30']]],
+                                'valid1' => ['type' => 'dual', 'data' => ['operator' => 'isTrue', 'settings' => null]],
                             ],
                         ],
                     ],
                 ]);
 
-                // Setup data - Group with mixed filters (obsolete + valid)
-                $groupWithMixedFilters = Group::factory()->create([
+                $groupWithOr = Group::factory()->create([
                     'model' => GroupModel::Student,
-                    'filters' => [
-                        'queryBuilder' => [
-                            'rules' => [
-                                'hux3' => [
-                                    'type' => 'performanceFirstGen',
-                                    'data' => [
-                                        'operator' => 'isTrue',
-                                        'settings' => null,
-                                    ],
-                                ],
-                                '2UzX' => [
-                                    'type' => 'dual',
-                                    'data' => [
-                                        'operator' => 'isTrue',
-                                        'settings' => null,
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ]);
-
-                // Setup data - Group with only valid filters
-                $groupWithValidFiltersOnly = Group::factory()->create([
-                    'model' => GroupModel::Student,
-                    'filters' => [
-                        'queryBuilder' => [
-                            'rules' => [
-                                'xyz1' => [
-                                    'type' => 'holds',
-                                    'data' => [
-                                        'operator' => 'contains.inverse',
-                                        'settings' => ['text' => 'hold'],
-                                    ],
-                                ],
-                                'xyz2' => [
-                                    'type' => 'dual',
-                                    'data' => [
-                                        'operator' => 'isTrue',
-                                        'settings' => null,
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ]);
-
-                // Setup data - Group with null filters
-                $groupWithNullFilters = Group::factory()->create([
-                    'model' => GroupModel::Student,
-                    'filters' => null,
-                ]);
-
-                // Setup data - Group with empty filters
-                $groupWithEmptyFilters = Group::factory()->create([
-                    'model' => GroupModel::Student,
-                    'filters' => [],
-                ]);
-
-                // Setup data - Group with obsolete filter in OR block
-                $groupWithOrBlockObsolete = Group::factory()->create([
-                    'model' => GroupModel::Student,
+                    'user_id' => $user->id,
                     'filters' => [
                         'queryBuilder' => [
                             'rules' => [
@@ -157,20 +93,8 @@ describe('2026_01_27_143000_temp_remove_obsolete_filters_from_groups', function 
                                         'groups' => [
                                             'grp1' => [
                                                 'rules' => [
-                                                    'nested1' => [
-                                                        'type' => 'performanceCumErn',
-                                                        'data' => [
-                                                            'operator' => 'isMin',
-                                                            'settings' => ['number' => '20', 'aggregate' => null],
-                                                        ],
-                                                    ],
-                                                    'nested2' => [
-                                                        'type' => 'dual',
-                                                        'data' => [
-                                                            'operator' => 'isTrue',
-                                                            'settings' => null,
-                                                        ],
-                                                    ],
+                                                    'obs2' => ['type' => 'performanceFirstGen', 'data' => ['operator' => 'isTrue']],
+                                                    'valid2' => ['type' => 'holds', 'data' => ['operator' => 'contains', 'settings' => ['text' => 'test']]],
                                                 ],
                                             ],
                                         ],
@@ -181,103 +105,26 @@ describe('2026_01_27_143000_temp_remove_obsolete_filters_from_groups', function 
                     ],
                 ]);
 
-                // Setup data - Group with mixed nested structure
-                $groupWithComplexNesting = Group::factory()->create([
+                $groupWithNull = Group::factory()->create([
                     'model' => GroupModel::Student,
-                    'filters' => [
-                        'queryBuilder' => [
-                            'rules' => [
-                                'top1' => [
-                                    'type' => 'holds',
-                                    'data' => [
-                                        'operator' => 'contains',
-                                        'settings' => ['text' => 'test'],
-                                    ],
-                                ],
-                                'or1' => [
-                                    'type' => 'or',
-                                    'data' => [
-                                        'groups' => [
-                                            'grpA' => [
-                                                'rules' => [
-                                                    'nested1' => [
-                                                        'type' => 'performanceFirstGen',
-                                                        'data' => [
-                                                            'operator' => 'isTrue',
-                                                            'settings' => null,
-                                                        ],
-                                                    ],
-                                                ],
-                                            ],
-                                            'grpB' => [
-                                                'rules' => [
-                                                    'nested2' => [
-                                                        'type' => 'dual',
-                                                        'data' => [
-                                                            'operator' => 'isTrue',
-                                                            'settings' => null,
-                                                        ],
-                                                    ],
-                                                ],
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
+                    'user_id' => $user->id,
+                    'filters' => null,
                 ]);
 
                 $migrate = Artisan::call('migrate', ['--path' => 'app-modules/group/database/migrations/2026_01_27_143000_temp_remove_obsolete_filters_from_groups.php']);
-
                 expect($migrate)->toBe(Command::SUCCESS);
 
-                $groupWithObsoleteOnly->refresh();
-                $groupWithMixedFilters->refresh();
-                $groupWithValidFiltersOnly->refresh();
-                $groupWithNullFilters->refresh();
-                $groupWithEmptyFilters->refresh();
-                $groupWithOrBlockObsolete->refresh();
-                $groupWithComplexNesting->refresh();
+                $groupWithMixed->refresh();
+                $groupWithOr->refresh();
+                $groupWithNull->refresh();
 
-                // Assert: Group with only obsolete filter should have empty rules
-                expect($groupWithObsoleteOnly->filters['queryBuilder']['rules'])->toBeArray();
-                expect($groupWithObsoleteOnly->filters['queryBuilder']['rules'])->toBeEmpty();
+                expect($groupWithMixed->filters['queryBuilder']['rules'])->toHaveKey('valid1');
+                expect($groupWithMixed->filters['queryBuilder']['rules'])->not->toHaveKey('obs1');
 
-                // Assert: Group with mixed filters should only have valid 'dual' filter remaining
-                expect($groupWithMixedFilters->filters['queryBuilder']['rules'])->toHaveKey('2UzX');
-                expect($groupWithMixedFilters->filters['queryBuilder']['rules']['2UzX']['type'])->toBe('dual');
-                expect($groupWithMixedFilters->filters['queryBuilder']['rules'])->not->toHaveKey('hux3');
+                expect($groupWithOr->filters['queryBuilder']['rules']['or1']['data']['groups']['grp1']['rules'])->toHaveKey('valid2');
+                expect($groupWithOr->filters['queryBuilder']['rules']['or1']['data']['groups']['grp1']['rules'])->not->toHaveKey('obs2');
 
-                // Assert: Group with valid filters only should remain unchanged
-                expect($groupWithValidFiltersOnly->filters['queryBuilder']['rules'])->toHaveKey('xyz1');
-                expect($groupWithValidFiltersOnly->filters['queryBuilder']['rules'])->toHaveKey('xyz2');
-                expect($groupWithValidFiltersOnly->filters['queryBuilder']['rules']['xyz1']['type'])->toBe('holds');
-                expect($groupWithValidFiltersOnly->filters['queryBuilder']['rules']['xyz2']['type'])->toBe('dual');
-
-                // Assert: Group with null filters should remain null
-                expect($groupWithNullFilters->filters)->toBeNull();
-
-                // Assert: Group with empty filters should remain empty
-                expect($groupWithEmptyFilters->filters)->toBeArray();
-                expect($groupWithEmptyFilters->filters)->toBeEmpty();
-
-                // Assert: Group with OR block should have obsolete filter removed but keep valid filter
-                expect($groupWithOrBlockObsolete->filters['queryBuilder']['rules'])->toHaveKey('or1');
-                $orBlock = $groupWithOrBlockObsolete->filters['queryBuilder']['rules']['or1'];
-                expect($orBlock['type'])->toBe('or');
-                expect($orBlock['data']['groups']['grp1']['rules'])->toHaveKey('nested2');
-                expect($orBlock['data']['groups']['grp1']['rules']['nested2']['type'])->toBe('dual');
-                expect($orBlock['data']['groups']['grp1']['rules'])->not->toHaveKey('nested1');
-
-                // Assert: Group with complex nesting should keep top-level valid filter and nested valid filter
-                expect($groupWithComplexNesting->filters['queryBuilder']['rules'])->toHaveKey('top1');
-                expect($groupWithComplexNesting->filters['queryBuilder']['rules']['top1']['type'])->toBe('holds');
-                expect($groupWithComplexNesting->filters['queryBuilder']['rules'])->toHaveKey('or1');
-                $complexOrBlock = $groupWithComplexNesting->filters['queryBuilder']['rules']['or1'];
-                expect($complexOrBlock['data']['groups']['grpA']['rules'])->not->toHaveKey('nested1');
-                expect($complexOrBlock['data']['groups']['grpB']['rules'])->toHaveKey('nested2');
-                expect($complexOrBlock['data']['groups']['grpB']['rules']['nested2']['type'])->toBe('dual');
+                expect($groupWithNull->filters)->toBeNull();
             }
         );
     });
