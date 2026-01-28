@@ -36,8 +36,10 @@
 
 // Add tests for migration files here
 
-// use Illuminate\Support\Facades\Artisan;
-// use Symfony\Component\Console\Command\Command;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
+use Illuminate\Support\Facades\Artisan;
+use Symfony\Component\Console\Command\Command;
 
 // Example migration test, leave commented out for future use as a template/example
 //describe('2025_01_01_165527_tmp_data_do_a_thing', function () {
@@ -57,3 +59,124 @@
 //        );
 //    });
 //});
+
+describe('2026_01_27_143000_temp_remove_obsolete_filters_from_groups', function () {
+    it('removes obsolete filter types from groups', function () {
+        isolatedMigration(
+            '2026_01_27_143000_temp_remove_obsolete_filters_from_groups',
+            function () {
+                // Setup data - Group with only obsolete filter
+                $groupWithObsoleteOnly = Group::factory()->create([
+                    'model' => GroupModel::Student,
+                    'filters' => [
+                        'queryBuilder' => [
+                            'rules' => [
+                                'abc1' => [
+                                    'type' => 'performanceCumErn',
+                                    'data' => [
+                                        'operator' => 'isMin',
+                                        'settings' => ['number' => '30', 'aggregate' => null],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]);
+
+                // Setup data - Group with mixed filters (obsolete + valid)
+                $groupWithMixedFilters = Group::factory()->create([
+                    'model' => GroupModel::Student,
+                    'filters' => [
+                        'queryBuilder' => [
+                            'rules' => [
+                                'hux3' => [
+                                    'type' => 'performanceFirstGen',
+                                    'data' => [
+                                        'operator' => 'isTrue',
+                                        'settings' => null,
+                                    ],
+                                ],
+                                '2UzX' => [
+                                    'type' => 'dual',
+                                    'data' => [
+                                        'operator' => 'isTrue',
+                                        'settings' => null,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]);
+
+                // Setup data - Group with only valid filters
+                $groupWithValidFiltersOnly = Group::factory()->create([
+                    'model' => GroupModel::Student,
+                    'filters' => [
+                        'queryBuilder' => [
+                            'rules' => [
+                                'xyz1' => [
+                                    'type' => 'holds',
+                                    'data' => [
+                                        'operator' => 'contains.inverse',
+                                        'settings' => ['text' => 'hold'],
+                                    ],
+                                ],
+                                'xyz2' => [
+                                    'type' => 'dual',
+                                    'data' => [
+                                        'operator' => 'isTrue',
+                                        'settings' => null,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]);
+
+                // Setup data - Group with null filters
+                $groupWithNullFilters = Group::factory()->create([
+                    'model' => GroupModel::Student,
+                    'filters' => null,
+                ]);
+
+                // Setup data - Group with empty filters
+                $groupWithEmptyFilters = Group::factory()->create([
+                    'model' => GroupModel::Student,
+                    'filters' => [],
+                ]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/group/database/migrations/2026_01_27_143000_temp_remove_obsolete_filters_from_groups.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                $groupWithObsoleteOnly->refresh();
+                $groupWithMixedFilters->refresh();
+                $groupWithValidFiltersOnly->refresh();
+                $groupWithNullFilters->refresh();
+                $groupWithEmptyFilters->refresh();
+
+                // Assert: Group with only obsolete filter should have empty rules
+                expect($groupWithObsoleteOnly->filters['queryBuilder']['rules'])->toBeArray();
+                expect($groupWithObsoleteOnly->filters['queryBuilder']['rules'])->toBeEmpty();
+
+                // Assert: Group with mixed filters should only have valid 'dual' filter remaining
+                expect($groupWithMixedFilters->filters['queryBuilder']['rules'])->toHaveKey('2UzX');
+                expect($groupWithMixedFilters->filters['queryBuilder']['rules']['2UzX']['type'])->toBe('dual');
+                expect($groupWithMixedFilters->filters['queryBuilder']['rules'])->not->toHaveKey('hux3');
+
+                // Assert: Group with valid filters only should remain unchanged
+                expect($groupWithValidFiltersOnly->filters['queryBuilder']['rules'])->toHaveKey('xyz1');
+                expect($groupWithValidFiltersOnly->filters['queryBuilder']['rules'])->toHaveKey('xyz2');
+                expect($groupWithValidFiltersOnly->filters['queryBuilder']['rules']['xyz1']['type'])->toBe('holds');
+                expect($groupWithValidFiltersOnly->filters['queryBuilder']['rules']['xyz2']['type'])->toBe('dual');
+
+                // Assert: Group with null filters should remain null
+                expect($groupWithNullFilters->filters)->toBeNull();
+
+                // Assert: Group with empty filters should remain empty
+                expect($groupWithEmptyFilters->filters)->toBeArray();
+                expect($groupWithEmptyFilters->filters)->toBeEmpty();
+            }
+        );
+    });
+});
