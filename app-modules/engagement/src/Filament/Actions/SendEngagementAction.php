@@ -237,7 +237,7 @@ class SendEngagementAction extends Action
                                         ]),
                                 ];
                             })
-                            ->visible(fn (Get $get) => $get('recipient_id')),
+                            ->visible(fn(Get $get) => !is_null($this->educatable) || $get('recipient_id')),
                     ]),
                 Step::make('Message Details')
                     ->schema(function (Get $get): array {
