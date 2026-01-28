@@ -154,8 +154,8 @@ class SendEngagementAction extends Action
                                     Fieldset::make('Message Type')
                                         ->schema([
                                             ToggleButtons::make('channel')
-                                                ->options(fn () =>
-                                                    array_filter(
+                                                ->options(
+                                                    fn () => array_filter(
                                                         NotificationChannel::getAvailableEngagementOptions(),
                                                         function (string $label) use ($educatable): bool {
                                                             if (NotificationChannel::tryFrom($label)?->getCaseDisabled() ?? false) {
@@ -237,7 +237,7 @@ class SendEngagementAction extends Action
                                         ]),
                                 ];
                             })
-                            ->visible(fn(Get $get) => $get('recipient_id')),
+                            ->visible(fn (Get $get) => $get('recipient_id')),
                     ]),
                 Step::make('Message Details')
                     ->schema(function (Get $get): array {

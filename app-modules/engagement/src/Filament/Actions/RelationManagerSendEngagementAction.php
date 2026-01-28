@@ -101,36 +101,36 @@ class RelationManagerSendEngagementAction extends CreateAction
                             ->schema([
                                 ToggleButtons::make('channel')
                                     ->inline()
-                                    ->options(fn (RelationManager $livewire) =>
-                                                    array_filter(
-                                                        NotificationChannel::getAvailableEngagementOptions(),
-                                                        function (string $label) use ($livewire): bool {
-                                                            $educatable = $livewire->getOwnerRecord();
+                                    ->options(
+                                        fn (RelationManager $livewire) => array_filter(
+                                            NotificationChannel::getAvailableEngagementOptions(),
+                                            function (string $label) use ($livewire): bool {
+                                                $educatable = $livewire->getOwnerRecord();
 
-                                                            assert($educatable instanceof Educatable);
+                                                assert($educatable instanceof Educatable);
 
-                                                            if (NotificationChannel::tryFrom($label)?->getCaseDisabled() ?? false) {
-                                                                return false;
-                                                            }
+                                                if (NotificationChannel::tryFrom($label)?->getCaseDisabled() ?? false) {
+                                                    return false;
+                                                }
 
-                                                            if ($label == NotificationChannel::Email->getLabel()) {
-                                                                return $educatable
-                                                                    ->emailAddresses()
-                                                                    ->whereDoesntHave('bounced')
-                                                                    ->exists();
-                                                            }
+                                                if ($label == NotificationChannel::Email->getLabel()) {
+                                                    return $educatable
+                                                        ->emailAddresses()
+                                                        ->whereDoesntHave('bounced')
+                                                        ->exists();
+                                                }
 
-                                                            if ($label == NotificationChannel::Sms->getLabel()) {
-                                                                return $educatable->phoneNumbers()
-                                                                    ->where('can_receive_sms', true)
-                                                                    ->whereDoesntHave('smsOptOut')
-                                                                    ->exists();
-                                                            }
+                                                if ($label == NotificationChannel::Sms->getLabel()) {
+                                                    return $educatable->phoneNumbers()
+                                                        ->where('can_receive_sms', true)
+                                                        ->whereDoesntHave('smsOptOut')
+                                                        ->exists();
+                                                }
 
-                                                            return true;
-                                                        }
-                                                    )
-                                                )
+                                                return true;
+                                            }
+                                        )
+                                    )
                                     ->default(function (RelationManager $livewire): ?string {
                                         assert($livewire->getOwnerRecord() instanceof Educatable);
 
