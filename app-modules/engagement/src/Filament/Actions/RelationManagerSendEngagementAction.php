@@ -200,7 +200,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                                 ?->getKey();
                                     })
                                     ->required(),
-                                    ])
+                            ]),
                     ])
                     ->columns(2),
                 Step::make('Message Details')
