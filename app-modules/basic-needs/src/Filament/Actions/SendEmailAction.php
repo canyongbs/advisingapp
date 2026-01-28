@@ -44,13 +44,14 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
-use App\Filament\Forms\Components\EducatableSelect;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard\Step;
@@ -110,33 +111,34 @@ class SendEmailAction
     {
         return Step::make('Recipient Details')
             ->schema([
-                EducatableSelect::make('recipient', isExcludingConvertedProspects: false)
+                Section::make()
                     ->label('Recipient Info')
-                    ->live()
-                    ->typeSelectToggleButtons()
-                    ->required()
-                    ->columns(2)
-                    ->afterStateUpdated(function (Get $get, Set $set) {
-                        $educatable = match ($get('recipient_type')) {
-                            'student' => Student::find($get('recipient_id')),
-                            'prospect' => Prospect::find($get('recipient_id')),
-                            default => null,
-                        };
+                    ->schema([
+                        ToggleButtons::make('recipient_type')
+                            ->label('Recipient Type')
+                            ->options([
+                                'student' => 'Student',
+                                'prospect' => 'Prospect',
+                            ])
+                            ->inline()
+                            ->live()
+                            ->afterStateUpdated(fn (Set $set) => $set('recipient_id', null))
+                            ->required(),
+                        Select::make('recipient_id')
+                            ->label('Recipient')
+                            ->searchable()
+                            ->hidden(fn (Get $get) => ! filled($get('recipient_type')))
+                            ->options(fn (Get $get) => self::getRecipientOptions($get))
+                            ->getSearchResultsUsing(fn (string $search, Get $get) => self::getRecipientSearchResults($search, $get))
+                            ->getOptionLabelUsing(fn (string $value, Get $get) => self::getRecipientOptionLabel($value, $get))
+                            ->afterStateUpdated(function (Get $get, Set $set, Component $livewire) use ($view) {
+                                $record = method_exists($livewire, 'getRecord') ? $livewire->getRecord() : null;
 
-                        if ($educatable && $educatable->emailAddresses()->whereDoesntHave('bounced')->exists()) {
-                            $set('channel', 'email');
-                            $set('recipient_route_id', $educatable->emailAddresses()->whereDoesntHave('bounced')->orderBy('order')->first()?->getKey());
-
-                            return;
-                        }
-
-                        if ($educatable && $educatable->phoneNumbers()->where('can_receive_sms', true)->whereDoesntHave('smsOptOut')->exists()) {
-                            $set('channel', 'sms');
-                            $set('recipient_route_id', $educatable->phoneNumbers()->where('can_receive_sms', true)->whereDoesntHave('smsOptOut')->orderBy('order')->first()?->getKey());
-
-                            return;
-                        }
-                    }),
+                                self::updateBodyAndRouteId($get, $set, $record, $view);
+                            })
+                            ->live()
+                            ->required(),
+                    ]),
 
                 Grid::make(1)
                     ->schema(fn (Get $get) => self::getRecipientRouteIdSchema($get))
