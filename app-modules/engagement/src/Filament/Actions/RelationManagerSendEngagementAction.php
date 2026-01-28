@@ -55,8 +55,10 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard\Step;
@@ -76,7 +78,16 @@ class RelationManagerSendEngagementAction extends CreateAction
 
         $this->icon('heroicon-m-chat-bubble-bottom-center-text')
             ->label('New')
-            ->modalHeading('Create new email or text')
+            ->modalHeading('Send Message')
+            ->modalDescription(function (RelationManager $livewire): string {
+                $educatable = $livewire->getOwnerRecord();
+
+                assert($educatable instanceof Educatable);
+
+                $educatableName = $educatable->getAttributeValue($educatable::displayNameKey());
+
+                return "Send an engagement to {$educatableName}.";
+            })
             ->model(Engagement::class)
             ->authorize(function (RelationManager $livewire) {
                 $ownerRecord = $livewire->getOwnerRecord();
@@ -84,122 +95,127 @@ class RelationManagerSendEngagementAction extends CreateAction
                 return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
             })
             ->steps(fn (): array => [
-                Step::make('Contact Information')
+                Step::make('Recipient Details')
                     ->schema([
-                        Select::make('channel')
-                            ->label('What would you like to send?')
-                            ->options(NotificationChannel::getEngagementOptions())
-                            ->default(function (RelationManager $livewire): ?string {
-                                assert($livewire->getOwnerRecord() instanceof Educatable);
+                        Fieldset::make('Message Type')
+                            ->schema([
+                                ToggleButtons::make('channel')
+                                    ->inline()
+                                    ->options(
+                                        fn (RelationManager $livewire) => array_filter(
+                                            NotificationChannel::getAvailableEngagementOptions(),
+                                            function (string $label) use ($livewire): bool {
+                                                $educatable = $livewire->getOwnerRecord();
 
-                                return $livewire->getOwnerRecord()->emailAddresses()->whereDoesntHave('bounced')->exists()
-                                    ? NotificationChannel::Email->value
-                                    : ($livewire->getOwnerRecord()->phoneNumbers()
-                                        ->where('can_receive_sms', true)
-                                        ->whereDoesntHave('smsOptOut')
-                                        ->exists() ? NotificationChannel::Sms->value : null);
-                            })
-                            ->disableOptionWhen(
-                                function (RelationManager $livewire, string $value): bool {
-                                    if (NotificationChannel::tryFrom($value)?->getCaseDisabled() ?? false) {
-                                        return true;
-                                    }
+                                                assert($educatable instanceof Educatable);
 
-                                    assert($livewire->getOwnerRecord() instanceof Educatable);
+                                                if (NotificationChannel::tryFrom($label)?->getCaseDisabled() ?? false) {
+                                                    return false;
+                                                }
 
-                                    if (($value == NotificationChannel::Email->value)) {
-                                        return ! $livewire->getOwnerRecord()
-                                            ->emailAddresses()
+                                                if ($label == NotificationChannel::Email->getLabel()) {
+                                                    return $educatable
+                                                        ->emailAddresses()
+                                                        ->whereDoesntHave('bounced')
+                                                        ->exists();
+                                                }
+
+                                                if ($label == NotificationChannel::Sms->getLabel()) {
+                                                    return $educatable->phoneNumbers()
+                                                        ->where('can_receive_sms', true)
+                                                        ->whereDoesntHave('smsOptOut')
+                                                        ->exists();
+                                                }
+
+                                                return true;
+                                            }
+                                        )
+                                    )
+                                    ->default(function (RelationManager $livewire): ?string {
+                                        assert($livewire->getOwnerRecord() instanceof Educatable);
+
+                                        return $livewire->getOwnerRecord()->emailAddresses()->whereDoesntHave('bounced')->exists()
+                                            ? NotificationChannel::Email->value
+                                            : ($livewire->getOwnerRecord()->phoneNumbers()
+                                                ->where('can_receive_sms', true)
+                                                ->whereDoesntHave('smsOptOut')
+                                                ->exists() ? NotificationChannel::Sms->value : null);
+                                    })
+                                    ->live()
+                                    ->afterStateUpdated(function (mixed $state, RelationManager $livewire, Set $set) {
+                                        assert($livewire->getOwnerRecord() instanceof Educatable);
+
+                                        $channel = NotificationChannel::parse($state);
+                                        $educatable = $livewire->getOwnerRecord();
+
+                                        $route = match ($channel) {
+                                            NotificationChannel::Email => $educatable->primaryEmailAddress()
+                                                ->whereDoesntHave('bounced')
+                                                ->first()?->getKey(),
+                                            NotificationChannel::Sms => $educatable->primaryPhoneNumber()
+                                                ->where('can_receive_sms', true)
+                                                ->whereDoesntHave('smsOptOut')
+                                                ->first()?->getKey(),
+                                            default => null,
+                                        } ?? match ($channel) {
+                                            NotificationChannel::Email => $educatable->emailAddresses()
+                                                ->whereDoesntHave('bounced')
+                                                ->first()?->getKey(),
+                                            NotificationChannel::Sms => $educatable->phoneNumbers()
+                                                ->where('can_receive_sms', true)
+                                                ->whereDoesntHave('smsOptOut')
+                                                ->first()?->getKey(),
+                                            default => null,
+                                        };
+
+                                        $set('recipient_route_id', $route);
+                                    }),
+                                Select::make('recipient_route_id')
+                                    ->label(fn (Get $get): string => match (NotificationChannel::parse($get('channel'))) {
+                                        NotificationChannel::Email => 'Email address',
+                                        NotificationChannel::Sms => 'Phone number',
+                                    })
+                                    ->options(function (Get $get, RelationManager $livewire): array {
+                                        assert($livewire->getOwnerRecord() instanceof Student || $livewire->getOwnerRecord() instanceof Prospect);
+
+                                        return match (NotificationChannel::parse($get('channel'))) {
+                                            NotificationChannel::Email => $livewire->getOwnerRecord()->emailAddresses()
+                                                ->whereDoesntHave('bounced')
+                                                ->get()
+                                                ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
+                                                    $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
+                                                ])
+                                                ->all(),
+                                            NotificationChannel::Sms => $livewire->getOwnerRecord()->phoneNumbers()
+                                                ->where('can_receive_sms', true)
+                                                ->whereDoesntHave('smsOptOut')
+                                                ->get()
+                                                ->mapWithKeys(fn (StudentPhoneNumber $phoneNumber): array => [
+                                                    $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
+                                                ])
+                                                ->all(),
+                                        };
+                                    })
+                                    ->default(function (RelationManager $livewire): ?string {
+                                        assert($livewire->getOwnerRecord() instanceof Educatable);
+
+                                        return $livewire->getOwnerRecord()->emailAddresses()
                                             ->whereDoesntHave('bounced')
-                                            ->exists();
-                                    }
-
-                                    if (($value == NotificationChannel::Sms->value)) {
-                                        return ! $livewire->getOwnerRecord()
-                                            ->phoneNumbers()
-                                            ->where('can_receive_sms', true)
-                                            ->whereDoesntHave('smsOptOut')
-                                            ->exists();
-                                    }
-
-                                    return true;
-                                }
-                            )
-                            ->selectablePlaceholder(false)
-                            ->live()
-                            ->afterStateUpdated(function (mixed $state, RelationManager $livewire, Set $set) {
-                                assert($livewire->getOwnerRecord() instanceof Educatable);
-
-                                $channel = NotificationChannel::parse($state);
-                                $educatable = $livewire->getOwnerRecord();
-
-                                $route = match ($channel) {
-                                    NotificationChannel::Email => $educatable->primaryEmailAddress()
-                                        ->whereDoesntHave('bounced')
-                                        ->first()?->getKey(),
-                                    NotificationChannel::Sms => $educatable->primaryPhoneNumber()
-                                        ->where('can_receive_sms', true)
-                                        ->whereDoesntHave('smsOptOut')
-                                        ->first()?->getKey(),
-                                    default => null,
-                                } ?? match ($channel) {
-                                    NotificationChannel::Email => $educatable->emailAddresses()
-                                        ->whereDoesntHave('bounced')
-                                        ->first()?->getKey(),
-                                    NotificationChannel::Sms => $educatable->phoneNumbers()
-                                        ->where('can_receive_sms', true)
-                                        ->whereDoesntHave('smsOptOut')
-                                        ->first()?->getKey(),
-                                    default => null,
-                                };
-
-                                $set('recipient_route_id', $route);
-                            }),
-                        Select::make('recipient_route_id')
-                            ->label(fn (Get $get): string => match (NotificationChannel::parse($get('channel'))) {
-                                NotificationChannel::Email => 'Email address',
-                                NotificationChannel::Sms => 'Phone number',
-                            })
-                            ->options(function (Get $get, RelationManager $livewire): array {
-                                assert($livewire->getOwnerRecord() instanceof Student || $livewire->getOwnerRecord() instanceof Prospect);
-
-                                return match (NotificationChannel::parse($get('channel'))) {
-                                    NotificationChannel::Email => $livewire->getOwnerRecord()->emailAddresses()
-                                        ->whereDoesntHave('bounced')
-                                        ->get()
-                                        ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
-                                            $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
-                                        ])
-                                        ->all(),
-                                    NotificationChannel::Sms => $livewire->getOwnerRecord()->phoneNumbers()
-                                        ->where('can_receive_sms', true)
-                                        ->whereDoesntHave('smsOptOut')
-                                        ->get()
-                                        ->mapWithKeys(fn (StudentPhoneNumber $phoneNumber): array => [
-                                            $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
-                                        ])
-                                        ->all(),
-                                };
-                            })
-                            ->default(function (RelationManager $livewire): ?string {
-                                assert($livewire->getOwnerRecord() instanceof Educatable);
-
-                                return $livewire->getOwnerRecord()->emailAddresses()
-                                    ->whereDoesntHave('bounced')
-                                    ->orderBy('order')
-                                    ->first()
-                                    ?->getKey()
-                                    ?? $livewire->getOwnerRecord()->phoneNumbers()
-                                        ->where('can_receive_sms', true)
-                                        ->whereDoesntHave('smsOptOut')
-                                        ->orderBy('order')
-                                        ->first()
-                                        ?->getKey();
-                            })
-                            ->required(),
+                                            ->orderBy('order')
+                                            ->first()
+                                            ?->getKey()
+                                            ?? $livewire->getOwnerRecord()->phoneNumbers()
+                                                ->where('can_receive_sms', true)
+                                                ->whereDoesntHave('smsOptOut')
+                                                ->orderBy('order')
+                                                ->first()
+                                                ?->getKey();
+                                    })
+                                    ->required(),
+                            ]),
                     ])
                     ->columns(2),
-                Step::make('Content')
+                Step::make('Message Details')
                     ->schema([
                         TiptapEditor::make('subject')
                             ->label('Subject')
@@ -318,7 +334,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                     ])
                     ->visible(auth()->user()->is_signature_enabled)
                     ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value),
-                Step::make('Send Your Message')
+                Step::make('Delivery Details')
                     ->schema([
                         Toggle::make('send_later')
                             ->reactive()

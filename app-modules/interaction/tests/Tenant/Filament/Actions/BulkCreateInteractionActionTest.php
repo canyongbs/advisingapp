@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Tests\Tenant\Filament\Actions\RequestFactories\BulkCreateInteractionActionRequestFactory;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ListProspects;
@@ -49,6 +50,8 @@ use function Tests\asSuperAdmin;
 
 it('shows the form and validation', function (BulkCreateInteractionActionRequestFactory $data, array $errors) {
     asSuperAdmin();
+
+    Division::factory()->create(['is_default' => true]);
 
     $student = Student::factory()->create();
 
@@ -79,7 +82,7 @@ it('shows the form and validation', function (BulkCreateInteractionActionRequest
         ['interaction_driver_id'],
     ],
     'division_id required' => [
-        BulkCreateInteractionActionRequestFactory::new()->without('division_id'),
+        BulkCreateInteractionActionRequestFactory::new()->state(['division_id' => null]),
         ['division_id' => 'required'],
     ],
     'division_id exists' => [
