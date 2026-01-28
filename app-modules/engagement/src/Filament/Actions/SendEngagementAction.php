@@ -154,7 +154,7 @@ class SendEngagementAction extends Action
                                     Fieldset::make('Message Type')
                                         ->schema([
                                             ToggleButtons::make('channel')
-                                                ->options(NotificationChannel::getEngagementOptions())
+                                                ->options(NotificationChannel::getAvailableEngagementOptions())
                                                 ->default(NotificationChannel::Email->value)
                                                 ->disableOptionWhen(
                                                     function (string $value) use ($educatable): bool {

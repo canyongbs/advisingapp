@@ -95,6 +95,17 @@ enum NotificationChannel: string implements HasLabel, HasIcon
         ];
     }
 
+    /**
+     * @return array<string, string>
+     */
+    public static function getAvailableEngagementOptions(): array
+    {
+        return [
+            NotificationChannel::Email->value => NotificationChannel::Email->getLabelForIntegrationState(),
+            ...(NotificationChannel::Sms->getCaseDisabled() ? [] : [NotificationChannel::Sms->value => NotificationChannel::Sms->getLabelForIntegrationState()]),
+        ];
+    }
+
     public static function parse(string | self | null $value): ?self
     {
         if (blank($value)) {
