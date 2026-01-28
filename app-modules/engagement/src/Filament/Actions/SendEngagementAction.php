@@ -154,31 +154,33 @@ class SendEngagementAction extends Action
                                     Fieldset::make('Message Type')
                                         ->schema([
                                             ToggleButtons::make('channel')
-                                                ->options(NotificationChannel::getAvailableEngagementOptions())
-                                                ->default(NotificationChannel::Email->value)
-                                                ->disableOptionWhen(
-                                                    function (string $value) use ($educatable): bool {
-                                                        if (NotificationChannel::tryFrom($value)?->getCaseDisabled() ?? false) {
+                                                ->options(fn () =>
+                                                    array_filter(
+                                                        NotificationChannel::getAvailableEngagementOptions(),
+                                                        function (string $label) use ($educatable): bool {
+                                                            if (NotificationChannel::tryFrom($label)?->getCaseDisabled() ?? false) {
+                                                                return false;
+                                                            }
+
+                                                            if ($label == NotificationChannel::Email->getLabel()) {
+                                                                return $educatable ? $educatable
+                                                                    ->emailAddresses()
+                                                                    ->whereDoesntHave('bounced')
+                                                                    ->exists() : false;
+                                                            }
+
+                                                            if ($label == NotificationChannel::Sms->getLabel()) {
+                                                                return $educatable ? $educatable->phoneNumbers()
+                                                                    ->where('can_receive_sms', true)
+                                                                    ->whereDoesntHave('smsOptOut')
+                                                                    ->exists() : false;
+                                                            }
+
                                                             return true;
                                                         }
-
-                                                        if ($value == NotificationChannel::Email->value) {
-                                                            return $educatable ? ! $educatable
-                                                                ->emailAddresses()
-                                                                ->whereDoesntHave('bounced')
-                                                                ->exists() : true;
-                                                        }
-
-                                                        if ($value == NotificationChannel::Sms->value) {
-                                                            return $educatable ? ! $educatable->phoneNumbers()
-                                                                ->where('can_receive_sms', true)
-                                                                ->whereDoesntHave('smsOptOut')
-                                                                ->exists() : true;
-                                                        }
-
-                                                        return true;
-                                                    }
+                                                    )
                                                 )
+                                                ->default(NotificationChannel::Email->value)
                                                 ->inline()
                                                 ->live()
                                                 ->afterStateUpdated(function (mixed $state, Set $set) use ($educatable) {
@@ -234,7 +236,8 @@ class SendEngagementAction extends Action
                                                 ->required(),
                                         ]),
                                 ];
-                            }),
+                            })
+                            ->visible(fn(Get $get) => $get('recipient_id')),
                     ]),
                 Step::make('Message Details')
                     ->schema(function (Get $get): array {
