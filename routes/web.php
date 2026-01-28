@@ -34,11 +34,16 @@
 </COPYRIGHT>
 */
 
+use App\Http\Controllers\DownloadExportController;
 use App\Http\Controllers\ViewPublicUserProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/profiles/{user:public_profile_slug}', ViewPublicUserProfileController::class)
     ->name('users.profile.view.public');
+
+Route::get('/exports/{export}/download', DownloadExportController::class)
+    ->middleware(['auth', 'signed'])
+    ->name('exports.download');
 
 Route::redirect('/docs/api', '/docs/api/v1')
     ->name('docs.api');
