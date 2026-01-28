@@ -54,16 +54,14 @@ return new class () extends Migration {
                             continue;
                         }
 
-                        $modified = false;
-
-                        if (isset($filters['queryBuilder']['rules']) && is_array($filters['queryBuilder']['rules'])) {
-                            foreach ($filters['queryBuilder']['rules'] as $ruleKey => $rule) {
-                                if (isset($rule['type']) && in_array($rule['type'], $obsoleteFilterTypes)) {
-                                    unset($filters['queryBuilder']['rules'][$ruleKey]);
-                                    $modified = true;
-                                }
-                            }
+                        if (! isset($filters['queryBuilder']['rules'])) {
+                            continue;
                         }
+
+                        $modified = $this->removeObsoleteFiltersFromRules(
+                            $filters['queryBuilder']['rules'],
+                            $obsoleteFilterTypes
+                        );
 
                         if (! $modified) {
                             continue;
@@ -77,5 +75,40 @@ return new class () extends Migration {
                     }
                 });
         });
+    }
+
+    /**
+     * @param array<string, mixed>  $rules
+     * @param array<int, string>  $obsoleteFilterTypes
+     *
+     * @return bool
+     */
+    protected function removeObsoleteFiltersFromRules(array &$rules, array $obsoleteFilterTypes): bool
+    {
+        $modified = false;
+
+        foreach ($rules as $ruleKey => $rule) {
+            if (isset($rule['type']) && $rule['type'] === 'or') {
+                if (isset($rule['data']['groups']) && is_array($rule['data']['groups'])) {
+                    foreach ($rule['data']['groups'] as $groupIndex => $group) {
+                        if (isset($group['rules']) && is_array($group['rules'])) {
+                            $nestedModified = $this->removeObsoleteFiltersFromRules(
+                                $rules[$ruleKey]['data']['groups'][$groupIndex]['rules'],
+                                $obsoleteFilterTypes
+                            );
+
+                            if ($nestedModified) {
+                                $modified = true;
+                            }
+                        }
+                    }
+                }
+            } elseif (isset($rule['type']) && in_array($rule['type'], $obsoleteFilterTypes)) {
+                unset($rules[$ruleKey]);
+                $modified = true;
+            }
+        }
+
+        return $modified;
     }
 };

@@ -145,6 +145,89 @@ describe('2026_01_27_143000_temp_remove_obsolete_filters_from_groups', function 
                     'filters' => [],
                 ]);
 
+                // Setup data - Group with obsolete filter in OR block
+                $groupWithOrBlockObsolete = Group::factory()->create([
+                    'model' => GroupModel::Student,
+                    'filters' => [
+                        'queryBuilder' => [
+                            'rules' => [
+                                'or1' => [
+                                    'type' => 'or',
+                                    'data' => [
+                                        'groups' => [
+                                            'grp1' => [
+                                                'rules' => [
+                                                    'nested1' => [
+                                                        'type' => 'performanceCumErn',
+                                                        'data' => [
+                                                            'operator' => 'isMin',
+                                                            'settings' => ['number' => '20', 'aggregate' => null],
+                                                        ],
+                                                    ],
+                                                    'nested2' => [
+                                                        'type' => 'dual',
+                                                        'data' => [
+                                                            'operator' => 'isTrue',
+                                                            'settings' => null,
+                                                        ],
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]);
+
+                // Setup data - Group with mixed nested structure
+                $groupWithComplexNesting = Group::factory()->create([
+                    'model' => GroupModel::Student,
+                    'filters' => [
+                        'queryBuilder' => [
+                            'rules' => [
+                                'top1' => [
+                                    'type' => 'holds',
+                                    'data' => [
+                                        'operator' => 'contains',
+                                        'settings' => ['text' => 'test'],
+                                    ],
+                                ],
+                                'or1' => [
+                                    'type' => 'or',
+                                    'data' => [
+                                        'groups' => [
+                                            'grpA' => [
+                                                'rules' => [
+                                                    'nested1' => [
+                                                        'type' => 'performanceFirstGen',
+                                                        'data' => [
+                                                            'operator' => 'isTrue',
+                                                            'settings' => null,
+                                                        ],
+                                                    ],
+                                                ],
+                                            ],
+                                            'grpB' => [
+                                                'rules' => [
+                                                    'nested2' => [
+                                                        'type' => 'dual',
+                                                        'data' => [
+                                                            'operator' => 'isTrue',
+                                                            'settings' => null,
+                                                        ],
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]);
+
                 $migrate = Artisan::call('migrate', ['--path' => 'app-modules/group/database/migrations/2026_01_27_143000_temp_remove_obsolete_filters_from_groups.php']);
 
                 expect($migrate)->toBe(Command::SUCCESS);
@@ -154,6 +237,8 @@ describe('2026_01_27_143000_temp_remove_obsolete_filters_from_groups', function 
                 $groupWithValidFiltersOnly->refresh();
                 $groupWithNullFilters->refresh();
                 $groupWithEmptyFilters->refresh();
+                $groupWithOrBlockObsolete->refresh();
+                $groupWithComplexNesting->refresh();
 
                 // Assert: Group with only obsolete filter should have empty rules
                 expect($groupWithObsoleteOnly->filters['queryBuilder']['rules'])->toBeArray();
@@ -176,6 +261,23 @@ describe('2026_01_27_143000_temp_remove_obsolete_filters_from_groups', function 
                 // Assert: Group with empty filters should remain empty
                 expect($groupWithEmptyFilters->filters)->toBeArray();
                 expect($groupWithEmptyFilters->filters)->toBeEmpty();
+
+                // Assert: Group with OR block should have obsolete filter removed but keep valid filter
+                expect($groupWithOrBlockObsolete->filters['queryBuilder']['rules'])->toHaveKey('or1');
+                $orBlock = $groupWithOrBlockObsolete->filters['queryBuilder']['rules']['or1'];
+                expect($orBlock['type'])->toBe('or');
+                expect($orBlock['data']['groups']['grp1']['rules'])->toHaveKey('nested2');
+                expect($orBlock['data']['groups']['grp1']['rules']['nested2']['type'])->toBe('dual');
+                expect($orBlock['data']['groups']['grp1']['rules'])->not->toHaveKey('nested1');
+
+                // Assert: Group with complex nesting should keep top-level valid filter and nested valid filter
+                expect($groupWithComplexNesting->filters['queryBuilder']['rules'])->toHaveKey('top1');
+                expect($groupWithComplexNesting->filters['queryBuilder']['rules']['top1']['type'])->toBe('holds');
+                expect($groupWithComplexNesting->filters['queryBuilder']['rules'])->toHaveKey('or1');
+                $complexOrBlock = $groupWithComplexNesting->filters['queryBuilder']['rules']['or1'];
+                expect($complexOrBlock['data']['groups']['grpA']['rules'])->not->toHaveKey('nested1');
+                expect($complexOrBlock['data']['groups']['grpB']['rules'])->toHaveKey('nested2');
+                expect($complexOrBlock['data']['groups']['grpB']['rules']['nested2']['type'])->toBe('dual');
             }
         );
     });
