@@ -79,6 +79,15 @@ class RelationManagerSendEngagementAction extends CreateAction
         $this->icon('heroicon-m-chat-bubble-bottom-center-text')
             ->label('New')
             ->modalHeading('Send Message')
+            ->modalDescription(function (RelationManager $livewire): string {
+                $educatable = $livewire->getOwnerRecord();
+
+                assert($educatable instanceof Educatable);
+
+                $educatableName = $educatable->getAttributeValue($educatable::displayNameKey());
+
+                return "Send an engagement to {$educatableName}.";
+            })
             ->model(Engagement::class)
             ->authorize(function (RelationManager $livewire) {
                 $ownerRecord = $livewire->getOwnerRecord();
