@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d04bfd1d10308c03efbb9a6896ce2923",
+    "content-hash": "2f6c700623ecab1fdad6e53033d445e9",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -2210,16 +2210,16 @@
         },
         {
             "name": "canyongbs/common",
-            "version": "2.6.1",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/common.git",
-                "reference": "fbc2ed140f58be6b236222b870f172d09709a1ad"
+                "reference": "caa6037c0437969e99d0dae346a4c14c58f601b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/common/zipball/fbc2ed140f58be6b236222b870f172d09709a1ad",
-                "reference": "fbc2ed140f58be6b236222b870f172d09709a1ad",
+                "url": "https://api.github.com/repos/canyongbs/common/zipball/caa6037c0437969e99d0dae346a4c14c58f601b7",
+                "reference": "caa6037c0437969e99d0dae346a4c14c58f601b7",
                 "shasum": ""
             },
             "require": {
@@ -2232,12 +2232,12 @@
                 "friendsofphp/php-cs-fixer": "^3.75",
                 "orchestra/testbench": "^10.4",
                 "orrison/meliorstan": "^0.3.2",
-                "pestphp/pest": "^3.8",
+                "pestphp/pest": "^3.8.5",
                 "pestphp/pest-plugin-laravel": "^3.2",
                 "php-coveralls/php-coveralls": "^0.1.0",
                 "php-mock/php-mock-phpunit": "^2.13",
                 "phpstan/phpstan": "^2.1",
-                "phpunit/phpunit": "^11.5"
+                "phpunit/phpunit": "^11.5.50"
             },
             "type": "package",
             "extra": {
@@ -2264,9 +2264,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/common/issues",
-                "source": "https://github.com/canyongbs/common/tree/2.6.1"
+                "source": "https://github.com/canyongbs/common/tree/2.7.0"
             },
-            "time": "2026-01-23T21:08:20+00:00"
+            "time": "2026-01-28T21:31:53+00:00"
         },
         {
             "name": "canyongbs/filament-tiptap-editor",
@@ -2346,16 +2346,16 @@
         },
         {
             "name": "canyongbs/model-state-machine",
-            "version": "2.0.2",
+            "version": "2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/model-state-machine.git",
-                "reference": "965fc8ad54ff15300341e68b4c6dac74f96999c6"
+                "reference": "0140903b1513897debe9d62a8993145f21142187"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/model-state-machine/zipball/965fc8ad54ff15300341e68b4c6dac74f96999c6",
-                "reference": "965fc8ad54ff15300341e68b4c6dac74f96999c6",
+                "url": "https://api.github.com/repos/canyongbs/model-state-machine/zipball/0140903b1513897debe9d62a8993145f21142187",
+                "reference": "0140903b1513897debe9d62a8993145f21142187",
                 "shasum": ""
             },
             "require": {
@@ -2367,7 +2367,7 @@
                 "larastan/larastan": "^3.0.2",
                 "nunomaduro/collision": "^7.0|^8.0|^9.0",
                 "orchestra/testbench": "^9.0|^10.0",
-                "pestphp/pest": "^3.0",
+                "pestphp/pest": "^3.8.5",
                 "pestphp/pest-plugin-laravel": "^3.0",
                 "phpstan/extension-installer": "^1.1",
                 "phpstan/phpstan-deprecation-rules": "^2.0",
@@ -2414,9 +2414,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/model-state-machine/issues",
-                "source": "https://github.com/canyongbs/model-state-machine/tree/2.0.2"
+                "source": "https://github.com/canyongbs/model-state-machine/tree/2.0.3"
             },
-            "time": "2025-11-13T13:09:38+00:00"
+            "time": "2026-01-28T21:32:56+00:00"
         },
         {
             "name": "carbonphp/carbon-doctrine-types",
@@ -9752,16 +9752,16 @@
         },
         {
             "name": "orrison/meliorstan",
-            "version": "v0.3.2",
+            "version": "v0.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Orrison/MeliorStan.git",
-                "reference": "5ba2356be0a339e765cda9bc8feda665d3145ad6"
+                "reference": "b7d091e2a32234899709261e744630128959b501"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Orrison/MeliorStan/zipball/5ba2356be0a339e765cda9bc8feda665d3145ad6",
-                "reference": "5ba2356be0a339e765cda9bc8feda665d3145ad6",
+                "url": "https://api.github.com/repos/Orrison/MeliorStan/zipball/b7d091e2a32234899709261e744630128959b501",
+                "reference": "b7d091e2a32234899709261e744630128959b501",
                 "shasum": ""
             },
             "require": {
@@ -9797,9 +9797,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Orrison/MeliorStan/issues",
-                "source": "https://github.com/Orrison/MeliorStan/tree/v0.3.2"
+                "source": "https://github.com/Orrison/MeliorStan/tree/v0.4.1"
             },
-            "time": "2025-10-16T06:13:26+00:00"
+            "time": "2026-01-28T21:29:02+00:00"
         },
         {
             "name": "owen-it/laravel-auditing",
@@ -16394,16 +16394,16 @@
         },
         {
             "name": "symfony/finder",
-            "version": "v7.4.4",
+            "version": "v7.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "01b24a145bbeaa7141e75887ec904c34a6728a5f"
+                "reference": "ad4daa7c38668dcb031e63bc99ea9bd42196a2cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/01b24a145bbeaa7141e75887ec904c34a6728a5f",
-                "reference": "01b24a145bbeaa7141e75887ec904c34a6728a5f",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/ad4daa7c38668dcb031e63bc99ea9bd42196a2cb",
+                "reference": "ad4daa7c38668dcb031e63bc99ea9bd42196a2cb",
                 "shasum": ""
             },
             "require": {
@@ -16438,7 +16438,7 @@
             "description": "Finds files and directories via an intuitive fluent interface",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/finder/tree/v7.4.4"
+                "source": "https://github.com/symfony/finder/tree/v7.4.5"
             },
             "funding": [
                 {
@@ -16458,7 +16458,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-12T12:19:02+00:00"
+            "time": "2026-01-26T15:07:59+00:00"
         },
         {
             "name": "symfony/html-sanitizer",
@@ -18234,16 +18234,16 @@
         },
         {
             "name": "symfony/process",
-            "version": "v7.4.4",
+            "version": "v7.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "626f07a53f4b4e2f00e11824cc29f928d797783b"
+                "reference": "608476f4604102976d687c483ac63a79ba18cc97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/626f07a53f4b4e2f00e11824cc29f928d797783b",
-                "reference": "626f07a53f4b4e2f00e11824cc29f928d797783b",
+                "url": "https://api.github.com/repos/symfony/process/zipball/608476f4604102976d687c483ac63a79ba18cc97",
+                "reference": "608476f4604102976d687c483ac63a79ba18cc97",
                 "shasum": ""
             },
             "require": {
@@ -18275,7 +18275,7 @@
             "description": "Executes commands in sub-processes",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/process/tree/v7.4.4"
+                "source": "https://github.com/symfony/process/tree/v7.4.5"
             },
             "funding": [
                 {
@@ -18295,7 +18295,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-20T09:23:51+00:00"
+            "time": "2026-01-26T15:07:59+00:00"
         },
         {
             "name": "symfony/psr-http-message-bridge",
@@ -20694,20 +20694,20 @@
         },
         {
             "name": "pestphp/pest",
-            "version": "v4.3.1",
+            "version": "v4.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pestphp/pest.git",
-                "reference": "bc57a84e77afd4544ff9643a6858f68d05aeab96"
+                "reference": "3a4329ddc7a2b67c19fca8342a668b39be3ae398"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pestphp/pest/zipball/bc57a84e77afd4544ff9643a6858f68d05aeab96",
-                "reference": "bc57a84e77afd4544ff9643a6858f68d05aeab96",
+                "url": "https://api.github.com/repos/pestphp/pest/zipball/3a4329ddc7a2b67c19fca8342a668b39be3ae398",
+                "reference": "3a4329ddc7a2b67c19fca8342a668b39be3ae398",
                 "shasum": ""
             },
             "require": {
-                "brianium/paratest": "^7.16.0",
+                "brianium/paratest": "^7.16.1",
                 "nunomaduro/collision": "^8.8.3",
                 "nunomaduro/termwind": "^2.3.3",
                 "pestphp/pest-plugin": "^4.0.0",
@@ -20715,18 +20715,18 @@
                 "pestphp/pest-plugin-mutate": "^4.0.1",
                 "pestphp/pest-plugin-profanity": "^4.2.1",
                 "php": "^8.3.0",
-                "phpunit/phpunit": "^12.5.4",
-                "symfony/process": "^7.4.3|^8.0.0"
+                "phpunit/phpunit": "^12.5.8",
+                "symfony/process": "^7.4.4|^8.0.0"
             },
             "conflict": {
                 "filp/whoops": "<2.18.3",
-                "phpunit/phpunit": ">12.5.4",
+                "phpunit/phpunit": ">12.5.8",
                 "sebastian/exporter": "<7.0.0",
                 "webmozart/assert": "<1.11.0"
             },
             "require-dev": {
                 "pestphp/pest-dev-tools": "^4.0.0",
-                "pestphp/pest-plugin-browser": "^4.1.1",
+                "pestphp/pest-plugin-browser": "^4.2.1",
                 "pestphp/pest-plugin-type-coverage": "^4.0.3",
                 "psy/psysh": "^0.12.18"
             },
@@ -20794,7 +20794,7 @@
             ],
             "support": {
                 "issues": "https://github.com/pestphp/pest/issues",
-                "source": "https://github.com/pestphp/pest/tree/v4.3.1"
+                "source": "https://github.com/pestphp/pest/tree/v4.3.2"
             },
             "funding": [
                 {
@@ -20806,7 +20806,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-04T16:29:59+00:00"
+            "time": "2026-01-28T01:01:19+00:00"
         },
         {
             "name": "pestphp/pest-plugin",
@@ -21802,16 +21802,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "12.5.4",
+            "version": "12.5.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "4ba0e923f9d3fc655de22f9547c01d15a41fc93a"
+                "reference": "37ddb96c14bfee10304825edbb7e66d341ec6889"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/4ba0e923f9d3fc655de22f9547c01d15a41fc93a",
-                "reference": "4ba0e923f9d3fc655de22f9547c01d15a41fc93a",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/37ddb96c14bfee10304825edbb7e66d341ec6889",
+                "reference": "37ddb96c14bfee10304825edbb7e66d341ec6889",
                 "shasum": ""
             },
             "require": {
@@ -21825,13 +21825,13 @@
                 "phar-io/manifest": "^2.0.4",
                 "phar-io/version": "^3.2.1",
                 "php": ">=8.3",
-                "phpunit/php-code-coverage": "^12.5.1",
+                "phpunit/php-code-coverage": "^12.5.2",
                 "phpunit/php-file-iterator": "^6.0.0",
                 "phpunit/php-invoker": "^6.0.0",
                 "phpunit/php-text-template": "^5.0.0",
                 "phpunit/php-timer": "^8.0.0",
                 "sebastian/cli-parser": "^4.2.0",
-                "sebastian/comparator": "^7.1.3",
+                "sebastian/comparator": "^7.1.4",
                 "sebastian/diff": "^7.0.0",
                 "sebastian/environment": "^8.0.3",
                 "sebastian/exporter": "^7.0.2",
@@ -21879,7 +21879,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/12.5.4"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/12.5.8"
             },
             "funding": [
                 {
@@ -21903,7 +21903,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-12-15T06:05:34+00:00"
+            "time": "2026-01-27T06:12:29+00:00"
         },
         {
             "name": "react/cache",
@@ -22489,16 +22489,16 @@
         },
         {
             "name": "sebastian/comparator",
-            "version": "7.1.3",
+            "version": "7.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/comparator.git",
-                "reference": "dc904b4bb3ab070865fa4068cd84f3da8b945148"
+                "reference": "6a7de5df2e094f9a80b40a522391a7e6022df5f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/dc904b4bb3ab070865fa4068cd84f3da8b945148",
-                "reference": "dc904b4bb3ab070865fa4068cd84f3da8b945148",
+                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/6a7de5df2e094f9a80b40a522391a7e6022df5f6",
+                "reference": "6a7de5df2e094f9a80b40a522391a7e6022df5f6",
                 "shasum": ""
             },
             "require": {
@@ -22557,7 +22557,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/comparator/issues",
                 "security": "https://github.com/sebastianbergmann/comparator/security/policy",
-                "source": "https://github.com/sebastianbergmann/comparator/tree/7.1.3"
+                "source": "https://github.com/sebastianbergmann/comparator/tree/7.1.4"
             },
             "funding": [
                 {
@@ -22577,7 +22577,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-20T11:27:00+00:00"
+            "time": "2026-01-24T09:28:48+00:00"
         },
         {
             "name": "sebastian/complexity",
