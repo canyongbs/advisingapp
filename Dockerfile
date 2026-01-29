@@ -202,7 +202,9 @@ RUN apt-get update \
     php8.4-sqlite3 \
     php8.4-xml \
     php8.4-zip \
-    # ImageMagick 7 runtime dependencies \
+    # ImageMagick 7 runtime dependencies
+    # Note: Package names are Ubuntu 24.04 (noble) specific due to t64 ABI transition
+    # These will need updating if the base image changes to a different Ubuntu version
     libjpeg8 \
     libpng16-16t64 \
     libwebp7 \
