@@ -103,4 +103,4 @@ The Feature Flag will be purged from the database automatically if it is no long
 
 ---
 
-See also [Data Migrations](../data-migrations.md)
+See also [Data Migrations](./data-migrations.md)
