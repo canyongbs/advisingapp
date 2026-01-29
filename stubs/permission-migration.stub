@@ -8,7 +8,14 @@ return new class extends Migration
     use CanModifyPermissions;
     
     private array $permissions = [
-        'permission' => 'Permission Group',
+        'permission-name.view-any' => 'Permission Group',
+        'permission-name.create' => 'Permission Group',
+        'permission-name.*.view' => 'Permission Group',
+        'permission-name.*.update' => 'Permission Group',
+        'permission-name.*.delete' => 'Permission Group',
+        'permission-name.*.restore' => 'Permission Group',
+        'permission-name.*.force-delete' => 'Permission Group',
+        // 'permission-name.import' => 'Permission Group', // Add only if needed / requested
     ];
 
     private array $guards = [
