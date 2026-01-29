@@ -83,29 +83,29 @@ RUN curl -L "https://github.com/ImageMagick/ImageMagick/archive/refs/tags/${IMAG
     && tar -xzf imagemagick.tar.gz \
     && cd ImageMagick-${IMAGEMAGICK_VERSION} \
     && ./configure \
-        --prefix=/usr/local \
-        --with-modules \
-        --with-jpeg \
-        --with-png \
-        --with-webp \
-        --with-tiff \
-        --with-raw \
-        --with-openjp2 \
-        --with-freetype \
-        --with-fontconfig \
-        --with-lcms \
-        --with-xml \
-        --with-heic \
-        --with-jxl \
-        --with-zip \
-        --with-bzlib \
-        --with-zstd \
-        --with-lqr \
-        --with-fftw \
-        --enable-hdri \
-        --enable-openmp \
-        --disable-static \
-        --without-x \
+    --prefix=/usr/local \
+    --with-modules \
+    --with-jpeg \
+    --with-png \
+    --with-webp \
+    --with-tiff \
+    --with-raw \
+    --with-openjp2 \
+    --with-freetype \
+    --with-fontconfig \
+    --with-lcms \
+    --with-xml \
+    --with-heic \
+    --with-jxl \
+    --with-zip \
+    --with-bzlib \
+    --with-zstd \
+    --with-lqr \
+    --with-fftw \
+    --enable-hdri \
+    --enable-openmp \
+    --disable-static \
+    --without-x \
     && make -j$(nproc) \
     && make install \
     && ldconfig
