@@ -1,5 +1,10 @@
 # SES Event Tracking
 
+<!-- TODO: Update this documentation with the current implementations and setup -->
+
+> [!WARNING]
+> This article is out of date and does not properly reflect how SES is configured and works in the system. It will be updated soon.
+
 This applications can make use of SES event tracking to track email all sorts of email events and process them within the application.
 In order to make use of this feature, the application first needs to be using SES as the mail provider either via API or SMTP.
 Next a Configuration Set will need to be created within the AWS account that is sending the emails, and configured with an SNS delivery destination.

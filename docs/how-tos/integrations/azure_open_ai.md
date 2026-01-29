@@ -1,5 +1,10 @@
 # Azure OpenAI
 
+<!-- TODO: Update this documentation for how to properly setup local Azure Open AI -->
+
+> [!WARNING]
+> This article is out of date and does not properly reflect how to setup Azure Open AI locally. It will be updated soon.
+
 The Advising App project provides a simple way to connect with and use Azure OpenAI in order to connect to OpenAI's powerful language models, summoning the power of AI inside of the application in a secure fashion.
 
 ## Before You Begin

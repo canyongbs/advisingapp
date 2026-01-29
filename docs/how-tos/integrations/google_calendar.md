@@ -1,5 +1,10 @@
 # Google Calendar
 
+<!-- TODO: Update this documentation for how to properly setup local Google Calendar connection -->
+
+> [!WARNING]
+> This article is out of date and does not properly reflect how to setup Google calendar integrations locally. It will be updated soon.
+
 ## Google Setup
 
 Visit https://console.cloud.google.com/ to get started.
