@@ -87,12 +87,50 @@ Ensure this migration is timestamped to run after all related schema and data mi
 
 ---
 
+## Post-Deployment Cleanup
+
+After deployment, someone will be tasked with cleaning up the Feature Flag. Make their job easier by documenting what needs to change.
+
+### Simple Cases
+
+In most cases, clean up is straightforward—search for usages of the Feature Flag class and:
+
+- Remove the Feature Flag conditional
+- Keep the code that runs when the flag is active
+- Delete the code that runs when it's inactive
+
+### Complex Cases
+
+When cleanup requires more than simply removing conditionals, add comments to guide the person doing the cleanup. Use this pattern:
+
+```php
+// TODO: FeatureFlag Cleanup - Details on what changes should be made
+```
+
+Multiline comments can be used for more detailed instructions or code examples:
+
+```php
+/*
+ * TODO: FeatureFlag Cleanup - After SomeFeature is removed:
+ * - Change this default value from 'legacy' to 'new_format'
+ * - Update the config in config/app.php to set 'feature_mode' => true
+ * - Remove the fallback query below
+ */
+```
+
+Adapt the comment syntax for the language of the file (e.g., `<!-- TODO: FeatureFlag Cleanup -->` in Blade templates).
+
+This pattern makes it easy to search the codebase for `TODO: FeatureFlag Cleanup` to find all locations that need attention, without relying on filenames or line numbers that may change.
+
+---
+
 ## Cleaning up a Feature Flag
 
 After the deployment containing your new changes and Feature Flag has gone out and successfully executed, there will generally be a task in the next release cycle to remove the Feature Flag.
 
 To remove a Feature Flag:
 
+- Search the codebase for `TODO: FeatureFlag Cleanup` to find any documented cleanup tasks
 - Delete all references to the Feature Flag throughout the codebase
 - Adjust any logic to work as if the Feature Flag were active
 - Delete any unneeded legacy code
