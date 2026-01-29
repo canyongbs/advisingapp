@@ -95,4 +95,4 @@ php artisan tenants:artisan "migrate"
 See also:
 
 - [Manage Feature Flags](./manage-feature-flags.md) — for activating Feature Flags within migrations
-- [Roles and Permissions](/docs/roles-and-permissions.md) — for permission-related migrations
+- [Creating Permissions](./creating-permissions.md) — for permission-related migrations
