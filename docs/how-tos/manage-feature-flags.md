@@ -24,7 +24,47 @@ Optionally, you can add logic to `resolve` and return `true` to activate the Fea
 
 ## Activating a Feature Flag
 
-After you have created all your schema and data migrations, create a new data migration specifically to activate the Feature Flag:
+There are two options for activating a Feature Flag during migrations.
+
+### Preferred: Activate Within the Same Migration
+
+The preferred approach is to activate the Feature Flag within the same migration that makes the schema or data changes. Wrap both the changes and the activation in a database transaction for safety—this ensures that if either the migration or the activation fails, both are rolled back together.
+
+```php
+use App\Features\SomeFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class () extends Migration {
+    public function up(): void
+    {
+        DB::transaction(function () {
+            Schema::table('some_table', function (Blueprint $table) {
+                $table->string('new_column')->nullable();
+            });
+
+            SomeFeature::activate();
+        });
+    }
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            SomeFeature::deactivate();
+
+            Schema::table('some_table', function (Blueprint $table) {
+                $table->dropColumn('new_column');
+            });
+        });
+    }
+};
+```
+
+### Alternative: Activate in a Separate Migration
+
+If you have multiple schema or data migrations that need to complete before the Feature Flag should be activated, create a separate migration that runs after all the pertinent migrations:
 
 ```php
 use App\Features\SomeFeature;
@@ -42,6 +82,8 @@ return new class () extends Migration {
     }
 };
 ```
+
+Ensure this migration is timestamped to run after all related schema and data migrations.
 
 ---
 
