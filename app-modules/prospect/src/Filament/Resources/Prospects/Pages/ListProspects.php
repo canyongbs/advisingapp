@@ -95,11 +95,11 @@ class ListProspects extends ListRecords
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('primaryEmailAddress.address')
-                    ->label('Email')
+                    ->label('Primary Email')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('primaryPhoneNumber.number')
-                    ->label('Phone')
+                    ->label('Primary Phone')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('status.name')
