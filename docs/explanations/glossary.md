@@ -13,7 +13,7 @@ A term should be cataloged here if:
 
 Terms used by product, stakeholders, and in the UI, mapped to their code / development understanding equivalents.
 
-**Concern**
+**Concern**:
 References the `app-modules/concern/src/Models/Concern.php` Model.
 
 Used to be called "Alert". Much of the code has been renamed to use the term "concern". But database schema has NOT yet changed.
@@ -22,7 +22,7 @@ Used to be called "Alert". Much of the code has been renamed to use the term "co
 
 Terms used by development mapped to their product / stakeholder understanding equivalents.
 
-**Educatable**
+**Educatable**:
 Largely based on the Interface shared by `Student` and `Prospect` models. Development will often refer to "Educatable" when talking about something that could possibly be either a Student or Prospect, such as in polymorphic relationships.
 
 Product is aware of this term and does understand its meaning and as such it can be used in interdepartmental discussion.
