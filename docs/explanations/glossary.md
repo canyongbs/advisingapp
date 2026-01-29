@@ -11,16 +11,18 @@ A term should be cataloged here if:
 
 ## Product Terms
 
-Terms used by product, stakeholders, and in the UI, mapped to their code / development understanding equivalents.
+> Terms used by product, stakeholders, and in the UI, mapped to their code / development understanding equivalents.
 
 **Concern**:
 References the `app-modules/concern/src/Models/Concern.php` Model.
 
 Used to be called "Alert". Much of the code has been renamed to use the term "concern". But database schema has NOT yet changed.
 
+---
+
 ## Development Terms
 
-Terms used by development mapped to their product / stakeholder understanding equivalents.
+> Terms used by development mapped to their product / stakeholder understanding equivalents.
 
 **Educatable**:
 Largely based on the Interface shared by `Student` and `Prospect` models. Development will often refer to "Educatable" when talking about something that could possibly be either a Student or Prospect, such as in polymorphic relationships.
@@ -28,3 +30,5 @@ Largely based on the Interface shared by `Student` and `Prospect` models. Develo
 Product is aware of this term and does understand its meaning and as such it can be used in interdepartmental discussion.
 
 NEVER use this term in User facing UI, it is not something that is pertinent to or understood by Users
+
+---
