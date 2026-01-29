@@ -36,7 +36,7 @@ RUN mkdir -p "$S6_DIR"; \
 FROM ${BASE_IMAGE} AS imagemagick-builder
 
 ARG PHP_VERSION='8.4'
-ARG IMAGEMAGICK_VERSION='7.1.1-43'
+ARG IMAGEMAGICK_VERSION='7.1.2-13'
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -60,15 +60,12 @@ RUN apt-get update \
     libpng-dev \
     libwebp-dev \
     libtiff-dev \
-    libraw-dev \
-    libopenjp2-7-dev \
     libfreetype-dev \
     libfontconfig1-dev \
     liblcms2-dev \
     libxml2-dev \
     libgomp1 \
     libheif-dev \
-    libjxl-dev \
     libzip-dev \
     libbz2-dev \
     libzstd-dev \
@@ -89,14 +86,11 @@ RUN curl -L "https://github.com/ImageMagick/ImageMagick/archive/refs/tags/${IMAG
     --with-png \
     --with-webp \
     --with-tiff \
-    --with-raw \
-    --with-openjp2 \
     --with-freetype \
     --with-fontconfig \
     --with-lcms \
     --with-xml \
     --with-heic \
-    --with-jxl \
     --with-zip \
     --with-bzlib \
     --with-zstd \
@@ -126,6 +120,7 @@ LABEL authors="Canyon GBS"
 LABEL maintainer="Canyon GBS"
 
 ARG PHP_VERSION='8.4'
+ARG PHP_API_VERSION=20240924
 ARG POSTGRES_VERSION=15
 
 ENV BUILD_PHP_VERSION=$PHP_VERSION \
@@ -166,11 +161,12 @@ COPY --from=setup /opt/s6/ /
 COPY --from=setup /etc/apt/sources.list.d/ /etc/apt/sources.list.d/
 
 # Bring over ImageMagick 7 libraries and PHP extension
-COPY --from=imagemagick-builder /usr/local/lib/ /usr/local/lib/
+COPY --from=imagemagick-builder /usr/local/lib/libMagick*.so* /usr/local/lib/
+COPY --from=imagemagick-builder /usr/local/lib/ImageMagick-7.1.2/ /usr/local/lib/ImageMagick-7.1.2/
 COPY --from=imagemagick-builder /usr/local/bin/magick /usr/local/bin/magick
 COPY --from=imagemagick-builder /usr/local/etc/ImageMagick-7/ /usr/local/etc/ImageMagick-7/
 COPY --from=imagemagick-builder /usr/local/share/ImageMagick-7/ /usr/local/share/ImageMagick-7/
-COPY --from=imagemagick-builder /usr/lib/php/20240924/imagick.so /usr/lib/php/20240924/imagick.so
+COPY --from=imagemagick-builder /usr/lib/php/${PHP_API_VERSION}/imagick.so /usr/lib/php/${PHP_API_VERSION}/imagick.so
 
 RUN apt-get update \
     \
@@ -211,15 +207,12 @@ RUN apt-get update \
     libpng16-16t64 \
     libwebp7 \
     libtiff6 \
-    libraw23t64 \
-    libopenjp2-7 \
     libfreetype6 \
     libfontconfig1 \
     liblcms2-2 \
     libxml2 \
     libgomp1 \
     libheif1 \
-    libjxl0.7 \
     libzip4t64 \
     libbz2-1.0 \
     libzstd1 \
