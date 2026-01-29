@@ -1,4 +1,4 @@
-# Single Sign On Setup
+# Single Sign on Setup
 
 This application allows for the setup of Single Sign On (SSO) with other applications. This is done by using the [Laravel Socialite](https://laravel.com/docs/10.x/socialite) package.
 
@@ -6,7 +6,7 @@ Available providers and their setup steps are as follows:
 
 ## Google
 
-Setup of Google SSO requires the configuration of a Google API project/application. Details on how to do so can be found [here](https://developers.google.com/identity/protocols/oauth2/openid-connect). Please keep in mind that at any time the link above may be out of date. Setup of the Google API project/application is not fully covered in this document.
+Setup of Google SSO requires the configuration of a Google API project/application. Details on how to do so can be found [here](https://developers.google.com/identity/protocols/oauth2/openid-connect). Please keep in mind that at any time the link above may be out-of-date. Setup of the Google API project/application is not fully covered in this document.
 
 Once the Google API project/application is set up, the following steps are required to set up Google SSO:
 
@@ -21,7 +21,7 @@ Once the Google API project/application is set up, the following steps are requi
 
 ## Microsoft
 
-Setup of Microsoft SSO requires the configuration of a Microsoft Azure AD application. Details on how to do so can be found [here](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app). Please keep in mind that at any time the link above may be out of date. Setup of the Microsoft Azure AD application is not fully covered in this document.
+Setup of Microsoft SSO requires the configuration of a Microsoft Azure AD application. Details on how to do so can be found [here](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app). Please keep in mind that at any time the link above may be out-of-date. Setup of the Microsoft Azure AD application is not fully covered in this document.
 
 Once the Microsoft Azure AD application is set up, the following steps are required to set up Microsoft SSO:
 
