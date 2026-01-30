@@ -42,6 +42,7 @@
     class="py-3"
     :$label
     :$isRequired
+    :description="$description ?? null"
 >
     @if (filled($response ?? null))
         <div class="not-prose flex flex-wrap items-center gap-3">

@@ -69,6 +69,10 @@ class EducatableBirthdateFormFieldBlock extends FormFieldBlock
                 ->string()
                 ->maxLength(255)
                 ->default('Birthdate'),
+            FilamentTextInput::make('description')
+                ->label('Field Description')
+                ->string()
+                ->maxLength(255),
             Checkbox::make('isRequired')
                 ->label('Required')
                 ->default(false),
@@ -85,6 +89,7 @@ class EducatableBirthdateFormFieldBlock extends FormFieldBlock
             'label' => $field->label,
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
+            ...self::getDescriptionSectionsSchema($field),
         ];
 
         if ($author && $submissible && in_array($submissible::class, [Form::class, Application::class])) {

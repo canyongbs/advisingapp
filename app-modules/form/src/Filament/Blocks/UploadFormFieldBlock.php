@@ -80,7 +80,7 @@ class UploadFormFieldBlock extends FormFieldBlock
      */
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
-        $schema = [
+        return [
             '$formkit' => 'upload',
             'label' => $field->label,
             'name' => $field->getKey(),
@@ -90,26 +90,8 @@ class UploadFormFieldBlock extends FormFieldBlock
             'limit' => $field->config['limit'] ?? 1,
             'size' => $field->config['size'] ?? null,
             'uploadUrl' => route('widgets.forms.form-upload-url'),
+            ...self::getDescriptionSectionsSchema($field),
         ];
-
-        if (! empty($field->config['description'])) {
-            $schema['sectionsSchema'] = [
-                'label' => [
-                    'children' => [
-                        '$label',
-                        [
-                            '$el' => 'div',
-                            'attrs' => [
-                                'class' => 'text-xs text-gray-500 mt-1 font-normal',
-                            ],
-                            'children' => $field->config['description'],
-                        ],
-                    ],
-                ],
-            ];
-        }
-
-        return $schema;
     }
 
     /**

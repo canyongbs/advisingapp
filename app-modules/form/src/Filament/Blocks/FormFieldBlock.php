@@ -116,4 +116,30 @@ abstract class FormFieldBlock extends TiptapBlock
             'response' => $response,
         ];
     }
+
+    protected static function getDescriptionSectionsSchema(
+        SubmissibleField $field,
+        string $sectionKey = 'label'
+    ): array {
+        if (empty($field->config['description'])) {
+            return [];
+        }
+
+        return [
+            'sectionsSchema' => [
+                $sectionKey => [
+                    'children' => [
+                        '$label',
+                        [
+                            '$el' => 'div',
+                            'attrs' => [
+                                'class' => 'text-xs text-gray-500 mt-1 font-normal',
+                            ],
+                            'children' => $field->config['description'],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
 }

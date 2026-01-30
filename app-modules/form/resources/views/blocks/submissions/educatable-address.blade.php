@@ -35,6 +35,7 @@
     class="py-3"
     :$label
     :$isRequired
+    :description="$description ?? null"
 >
     @php
         $addressData = is_array($response ?? null) ? $response : json_decode($response ?? '{}', true);

@@ -42,6 +42,7 @@
     <x-form::blocks.field-wrapper
         :label="$firstNameLabel"
         isRequired
+        :description="$description ?? null"
     >
         <x-form::blocks.previews.field />
     </x-form::blocks.field-wrapper>
