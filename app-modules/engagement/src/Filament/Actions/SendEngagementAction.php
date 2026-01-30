@@ -44,6 +44,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
@@ -68,6 +69,7 @@ use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class SendEngagementAction extends Action
@@ -123,7 +125,7 @@ class SendEngagementAction extends Action
                                 ->afterStateUpdated(function (Get $get, Set $set) {
                                     $educatable = match ($get('recipient_type')) {
                                         'student' => Student::find($get('recipient_id')),
-                                        'prospect' => Prospect::find($get('recipient_id')),
+                                        'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
                                         default => null,
                                     };
 
@@ -146,7 +148,7 @@ class SendEngagementAction extends Action
                             ->schema(function (Get $get): array {
                                 $educatable = $this->getEducatable() ?? match ($get('recipient_type')) {
                                     'student' => Student::find($get('recipient_id')),
-                                    'prospect' => Prospect::find($get('recipient_id')),
+                                    'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
                                     default => null,
                                 };
 
@@ -226,7 +228,7 @@ class SendEngagementAction extends Action
                                                         ->where('can_receive_sms', true)
                                                         ->whereDoesntHave('smsOptOut')
                                                         ->get()
-                                                        ->mapWithKeys(fn (StudentPhoneNumber $phoneNumber): array => [
+                                                        ->mapWithKeys(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber): array => [
                                                             $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
                                                         ])
                                                         ->all() : [],
@@ -243,7 +245,7 @@ class SendEngagementAction extends Action
                     ->schema(function (Get $get): array {
                         $educatable = $this->getEducatable() ?? match ($get('recipient_type')) {
                             'student' => Student::find($get('recipient_id')),
-                            'prospect' => Prospect::find($get('recipient_id')),
+                            'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
                             default => null,
                         };
 
@@ -381,7 +383,7 @@ class SendEngagementAction extends Action
                 /** @var Student | Prospect $recipient */
                 $recipient = $this->getEducatable() ?? match ($data['recipient_type']) {
                     'student' => Student::find($data['recipient_id']),
-                    'prospect' => Prospect::find($data['recipient_id']),
+                    'prospect' => Str::isUuid($data['recipient_id']) ? Prospect::find($data['recipient_id']) : null,
                     default => null,
                 };
                 $data['subject'] ??= ['type' => 'doc', 'content' => []];
