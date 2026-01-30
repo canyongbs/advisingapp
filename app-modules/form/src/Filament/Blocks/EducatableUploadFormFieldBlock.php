@@ -92,6 +92,7 @@ class EducatableUploadFormFieldBlock extends FormFieldBlock
             'limit' => $field->config['limit'] ?? 1,
             'size' => $field->config['size'] ?? null,
             'uploadUrl' => route('widgets.forms.form-upload-url'),
+            ...self::getDescriptionSectionsSchema($field),
         ];
     }
 

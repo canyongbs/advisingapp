@@ -71,6 +71,10 @@ class EducatableNameFormFieldBlock extends FormFieldBlock
                 ->string()
                 ->maxLength(255)
                 ->default('Name'),
+            FilamentTextInput::make('description')
+                ->label('Field Description')
+                ->string()
+                ->maxLength(255),
             FilamentTextInput::make('firstNameLabel')
                 ->label('First Name Label')
                 ->required()
@@ -141,6 +145,7 @@ class EducatableNameFormFieldBlock extends FormFieldBlock
                     'value' => $author instanceof Student ? ($author->first ?? '') : ($author instanceof Prospect ? ($author->first_name ?? '') : ''),
                     ...($disabled ? ['disabled' => true] : []),
                     'validation' => 'required',
+                    ...self::getDescriptionSectionsSchema($field),
                 ],
                 [
                     '$formkit' => 'text',

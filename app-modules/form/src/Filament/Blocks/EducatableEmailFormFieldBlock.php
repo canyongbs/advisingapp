@@ -67,6 +67,10 @@ class EducatableEmailFormFieldBlock extends FormFieldBlock
                 ->string()
                 ->maxLength(255)
                 ->default('Your email address'),
+            FilamentTextInput::make('description')
+                ->label('Field Description')
+                ->string()
+                ->maxLength(255),
             Checkbox::make('isRequired')
                 ->label('Required')
                 ->default(true),
@@ -80,6 +84,7 @@ class EducatableEmailFormFieldBlock extends FormFieldBlock
             'label' => $field->label,
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
+            ...self::getDescriptionSectionsSchema($field),
         ];
 
         if ($author && $submissible && in_array($submissible::class, [Form::class, Application::class])) {

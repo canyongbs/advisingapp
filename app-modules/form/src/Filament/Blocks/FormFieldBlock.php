@@ -63,6 +63,10 @@ abstract class FormFieldBlock extends TiptapBlock
                 ->required()
                 ->string()
                 ->maxLength(255),
+            TextInput::make('description')
+                ->label('Field Description')
+                ->string()
+                ->maxLength(255),
             Checkbox::make('isRequired')
                 ->label('Required'),
             ...$this->fields(),
@@ -110,6 +114,35 @@ abstract class FormFieldBlock extends TiptapBlock
         return [
             'field' => $field,
             'response' => $response,
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected static function getDescriptionSectionsSchema(
+        SubmissibleField $field,
+        string $sectionKey = 'label'
+    ): array {
+        if (empty($field->config['description'])) {
+            return [];
+        }
+
+        return [
+            'sectionsSchema' => [
+                $sectionKey => [
+                    'children' => [
+                        '$label',
+                        [
+                            '$el' => 'div',
+                            'attrs' => [
+                                'class' => 'text-xs text-gray-500 mt-1 font-normal',
+                            ],
+                            'children' => $field->config['description'],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }

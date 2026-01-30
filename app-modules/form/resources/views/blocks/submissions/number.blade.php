@@ -35,6 +35,7 @@
     class="py-3"
     :$label
     :$isRequired
+    :description="$description ?? null"
 >
     @if (filled($response ?? null))
         {{ \Filament\Support\format_number($response ?? null) }}

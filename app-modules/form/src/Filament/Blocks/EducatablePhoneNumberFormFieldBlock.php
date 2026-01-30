@@ -75,6 +75,10 @@ class EducatablePhoneNumberFormFieldBlock extends FormFieldBlock
                 ->string()
                 ->maxLength(255)
                 ->default('Phone Number'),
+            FilamentTextInput::make('description')
+                ->label('Field Description')
+                ->string()
+                ->maxLength(255),
             Checkbox::make('isRequired')
                 ->label('Required')
                 ->default(false),
@@ -91,6 +95,7 @@ class EducatablePhoneNumberFormFieldBlock extends FormFieldBlock
             'label' => $field->label,
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
+            ...self::getDescriptionSectionsSchema($field),
         ];
 
         if ($author && $submissible && in_array($submissible::class, [Form::class, Application::class])) {

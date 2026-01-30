@@ -35,6 +35,7 @@
     class="py-3"
     :$label
     :$isRequired
+    :description="$description ?? null"
 >
     @if (blank($response ?? null))
         <span class="text-gray-500">No response</span>

@@ -34,6 +34,7 @@
 <x-form::blocks.field-wrapper
     :$label
     :$isRequired
+    :description="$description ?? null"
 >
     <div class="h-16 w-full rounded border border-gray-500"></div>
 </x-form::blocks.field-wrapper>

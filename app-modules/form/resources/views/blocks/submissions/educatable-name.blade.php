@@ -35,6 +35,7 @@
     class="py-3"
     :$label
     :isRequired="false"
+    :description="$description ?? null"
 >
     @php
         $nameData = is_array($response ?? null) ? $response : json_decode($response ?? '{}', true);

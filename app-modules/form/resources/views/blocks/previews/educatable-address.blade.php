@@ -34,6 +34,7 @@
 <x-form::blocks.field-wrapper
     :$label
     :$isRequired
+    :description="$description ?? null"
 >
     <div class="space-y-2">
         <x-form::blocks.previews.field />

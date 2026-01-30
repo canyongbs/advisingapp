@@ -34,6 +34,7 @@
 <x-form::blocks.field-wrapper
     :$label
     :$isRequired
+    :description="$description ?? null"
 >
     <div class="grid gap-y-2">
         @foreach ($options as $option)

@@ -71,6 +71,10 @@ class EducatableAddressFormFieldBlock extends FormFieldBlock
                 ->string()
                 ->maxLength(255)
                 ->default('Address'),
+            FilamentTextInput::make('description')
+                ->label('Field Description')
+                ->string()
+                ->maxLength(255),
             Checkbox::make('isRequired')
                 ->label('Required')
                 ->default(false),
@@ -110,6 +114,7 @@ class EducatableAddressFormFieldBlock extends FormFieldBlock
                     'value' => $address->line_1 ?? '',
                     ...($disabled ? ['disabled' => true] : []),
                     ...($field->is_required ? ['validation' => 'required'] : []),
+                    ...self::getDescriptionSectionsSchema($field),
                 ],
                 [
                     '$formkit' => 'text',
