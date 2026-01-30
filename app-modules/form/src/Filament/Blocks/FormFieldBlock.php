@@ -117,6 +117,9 @@ abstract class FormFieldBlock extends TiptapBlock
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected static function getDescriptionSectionsSchema(
         SubmissibleField $field,
         string $sectionKey = 'label'
