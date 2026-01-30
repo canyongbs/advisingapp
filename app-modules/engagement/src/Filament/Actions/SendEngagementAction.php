@@ -69,6 +69,7 @@ use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class SendEngagementAction extends Action
@@ -124,7 +125,7 @@ class SendEngagementAction extends Action
                                 ->afterStateUpdated(function (Get $get, Set $set) {
                                     $educatable = match ($get('recipient_type')) {
                                         'student' => Student::find($get('recipient_id')),
-                                        'prospect' => Prospect::find($get('recipient_id')),
+                                        'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
                                         default => null,
                                     };
 
@@ -147,7 +148,7 @@ class SendEngagementAction extends Action
                             ->schema(function (Get $get): array {
                                 $educatable = $this->getEducatable() ?? match ($get('recipient_type')) {
                                     'student' => Student::find($get('recipient_id')),
-                                    'prospect' => Prospect::find($get('recipient_id')),
+                                    'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
                                     default => null,
                                 };
 
@@ -244,7 +245,7 @@ class SendEngagementAction extends Action
                     ->schema(function (Get $get): array {
                         $educatable = $this->getEducatable() ?? match ($get('recipient_type')) {
                             'student' => Student::find($get('recipient_id')),
-                            'prospect' => Prospect::find($get('recipient_id')),
+                            'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
                             default => null,
                         };
 
@@ -382,7 +383,7 @@ class SendEngagementAction extends Action
                 /** @var Student | Prospect $recipient */
                 $recipient = $this->getEducatable() ?? match ($data['recipient_type']) {
                     'student' => Student::find($data['recipient_id']),
-                    'prospect' => Prospect::find($data['recipient_id']),
+                    'prospect' => Str::isUuid($data['recipient_id']) ? Prospect::find($data['recipient_id']) : null,
                     default => null,
                 };
                 $data['subject'] ??= ['type' => 'doc', 'content' => []];
