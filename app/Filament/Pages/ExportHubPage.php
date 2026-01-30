@@ -37,12 +37,25 @@
 namespace App\Filament\Pages;
 
 use App\Features\ExportHubFeature;
+use App\Models\Export;
 use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 use UnitEnum;
 
-class ExportHubPage extends Page
+class ExportHubPage extends Page implements HasForms, HasTable
 {
+    use InteractsWithForms;
+    use InteractsWithTable;
+
     protected string $view = 'filament.pages.export-hub-page';
 
     protected static string | UnitEnum | null $navigationGroup = 'Data and Analytics';
@@ -59,5 +72,43 @@ class ExportHubPage extends Page
         assert($user instanceof User);
 
         return ExportHubFeature::active() && $user->can('export_hub.view-any');
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Export::query())
+            ->columns([
+                TextColumn::make('requestor')
+                    ->getStateUsing(function (Export $record): string {
+                        $user = $record->user;
+                        assert($user instanceof User);
+
+                        return $user->name;
+                    }),
+                TextColumn::make('exporter')
+                    ->label('Export Name')
+                    ->getStateUsing(function (Export $record): string {
+                        if (defined($record->exporter . '::EXPORT_NAME')) {
+                            return constant($record->exporter . '::EXPORT_NAME') . ' Export';
+                        }
+
+                        return Str::of(class_basename($record->exporter))
+                            ->replaceLast('Exporter', '')
+                            ->headline() . ' Export';
+                    }),
+                TextColumn::make('created_at')
+                    ->label('Date Started')
+                    ->dateTime(),
+                TextColumn::make('completed_at')
+                    ->label('Date Completed')
+                    ->dateTime(),
+            ])->recordActions([
+          Action::make('download')
+              ->label('Download')
+              ->icon('heroicon-o-arrow-down-tray')
+              ->url(fn (Export $record) => URL::signedRoute('exports.download', $record))
+              ->visible(fn (Export $record) => $record->completed_at !== null && auth()->user()->can('export_hub.import')),
+      ]);
     }
 }

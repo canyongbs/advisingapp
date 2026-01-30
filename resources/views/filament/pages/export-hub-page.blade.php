@@ -32,10 +32,9 @@
 </COPYRIGHT>
 --}}
 @php
-    use App\Livewire\ExportHubTable;
 @endphp
 <x-filament-panels::page>
     <div>
-        @livewire(ExportHubTable::class)
+        {{ $this->table }}
     </div>
 </x-filament-panels::page>
