@@ -44,6 +44,8 @@ use Filament\Actions\Exports\Models\Export;
 
 class StudentCaseExporter extends Exporter
 {
+    public const EXPORT_NAME = 'Student Cases';
+
     protected static ?string $model = CaseModel::class;
 
     public static function getColumns(): array

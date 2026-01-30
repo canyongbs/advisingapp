@@ -44,8 +44,10 @@ use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 
-class StudentInteractionUsersTableExportExporter extends Exporter
+class StudentInteractionUsersExporter extends Exporter
 {
+    public const EXPORT_NAME = 'Student Interaction Users';
+
     protected static ?string $model = User::class;
 
     public static function getColumns(): array

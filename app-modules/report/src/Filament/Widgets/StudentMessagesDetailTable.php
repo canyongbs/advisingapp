@@ -45,7 +45,7 @@ use AdvisingApp\Engagement\Models\HolisticEngagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Filament\Exports\StudentMessagesDetailTableExporter;
+use AdvisingApp\Report\Filament\Exports\StudentMessagesExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -231,12 +231,12 @@ class StudentMessagesDetailTable extends BaseWidget
                     )
                     ->url(
                         fn (HolisticEngagement $record) => $record->record instanceof Engagement
-                        ? (
-                            $record->record->campaignAction?->campaign
+                            ? (
+                                $record->record->campaignAction?->campaign
                                 ? CampaignResource::getUrl('view', ['record' => $record->record->campaignAction->campaign->getKey()])
                                 : null
-                        )
-                        : null
+                            )
+                            : null
                     )
                     ->openUrlInNewTab(),
             ])
@@ -254,7 +254,7 @@ class StudentMessagesDetailTable extends BaseWidget
             ])
             ->headerActions([
                 ExportAction::make()
-                    ->exporter(StudentMessagesDetailTableExporter::class)
+                    ->exporter(StudentMessagesExporter::class)
                     ->formats([
                         ExportFormat::Csv,
                     ]),

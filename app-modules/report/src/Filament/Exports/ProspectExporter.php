@@ -44,6 +44,8 @@ use Filament\Tables\Columns\TextColumn;
 
 class ProspectExporter extends Exporter
 {
+    public const EXPORT_NAME = 'Prospects';
+
     protected static ?string $model = Prospect::class;
 
     /**

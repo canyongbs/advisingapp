@@ -65,16 +65,22 @@ class ExportHubTable extends Component implements HasForms, HasTable, HasActions
             ->columns([
                 TextColumn::make('requestor')
                     ->getStateUsing(function (Export $record): string {
-                        /** @var User $user */
                         $user = $record->user;
+                        assert($user instanceof User);
 
                         return $user->name;
                     }),
                 TextColumn::make('exporter')
                     ->label('Export Name')
-                    ->getStateUsing(fn (Export $record): string => Str::of(class_basename($record->exporter))
-                        ->replaceLast('Exporter', '')
-                        ->headline() . ' Export'),
+                    ->getStateUsing(function (Export $record): string {
+                        if (defined($record->exporter . '::EXPORT_NAME')) {
+                            return constant($record->exporter . '::EXPORT_NAME') . ' Export';
+                        }
+
+                        return Str::of(class_basename($record->exporter))
+                            ->replaceLast('Exporter', '')
+                            ->headline() . ' Export';
+                    }),
                 TextColumn::make('created_at')
                     ->label('Date Started')
                     ->dateTime(),

@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\LegacyAiMessageLogs\Pages;
 
-use AdvisingApp\Ai\Filament\Exports\LegacyAiMessageExporter;
+use AdvisingApp\Ai\Filament\Exports\AssistantUtilizationExporter;
 use AdvisingApp\Ai\Filament\Resources\LegacyAiMessageLogs\LegacyAiMessageLogResource;
 use Filament\Actions\ExportAction;
 use Filament\Resources\Pages\ManageRecords;
@@ -51,7 +51,7 @@ class ManageLegacyAiMessageLogs extends ManageRecords
     {
         return [
             ExportAction::make()
-                ->exporter(LegacyAiMessageExporter::class),
+                ->exporter(AssistantUtilizationExporter::class),
         ];
     }
 }

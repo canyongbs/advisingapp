@@ -51,8 +51,10 @@ use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 use Illuminate\Support\Str;
 
-class StudentMessagesDetailTableExporter extends Exporter
+class StudentMessagesExporter extends Exporter
 {
+    public const EXPORT_NAME = 'Student Messages';
+
     protected static ?string $model = HolisticEngagement::class;
 
     public static function getColumns(): array

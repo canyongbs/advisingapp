@@ -44,6 +44,8 @@ use Filament\Tables\Columns\TextColumn;
 
 class UserExporter extends Exporter
 {
+    public const EXPORT_NAME = 'Users';
+
     protected static ?string $model = User::class;
 
     /**

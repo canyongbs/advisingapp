@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Report\Filament\Exports\MostEngagedStudentTableExporter;
+use AdvisingApp\Report\Filament\Exports\MostActivelyEngagedStudentsExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\ExportAction;
@@ -115,7 +115,7 @@ class MostEngagedStudentsTable extends BaseWidget
             ])
             ->headerActions([
                 ExportAction::make()
-                    ->exporter(MostEngagedStudentTableExporter::class)
+                    ->exporter(MostActivelyEngagedStudentsExporter::class)
                     ->formats([
                         ExportFormat::Csv,
                     ]),

@@ -34,17 +34,43 @@
 </COPYRIGHT>
 */
 
-use App\Features\ExportHubFeature;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\Report\Filament\Exports;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Actions\Exports\ExportColumn;
+use Filament\Actions\Exports\Exporter;
+use Filament\Actions\Exports\Models\Export;
+
+class MostRecentStudentsExporter extends Exporter
+{
+    public const EXPORT_NAME = 'Most Recent Students';
+
+    protected static ?string $model = Student::class;
+
+    public static function getColumns(): array
     {
-        ExportHubFeature::activate();
+        return [
+            ExportColumn::make('full_name')
+                ->label('Full Name'),
+            ExportColumn::make('primaryEmailAddress.address')
+                ->label('Email'),
+            ExportColumn::make('sisid')
+                ->label('SIS ID'),
+            ExportColumn::make('otherid')
+                ->label('Other ID'),
+            ExportColumn::make('created_at_source')
+                ->label('Created'),
+        ];
     }
 
-    public function down(): void
+    public static function getCompletedNotificationBody(Export $export): string
     {
-        ExportHubFeature::deactivate();
+        $body = 'Your most recent students report table export has completed and ' . number_format($export->successful_rows) . ' ' . str('row')->plural($export->successful_rows) . ' exported.';
+
+        if ($failedRowsCount = $export->getFailedRowsCount()) {
+            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to export.';
+        }
+
+        return $body;
     }
-};
+}

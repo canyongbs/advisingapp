@@ -36,14 +36,16 @@
 
 namespace AdvisingApp\Report\Filament\Exports;
 
-use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 
-class StudentReportTableExporter extends Exporter
+class MostRecentProspectsExporter extends Exporter
 {
-    protected static ?string $model = Student::class;
+    public const EXPORT_NAME = 'Most Recent Prospects';
+
+    protected static ?string $model = Prospect::class;
 
     public static function getColumns(): array
     {
@@ -52,18 +54,17 @@ class StudentReportTableExporter extends Exporter
                 ->label('Full Name'),
             ExportColumn::make('primaryEmailAddress.address')
                 ->label('Email'),
-            ExportColumn::make('sisid')
-                ->label('SIS ID'),
-            ExportColumn::make('otherid')
-                ->label('Other ID'),
-            ExportColumn::make('created_at_source')
-                ->label('Created'),
+            ExportColumn::make('status.name'),
+            ExportColumn::make('createdBy.name')
+                ->label('Created By'),
+            ExportColumn::make('created_at')
+                ->label('Created Date'),
         ];
     }
 
     public static function getCompletedNotificationBody(Export $export): string
     {
-        $body = 'Your most recent students report table export has completed and ' . number_format($export->successful_rows) . ' ' . str('row')->plural($export->successful_rows) . ' exported.';
+        $body = 'Your most recent prospects report table export has completed and ' . number_format($export->successful_rows) . ' ' . str('row')->plural($export->successful_rows) . ' exported.';
 
         if ($failedRowsCount = $export->getFailedRowsCount()) {
             $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to export.';

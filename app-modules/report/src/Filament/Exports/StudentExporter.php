@@ -50,6 +50,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class StudentExporter extends Exporter
 {
+    public const EXPORT_NAME = 'Students';
+
     protected static ?string $model = Student::class;
 
     /**

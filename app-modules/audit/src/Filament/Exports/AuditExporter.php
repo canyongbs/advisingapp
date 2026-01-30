@@ -44,6 +44,8 @@ use Filament\Actions\Exports\Models\Export;
 
 class AuditExporter extends Exporter
 {
+    public const EXPORT_NAME = 'Audit';
+
     protected static ?string $model = Audit::class;
 
     public static function getColumns(): array
