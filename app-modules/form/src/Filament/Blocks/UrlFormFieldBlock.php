@@ -84,7 +84,7 @@ class UrlFormFieldBlock extends FormFieldBlock
                 ],
             ];
         }
-        
+
         return $schema;
     }
 

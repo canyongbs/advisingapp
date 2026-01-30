@@ -66,7 +66,7 @@ class PhoneFormFieldBlock extends FormFieldBlock
             ...($field->is_required ? ['validation' => 'required'] : []),
         ];
 
-         if (! empty($field->config['description'])) {
+        if (! empty($field->config['description'])) {
             $schema['sectionsSchema'] = [
                 'label' => [
                     'children' => [

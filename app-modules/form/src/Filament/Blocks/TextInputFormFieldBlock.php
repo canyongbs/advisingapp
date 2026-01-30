@@ -80,7 +80,7 @@ class TextInputFormFieldBlock extends FormFieldBlock
                 ],
             ];
         }
-        
+
         return $schema;
     }
 

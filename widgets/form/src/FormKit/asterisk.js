@@ -49,7 +49,7 @@ export default function asteriskPlugin(node) {
 
         const schemaFn = node.props.definition.schema;
         node.props.definition.schema = (sectionsSchema = {}) => {
-          const existingLabelChildren = sectionsSchema[legendOrLabel]?.children || ['$label'];
+            const existingLabelChildren = sectionsSchema[legendOrLabel]?.children || ['$label'];
             const newChildren = [];
             newChildren.push(existingLabelChildren[0] || '$label');
             newChildren.push({
