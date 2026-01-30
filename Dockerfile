@@ -102,9 +102,7 @@ RUN curl -L "https://github.com/ImageMagick/ImageMagick/archive/refs/tags/${IMAG
     --without-x \
     && make -j$(nproc) \
     && make install \
-    && ldconfig \
-    # Copy versioned directory to a fixed name for later COPY
-    && cp -r /usr/local/lib/ImageMagick-${IMAGEMAGICK_VERSION%%-*} /usr/local/lib/ImageMagick-final
+    && ldconfig
 
 # Build PHP imagick extension from PECL
 RUN curl -L "https://pecl.php.net/get/imagick" -o imagick.tgz \
@@ -165,7 +163,7 @@ COPY --from=setup /etc/apt/sources.list.d/ /etc/apt/sources.list.d/
 
 # Bring over ImageMagick 7 libraries and PHP extension
 COPY --from=imagemagick-builder /usr/local/lib/libMagick*.so* /usr/local/lib/
-COPY --from=imagemagick-builder /usr/local/lib/ImageMagick-final/ /usr/local/lib/ImageMagick-${IMAGEMAGICK_VERSION%%-*}/
+COPY --from=imagemagick-builder /usr/local/lib/ImageMagick-${IMAGEMAGICK_VERSION%%-*}/ /usr/local/lib/ImageMagick-${IMAGEMAGICK_VERSION%%-*}/
 COPY --from=imagemagick-builder /usr/local/bin/magick /usr/local/bin/magick
 COPY --from=imagemagick-builder /usr/local/etc/ImageMagick-7/ /usr/local/etc/ImageMagick-7/
 COPY --from=imagemagick-builder /usr/local/share/ImageMagick-7/ /usr/local/share/ImageMagick-7/
