@@ -37,5 +37,6 @@
     <x-form::blocks.field-wrapper
         :$label
         :$isRequired
+        :description="$description ?? null"
     />
 </div>

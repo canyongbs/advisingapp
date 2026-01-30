@@ -37,6 +37,11 @@
         {{ $label }}@if ($isRequired)
             <sup class="text-danger-600 dark:text-danger-400 font-medium">*</sup>
         @endif
+        @if (isset($description))
+            <p class="text-muted-600 dark:text-muted-400 mt-1 text-xs font-normal">
+                {{ $description }}
+            </p>
+        @endif
     </div>
 
     {{ $slot }}

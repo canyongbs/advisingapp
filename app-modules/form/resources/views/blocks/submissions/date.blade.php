@@ -35,6 +35,7 @@
     class="py-3"
     :$label
     :$isRequired
+    :description="$description ?? null"
 >
     @if (filled($response ?? null))
         {{ \Carbon\Carbon::parse($response)->toFormattedDateString() }}

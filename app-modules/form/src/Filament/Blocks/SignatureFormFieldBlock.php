@@ -61,11 +61,30 @@ class SignatureFormFieldBlock extends FormFieldBlock
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
-        return [
+        $schema = [
             '$formkit' => 'signature',
             'label' => $field->label,
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
         ];
+
+        if (! empty($field->config['description'])) {
+            $schema['sectionsSchema'] = [
+                'label' => [
+                    'children' => [
+                        '$label',
+                        [
+                            '$el' => 'div',
+                            'attrs' => [
+                                'class' => 'text-xs text-gray-500 mt-1 font-normal',
+                            ],
+                            'children' => $field->config['description'],
+                        ],
+                    ],
+                ],
+            ];
+        }
+
+        return $schema;
     }
 }

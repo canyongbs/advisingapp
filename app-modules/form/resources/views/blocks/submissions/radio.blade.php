@@ -35,6 +35,7 @@
     class="py-3"
     :$label
     :$isRequired
+    :description="$description ?? null"
 >
     {{ $options[$response ?? null] ?? null }}
 

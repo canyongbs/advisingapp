@@ -49,18 +49,25 @@ export default function asteriskPlugin(node) {
 
         const schemaFn = node.props.definition.schema;
         node.props.definition.schema = (sectionsSchema = {}) => {
+          const existingLabelChildren = sectionsSchema[legendOrLabel]?.children || ['$label'];
+            const newChildren = [];
+            newChildren.push(existingLabelChildren[0] || '$label');
+            newChildren.push({
+                $el: 'span',
+                if: '$state.required',
+                attrs: {
+                    class: '$classes.asterisk',
+                },
+                children: ['*'],
+            });
+
+            if (existingLabelChildren.length > 1) {
+                newChildren.push(...existingLabelChildren.slice(1));
+            }
+
             sectionsSchema[legendOrLabel] = {
-                children: [
-                    '$label',
-                    {
-                        $el: 'span',
-                        if: '$state.required',
-                        attrs: {
-                            class: '$classes.asterisk',
-                        },
-                        children: ['*'],
-                    },
-                ],
+                ...sectionsSchema[legendOrLabel],
+                children: newChildren,
             };
 
             return schemaFn(sectionsSchema);

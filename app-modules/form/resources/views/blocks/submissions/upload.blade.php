@@ -35,6 +35,7 @@
     class="py-3"
     :$label
     :$isRequired
+    :description="$description ?? null"
 >
     <div class="flex flex-col space-y-2">
         @if (isset($media) && count($media) > 0)

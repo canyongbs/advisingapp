@@ -35,6 +35,7 @@
     class="py-3"
     :$label
     :$isRequired
+    :description="$description ?? null"
 >
     <div class="flex h-16 max-w-xs items-center dark:bg-white">
         @if (filled($response ?? null))

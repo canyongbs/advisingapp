@@ -63,6 +63,10 @@ abstract class FormFieldBlock extends TiptapBlock
                 ->required()
                 ->string()
                 ->maxLength(255),
+            TextInput::make('description')
+                ->label('Field Description')
+                ->string()
+                ->maxLength(255),
             Checkbox::make('isRequired')
                 ->label('Required'),
             ...$this->fields(),
