@@ -1,4 +1,5 @@
 ARG BASE_IMAGE="public.ecr.aws/lts/ubuntu:24.04"
+ARG IMAGEMAGICK_VERSION='7.1.2-13'
 
 FROM ${BASE_IMAGE} AS setup
 
@@ -36,8 +37,7 @@ RUN mkdir -p "$S6_DIR"; \
 FROM ${BASE_IMAGE} AS imagemagick-builder
 
 ARG PHP_VERSION='8.4'
-ARG IMAGEMAGICK_VERSION='7.1.2-13'
-
+ARG IMAGEMAGICK_VERSION
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Copy ondrej PHP sources for PHP dev headers
@@ -102,7 +102,9 @@ RUN curl -L "https://github.com/ImageMagick/ImageMagick/archive/refs/tags/${IMAG
     --without-x \
     && make -j$(nproc) \
     && make install \
-    && ldconfig
+    && ldconfig \
+    # Copy versioned directory to a fixed name for later COPY
+    && cp -r /usr/local/lib/ImageMagick-${IMAGEMAGICK_VERSION%%-*} /usr/local/lib/ImageMagick-final
 
 # Build PHP imagick extension from PECL
 RUN curl -L "https://pecl.php.net/get/imagick" -o imagick.tgz \
@@ -122,6 +124,7 @@ LABEL maintainer="Canyon GBS"
 ARG PHP_VERSION='8.4'
 ARG PHP_API_VERSION=20240924
 ARG POSTGRES_VERSION=15
+ARG IMAGEMAGICK_VERSION
 
 ENV BUILD_PHP_VERSION=$PHP_VERSION \
     DEBIAN_FRONTEND=noninteractive \
@@ -162,7 +165,7 @@ COPY --from=setup /etc/apt/sources.list.d/ /etc/apt/sources.list.d/
 
 # Bring over ImageMagick 7 libraries and PHP extension
 COPY --from=imagemagick-builder /usr/local/lib/libMagick*.so* /usr/local/lib/
-COPY --from=imagemagick-builder /usr/local/lib/ImageMagick-7.1.2/ /usr/local/lib/ImageMagick-7.1.2/
+COPY --from=imagemagick-builder /usr/local/lib/ImageMagick-final/ /usr/local/lib/ImageMagick-${IMAGEMAGICK_VERSION%%-*}/
 COPY --from=imagemagick-builder /usr/local/bin/magick /usr/local/bin/magick
 COPY --from=imagemagick-builder /usr/local/etc/ImageMagick-7/ /usr/local/etc/ImageMagick-7/
 COPY --from=imagemagick-builder /usr/local/share/ImageMagick-7/ /usr/local/share/ImageMagick-7/
