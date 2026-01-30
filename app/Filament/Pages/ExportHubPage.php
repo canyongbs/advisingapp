@@ -104,11 +104,11 @@ class ExportHubPage extends Page implements HasForms, HasTable
                     ->label('Date Completed')
                     ->dateTime(),
             ])->recordActions([
-          Action::make('download')
-              ->label('Download')
-              ->icon('heroicon-o-arrow-down-tray')
-              ->url(fn (Export $record) => URL::signedRoute('exports.download', $record))
-              ->visible(fn (Export $record) => $record->completed_at !== null && auth()->user()->can('export_hub.import')),
-      ]);
+                Action::make('download')
+                    ->label('Download')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->url(fn (Export $record) => URL::signedRoute('exports.download', $record))
+                    ->visible(fn (Export $record) => $record->completed_at !== null && auth()->user()->can('export_hub.import')),
+            ]);
     }
 }
