@@ -103,6 +103,7 @@ class AddCareTeamMemberToEducatableAttachAction extends AttachAction
                                         Select::make('user_id')
                                             ->searchable()
                                             ->required()
+                                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                             ->options(match (true) {
                                                 $this->getLivewire()->getOwnerRecord() instanceof Student => User::query()->tap(new HasLicense(Student::getLicenseType()))
                                                     ->whereDoesntHave(
