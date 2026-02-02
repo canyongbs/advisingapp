@@ -46,7 +46,7 @@ jobs:
                   key: ${{ env.php-extensions-key }}
 
             - name: Cache extensions
-              uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 #5.0.2
+              uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 #5.0.3
               with:
                   path: ${{ steps.extcache.outputs.dir }}
                   key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
@@ -63,7 +63,7 @@ jobs:
 
             - name: Cache dependencies
               id: cache-composer
-              uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 #5.0.2
+              uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 #5.0.3
               with:
                   path: vendor
                   key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
@@ -80,13 +80,13 @@ jobs:
             - run: npm install
 
             - name: Set up Ruby
-              uses: ruby/setup-ruby@90be1154f987f4dc0fe0dd0feedac9e473aa4ba8 #1.286.0
+              uses: ruby/setup-ruby@8d27f39a5e7ad39aebbcbd1324f7af020229645c #1.287.0
 
             - name: Run Ruby Script
               run: ruby ./copyright.rb
 
             - name: Cache PHP CS Fixer
-              uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 #5.0.2
+              uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 #5.0.3
               with:
                   path: .php-cs-fixer.cache
                   key: ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-${{ github.run_id }}
@@ -94,7 +94,7 @@ jobs:
                       ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-
 
             - name: Cache Prettier
-              uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 #5.0.2
+              uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 #5.0.3
               with:
                   path: ./node_modules/.cache/prettier/.prettier-cache
                   key: ${{ runner.OS }}-${{ github.repository }}-prettier-${{ github.run_id }}
@@ -176,7 +176,7 @@ jobs:
                   key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
 
             - name: Cache extensions
-              uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 #5.0.2
+              uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 #5.0.3
               with:
                   path: ${{ steps.extcache.outputs.dir }}
                   key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
@@ -198,7 +198,7 @@ jobs:
 
             - name: Cache dependencies
               id: cache-composer
-              uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 #5.0.2
+              uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 #5.0.3
               with:
                   path: vendor
                   key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
@@ -291,7 +291,7 @@ jobs:
                   key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
 
             - name: Cache extensions
-              uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 #5.0.2
+              uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 #5.0.3
               with:
                   path: ${{ steps.extcache.outputs.dir }}
                   key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
@@ -313,7 +313,7 @@ jobs:
 
             - name: Cache dependencies
               id: cache-composer
-              uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 #5.0.2
+              uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 #5.0.3
               with:
                   path: vendor
                   key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
@@ -336,7 +336,7 @@ jobs:
               run: php artisan app:generate-helper-files
 
             - name: 'Restore result cache'
-              uses: actions/cache/restore@8b402f58fbc84540c8b491a91e594a4576fec3d7 #5.0.2
+              uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 #5.0.3
               with:
                   path: tmp
                   key: 'linting-result-cache-${{ github.run_id }}'
@@ -347,7 +347,7 @@ jobs:
               run: ./vendor/bin/phpstan analyse --configuration phpstan-ci.neon --no-progress
 
             - name: 'Save result cache'
-              uses: actions/cache/save@8b402f58fbc84540c8b491a91e594a4576fec3d7 #5.0.2
+              uses: actions/cache/save@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 #5.0.3
               if: ${{ !cancelled() }}
               with:
                   path: tmp
