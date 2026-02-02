@@ -156,12 +156,12 @@ class AddCareTeamMemberToEducatableAttachAction extends AttachAction
                         ]),
                     Step::make('Confirm New Care Team Members')
                         ->schema([
-                                                    ViewField::make('summary')
+                            ViewField::make('summary')
                                 ->view(
                                     'filament.forms.components.care-teams.summary',
                                     fn (Get $get) => ['careTeams' => $get('careTeams'), 'educatable' => $this->getLivewire()->getOwnerRecord()]
                                 ),
-                                                ]),
+                        ]),
                 ];
             })
             ->action(function (array $data) {
