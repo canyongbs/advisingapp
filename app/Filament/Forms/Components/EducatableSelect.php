@@ -148,7 +148,7 @@ class EducatableSelect extends Component
                 ->required($this->isRequired())
                 ->searchable()
                 ->afterStateUpdated(function () {
-                    $this->callAfterStateUpdated();
+                    $this->callAfterStateUpdatedForChildComponent();
                 }),
         ];
     }
@@ -184,5 +184,19 @@ class EducatableSelect extends Component
         }
 
         return ! auth()->user()->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()]);
+    }
+
+    public function callAfterStateUpdatedForChildComponent(bool $shouldBubbleToParents = true): static
+    {
+        return parent::callAfterStateUpdated($shouldBubbleToParents);
+    }
+
+    public function callAfterStateUpdated(bool $shouldBubbleToParents = true): static
+    {
+        if ($shouldBubbleToParents) {
+            $this->getContainer()->getParentComponent()?->callAfterStateUpdated();
+        }
+
+        return $this;
     }
 }
