@@ -66,7 +66,7 @@ class ResourceHubPortalArticleController extends Controller
                 'id' => $article->getKey(),
                 'categoryId' => $article->category_id,
                 'name' => $article->title,
-                'lastUpdated' => $article->updated_at->setTimezone(app(DisplaySettings::class)->getTimezone())->format('M d Y, h:m a'),
+                'lastUpdated' => $article->updated_at->setTimezone(app(DisplaySettings::class)->getTimezone())->format('M d Y, h:i a'),
                 'content' => $content,
             ]),
             'portal_view_count' => $article->portal_view_count,
