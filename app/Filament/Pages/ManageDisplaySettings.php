@@ -37,9 +37,9 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Clusters\InstitutionDetails;
-use App\Filament\Forms\Components\TimezoneSelect;
 use App\Models\User;
 use App\Settings\DisplaySettings;
+use CanyonGBS\Common\Filament\Forms\Components\TimezoneSelect;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Pages\SettingsPage;

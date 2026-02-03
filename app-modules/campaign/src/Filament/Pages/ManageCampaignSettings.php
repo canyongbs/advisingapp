@@ -37,10 +37,10 @@
 namespace AdvisingApp\Campaign\Filament\Pages;
 
 use AdvisingApp\Campaign\Settings\CampaignSettings;
-use App\Filament\Forms\Components\TimezoneSelect;
 use App\Models\User;
 use App\Settings\DisplaySettings;
 use BackedEnum;
+use CanyonGBS\Common\Filament\Forms\Components\TimezoneSelect;
 use Filament\Forms\Components\Select;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
