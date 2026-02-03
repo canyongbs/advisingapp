@@ -54,7 +54,7 @@ class EmailPhoneHealthExporter extends Exporter
             ExportColumn::make('full_name')
                 ->label('Name'),
             ExportColumn::make('email_status')
-                ->state(fn (Student $record) => $record->primaryEmailAddress?->isHealthy() ? 'Healthy' : 'Unhealthy')
+                ->state(fn (Student $record) => $record->canReceiveEmail() ? 'Healthy' : 'Unhealthy')
                 ->label('Email Status'),
             ExportColumn::make('is_primary_email_set')
                 ->state(fn (Student $record) => filled($record->primaryEmailAddress) ? 'Yes' : 'No')
@@ -66,7 +66,7 @@ class EmailPhoneHealthExporter extends Exporter
                 ->state(fn (Student $record) => $record->primaryEmailAddress && ($record->primaryEmailAddress->optedOut?->status === EmailAddressOptInOptOutStatus::OptedOut) ? 'Yes' : 'No')
                 ->label('Email Opt Out'),
             ExportColumn::make('phone_status')
-                ->state(fn (Student $record) => ($record->primaryPhoneNumber && $record->primaryPhoneNumber->can_receive_sms && ! $record->primaryPhoneNumber->smsOptOut) ? 'Healthy' : 'Unhealthy')
+                ->state(fn (Student $record) => $record->canReceiveSms() ? 'Healthy' : 'Unhealthy')
                 ->label('Phone Status'),
             ExportColumn::make('is_primary_phone_set')
                 ->state(fn (Student $record) => filled($record->primaryPhoneNumber) ? 'Yes' : 'No')
