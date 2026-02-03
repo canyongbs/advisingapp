@@ -44,7 +44,7 @@ use Filament\Actions\Exports\Models\Export;
 
 class EmailPhoneHealthExporter extends Exporter
 {
-    public const EXPORT_NAME = ' Student Email and Phone Health Export';
+    public const EXPORT_NAME = 'Student Email and Phone Health Export';
 
     protected static ?string $model = Student::class;
 
