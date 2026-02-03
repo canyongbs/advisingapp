@@ -34,41 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Exports;
+use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Actions\Exports\ExportColumn;
-use Filament\Actions\Exports\Exporter;
-use Filament\Actions\Exports\Models\Export;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-class StudentReportTableExporter extends Exporter
-{
-    protected static ?string $model = Student::class;
+    /**
+     * @var array<string> $permissions
+     */
+    private array $permissions = [
+        'export_hub.view-any' => 'Export Hub',
+        'export_hub.create' => 'Export Hub',
+        'export_hub.*.view' => 'Export Hub',
+        'export_hub.*.update' => 'Export Hub',
+        'export_hub.*.delete' => 'Export Hub',
+        'export_hub.*.restore' => 'Export Hub',
+        'export_hub.*.force-delete' => 'Export Hub',
+        'export_hub.import' => 'Export Hub',
+    ];
 
-    public static function getColumns(): array
+    /**
+     * @var array<string> $guards
+     */
+    private array $guards = [
+        'web',
+        'api',
+    ];
+
+    public function up(): void
     {
-        return [
-            ExportColumn::make('full_name')
-                ->label('Full Name'),
-            ExportColumn::make('primaryEmailAddress.address')
-                ->label('Email'),
-            ExportColumn::make('sisid')
-                ->label('SIS ID'),
-            ExportColumn::make('otherid')
-                ->label('Other ID'),
-            ExportColumn::make('created_at_source')
-                ->label('Created'),
-        ];
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $this->createPermissions($this->permissions, $guard);
+            });
     }
 
-    public static function getCompletedNotificationBody(Export $export): string
+    public function down(): void
     {
-        $body = 'Your most recent students report table export has completed and ' . number_format($export->successful_rows) . ' ' . str('row')->plural($export->successful_rows) . ' exported.';
-
-        if ($failedRowsCount = $export->getFailedRowsCount()) {
-            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to export.';
-        }
-
-        return $body;
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $this->deletePermissions(array_keys($this->permissions), $guard);
+            });
     }
-}
+};

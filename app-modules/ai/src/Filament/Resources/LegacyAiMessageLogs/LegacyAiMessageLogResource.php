@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\LegacyAiMessageLogs;
 
-use AdvisingApp\Ai\Filament\Exports\LegacyAiMessageExporter;
+use AdvisingApp\Ai\Filament\Exports\AssistantUtilizationExporter;
 use AdvisingApp\Ai\Filament\Resources\LegacyAiMessageLogs\Pages\ManageLegacyAiMessageLogs;
 use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 use App\Filament\Clusters\UsageAuditing;
@@ -117,7 +117,7 @@ class LegacyAiMessageLogResource extends Resource
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     ExportBulkAction::make()
-                        ->exporter(LegacyAiMessageExporter::class),
+                        ->exporter(AssistantUtilizationExporter::class),
                 ]),
             ])
             ->defaultSort('sent_at', 'desc');

@@ -34,37 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Exports;
+namespace App\Http\Controllers;
 
-use AdvisingApp\Research\Models\ResearchRequest;
-use Filament\Actions\Exports\ExportColumn;
-use Filament\Actions\Exports\Exporter;
-use Filament\Actions\Exports\Models\Export;
+use App\Models\Export;
+use Filament\Actions\Exports\Downloaders\CsvDownloader;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class ResearchAdvisorReportTableExporter extends Exporter
+class DownloadExportController extends Controller
 {
-    protected static ?string $model = ResearchRequest::class;
-
-    public static function getColumns(): array
+    public function __invoke(Export $export): StreamedResponse
     {
-        return [
-            ExportColumn::make('user.name')
-                ->label('Created By'),
-            ExportColumn::make('title')
-                ->label('Name'),
-            ExportColumn::make('created_at')
-                ->label('Created At'),
-        ];
-    }
+        abort_unless(auth()->user()->can('export_hub.import'), 403);
 
-    public static function getCompletedNotificationBody(Export $export): string
-    {
-        $body = 'Your research advisor report table export has completed and ' . number_format($export->successful_rows) . ' ' . str('row')->plural($export->successful_rows) . ' exported.';
-
-        if ($failedRowsCount = $export->getFailedRowsCount()) {
-            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to export.';
-        }
-
-        return $body;
+        return app(CsvDownloader::class)($export);
     }
 }

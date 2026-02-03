@@ -37,7 +37,7 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Report\Filament\Exports\StudentInteractionUsersTableExportExporter;
+use AdvisingApp\Report\Filament\Exports\StudentInteractionUsersExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
@@ -89,7 +89,7 @@ class StudentInteractionUsersTable extends BaseWidget
         return $table
             ->headerActions([
                 ExportAction::make()
-                    ->exporter(StudentInteractionUsersTableExportExporter::class)
+                    ->exporter(StudentInteractionUsersExporter::class)
                     ->formats([
                         ExportFormat::Csv,
                     ]),

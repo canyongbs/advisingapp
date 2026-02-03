@@ -36,40 +36,26 @@
 
 namespace AdvisingApp\Report\Filament\Exports;
 
-use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
-use Filament\Tables\Columns\TextColumn;
 
-class ProspectExporter extends Exporter
+class MostActivelyEngagedStudentsExporter extends Exporter
 {
-    public const EXPORT_NAME = 'Prospects';
+    public const EXPORT_NAME = 'Most Actively Engaged Students';
 
-    protected static ?string $model = Prospect::class;
+    protected static ?string $model = Student::class;
 
-    /**
-     * @param class-string<TextColumn | ExportColumn> $type
-     */
-    public static function getColumns(string $type = ExportColumn::class): array
+    public static function getColumns(): array
     {
         return [
-            $type::make('id')
-                ->label('ID'),
-            static::notDefault($type::make('status.name')),
-            static::notDefault($type::make('source.name')),
-            $type::make('first_name'),
-            $type::make('last_name'),
-            static::notDefault($type::make('full_name')),
-            static::notDefault($type::make('preferred')
-                ->label('Preferred Name')),
-            static::notDefault($type::make('description')),
-            static::notDefault($type::make('birthdate')),
-            static::notDefault($type::make('hsgrad')
-                ->label('High School Grad')),
-            $type::make('created_at'),
-            static::notDefault($type::make('assigned_to.name')),
-            static::notDefault($type::make('created_by.name')),
+            ExportColumn::make('full_name')
+                ->label('Full Name'),
+            ExportColumn::make('primaryEmailAddress.address')
+                ->label('Email'),
+            ExportColumn::make('engagements_count')
+                ->label('Engagements'),
         ];
     }
 
@@ -82,14 +68,5 @@ class ProspectExporter extends Exporter
         }
 
         return $body;
-    }
-
-    protected static function notDefault(ExportColumn | TextColumn $column): ExportColumn | TextColumn
-    {
-        if ($column instanceof ExportColumn) {
-            $column->enabledByDefault(false);
-        }
-
-        return $column;
     }
 }

@@ -37,7 +37,7 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Filament\Exports\ProspectReportTableExportExporter;
+use AdvisingApp\Report\Filament\Exports\MostRecentProspectsExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
@@ -72,7 +72,7 @@ class ProspectReportTableChart extends TableWidget
         return $table
             ->headerActions([
                 ExportAction::make()
-                    ->exporter(ProspectReportTableExportExporter::class)
+                    ->exporter(MostRecentProspectsExporter::class)
                     ->formats([
                         ExportFormat::Csv,
                     ]),

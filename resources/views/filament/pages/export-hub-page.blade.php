@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
@@ -32,39 +30,11 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace AdvisingApp\Report\Filament\Exports;
-
-use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Actions\Exports\ExportColumn;
-use Filament\Actions\Exports\Exporter;
-use Filament\Actions\Exports\Models\Export;
-
-class MostEngagedStudentTableExporter extends Exporter
-{
-    protected static ?string $model = Student::class;
-
-    public static function getColumns(): array
-    {
-        return [
-            ExportColumn::make('full_name')
-                ->label('Full Name'),
-            ExportColumn::make('primaryEmailAddress.address')
-                ->label('Email'),
-            ExportColumn::make('engagements_count')
-                ->label('Engagements'),
-        ];
-    }
-
-    public static function getCompletedNotificationBody(Export $export): string
-    {
-        $body = 'Your most actively engaged students report table export has completed and ' . number_format($export->successful_rows) . ' ' . str('row')->plural($export->successful_rows) . ' exported.';
-
-        if ($failedRowsCount = $export->getFailedRowsCount()) {
-            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to export.';
-        }
-
-        return $body;
-    }
-}
+--}}
+@php
+@endphp
+<x-filament-panels::page>
+    <div>
+        {{ $this->table }}
+    </div>
+</x-filament-panels::page>

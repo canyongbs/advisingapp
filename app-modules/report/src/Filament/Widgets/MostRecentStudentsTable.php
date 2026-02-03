@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Report\Filament\Exports\StudentReportTableExporter;
+use AdvisingApp\Report\Filament\Exports\MostRecentStudentsExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\ExportAction;
@@ -115,7 +115,7 @@ class MostRecentStudentsTable extends BaseWidget
             ])
             ->headerActions([
                 ExportAction::make()
-                    ->exporter(StudentReportTableExporter::class)
+                    ->exporter(MostRecentStudentsExporter::class)
                     ->formats([
                         ExportFormat::Csv,
                     ]),
