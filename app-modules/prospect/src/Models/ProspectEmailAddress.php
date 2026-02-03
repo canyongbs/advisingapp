@@ -104,4 +104,9 @@ class ProspectEmailAddress extends BaseModel implements Auditable
 
         return EmailHealthStatus::Healthy;
     }
+
+    public function isHealthy(): bool
+    {
+        return $this->getHealthStatus() === EmailHealthStatus::Healthy;
+    }
 }
