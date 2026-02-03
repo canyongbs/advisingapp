@@ -69,7 +69,7 @@ Route::middleware([
 
             return $user;
         })
-            ->middleware(['auth:sanctum', 'abilities:resource-hub-portal'])
+            ->middleware(['auth:sanctum'])
             ->name('user.auth-check');
 
         // Handle preflight CORS requests for all routes in this group

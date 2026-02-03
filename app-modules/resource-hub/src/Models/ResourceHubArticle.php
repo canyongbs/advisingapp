@@ -62,12 +62,14 @@ class ResourceHubArticle extends BaseModel implements Auditable, HasMedia
 
     protected $casts = [
         'public' => 'boolean',
+        'has_table_of_contents' => 'boolean',
         'article_details' => 'array',
     ];
 
     protected $fillable = [
         'article_details',
         'category_id',
+        'has_table_of_contents',
         'notes',
         'public',
         'quality_id',

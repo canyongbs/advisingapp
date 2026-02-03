@@ -32,7 +32,23 @@
 </COPYRIGHT>
 --}}
 <div class="mt-2 rounded p-4">
-    <div class="prose mt-2 max-w-full lg:prose-xl dark:prose-invert">
-        {!! $getState() ? tiptap_converter()->record($getRecord(), attribute: $getName())->asHTML($getState()) : null !!}
+    <div class="prose mt-2 max-w-full dark:prose-invert">
+        @if ($state = $getState())
+            @php
+                $record = $getRecord();
+            @endphp
+
+            @if ($record->has_table_of_contents)
+                <h2>
+                    Table of Contents
+                </h2>
+
+                <div class="prose-toc">
+                    {!! tiptap_converter()->record($record, attribute: $getName())->asTOC($state) !!}
+                </div>
+            @endif
+
+            {!! tiptap_converter()->asHTML($state, toc: true, maxDepth: 3) !!}
+        @endif
     </div>
 </div>

@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,47 +33,33 @@
 
 </COPYRIGHT>
 */
-import vue from '@vitejs/plugin-vue';
-import { resolve } from 'path';
-import { defineConfig } from 'vite';
 
-export default defineConfig({
-    plugins: [vue()],
-    experimental: {
-        renderBuiltUrl(filename) {
-            return {
-                runtime: `window.__VITE_RESOURCE_HUB_PORTAL_ASSET_URL__.replace(/\\/$/, '') + '/' + ${JSON.stringify(filename)}`,
-            };
-        },
-    },
-    build: {
-        manifest: true,
-        rollupOptions: {
-            input: {
-                portal: resolve(__dirname, './src/portal.js'),
-                loader: resolve(__dirname, './src/loader.js'),
-            },
-            output: {
-                entryFileNames: (chunkInfo) => {
-                    return chunkInfo.name === 'loader'
-                        ? 'advising-app-resource-hub-portal.js'
-                        : 'advising-app-resource-hub-portal-app-[hash].js';
-                },
-                assetFileNames: (assetInfo) => {
-                    return '[name]-[hash][extname]';
-                },
-                // Place chunks directly in the root
-                chunkFileNames: '[name]-[hash].js',
-            },
-        },
-        outDir: resolve(__dirname, '../../storage/app/public/portals/resource-hub'),
-        emptyOutDir: true,
-        sourcemap: true,
-    },
-    resolve: {
-        alias: {
-            '@': resolve(__dirname, 'src'),
-        },
-    },
-    define: { 'process.env.NODE_ENV': '"production"' },
-});
+use App\Features\ResourceHubArticleTableOfContentsFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+
+return new class () extends Migration {
+    public function up(): void
+    {
+        DB::transaction(function () {
+            Schema::table('resource_hub_articles', function (Blueprint $table) {
+                $table->boolean('has_table_of_contents')->default(false);
+            });
+
+            ResourceHubArticleTableOfContentsFeature::activate();
+        });
+    }
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            ResourceHubArticleTableOfContentsFeature::deactivate();
+
+            Schema::table('resource_hub_articles', function (Blueprint $table) {
+                $table->dropColumn('has_table_of_contents');
+            });
+        });
+    }
+};
