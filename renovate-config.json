@@ -10,6 +10,7 @@
     "repositories": ["canyongbs/advisingapp"],
     "enabledManagers": ["custom.regex"],
     "reviewers": ["Orrison"],
+    "dependencyDashboard": false,
     "customManagers": [
         {
             "customType": "regex",
