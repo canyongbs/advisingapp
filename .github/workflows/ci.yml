@@ -367,6 +367,5 @@ jobs:
                   show-progress: false
 
             - name: Validate Renovate configuration
-              working-directory: example
               run: |
                   renovate-config-validator renovate-config.json
