@@ -46,6 +46,7 @@ use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Filament\Actions\AttachAction;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ViewField;
 use Filament\Schemas\Components\Utilities\Get;
@@ -68,84 +69,102 @@ class AddCareTeamMemberToEducatableAttachAction extends AttachAction
             ->modalWidth(Width::FourExtraLarge)
             ->attachAnother(false)
             ->color('primary')
-            ->steps(fn () => [
-                Step::make('Add Care Team Members')
-                    ->schema([
-                        Repeater::make('careTeams')
-                            ->label(fn () => "Please identify which team members you would like to add to the care team for {$this->getLivewire()->getOwnerRecord()->getMorphClass()} {$this->getLivewire()->getOwnerRecord()->display_name}")
-                            ->schema(fn () => [
-                                Select::make('user_id')
-                                    ->label('User')
-                                    ->searchable()
-                                    ->required()
-                                    ->options(match (true) {
-                                        $this->getLivewire()->getOwnerRecord() instanceof Student => User::query()->tap(new HasLicense(Student::getLicenseType()))
-                                            ->whereDoesntHave(
-                                                'studentCareTeams',
-                                                fn ($query) => $query
-                                                    ->where('educatable_type', $this->getLivewire()->getOwnerRecord()->getMorphClass())
-                                                    ->where('educatable_id', $this->getLivewire()->getOwnerRecord()->getKey())
+            ->steps(function () {
+                $careTeamRoleExists = CareTeamRole::where(
+                    'type',
+                    match (true) {
+                        $this->getLivewire()->getOwnerRecord() instanceof Student => CareTeamRoleType::Student,
+                        $this->getLivewire()->getOwnerRecord() instanceof Prospect => CareTeamRoleType::Prospect,
+                        default => null,
+                    }
+                )
+                    ->count() > 0;
+
+                return [
+                    Step::make('Add Care Team Members')
+                        ->schema([
+                            Repeater::make('careTeams')
+                                ->label(fn () => "Please add one or more staff members to the care team for the {$this->getLivewire()->getOwnerRecord()->getMorphClass()} {$this->getLivewire()->getOwnerRecord()->display_name}")
+                                ->table(function () use ($careTeamRoleExists) {
+                                    $columns = [
+                                        TableColumn::make('User')
+                                            ->markAsRequired(),
+                                    ];
+
+                                    if ($careTeamRoleExists) {
+                                        $columns[] = TableColumn::make('Care Team Role');
+                                    }
+
+                                    return $columns;
+                                })
+                                ->compact()
+                                ->schema(function () use ($careTeamRoleExists) {
+                                    return [
+                                        Select::make('user_id')
+                                            ->searchable()
+                                            ->required()
+                                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                            ->options(match (true) {
+                                                $this->getLivewire()->getOwnerRecord() instanceof Student => User::query()->tap(new HasLicense(Student::getLicenseType()))
+                                                    ->whereDoesntHave(
+                                                        'studentCareTeams',
+                                                        fn ($query) => $query
+                                                            ->where('educatable_type', $this->getLivewire()->getOwnerRecord()->getMorphClass())
+                                                            ->where('educatable_id', $this->getLivewire()->getOwnerRecord()->getKey())
+                                                    )
+                                                    ->tap(new WithoutAnyAdmin())
+                                                    ->pluck('name', 'id'),
+                                                $this->getLivewire()->getOwnerRecord() instanceof Prospect => User::query()->tap(new HasLicense(Prospect::getLicenseType()))
+                                                    ->whereDoesntHave(
+                                                        'prospectCareTeams',
+                                                        fn ($query) => $query
+                                                            ->where('educatable_type', $this->getLivewire()->getOwnerRecord()->getMorphClass())
+                                                            ->where('educatable_id', $this->getLivewire()->getOwnerRecord()->getKey())
+                                                    )
+                                                    ->tap(new WithoutAnyAdmin())
+                                                    ->pluck('name', 'id'),
+                                                default => null,
+                                            }),
+                                        Select::make('care_team_role_id')
+                                            ->relationship(
+                                                'careTeamRole',
+                                                'name',
+                                                fn (Builder $query) => $query
+                                                    ->where(
+                                                        'type',
+                                                        match (true) {
+                                                            $this->getLivewire()->getOwnerRecord() instanceof Student => CareTeamRoleType::Student,
+                                                            $this->getLivewire()->getOwnerRecord() instanceof Prospect => CareTeamRoleType::Prospect,
+                                                            default => null,
+                                                        }
+                                                    )
+                                                    ->orderByDesc('created_at')
                                             )
-                                            ->tap(new WithoutAnyAdmin())
-                                            ->pluck('name', 'id'),
-                                        $this->getLivewire()->getOwnerRecord() instanceof Prospect => User::query()->tap(new HasLicense(Prospect::getLicenseType()))
-                                            ->whereDoesntHave(
-                                                'prospectCareTeams',
-                                                fn ($query) => $query
-                                                    ->where('educatable_type', $this->getLivewire()->getOwnerRecord()->getMorphClass())
-                                                    ->where('educatable_id', $this->getLivewire()->getOwnerRecord()->getKey())
-                                            )
-                                            ->tap(new WithoutAnyAdmin())
-                                            ->pluck('name', 'id'),
-                                        default => null,
-                                    }),
-                                Select::make('care_team_role_id')
-                                    ->label('Role')
-                                    ->relationship(
-                                        'careTeamRole',
-                                        'name',
-                                        fn (Builder $query) => $query
-                                            ->where(
-                                                'type',
-                                                match (true) {
-                                                    $this->getLivewire()->getOwnerRecord() instanceof Student => CareTeamRoleType::Student,
-                                                    $this->getLivewire()->getOwnerRecord() instanceof Prospect => CareTeamRoleType::Prospect,
-                                                    default => null,
-                                                }
-                                            )
-                                            ->orderByDesc('created_at')
-                                    )
-                                    ->default(fn () => match (true) {
-                                        $this->getLivewire()->getOwnerRecord() instanceof Student => CareTeamRoleType::studentDefault()?->id,
-                                        $this->getLivewire()->getOwnerRecord() instanceof Prospect => CareTeamRoleType::prospectDefault()?->id,
-                                        default => null,
-                                    })
-                                    ->preload()
-                                    ->optionsLimit(20)
-                                    ->searchable()
-                                    ->model(CareTeam::class)
-                                    ->visible(CareTeamRole::where(
-                                        'type',
-                                        match (true) {
-                                            $this->getLivewire()->getOwnerRecord() instanceof Student => CareTeamRoleType::Student,
-                                            $this->getLivewire()->getOwnerRecord() instanceof Prospect => CareTeamRoleType::Prospect,
-                                            default => null,
-                                        }
-                                    )
-                                        ->count() > 0),
-                            ])
-                            ->addActionLabel('Add User')
-                            ->reorderable(false),
-                    ]),
-                Step::make('Confirm New Care Team Members')
-                    ->schema([
-                        ViewField::make('summary')
-                            ->view(
-                                'filament.forms.components.care-teams.summary',
-                                fn (Get $get) => ['careTeams' => $get('careTeams'), 'educatable' => $this->getLivewire()->getOwnerRecord()]
-                            ),
-                    ]),
-            ])
+                                            ->default(fn () => match (true) {
+                                                $this->getLivewire()->getOwnerRecord() instanceof Student => CareTeamRoleType::studentDefault()?->id,
+                                                $this->getLivewire()->getOwnerRecord() instanceof Prospect => CareTeamRoleType::prospectDefault()?->id,
+                                                default => null,
+                                            })
+                                            ->preload()
+                                            ->optionsLimit(20)
+                                            ->searchable()
+                                            ->model(CareTeam::class)
+                                            ->visible($careTeamRoleExists),
+                                    ];
+                                })
+                                ->addActionLabel('Add User')
+                                ->reorderable(false),
+                        ]),
+                    Step::make('Confirm New Care Team Members')
+                        ->schema([
+                            ViewField::make('summary')
+                                ->view(
+                                    'filament.forms.components.care-teams.summary',
+                                    fn (Get $get) => ['careTeams' => $get('careTeams'), 'educatable' => $this->getLivewire()->getOwnerRecord()]
+                                ),
+                        ]),
+                ];
+            })
             ->action(function (array $data) {
                 try {
                     DB::beginTransaction();
