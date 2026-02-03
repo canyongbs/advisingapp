@@ -36,8 +36,8 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Forms\Components\TimezoneSelect;
 use App\Settings\DisplaySettings;
+use CanyonGBS\Common\Filament\Forms\Components\TimezoneSelect;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
