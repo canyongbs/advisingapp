@@ -36,9 +36,13 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Report\Filament\Exports\EmailPhoneHealthExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\PaginationMode;
@@ -93,12 +97,12 @@ class StudentDeliverableTable extends BaseWidget
                 TextColumn::make('full_name')
                     ->label('Name')
                     ->searchable(),
-                TextColumn::make('email_health')
+                TextColumn::make('email_status')
                     ->label('Email Status')
                     ->badge()
                     ->color(fn (Student $record) => $record->primaryEmailAddress?->isHealthy() ? 'info' : 'warning')
                     ->state(fn (Student $record) => $record->primaryEmailAddress?->isHealthy() ? 'Healthy' : 'Unhealthy'),
-                IconColumn::make('primaryEmailAddress.address')
+                IconColumn::make('primary_email_set')
                     ->label('Primary Email Set')
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
@@ -122,7 +126,7 @@ class StudentDeliverableTable extends BaseWidget
                     ->trueColor('success')
                     ->falseColor('danger')
                     ->state(fn (Student $record) => $record->primaryEmailAddress ? ($record->primaryEmailAddress->optedOut?->status === EmailAddressOptInOptOutStatus::OptedOut) : false),
-                TextColumn::make('phone_health')
+                TextColumn::make('phone_status')
                     ->label('Phone Status')
                     ->badge()
                     ->color(fn (Student $record) => ($record->primaryPhoneNumber && $record->primaryPhoneNumber->can_receive_sms && ! $record->primaryPhoneNumber->smsOptOut) ? 'info' : 'warning')
@@ -218,6 +222,16 @@ class StudentDeliverableTable extends BaseWidget
 
                         return $query;
                     }),
+            ])
+            ->recordActions([
+                ViewAction::make()
+                    ->label('Go to Student')
+                    ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record]), shouldOpenInNewTab: true)
+                    ->icon('heroicon-m-arrow-top-right-on-square'),
+            ])
+            ->headerActions([
+                ExportAction::make('export')
+                    ->exporter(EmailPhoneHealthExporter::class),
             ])
             ->paginationMode(PaginationMode::Default);
     }
