@@ -42,13 +42,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use ReflectionClass;
+use Symfony\Component\Finder\SplFileInfo;
 
 class ApplicationModels
 {
+  /**
+   * @return Collection<int|string, non-falsy-string>
+   */
     public function all(): Collection
     {
         return collect(File::allFiles(app_path()))
-            ->map(function ($item) {
+            ->map(function (SplFileInfo $item) {
                 $path = $item->getRelativePathName();
                 $class = sprintf(
                     '\%s%s',
@@ -58,7 +62,7 @@ class ApplicationModels
 
                 return $class;
             })
-            ->filter(function ($class) {
+            ->filter(function (string $class) {
                 $isModel = false;
 
                 if (class_exists($class)) {

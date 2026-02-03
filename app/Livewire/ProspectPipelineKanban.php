@@ -50,6 +50,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
@@ -68,6 +69,9 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
         $this->pipeline = $pipeline;
     }
 
+    /**
+     * @return Collection<string, Collection<int, Educatable>>
+     */
     public function getPipelineSubjects(): Collection
     {
         $currentPipeline = $this->pipeline;
@@ -89,7 +93,10 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
         );
     }
 
-    public function getStages()
+    /**
+     * @return Collection<int, Educatable>
+     */
+    public function getStages(): Collection
     {
         return PipelineStage::orderBy('order', 'ASC')
             ->whereHas('pipeline', function (Builder $query) {
@@ -99,7 +106,7 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
             ->prepend($this->pipeline->default_stage, '');
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.prospect-pipeline-kanban', [
             'pipelineEducatables' => $this->getPipelineSubjects(),
@@ -107,7 +114,7 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
         ]);
     }
 
-    public function moveProspect(Pipeline $pipeline, string $educatableId, $fromStage = '', $toStage = ''): JsonResponse
+    public function moveProspect(Pipeline $pipeline, string $educatableId, string $fromStage = '', string $toStage = ''): JsonResponse
     {
         try {
             $educatableType = $pipeline->group->model;
@@ -141,8 +148,8 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
                         'pipeline_stage_id' => $toStage,
                     ]);
             }
-        } catch (Exception $e) {
-            report($e);
+        } catch (Exception $exception) {
+            report($exception);
 
             return response()->json([
                 'success' => false,

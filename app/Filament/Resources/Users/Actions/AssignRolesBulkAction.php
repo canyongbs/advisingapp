@@ -66,9 +66,8 @@ class AssignRolesBulkAction extends BulkAction
                     ->multiple(),
             ])
             ->action(function (array $data, Collection $records) {
-                $records->each(function ($record) use ($data) {
-                    throw_unless($record instanceof User, new Exception('Record must be of type user.'));
-
+                /** @var Collection <int, User> $records */
+                $records->each(function (User $record) use ($data) {
                     if ($data['replace']) {
                         $record->syncRoles($data['roles']);
                     } else {

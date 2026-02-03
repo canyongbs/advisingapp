@@ -54,7 +54,7 @@ class TimelineServiceProvider extends ServiceProvider
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new TimelinePlugin()));
     }
 
-    public function boot()
+    public function boot(): void
     {
         Relation::morphMap([
             'timeline' => Timeline::class,

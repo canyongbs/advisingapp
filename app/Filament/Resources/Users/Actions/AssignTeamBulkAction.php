@@ -69,13 +69,13 @@ class AssignTeamBulkAction extends BulkAction
             ->action(function (array $data, Collection $records) {
                 $success = 0;
                 $fail = 0;
-                $records->each(function ($record) use ($data, &$success, &$fail) {
+                /** @var Collection <int, User> $records */
+                $records->each(function (User $record) use ($data, &$success, &$fail) {
                     try {
-                        throw_unless($record instanceof User, new Exception('Record must be of type user.'));
                         $record->assignTeam($data['team']);
                         $success++;
-                    } catch (Exception $e) {
-                        report($e);
+                    } catch (Exception $exception) {
+                        report($exception);
                         $fail++;
                     }
                 });

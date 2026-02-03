@@ -108,8 +108,8 @@ class UtilizationMetricsApiController extends Controller
                     'messages_reset' => $licenseSettings->data->limits->resetDate,
                 ],
             ], 200);
-        } catch (Exception $e) {
-            report($e);
+        } catch (Exception $exception) {
+            report($exception);
 
             return response()->json([], 500);
         }

@@ -53,6 +53,9 @@ class RenderForm extends Component implements HasForms, HasActions
 
     public Form $form;
 
+    /**
+     * @var array<mixed>|null $data
+     */
     public ?array $data = [];
 
     public function render(): View

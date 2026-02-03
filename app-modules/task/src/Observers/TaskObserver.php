@@ -68,10 +68,10 @@ class TaskObserver
     {
         try {
             TriggeredAutoSubscription::dispatchIf(! empty($task->createdBy), $task->createdBy, $task);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             DB::rollBack();
 
-            throw $e;
+            throw $exception;
         }
     }
 

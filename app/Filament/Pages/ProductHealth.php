@@ -75,7 +75,7 @@ class ProductHealth extends HealthCheckResults
             ->filter(fn ($check) => ! in_array($check->status, [Status::ok()->value, Status::skipped()->value]))
             ->count();
 
-        return $count > 0 ? $count : null;
+        return $count > 0 ? (string) $count : null;
     }
 
     public static function getNavigationBadgeColor(): string | array | null
