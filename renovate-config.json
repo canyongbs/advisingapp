@@ -11,6 +11,9 @@
     "enabledManagers": ["custom.regex"],
     "reviewers": ["Orrison"],
     "dependencyDashboard": false,
+    "vulnerabilityAlerts": {
+        "enabled": false
+    },
     "customManagers": [
         {
             "customType": "regex",
