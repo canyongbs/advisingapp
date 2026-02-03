@@ -7,6 +7,7 @@ on:
 
 jobs:
     renovate:
+        name: Run Renovate
         runs-on: ubuntu-latest
         timeout-minutes: 15
         steps:
@@ -15,5 +16,5 @@ jobs:
             - name: Run Renovate
               uses: renovatebot/github-action@957af03d760b2c87fc65cb95628f6d5f95d9c578 #46.0.0
               with:
-                  configurationFile: renovate.json
+                  configurationFile: .github/renovate.json
                   token: ${{ secrets.PAT }}
