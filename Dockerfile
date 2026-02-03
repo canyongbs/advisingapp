@@ -1,4 +1,5 @@
 ARG BASE_IMAGE="public.ecr.aws/lts/ubuntu:24.04"
+ARG IMAGEMAGICK_VERSION='7.1.2-13'
 
 FROM ${BASE_IMAGE} AS setup
 
@@ -33,13 +34,95 @@ RUN mkdir -p "$S6_DIR"; \
     && untar ${S6_SRC_URL}/${S6_VERSION}/s6-overlay-${S6_ARCH}.tar.xz \
     && add-apt-repository -y ppa:ondrej/php
 
+FROM ${BASE_IMAGE} AS imagemagick-builder
+
+ARG PHP_VERSION='8.4'
+ARG IMAGEMAGICK_VERSION
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Copy ondrej PHP sources for PHP dev headers
+COPY --from=setup /etc/apt/sources.list.d/ /etc/apt/sources.list.d/
+COPY --from=setup /etc/apt/trusted.gpg.d/ /etc/apt/trusted.gpg.d/
+
+# Install ca-certificates first to allow HTTPS access to PPAs
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates gnupg \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+    # Build essentials
+    build-essential \
+    pkg-config \
+    curl \
+    # PHP dev headers for building imagick extension
+    php${PHP_VERSION}-dev \
+    # ImageMagick build dependencies
+    libjpeg-dev \
+    libpng-dev \
+    libwebp-dev \
+    libtiff-dev \
+    libfreetype-dev \
+    libfontconfig1-dev \
+    liblcms2-dev \
+    libxml2-dev \
+    libgomp1 \
+    libheif-dev \
+    libzip-dev \
+    libbz2-dev \
+    libzstd-dev \
+    liblqr-1-0-dev \
+    libfftw3-dev \
+    libltdl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download and build ImageMagick 7
+WORKDIR /tmp
+RUN curl -L "https://github.com/ImageMagick/ImageMagick/archive/refs/tags/${IMAGEMAGICK_VERSION}.tar.gz" -o imagemagick.tar.gz \
+    && tar -xzf imagemagick.tar.gz \
+    && cd ImageMagick-${IMAGEMAGICK_VERSION} \
+    && ./configure \
+    --prefix=/usr/local \
+    --with-modules \
+    --with-jpeg \
+    --with-png \
+    --with-webp \
+    --with-tiff \
+    --with-freetype \
+    --with-fontconfig \
+    --with-lcms \
+    --with-xml \
+    --with-heic \
+    --with-zip \
+    --with-bzlib \
+    --with-zstd \
+    --with-lqr \
+    --with-fftw \
+    --enable-hdri \
+    --enable-openmp \
+    --disable-static \
+    --without-x \
+    && make -j$(nproc) \
+    && make install \
+    && ldconfig
+
+# Build PHP imagick extension from PECL
+RUN curl -L "https://pecl.php.net/get/imagick" -o imagick.tgz \
+    && mkdir imagick \
+    && tar -xzf imagick.tgz -C imagick --strip-components=1 \
+    && cd imagick \
+    && phpize \
+    && ./configure --with-imagick=/usr/local \
+    && make -j$(nproc) \
+    && make install
+
 FROM ${BASE_IMAGE} AS base
 
 LABEL authors="Canyon GBS"
 LABEL maintainer="Canyon GBS"
 
 ARG PHP_VERSION='8.4'
+ARG PHP_API_VERSION=20240924
 ARG POSTGRES_VERSION=15
+ARG IMAGEMAGICK_VERSION
 
 ENV BUILD_PHP_VERSION=$PHP_VERSION \
     DEBIAN_FRONTEND=noninteractive \
@@ -78,6 +161,14 @@ COPY --from=setup /opt/s6/ /
 # Bring over the ondrej sources
 COPY --from=setup /etc/apt/sources.list.d/ /etc/apt/sources.list.d/
 
+# Bring over ImageMagick 7 libraries and PHP extension
+COPY --from=imagemagick-builder /usr/local/lib/libMagick*.so* /usr/local/lib/
+COPY --from=imagemagick-builder /usr/local/lib/ImageMagick-${IMAGEMAGICK_VERSION%%-*}/ /usr/local/lib/ImageMagick-${IMAGEMAGICK_VERSION%%-*}/
+COPY --from=imagemagick-builder /usr/local/bin/magick /usr/local/bin/magick
+COPY --from=imagemagick-builder /usr/local/etc/ImageMagick-7/ /usr/local/etc/ImageMagick-7/
+COPY --from=imagemagick-builder /usr/local/share/ImageMagick-7/ /usr/local/share/ImageMagick-7/
+COPY --from=imagemagick-builder /usr/lib/php/${PHP_API_VERSION}/imagick.so /usr/lib/php/${PHP_API_VERSION}/imagick.so
+
 RUN apt-get update \
     \
     # configure web user and group \
@@ -103,7 +194,6 @@ RUN apt-get update \
     php8.4-common \
     php8.4-curl \
     php8.4-gd \
-    php8.4-imagick \
     php8.4-intl \
     php8.4-mailparse \
     php8.4-mbstring \
@@ -113,6 +203,31 @@ RUN apt-get update \
     php8.4-sqlite3 \
     php8.4-xml \
     php8.4-zip \
+    # ImageMagick 7 runtime dependencies
+    # Note: Package names are Ubuntu 24.04 (noble) specific due to t64 ABI transition
+    # These will need updating if the base image changes to a different Ubuntu version
+    libjpeg8 \
+    libpng16-16t64 \
+    libwebp7 \
+    libtiff6 \
+    libfreetype6 \
+    libfontconfig1 \
+    liblcms2-2 \
+    libxml2 \
+    libgomp1 \
+    libheif1 \
+    libzip4t64 \
+    libbz2-1.0 \
+    libzstd1 \
+    liblqr-1-0 \
+    libfftw3-double3 \
+    libltdl7 \
+    \
+    # Enable imagick extension \
+    && echo "extension=imagick.so" > /etc/php/8.4/mods-available/imagick.ini \
+    && phpenmod imagick \
+    # Update library cache for ImageMagick \
+    && ldconfig \
     \
     # set symlink to version number for script management \
     && ln -sf /etc/php/${BUILD_PHP_VERSION}/ /etc/php/current_version \
