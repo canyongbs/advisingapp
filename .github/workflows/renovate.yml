@@ -16,5 +16,5 @@ jobs:
             - name: Run Renovate
               uses: renovatebot/github-action@957af03d760b2c87fc65cb95628f6d5f95d9c578 #46.0.0
               with:
-                  configurationFile: .github/renovate.json
+                  configurationFile: renovate-config.json
                   token: ${{ secrets.PAT }}
