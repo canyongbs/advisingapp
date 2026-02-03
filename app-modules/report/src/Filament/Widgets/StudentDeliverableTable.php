@@ -100,8 +100,8 @@ class StudentDeliverableTable extends BaseWidget
                 TextColumn::make('email_status')
                     ->label('Email Status')
                     ->badge()
-                    ->color(fn (Student $record) => $record->primaryEmailAddress?->isHealthy() ? 'info' : 'warning')
-                    ->state(fn (Student $record) => $record->primaryEmailAddress?->isHealthy() ? 'Healthy' : 'Unhealthy'),
+                    ->color(fn (Student $record) => $record->canReceiveEmail() ? 'info' : 'warning')
+                    ->state(fn (Student $record) => $record->canReceiveEmail() ? 'Healthy' : 'Unhealthy'),
                 IconColumn::make('primary_email_set')
                     ->label('Primary Email Set')
                     ->boolean()
@@ -129,8 +129,8 @@ class StudentDeliverableTable extends BaseWidget
                 TextColumn::make('phone_status')
                     ->label('Phone Status')
                     ->badge()
-                    ->color(fn (Student $record) => ($record->primaryPhoneNumber && $record->primaryPhoneNumber->can_receive_sms && ! $record->primaryPhoneNumber->smsOptOut) ? 'info' : 'warning')
-                    ->state(fn (Student $record) => ($record->primaryPhoneNumber && $record->primaryPhoneNumber->can_receive_sms && ! $record->primaryPhoneNumber->smsOptOut) ? 'Healthy' : 'Unhealthy'),
+                    ->color(fn (Student $record) => $record->canReceiveSms() ? 'info' : 'warning')
+                    ->state(fn (Student $record) => $record->canReceiveSms() ? 'Healthy' : 'Unhealthy'),
                 IconColumn::make('primary_phone_set')
                     ->label('Primary Phone Set')
                     ->boolean()
