@@ -99,6 +99,7 @@ trait HasAdvancedFilter
 
     /**
      * @param array<mixed> $data
+     *
      * @return array<mixed>
      */
     protected function processGlobalSearch(array $data): array

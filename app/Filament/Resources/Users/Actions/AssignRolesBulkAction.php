@@ -38,7 +38,6 @@ namespace App\Filament\Resources\Users\Actions;
 
 use AdvisingApp\Authorization\Models\Role;
 use App\Models\User;
-use Exception;
 use Filament\Actions\BulkAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
