@@ -1,6 +1,15 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "branchPrefix": "renovate-updates/",
     "extends": ["config:recommended"],
+    "username": "renovate-release",
+    "gitAuthor": "Renovate Bot <bot@renovateapp.com>",
+    "onboarding": false,
+    "requireConfig": "ignored",
+    "platform": "github",
+    "repositories": [
+        "canyongbs/advisingapp"
+    ],
     "enabledManagers": ["custom.regex"],
     "reviewers": ["Orrison"],
     "customManagers": [
