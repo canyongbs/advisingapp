@@ -6,7 +6,7 @@
     "customManagers": [
         {
             "customType": "regex",
-            "managerName": "imagemagick-version",
+            "description": "ImageMagick Version Updates",
             "managerFilePatterns": ["/^Dockerfile$/"],
             "matchStrings": ["ARG IMAGEMAGICK_VERSION=['\"]?(?<currentValue>[\\d.]+-\\d+)['\"]?"],
             "extractVersionTemplate": "^v?(?<version>.*)$",
