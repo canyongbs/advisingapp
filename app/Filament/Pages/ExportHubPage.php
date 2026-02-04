@@ -80,11 +80,8 @@ class ExportHubPage extends Page implements HasForms, HasTable
             ->query(Export::query())
             ->columns([
                 TextColumn::make('requestor')
-                    ->getStateUsing(function (Export $record): string {
-                        $user = $record->user;
-                        assert($user instanceof User);
-
-                        return $user->name;
+                    ->getStateUsing(function (Export $record): ?string {
+                        return $record->user->name ?? null;
                     }),
                 TextColumn::make('exporter')
                     ->label('Export Name')
