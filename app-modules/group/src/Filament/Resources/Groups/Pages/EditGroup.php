@@ -39,7 +39,10 @@ namespace AdvisingApp\Group\Filament\Resources\Groups\Pages;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryEmailAddress;
+use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
@@ -47,6 +50,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Callout;
 use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
@@ -55,6 +59,9 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @extends EditRecord<Group>
+ */
 class EditGroup extends EditRecord implements HasTable
 {
     use InteractsWithTable {
@@ -123,6 +130,38 @@ class EditGroup extends EditRecord implements HasTable
             ->components([
                 $this->getFormContentComponent(),
                 $this->getRelationManagersContentComponent(),
+                Callout::make('Warning')
+                    ->description(function (): string {
+                        $count = $this->getFilteredTableQuery()->count();
+
+                        $unhealthyEmailCount = $this->getFilteredTableQuery()
+                            ->tap(new UnhealthyEducatablePrimaryEmailAddress())
+                            ->count();
+                        $unhealthyEmailPercent = bcround(($count > 0) ? bcmul(bcdiv((string) $unhealthyEmailCount, (string) $count, 4), '100', 2) : '0', 2);
+
+                        $unhealthyPhoneCount = $this->getFilteredTableQuery()
+                            ->tap(new UnhealthyEducatablePrimaryPhoneNumber())
+                            ->count();
+                        $unhealthyPhonePercent = bcround(($count > 0) ? bcmul(bcdiv((string) $unhealthyPhoneCount, (string) $count, 4), '100', 2) : '0', 2);
+
+                        return "Of the {$count} {$this->getRecord()->model->getPluralLabel()} who will be a member of this group, {$unhealthyEmailPercent}% are unable to receive emails to their primary email address and {$unhealthyPhonePercent}% are unable to receive SMS to their primary phone on file. Campaigns or bulk messages will skip these {$this->getRecord()->model->getPluralLabel()}.";
+                    })
+                    ->warning()
+                    ->visible(function (): bool {
+                        if ($this->getFilteredTableQuery()
+                            ->tap(new UnhealthyEducatablePrimaryEmailAddress())
+                            ->exists()) {
+                            return true;
+                        }
+
+                        if ($this->getFilteredTableQuery()
+                            ->tap(new UnhealthyEducatablePrimaryPhoneNumber())
+                            ->exists()) {
+                            return true;
+                        }
+
+                        return false;
+                    }),
                 EmbeddedTable::make(),
             ]);
     }
@@ -133,7 +172,7 @@ class EditGroup extends EditRecord implements HasTable
 
         $data['model'] = $group->model;
         $data['type'] = $group->type;
-        $data['user']['name'] = $group->user ? $group->user->name : 'N/A';
+        $data['user']['name'] = $group->user->name ?? 'N/A';
 
         return $data;
     }
