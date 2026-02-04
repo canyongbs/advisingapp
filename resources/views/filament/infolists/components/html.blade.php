@@ -39,13 +39,19 @@
             @endphp
 
             @if ($record->has_table_of_contents)
-                <h2>
-                    Table of Contents
-                </h2>
+                @php
+                    $tableOfContents = tiptap_converter()->record($record, attribute: $getName())->asTOC($state);
+                @endphp
 
-                <div class="prose-toc">
-                    {!! tiptap_converter()->record($record, attribute: $getName())->asTOC($state) !!}
-                </div>
+                @if (filled($tableOfContents))
+                    <h2>
+                        Table of Contents
+                    </h2>
+
+                    <div class="prose-toc">
+                        {!! $tableOfContents !!}
+                    </div>
+                @endif
             @endif
 
             {!! tiptap_converter()->asHTML($state, toc: true, maxDepth: 3) !!}
