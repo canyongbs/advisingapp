@@ -41,3 +41,7 @@
     @apply relative bg-no-repeat;
     background-image: radial-gradient(circle at top, theme('colors.primary.200'), theme('colors.white') 50%);
 }
+
+.prose-toc {
+    @apply mb-16;
+}

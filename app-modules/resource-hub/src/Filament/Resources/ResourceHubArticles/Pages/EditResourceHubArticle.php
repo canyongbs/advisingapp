@@ -43,6 +43,7 @@ use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubAr
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
+use App\Features\ResourceHubArticleTableOfContentsFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action as BaseAction;
 use Filament\Forms\Components\Select;
@@ -125,6 +126,12 @@ class EditResourceHubArticle extends EditRecord
                                     ->default(false)
                                     ->onColor('success')
                                     ->offColor('gray'),
+                                Toggle::make('has_table_of_contents')
+                                    ->label('Table of Contents')
+                                    ->default(false)
+                                    ->onColor('success')
+                                    ->offColor('gray')
+                                    ->visible(fn (): bool => ResourceHubArticleTableOfContentsFeature::active()),
                             ])
                             ->columns(2),
                         Tab::make('Metadata')

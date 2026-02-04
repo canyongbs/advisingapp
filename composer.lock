@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "425e9e976232d80a176ff2e99c6f993d",
+    "content-hash": "dd47b9d3676bd231e78456d806459aef",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -2270,16 +2270,16 @@
         },
         {
             "name": "canyongbs/filament-tiptap-editor",
-            "version": "2.2.1",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/filament-tiptap-editor.git",
-                "reference": "e4d030b4e6386bb05cc7f14abaeab72d948999ac"
+                "reference": "20c96067af2178ca26edab26c9a9fc2470097458"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/filament-tiptap-editor/zipball/e4d030b4e6386bb05cc7f14abaeab72d948999ac",
-                "reference": "e4d030b4e6386bb05cc7f14abaeab72d948999ac",
+                "url": "https://api.github.com/repos/canyongbs/filament-tiptap-editor/zipball/20c96067af2178ca26edab26c9a9fc2470097458",
+                "reference": "20c96067af2178ca26edab26c9a9fc2470097458",
                 "shasum": ""
             },
             "require": {
@@ -2340,9 +2340,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/filament-tiptap-editor/issues",
-                "source": "https://github.com/canyongbs/filament-tiptap-editor/tree/2.2.1"
+                "source": "https://github.com/canyongbs/filament-tiptap-editor/tree/2.3.0"
             },
-            "time": "2026-01-22T21:07:07+00:00"
+            "time": "2026-02-03T11:23:41+00:00"
         },
         {
             "name": "canyongbs/model-state-machine",
@@ -24342,5 +24342,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

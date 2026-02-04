@@ -262,7 +262,15 @@
     @apply p-0;
 }
 
+.prose :is(h1, h2, h3, h4, h5, h6):where(:not(.not-prose, .not-prose *)) {
+    scroll-margin-top: 8rem;
+}
+
 .fi-body:has(.branding-bar) {
+    & .prose :is(h1, h2, h3, h4, h5, h6):where(:not(.not-prose, .not-prose *)) {
+        scroll-margin-top: 10.5rem;
+    }
+
     &.fi-body-has-sidebar-collapsible-on-desktop,
     &.fi-body-has-sidebar-fully-collapsible-on-desktop {
         & .fi-main-ctn {
@@ -280,4 +288,8 @@
     &.fi-body-has-topbar .fi-sidebar {
         @apply lg:top-[6.5rem]! lg:h-[calc(100dvh-6.5rem)]!;
     }
+}
+
+.prose-toc {
+    @apply mb-16;
 }

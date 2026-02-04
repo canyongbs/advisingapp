@@ -50,6 +50,12 @@ class ResourceHubPortalArticleController extends Controller
     {
         $article->increment('portal_view_count');
 
+        $content = tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details, toc: true, maxDepth: 3);
+
+        if ($article->has_table_of_contents) {
+            $content = '<h2>Table of Contents</h2><div class="prose-toc">' . tiptap_converter()->asTOC($article->article_details) . '</div>' . $content;
+        }
+
         return response()->json([
             'category' => ResourceHubCategoryData::from([
                 'id' => $category->getKey(),
@@ -60,8 +66,8 @@ class ResourceHubPortalArticleController extends Controller
                 'id' => $article->getKey(),
                 'categoryId' => $article->category_id,
                 'name' => $article->title,
-                'lastUpdated' => $article->updated_at->setTimezone(app(DisplaySettings::class)->timezone)->format('M d Y, h:m a'),
-                'content' => tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details),
+                'lastUpdated' => $article->updated_at->setTimezone(app(DisplaySettings::class)->getTimezone())->format('M d Y, h:i a'),
+                'content' => $content,
             ]),
             'portal_view_count' => $article->portal_view_count,
         ]);

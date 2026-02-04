@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,47 +33,15 @@
 
 </COPYRIGHT>
 */
-import vue from '@vitejs/plugin-vue';
-import { resolve } from 'path';
-import { defineConfig } from 'vite';
 
-export default defineConfig({
-    plugins: [vue()],
-    experimental: {
-        renderBuiltUrl(filename) {
-            return {
-                runtime: `window.__VITE_RESOURCE_HUB_PORTAL_ASSET_URL__.replace(/\\/$/, '') + '/' + ${JSON.stringify(filename)}`,
-            };
-        },
-    },
-    build: {
-        manifest: true,
-        rollupOptions: {
-            input: {
-                portal: resolve(__dirname, './src/portal.js'),
-                loader: resolve(__dirname, './src/loader.js'),
-            },
-            output: {
-                entryFileNames: (chunkInfo) => {
-                    return chunkInfo.name === 'loader'
-                        ? 'advising-app-resource-hub-portal.js'
-                        : 'advising-app-resource-hub-portal-app-[hash].js';
-                },
-                assetFileNames: (assetInfo) => {
-                    return '[name]-[hash][extname]';
-                },
-                // Place chunks directly in the root
-                chunkFileNames: '[name]-[hash].js',
-            },
-        },
-        outDir: resolve(__dirname, '../../storage/app/public/portals/resource-hub'),
-        emptyOutDir: true,
-        sourcemap: true,
-    },
-    resolve: {
-        alias: {
-            '@': resolve(__dirname, 'src'),
-        },
-    },
-    define: { 'process.env.NODE_ENV': '"production"' },
-});
+namespace App\Features;
+
+use App\Support\AbstractFeatureFlag;
+
+class ResourceHubArticleTableOfContentsFeature extends AbstractFeatureFlag
+{
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
+}
