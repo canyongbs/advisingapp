@@ -192,12 +192,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Models/AiMessage.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Ai\\\\Models\\\\AiMessage\\:\\:\\$dispatchesEvents type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Models/AiMessage.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:withTrashed\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
@@ -230,12 +224,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Ai\\\\Models\\\\AiThread\\:\\:toLivewire\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Models/AiThread.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Ai\\\\Models\\\\AiThread\\:\\:\\$dispatchesEvents type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Models/AiThread.php',
 ];
@@ -394,222 +382,6 @@ $ignoreErrors[] = [
     'identifier' => 'return.type',
     'count' => 2,
     'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Unit/AiThreadCascadeDeleteAiMessagesTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/alert/database/migrations/2024_11_14_130353_seed_permissions_for_alert_status\\.php\\:42\\:\\:\\$guards type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/database/migrations/2024_11_14_130353_seed_permissions_for_alert_status.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/alert/database/migrations/2024_11_14_130353_seed_permissions_for_alert_status\\.php\\:42\\:\\:\\$permissions type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/database/migrations/2024_11_14_130353_seed_permissions_for_alert_status.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Enums\\\\AlertSeverity\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
-    'identifier' => 'return.unusedType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Enums/AlertSeverity.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Enums\\\\SystemAlertStatusClassification\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
-    'identifier' => 'return.unusedType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Enums/SystemAlertStatusClassification.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Alert\\\\Histories\\\\AlertHistory\\:\\:\\$formatted\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 8,
-    'path' => __DIR__ . '/app-modules/alert/src/Filament/Actions/AlertHistoryCreatedViewAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Alert\\\\Histories\\\\AlertHistory\\:\\:\\$formatted\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Filament/Actions/AlertHistoryUpdatedViewAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Filament/Actions/BulkCreateAlertAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Alert\\\\Models\\\\AlertStatus\\:\\:\\$is_default\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/AlertStatuses/Pages/CreateAlertStatus.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/AlertStatuses/Pages/CreateAlertStatus.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Alert\\\\Models\\\\AlertStatus\\:\\:\\$is_default\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/AlertStatuses/Pages/EditAlertStatus.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/AlertStatuses/Pages/EditAlertStatus.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Filament\\\\Resources\\\\Alerts\\\\Pages\\\\ListAlerts\\:\\:groupFilter\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/Alerts/Pages/ListAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Filament\\\\Resources\\\\Alerts\\\\Pages\\\\ListAlerts\\:\\:groupFilter\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Filament/Resources/Alerts/Pages/ListAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Alert\\\\Models\\\\AlertStatus\\|Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Alert\\\\Models\\\\AlertStatus\\>\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/alert/src/Histories/AlertHistory.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:alertHistories\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Histories/AlertHistory.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Histories\\\\AlertHistory\\:\\:getFormattedValueForKey\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Histories/AlertHistory.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Histories\\\\AlertHistory\\:\\:getTimelineData\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Histories/AlertHistory.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe method call on non\\-nullable type Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\>\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Listeners/NotifySubscribersOfAlertCreated.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Models\\\\Alert\\:\\:concern\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Models/Alert.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Models\\\\Alert\\:\\:createdBy\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Models/Alert.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Models\\\\Alert\\:\\:processCustomHistories\\(\\) has parameter \\$new with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Models/Alert.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Models\\\\Alert\\:\\:processCustomHistories\\(\\) has parameter \\$old with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Models/Alert.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Models\\\\Alert\\:\\:processCustomHistories\\(\\) has parameter \\$pending with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Models/Alert.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Models\\\\Alert\\:\\:processHistory\\(\\) has parameter \\$new with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Models/Alert.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Models\\\\Alert\\:\\:processHistory\\(\\) has parameter \\$old with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Models/Alert.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Models\\\\Alert\\:\\:recordHistory\\(\\) has parameter \\$new with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Models/Alert.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Models\\\\Alert\\:\\:recordHistory\\(\\) has parameter \\$old with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Models/Alert.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Models\\\\Alert\\:\\:recordHistory\\(\\) has parameter \\$pending with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Models/Alert.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Models\\\\Alert\\:\\:scopeLicensedToEducatable\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Models/Alert.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Models\\\\Alert\\:\\:scopeLicensedToEducatable\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Models/Alert.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Alert\\\\Models\\\\Alert\\:\\:\\$ignoredAttributes type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Models/Alert.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Notifications\\\\AlertCreatedNotification\\:\\:toDatabase\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Notifications/AlertCreatedNotification.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$concern\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Observers/AlertHistoryObserver.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Alert\\\\Models\\\\AlertStatus\\:\\:\\$order\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Observers/AlertStatusObserver.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Alert\\\\Rules\\\\ConcernIdExistsRule\\:\\:setData\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Rules/ConcernIdExistsRule.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Alert\\\\Rules\\\\ConcernIdExistsRule\\:\\:\\$data has no type specified\\.$#',
-    'identifier' => 'missingType.property',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Rules/ConcernIdExistsRule.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int,AdvisingApp\\\\Form\\\\Models\\\\SubmissibleField\\>\\:\\:map\\(\\) expects callable\\(AdvisingApp\\\\Form\\\\Models\\\\SubmissibleField, int\\)\\: array\\{type\\: \'tiptapBlock\', attrs\\: array\\{id\\: string, type\\: string, data\\: non\\-empty\\-array\\}\\}, Closure\\(AdvisingApp\\\\Application\\\\Models\\\\ApplicationField\\)\\: array\\{type\\: \'tiptapBlock\', attrs\\: array\\{id\\: string, type\\: string, data\\: non\\-empty\\-array\\}\\} given\\.$#',
@@ -1392,22 +1164,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/authorization/tests/Tenant/Feature/Filament/Resources/Users/Actions/AssignLicensesBulkActionTest.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\.\\.\\.\\$data of method Pest\\\\PendingCalls\\\\TestCall\\:\\:with\\(\\) expects array\\<Closure\\|iterable\\<int\\|string, mixed\\>\\|string\\>\\|Closure\\|string, array\\{AdvisingApp\\\\Authorization\\\\Enums\\\\LicenseType\\:\\:ConversationalAi, AdvisingApp\\\\Authorization\\\\Enums\\\\LicenseType\\:\\:RetentionCrm, AdvisingApp\\\\Authorization\\\\Enums\\\\LicenseType\\:\\:RecruitmentCrm\\} given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/authorization/tests/Tenant/Feature/Filament/Resources/Users/Actions/AssignLicensesBulkActionTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$user of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 11,
     'path' => __DIR__ . '/app-modules/authorization/tests/Tenant/Feature/Filament/Resources/Users/ListUsersTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\.\\.\\.\\$data of method Pest\\\\PendingCalls\\\\TestCall\\:\\:with\\(\\) expects array\\<Closure\\|iterable\\<int\\|string, mixed\\>\\|string\\>\\|Closure\\|string, array\\{AdvisingApp\\\\Authorization\\\\Enums\\\\LicenseType\\:\\:ConversationalAi, AdvisingApp\\\\Authorization\\\\Enums\\\\LicenseType\\:\\:RetentionCrm, AdvisingApp\\\\Authorization\\\\Enums\\\\LicenseType\\:\\:RecruitmentCrm\\} given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/authorization/tests/Tenant/Unit/LicenceTypeTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/basic\\-needs/database/migrations/2024_06_18_120111_seed_permissions_for_basic_needs_category\\.php\\:42\\:\\:\\$guards type has no value type specified in iterable type array\\.$#',
@@ -1590,12 +1350,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/InteractionBlock.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\ProactiveAlertBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/ProactiveAlertBlock.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\SubscriptionBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -1666,12 +1420,6 @@ $ignoreErrors[] = [
     'identifier' => 'MeliorStan.shortVariable',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/campaign/src/Jobs/InteractionCampaignActionJob.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Jobs/ProactiveAlertCampaignActionJob.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
@@ -2394,18 +2142,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/case-management/src/Models/CaseModel.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseModel\\:\\:scopeLicensedToEducatable\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Models/CaseModel.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseModel\\:\\:scopeLicensedToEducatable\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Models/CaseModel.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseModel\\:\\:scopeOpen\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -3000,18 +2736,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Models/Engagement.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\Engagement\\:\\:scopeLicensedToEducatable\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Models/Engagement.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\Engagement\\:\\:scopeLicensedToEducatable\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Models/Engagement.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\Engagement\\:\\:scopeSentToProspect\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -3080,7 +2804,7 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:\\$display_name\\.$#',
     'identifier' => 'property.notFound',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Notifications/EngagementFailedNotification.php',
 ];
 $ignoreErrors[] = [
@@ -3538,12 +3262,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/FormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable \\$block in PHPDoc tag @var does not exist\\.$#',
-    'identifier' => 'varTag.variableNotFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/FormFieldBlockRegistry.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\NumberFormFieldBlock\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -4087,18 +3805,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Form\\\\Models\\\\Submission\\:\\:fields\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany does not specify its types\\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \\(2\\-4 required\\)$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Models/Submission.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Models\\\\Submission\\:\\:scopeLicensedToEducatable\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Models/Submission.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Models\\\\Submission\\:\\:scopeLicensedToEducatable\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/form/src/Models/Submission.php',
@@ -4716,12 +4422,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/integration-twilio/tests/Tenant/Feature/Http/Middleware/LogTwilioRequestTest.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Match expression does not handle remaining value\\: mixed$#',
-    'identifier' => 'match.unhandled',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/interaction/database/factories/InteractionFactory.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Interaction\\\\Database\\\\Seeders\\\\InteractionSeeder\\:\\:metadataSeeders\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -4801,18 +4501,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\:\\:getTimelineData\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\:\\:scopeLicensedToEducatable\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Interaction\\\\Models\\\\Interaction\\:\\:scopeLicensedToEducatable\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
@@ -5010,30 +4698,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/meeting-center/src/Filament/Resources/Events/Pages/CreateEvent.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Filament\\\\Resources\\\\Events\\\\Pages\\\\EditEvent\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Filament/Resources/Events/Pages/EditEvent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Filament\\\\Resources\\\\Events\\\\Pages\\\\EditEvent\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Filament/Resources/Events/Pages/EditEvent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Filament\\\\Resources\\\\Events\\\\Pages\\\\EditEvent\\:\\:saveFieldsFromComponents\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Filament/Resources/Events/Pages/EditEvent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$form of method AdvisingApp\\\\MeetingCenter\\\\Filament\\\\Resources\\\\Events\\\\Pages\\\\EditEvent\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\MeetingCenter\\\\Models\\\\EventRegistrationForm, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Filament/Resources/Events/Pages/EditEvent.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$title\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -5110,12 +4774,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/meeting-center/src/Livewire/EventAttendeeSubmissionsManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\MeetingCenter\\\\Livewire\\\\RenderEventRegistrationForm\\:\\:\\$data type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Livewire/RenderEventRegistrationForm.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Managers\\\\Contracts\\\\CalendarInterface\\:\\:getEvents\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -5518,18 +5176,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/notification/src/Models/Contracts/Message.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\:\\:scopeLicensedToEducatable\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/notification/src/Models/Subscription.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Notification\\\\Models\\\\Subscription\\:\\:scopeLicensedToEducatable\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/notification/src/Models/Subscription.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Notifications\\\\Notification\\:\\:toDatabase\\(\\)\\.$#',
@@ -6012,12 +5658,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ListProspects.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$badge of method Filament\\\\Navigation\\\\NavigationItem\\:\\:badge\\(\\) expects Closure\\|string\\|null, int\\<1, max\\>\\|null given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ManageProspectAlerts.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:timeline\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
@@ -6121,12 +5761,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:additionalPhoneNumbers\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:alertHistories\\(\\) return type with generic class Staudenmeir\\\\EloquentHasManyDeep\\\\HasManyDeep does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/src/Models/Prospect.php',
@@ -6408,12 +6042,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/src/Enums/TrackedEventType.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Alert\\\\Models\\\\AlertStatus\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Exports/StudentExporter.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Report\\\\Filament\\\\Pages\\\\ArtificialIntelligence\\:\\:\\$cacheTag has no type specified\\.$#',
     'identifier' => 'missingType.property',
     'count' => 1,
@@ -6606,18 +6234,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/PieChartReportWidget.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$query of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/ProspectInteractionStatusPolarAreaChart.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$query of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/ProspectInteractionTypeDoughnutChart.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$interaction of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
@@ -6688,18 +6304,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentDeliverableTable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$query of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentInteractionStatusPolarAreaChart.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$query of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentInteractionTypeDoughnutChart.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$interaction of anonymous function has no typehint\\.$#',
@@ -6792,12 +6396,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/tests/Tenant/Unit/UniqueLogin/UserStatsTest.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Pest\\\\PendingCalls\\\\TestCall\\|Pest\\\\Support\\\\HigherOrderTapProxy\\:\\:travelTo\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/tests/Tenant/Unit/UniqueLogin/UserUniqueLoginCountLineChartTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Spatie\\\\Invade\\\\Invader\\<object\\>\\|Spatie\\\\Invade\\\\StaticInvader\\:\\:getData\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
@@ -6805,12 +6403,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Unable to resolve the template type T in call to function invade$#',
-    'identifier' => 'argument.templateType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/tests/Tenant/Unit/UniqueLogin/UserUniqueLoginCountLineChartTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TValue in call to function expect$#',
     'identifier' => 'argument.templateType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/report/tests/Tenant/Unit/UniqueLogin/UserUniqueLoginCountLineChartTest.php',
@@ -7380,72 +6972,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/CreateStudent.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dfw\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dual\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$first\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$firstgen\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$full_name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$last\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$preferred\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryEmailAddress\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryPhoneNumber\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sap\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sisid\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/EditStudent.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Anonymous function never returns null so it can be removed from the return type\\.$#',
     'identifier' => 'return.unusedType',
     'count' => 3,
@@ -7470,288 +6996,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ListStudents.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dfw\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dual\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$first\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$firstgen\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$full_name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$last\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$preferred\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryEmailAddress\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryPhoneNumber\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sap\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sisid\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentAlerts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dfw\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentCareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dual\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentCareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$first\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentCareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$firstgen\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentCareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$full_name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentCareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$last\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentCareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$preferred\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentCareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryEmailAddress\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentCareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryPhoneNumber\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentCareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sap\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentCareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sisid\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentCareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentCareTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dfw\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentSubscriptions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dual\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentSubscriptions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$first\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentSubscriptions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$firstgen\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentSubscriptions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$full_name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentSubscriptions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$last\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentSubscriptions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$preferred\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentSubscriptions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryEmailAddress\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentSubscriptions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryPhoneNumber\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentSubscriptions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sap\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentSubscriptions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sisid\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentSubscriptions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentSubscriptions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dfw\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentTasks.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dual\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentTasks.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$first\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentTasks.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$firstgen\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentTasks.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$full_name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentTasks.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$last\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentTasks.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$preferred\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentTasks.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryEmailAddress\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentTasks.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryPhoneNumber\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentTasks.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sap\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentTasks.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sisid\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentTasks.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:getLicenseType\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 2,
@@ -7766,12 +7010,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$model of method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphTo\\<AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable,Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:associate\\(\\) expects AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\|null, Illuminate\\\\Database\\\\Eloquent\\\\Model given\\.$#',
     'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentTasks.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ManageStudentTasks.php',
 ];
@@ -7818,144 +7056,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/StudentCaseManagement.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dfw\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dual\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$first\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$firstgen\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$full_name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$last\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$preferred\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryEmailAddress\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryPhoneNumber\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sap\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sisid\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dfw\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$dual\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$first\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$firstgen\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$full_name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$last\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$preferred\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryEmailAddress\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryPhoneNumber\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sap\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sisid\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:timeline\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
@@ -7976,12 +7076,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Students\\\\Pages\\\\ViewStudentActivityFeed\\:\\:viewRecord\\(\\) has parameter \\$morphReference with no type specified\\.$#',
     'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
 ];
@@ -8203,12 +7297,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:additionalPhoneNumbers\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:alertHistories\\(\\) return type with generic class Staudenmeir\\\\EloquentHasManyDeep\\\\HasManyDeep does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
@@ -8562,24 +7650,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Survey\\\\Providers\\\\SurveyServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Providers/SurveyServiceProvider.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Task\\\\Histories\\\\TaskHistory\\:\\:\\$formatted\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 14,
-    'path' => __DIR__ . '/app-modules/task/src/Filament/Actions/TaskHistoryCreatedViewAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Task\\\\Histories\\\\TaskHistory\\:\\:\\$formatted\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Filament/Actions/TaskHistoryUpdatedViewAction.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:getLicenseType\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 2,
@@ -8613,12 +7683,6 @@ $ignoreErrors[] = [
     'message' => '#^Ternary operator condition is always true\\.$#',
     'identifier' => 'ternary.alwaysTrue',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Filament/Resources/Tasks/Components/TaskViewAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe method call on non\\-nullable type Illuminate\\\\Auth\\\\AuthManager\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 3,
     'path' => __DIR__ . '/app-modules/task/src/Filament/Resources/Tasks/Components/TaskViewAction.php',
 ];
 $ignoreErrors[] = [
@@ -8676,67 +7740,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Task\\\\Models\\\\Task\\:\\:processCustomHistories\\(\\) has parameter \\$new with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Task\\\\Models\\\\Task\\:\\:processCustomHistories\\(\\) has parameter \\$old with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Task\\\\Models\\\\Task\\:\\:processCustomHistories\\(\\) has parameter \\$pending with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Task\\\\Models\\\\Task\\:\\:processHistory\\(\\) has parameter \\$new with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Task\\\\Models\\\\Task\\:\\:processHistory\\(\\) has parameter \\$old with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Task\\\\Models\\\\Task\\:\\:recordHistory\\(\\) has parameter \\$new with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Task\\\\Models\\\\Task\\:\\:recordHistory\\(\\) has parameter \\$old with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Task\\\\Models\\\\Task\\:\\:recordHistory\\(\\) has parameter \\$pending with generic class Illuminate\\\\Support\\\\Collection but does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Task\\\\Models\\\\Task\\:\\:scopeByNextDue\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Task\\\\Models\\\\Task\\:\\:scopeLicensedToEducatable\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Task\\\\Models\\\\Task\\:\\:scopeLicensedToEducatable\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
@@ -8744,12 +7748,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Task\\\\Models\\\\Task\\:\\:scopeOpen\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Task\\\\Models\\\\Task\\:\\:\\$ignoredAttributes type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
 ];
@@ -8778,18 +7776,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/task/src/Observers/TaskHistoryObserver.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Observers/TaskObserver.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe method call on non\\-nullable type AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 5,
-    'path' => __DIR__ . '/app-modules/task/src/Policies/TaskPolicy.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$id\\.$#',
     'identifier' => 'property.notFound',
     'count' => 5,
@@ -8800,12 +7786,6 @@ $ignoreErrors[] = [
     'identifier' => 'argument.templateType',
     'count' => 5,
     'path' => __DIR__ . '/app-modules/task/tests/Tenant/TaskAssignmentTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Faker\\\\Generator\\:\\:catchPhrase\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/team/database/factories/TeamFactory.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Theme\\\\DataTransferObjects\\\\ThemeConfig\\:\\:__construct\\(\\) has parameter \\$colorOverrides with no value type specified in iterable type array\\.$#',
@@ -9000,60 +7980,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/timeline/src/Observers/HistorySubjectObserver.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Timeline\\\\Providers\\\\TimelineServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/timeline/src/Providers/TimelineServiceProvider.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Alert\\\\Histories\\\\AlertHistory\\:\\:\\$created_at\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/timeline/src/Timelines/AlertHistoryTimeline.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Alert\\\\Histories\\\\AlertHistory\\:\\:\\$event\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/timeline/src/Timelines/AlertHistoryTimeline.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Match expression does not handle remaining value\\: mixed$#',
-    'identifier' => 'match.unhandled',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/timeline/src/Timelines/AlertHistoryTimeline.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Task\\\\Histories\\\\TaskHistory\\:\\:\\$created_at\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/timeline/src/Timelines/TaskHistoryTimeline.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Task\\\\Histories\\\\TaskHistory\\:\\:\\$event\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/timeline/src/Timelines/TaskHistoryTimeline.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Match expression does not handle remaining value\\: mixed$#',
-    'identifier' => 'match.unhandled',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/timeline/src/Timelines/TaskHistoryTimeline.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:engagementResponses\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/timeline/tests/Tenant/Listeners/AddRecordToTimelineTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:engagementResponses\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/timeline/tests/Tenant/Listeners/RemoveRecordFromTimelineTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Webhook\\\\Actions\\\\StoreInboundWebhook\\:\\:handle\\(\\) has parameter \\$payload with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -9102,24 +8028,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Actions/Finders/ApplicationModels.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Actions\\\\Finders\\\\ApplicationModels\\:\\:all\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Actions/Finders/ApplicationModels.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$class of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Actions/Finders/ApplicationModels.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$item of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Actions/Finders/ApplicationModels.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Class App\\\\Casts\\\\Encrypted implements generic interface Illuminate\\\\Contracts\\\\Database\\\\Eloquent\\\\CastsAttributes but does not specify its types\\: TGet, TSet$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -9160,12 +8068,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app/DataTransferObjects/Casts/MoneySettingCast.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Exceptions/Handler.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Exceptions\\\\IntegrationException\\:\\:make\\(\\) should return static\\(App\\\\Exceptions\\\\IntegrationException\\) but returns App\\\\Exceptions\\\\IntegrationNotConfigured\\.$#',
@@ -9210,52 +8112,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Filament/Pages/AmazonS3.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Filament\\\\Pages\\\\ProductHealth\\:\\:getNavigationBadge\\(\\) should return string\\|null but returns int\\<1, max\\>\\|null\\.$#',
-    'identifier' => 'return.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Pages/ProductHealth.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$targetDay of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Pages/ProfilePage.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Negated boolean expression is always true\\.$#',
     'identifier' => 'booleanNot.alwaysTrue',
     'count' => 1,
     'path' => __DIR__ . '/app/Filament/Resources/Users/Actions/AssignLicensesBulkAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/Users/Actions/AssignLicensesBulkAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$value of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/Users/Actions/AssignLicensesBulkAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/Users/Actions/AssignRolesBulkAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/Users/Actions/AssignTeamBulkAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/Users/Actions/AssignTeamBulkAction.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method name "showSSOModal" is not in camelCase\\.$#',
@@ -9274,12 +8134,6 @@ $ignoreErrors[] = [
     'identifier' => 'MeliorStan.methodNameNotCamelCase',
     'count' => 1,
     'path' => __DIR__ . '/app/Filament/Resources/Users/Pages/EditUser.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$query of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 6,
-    'path' => __DIR__ . '/app/Filament/Resources/Users/Pages/ListUsers.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseModel\\:\\:\\$case_model_id\\.$#',
@@ -9324,12 +8178,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Filament/Widgets/Notifications.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Http/Controllers/UtilizationMetricsApiController.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Http\\\\Controllers\\\\ViewPublicUserProfileController\\:\\:formatHours\\(\\) has parameter \\$hours with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -9342,52 +8190,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Http/Controllers/ViewPublicUserProfileController.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Livewire\\\\ProspectPipelineKanban\\:\\:getPipelineSubjects\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Livewire\\\\ProspectPipelineKanban\\:\\:getStages\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Livewire\\\\ProspectPipelineKanban\\:\\:moveProspect\\(\\) has parameter \\$fromStage with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Livewire\\\\ProspectPipelineKanban\\:\\:moveProspect\\(\\) has parameter \\$toStage with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Livewire\\\\ProspectPipelineKanban\\:\\:render\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$relations of method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:with\\(\\) expects array\\<array\\|\\(Closure\\(Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\Relation\\<\\*, \\*, \\*\\>\\)\\: mixed\\)\\|string\\>\\|string, array\\{educatablePipelineStages\\: Closure\\(AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany\\)\\: AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany\\} given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property App\\\\Livewire\\\\RenderForm\\:\\:\\$data type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/RenderForm.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\Authenticatable\\:\\:canOrElse\\(\\) has parameter \\$abilities with no value type specified in iterable type iterable\\.$#',
@@ -9456,12 +8262,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Models/Scopes/SetupIsComplete.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:allowedOperators\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:confirmMultifactorAuthentication\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -9498,67 +8298,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Models/User.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:orderableColumns\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:processGlobalSearch\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:processGlobalSearch\\(\\) has parameter \\$data with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:processQuery\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:processQuery\\(\\) has parameter \\$data with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:processQuery\\(\\) has parameter \\$query with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:reGenerateRecoveryCodes\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:scopeAdvancedFilter\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:scopeAdvancedFilter\\(\\) has parameter \\$data with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:scopeAdvancedFilter\\(\\) has parameter \\$query with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\User\\:\\:whiteListColumns\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/User.php',
@@ -9566,12 +8306,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^PHPDoc tag @return contains generic type AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany\\<AdvisingApp\\\\Consent\\\\Models\\\\ConsentAgreement, \\$this\\(App\\\\Models\\\\User\\)\\> but class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany is not generic\\.$#',
     'identifier' => 'generics.notGeneric',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$column of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/User.php',
 ];
@@ -9666,18 +8400,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Support\\\\FilterQueryBuilder\\:\\:isNestedColumn\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Support\\\\FilterQueryBuilder\\:\\:isNestedColumn\\(\\) has parameter \\$column with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method App\\\\Support\\\\FilterQueryBuilder\\:\\:makeFilter\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -9714,26 +8436,8 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$q of anonymous function has no typehint\\.$#',
+    'message' => '#^Parameter \\#1 \\$query of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter name "\\$q" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property App\\\\Support\\\\FilterQueryBuilder\\:\\:\\$model has no type specified\\.$#',
-    'identifier' => 'missingType.property',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property App\\\\Support\\\\FilterQueryBuilder\\:\\:\\$table has no type specified\\.$#',
-    'identifier' => 'missingType.property',
     'count' => 1,
     'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
 ];

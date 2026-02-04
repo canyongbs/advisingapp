@@ -162,10 +162,10 @@ class ListUsers extends ListRecords
                             return;
                         }
 
-                        $query->when(in_array('unassigned', $data['values']), function ($query) {
+                        $query->when(in_array('unassigned', $data['values']), function (Builder $query) {
                             $query->whereDoesntHave('team');
                         })
-                            ->{in_array('unassigned', $data['values']) ? 'orWhereHas' : 'whereHas'}('team', function ($query) use ($data) {
+                            ->{in_array('unassigned', $data['values']) ? 'orWhereHas' : 'whereHas'}('team', function (Builder $query) use ($data) {
                                 $query->whereIn('team_id', array_filter($data['values'], fn ($value) => $value !== 'unassigned'));
                             });
                     })
@@ -189,10 +189,10 @@ class ListUsers extends ListRecords
                                 return;
                             }
 
-                            $query->when(in_array('none', $data['values']), function ($query) {
+                            $query->when(in_array('none', $data['values']), function (Builder $query) {
                                 $query->whereDoesntHave('roles');
                             })
-                                ->{in_array('none', $data['values']) ? 'orWhereHas' : 'whereHas'}('roles', function ($query) use ($data) {
+                                ->{in_array('none', $data['values']) ? 'orWhereHas' : 'whereHas'}('roles', function (Builder $query) use ($data) {
                                     $query->whereIn('id', array_filter($data['values'], fn ($value) => $value !== 'none'));
                                 });
                         }
@@ -219,10 +219,10 @@ class ListUsers extends ListRecords
                                 return;
                             }
 
-                            $query->when(in_array('no_assigned_license', $data['values']), function ($query) {
+                            $query->when(in_array('no_assigned_license', $data['values']), function (Builder $query) {
                                 $query->whereDoesntHave('licenses');
                             })
-                                ->{in_array('no_assigned_license', $data['values']) ? 'orWhereHas' : 'whereHas'}('licenses', function ($query) use ($data) {
+                                ->{in_array('no_assigned_license', $data['values']) ? 'orWhereHas' : 'whereHas'}('licenses', function (Builder $query) use ($data) {
                                     $query->whereIn('type', array_filter($data['values'], fn ($value) => $value !== 'no_assigned_license'));
                                 });
                         }

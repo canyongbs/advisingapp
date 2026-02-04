@@ -40,7 +40,6 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
 use App\Models\User;
 use Closure;
-use Exception;
 use Filament\Actions\BulkAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Toggle;
@@ -84,9 +83,8 @@ class AssignLicensesBulkAction extends BulkAction
                     ->map(fn (LicenseType $licenseType): Toggle => $this->getToggleForLicenseType($licenseType)),
             ])
             ->action(function (array $data, Collection $records) {
-                $records->each(function ($record) use ($data) {
-                    throw_unless($record instanceof User, new Exception('Record must be of type user.'));
-
+                /** @var Collection <int, User> $records */
+                $records->each(function (User $record) use ($data) {
                     collect($this->licenseTypes)->each(function (LicenseType $licenseType) use ($record, $data) {
                         if ($data[$licenseType->value]) {
                             $record->grantLicense($licenseType);
@@ -116,7 +114,7 @@ class AssignLicensesBulkAction extends BulkAction
             ->hintColor(fn (Get $get): string => $get("{$licenseType->value}_count") > 0 ? 'success' : 'danger')
             ->afterStateUpdated($this->getAfterStateUpdatedCallbackForLicenseType($licenseType))
             ->rules([
-                fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($licenseType, $get) {
+                fn (Get $get): Closure => function (string $attribute, string $value, Closure $fail) use ($licenseType, $get) {
                     if ($get("{$licenseType->value}_count") < 0) {
                         $fail("You do not have enough seats for {$licenseType->getLabel()}");
                     }

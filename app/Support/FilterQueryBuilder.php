@@ -36,14 +36,15 @@
 
 namespace App\Support;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class FilterQueryBuilder
 {
-    protected $model;
+    protected Model $model;
 
-    protected $table;
+    protected string $table;
 
     public function apply($query, $data)
     {
@@ -106,10 +107,10 @@ class FilterQueryBuilder
             $callable = Str::camel($relation);
             $filter['match'] = 'and';
 
-            $query->orWhereHas(Str::camel($callable), function ($q) use ($filter) {
+            $query->orWhereHas(Str::camel($callable), function ($query) use ($filter) {
                 $this->{Str::camel($filter['operator'])}(
                     $filter,
-                    $q
+                    $query
                 );
             });
         } else {
@@ -121,7 +122,7 @@ class FilterQueryBuilder
         }
     }
 
-    protected function isNestedColumn($column)
+    protected function isNestedColumn(string $column): bool
     {
         return strpos($column, '.') !== false;
     }

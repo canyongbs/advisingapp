@@ -37,6 +37,8 @@
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Listeners\AddRecordToTimeline;
 use AdvisingApp\Timeline\Models\Timeline;
@@ -54,6 +56,7 @@ it('busts the timeline cache for the associated educatable', function () {
     );
 
     // When we create another timelineable record
+    assert($initialResponse->sender instanceof Student || $initialResponse->sender instanceof Prospect);
     $subsequentResponse = $initialResponse->sender->engagementResponses()->createQuietly([
         'type' => EngagementResponseType::Sms,
         'content' => 'This is a test response',

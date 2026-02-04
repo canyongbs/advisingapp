@@ -283,7 +283,7 @@ abstract class ProfilePage extends Page
 
                             collect(['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'])
                                 ->filter(fn ($targetDay) => $targetDay !== $day)
-                                ->each(function ($targetDay) use ($get, $set, $key, $start, $end) {
+                                ->each(function (string $targetDay) use ($get, $set, $key, $start, $end) {
                                     if ($get("{$key}.{$targetDay}.enabled") === false) {
                                         return;
                                     }

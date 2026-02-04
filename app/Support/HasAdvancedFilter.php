@@ -36,16 +36,23 @@
 
 namespace App\Support;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Validation\ValidationException;
 
 trait HasAdvancedFilter
 {
-    public function scopeAdvancedFilter($query, $data)
+    /**
+     * @param array<mixed> $data
+     */
+    public function scopeAdvancedFilter(Builder $query, array $data): Builder
     {
         return $this->processQuery($query, $data);
     }
 
-    public function processQuery($query, $data)
+    /**
+     * @param array<mixed> $data
+     */
+    public function processQuery(Builder $query, array $data): Builder
     {
         $data = $this->processGlobalSearch($data);
 
@@ -73,24 +80,29 @@ trait HasAdvancedFilter
         return (new FilterQueryBuilder())->apply($query, $data);
     }
 
-    protected function orderableColumns()
+    protected function orderableColumns(): string
     {
         return implode(',', $this->orderable);
     }
 
-    protected function whiteListColumns()
+    protected function whiteListColumns(): string
     {
         return implode(',', $this->filterable);
     }
 
-    protected function allowedOperators()
+    protected function allowedOperators(): string
     {
         return implode(',', [
             'contains',
         ]);
     }
 
-    protected function processGlobalSearch($data)
+    /**
+     * @param array<mixed> $data
+     *
+     * @return array<mixed>
+     */
+    protected function processGlobalSearch(array $data): array
     {
         if (isset($data['f']) || ! isset($data['s'])) {
             return $data;
@@ -98,7 +110,7 @@ trait HasAdvancedFilter
 
         $data['filter_match'] = 'or';
 
-        $data['f'] = array_map(function ($column) use ($data) {
+        $data['f'] = array_map(function (string $column) use ($data) {
             return [
                 'column' => $column,
                 'operator' => 'contains',
