@@ -110,4 +110,12 @@ enum GroupModel: string implements HasLabel
             static::Student => StudentGroupSubjectImporter::class,
         };
     }
+
+    public function getPluralLabel(): string
+    {
+        return match ($this) {
+            static::Prospect => 'prospects',
+            static::Student => 'students',
+        };
+    }
 }
