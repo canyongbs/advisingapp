@@ -43,6 +43,7 @@ use AdvisingApp\Timeline\Livewire\Concerns\HasTimelineRecords;
 use BackedEnum;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
+use Illuminate\Database\Eloquent\Model;
 
 abstract class TimelinePage extends Page
 {
@@ -58,7 +59,7 @@ abstract class TimelinePage extends Page
 
     public string $noMoreRecordsMessage = 'You have reached the end of this timeline.';
 
-    public function mount($record): void
+    public function mount(Model $record): void
     {
         $this->recordModel = $this->record = $this->resolveRecord($record);
     }

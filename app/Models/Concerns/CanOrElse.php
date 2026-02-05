@@ -42,6 +42,9 @@ trait CanOrElse
 {
     // For now, this is assuming the operator is always 'or'
     // Though we may also want to provide support for 'and'
+    /**
+     * @param iterable<string>|string $abilities
+     */
     public function canOrElse(iterable|string $abilities, string $denyResponse, mixed $arguments = []): Response
     {
         $abilities = is_iterable($abilities) ? $abilities : [$abilities];

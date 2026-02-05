@@ -44,6 +44,7 @@ trait CanLoadTimelineRecords
 {
     public int $recordsPerPage = 5;
 
+    /** @var Collection<int, Timeline> $timelineRecords */
     public Collection $timelineRecords;
 
     public ?string $nextCursor = null;

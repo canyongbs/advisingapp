@@ -51,6 +51,9 @@ class SliderSurveyFieldBlock extends FormFieldBlock
         return 'slider';
     }
 
+    /**
+     * @return array<mixed>
+     */
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
         return [
@@ -61,6 +64,9 @@ class SliderSurveyFieldBlock extends FormFieldBlock
         ];
     }
 
+    /**
+     * @return array<string>
+     */
     public static function getValidationRules(SubmissibleField $field): array
     {
         return [

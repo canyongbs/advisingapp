@@ -80,6 +80,11 @@ class ViewPublicUserProfileController extends Controller
         ]);
     }
 
+    /**
+     * @param array<mixed>|null $hours
+     *
+     * @return Collection<string, mixed>
+     */
     private function formatHours(?array $hours): Collection
     {
         return collect($hours)
