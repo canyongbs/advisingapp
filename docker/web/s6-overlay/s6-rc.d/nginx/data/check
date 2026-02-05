@@ -1,10 +1,22 @@
 #!/command/with-contenv bash
-response=$(curl -s -o /dev/null -w "%{http_code}" -L --insecure http://localhost/ping)
 
-if [[ $response == "200" ]]; then
-	exit 0
-else
-	echo "❌ There seems to be a failure in checking the web server. Here's the response:"
-	echo "$response"
-	exit 1
-fi
+max_attempts=3
+attempt=1
+
+while [ $attempt -le $max_attempts ]; do
+	response=$(curl -s -o /dev/null -w "%{http_code}" -L --insecure http://localhost/ping)
+	
+	if [[ $response == "200" ]]; then
+        echo "✅ Web server is responding correctly."
+		exit 0
+	fi
+	
+	if [ $attempt -lt $max_attempts ]; then
+        echo "⚠️ Web server not responding correctly (HTTP $response). Retrying... ($attempt/$max_attempts)"
+		sleep 1
+	fi
+	((attempt++))
+done
+
+echo "❌ There seems to be a failure in checking the web server after $max_attempts attempts."
+exit 1
