@@ -73,7 +73,7 @@ it('it properly subscriptions the creator and assigned Users to the Subscribable
     $subscriptions = $task->createdBy->subscriptions;
 
     expect($subscriptions->count())->toBe(1)
-        ->and($subscriptions->first()->subscribable->getKey())->toBe($task->concern->id);
+        ->and($subscriptions->first()->subscribable->getKey())->toBe($task->concern->getKey());
 
     $task = Task::factory()
         ->assigned()
