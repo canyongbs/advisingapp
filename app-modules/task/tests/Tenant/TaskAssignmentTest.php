@@ -59,7 +59,7 @@ it('sends the proper notification to the assigned User', function () {
 
     Notification::assertSentTo($newAssignedUser, TaskAssignedToUserNotification::class);
     Notification::assertNotSentTo($originalAssignedUser, TaskAssignedToUserNotification::class);
-});
+}); 
 
 it('it properly subscriptions the creator and assigned Users to the Subscribable', function () {
     $task = Task::factory()
