@@ -31,13 +31,19 @@
 
 </COPYRIGHT>
 --}}
+
+@use('App\Features\FormRepeaterFeature')
+@php
+    $optionsData =
+        FormRepeaterFeature::active() && array_is_list($options) ? collect($options)->pluck('label') : $options;
+@endphp
 <x-form::blocks.field-wrapper
     :$label
     :$isRequired
     :description="$description ?? null"
 >
     <div class="grid gap-y-2">
-        @foreach ($options as $option)
+        @foreach ($optionsData as $option)
             <div class="flex items-center gap-2">
                 <div class="h-3 w-3 rounded border border-gray-500"></div>
                 <div class="text-sm font-medium leading-6">
