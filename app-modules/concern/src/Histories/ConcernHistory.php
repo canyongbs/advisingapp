@@ -75,10 +75,6 @@ class ConcernHistory extends History implements ProvidesATimeline
      */
     public function getFormattedValueForKey(string $key): array
     {
-        $status = ConcernStatus::find($this->old[$key]);
-
-        assert($status instanceof ConcernStatus);
-
         return match ($key) {
             'status' => [
                 'key' => 'Status',
@@ -87,10 +83,8 @@ class ConcernHistory extends History implements ProvidesATimeline
             ],
             'status_id' => [
                 'key' => 'Status',
-                'old' => array_key_exists($key, $this->old)
-                  ? $status->name
-                  : null,
-                'new' => $status->name,
+                'old' => array_key_exists($key, $this->old) ? ConcernStatus::find($this->old[$key])?->name : null,
+                'new' => ConcernStatus::find($this->new[$key])?->name,
             ],
             'severity' => [
                 'key' => 'Severity',
