@@ -58,7 +58,7 @@ class CaseResource extends Resource
     protected static ?string $modelLabel = 'Case';
 
     // TODO: Look into whether or not we should just delete this resource
-    protected static bool $shouldRegisterNavigation = true;
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function shouldShowFormSubmission(Page $page): bool
     {
