@@ -43,6 +43,9 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 #[MapInputName(SnakeCaseMapper::class)]
 class ThemeConfig extends Data
 {
+    /**
+     * @param array<mixed> $colorOverrides
+     */
     public function __construct(
         public array $colorOverrides = [],
         public bool $hasDarkMode = true,

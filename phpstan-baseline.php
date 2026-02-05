@@ -1836,12 +1836,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/CaseResource.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\CaseManagement\\\\Filament\\\\Resources\\\\Cases\\\\Pages\\\\CaseTimeline\\:\\:\\$modelsToTimeline type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/src/Filament/Resources/Cases/Pages/CaseTimeline.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Unable to resolve the template type TGroupKey in call to method Illuminate\\\\Support\\\\Collection\\<int,AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseStatus\\>\\:\\:groupBy\\(\\)$#',
     'identifier' => 'argument.templateType',
     'count' => 1,
@@ -3918,32 +3912,8 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/CreateGroup.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$filters\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/EditGroup.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$model\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/EditGroup.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/EditGroup.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$user\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/EditGroup.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:subjects\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
+    'message' => '#^Call to static method make\\(\\) on an unknown class Filament\\\\Schemas\\\\Components\\\\Callout\\.$#',
+    'identifier' => 'class.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/EditGroup.php',
 ];
@@ -5334,6 +5304,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/portal/src/Enums/PortalType.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Access to an undefined property AdvisingApp\\\\ResourceHub\\\\Models\\\\ResourceHubArticle\\:\\:\\$has_table_of_contents\\.$#',
+    'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/portal/src/Http/Controllers/ResourceHub/ResourceHubPortalArticleController.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$value of static method Illuminate\\\\Support\\\\Facades\\\\Hash\\:\\:check\\(\\) expects string, int given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
@@ -5660,36 +5636,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:timeline\\(\\)\\.$#',
     'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ViewProspectActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\Pages\\\\ViewProspectActivityFeed\\:\\:viewRecord\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ViewProspectActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\Pages\\\\ViewProspectActivityFeed\\:\\:viewRecord\\(\\) has parameter \\$key with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ViewProspectActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\Pages\\\\ViewProspectActivityFeed\\:\\:viewRecord\\(\\) has parameter \\$morphReference with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ViewProspectActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\Pages\\\\ViewProspectActivityFeed\\:\\:\\$modelsToTimeline type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ViewProspectActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\Pages\\\\ViewProspectActivityFeed\\:\\:\\$timelineRecords with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Pages/ViewProspectActivityFeed.php',
 ];
@@ -6900,36 +6846,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableActivityFeedWidget.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Educatables\\\\Widgets\\\\EducatableActivityFeedWidget\\:\\:viewRecord\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableActivityFeedWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Educatables\\\\Widgets\\\\EducatableActivityFeedWidget\\:\\:viewRecord\\(\\) has parameter \\$key with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableActivityFeedWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Educatables\\\\Widgets\\\\EducatableActivityFeedWidget\\:\\:viewRecord\\(\\) has parameter \\$morphReference with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableActivityFeedWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Educatables\\\\Widgets\\\\EducatableActivityFeedWidget\\:\\:\\$modelsToTimeline type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableActivityFeedWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Educatables\\\\Widgets\\\\EducatableActivityFeedWidget\\:\\:\\$timelineRecords with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableActivityFeedWidget.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Educatables\\\\Widgets\\\\EducatableCareTeamWidget\\:\\:getCareTeam\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -7058,36 +6974,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:timeline\\(\\)\\.$#',
     'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Students\\\\Pages\\\\ViewStudentActivityFeed\\:\\:viewRecord\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Students\\\\Pages\\\\ViewStudentActivityFeed\\:\\:viewRecord\\(\\) has parameter \\$key with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Students\\\\Pages\\\\ViewStudentActivityFeed\\:\\:viewRecord\\(\\) has parameter \\$morphReference with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Students\\\\Pages\\\\ViewStudentActivityFeed\\:\\:\\$modelsToTimeline type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Students\\\\Pages\\\\ViewStudentActivityFeed\\:\\:\\$timelineRecords with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
 ];
@@ -7440,30 +7326,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/survey/src/Filament/Blocks/LikertScaleSurveyBlock.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Survey\\\\Filament\\\\Blocks\\\\RatingScaleSurveyFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Filament/Blocks/RatingScaleSurveyFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Survey\\\\Filament\\\\Blocks\\\\RatingScaleSurveyFieldBlock\\:\\:getValidationRules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Filament/Blocks/RatingScaleSurveyFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Survey\\\\Filament\\\\Blocks\\\\SliderSurveyFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Filament/Blocks/SliderSurveyFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Survey\\\\Filament\\\\Blocks\\\\SliderSurveyFieldBlock\\:\\:getValidationRules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Filament/Blocks/SliderSurveyFieldBlock.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Variable \\$block in PHPDoc tag @var does not exist\\.$#',
     'identifier' => 'varTag.variableNotFound',
     'count' => 1,
@@ -7776,24 +7638,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/task/src/Observers/TaskHistoryObserver.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 5,
-    'path' => __DIR__ . '/app-modules/task/tests/Tenant/TaskAssignmentTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TAndValue in call to method Pest\\\\Expectation\\<int\\<0, max\\>\\|null\\>\\:\\:and\\(\\)$#',
-    'identifier' => 'argument.templateType',
-    'count' => 5,
-    'path' => __DIR__ . '/app-modules/task/tests/Tenant/TaskAssignmentTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Theme\\\\DataTransferObjects\\\\ThemeConfig\\:\\:__construct\\(\\) has parameter \\$colorOverrides with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/theme/src/DataTransferObjects/ThemeConfig.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Theme\\\\Settings\\\\ThemeSettings\\:\\:\\$tenant_id\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -7844,42 +7688,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:timeline\\(\\)\\.$#',
     'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/timeline/src/Filament/Pages/TimelinePage.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Timeline\\\\Filament\\\\Pages\\\\TimelinePage\\:\\:mount\\(\\) has parameter \\$record with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/timeline/src/Filament/Pages/TimelinePage.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Timeline\\\\Filament\\\\Pages\\\\TimelinePage\\:\\:viewRecord\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/timeline/src/Filament/Pages/TimelinePage.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Timeline\\\\Filament\\\\Pages\\\\TimelinePage\\:\\:viewRecord\\(\\) has parameter \\$key with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/timeline/src/Filament/Pages/TimelinePage.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Timeline\\\\Filament\\\\Pages\\\\TimelinePage\\:\\:viewRecord\\(\\) has parameter \\$morphReference with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/timeline/src/Filament/Pages/TimelinePage.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Timeline\\\\Filament\\\\Pages\\\\TimelinePage\\:\\:\\$modelsToTimeline type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/timeline/src/Filament/Pages/TimelinePage.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Timeline\\\\Filament\\\\Pages\\\\TimelinePage\\:\\:\\$timelineRecords with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/timeline/src/Filament/Pages/TimelinePage.php',
 ];
@@ -7980,12 +7788,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/timeline/src/Observers/HistorySubjectObserver.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Webhook\\\\Actions\\\\StoreInboundWebhook\\:\\:handle\\(\\) has parameter \\$payload with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/webhook/src/Actions/StoreInboundWebhook.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter name "signingCertURL" is not in camelCase\\.$#',
     'identifier' => 'MeliorStan.parameterNameNotCamelCase',
     'count' => 1,
@@ -8070,48 +7872,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/DataTransferObjects/Casts/MoneySettingCast.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Exceptions\\\\IntegrationException\\:\\:make\\(\\) should return static\\(App\\\\Exceptions\\\\IntegrationException\\) but returns App\\\\Exceptions\\\\IntegrationNotConfigured\\.$#',
-    'identifier' => 'return.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Exceptions/IntegrationException.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Exceptions\\\\IntegrationException\\:\\:make\\(\\) should return static\\(App\\\\Exceptions\\\\IntegrationException\\) but returns App\\\\Exceptions\\\\IntegrationNotEnabled\\.$#',
-    'identifier' => 'return.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Exceptions/IntegrationException.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Filament\\\\Pages\\\\AmazonS3\\:\\:mutateFormDataBeforeFill\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Pages/AmazonS3.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Filament\\\\Pages\\\\AmazonS3\\:\\:mutateFormDataBeforeFill\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Pages/AmazonS3.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Filament\\\\Pages\\\\AmazonS3\\:\\:mutateFormDataBeforeSave\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Pages/AmazonS3.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Filament\\\\Pages\\\\AmazonS3\\:\\:mutateFormDataBeforeSave\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Pages/AmazonS3.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property App\\\\Filament\\\\Pages\\\\AmazonS3\\:\\:\\$data type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Pages/AmazonS3.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Negated boolean expression is always true\\.$#',
     'identifier' => 'booleanNot.alwaysTrue',
     'count' => 1,
@@ -8178,28 +7938,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Filament/Widgets/Notifications.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Http\\\\Controllers\\\\ViewPublicUserProfileController\\:\\:formatHours\\(\\) has parameter \\$hours with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Http/Controllers/ViewPublicUserProfileController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Http\\\\Controllers\\\\ViewPublicUserProfileController\\:\\:formatHours\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Http/Controllers/ViewPublicUserProfileController.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$relations of method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:with\\(\\) expects array\\<array\\|\\(Closure\\(Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\Relation\\<\\*, \\*, \\*\\>\\)\\: mixed\\)\\|string\\>\\|string, array\\{educatablePipelineStages\\: Closure\\(AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany\\)\\: AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany\\} given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Models\\\\Authenticatable\\:\\:canOrElse\\(\\) has parameter \\$abilities with no value type specified in iterable type iterable\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/Authenticatable.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\Authenticatable\\:\\:roles\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany does not specify its types\\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \\(2\\-4 required\\)$#',
@@ -8224,12 +7966,6 @@ $ignoreErrors[] = [
     'identifier' => 'argument.templateType',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/Authenticatable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Class App\\\\Models\\\\BaseModel uses generic trait Illuminate\\\\Database\\\\Eloquent\\\\Factories\\\\HasFactory but does not specify its types\\: TFactory$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/BaseModel.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\Scopes\\\\ExcludeConvertedProspects\\:\\:__invoke\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',

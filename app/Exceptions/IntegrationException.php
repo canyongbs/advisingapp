@@ -49,7 +49,7 @@ class IntegrationException extends Exception
         parent::__construct();
     }
 
-    public static function make(Integration $integration): static
+    public static function make(Integration $integration): static|IntegrationNotConfigured|IntegrationNotEnabled
     {
         if ($integration->isNotConfigured()) {
             return new IntegrationNotConfigured($integration);

@@ -38,13 +38,16 @@ namespace App\Models;
 
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 abstract class BaseModel extends Model
 {
+    /** @use HasFactory<Factory> */
     use HasFactory;
+
     use HasUuids;
     use UsesTenantConnection;
 

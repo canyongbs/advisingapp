@@ -73,7 +73,7 @@ it('it properly subscriptions the creator and assigned Users to the Subscribable
     $subscriptions = $task->createdBy->subscriptions;
 
     expect($subscriptions->count())->toBe(1)
-        ->and($subscriptions->first()->subscribable->id)->toBe($task->concern->id);
+        ->and($subscriptions->first()->subscribable->getKey())->toBe($task->concern->getKey());
 
     $task = Task::factory()
         ->assigned()
@@ -85,12 +85,12 @@ it('it properly subscriptions the creator and assigned Users to the Subscribable
     $creatorSubscriptions = $task->createdBy->subscriptions;
 
     expect($creatorSubscriptions->count())->toBe(1)
-        ->and($creatorSubscriptions->first()->subscribable->id)->toBe($task->concern->id);
+        ->and($creatorSubscriptions->first()->subscribable->getKey())->toBe($task->concern->id);
 
     $assignedToSubscriptions = $task->assignedTo->subscriptions;
 
     expect($assignedToSubscriptions->count())->toBe(1)
-        ->and($assignedToSubscriptions->first()->subscribable->id)->toBe($task->concern->id);
+        ->and($assignedToSubscriptions->first()->subscribable->getKey())->toBe($task->concern->id);
 
     $newAssignedUser = User::factory()->create();
 
@@ -104,10 +104,10 @@ it('it properly subscriptions the creator and assigned Users to the Subscribable
     $creatorSubscriptions = $task->createdBy->subscriptions;
 
     expect($creatorSubscriptions->count())->toBe(1)
-        ->and($creatorSubscriptions->first()->subscribable->id)->toBe($task->concern->id);
+        ->and($creatorSubscriptions->first()->subscribable->getKey())->toBe($task->concern->id);
 
     $assignedToSubscriptions = $task->assignedTo->subscriptions;
 
     expect($assignedToSubscriptions->count())->toBe(1)
-        ->and($assignedToSubscriptions->first()->subscribable->id)->toBe($task->concern->id);
+        ->and($assignedToSubscriptions->first()->subscribable->getKey())->toBe($task->concern->id);
 });
