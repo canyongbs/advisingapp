@@ -146,7 +146,7 @@ class StudentDeliverableTable extends BaseWidget
                     ->falseIcon('heroicon-o-x-circle')
                     ->trueColor('success')
                     ->falseColor('danger')
-                    ->state(fn (Student $record) => $record->canReceiveSms()),
+                    ->state(fn (Student $record) => filled($record->primaryPhoneNumber?->number) && $record->primaryPhoneNumber->can_receive_sms),
                 IconColumn::make('smsOptOut')
                     ->label('SMS Opt Out')
                     ->boolean()
@@ -168,25 +168,13 @@ class StudentDeliverableTable extends BaseWidget
                             return $query
                                 ->where(function (Builder $query) {
                                     $query->whereDoesntHave('primaryEmailAddress')
-                                        ->orWhereHas('primaryEmailAddress', function (Builder $query1) {
-                                            $query1->where(function (Builder $query2) {
-                                                $query2->has('bounced')
-                                                    ->orWhereHas('optedOut', function (Builder $query3) {
-                                                        $query3->where('status', EmailAddressOptInOptOutStatus::OptedOut);
-                                                    });
-                                            });
-                                        });
+                                        ->orWhereHas('primaryEmailAddress.bounced');
                                 });
                         }
 
                         if (($data['value'] ?? null) === 'healthy') {
                             return $query->whereHas('primaryEmailAddress', function (Builder $query1) {
-                                $query1->where(function (Builder $query2) {
-                                    $query2->doesntHave('bounced')
-                                        ->orWhereHas('optedOut', function (Builder $query3) {
-                                            $query3->where('status', EmailAddressOptInOptOutStatus::OptedIn);
-                                        });
-                                });
+                                $query1->whereDoesntHave('bounced');
                             });
                         }
 
@@ -202,12 +190,14 @@ class StudentDeliverableTable extends BaseWidget
                         if (($data['value'] ?? null) === 'unhealthy') {
                             return $query
                                 ->where(function (Builder $query) {
-                                    $query->whereHas('primaryPhoneNumber', function (Builder $query1) {
-                                        $query1->where(function (Builder $query2) {
-                                            $query2->where('can_receive_sms', false)
-                                                ->orWhereHas('smsOptOut');
+                                    $query
+                                        ->whereDoesntHave('primaryPhoneNumber')
+                                        ->orWhereHas('primaryPhoneNumber', function (Builder $query1) {
+                                            $query1->where(function (Builder $query2) {
+                                                $query2->where('can_receive_sms', false)
+                                                    ->orWhereHas('smsOptOut');
+                                            });
                                         });
-                                    })->orWhereDoesntHave('primaryPhoneNumber');
                                 });
                         }
 

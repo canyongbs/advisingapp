@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -94,14 +93,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
             ? Student::query()
                 ->where(function (Builder $query) {
                     $query->whereDoesntHave('primaryEmailAddress')
-                        ->orWhereHas('primaryEmailAddress', function (Builder $query1) {
-                            $query1->where(function (Builder $query2) {
-                                $query2->has('bounced')
-                                    ->orWhereHas('optedOut', function (Builder $query3) {
-                                        $query3->where('status', EmailAddressOptInOptOutStatus::OptedOut);
-                                    });
-                            });
-                        });
+                        ->orWhereHas('primaryEmailAddress.bounced');
                 })
                 ->when(
                     $startDate && $endDate,
@@ -118,14 +110,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
                 fn () => Student::query()
                     ->where(function (Builder $query) {
                         $query->whereDoesntHave('primaryEmailAddress')
-                            ->orWhereHas('primaryEmailAddress', function (Builder $query1) {
-                                $query1->where(function (Builder $query2) {
-                                    $query2->has('bounced')
-                                        ->orWhereHas('optedOut', function (Builder $query3) {
-                                            $query3->where('status', EmailAddressOptInOptOutStatus::OptedOut);
-                                        });
-                                });
-                            });
+                            ->orWhereHas('primaryEmailAddress.bounced');
                     })->count()
             );
 
@@ -150,12 +135,14 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
         $studentsPrimaryPhoneUnhealthy = $shouldBypassCache
             ? Student::query()
                 ->where(function (Builder $query) {
-                    $query->whereHas('primaryPhoneNumber', function (Builder $query1) {
-                        $query1->where(function (Builder $query2) {
-                            $query2->where('can_receive_sms', false)
-                                ->orWhereHas('smsOptOut');
+                    $query
+                        ->whereDoesntHave('primaryPhoneNumber')
+                        ->orWhereHas('primaryPhoneNumber', function (Builder $query1) {
+                            $query1->where(function (Builder $query2) {
+                                $query2->where('can_receive_sms', false)
+                                    ->orWhereHas('smsOptOut');
+                            });
                         });
-                    })->orWhereDoesntHave('primaryPhoneNumber');
                 })
                 ->when(
                     $startDate && $endDate,
@@ -170,12 +157,14 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
                 'unhealthy-phone-students-count',
                 now()->addHours(24),
                 fn () => Student::query()->where(function (Builder $query) {
-                    $query->whereHas('primaryPhoneNumber', function (Builder $query1) {
-                        $query1->where(function (Builder $query2) {
-                            $query2->where('can_receive_sms', false)
-                                ->orWhereHas('smsOptOut');
+                    $query
+                        ->whereDoesntHave('primaryPhoneNumber')
+                        ->orWhereHas('primaryPhoneNumber', function (Builder $query1) {
+                            $query1->where(function (Builder $query2) {
+                                $query2->where('can_receive_sms', false)
+                                    ->orWhereHas('smsOptOut');
+                            });
                         });
-                    })->orWhereDoesntHave('primaryPhoneNumber');
                 })->count()
             );
 

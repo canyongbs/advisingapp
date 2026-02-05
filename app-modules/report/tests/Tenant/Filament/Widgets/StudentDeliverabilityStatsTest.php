@@ -37,9 +37,7 @@
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentDeliverabilityStats;
-use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
-use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Number;
@@ -61,17 +59,13 @@ it('returns correct percentages of students with Email missing, Email unhealthy,
     $student3->primaryPhoneNumber->update(['can_receive_sms' => false]);
 
     $student4 = Student::factory()->state(['created_at_source' => $endDate])->create();
-    EmailAddressOptInOptOut::factory()->create([
-        'address' => $student4->primaryEmailAddress->address,
-        'status' => EmailAddressOptInOptOutStatus::OptedOut,
-    ]);
     SmsOptOutPhoneNumber::factory()->create(['number' => $student4->primaryPhoneNumber->number]);
 
     $totalStudents = Student::query()
         ->whereBetween('created_at_source', [$startDate, $endDate])
         ->count();
     $emailMissingCount = 1;
-    $emailUnhealthyCount = 3;
+    $emailUnhealthyCount = 2;
     $phoneMissingCount = 1;
     $phoneUnhealthyCount = 3;
 
