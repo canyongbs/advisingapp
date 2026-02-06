@@ -92,8 +92,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
         $studentsPrimaryEmailUnhealthy = $shouldBypassCache
             ? Student::query()
                 ->where(function (Builder $query) {
-                    $query->whereDoesntHave('primaryEmailAddress')
-                        ->orWhereHas('primaryEmailAddress.bounced');
+                    $query->isPrimaryEmailUnhealthy();
                 })
                 ->when(
                     $startDate && $endDate,
@@ -108,10 +107,8 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
                 'unhealthy-email-students-count',
                 now()->addHours(24),
                 fn () => Student::query()
-                    ->where(function (Builder $query) {
-                        $query->whereDoesntHave('primaryEmailAddress')
-                            ->orWhereHas('primaryEmailAddress.bounced');
-                    })->count()
+                    ->isPrimaryEmailUnhealthy()
+                    ->count()
             );
 
         $studentsPrimaryPhoneMissing = $shouldBypassCache
