@@ -94,10 +94,10 @@ class RadioFormFieldBlock extends FormFieldBlock
 
     public static function getValidationRules(SubmissibleField $field): array
     {
-        /** @var array<string, string> */
-        $configOptions = $field->config['options'];
-
         if (! FormRepeaterFeature::active()) {
+            /** @var array<string, string> */
+            $configOptions = $field->config['options'];
+
             return [
                 'string',
                 'in:' . collect($configOptions)->keys()->join(','),
