@@ -36,7 +36,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Features\ExportHubFeature;
 use App\Models\Export;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -71,7 +70,7 @@ class ExportHubPage extends Page implements HasForms, HasTable
         $user = auth()->user();
         assert($user instanceof User);
 
-        return ExportHubFeature::active() && $user->can('export_hub.view-any');
+        return $user->can('export_hub.view-any');
     }
 
     public function table(Table $table): Table
