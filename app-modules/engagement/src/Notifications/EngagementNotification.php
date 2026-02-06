@@ -51,7 +51,6 @@ use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
-use App\Features\EngagementDispatchFailedAtFeature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
@@ -113,11 +112,9 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
             app('sentry')->captureException($exception);
         }
 
-        if (EngagementDispatchFailedAtFeature::active()) {
-            $this->engagement->update([
-                'dispatch_failed_at' => now(),
-            ]);
-        }
+        $this->engagement->update([
+            'dispatch_failed_at' => now(),
+        ]);
 
         if (is_null($this->engagement->engagement_batch_id)) {
             $this->engagement->user->notify(new EngagementFailedNotification($this->engagement));
