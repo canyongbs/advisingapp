@@ -53,7 +53,11 @@ class ResourceHubPortalArticleController extends Controller
         $content = tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details, toc: true, maxDepth: 3);
 
         if ($article->has_table_of_contents) {
-            $content = '<h2>Table of Contents</h2><div class="prose-toc">' . tiptap_converter()->asTOC($article->article_details) . '</div>' . $content;
+            $tableOfContents = tiptap_converter()->asTOC($article->article_details);
+
+            if (filled($tableOfContents)) {
+                $content = '<h2>Table of Contents</h2><div class="prose-toc">' . $tableOfContents . '</div>' . $content;
+            }
         }
 
         return response()->json([
