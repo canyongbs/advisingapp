@@ -164,18 +164,23 @@ class StudentDeliverableTable extends BaseWidget
                         'healthy' => 'Healthy',
                     ])
                     ->query(function (Builder $query, array $data): Builder {
+                        /** @var Builder<Student> $query */
                         if (($data['value'] ?? null) === 'unhealthy') {
-                            return $query
-                                ->where(function (Builder $query) {
-                                    $query->whereDoesntHave('primaryEmailAddress')
-                                        ->orWhereHas('primaryEmailAddress.bounced');
-                                });
+                            return $query->isPrimaryEmailUnhealthy();
                         }
 
                         if (($data['value'] ?? null) === 'healthy') {
-                            return $query->whereHas('primaryEmailAddress', function (Builder $query1) {
-                                $query1->whereDoesntHave('bounced');
-                            });
+                            return $query->whereHas(
+                                'primaryEmailAddress',
+                                fn (Builder $email) => $email->whereDoesntHave('bounced')
+                                    ->whereDoesntHave(
+                                        'optedOut',
+                                        fn (Builder $optedOut) => $optedOut->where(
+                                            'status',
+                                            EmailAddressOptInOptOutStatus::OptedOut
+                                        )
+                                    )
+                            );
                         }
 
                         return $query;
