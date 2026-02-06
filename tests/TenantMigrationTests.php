@@ -36,9 +36,6 @@
 
 // Add tests for migration files here
 
-use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Models\Group;
-use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\Console\Command\Command;
 
