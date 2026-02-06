@@ -140,11 +140,11 @@ it('it returns deliverability data only for students based on group filters', fu
 });
 
 it('can filter table based on email bounce status', function () {
-    $bouncedStudents = Student::factory()
+    $unHealthyEmailsStudents = Student::factory()
         ->count(2)
         ->create();
 
-    $bouncedStudents->each(function (Student $student) {
+    $unHealthyEmailsStudents->each(function (Student $student) {
         BouncedEmailAddress::factory()->create([
             'address' => $student->primaryEmailAddress->address,
         ]);
@@ -157,25 +157,25 @@ it('can filter table based on email bounce status', function () {
     livewire(StudentDeliverableTable::class, [
         'cacheTag' => 'report-student-deliverability',
     ])
-        ->assertCanSeeTableRecords($healthyStudents->merge($bouncedStudents));
+        ->assertCanSeeTableRecords($healthyStudents->merge($unHealthyEmailsStudents));
 
     livewire(StudentDeliverableTable::class, [
         'cacheTag' => 'report-student-deliverability',
     ])
-        ->filterTable('email_status', 'bounced')
-        ->assertCanSeeTableRecords($bouncedStudents)
+        ->filterTable('email_status', 'unhealthy')
+        ->assertCanSeeTableRecords($unHealthyEmailsStudents)
         ->assertCanNotSeeTableRecords($healthyStudents)
         ->filterTable('email_status', 'healthy')
         ->assertCanSeeTableRecords($healthyStudents)
-        ->assertCanNotSeeTableRecords($bouncedStudents);
+        ->assertCanNotSeeTableRecords($unHealthyEmailsStudents);
 });
 
 it('can filter table based on phone sms opt-out status', function () {
-    $bouncedStudents = Student::factory()
+    $unHealthyPhoneStudents = Student::factory()
         ->count(2)
         ->create();
 
-    $bouncedStudents->each(function (Student $student) {
+    $unHealthyPhoneStudents->each(function (Student $student) {
         SmsOptOutPhoneNumber::factory()->create([
             'number' => $student->primaryPhoneNumber->number,
         ]);
@@ -188,15 +188,15 @@ it('can filter table based on phone sms opt-out status', function () {
     livewire(StudentDeliverableTable::class, [
         'cacheTag' => 'report-student-deliverability',
     ])
-        ->assertCanSeeTableRecords($healthyStudents->merge($bouncedStudents));
+        ->assertCanSeeTableRecords($healthyStudents->merge($unHealthyPhoneStudents));
 
     livewire(StudentDeliverableTable::class, [
         'cacheTag' => 'report-student-deliverability',
     ])
-        ->filterTable('phone_status', 'opt-out')
-        ->assertCanSeeTableRecords($bouncedStudents)
+        ->filterTable('phone_status', 'unhealthy')
+        ->assertCanSeeTableRecords($unHealthyPhoneStudents)
         ->assertCanNotSeeTableRecords($healthyStudents)
         ->filterTable('phone_status', 'healthy')
         ->assertCanSeeTableRecords($healthyStudents)
-        ->assertCanNotSeeTableRecords($bouncedStudents);
+        ->assertCanNotSeeTableRecords($unHealthyPhoneStudents);
 });

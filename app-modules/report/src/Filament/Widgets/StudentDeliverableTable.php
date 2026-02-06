@@ -36,8 +36,14 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Report\Filament\Exports\EmailPhoneHealthExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
+use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Filters\SelectFilter;
@@ -54,7 +60,7 @@ class StudentDeliverableTable extends BaseWidget
 
     protected static ?string $pollingInterval = null;
 
-    protected static ?string $heading = 'Student Engagement Deliberability';
+    protected static ?string $heading = 'Email and Phone Health Detail';
 
     protected int | string | array $columnSpan = 'full';
 
@@ -75,6 +81,7 @@ class StudentDeliverableTable extends BaseWidget
         return $table
             ->query(
                 Student::select('sisid', 'full_name', 'primary_email_id', 'primary_phone_id')
+                    ->with(['primaryEmailAddress', 'primaryPhoneNumber'])
                     ->when(
                         $startDate && $endDate,
                         function (Builder $query) use ($startDate, $endDate): Builder {
@@ -90,37 +97,90 @@ class StudentDeliverableTable extends BaseWidget
                 TextColumn::make('full_name')
                     ->label('Name')
                     ->searchable(),
-                TextColumn::make('primaryEmailAddress.address')
-                    ->label('Primary Email')
-                    ->searchable(),
-                TextColumn::make('email_bounce')
+                TextColumn::make('email_status')
                     ->label('Email Status')
                     ->badge()
-                    ->color(fn (Student $record) => ($record->primaryEmailAddress?->bounced()->exists()) ? 'warning' : 'info')
-                    ->state(fn (Student $record) => ($record->primaryEmailAddress?->bounced()->exists()) ? 'Bounced' : 'Healthy'),
-                TextColumn::make('primaryPhoneNumber.number')
-                    ->label('Primary Phone')
-                    ->searchable(),
-                TextColumn::make('sms_opt_out')
+                    ->color(fn (Student $record) => $record->canReceiveEmail() ? 'info' : 'warning')
+                    ->state(fn (Student $record) => $record->canReceiveEmail() ? 'Healthy' : 'Unhealthy'),
+                IconColumn::make('primary_email_set')
+                    ->label('Primary Email Set')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger')
+                    ->state(fn (Student $record) => filled($record->primaryEmailAddress)),
+                IconColumn::make('email_bounced')
+                    ->label('Email Bounce')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger')
+                    ->state(fn (Student $record) => $record->primaryEmailAddress ? ($record->primaryEmailAddress->bounced !== null) : false),
+                IconColumn::make('email_opt_out')
+                    ->label('Email Opt Out')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger')
+                    ->state(fn (Student $record) => $record->primaryEmailAddress ? ($record->primaryEmailAddress->optedOut?->status === EmailAddressOptInOptOutStatus::OptedOut) : false),
+                TextColumn::make('phone_status')
                     ->label('Phone Status')
                     ->badge()
-                    ->color(fn (Student $record) => ($record->primaryPhoneNumber?->smsOptOut()->exists()) ? 'warning' : 'info')
-                    ->state(fn (Student $record) => ($record->primaryPhoneNumber?->smsOptOut()->exists()) ? 'Opt Out' : 'Healthy'),
+                    ->color(fn (Student $record) => $record->canReceiveSms() ? 'info' : 'warning')
+                    ->state(fn (Student $record) => $record->canReceiveSms() ? 'Healthy' : 'Unhealthy'),
+                IconColumn::make('primary_phone_set')
+                    ->label('Primary Phone Set')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger')
+                    ->state(fn (Student $record) => filled($record->primaryPhoneNumber)),
+                IconColumn::make('can_receive_sms')
+                    ->label('SMS Capable')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger')
+                    ->state(fn (Student $record) => filled($record->primaryPhoneNumber?->number) && $record->primaryPhoneNumber->can_receive_sms),
+                IconColumn::make('smsOptOut')
+                    ->label('SMS Opt Out')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger')
+                    ->state(fn (Student $record) => $record->primaryPhoneNumber ? $record->primaryPhoneNumber->smsOptOut()->exists() : false),
             ])
             ->filters([
                 SelectFilter::make('email_status')
                     ->label('Email Status')
                     ->options([
-                        'bounced' => 'Bounced',
+                        'unhealthy' => 'Unhealthy',
                         'healthy' => 'Healthy',
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        if (($data['value'] ?? null) === 'bounced') {
-                            return $query->whereHas('primaryEmailAddress.bounced');
+                        /** @var Builder<Student> $query */
+                        if (($data['value'] ?? null) === 'unhealthy') {
+                            return $query->isPrimaryEmailUnhealthy();
                         }
 
                         if (($data['value'] ?? null) === 'healthy') {
-                            return $query->whereDoesntHave('primaryEmailAddress.bounced');
+                            return $query->whereHas(
+                                'primaryEmailAddress',
+                                fn (Builder $email) => $email->whereDoesntHave('bounced')
+                                    ->whereDoesntHave(
+                                        'optedOut',
+                                        fn (Builder $optedOut) => $optedOut->where(
+                                            'status',
+                                            EmailAddressOptInOptOutStatus::OptedOut
+                                        )
+                                    )
+                            );
                         }
 
                         return $query;
@@ -128,20 +188,45 @@ class StudentDeliverableTable extends BaseWidget
                 SelectFilter::make('phone_status')
                     ->label('Phone Status')
                     ->options([
-                        'opt-out' => 'Opt Out',
+                        'unhealthy' => 'Unhealthy',
                         'healthy' => 'Healthy',
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        if (($data['value'] ?? null) === 'opt-out') {
-                            return $query->whereHas('primaryPhoneNumber.smsOptOut');
+                        if (($data['value'] ?? null) === 'unhealthy') {
+                            return $query
+                                ->where(function (Builder $query) {
+                                    $query
+                                        ->whereDoesntHave('primaryPhoneNumber')
+                                        ->orWhereHas('primaryPhoneNumber', function (Builder $query1) {
+                                            $query1->where(function (Builder $query2) {
+                                                $query2->where('can_receive_sms', false)
+                                                    ->orWhereHas('smsOptOut');
+                                            });
+                                        });
+                                });
                         }
 
                         if (($data['value'] ?? null) === 'healthy') {
-                            return $query->whereDoesntHave('primaryPhoneNumber.smsOptOut');
+                            return $query->whereHas('primaryPhoneNumber', function (Builder $query1) {
+                                $query1->where(function (Builder $query2) {
+                                    $query2->where('can_receive_sms', true)
+                                        ->whereDoesntHave('smsOptOut');
+                                });
+                            });
                         }
 
                         return $query;
                     }),
+            ])
+            ->recordActions([
+                ViewAction::make()
+                    ->label('Go to Student')
+                    ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record]), shouldOpenInNewTab: true)
+                    ->icon('heroicon-m-arrow-top-right-on-square'),
+            ])
+            ->headerActions([
+                ExportAction::make('export')
+                    ->exporter(EmailPhoneHealthExporter::class),
             ])
             ->paginationMode(PaginationMode::Default);
     }
