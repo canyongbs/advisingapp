@@ -146,8 +146,12 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 NavigationGroup::make()
-                    ->label('Artificial Intelligence')
+                    ->label('Enterprise AI')
                     ->icon('heroicon-o-sparkles')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Chatbots')
+                    ->icon('heroicon-o-bolt')
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label('CRM')

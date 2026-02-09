@@ -47,7 +47,7 @@ class ResearchAdvisorReport extends AiReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
+    protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
 
     protected static ?string $title = 'Research Advisor';
 
