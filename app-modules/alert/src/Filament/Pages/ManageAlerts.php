@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Alert\Filament\Pages;
 
+use AdvisingApp\Alert\Actions\FindGroupsUsingAlerts;
 use AdvisingApp\Alert\Actions\GenerateStudentAlertsView;
+use AdvisingApp\Alert\Jobs\RemoveAlertFiltersFromGroupsJob;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Filament\Forms\Components\Heading;
@@ -52,7 +54,10 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 use UnitEnum;
@@ -78,6 +83,15 @@ class ManageAlerts extends Page implements HasForms
 
     /** @var array<string, mixed> $data */
     public ?array $data = [];
+
+    /** @var array<string, mixed> */
+    public array $pendingSaveData = [];
+
+    /** @var array<string> */
+    public array $alertIdsBeingDisabled = [];
+
+    /** @var array<int, array{alert_configuration_id: string, alert_name: string, group_count: int}> */
+    public array $affectedGroupsData = [];
 
     public static function canAccess(): bool
     {
@@ -107,11 +121,53 @@ class ManageAlerts extends Page implements HasForms
             return;
         }
 
+        $data = $this->form->getState();
+
+        $alertsBeingDisabled = $this->getAlertsBeingDisabled($data);
+
+        if ($alertsBeingDisabled->isNotEmpty()) {
+            $affectedGroups = app(FindGroupsUsingAlerts::class)
+                ->execute($alertsBeingDisabled->toArray());
+
+            if ($affectedGroups->isNotEmpty()) {
+                $this->pendingSaveData = $data;
+                $this->alertIdsBeingDisabled = $alertsBeingDisabled->toArray();
+                $this->affectedGroupsData = $affectedGroups->all();
+
+                $this->mountAction('confirmDisableAlerts');
+
+                return;
+            }
+        }
+
+        $this->performSave($data);
+    }
+
+    public function confirmDisableAlertsAction(): Action
+    {
+        return Action::make('confirmDisableAlerts')
+            ->requiresConfirmation()
+            ->modalHeading('Alert Disable Warning')
+            ->modalDescription(fn (): HtmlString => $this->buildWarningMessage())
+            ->modalSubmitActionLabel('Proceed')
+            ->modalCancelActionLabel('Cancel')
+            ->action(function (): void {
+                $this->performSave($this->pendingSaveData, dispatchFilterRemoval: true);
+
+                $this->pendingSaveData = [];
+                $this->alertIdsBeingDisabled = [];
+                $this->affectedGroupsData = [];
+            });
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    protected function performSave(array $data, bool $dispatchFilterRemoval = false): void
+    {
         DB::beginTransaction();
 
         try {
-            $data = $this->form->getState();
-
             $alertConfigurations = AlertConfiguration::with('configuration')->orderBy('id')->get();
 
             foreach ($alertConfigurations as $config) {
@@ -145,6 +201,10 @@ class ManageAlerts extends Page implements HasForms
 
             DB::commit();
 
+            if ($dispatchFilterRemoval && ! empty($this->alertIdsBeingDisabled)) {
+                RemoveAlertFiltersFromGroupsJob::dispatch($this->alertIdsBeingDisabled);
+            }
+
             Notification::make()
                 ->success()
                 ->title('Alert configurations saved')
@@ -164,6 +224,44 @@ class ManageAlerts extends Page implements HasForms
                 ->danger()
                 ->send();
         }
+    }
+
+    /**
+     * @param  array<string, mixed>  $formData
+     *
+     * @return Collection<int, string>
+     */
+    protected function getAlertsBeingDisabled(array $formData): Collection
+    {
+        $currentlyEnabled = AlertConfiguration::query()
+            ->where('is_enabled', true)
+            ->pluck('id')
+            ->map(fn ($id) => (string) $id);
+
+        return $currentlyEnabled->filter(function (string $configId) use ($formData): bool {
+            return empty($formData[$configId]['is_enabled']);
+        })->values();
+    }
+
+    protected function buildWarningMessage(): HtmlString
+    {
+        $lines = ['<p>We have detected that the following alerts you are attempting to disable are actively used by groups:</p><ul>'];
+
+        $totalGroupCount = 0;
+
+        foreach ($this->affectedGroupsData as $alert) {
+            $groupWord = Str::plural('group', $alert['group_count']);
+            $lines[] = "<li><strong>{$alert['alert_name']}</strong> - used by {$alert['group_count']} {$groupWord}</li>";
+            $totalGroupCount += $alert['group_count'];
+        }
+
+        $alertCount = count($this->affectedGroupsData);
+        $alertWord = Str::plural('alert', $alertCount);
+        $groupWord = Str::plural('group', $totalGroupCount);
+
+        $lines[] = "</ul><p>If you disable the {$alertWord} listed above, it may impact the intended audiences of downstream campaigns and workflows, which use the affected student {$groupWord}.</p>";
+
+        return new HtmlString(implode('', $lines));
     }
 
     /**

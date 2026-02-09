@@ -41,6 +41,7 @@ use Filament\Forms\Components\Select;
 use Filament\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Schemas\Components\Component;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class AlertStatusOperator extends Operator
 {
@@ -108,6 +109,11 @@ class AlertStatusOperator extends Operator
         ];
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     *
+     * @return Builder<Model>
+     */
     public function applyToBaseQuery(Builder $query): Builder
     {
         $settings = $this->getSettings();
@@ -119,15 +125,13 @@ class AlertStatusOperator extends Operator
         }
 
         $wantsTrue = $status === '1' || $status === true;
-
-        // XOR: if inverse is set, flip the logic
         $shouldHave = $wantsTrue xor (bool) $this->isInverse();
 
         $method = $shouldHave ? 'whereHas' : 'whereDoesntHave';
 
         return $query->{$method}(
             'studentAlerts',
-            fn (Builder $q) => $q->where('alert_configuration_id', $alertConfigurationId)
+            fn (Builder $query) => $query->where('alert_configuration_id', $alertConfigurationId)
         );
     }
 }

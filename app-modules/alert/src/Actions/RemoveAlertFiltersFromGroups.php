@@ -36,85 +36,98 @@
 
 namespace AdvisingApp\Alert\Actions;
 
-use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
-use Illuminate\Support\Collection;
 
-class FindGroupsUsingAlerts
+class RemoveAlertFiltersFromGroups
 {
     /**
      * @param  array<string>  $alertConfigurationIds
-     *
-     * @return Collection<int, array{alert_configuration_id: string, alert_name: string, group_count: int}>
      */
-    public function execute(array $alertConfigurationIds): Collection
+    public function execute(array $alertConfigurationIds): int
     {
+        $modifiedCount = 0;
+
         $groups = Group::query()
             ->where('model', GroupModel::Student)
             ->where('type', GroupType::Dynamic)
             ->whereNotNull('filters')
             ->get();
 
-        $alertConfigurations = AlertConfiguration::query()
-            ->whereIn('id', $alertConfigurationIds)
-            ->get()
-            ->keyBy('id');
+        foreach ($groups as $group) {
+            $filters = $group->filters;
 
-        $results = collect();
+            if (empty($filters['queryBuilder']['rules'])) {
+                continue;
+            }
 
-        foreach ($alertConfigurationIds as $alertConfigId) {
-            $matchingGroupCount = $groups->filter(
-                fn (Group $group) => $this->groupReferencesAlert($group, $alertConfigId)
-            )->count();
+            $originalRules = $filters['queryBuilder']['rules'];
+            $cleanedRules = $this->removeAlertRulesFromRules(
+                $originalRules,
+                $alertConfigurationIds
+            );
 
-            if ($matchingGroupCount > 0) {
-                $config = $alertConfigurations->get($alertConfigId);
-                $alertName = $config?->preset->getLabel() ?? 'Unknown Alert';
-
-                $results->push([
-                    'alert_configuration_id' => $alertConfigId,
-                    'alert_name' => $alertName,
-                    'group_count' => $matchingGroupCount,
-                ]);
+            if ($cleanedRules !== $originalRules) {
+                $filters['queryBuilder']['rules'] = $cleanedRules;
+                $group->filters = $filters;
+                $group->save();
+                $modifiedCount++;
             }
         }
 
-        return $results;
-    }
-
-    protected function groupReferencesAlert(Group $group, string $alertConfigurationId): bool
-    {
-        $filters = $group->filters;
-        $rules = $filters['queryBuilder']['rules'] ?? [];
-
-        return $this->rulesReferenceAlert($rules, $alertConfigurationId);
+        return $modifiedCount;
     }
 
     /**
      * @param  array<int, array<string, mixed>>  $rules
+     * @param  array<string>  $alertConfigurationIds
+     *
+     * @return array<int, array<string, mixed>>
      */
-    protected function rulesReferenceAlert(array $rules, string $alertConfigurationId): bool
+    protected function removeAlertRulesFromRules(array $rules, array $alertConfigurationIds): array
     {
-        foreach ($rules as $rule) {
+        $cleaned = [];
+
+        foreach ($rules as $key => $rule) {
             if (isset($rule['type']) && $rule['type'] === 'or') {
                 if (isset($rule['data']['groups']) && is_array($rule['data']['groups'])) {
+                    $cleanedGroups = [];
+
                     foreach ($rule['data']['groups'] as $group) {
-                        if (isset($group['rules']) && $this->rulesReferenceAlert($group['rules'], $alertConfigurationId)) {
-                            return true;
+                        if (isset($group['rules'])) {
+                            $cleanedGroupRules = $this->removeAlertRulesFromRules(
+                                $group['rules'],
+                                $alertConfigurationIds
+                            );
+
+                            if (! empty($cleanedGroupRules)) {
+                                $group['rules'] = $cleanedGroupRules;
+                                $cleanedGroups[] = $group;
+                            }
                         }
                     }
+
+                    if (! empty($cleanedGroups)) {
+                        $rule['data']['groups'] = $cleanedGroups;
+                        $cleaned[$key] = $rule;
+                    }
                 }
-            } elseif (
+
+                continue;
+            }
+
+            if (
                 isset($rule['type']) && $rule['type'] === 'alertStatus' &&
                 isset($rule['data']['settings']['alert_configuration_id']) &&
-                $rule['data']['settings']['alert_configuration_id'] === $alertConfigurationId
+                in_array($rule['data']['settings']['alert_configuration_id'], $alertConfigurationIds, true)
             ) {
-                return true;
+                continue;
             }
+
+            $cleaned[$key] = $rule;
         }
 
-        return false;
+        return $cleaned;
     }
 }

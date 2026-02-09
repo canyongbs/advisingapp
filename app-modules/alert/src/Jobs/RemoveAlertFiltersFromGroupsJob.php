@@ -34,35 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Filament\Filters;
+namespace AdvisingApp\Alert\Jobs;
 
-use AdvisingApp\Alert\Models\AlertConfiguration;
-use Filament\Forms\Components\Builder\Block;
-use Filament\QueryBuilder\Constraints\Constraint;
+use AdvisingApp\Alert\Actions\RemoveAlertFiltersFromGroups;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
-class AlertStatusConstraint extends Constraint
+class RemoveAlertFiltersFromGroupsJob implements ShouldQueue
 {
-    protected function setUp(): void
+    use Queueable;
+
+    /**
+     * @param  array<string>  $alertConfigurationIds
+     */
+    public function __construct(
+        public array $alertConfigurationIds
+    ) {}
+
+    public function handle(): void
     {
-        parent::setUp();
-
-        $this->icon('heroicon-m-bell-alert');
-
-        $this->label('Alerts');
-
-        $this->operators([
-            AlertStatusOperator::make(),
-        ]);
-    }
-
-    public function getBuilderBlock(): Block
-    {
-        $block = parent::getBuilderBlock();
-
-        if (! AlertConfiguration::query()->where('is_enabled', true)->exists()) {
-            $block->maxItems(0);
-        }
-
-        return $block;
+        app(RemoveAlertFiltersFromGroups::class)->execute($this->alertConfigurationIds);
     }
 }
