@@ -35,9 +35,22 @@
 */
 
 use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 
 return new class () extends Migration {
-    public function up(): void {}
+    public function up(): void
+    {
+        Schema::table('students', function (Blueprint $table) {
+            $table->dropColumn('sms_opt_out');
+            $table->dropColumn('email_bounce');
+        });
+    }
 
-    public function down(): void {}
+    public function down(): void
+    {
+        Schema::table('students', function (Blueprint $table) {
+            $table->boolean('sms_opt_out')->nullable();
+            $table->boolean('email_bounce')->nullable();
+        });
+    }
 };
