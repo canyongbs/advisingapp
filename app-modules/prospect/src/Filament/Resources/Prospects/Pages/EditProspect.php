@@ -272,16 +272,6 @@ class EditProspect extends EditRecord
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
-                Section::make('Engagement Restrictions')
-                    ->schema([
-                        Select::make('sms_opt_out')
-                            ->label('SMS Opt Out')
-                            ->boolean(),
-                        Select::make('email_bounce')
-                            ->label('Email Bounce')
-                            ->boolean(),
-                    ])
-                    ->columns(2),
                 Section::make('Record Details')
                     ->schema([
                         Select::make('created_by_id')

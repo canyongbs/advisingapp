@@ -107,16 +107,6 @@ it('creates a prospect', function () {
             ->toBe($createProspectRequestData['description']);
     }
 
-    if (isset($createProspectRequestData['sms_opt_out'])) {
-        expect($response['data']['sms_opt_out'] ?? null)
-            ->toBe($createProspectRequestData['sms_opt_out']);
-    }
-
-    if (isset($createProspectRequestData['email_bounce'])) {
-        expect($response['data']['email_bounce'] ?? null)
-            ->toBe($createProspectRequestData['email_bounce']);
-    }
-
     expect($response['data']['status'] ?? null)
         ->toBe($createProspectRequestData['status']);
 
@@ -222,8 +212,6 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     '`full_name` is max 255 characters' => [['full_name' => str_repeat('a', 256)], 'full_name', 'The full name may not be greater than 255 characters.'],
     '`preferred` is max 255 characters' => [['preferred' => str_repeat('a', 256)], 'preferred', 'The preferred may not be greater than 255 characters.'],
     '`description` is max 65535 characters' => [['description' => str_repeat('a', 65536)], 'description', 'The description may not be greater than 65535 characters.'],
-    '`sms_opt_out` is boolean' => [['sms_opt_out' => 'not-boolean'], 'sms_opt_out', 'The sms opt out field must be true or false.'],
-    '`email_bounce` is boolean' => [['email_bounce' => 'not-boolean'], 'email_bounce', 'The email bounce field must be true or false.'],
     '`status` is required' => [['status' => null], 'status', 'The status field is required.'],
     '`source` is required' => [['source' => null], 'source', 'The source field is required.'],
     '`birthdate` is a valid date' => [['birthdate' => 'not-a-date'], 'birthdate', 'The birthdate is not a valid date.'],

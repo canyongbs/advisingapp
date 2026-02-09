@@ -110,16 +110,6 @@ class ProspectProfileInfolist
                                 ->label('Description'),
                         ]),
                         Subsection::make([
-                            IconEntry::make('sms_opt_out')
-                                ->label('SMS Opt Out')
-                                ->boolean()
-                                ->placeholder('N/A'),
-                            IconEntry::make('email_bounce')
-                                ->label('Email Bounce')
-                                ->boolean()
-                                ->placeholder('N/A'),
-                        ]),
-                        Subsection::make([
                             TextEntry::make('createdBy.name')
                                 ->label('Created By'),
                         ]),

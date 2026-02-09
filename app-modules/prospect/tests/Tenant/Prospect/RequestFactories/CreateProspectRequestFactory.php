@@ -82,8 +82,6 @@ class CreateProspectRequestFactory extends RequestFactory
             ],
             'preferred' => $this->faker->firstName(),
             'description' => $this->faker->paragraph(),
-            'sms_opt_out' => $this->faker->boolean(),
-            'email_bounce' => $this->faker->boolean(),
             'birthdate' => $this->faker->date(),
             'hsgrad' => $this->faker->year(),
             'created_by_id' => User::factory()->create()->id,

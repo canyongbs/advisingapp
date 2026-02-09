@@ -77,8 +77,6 @@ class UpdateProspectController
             'full_name' => ['sometimes', 'max:255'],
             'preferred' => ['sometimes', 'max:255'],
             'description' => ['sometimes', 'max:65535'],
-            'sms_opt_out' => ['sometimes', 'boolean'],
-            'email_bounce' => ['sometimes', 'boolean'],
             'status' => ['sometimes', 'max:255'],
             'source' => ['sometimes', 'max:255'],
             'birthdate' => ['sometimes', 'date', 'date_format:Y-m-d'],

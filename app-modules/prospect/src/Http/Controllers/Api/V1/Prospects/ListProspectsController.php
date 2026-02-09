@@ -65,8 +65,6 @@ class ListProspectsController
     #[QueryParameter('filter[last_name]', description: 'Filter the results where the prospect\'s last name contains the provided string.', type: 'string')]
     #[QueryParameter('filter[full_name]', description: 'Filter the results where the prospect\'s full name contains the provided string.', type: 'string')]
     #[QueryParameter('filter[preferred]', description: 'Filter the results where the prospect\'s preferred name contains the provided string (case-insensitive, partial match).', type: 'string')]
-    #[QueryParameter('filter[sms_opt_out]', description: 'Filter the results where the prospect\'s sms_opt_out matches the provided boolean. Accepts true or false.', type: 'boolean')]
-    #[QueryParameter('filter[email_bounce]', description: 'Filter the results where the prospect\'s email_bounce matches the provided boolean. Accepts true or false.', type: 'boolean')]
     #[QueryParameter('filter[birthdate]', description: 'Filter the results where the prospect\'s birthdate matches the provided date using comparison operators. Supported: =, <, <=, >, >=. Format: YYYY-MM-DD.', type: 'date')]
     #[QueryParameter('filter[status]', description: 'Filter the results where the prospect\'s status name (case-insensitive) matches the provided string. Example: filter[status]=converted.', type: 'string')]
     #[QueryParameter('filter[source]', description: 'Filter the results where the prospect\'s source name (case-insensitive) matches the provided string. Example: filter[source]=import.', type: 'string')]
@@ -107,8 +105,6 @@ class ListProspectsController
                 AllowedFilter::partial('last_name'),
                 AllowedFilter::partial('full_name'),
                 AllowedFilter::partial('preferred'),
-                AllowedFilter::exact('sms_opt_out'),
-                AllowedFilter::exact('email_bounce'),
                 AllowedFilter::operator('birthdate', FilterOperator::DYNAMIC),
                 AllowedFilter::operator('hsgrad', FilterOperator::DYNAMIC),
                 AllowedFilter::callback('status', function (Builder $query, mixed $value): Builder {
