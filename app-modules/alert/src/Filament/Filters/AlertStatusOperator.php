@@ -51,15 +51,16 @@ class AlertStatusOperator extends Operator
 
         $this->name('alertStatus');
 
-        $this->label('filter by alert');
+        $this->label(fn (): string => $this->isInverse() ? 'False' : 'True');
 
-        $this->summary(function (?array $settings): string {
+        $this->summary(function (): string {
+            $settings = $this->getSettings();
+
             if (blank($settings)) {
                 return '';
             }
 
             $alertConfigurationId = $settings['alert_configuration_id'] ?? null;
-            $status = $settings['status'] ?? null;
 
             $alertName = 'Unknown Alert';
 
@@ -68,7 +69,7 @@ class AlertStatusOperator extends Operator
                 $alertName = $config?->preset->getLabel() ?? 'Unknown Alert';
             }
 
-            $statusLabel = ($status === '1' || $status === true) ? 'True' : 'False';
+            $statusLabel = $this->isInverse() ? 'False' : 'True';
 
             return "alert \"{$alertName}\" = {$statusLabel}";
         });
@@ -94,14 +95,6 @@ class AlertStatusOperator extends Operator
                 )
                 ->required()
                 ->searchable(),
-            Select::make('status')
-                ->label('Status')
-                ->options([
-                    '1' => 'True',
-                    '0' => 'False',
-                ])
-                ->required()
-                ->default('1'),
         ];
     }
 
@@ -114,13 +107,12 @@ class AlertStatusOperator extends Operator
     {
         $settings = $this->getSettings();
         $alertConfigurationId = $settings['alert_configuration_id'] ?? null;
-        $status = $settings['status'] ?? null;
 
         if (blank($alertConfigurationId)) {
             return $query;
         }
 
-        $method = ($status === '1' || $status === true) ? 'whereHas' : 'whereDoesntHave';
+        $method = $this->isInverse() ? 'whereDoesntHave' : 'whereHas';
 
         return $query->{$method}(
             'studentAlerts',
