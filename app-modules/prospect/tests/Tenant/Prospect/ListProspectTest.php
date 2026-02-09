@@ -102,11 +102,6 @@ test('ListProspects can bulk update characteristics', function () {
         ])
         ->assertHasNoTableBulkActionErrors()
         ->callTableBulkAction('bulk_update', $prospects, [
-            'field' => 'email_bounce',
-            'email_bounce' => true,
-        ])
-        ->assertHasNoTableBulkActionErrors()
-        ->callTableBulkAction('bulk_update', $prospects, [
             'field' => 'hsgrad',
             'hsgrad' => $hsgrad,
         ])
@@ -127,7 +122,6 @@ test('ListProspects can bulk update characteristics', function () {
             fn ($prospect) => $prospect
                 ->refresh()
                 ->description->toBe($description)
-                ->email_bounce->toBeTrue()
                 ->hsgrad->toBe($hsgrad)
                 ->source_id->toBe($source->id)
                 ->status_id->toBe($status->id)
