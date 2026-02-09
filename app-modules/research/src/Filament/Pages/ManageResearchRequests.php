@@ -66,7 +66,7 @@ class ManageResearchRequests extends Page
     {
         return [
             NavigationItem::make('Research Advisor')
-                ->group('Artificial Intelligence')
+                ->group('Enterprise AI')
                 ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName(), NewResearchRequest::getRouteName()))
                 ->sort(30)
                 ->url(static::getUrl()),

@@ -61,7 +61,7 @@ class InstitutionalAdvisor extends Page
 
     protected string $view = 'assistant::filament.pages.personal-assistant';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
+    protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
 
     protected static ?string $navigationLabel = 'Institutional Advisor';
 

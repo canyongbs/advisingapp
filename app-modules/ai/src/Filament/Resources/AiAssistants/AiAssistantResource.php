@@ -50,7 +50,7 @@ class AiAssistantResource extends Resource
 {
     protected static ?string $model = AiAssistant::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
+    protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
 
     protected static ?string $navigationLabel = 'Custom Advisors';
 

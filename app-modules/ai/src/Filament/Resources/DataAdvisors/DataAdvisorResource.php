@@ -55,7 +55,7 @@ class DataAdvisorResource extends Resource
 
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
+    protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
 
     protected static ?int $navigationSort = 40;
 

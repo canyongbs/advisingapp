@@ -48,7 +48,7 @@ class PromptResource extends Resource
 {
     protected static ?string $model = Prompt::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Artificial Intelligence';
+    protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
 
     protected static ?string $navigationLabel = 'Prompt Library';
 
