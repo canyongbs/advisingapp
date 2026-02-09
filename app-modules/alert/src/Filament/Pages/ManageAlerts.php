@@ -161,7 +161,7 @@ class ManageAlerts extends Page implements HasForms
     }
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param array<string, mixed> $data
      */
     protected function performSave(array $data, bool $dispatchFilterRemoval = false): void
     {
@@ -227,7 +227,7 @@ class ManageAlerts extends Page implements HasForms
     }
 
     /**
-     * @param  array<string, mixed>  $formData
+     * @param array<string, mixed> $formData
      *
      * @return Collection<int, string>
      */

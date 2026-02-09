@@ -45,7 +45,7 @@ class RemoveAlertFiltersFromGroupsJob implements ShouldQueue
     use Queueable;
 
     /**
-     * @param  array<string>  $alertConfigurationIds
+     * @param array<string> $alertConfigurationIds
      */
     public function __construct(
         public array $alertConfigurationIds

@@ -110,7 +110,7 @@ class AlertStatusOperator extends Operator
     }
 
     /**
-     * @param  Builder<Model>  $query
+     * @param Builder<Model> $query
      *
      * @return Builder<Model>
      */

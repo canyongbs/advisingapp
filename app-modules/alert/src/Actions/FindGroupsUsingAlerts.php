@@ -45,7 +45,7 @@ use Illuminate\Support\Collection;
 class FindGroupsUsingAlerts
 {
     /**
-     * @param  array<string>  $alertConfigurationIds
+     * @param array<string> $alertConfigurationIds
      *
      * @return Collection<int, array{alert_configuration_id: string, alert_name: string, group_count: int}>
      */
@@ -93,7 +93,7 @@ class FindGroupsUsingAlerts
     }
 
     /**
-     * @param  array<int, array<string, mixed>>  $rules
+     * @param array<int, array<string, mixed>> $rules
      */
     protected function rulesReferenceAlert(array $rules, string $alertConfigurationId): bool
     {

@@ -43,7 +43,7 @@ use AdvisingApp\Group\Models\Group;
 class RemoveAlertFiltersFromGroups
 {
     /**
-     * @param  array<string>  $alertConfigurationIds
+     * @param array<string> $alertConfigurationIds
      */
     public function execute(array $alertConfigurationIds): int
     {
@@ -80,8 +80,8 @@ class RemoveAlertFiltersFromGroups
     }
 
     /**
-     * @param  array<int, array<string, mixed>>  $rules
-     * @param  array<string>  $alertConfigurationIds
+     * @param array<int, array<string, mixed>> $rules
+     * @param array<string> $alertConfigurationIds
      *
      * @return array<int, array<string, mixed>>
      */
