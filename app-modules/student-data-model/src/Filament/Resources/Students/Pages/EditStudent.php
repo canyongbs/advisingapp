@@ -294,12 +294,6 @@ class EditStudent extends EditRecord
                     ]),
                 Section::make('Additional Information')
                     ->schema([
-                        Select::make('sms_opt_out')
-                            ->label('SMS Opt Out')
-                            ->boolean(),
-                        Select::make('email_bounce')
-                            ->label('Email Bounce')
-                            ->boolean(),
                         Select::make('dual')
                             ->label('Dual')
                             ->boolean(),

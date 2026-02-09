@@ -78,8 +78,6 @@ class CreateStudentController
             'birthdate' => ['sometimes', 'date', 'date_format:Y-m-d'],
             'hsgrad' => ['sometimes', 'date', 'date_format:Y-m-d'],
             'gender' => ['sometimes', 'max:255'],
-            'sms_opt_out' => ['sometimes', 'boolean'],
-            'email_bounce' => ['sometimes', 'boolean'],
             'dual' => ['sometimes', 'boolean'],
             'ferpa' => ['sometimes', 'boolean'],
             'firstgen' => ['sometimes', 'boolean'],

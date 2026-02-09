@@ -109,8 +109,6 @@ it('can filter students by all attributes', function (string $requestKey, mixed 
     '`updated_at_source`' => ['updated_at_source', '2025-01-02 12:00:00', ['updated_at_source' => '2025-01-02 12:00:00'], ['updated_at_source' => '1999-01-01 00:00:00'], 'updated_at_source', '2025-01-02T12:00:00.000000Z'],
     '`hsgrad`' => ['hsgrad', '2022-01-01', ['hsgrad' => '2022-01-01'], ['hsgrad' => '1999-01-01'], 'hsgrad', '2022-01-01'],
     '`holds`' => ['holds', '1', ['holds' => '1'], ['holds' => '99'], 'holds', '1'],
-    '`sms_opt_out`' => ['sms_opt_out', true, ['sms_opt_out' => true], ['sms_opt_out' => false], 'sms_opt_out', true],
-    '`email_bounce`' => ['email_bounce', true, ['email_bounce' => true], ['email_bounce' => false], 'email_bounce', true],
     '`dual`' => ['dual', true, ['dual' => true], ['dual' => false], 'dual', true],
     '`ferpa`' => ['ferpa', true, ['ferpa' => true], ['ferpa' => false], 'ferpa', true],
     '`sap`' => ['sap', true, ['sap' => true], ['sap' => false], 'sap', true],
