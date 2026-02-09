@@ -55,6 +55,25 @@ class AlertStatusConstraint extends Constraint
         ]);
     }
 
+    /**
+     * @return array<string, string>
+     */
+    public function getOperatorSelectOptions(): array
+    {
+        $options = [];
+
+        foreach ($this->getOperators() as $operatorName => $operator) {
+            $operator->constraint($this);
+
+            $options[$operatorName] = $operator->inverse(false)->getLabel();
+
+            $operator->constraint(null);
+            $operator->inverse(null);
+        }
+
+        return $options;
+    }
+
     public function getBuilderBlock(): Block
     {
         $block = parent::getBuilderBlock();

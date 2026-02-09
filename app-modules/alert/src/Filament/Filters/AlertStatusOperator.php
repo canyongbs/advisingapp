@@ -51,11 +51,9 @@ class AlertStatusOperator extends Operator
 
         $this->name('alertStatus');
 
-        $this->label(fn (bool $isInverse): string => $isInverse
-            ? 'does not have alert'
-            : 'has alert');
+        $this->label('filter by alert');
 
-        $this->summary(function (bool $isInverse, ?array $settings): string {
+        $this->summary(function (?array $settings): string {
             if (blank($settings)) {
                 return '';
             }
@@ -72,9 +70,7 @@ class AlertStatusOperator extends Operator
 
             $statusLabel = ($status === '1' || $status === true) ? 'True' : 'False';
 
-            $prefix = $isInverse ? 'does not have' : 'has';
-
-            return "{$prefix} alert \"{$alertName}\" = {$statusLabel}";
+            return "alert \"{$alertName}\" = {$statusLabel}";
         });
     }
 
@@ -99,7 +95,7 @@ class AlertStatusOperator extends Operator
                 ->required()
                 ->searchable(),
             Select::make('status')
-                ->label('Alert Status')
+                ->label('Status')
                 ->options([
                     '1' => 'True',
                     '0' => 'False',
@@ -124,10 +120,7 @@ class AlertStatusOperator extends Operator
             return $query;
         }
 
-        $wantsTrue = $status === '1' || $status === true;
-        $shouldHave = $wantsTrue xor (bool) $this->isInverse();
-
-        $method = $shouldHave ? 'whereHas' : 'whereDoesntHave';
+        $method = ($status === '1' || $status === true) ? 'whereHas' : 'whereDoesntHave';
 
         return $query->{$method}(
             'studentAlerts',
