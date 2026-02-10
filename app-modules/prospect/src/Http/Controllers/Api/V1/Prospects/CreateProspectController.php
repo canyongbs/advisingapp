@@ -75,8 +75,6 @@ class CreateProspectController
             'full_name' => ['required', 'max:255'],
             'preferred' => ['sometimes', 'max:255'],
             'description' => ['sometimes', 'max:65535'],
-            'sms_opt_out' => ['sometimes', 'boolean'],
-            'email_bounce' => ['sometimes', 'boolean'],
             'status' => ['required', 'max:255'],
             'source' => ['required', 'max:255'],
             'birthdate' => ['sometimes', 'date', 'date_format:Y-m-d'],

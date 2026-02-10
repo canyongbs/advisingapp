@@ -127,8 +127,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         'full_name',
         'preferred',
         'description',
-        'sms_opt_out',
-        'email_bounce',
         'status_id',
         'source_id',
         'birthdate',
@@ -140,8 +138,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     ];
 
     protected $casts = [
-        'sms_opt_out' => 'boolean',
-        'email_bounce' => 'boolean',
         'birthdate' => 'date',
     ];
 

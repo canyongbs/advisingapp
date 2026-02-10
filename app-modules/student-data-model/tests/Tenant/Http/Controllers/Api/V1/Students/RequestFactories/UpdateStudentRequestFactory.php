@@ -51,8 +51,6 @@ class UpdateStudentRequestFactory extends RequestFactory
             'birthdate' => $this->faker->optional()->randomElement([$this->faker->date('Y-m-d'), null]),
             'hsgrad' => $this->faker->optional()->randomElement([$this->faker->date('Y-m-d'), null]),
             'gender' => $this->faker->optional()->text(10),
-            'sms_opt_out' => $this->faker->optional()->randomElement([true, false, null]),
-            'email_bounce' => $this->faker->optional()->randomElement([true, false, null]),
             'dual' => $this->faker->optional()->randomElement([true, false, null]),
             'ferpa' => $this->faker->optional()->randomElement([true, false, null]),
             'firstgen' => $this->faker->optional()->randomElement([true, false, null]),

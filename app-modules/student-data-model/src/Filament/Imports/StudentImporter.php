@@ -120,21 +120,6 @@ class StudentImporter extends Importer
                     'string',
                     'max:255',
                 ]),
-            ImportColumn::make('sms_opt_out')
-                ->label('SMS opt out')
-                ->example('false')
-                ->boolean()
-                ->rules([
-                    'nullable',
-                    'boolean',
-                ]),
-            ImportColumn::make('email_bounce')
-                ->example('true')
-                ->boolean()
-                ->rules([
-                    'nullable',
-                    'boolean',
-                ]),
             ImportColumn::make('dual')
                 ->example('true')
                 ->boolean()

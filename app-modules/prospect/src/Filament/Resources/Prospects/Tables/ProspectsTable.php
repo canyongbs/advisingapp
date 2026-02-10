@@ -42,7 +42,6 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\QueryBuilder;
-use Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
@@ -128,13 +127,6 @@ class ProspectsTable
                                     ->multiple()
                                     ->preload(),
                             ),
-                        BooleanConstraint::make('sms_opt_out')
-                            ->label('SMS Opt Out')
-                            ->icon('heroicon-m-chat-bubble-bottom-center')
-                            ->nullable(),
-                        BooleanConstraint::make('email_bounce')
-                            ->icon('heroicon-m-arrow-uturn-left')
-                            ->nullable(),
                         TextConstraint::make('hsgrad')
                             ->label('HS Grad')
                             ->icon('heroicon-m-academic-cap'),

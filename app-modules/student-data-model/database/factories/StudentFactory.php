@@ -62,8 +62,6 @@ class StudentFactory extends Factory
             'last' => $this->faker->lastName(),
             'full_name' => fn (array $attributes) => "{$attributes['first']} {$attributes['last']}",
             'preferred' => $this->faker->randomElement([$this->faker->firstName(), null]),
-            'sms_opt_out' => $this->faker->boolean(),
-            'email_bounce' => $this->faker->boolean(),
             'birthdate' => $this->faker->date(),
             'hsgrad' => $this->faker->date(),
             'dual' => $this->faker->boolean(),

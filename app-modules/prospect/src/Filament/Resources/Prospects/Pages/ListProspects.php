@@ -198,9 +198,7 @@ class ListProspects extends ListRecords
                                 Select::make('field')
                                     ->options([
                                         'description' => 'Description',
-                                        'email_bounce' => 'Email Bounce',
                                         'hsgrad' => 'High School Graduation Year',
-                                        'sms_opt_out' => 'SMS Opt Out',
                                         'source_id' => 'Source',
                                         'status_id' => 'Status',
                                     ])
@@ -210,10 +208,6 @@ class ListProspects extends ListRecords
                                     ->string()
                                     ->required()
                                     ->visible(fn (Get $get) => $get('field') === 'description'),
-                                Select::make('email_bounce')
-                                    ->label('Email Bounce')
-                                    ->boolean()
-                                    ->visible(fn (Get $get) => $get('field') === 'email_bounce'),
                                 TextInput::make('hsgrad')
                                     ->label('High School Graduation Year')
                                     ->numeric()
@@ -221,10 +215,6 @@ class ListProspects extends ListRecords
                                     ->maxValue(now()->addYears(25)->year)
                                     ->required()
                                     ->visible(fn (Get $get) => $get('field') === 'hsgrad'),
-                                Select::make('sms_opt_out')
-                                    ->label('SMS Opt Out')
-                                    ->boolean()
-                                    ->visible(fn (Get $get) => $get('field') === 'sms_opt_out'),
                                 Select::make('source_id')
                                     ->label('Source')
                                     ->relationship('source', 'name')

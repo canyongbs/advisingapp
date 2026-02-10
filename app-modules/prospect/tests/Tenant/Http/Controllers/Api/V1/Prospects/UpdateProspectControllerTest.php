@@ -111,16 +111,6 @@ it('updates a prospect', function () {
             ->toBe($updateProspectRequestData['description']);
     }
 
-    if (isset($updateProspectRequestData['sms_opt_out'])) {
-        expect($response['data']['sms_opt_out'] ?? null)
-            ->toBe($updateProspectRequestData['sms_opt_out']);
-    }
-
-    if (isset($updateProspectRequestData['email_bounce'])) {
-        expect($response['data']['email_bounce'] ?? null)
-            ->toBe($updateProspectRequestData['email_bounce']);
-    }
-
     if (isset($updateProspectRequestData['status'])) {
         expect($response['data']['status'] ?? null)
             ->toBe($updateProspectRequestData['status']);
@@ -195,8 +185,6 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     '`birthdate` is a valid date' => [['birthdate' => 'not-a-date'], 'birthdate', 'The birthdate is not a valid date.'],
     '`birthdate` is Y-m-d format' => [['birthdate' => '2020/01/01'], 'birthdate', 'The birthdate does not match the format Y-m-d.'],
     '`hsgrad` is numeric' => [['hsgrad' => 'not-a-number'], 'hsgrad', 'The hsgrad must be a number.'],
-    '`sms_opt_out` is boolean' => [['sms_opt_out' => 'not-boolean'], 'sms_opt_out', 'The sms opt out field must be true or false.'],
-    '`email_bounce` is boolean' => [['email_bounce' => 'not-boolean'], 'email_bounce', 'The email bounce field must be true or false.'],
     '`primary_email_id` is a valid UUID' => [['primary_email_id' => 'not-a-uuid'], 'primary_email_id', 'The primary email id must be a valid UUID.'],
     '`primary_email_id` is an existing email address ID' => [['primary_email_id' => (string) Str::orderedUuid()], 'primary_email_id', 'The selected primary email id is invalid.'],
     '`primary_email_id` is an email address ID for the current prospect' => [['primary_email_id' => ($primaryEmailId = (string) Str::orderedUuid())], 'primary_email_id', 'The selected primary email id is invalid.', function () use ($primaryEmailId) {

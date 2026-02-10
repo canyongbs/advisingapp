@@ -223,13 +223,6 @@ class StudentsTable
                         NumberConstraint::make('enrollmentUntEarned')
                             ->label('Enrollment Earned')
                             ->relationship('enrollments', 'unt_earned'),
-                        BooleanConstraint::make('sms_opt_out')
-                            ->label('SMS Opt Out')
-                            ->icon('heroicon-m-chat-bubble-bottom-center')
-                            ->nullable(),
-                        BooleanConstraint::make('email_bounce')
-                            ->icon('heroicon-m-arrow-uturn-left')
-                            ->nullable(),
                         ...self::getEnrollmentTermConstraints(),
                     ])
                     ->constraintPickerColumns([

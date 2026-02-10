@@ -53,8 +53,6 @@ class CreateProspectRequestFactory extends RequestFactory
             'full_name' => "{$firstName} {$lastName}",
             'preferred' => $this->faker->optional()->firstName(),
             'description' => $this->faker->paragraph(),
-            'sms_opt_out' => $this->faker->optional()->randomElement([true, false, null]),
-            'email_bounce' => $this->faker->optional()->randomElement([true, false, null]),
             'status' => ProspectStatus::inRandomOrder()->first()->name ?? ProspectStatus::factory()->create()->name,
             'source' => ProspectSource::inRandomOrder()->first()->name ?? ProspectSource::factory()->create()->name,
             'birthdate' => $this->faker->optional()->randomElement([$this->faker->date('Y-m-d'), null]),

@@ -34,31 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Tests\Tenant\Prospect\RequestFactories;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Models\User;
-use Worksome\RequestFactories\RequestFactory;
-
-class EditProspectRequestFactory extends RequestFactory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        $firstName = $this->faker->firstName();
-        $lastName = $this->faker->lastName();
-
-        return [
-            'status_id' => ProspectStatus::inRandomOrder()->first()?->id ?? ProspectStatus::factory()->create()->id,
-            'source_id' => ProspectSource::inRandomOrder()->first()?->id ?? ProspectSource::factory()->create()->id,
-            'first_name' => $firstName,
-            'last_name' => $lastName,
-            'full_name' => "{$firstName} {$lastName}",
-            'preferred' => $this->faker->firstName(),
-            'description' => $this->faker->paragraph(),
-            'birthdate' => $this->faker->date(),
-            'hsgrad' => $this->faker->year(),
-            'created_by_id' => User::factory()->create()->id,
-        ];
+        Schema::table('prospects', function (Blueprint $table) {
+            $table->dropColumn('sms_opt_out');
+            $table->dropColumn('email_bounce');
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('prospects', function (Blueprint $table) {
+            $table->boolean('sms_opt_out')->nullable();
+            $table->boolean('email_bounce')->nullable();
+        });
+    }
+};

@@ -53,8 +53,7 @@ class UnhealthyEducatablePrimaryPhoneNumber
                 ->orWhereHas('primaryPhoneNumber', function (Builder $query) {
                     $query->where('can_receive_sms', false)
                         ->orWhereHas('smsOptOut');
-                })
-                ->orWhere('sms_opt_out', true);
+                });
         });
     }
 }

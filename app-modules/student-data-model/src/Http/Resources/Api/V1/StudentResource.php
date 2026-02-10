@@ -63,8 +63,6 @@ class StudentResource extends JsonResource
             'birthdate' => $this->resource->birthdate ? $this->resource->birthdate->format('Y-m-d') : null,
             'hsgrad' => $this->resource->hsgrad ? Date::parse($this->resource->hsgrad)->format('Y-m-d') : null,
             'gender' => $this->resource->gender,
-            'sms_opt_out' => $this->resource->sms_opt_out,
-            'email_bounce' => $this->resource->email_bounce,
             'dual' => $this->resource->dual,
             'ferpa' => $this->resource->ferpa,
             'dfw' => $this->resource->dfw ? $this->resource->dfw->format('Y-m-d') : null,

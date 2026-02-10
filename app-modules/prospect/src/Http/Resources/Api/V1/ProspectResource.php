@@ -59,8 +59,6 @@ class ProspectResource extends JsonResource
             'full_name' => $this->resource->full_name,
             'preferred' => $this->resource->preferred,
             'description' => $this->resource->description,
-            'sms_opt_out' => $this->resource->sms_opt_out,
-            'email_bounce' => $this->resource->email_bounce,
             'status' => $this->resource->status->name,
             'source' => $this->resource->source->name,
             'birthdate' => $this->resource->birthdate ? $this->resource->birthdate->format('Y-m-d') : null,

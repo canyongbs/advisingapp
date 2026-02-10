@@ -43,7 +43,6 @@ use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use App\Infolists\Components\Subsection;
 use Filament\Actions\Action;
-use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -108,16 +107,6 @@ class ProspectProfileInfolist
                                 ->label('Source'),
                             TextEntry::make('description')
                                 ->label('Description'),
-                        ]),
-                        Subsection::make([
-                            IconEntry::make('sms_opt_out')
-                                ->label('SMS Opt Out')
-                                ->boolean()
-                                ->placeholder('N/A'),
-                            IconEntry::make('email_bounce')
-                                ->label('Email Bounce')
-                                ->boolean()
-                                ->placeholder('N/A'),
                         ]),
                         Subsection::make([
                             TextEntry::make('createdBy.name')

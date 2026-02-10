@@ -141,16 +141,6 @@ it('updates a student', function () {
             ->toBe($updateStudentRequestData['gender']);
     }
 
-    if (isset($updateStudentRequestData['sms_opt_out'])) {
-        expect($response['data']['sms_opt_out'] ?? null)
-            ->toBe($updateStudentRequestData['sms_opt_out']);
-    }
-
-    if (isset($updateStudentRequestData['email_bounce'])) {
-        expect($response['data']['email_bounce'] ?? null)
-            ->toBe($updateStudentRequestData['email_bounce']);
-    }
-
     if (isset($updateStudentRequestData['dual'])) {
         expect($response['data']['dual'] ?? null)
             ->toBe($updateStudentRequestData['dual']);
@@ -282,8 +272,6 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     '`hsgrad` is valid date' => [['hsgrad' => 'not-a-date'], 'hsgrad', 'The hsgrad is not a valid date.'],
     '`hsgrad` is Y-m-d format' => [['hsgrad' => '2022/01/01'], 'hsgrad', 'The hsgrad does not match the format Y-m-d.'],
     '`gender` is max 255 characters' => [['gender' => str_repeat('a', 256)], 'gender', 'The gender may not be greater than 255 characters.'],
-    '`sms_opt_out` is boolean' => [['sms_opt_out' => 'not-boolean'], 'sms_opt_out', 'The sms opt out field must be true or false.'],
-    '`email_bounce` is boolean' => [['email_bounce' => 'not-boolean'], 'email_bounce', 'The email bounce field must be true or false.'],
     '`dual` is boolean' => [['dual' => 'not-boolean'], 'dual', 'The dual field must be true or false.'],
     '`ferpa` is boolean' => [['ferpa' => 'not-boolean'], 'ferpa', 'The ferpa field must be true or false.'],
     '`firstgen` is boolean' => [['firstgen' => 'not-boolean'], 'firstgen', 'The firstgen field must be true or false.'],

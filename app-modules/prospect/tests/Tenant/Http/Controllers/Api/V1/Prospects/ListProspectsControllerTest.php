@@ -109,8 +109,6 @@ it('can filter prospects by all attributes', function (string $requestKey, mixed
     '`last_name`' => ['last_name', 'Smith', ['last_name' => 'Smith'], ['last_name' => 'UniqueLast'], 'last_name', 'Smith'],
     '`full_name`' => ['full_name', 'John Doe', ['full_name' => 'John Doe'], ['full_name' => 'Unique Name'], 'full_name', 'John Doe'],
     '`preferred`' => ['preferred', 'JD', ['preferred' => 'JD'], ['preferred' => 'UniquePref'], 'preferred', 'JD'],
-    '`sms_opt_out`' => ['sms_opt_out', true, ['sms_opt_out' => true], ['sms_opt_out' => false], 'sms_opt_out', true],
-    '`email_bounce`' => ['email_bounce', true, ['email_bounce' => true], ['email_bounce' => false], 'email_bounce', true],
     '`birthdate`' => ['birthdate', '2000-01-01', ['birthdate' => '2000-01-01'], ['birthdate' => '1990-01-01'], 'birthdate', '2000-01-01'],
     '`hsgrad`' => ['hsgrad', '2022', ['hsgrad' => '2022'], ['hsgrad' => '1999'], 'hsgrad', '2022'],
     '`status`' => [
