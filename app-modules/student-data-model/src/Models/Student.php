@@ -508,13 +508,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function canReceiveEmail(): bool
     {
-        if (blank($this->primaryEmailAddress?->address)) {
-            return false;
-        }
-
-        $healthStatus = $this->primaryEmailAddress->getHealthStatus();
-
-        return $healthStatus === EmailHealthStatus::Healthy;
+        return $this->primaryEmailAddress?->getHealthStatus() === EmailHealthStatus::Healthy;
     }
 
     public function canReceiveSms(): bool
