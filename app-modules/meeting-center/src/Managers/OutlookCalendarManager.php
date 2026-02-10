@@ -47,6 +47,7 @@ use Carbon\Carbon;
 use DateTime;
 use DateTimeInterface;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 use Illuminate\Support\Facades\Http;
 use Microsoft\Graph\Core\GraphConstants;
 use Microsoft\Graph\Graph;
@@ -59,6 +60,7 @@ use Microsoft\Graph\Model\Event;
 use Microsoft\Graph\Model\FreeBusyStatus;
 use Microsoft\Graph\Model\ItemBody;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 class OutlookCalendarManager implements CalendarInterface
 {
@@ -97,14 +99,14 @@ class OutlookCalendarManager implements CalendarInterface
 
         do {
             try {
-                $response = $request->execute();
+                $response = $this->executeWithRetry($request);
             } catch (ClientException $exception) {
                 if ($exception->getCode() === Response::HTTP_UNAUTHORIZED) {
                     $calendar = $this->refreshToken($calendar);
 
                     $request->setAccessToken($calendar->oauth_token);
 
-                    $response = $request->execute();
+                    $response = $this->executeWithRetry($request);
                 } else {
                     throw $exception;
                 }
@@ -136,14 +138,14 @@ class OutlookCalendarManager implements CalendarInterface
             ->attachBody($this->toMicrosoftGraphEvent($event));
 
         try {
-            $response = $request->execute();
+            $response = $this->executeWithRetry($request);
         } catch (ClientException $exception) {
             if ($exception->getCode() === Response::HTTP_UNAUTHORIZED) {
                 $calendar = $this->refreshToken($event->calendar);
 
                 $request->setAccessToken($calendar->oauth_token);
 
-                $response = $request->execute();
+                $response = $this->executeWithRetry($request);
             } else {
                 throw $exception;
             }
@@ -164,14 +166,14 @@ class OutlookCalendarManager implements CalendarInterface
             ->attachBody($this->toMicrosoftGraphEvent($event));
 
         try {
-            $response = $request->execute();
+            $response = $this->executeWithRetry($request);
         } catch (ClientException $exception) {
             if ($exception->getCode() === Response::HTTP_UNAUTHORIZED) {
                 $calendar = $this->refreshToken($event->calendar);
 
                 $request->setAccessToken($calendar->oauth_token);
 
-                $response = $request->execute();
+                $response = $this->executeWithRetry($request);
             } else {
                 throw $exception;
             }
@@ -191,14 +193,14 @@ class OutlookCalendarManager implements CalendarInterface
         );
 
         try {
-            $request->execute();
+            $this->executeWithRetry($request);
         } catch (ClientException $exception) {
             if ($exception->getCode() === Response::HTTP_UNAUTHORIZED) {
                 $calendar = $this->refreshToken($event->calendar);
 
                 $request->setAccessToken($calendar->oauth_token);
 
-                $request->execute();
+                $this->executeWithRetry($request);
             } else {
                 throw $exception;
             }
@@ -365,5 +367,15 @@ class OutlookCalendarManager implements CalendarInterface
         }
 
         return $microsoftEvent;
+    }
+
+    private function executeWithRetry(object $request, int $maxAttempts = 3, int $delayMs = 500): mixed
+    {
+        return retry(
+            $maxAttempts,
+            fn (): mixed => $request->execute(),
+            $delayMs,
+            fn (Throwable $exception) => $exception instanceof ServerException
+        );
     }
 }
