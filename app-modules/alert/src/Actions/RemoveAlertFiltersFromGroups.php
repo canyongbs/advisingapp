@@ -39,6 +39,7 @@ namespace AdvisingApp\Alert\Actions;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
+use Illuminate\Support\Facades\DB;
 
 class RemoveAlertFiltersFromGroups
 {
@@ -47,36 +48,38 @@ class RemoveAlertFiltersFromGroups
      */
     public function execute(array $alertConfigurationIds): int
     {
-        $modifiedCount = 0;
+        return DB::transaction(function () use ($alertConfigurationIds): int {
+            $modifiedCount = 0;
 
-        $groups = Group::query()
-            ->where('model', GroupModel::Student)
-            ->where('type', GroupType::Dynamic)
-            ->whereNotNull('filters')
-            ->get();
+            $groups = Group::query()
+                ->where('model', GroupModel::Student)
+                ->where('type', GroupType::Dynamic)
+                ->whereNotNull('filters')
+                ->get();
 
-        foreach ($groups as $group) {
-            $filters = $group->filters;
+            foreach ($groups as $group) {
+                $filters = $group->filters;
 
-            if (empty($filters['queryBuilder']['rules'])) {
-                continue;
+                if (empty($filters['queryBuilder']['rules'])) {
+                    continue;
+                }
+
+                $originalRules = $filters['queryBuilder']['rules'];
+                $cleanedRules = $this->removeAlertRulesFromRules(
+                    $originalRules,
+                    $alertConfigurationIds
+                );
+
+                if ($cleanedRules !== $originalRules) {
+                    $filters['queryBuilder']['rules'] = $cleanedRules;
+                    $group->filters = $filters;
+                    $group->save();
+                    $modifiedCount++;
+                }
             }
 
-            $originalRules = $filters['queryBuilder']['rules'];
-            $cleanedRules = $this->removeAlertRulesFromRules(
-                $originalRules,
-                $alertConfigurationIds
-            );
-
-            if ($cleanedRules !== $originalRules) {
-                $filters['queryBuilder']['rules'] = $cleanedRules;
-                $group->filters = $filters;
-                $group->save();
-                $modifiedCount++;
-            }
-        }
-
-        return $modifiedCount;
+            return $modifiedCount;
+        });
     }
 
     /**
