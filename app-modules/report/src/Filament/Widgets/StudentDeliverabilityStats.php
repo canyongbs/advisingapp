@@ -83,12 +83,12 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
                     $groupId,
                     fn (Builder $query) => $this->groupFilter($query, $groupId)
                 )
-                ->whereNull('primary_email_id')
+                ->whereDoesntHave('primaryEmailAddress')
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'missing-email-students-count',
                 now()->addHours(24),
-                fn () => Student::query()->whereNull('primary_email_id')->count()
+                fn () => Student::query()->whereDoesntHave('primaryEmailAddress')->count()
             );
 
         $studentsPrimaryEmailUnhealthy = $shouldBypassCache
@@ -121,12 +121,12 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
                     $groupId,
                     fn (Builder $query) => $this->groupFilter($query, $groupId)
                 )
-                ->whereNull('primary_phone_id')
+                ->whereDoesntHave('primaryPhoneNumber')
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'missing-phone-students-count',
                 now()->addHours(24),
-                fn () => Student::query()->whereNull('primary_phone_id')->count()
+                fn () => Student::query()->whereDoesntHave('primaryPhoneNumber')->count()
             );
 
         $studentsPrimaryPhoneUnhealthy = $shouldBypassCache
