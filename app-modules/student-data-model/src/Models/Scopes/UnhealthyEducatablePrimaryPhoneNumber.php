@@ -42,9 +42,11 @@ use Illuminate\Database\Eloquent\Model;
 class UnhealthyEducatablePrimaryPhoneNumber
 {
     /**
-     * @param Builder<Model> $query
+     * @template TModel of Model
      *
-     * @return Builder<Model>
+     * @param Builder<TModel> $query
+     *
+     * @return Builder<TModel>
      */
     public function __invoke(Builder $query): Builder
     {
