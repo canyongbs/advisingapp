@@ -61,7 +61,6 @@ use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Database\Factories\StudentFactory;
-use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
 use AdvisingApp\StudentDataModel\Enums\EmailHealthStatus;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -566,26 +565,6 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             ->using(EducatablePipelineStage::class)
             ->withPivot(['pipeline_stage_id'])
             ->withTimestamps();
-    }
-
-    /**
-     * @param  Builder<$this>  $query
-     *
-     * @return Builder<$this>
-     */
-    public function scopeIsPrimaryEmailUnhealthy(Builder $query): Builder
-    {
-        return $query->where(function (Builder $query) {
-            $query->whereDoesntHave('primaryEmailAddress')
-                ->orWhereHas(
-                    'primaryEmailAddress',
-                    fn (Builder $email) => $email->has('bounced')
-                        ->orWhereHas(
-                            'optedOut',
-                            fn (Builder $query) => $query->where('status', EmailAddressOptInOptOutStatus::OptedOut)
-                        )
-                );
-        });
     }
 
     protected static function booted(): void

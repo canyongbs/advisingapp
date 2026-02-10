@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryEmailAddress;
+use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -91,9 +93,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
 
         $studentsPrimaryEmailUnhealthy = $shouldBypassCache
             ? Student::query()
-                ->where(function (Builder $query) {
-                    $query->isPrimaryEmailUnhealthy();
-                })
+                ->tap(new UnhealthyEducatablePrimaryEmailAddress())
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
@@ -107,7 +107,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
                 'unhealthy-email-students-count',
                 now()->addHours(24),
                 fn () => Student::query()
-                    ->isPrimaryEmailUnhealthy()
+                    ->tap(new UnhealthyEducatablePrimaryEmailAddress())
                     ->count()
             );
 
@@ -131,16 +131,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
 
         $studentsPrimaryPhoneUnhealthy = $shouldBypassCache
             ? Student::query()
-                ->where(function (Builder $query) {
-                    $query
-                        ->whereDoesntHave('primaryPhoneNumber')
-                        ->orWhereHas('primaryPhoneNumber', function (Builder $query1) {
-                            $query1->where(function (Builder $query2) {
-                                $query2->where('can_receive_sms', false)
-                                    ->orWhereHas('smsOptOut');
-                            });
-                        });
-                })
+                ->tap(new UnhealthyEducatablePrimaryPhoneNumber())
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
@@ -153,16 +144,9 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'unhealthy-phone-students-count',
                 now()->addHours(24),
-                fn () => Student::query()->where(function (Builder $query) {
-                    $query
-                        ->whereDoesntHave('primaryPhoneNumber')
-                        ->orWhereHas('primaryPhoneNumber', function (Builder $query1) {
-                            $query1->where(function (Builder $query2) {
-                                $query2->where('can_receive_sms', false)
-                                    ->orWhereHas('smsOptOut');
-                            });
-                        });
-                })->count()
+                fn () => Student::query()
+                    ->tap(new UnhealthyEducatablePrimaryPhoneNumber())
+                    ->count()
             );
 
         $primaryEmailMissingPercentage = $totalStudents > 0 ? ($studentsPrimaryEmailMissing / $totalStudents) * 100 : 0;

@@ -40,6 +40,8 @@ use AdvisingApp\Report\Filament\Exports\EmailPhoneHealthExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryEmailAddress;
+use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ViewAction;
@@ -166,7 +168,7 @@ class StudentDeliverableTable extends BaseWidget
                     ->query(function (Builder $query, array $data): Builder {
                         /** @var Builder<Student> $query */
                         if (($data['value'] ?? null) === 'unhealthy') {
-                            return $query->isPrimaryEmailUnhealthy();
+                            return $query->tap(new UnhealthyEducatablePrimaryEmailAddress());
                         }
 
                         if (($data['value'] ?? null) === 'healthy') {
@@ -193,17 +195,7 @@ class StudentDeliverableTable extends BaseWidget
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         if (($data['value'] ?? null) === 'unhealthy') {
-                            return $query
-                                ->where(function (Builder $query) {
-                                    $query
-                                        ->whereDoesntHave('primaryPhoneNumber')
-                                        ->orWhereHas('primaryPhoneNumber', function (Builder $query1) {
-                                            $query1->where(function (Builder $query2) {
-                                                $query2->where('can_receive_sms', false)
-                                                    ->orWhereHas('smsOptOut');
-                                            });
-                                        });
-                                });
+                            return $query->tap(new UnhealthyEducatablePrimaryPhoneNumber());
                         }
 
                         if (($data['value'] ?? null) === 'healthy') {
