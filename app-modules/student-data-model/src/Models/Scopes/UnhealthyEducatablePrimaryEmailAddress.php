@@ -56,8 +56,7 @@ class UnhealthyEducatablePrimaryEmailAddress
                         ->orWhereHas('optedOut', function (Builder $query) {
                             $query->where('status', EmailAddressOptInOptOutStatus::OptedOut);
                         });
-                })
-                ->orWhere('email_bounce', true);
+                });
         });
     }
 }
