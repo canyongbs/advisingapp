@@ -170,3 +170,158 @@ it('returns correct percentages of students Email missing, Email unhealthy, Phon
         ->and($stats[2]->getValue())->toBe(Number::format(($phoneMissingCountWithoutFilter / $totalStudentsWithoutFilter) * 100, 2) . '%')
         ->and($stats[3]->getValue())->toBe(Number::format(($phoneUnhealthyCountWithoutFilter / $totalStudentsWithoutFilter) * 100, 2) . '%');
 });
+
+it('handles zero students in date range without division errors', function () {
+    $startDate = now()->subDays(10);
+    $endDate = now()->subDays(5);
+
+    // Create students outside the date range
+    Student::factory()->state(['created_at_source' => now()->subDays(20)])->create();
+    Student::factory()->state(['created_at_source' => now()])->create();
+
+    $widget = new StudentDeliverabilityStats();
+    $widget->cacheTag = 'report-student-deliverability';
+    $widget->pageFilters = [
+        'startDate' => $startDate->toDateString(),
+        'endDate' => $endDate->toDateString(),
+    ];
+
+    $stats = $widget->getStats();
+
+    // Should handle zero students gracefully (likely showing 0% or N/A)
+    expect($stats[0]->getValue())->toBeString()
+        ->and($stats[1]->getValue())->toBeString()
+        ->and($stats[2]->getValue())->toBeString()
+        ->and($stats[3]->getValue())->toBeString();
+});
+
+it('shows 0% for all metrics when all students are healthy', function () {
+    $startDate = now()->subDays(10);
+    $endDate = now()->subDays(5);
+
+    // Create healthy students with valid email and phone
+    Student::factory()->state(['created_at_source' => $startDate])->create();
+    Student::factory()->state(['created_at_source' => $endDate])->create();
+    Student::factory()->state(['created_at_source' => now()->subDays(7)])->create();
+
+    $widget = new StudentDeliverabilityStats();
+    $widget->cacheTag = 'report-student-deliverability';
+    $widget->pageFilters = [
+        'startDate' => $startDate->toDateString(),
+        'endDate' => $endDate->toDateString(),
+    ];
+
+    $stats = $widget->getStats();
+
+    expect($stats[0]->getValue())->toBe('0.00%')
+        ->and($stats[1]->getValue())->toBe('0.00%')
+        ->and($stats[2]->getValue())->toBe('0.00%')
+        ->and($stats[3]->getValue())->toBe('0.00%');
+});
+
+it('shows 100% for all metrics when all students are completely unhealthy', function () {
+    $startDate = now()->subDays(10);
+    $endDate = now()->subDays(5);
+
+    // Create students with missing email and phone
+    $student1 = Student::factory()->state(['created_at_source' => $startDate])->create();
+    $student1->primaryEmailAddress()->delete();
+    $student1->update(['primary_email_id' => null]);
+    $student1->primaryPhoneNumber()->delete();
+    $student1->update(['primary_phone_id' => null]);
+
+    $student2 = Student::factory()->state(['created_at_source' => $endDate])->create();
+    $student2->primaryEmailAddress()->delete();
+    $student2->update(['primary_email_id' => null]);
+    $student2->primaryPhoneNumber()->delete();
+    $student2->update(['primary_phone_id' => null]);
+
+    $widget = new StudentDeliverabilityStats();
+    $widget->cacheTag = 'report-student-deliverability';
+    $widget->pageFilters = [
+        'startDate' => $startDate->toDateString(),
+        'endDate' => $endDate->toDateString(),
+    ];
+
+    $stats = $widget->getStats();
+
+    expect($stats[0]->getValue())->toBe('100.00%')
+        ->and($stats[1]->getValue())->toBe('100.00%')
+        ->and($stats[2]->getValue())->toBe('100.00%')
+        ->and($stats[3]->getValue())->toBe('100.00%');
+});
+
+it('includes students created exactly on start and end dates', function () {
+    $startDate = now()->subDays(10)->startOfDay();
+    $endDate = now()->subDays(5)->endOfDay();
+
+    // Create students on exact boundaries
+    $studentOnStart = Student::factory()->state(['created_at_source' => $startDate])->create();
+    $studentOnStart->primaryEmailAddress()->delete();
+    $studentOnStart->update(['primary_email_id' => null]);
+
+    $studentOnEnd = Student::factory()->state(['created_at_source' => $endDate])->create();
+    $studentOnEnd->primaryPhoneNumber()->delete();
+    $studentOnEnd->update(['primary_phone_id' => null]);
+
+    $studentInMiddle = Student::factory()->state(['created_at_source' => now()->subDays(7)])->create();
+
+    $widget = new StudentDeliverabilityStats();
+    $widget->cacheTag = 'report-student-deliverability';
+    $widget->pageFilters = [
+        'startDate' => $startDate->toDateString(),
+        'endDate' => $endDate->toDateString(),
+    ];
+
+    $stats = $widget->getStats();
+
+    // Should include all 3 students
+    $totalStudents = 3;
+    $emailMissingCount = 1;
+    $phoneMissingCount = 1;
+
+    expect($stats[0]->getValue())->toBe(Number::format(($emailMissingCount / $totalStudents) * 100, 2) . '%')
+        ->and($stats[2]->getValue())->toBe(Number::format(($phoneMissingCount / $totalStudents) * 100, 2) . '%');
+});
+
+it('correctly excludes healthy students with opted-in emails and valid phones from unhealthy counts', function () {
+    $startDate = now()->subDays(10);
+    $endDate = now()->subDays(5);
+
+    // Create a fully healthy student with explicit opt-in
+    $healthyStudent = Student::factory()->state(['created_at_source' => $startDate])->create();
+    EmailAddressOptInOptOut::factory()->create([
+        'address' => $healthyStudent->primaryEmailAddress->address,
+        'status' => EmailAddressOptInOptOutStatus::OptedIn,
+    ]);
+
+    // Create another healthy student without any opt-in/opt-out record
+    $normalStudent = Student::factory()->state(['created_at_source' => $endDate])->create();
+
+    // Create an unhealthy student for comparison
+    $unhealthyStudent = Student::factory()->state(['created_at_source' => now()->subDays(7)])->create();
+    $unhealthyStudent->primaryEmailAddress()->delete();
+    $unhealthyStudent->update(['primary_email_id' => null]);
+    $unhealthyStudent->primaryPhoneNumber()->delete();
+    $unhealthyStudent->update(['primary_phone_id' => null]);
+
+    $widget = new StudentDeliverabilityStats();
+    $widget->cacheTag = 'report-student-deliverability';
+    $widget->pageFilters = [
+        'startDate' => $startDate->toDateString(),
+        'endDate' => $endDate->toDateString(),
+    ];
+
+    $stats = $widget->getStats();
+
+    $totalStudents = 3;
+    $emailMissingCount = 1; // Only unhealthyStudent
+    $emailUnhealthyCount = 1; // Only unhealthyStudent
+    $phoneMissingCount = 1; // Only unhealthyStudent
+    $phoneUnhealthyCount = 1; // Only unhealthyStudent
+
+    expect($stats[0]->getValue())->toBe(Number::format(($emailMissingCount / $totalStudents) * 100, 2) . '%')
+        ->and($stats[1]->getValue())->toBe(Number::format(($emailUnhealthyCount / $totalStudents) * 100, 2) . '%')
+        ->and($stats[2]->getValue())->toBe(Number::format(($phoneMissingCount / $totalStudents) * 100, 2) . '%')
+        ->and($stats[3]->getValue())->toBe(Number::format(($phoneUnhealthyCount / $totalStudents) * 100, 2) . '%');
+});
