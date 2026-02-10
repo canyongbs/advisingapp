@@ -41,7 +41,9 @@ use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportLineChart;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use App\Enums\Feature;
 use App\Filament\Clusters\ReportLibrary;
+use Illuminate\Support\Facades\Gate;
 use UnitEnum;
 
 class QnaAdvisorReport extends AiReport
@@ -57,6 +59,11 @@ class QnaAdvisorReport extends AiReport
     protected static ?int $navigationSort = 180;
 
     protected string $cacheTag = 'qna-advisor-report';
+
+    public static function canAccess(): bool
+    {
+      return Gate::check(Feature::QnAAdvisor->getGateName()) && parent::canAccess();
+    }
 
     public function getWidgets(): array
     {

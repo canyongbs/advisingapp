@@ -40,7 +40,9 @@ use AdvisingApp\Report\Abstract\ProspectReport;
 use AdvisingApp\Report\Filament\Widgets\ProspectCaseStats;
 use AdvisingApp\Report\Filament\Widgets\ProspectCaseTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use App\Enums\Feature;
 use App\Filament\Clusters\ReportLibrary;
+use Illuminate\Support\Facades\Gate;
 use UnitEnum;
 
 class ProspectCaseReport extends ProspectReport
@@ -56,6 +58,11 @@ class ProspectCaseReport extends ProspectReport
     protected string $cacheTag = 'report-prospect-case';
 
     protected static ?int $navigationSort = 130;
+
+    public static function canAccess(): bool
+    {
+      return Gate::check(Feature::CaseManagement->getGateName()) && parent::canAccess();
+    }
 
     public function getColumns(): int|array
     {

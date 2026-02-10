@@ -37,8 +37,10 @@
 namespace AdvisingApp\Report\Abstract;
 
 use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
+use App\Enums\Feature;
 use App\Models\User;
 use Filament\Pages\Dashboard;
+use Illuminate\Support\Facades\Gate;
 
 abstract class ProjectManagementReport extends Dashboard
 {
@@ -51,6 +53,6 @@ abstract class ProjectManagementReport extends Dashboard
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('report-library.view-any');
+        return Gate::check(Feature::ProjectManagement->getGateName()) && $user->can('report-library.view-any');
     }
 }

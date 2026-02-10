@@ -34,8 +34,10 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\Prospect\Filament\Pages\RecruitmentCrmDashboard;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectsActionCenterWidget;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectStats;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -45,6 +47,7 @@ use AdvisingApp\Task\Models\Task;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
 it('renders all prospects correctly in the recruitment dashboard for the All tab', function () {
@@ -153,4 +156,22 @@ it('renders care team prospects correctly in the recruitment dashboard for the C
     livewire(ProspectsActionCenterWidget::class, ['activeTab' => ActionCenterTab::CareTeam->value])
         ->assertSuccessful()
         ->assertCanSeeTableRecords($prospectsWithCareTeam);
+});
+
+it('is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    actingAs($user);
+
+    get(RecruitmentCrmDashboard::getUrl())->assertForbidden();
+
+    $user->grantLicense(LicenseType::RecruitmentCrm);
+
+    $user->refresh();
+
+    get(RecruitmentCrmDashboard::getUrl())->assertForbidden();
+
+    $user->givePermissionTo('report-library.view-any');
+
+    get(RecruitmentCrmDashboard::getUrl())->assertSuccessful();
 });

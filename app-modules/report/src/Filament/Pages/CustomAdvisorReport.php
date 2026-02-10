@@ -42,7 +42,9 @@ use AdvisingApp\Report\Filament\Widgets\CustomAdvisorLineChart;
 use AdvisingApp\Report\Filament\Widgets\CustomAdvisorStats;
 use AdvisingApp\Report\Filament\Widgets\CustomAdvisorTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use App\Enums\Feature;
 use App\Filament\Clusters\ReportLibrary;
+use Illuminate\Support\Facades\Gate;
 use UnitEnum;
 
 class CustomAdvisorReport extends AiReport
@@ -60,6 +62,11 @@ class CustomAdvisorReport extends AiReport
     protected static ?int $navigationSort = 160;
 
     protected string $cacheTag = 'custom-advisor-report';
+
+    public static function canAccess(): bool
+    {
+      return Gate::check(Feature::CustomAiAssistants->getGateName()) && parent::canAccess();
+    }
 
     public function getWidgets(): array
     {
