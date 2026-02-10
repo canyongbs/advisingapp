@@ -61,7 +61,7 @@ class ResearchAdvisorReport extends AiReport
 
     public static function canAccess(): bool
     {
-      return Gate::check(Feature::ResearchAdvisor->getGateName()) && parent::canAccess();
+        return Gate::check(Feature::ResearchAdvisor->getGateName()) && parent::canAccess();
     }
 
     public function getWidgets(): array

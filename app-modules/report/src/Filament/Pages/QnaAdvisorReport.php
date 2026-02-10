@@ -62,7 +62,7 @@ class QnaAdvisorReport extends AiReport
 
     public static function canAccess(): bool
     {
-      return Gate::check(Feature::QnAAdvisor->getGateName()) && parent::canAccess();
+        return Gate::check(Feature::QnAAdvisor->getGateName()) && parent::canAccess();
     }
 
     public function getWidgets(): array

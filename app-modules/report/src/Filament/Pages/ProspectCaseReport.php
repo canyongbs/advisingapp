@@ -61,7 +61,7 @@ class ProspectCaseReport extends ProspectReport
 
     public static function canAccess(): bool
     {
-      return Gate::check(Feature::CaseManagement->getGateName()) && parent::canAccess();
+        return Gate::check(Feature::CaseManagement->getGateName()) && parent::canAccess();
     }
 
     public function getColumns(): int|array
