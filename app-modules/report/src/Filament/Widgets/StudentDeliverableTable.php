@@ -40,6 +40,8 @@ use AdvisingApp\Report\Filament\Exports\EmailPhoneHealthExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Scopes\HealthyEducatablePrimaryEmailAddress;
+use AdvisingApp\StudentDataModel\Models\Scopes\HealthyEducatablePrimaryPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -172,17 +174,7 @@ class StudentDeliverableTable extends BaseWidget
                         }
 
                         if (($data['value'] ?? null) === 'healthy') {
-                            return $query->whereHas(
-                                'primaryEmailAddress',
-                                fn (Builder $email) => $email->whereDoesntHave('bounced')
-                                    ->whereDoesntHave(
-                                        'optedOut',
-                                        fn (Builder $optedOut) => $optedOut->where(
-                                            'status',
-                                            EmailAddressOptInOptOutStatus::OptedOut
-                                        )
-                                    )
-                            );
+                            return $query->tap(new HealthyEducatablePrimaryEmailAddress());
                         }
 
                         return $query;
@@ -199,12 +191,7 @@ class StudentDeliverableTable extends BaseWidget
                         }
 
                         if (($data['value'] ?? null) === 'healthy') {
-                            return $query->whereHas('primaryPhoneNumber', function (Builder $query1) {
-                                $query1->where(function (Builder $query2) {
-                                    $query2->where('can_receive_sms', true)
-                                        ->whereDoesntHave('smsOptOut');
-                                });
-                            });
+                            return $query->tap(new HealthyEducatablePrimaryPhoneNumber());
                         }
 
                         return $query;
