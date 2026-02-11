@@ -168,6 +168,7 @@
         "post-install-cmd": [
             "@php -r \"if (file_exists('vendor/telnyx/telnyx-php/composer.lock')) { unlink('vendor/telnyx/telnyx-php/composer.lock'); }\"",
             "@php -r \"if (file_exists('vendor/talkroute/message-segment-calculator/tools/php-cs-fixer/composer.lock')) { unlink('vendor/talkroute/message-segment-calculator/tools/php-cs-fixer/composer.lock'); }\"",
+            "@php -r \"if (file_exists('vendor/talkroute/message-segment-calculator/composer.lock')) { unlink('vendor/talkroute/message-segment-calculator/composer.lock'); }\"",
             "@php -r \"if (file_exists('vendor/spatie/laravel-health/yarn.lock')) { unlink('vendor/spatie/laravel-health/yarn.lock'); }\"",
             "@php -r \"if (file_exists('vendor/saade/filament-fullcalendar/package-lock.json')) { unlink('vendor/saade/filament-fullcalendar/package-lock.json'); }\""
         ],
@@ -175,6 +176,7 @@
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
             "@php -r \"if (file_exists('vendor/telnyx/telnyx-php/composer.lock')) { unlink('vendor/telnyx/telnyx-php/composer.lock'); }\"",
             "@php -r \"if (file_exists('vendor/talkroute/message-segment-calculator/tools/php-cs-fixer/composer.lock')) { unlink('vendor/talkroute/message-segment-calculator/tools/php-cs-fixer/composer.lock'); }\"",
+            "@php -r \"if (file_exists('vendor/talkroute/message-segment-calculator/composer.lock')) { unlink('vendor/talkroute/message-segment-calculator/composer.lock'); }\"",
             "@php -r \"if (file_exists('vendor/spatie/laravel-health/yarn.lock')) { unlink('vendor/spatie/laravel-health/yarn.lock'); }\"",
             "@php -r \"if (file_exists('vendor/saade/filament-fullcalendar/package-lock.json')) { unlink('vendor/saade/filament-fullcalendar/package-lock.json'); }\""
         ],
