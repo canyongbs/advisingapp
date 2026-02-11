@@ -34,25 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Abstract;
-
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use App\Enums\Feature;
+use AdvisingApp\Report\Filament\Pages\ProjectReport;
 use App\Models\User;
-use Filament\Pages\Dashboard;
-use Illuminate\Support\Facades\Gate;
+use App\Settings\LicenseSettings;
 
-abstract class ProjectManagementReport extends Dashboard
-{
-    use HasFiltersForm;
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 
-    protected string $view = 'report::filament.pages.report';
+it('is gated with proper access control', function () {
+    $settings = app(LicenseSettings::class);
+    $user = User::factory()->create();
 
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
+    $settings->data->addons->projectManagement = false;
+    $settings->save();
 
-        return Gate::check(Feature::ProjectManagement->getGateName()) && $user->can('report-library.view-any');
-    }
-}
+    actingAs($user);
+
+    get(ProjectReport::getUrl())->assertForbidden();
+
+    $user->givePermissionTo('report-library.view-any');
+
+    get(ProjectReport::getUrl())->assertForbidden();
+
+    $settings->data->addons->projectManagement = true;
+    $settings->save();
+
+    get(ProjectReport::getUrl())->assertSuccessful();
+});

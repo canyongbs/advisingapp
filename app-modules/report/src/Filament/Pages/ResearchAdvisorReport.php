@@ -40,7 +40,9 @@ use AdvisingApp\Report\Abstract\AiReport;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\ResearchAdvisorReportStats;
 use AdvisingApp\Report\Filament\Widgets\ResearchAdvisorReportTable;
+use App\Enums\Feature;
 use App\Filament\Clusters\ReportLibrary;
+use Illuminate\Support\Facades\Gate;
 use UnitEnum;
 
 class ResearchAdvisorReport extends AiReport
@@ -56,6 +58,11 @@ class ResearchAdvisorReport extends AiReport
     protected static ?int $navigationSort = 170;
 
     protected string $cacheTag = 'research-advisor-report';
+
+    public static function canAccess(): bool
+    {
+        return Gate::check(Feature::ResearchAdvisor->getGateName()) && parent::canAccess();
+    }
 
     public function getWidgets(): array
     {

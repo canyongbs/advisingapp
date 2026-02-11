@@ -34,25 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Abstract;
-
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use App\Enums\Feature;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Report\Filament\Pages\StudentTaskManagement;
 use App\Models\User;
-use Filament\Pages\Dashboard;
-use Illuminate\Support\Facades\Gate;
 
-abstract class ProjectManagementReport extends Dashboard
-{
-    use HasFiltersForm;
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 
-    protected string $view = 'report::filament.pages.report';
+it('is gated with proper access control', function () {
+    $user = User::factory()->create();
 
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
+    actingAs($user);
 
-        return Gate::check(Feature::ProjectManagement->getGateName()) && $user->can('report-library.view-any');
-    }
-}
+    get(StudentTaskManagement::getUrl())->assertForbidden();
+
+    $user->grantLicense(LicenseType::RetentionCrm);
+
+    $user->refresh();
+
+    get(StudentTaskManagement::getUrl())->assertForbidden();
+
+    $user->givePermissionTo('report-library.view-any');
+
+    get(StudentTaskManagement::getUrl())->assertSuccessful();
+});

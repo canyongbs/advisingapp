@@ -34,25 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Abstract;
-
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use App\Enums\Feature;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Report\Filament\Pages\CustomAdvisorReport;
 use App\Models\User;
-use Filament\Pages\Dashboard;
-use Illuminate\Support\Facades\Gate;
+use App\Settings\LicenseSettings;
 
-abstract class ProjectManagementReport extends Dashboard
-{
-    use HasFiltersForm;
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 
-    protected string $view = 'report::filament.pages.report';
+it('is gated with proper access control', function () {
+    $settings = app(LicenseSettings::class);
+    $user = User::factory()->create();
 
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
+    $settings->data->addons->customAiAssistants = false;
+    $settings->save();
 
-        return Gate::check(Feature::ProjectManagement->getGateName()) && $user->can('report-library.view-any');
-    }
-}
+    actingAs($user);
+
+    get(CustomAdvisorReport::getUrl())->assertForbidden();
+
+    $user->grantLicense(LicenseType::ConversationalAi);
+
+    $user->refresh();
+
+    get(CustomAdvisorReport::getUrl())->assertForbidden();
+
+    $user->givePermissionTo('report-library.view-any');
+
+    get(CustomAdvisorReport::getUrl())->assertForbidden();
+
+    $settings->data->addons->customAiAssistants = true;
+    $settings->save();
+
+    get(CustomAdvisorReport::getUrl())->assertSuccessful();
+});

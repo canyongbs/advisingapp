@@ -40,7 +40,9 @@ use AdvisingApp\Report\Abstract\StudentReport;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\StudentCaseStats;
 use AdvisingApp\Report\Filament\Widgets\StudentCaseTable;
+use App\Enums\Feature;
 use App\Filament\Clusters\ReportLibrary;
+use Illuminate\Support\Facades\Gate;
 use UnitEnum;
 
 class StudentCaseReport extends StudentReport
@@ -56,6 +58,11 @@ class StudentCaseReport extends StudentReport
     protected string $cacheTag = 'report-student-case';
 
     protected static ?int $navigationSort = 70;
+
+    public static function canAccess(): bool
+    {
+        return Gate::check(Feature::CaseManagement->getGateName()) && parent::canAccess();
+    }
 
     public function getColumns(): int|array
     {

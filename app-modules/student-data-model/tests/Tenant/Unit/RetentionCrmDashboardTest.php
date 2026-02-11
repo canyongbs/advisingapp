@@ -34,8 +34,10 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\StudentDataModel\Filament\Pages\RetentionCrmDashboard;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
@@ -43,6 +45,7 @@ use AdvisingApp\Task\Models\Task;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
 it('renders all students correctly in the retention dashboard', function () {
@@ -80,4 +83,22 @@ it('renders all students correctly in the retention dashboard', function () {
                 ->merge($studentsWithSubscription)
                 ->merge($studentsWithCareTeam)
         );
+});
+
+it('is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    actingAs($user);
+
+    get(RetentionCrmDashboard::getUrl())->assertForbidden();
+
+    $user->grantLicense(LicenseType::RetentionCrm);
+
+    $user->refresh();
+
+    get(RetentionCrmDashboard::getUrl())->assertForbidden();
+
+    $user->givePermissionTo('report-library.view-any');
+
+    get(RetentionCrmDashboard::getUrl())->assertSuccessful();
 });

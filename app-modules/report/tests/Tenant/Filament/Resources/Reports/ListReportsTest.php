@@ -34,25 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Abstract;
-
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use App\Enums\Feature;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Report\Filament\Resources\Reports\Pages\ListReports;
 use App\Models\User;
-use Filament\Pages\Dashboard;
-use Illuminate\Support\Facades\Gate;
 
-abstract class ProjectManagementReport extends Dashboard
-{
-    use HasFiltersForm;
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 
-    protected string $view = 'report::filament.pages.report';
+it('is gated with proper access control', function () {
+    $user = User::factory()->create();
 
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
+    actingAs($user);
 
-        return Gate::check(Feature::ProjectManagement->getGateName()) && $user->can('report-library.view-any');
-    }
-}
+    get(ListReports::getUrl())->assertForbidden();
+
+    $user->givePermissionTo('report.view-any');
+
+    get(ListReports::getUrl())->assertForbidden();
+
+    $user->givePermissionTo('user.view-any');
+
+    get(ListReports::getUrl())->assertSuccessful();
+
+    $user->revokePermissionTo('user.view-any');
+
+    $user->grantLicense(LicenseType::RecruitmentCrm);
+
+    $user->refresh();
+
+    get(ListReports::getUrl())->assertSuccessful();
+
+    $user->revokeLicense(LicenseType::RecruitmentCrm);
+    $user->grantLicense(LicenseType::RetentionCrm);
+
+    $user->refresh();
+
+    get(ListReports::getUrl())->assertSuccessful();
+});
