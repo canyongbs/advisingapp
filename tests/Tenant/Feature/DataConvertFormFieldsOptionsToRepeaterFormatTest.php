@@ -71,7 +71,7 @@ it('converts radio and checkbox options to repeater format', function () {
         'config' => ['description' => 'desc', 'options' => ['1' => '1', '2' => '2', '3' => '3']],
     ]);
 
-    $migration = require database_path('migrations/2026_02_04_120050_tmp_data_convert_form_fields_options_to_repeater_format.php');
+    $migration = app('files')->getRequire(database_path('migrations/2026_02_04_120050_tmp_data_convert_form_fields_options_to_repeater_format.php'));
     $migration->up();
 
     $radioField->refresh();
@@ -134,7 +134,7 @@ it('skips already converted fields', function () {
         ],
     ]);
 
-    $migration = require database_path('migrations/2026_02_04_120050_tmp_data_convert_form_fields_options_to_repeater_format.php');
+    $migration = app('files')->getRequire(database_path('migrations/2026_02_04_120050_tmp_data_convert_form_fields_options_to_repeater_format.php'));
     $migration->up();
 
     $radioField->refresh();
