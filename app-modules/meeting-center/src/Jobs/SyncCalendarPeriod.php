@@ -47,6 +47,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Throwable;
 
 class SyncCalendarPeriod implements ShouldQueue, ShouldBeUnique
 {
@@ -54,6 +55,10 @@ class SyncCalendarPeriod implements ShouldQueue, ShouldBeUnique
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
+    public int $tries = 3;
+
+    public int $timeout = 600;
 
     public function __construct(
         protected Calendar $calendar,
@@ -70,6 +75,10 @@ class SyncCalendarPeriod implements ShouldQueue, ShouldBeUnique
 
     public function handle(): void
     {
+        if (blank($this->calendar->oauth_token)) {
+            return;
+        }
+
         resolve(CalendarManager::class)
             ->driver($this->calendar->provider_type->value)
             ->syncEvents(
@@ -77,5 +86,10 @@ class SyncCalendarPeriod implements ShouldQueue, ShouldBeUnique
                 new DateTime($this->start->toDateTimeString()),
                 new DateTime($this->end->toDateTimeString())
             );
+    }
+
+    public function failed(?Throwable $exception): void
+    {
+        report($exception);
     }
 }

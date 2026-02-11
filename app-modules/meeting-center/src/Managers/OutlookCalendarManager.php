@@ -270,39 +270,20 @@ class OutlookCalendarManager implements CalendarInterface
             ]
         );
 
-        if ($response->clientError() || $response->serverError()) {
-            if ($response->status() === Response::HTTP_UNAUTHORIZED) {
-                $calendar->oauth_token = null;
-                $calendar->oauth_refresh_token = null;
-                $calendar->oauth_token_expires_at = null;
-
-                $calendar->save();
-
-                $calendar->user->notify(new CalendarRequiresReconnectNotification($calendar));
-
-                throw new CouldNotRefreshToken(previous: $response->toException());
-            }
-
-            if (
-                ($response->status() === Response::HTTP_BAD_REQUEST)
-                && ($response->json('error') === 'invalid_grant')
-                && (
-                    is_string($errorDescription = $response->json('error_description'))
-                    && str_contains($errorDescription, 'AADSTS50173')
-                )
-            ) {
-                $calendar->oauth_token = null;
-                $calendar->oauth_refresh_token = null;
-                $calendar->oauth_token_expires_at = null;
-
-                $calendar->save();
-
-                $calendar->user->notify(new CalendarRequiresReconnectNotification($calendar));
-
-                throw new CouldNotRefreshToken(previous: $response->toException());
-            }
-
+        if ($response->serverError()) {
             $response->throw();
+        }
+
+        if ($response->clientError()) {
+            $calendar->oauth_token = null;
+            $calendar->oauth_refresh_token = null;
+            $calendar->oauth_token_expires_at = null;
+
+            $calendar->save();
+
+            $calendar->user->notify(new CalendarRequiresReconnectNotification($calendar));
+
+            throw new CouldNotRefreshToken(previous: $response->toException());
         }
 
         $data = $response->object();

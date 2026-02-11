@@ -54,6 +54,10 @@ class SyncCalendar implements ShouldQueue, ShouldBeUnique
     use Queueable;
     use SerializesModels;
 
+    public int $tries = 3;
+
+    public int $timeout = 600;
+
     public function __construct(protected Calendar $calendar)
     {
         $this->onQueue(config('meeting-center.queue'));
@@ -66,6 +70,10 @@ class SyncCalendar implements ShouldQueue, ShouldBeUnique
 
     public function handle(): void
     {
+        if (blank($this->calendar->oauth_token)) {
+            return;
+        }
+
         $now = Carbon::now();
         $jobs = [];
 
