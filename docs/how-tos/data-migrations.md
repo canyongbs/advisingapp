@@ -55,6 +55,7 @@ Temporary migrations **may** use Eloquent models and other classes that could be
 - Be wrapped in transactions for safety
 - Include a `down` method
 - Be idempotent where possible
+- Though using Eloquent Models is allowed in temporary migrations, it is highly recommended that they be used very sparingly, if at all. If you choose to use them you MUST consider and possibly mitigate side effects of their use such as observers, global scopes on the model, etc.
 
 ---
 
