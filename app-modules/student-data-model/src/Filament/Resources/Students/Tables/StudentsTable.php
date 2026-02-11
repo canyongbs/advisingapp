@@ -80,6 +80,8 @@ class StudentsTable
             ])
             ->filters([
                 QueryBuilder::make()
+                    // WARNING: Removing constraints from this list requires a data migration to clean up
+                    // existing Groups that reference the removed filter types. See docs/explanations/maintaining-group-filters.md
                     ->constraints([
                         TextConstraint::make('full_name')
                             ->label('Full Name')
