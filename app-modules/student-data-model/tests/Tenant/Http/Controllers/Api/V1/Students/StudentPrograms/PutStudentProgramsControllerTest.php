@@ -138,7 +138,7 @@ it('creates a student program', function () {
         ->toBe($createStudentProgramRequestData['programs'][0]['prog_status']);
 
     expect($response['data'][0]['cum_gpa'])
-        ->toBe((float) $createStudentProgramRequestData['programs'][0]['cum_gpa']);
+        ->toEqual($createStudentProgramRequestData['programs'][0]['cum_gpa']);
 
     expect($response['data'][0]['semester'])
         ->toBe($createStudentProgramRequestData['programs'][0]['semester']);
