@@ -36,16 +36,16 @@
 
 // Add tests for migration files here
 
-use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Models\Group;
-use App\Models\User;
-use Illuminate\Support\Facades\Artisan;
-use Symfony\Component\Console\Command\Command;
 use AdvisingApp\Form\Filament\Blocks\CheckboxesFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\RadioFormFieldBlock;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormField;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use App\Features\FormRepeaterFeature;
+use App\Models\User;
+use Illuminate\Support\Facades\Artisan;
+use Symfony\Component\Console\Command\Command;
 
 describe('2026_02_10_161725_tmp_data_remove_sms_opt_out_and_email_bounce_filters_from_segments', function () {
     it('removes sms_opt_out and email_bounce filter types from groups', function () {
