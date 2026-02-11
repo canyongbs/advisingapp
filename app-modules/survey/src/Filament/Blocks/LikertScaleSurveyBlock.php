@@ -57,6 +57,9 @@ class LikertScaleSurveyBlock extends FormFieldBlock
         return 'likert';
     }
 
+    /**
+     * @return array<string, string|array<string, string>>
+     */
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
         return [
@@ -68,6 +71,9 @@ class LikertScaleSurveyBlock extends FormFieldBlock
         ];
     }
 
+    /**
+     * @return array<string>
+     */
     public static function getValidationRules(SubmissibleField $field): array
     {
         return [
@@ -76,6 +82,9 @@ class LikertScaleSurveyBlock extends FormFieldBlock
         ];
     }
 
+    /**
+     * @return array<string, string>
+     */
     public static function options(): array
     {
         return [

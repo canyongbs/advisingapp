@@ -54,6 +54,9 @@ class DuplicateSurvey
         $this->updateStepContent($fieldMap);
     }
 
+    /**
+     * @return array<string, string>
+     */
     protected function replicateSteps(): array
     {
         $stepMap = [];
@@ -69,6 +72,10 @@ class DuplicateSurvey
         return $stepMap;
     }
 
+    /**
+     * @param array<string, string> $stepMap
+     * @return array<string, string>
+     */
     protected function replicateFields(array $stepMap): array
     {
         $fieldMap = [];
@@ -85,6 +92,9 @@ class DuplicateSurvey
         return $fieldMap;
     }
 
+    /**
+     * @param array<string, string> $fieldMap
+     */
     protected function updateStepContent(array $fieldMap): void
     {
         $this->replica->steps()->each(function (SurveyStep $step) use ($fieldMap) {

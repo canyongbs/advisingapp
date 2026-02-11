@@ -392,6 +392,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return $this->hasManyDeepFromRelations($this->concerns(), (new Concern())->histories());
     }
 
+    /**
+     * @return HasManyDeep<Model, $this>
+     */
     public function taskHistories(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->tasks(), (new Task())->histories());
@@ -410,6 +413,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return LicenseType::RetentionCrm;
     }
 
+    /**
+     * @return MorphOne<Timeline, $this>
+     */
     public function timeline(): MorphOne
     {
         return $this->morphOne(Timeline::class, 'entity');
@@ -469,21 +475,33 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return $this->belongsTo(StudentPhoneNumber::class, 'primary_phone_id');
     }
 
-    public function primaryAddress()
+    /**
+     * @return BelongsTo<StudentAddress, $this>
+     */
+    public function primaryAddress(): BelongsTo
     {
         return $this->belongsTo(StudentAddress::class, 'primary_address_id');
     }
 
+    /**
+     * @return HasMany<StudentEmailAddress, $this>
+     */
     public function additionalEmailAddresses(): HasMany
     {
         return $this->emailAddresses()->whereKeyNot($this->primary_email_id);
     }
 
+    /**
+     * @return HasMany<StudentPhoneNumber, $this>
+     */
     public function additionalPhoneNumbers(): HasMany
     {
         return $this->phoneNumbers()->whereKeyNot($this->primary_phone_id);
     }
 
+    /**
+     * @return HasMany<StudentAddress, $this>
+     */
     public function additionalAddresses(): HasMany
     {
         return $this->addresses()->whereKeyNot($this->primary_address_id);
@@ -532,8 +550,6 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     /**
      * Route notifications for the mail channel.
-     *
-     * @return array<string, string>|string|null
      */
     public function routeNotificationForMail(Notification $notification): ?string
     {

@@ -41,6 +41,9 @@ use Filament\Actions\Imports\ImportColumn;
 
 trait ImportColumns
 {
+    /**
+     * @return array<ImportColumn>
+     */
     public static function getProgramColumns(): array
     {
         return [
@@ -150,6 +153,9 @@ trait ImportColumns
         ];
     }
 
+    /**
+     * @return array<ImportColumn>
+     */
     public static function getEnrollmentColumns(): array
     {
         return [

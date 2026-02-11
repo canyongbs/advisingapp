@@ -61,6 +61,7 @@ use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -128,6 +129,9 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, H
         }
     }
 
+    /**
+     * @return array<string>
+     */
     public function getStateMachineFields(): array
     {
         return [
@@ -135,7 +139,7 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, H
         ];
     }
 
-    /** @return MorphTo<Educatable> */
+    /** @return MorphTo<Model, $this> */
     public function concern(): MorphTo
     {
         return $this->morphTo();
@@ -205,7 +209,7 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, H
 
     public function getSubscribable(): ?Subscribable
     {
-        return $this->concern instanceof Subscribable ? $this->concern : null;
+        return $this->concern;
     }
 
     public function scopeByNextDue(Builder $query): void

@@ -78,6 +78,9 @@ class TaskAssignedToUserNotification extends Notification implements ShouldQueue
             ->line("\"{$truncatedTaskDescription}\"");
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toDatabase(object $notifiable): array
     {
         $url = match (true) {
@@ -91,8 +94,6 @@ class TaskAssignedToUserNotification extends Notification implements ShouldQueue
             $this->task->concern instanceof Student => "You have been assigned a new Task: <a href='{$url}' target='_blank' class='underline'>{$title}</a> related to Student <a href='" . ViewStudent::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>",
 
             $this->task->concern instanceof Prospect => "You have been assigned a new Task: <a href='{$url}' target='_blank' class='underline'>{$title}</a> related to Prospect <a href='" . ViewProspect::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>",
-
-            default => "You have been assigned a new Task: <a href='{$url}' target='_blank' class='underline'>{$title}</a>",
         };
 
         return FilamentNotification::make()

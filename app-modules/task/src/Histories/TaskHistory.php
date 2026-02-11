@@ -39,6 +39,7 @@ namespace AdvisingApp\Task\Histories;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\History;
 use AdvisingApp\Timeline\Timelines\TaskHistoryTimeline;
@@ -59,12 +60,18 @@ class TaskHistory extends History implements ProvidesATimeline
         return new TaskHistoryTimeline($this);
     }
 
+    /**
+     * @return Collection<int, Model>
+     */
     public static function getTimelineData(Model $forModel): Collection
     {
-        /* @var Student|Prospect $forModel */
+        assert($forModel instanceof Student || $forModel instanceof Prospect);
         return $forModel->taskHistories()->get();
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getFormattedValueForKey(string $key): array
     {
         return match ($key) {
@@ -122,6 +129,9 @@ class TaskHistory extends History implements ProvidesATimeline
         };
     }
 
+    /**
+     * @return Collection<string, string>
+     */
     public function getFormattedValues(): Collection
     {
         $values = parent::getFormattedValues()

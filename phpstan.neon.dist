@@ -1,7 +1,6 @@
 includes:
     - ./vendor/larastan/larastan/extension.neon
     - ./vendor/tpetry/laravel-postgresql-enhanced/phpstan-extension.neon
-    - ./phpstan-baseline.php
     - ./vendor/pestphp/pest/extension.neon
     - ./vendor/orrison/meliorstan/config/extension.neon
 
