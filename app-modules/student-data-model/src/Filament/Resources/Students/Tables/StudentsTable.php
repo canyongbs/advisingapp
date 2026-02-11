@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\Tables;
 
+use AdvisingApp\Alert\Filament\Filters\AlertStatusConstraint;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\ExistingValuesSelectConstraint;
@@ -126,6 +127,7 @@ class StudentsTable
                                     ->multiple()
                                     ->preload(),
                             ),
+                        ...self::getAlertConstraints(),
                         TextConstraint::make('holds')
                             ->icon('heroicon-m-exclamation-triangle'),
                         ExistingValuesSelectConstraint::make('gender')
@@ -299,5 +301,15 @@ class StudentsTable
                     ->mapWithKeys(fn (?string $option): array => $option ? [strtolower($option) => $option] : [])
                     ->all();
             });
+    }
+
+    /**
+     * @return array<AlertStatusConstraint>
+     */
+    private static function getAlertConstraints(): array
+    {
+        return [
+            AlertStatusConstraint::make('alertStatus'),
+        ];
     }
 }
