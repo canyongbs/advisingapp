@@ -504,18 +504,12 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function canReceiveEmail(): bool
     {
-        if (blank($this->primaryEmailAddress?->address)) {
-            return false;
-        }
-
-        $healthStatus = $this->primaryEmailAddress->getHealthStatus();
-
-        return $healthStatus === EmailHealthStatus::Healthy;
+        return $this->primaryEmailAddress?->getHealthStatus() === EmailHealthStatus::Healthy;
     }
 
     public function canReceiveSms(): bool
     {
-        return filled($this->primaryPhoneNumber?->number) && $this->primaryPhoneNumber->can_receive_sms && (! $this->primaryPhoneNumber->smsOptOut()->exists());
+        return $this->primaryPhoneNumber?->can_receive_sms && (! $this->primaryPhoneNumber->smsOptOut()->exists());
     }
 
     /**
@@ -547,8 +541,8 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     }
 
     /**
-    * @return MorphToMany<Pipeline, $this, EducatablePipelineStage>
-    */
+     * @return MorphToMany<Pipeline, $this, EducatablePipelineStage>
+     */
     public function educatablePipelineStages(): MorphToMany
     {
         return $this->morphToMany(

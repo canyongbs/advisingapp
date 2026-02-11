@@ -36,10 +36,11 @@
 
 namespace AdvisingApp\StudentDataModel\Models\Scopes;
 
+use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class UnhealthyEducatablePrimaryPhoneNumber
+class HealthyEducatablePrimaryEmailAddress
 {
     /**
      * @template TModel of Model
@@ -51,11 +52,12 @@ class UnhealthyEducatablePrimaryPhoneNumber
     public function __invoke(Builder $query): Builder
     {
         return $query->where(function (Builder $query) {
-            $query->whereDoesntHave('primaryPhoneNumber')
-                ->orWhereHas('primaryPhoneNumber', function (Builder $query) {
-                    $query->where('can_receive_sms', false)
-                        ->orWhereHas('smsOptOut');
-                });
+            $query->whereHas('primaryEmailAddress', function (Builder $query) {
+                $query->whereDoesntHave('bounced')
+                    ->whereDoesntHave('optedOut', function (Builder $query) {
+                        $query->where('status', EmailAddressOptInOptOutStatus::OptedOut);
+                    });
+            });
         });
     }
 }

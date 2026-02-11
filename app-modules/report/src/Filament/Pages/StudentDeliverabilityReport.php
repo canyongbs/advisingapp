@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Filament\Pages;
 
 use AdvisingApp\Report\Abstract\StudentReport;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use AdvisingApp\Report\Filament\Widgets\StudentDeliverabilityStats;
 use AdvisingApp\Report\Filament\Widgets\StudentDeliverableTable;
 use App\Filament\Clusters\ReportLibrary;
 use UnitEnum;
@@ -69,6 +70,7 @@ class StudentDeliverabilityReport extends StudentReport
     {
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            StudentDeliverabilityStats::make(['cacheTag' => $this->cacheTag]),
             StudentDeliverableTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }

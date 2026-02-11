@@ -39,7 +39,7 @@ namespace AdvisingApp\StudentDataModel\Models\Scopes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class UnhealthyEducatablePrimaryPhoneNumber
+class HealthyEducatablePrimaryPhoneNumber
 {
     /**
      * @template TModel of Model
@@ -51,11 +51,10 @@ class UnhealthyEducatablePrimaryPhoneNumber
     public function __invoke(Builder $query): Builder
     {
         return $query->where(function (Builder $query) {
-            $query->whereDoesntHave('primaryPhoneNumber')
-                ->orWhereHas('primaryPhoneNumber', function (Builder $query) {
-                    $query->where('can_receive_sms', false)
-                        ->orWhereHas('smsOptOut');
-                });
+            $query->whereHas('primaryPhoneNumber', function (Builder $query) {
+                $query->where('can_receive_sms', true)
+                    ->whereDoesntHave('smsOptOut');
+            });
         });
     }
 }
