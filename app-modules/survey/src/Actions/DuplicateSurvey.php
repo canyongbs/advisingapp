@@ -74,6 +74,7 @@ class DuplicateSurvey
 
     /**
      * @param array<string, string> $stepMap
+     *
      * @return array<string, string>
      */
     protected function replicateFields(array $stepMap): array

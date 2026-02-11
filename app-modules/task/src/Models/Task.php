@@ -42,7 +42,6 @@ use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Database\Factories\TaskFactory;

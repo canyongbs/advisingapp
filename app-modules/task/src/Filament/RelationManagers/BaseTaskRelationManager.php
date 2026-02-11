@@ -46,7 +46,6 @@ use AdvisingApp\Task\Models\Task;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
-use App\Models\User;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DissociateAction;
@@ -123,7 +122,7 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                             assert($owner instanceof Student || $owner instanceof Prospect);
 
                             return $query->tap(new HasLicense($owner->getLicenseType()));
-                        } ,
+                        },
                     )
                     ->nullable()
                     ->searchable(['name', 'email'])
@@ -181,7 +180,7 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                             assert($owner instanceof Student || $owner instanceof Prospect);
 
                             return $query->tap(new HasLicense($owner->getLicenseType()));
-                        } ,
+                        },
                     )
                     ->searchable()
                     ->multiple(),
