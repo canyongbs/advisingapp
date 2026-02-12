@@ -170,7 +170,6 @@
             "@php -r \"if (file_exists('vendor/talkroute/message-segment-calculator/tools/php-cs-fixer/composer.lock')) { unlink('vendor/talkroute/message-segment-calculator/tools/php-cs-fixer/composer.lock'); }\"",
             "@php -r \"if (file_exists('vendor/talkroute/message-segment-calculator/composer.lock')) { unlink('vendor/talkroute/message-segment-calculator/composer.lock'); }\"",
             "@php -r \"if (file_exists('vendor/spatie/laravel-health/yarn.lock')) { unlink('vendor/spatie/laravel-health/yarn.lock'); }\"",
-            "@php -r \"if (file_exists('vendor/saade/filament-fullcalendar/package-lock.json')) { unlink('vendor/saade/filament-fullcalendar/package-lock.json'); }\"",
             "@php -r \"if (file_exists('vendor/phpdocumentor/reflection/composer.lock')) { unlink('vendor/phpdocumentor/reflection/composer.lock'); }\""
         ],
         "post-update-cmd": [
@@ -179,7 +178,6 @@
             "@php -r \"if (file_exists('vendor/talkroute/message-segment-calculator/tools/php-cs-fixer/composer.lock')) { unlink('vendor/talkroute/message-segment-calculator/tools/php-cs-fixer/composer.lock'); }\"",
             "@php -r \"if (file_exists('vendor/talkroute/message-segment-calculator/composer.lock')) { unlink('vendor/talkroute/message-segment-calculator/composer.lock'); }\"",
             "@php -r \"if (file_exists('vendor/spatie/laravel-health/yarn.lock')) { unlink('vendor/spatie/laravel-health/yarn.lock'); }\"",
-            "@php -r \"if (file_exists('vendor/saade/filament-fullcalendar/package-lock.json')) { unlink('vendor/saade/filament-fullcalendar/package-lock.json'); }\"",
             "@php -r \"if (file_exists('vendor/phpdocumentor/reflection/composer.lock')) { unlink('vendor/phpdocumentor/reflection/composer.lock'); }\""
         ],
         "post-root-package-install": [
