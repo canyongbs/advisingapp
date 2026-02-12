@@ -46,6 +46,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use App\Models\NotificationSetting;
 use App\Models\User;
+use Exception;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -86,6 +87,7 @@ class TaskAssignedToUserNotification extends Notification implements ShouldQueue
         $url = match (true) {
             $this->task->concern instanceof Student => ManageStudentTasks::getUrl(['record' => $this->task->concern]),
             $this->task->concern instanceof Prospect => ManageProspectTasks::getUrl(['record' => $this->task->concern]),
+            default => throw new Exception('Invalid task concern type.')
         };
 
         $title = str($this->task->title)->limit();
@@ -94,6 +96,8 @@ class TaskAssignedToUserNotification extends Notification implements ShouldQueue
             $this->task->concern instanceof Student => "You have been assigned a new Task: <a href='{$url}' target='_blank' class='underline'>{$title}</a> related to Student <a href='" . ViewStudent::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>",
 
             $this->task->concern instanceof Prospect => "You have been assigned a new Task: <a href='{$url}' target='_blank' class='underline'>{$title}</a> related to Prospect <a href='" . ViewProspect::getUrl(['record' => $this->task->concern]) . "' target='_blank' class='underline'>{$this->task->concern->full_name}</a>",
+
+            default => throw new Exception('Invalid task concern type.')
         };
 
         return FilamentNotification::make()

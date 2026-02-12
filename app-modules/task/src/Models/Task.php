@@ -60,7 +60,6 @@ use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -70,8 +69,6 @@ use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property-read Student|Prospect $concern
- *
  * @mixin IdeHelperTask
  */
 #[ObservedBy([TaskObserver::class])] #[ScopedBy([ConfidentialTaskScope::class])]
@@ -138,9 +135,10 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, H
         ];
     }
 
-    /** @return MorphTo<Model, $this> */
+    /** @return MorphTo<Student|Prospect, $this> */
     public function concern(): MorphTo
     {
+        /** @var MorphTo<Student|Prospect, $this> */
         return $this->morphTo();
     }
 

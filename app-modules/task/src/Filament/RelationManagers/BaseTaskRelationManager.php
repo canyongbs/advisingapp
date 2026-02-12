@@ -210,6 +210,8 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
 
                         $task->assigned_to = $data->get('assigned_to');
 
+                        assert($this->getOwnerRecord() instanceof Student || $this->getOwnerRecord() instanceof Prospect);
+
                         $task->concern()->associate($this->getOwnerRecord());
 
                         $task->save();

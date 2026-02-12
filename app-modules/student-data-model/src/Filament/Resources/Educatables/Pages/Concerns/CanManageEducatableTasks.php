@@ -205,6 +205,8 @@ trait CanManageEducatableTasks
 
                         $task->assigned_to = $data->get('assigned_to');
 
+                        assert($this->getRecord() instanceof Student || $this->getRecord() instanceof Prospect);
+
                         $task->concern()->associate($this->getRecord());
 
                         $task->save();
