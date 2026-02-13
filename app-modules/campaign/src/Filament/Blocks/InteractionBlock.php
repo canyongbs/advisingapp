@@ -37,7 +37,6 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimePicker;
-use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionDriver;
