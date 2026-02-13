@@ -40,7 +40,6 @@ use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimePicker;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\MeetingCenter\Models\Event;
 use Carbon\CarbonImmutable;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 
 class EventBlock extends CampaignActionBlock
