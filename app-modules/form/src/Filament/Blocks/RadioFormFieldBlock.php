@@ -40,7 +40,10 @@ use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\FormRepeaterFeature;
 use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
 
 class RadioFormFieldBlock extends FormFieldBlock
 {
@@ -57,10 +60,23 @@ class RadioFormFieldBlock extends FormFieldBlock
 
     public function fields(): array
     {
+        if (! FormRepeaterFeature::active()) {
+            return [
+                KeyValue::make('options')
+                    ->keyLabel('Value')
+                    ->valueLabel('Label'),
+            ];
+        }
+
         return [
-            KeyValue::make('options')
-                ->keyLabel('Value')
-                ->valueLabel('Label'),
+            Repeater::make('options')
+                ->saveRelationshipsUsing(fn () => null)
+                ->schema([
+                    TextInput::make('value')->required(),
+                    TextInput::make('label')->required(),
+                ])
+                ->columns(2)
+                ->reorderable(),
         ];
     }
 
@@ -78,9 +94,29 @@ class RadioFormFieldBlock extends FormFieldBlock
 
     public static function getValidationRules(SubmissibleField $field): array
     {
+        if (! FormRepeaterFeature::active()) {
+            /** @var array<string, string> */
+            $configOptions = $field->config['options'];
+
+            return [
+                'string',
+                'in:' . collect($configOptions)->keys()->join(','),
+            ];
+        }
+
+        /** @var array<int, array<string, string>>|array<string, string> */
+        $options = $field->config['options'];
+        $values = collect($options);
+
+        if (isset($options[0]) && is_array($options[0])) {
+            $values = $values->pluck('value');
+        } else {
+            $values = $values->keys();
+        }
+
         return [
             'string',
-            'in:' . collect($field->config['options'])->keys()->join(','),
+            'in:' . $values->join(','),
         ];
     }
 }
