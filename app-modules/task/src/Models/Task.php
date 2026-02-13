@@ -135,7 +135,7 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, H
         ];
     }
 
-    /** @return MorphTo<Student|Prospect, $this> */
+    /** @return MorphTo<covariant Student|Prospect, $this> */
     public function concern(): MorphTo
     {
         return $this->morphTo();
