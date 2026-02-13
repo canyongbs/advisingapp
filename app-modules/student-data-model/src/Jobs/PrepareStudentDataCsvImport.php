@@ -61,9 +61,9 @@ class PrepareStudentDataCsvImport implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public $timeout = 1140;
+    public int $timeout = 1140;
 
-    public $tries = 1;
+    public int $tries = 1;
 
     public bool $deleteWhenMissingModels = true;
 

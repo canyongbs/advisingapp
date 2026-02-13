@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManag
 
 use AdvisingApp\StudentDataModel\Filament\Imports\EnrollmentImporter;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;

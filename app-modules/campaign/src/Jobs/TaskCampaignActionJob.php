@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Campaign\Jobs;
 
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use App\Models\User;
 use Exception;
@@ -56,6 +58,8 @@ class TaskCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                 ! $educatable instanceof Educatable,
                 new Exception('The educatable model must implement the Educatable contract.')
             );
+
+            assert($educatable instanceof Student || $educatable instanceof Prospect);
 
             $action = $this->actionEducatable->campaignAction;
 

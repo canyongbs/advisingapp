@@ -88,10 +88,6 @@ class ProgramsRelationManager extends RelationManager
                             return null;
                         }
 
-                        if (! is_array($acadPlan)) {
-                            return null;
-                        }
-
                         $majors = $acadPlan['major'] ?? [];
                         $minors = $acadPlan['minor'] ?? [];
 

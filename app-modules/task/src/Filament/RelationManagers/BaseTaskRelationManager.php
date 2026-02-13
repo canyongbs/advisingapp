@@ -116,7 +116,13 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                     ->relationship(
                         'assignedTo',
                         'name',
-                        fn (Builder $query) => $query->tap(new HasLicense($this->getOwnerRecord()->getLicenseType())),
+                        function (Builder $query) {
+                            $owner = $this->getOwnerRecord();
+
+                            assert($owner instanceof Student || $owner instanceof Prospect);
+
+                            return $query->tap(new HasLicense($owner->getLicenseType()));
+                        },
                     )
                     ->nullable()
                     ->searchable(['name', 'email'])
@@ -151,7 +157,7 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                     ->sortable(),
                 TextColumn::make('concern.full_name')
                     ->label('Related To')
-                    ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
+                    ->url(fn (Task $record) => match ($record->concern::class) {
                         Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
                         default => null,
@@ -168,7 +174,13 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                     ->relationship(
                         'assignedTo',
                         'name',
-                        fn (Builder $query) => $query->tap(new HasLicense($this->getOwnerRecord()->getLicenseType())),
+                        function (Builder $query) {
+                            $owner = $this->getOwnerRecord();
+
+                            assert($owner instanceof Student || $owner instanceof Prospect);
+
+                            return $query->tap(new HasLicense($owner->getLicenseType()));
+                        },
                     )
                     ->searchable()
                     ->multiple(),
@@ -197,6 +209,8 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                         $task = new ($model)($data->except('assigned_to')->toArray());
 
                         $task->assigned_to = $data->get('assigned_to');
+
+                        assert($this->getOwnerRecord() instanceof Student || $this->getOwnerRecord() instanceof Prospect);
 
                         $task->concern()->associate($this->getOwnerRecord());
 

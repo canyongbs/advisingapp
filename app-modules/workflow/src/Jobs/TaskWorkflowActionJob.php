@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Workflow\Jobs;
 
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Task\Notifications\TaskAssignedToUserNotification;
 use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
@@ -58,6 +60,7 @@ class TaskWorkflowActionJob extends ExecuteWorkflowActionJob
             $educatable = $this->workflowRunStep->workflowRun->related;
 
             assert($educatable instanceof Educatable);
+            assert($educatable instanceof Student || $educatable instanceof Prospect);
 
             $details = $this->workflowRunStep->details;
 

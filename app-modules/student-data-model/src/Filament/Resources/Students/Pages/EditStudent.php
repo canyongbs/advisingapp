@@ -156,7 +156,7 @@ class EditStudent extends EditRecord
                                     ]),
                             ])
                             ->orderColumn('order')
-                            ->itemLabel(fn (Repeater $component, Schema $schema): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary email address' : 'Additional email address')
+                            ->itemLabel(fn (Repeater $component, Schema $schema): string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary email address' : 'Additional email address')
                             ->extraItemActions([
                                 $makeRepeaterItemPrimaryAction(),
                             ])
@@ -239,7 +239,7 @@ class EditStudent extends EditRecord
                                 })
                             )
                             ->orderColumn('order')
-                            ->itemLabel(fn (Repeater $component, Schema $schema): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary phone number' : 'Additional phone number')
+                            ->itemLabel(fn (Repeater $component, Schema $schema): string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary phone number' : 'Additional phone number')
                             ->extraItemActions([
                                 $makeRepeaterItemPrimaryAction(),
                             ])
@@ -283,7 +283,7 @@ class EditStudent extends EditRecord
                                     ]),
                             ])
                             ->orderColumn('order')
-                            ->itemLabel(fn (Repeater $component, Schema $schema): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary address' : 'Additional address')
+                            ->itemLabel(fn (Repeater $component, Schema $schema): string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary address' : 'Additional address')
                             ->extraItemActions([
                                 $makeRepeaterItemPrimaryAction(),
                             ])

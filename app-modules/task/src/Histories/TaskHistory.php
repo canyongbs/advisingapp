@@ -59,12 +59,19 @@ class TaskHistory extends History implements ProvidesATimeline
         return new TaskHistoryTimeline($this);
     }
 
+    /**
+     * @return Collection<int, Model>
+     */
     public static function getTimelineData(Model $forModel): Collection
     {
-        /* @var Student|Prospect $forModel */
+        assert($forModel instanceof Student || $forModel instanceof Prospect);
+
         return $forModel->taskHistories()->get();
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getFormattedValueForKey(string $key): array
     {
         return match ($key) {
@@ -122,6 +129,9 @@ class TaskHistory extends History implements ProvidesATimeline
         };
     }
 
+    /**
+     * @return Collection<string, string>
+     */
     public function getFormattedValues(): Collection
     {
         $values = parent::getFormattedValues()
