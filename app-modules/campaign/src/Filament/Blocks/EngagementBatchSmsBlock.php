@@ -37,11 +37,11 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftEngagementBlockWithAi;
+use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimePicker;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use Carbon\CarbonImmutable;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Schemas\Components\Actions;
 
@@ -73,15 +73,9 @@ class EngagementBatchSmsBlock extends CampaignActionBlock
                         'recipient preferred name',
                     ]),
             ]),
-            DateTimePicker::make('execute_at')
-                ->label('When should the journey step be executed?')
-                ->columnSpanFull()
-                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+            CampaignDateTimePicker::make('execute_at')
                 ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
-                ->lazy()
-                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
-                ->required()
-                ->minDate(now()),
+                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null),
         ];
     }
 

@@ -34,43 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Blocks;
+namespace AdvisingApp\Campaign\Filament\Forms\Components;
 
-use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimePicker;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
-use AdvisingApp\MeetingCenter\Models\Event;
-use Carbon\CarbonImmutable;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\DateTimePicker;
 
-class EventBlock extends CampaignActionBlock
+class CampaignDateTimePicker
 {
-    protected function setUp(): void
+    public static function make(string $name): DateTimePicker
     {
-        parent::setUp();
-
-        $this->label = 'Invite Event';
-
-        $this->model(Event::class);
-
-        $this->schema($this->createFields());
-    }
-
-    public function generateFields(string $fieldPrefix = ''): array
-    {
-        return [
-            Select::make($fieldPrefix . 'event')
-                ->label('Select Event')
-                ->options(Event::where('ends_at', '>=', now())->pluck('title', 'id')->toArray())
-                ->nullable()
-                ->searchable(),
-            CampaignDateTimePicker::make('execute_at')
-                ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
-                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null),
-        ];
-    }
-
-    public static function type(): string
-    {
-        return 'event';
+        return DateTimePicker::make($name)
+            ->label('When should the journey step be executed?')
+            ->columnSpanFull()
+            ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+            ->hintIconTooltip('This time is set in ' . app(CampaignSettings::class)->getActionExecutionTimezoneLabel() . '.')
+            ->lazy()
+            ->required()
+            ->minDate(now());
     }
 }
