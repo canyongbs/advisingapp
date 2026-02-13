@@ -70,19 +70,23 @@ class EditEventRegistration extends EditRecord
             Fieldset::make('Registration Form')
                 ->relationship('eventRegistrationForm')
                 ->saveRelationshipsBeforeChildrenUsing(static function (Component | CanEntangleWithSingularRelationships $component): void {
-                    $component->getCachedExistingRecord()?->delete();
-
                     $relationship = $component->getRelationship();
-
+                    $record = $component->getCachedExistingRecord();
                     $data = $component->getChildComponentContainer()->getState(shouldCallHooksBefore: false);
-                    $data = $component->mutateRelationshipDataBeforeCreate($data);
 
-                    $relatedModel = $component->getRelatedModel();
+                    if ($record) {
+                        $record->fill($data);
+                        $record->save();
+                    } else {
+                        $data = $component->mutateRelationshipDataBeforeCreate($data);
 
-                    $record = new $relatedModel();
-                    $record->fill($data);
+                        $relatedModel = $component->getRelatedModel();
 
-                    $relationship->save($record);
+                        $record = new $relatedModel();
+                        $record->fill($data);
+
+                        $relationship->save($record);
+                    }
 
                     $component->cachedExistingRecord($record);
                 })
