@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
+use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimePicker;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\CreateCampaign;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\CareTeam\Models\CareTeam;
@@ -147,15 +148,8 @@ class CareTeamBlock extends CampaignActionBlock
                 ->label('Remove all prior care team assignments?')
                 ->default(false)
                 ->hintIconTooltip('If checked, all prior care team assignments will be removed.'),
-            DateTimePicker::make('execute_at')
-                ->label('When should the journey step be executed?')
-                ->columnSpanFull()
-                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
-                ->hintIconTooltip('This time is set in ' . app(CampaignSettings::class)->getActionExecutionTimezoneLabel() . '.')
-                ->lazy()
-                ->helperText(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
-                ->required()
-                ->minDate(now()),
+            CampaignDateTimePicker::make('execute_at')
+                ->helperText(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null),
         ];
     }
 
