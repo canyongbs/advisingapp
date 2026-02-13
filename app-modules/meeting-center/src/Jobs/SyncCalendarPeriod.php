@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Jobs;
 
+use AdvisingApp\MeetingCenter\Jobs\Middleware\CalendarRequestsConcurrencyLimit;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use App\Models\Tenant;
@@ -55,12 +56,29 @@ class SyncCalendarPeriod implements ShouldQueue, ShouldBeUnique
     use Queueable;
     use SerializesModels;
 
+    public int $maxExceptions = 3;
+
     public function __construct(
-        protected Calendar $calendar,
-        protected Carbon $start,
-        protected Carbon $end,
+        public Calendar $calendar,
+        public Carbon $start,
+        public Carbon $end,
     ) {
         $this->onQueue(config('meeting-center.queue'));
+    }
+
+    /**
+     * Get the middleware the job should pass through.
+     *
+     * @return array<int, object>
+     */
+    public function middleware(): array
+    {
+        return [new CalendarRequestsConcurrencyLimit()];
+    }
+
+    public function retryUntil(): DateTime
+    {
+        return now()->addHour();
     }
 
     public function uniqueId(): string
