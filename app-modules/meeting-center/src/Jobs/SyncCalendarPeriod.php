@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Jobs;
 
+use AdvisingApp\MeetingCenter\Exceptions\MicrosoftGraphRateLimited;
 use AdvisingApp\MeetingCenter\Jobs\Middleware\CalendarRequestsConcurrencyLimit;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use AdvisingApp\MeetingCenter\Models\Calendar;
@@ -88,12 +89,20 @@ class SyncCalendarPeriod implements ShouldQueue, ShouldBeUnique
 
     public function handle(): void
     {
-        resolve(CalendarManager::class)
-            ->driver($this->calendar->provider_type->value)
-            ->syncEvents(
-                $this->calendar,
-                new DateTime($this->start->toDateTimeString()),
-                new DateTime($this->end->toDateTimeString())
-            );
+        try {
+            resolve(CalendarManager::class)
+                ->driver($this->calendar->provider_type->value)
+                ->syncEvents(
+                    $this->calendar,
+                    new DateTime($this->start->toDateTimeString()),
+                    new DateTime($this->end->toDateTimeString())
+                );
+        } catch (MicrosoftGraphRateLimited $exception) {
+            if (filled($exception->retryAfterSeconds)) {
+                $this->release($exception->retryAfterSeconds);
+            }
+
+            throw $exception;
+        }
     }
 }
