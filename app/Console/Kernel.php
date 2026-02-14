@@ -109,10 +109,10 @@ class Kernel extends ConsoleKernel
                             dispatch(new SyncCalendars());
                         });
                     })
-                        ->everyMinute()
+                        ->everyFifteenMinutes()
                         ->name("Dispatch SyncCalendars | Tenant {$tenant->domain}")
                         ->monitorName("Dispatch SyncCalendars | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(15);
+                        ->withoutOverlapping(60);
 
                     $schedule->call(function () use ($tenant) {
                         $tenant->execute(function () {
