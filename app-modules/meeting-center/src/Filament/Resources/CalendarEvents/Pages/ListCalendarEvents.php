@@ -141,8 +141,10 @@ class ListCalendarEvents extends ListRecords
                 TextColumn::make('title')
                     ->sortable(),
                 TextColumn::make('starts_at')
+                    ->dateTime(timezone: auth()->user()->timezone ?? config('app.timezone'))
                     ->sortable(),
                 TextColumn::make('ends_at')
+                    ->dateTime(timezone: auth()->user()->timezone ?? config('app.timezone'))
                     ->sortable(),
                 TextColumn::make('attendees')
                     ->badge()

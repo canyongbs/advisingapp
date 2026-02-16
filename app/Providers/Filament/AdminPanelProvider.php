@@ -202,7 +202,8 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentSpatieLaravelHealthPlugin::make()
                     ->usingPage(ProductHealth::class),
-                FilamentFullCalendarPlugin::make(),
+                FilamentFullCalendarPlugin::make()
+                    ->timezone(fn () => auth()->user()->timezone ?? config('app.timezone')),
             ])
             ->userMenuItems([
                 MenuItem::make()
