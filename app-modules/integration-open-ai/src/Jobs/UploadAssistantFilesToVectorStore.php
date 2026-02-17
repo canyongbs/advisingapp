@@ -76,9 +76,13 @@ class UploadAssistantFilesToVectorStore implements ShouldQueue, TenantAware, Sho
         $parsedFiles = $this->assistant->files()->whereNotNull('parsing_results')->get()->all();
         $parsedLinks = $this->assistant->links()->whereNotNull('parsing_results')->get()->all();
 
-        $parsedData = [...$parsedFiles, ...$parsedLinks];
+        $parsedData = [
+            ...$parsedFiles,
+            ...$parsedLinks,
+            ...$this->assistant->getResourceHubArticles(),
+        ];
 
-        if ($parsedData && (! $service->areFilesReady($parsedData))) {
+        if ($parsedData && (! $service->areFilesReady($parsedData, $this->assistant))) {
             Log::info("The AI assistant [{$this->assistant->getKey()}] files are not ready for use yet.");
 
             ($this->attempts() < 15) && $this->release(now()->addMinute());

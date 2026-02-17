@@ -36,15 +36,21 @@
 
 namespace AdvisingApp\ResourceHub\Models;
 
+use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Division\Models\Division;
+use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
+use AdvisingApp\ResourceHub\Observers\ResourceHubArticleObserver;
 use App\Models\BaseModel;
 use App\Models\User;
 use DateTimeInterface;
+use Exception;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
@@ -53,7 +59,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 /**
  * @mixin IdeHelperResourceHubArticle
  */
-class ResourceHubArticle extends BaseModel implements Auditable, HasMedia
+#[ObservedBy([ResourceHubArticleObserver::class])]
+class ResourceHubArticle extends BaseModel implements AiFile, Auditable, HasMedia
 {
     use AuditableTrait;
     use HasUuids;
@@ -190,6 +197,48 @@ class ResourceHubArticle extends BaseModel implements Auditable, HasMedia
         }
 
         $this->upvote();
+    }
+
+    public function getKey(): string
+    {
+        return parent::getKey();
+    }
+
+    public function getName(): ?string
+    {
+        return $this->title;
+    }
+
+    public function getMimeType(): ?string
+    {
+        return 'text/markdown';
+    }
+
+    public function getFileId(): ?string
+    {
+        throw new Exception('Resource hub articles do not have a file ID, as they are not parsed by LlamaParse.');
+    }
+
+    public function getParsingResults(): ?string
+    {
+        if (blank($this->article_details)) {
+            return null;
+        }
+
+        return tiptap_converter()->asText($this->article_details);
+    }
+
+    public function getTemporaryUrl(): ?string
+    {
+        throw new Exception('Temporary URL is not applicable for resource hub articles.');
+    }
+
+    /**
+     * @return MorphMany<OpenAiVectorStore, $this>
+     */
+    public function openAiVectorStores(): MorphMany
+    {
+        return $this->morphMany(OpenAiVectorStore::class, 'file');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

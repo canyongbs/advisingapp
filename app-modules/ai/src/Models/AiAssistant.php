@@ -40,9 +40,12 @@ use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\Ai\Models\Scopes\AiAssistantConfidentialScope;
 use AdvisingApp\Ai\Observers\AiAssistantObserver;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\Team\Models\Team;
+use App\Features\ResourceHubKnowledgeFeature;
 use App\Models\BaseModel;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
@@ -81,6 +84,7 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
         'instructions',
         'knowledge',
         'is_confidential',
+        'has_resource_hub_knowledge',
         'created_by_id',
         'last_updated_by_id',
     ];
@@ -91,6 +95,7 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
         'is_default' => 'bool',
         'model' => AiModel::class,
         'is_confidential' => 'bool',
+        'has_resource_hub_knowledge' => 'bool',
     ];
 
     protected ?bool $isUpvoted = null;
@@ -216,5 +221,25 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
     public function links(): HasMany
     {
         return $this->hasMany(AiAssistantLink::class, 'ai_assistant_id');
+    }
+
+    /**
+     * @return array<AiFile>
+     */
+    public function getResourceHubArticles(): array
+    {
+        if (! ResourceHubKnowledgeFeature::active()) {
+            return [];
+        }
+
+        if (! $this->has_resource_hub_knowledge) {
+            return [];
+        }
+
+        return ResourceHubArticle::query()
+            ->public()
+            ->whereNotNull('article_details')
+            ->get()
+            ->all();
     }
 }

@@ -261,10 +261,10 @@ it('can confirm that a file is ready if it has a stored timestamp', function () 
     $file = AiMessageFile::factory()
         ->has(OpenAiVectorStore::factory()->state([
             'deployment_hash' => $service->getDeploymentHash(),
-        ]))
+        ]), 'openAiVectorStores')
         ->create();
 
-    expect($file->openAiVectorStore->ready_until->isFuture())
+    expect($file->openAiVectorStores->first()->ready_until->isFuture())
         ->toBeTrue();
 
     expect($service->areFilesReady([$file]))
@@ -287,7 +287,7 @@ it('can confirm that a file is not ready if it is still processing', function ()
         ->has(OpenAiVectorStore::factory()->state([
             'deployment_hash' => $service->getDeploymentHash(),
             'ready_until' => null,
-        ]))
+        ]), 'openAiVectorStores')
         ->create();
 
     expect($service->areFilesReady([$file]))
@@ -313,13 +313,13 @@ it('can confirm that a file is ready if all files are finished processing', func
             'deployment_hash' => $service->getDeploymentHash(),
             'ready_until' => null,
             'vector_store_file_id' => null,
-        ]))
+        ]), 'openAiVectorStores')
         ->create();
 
     expect($service->areFilesReady([$file]))
         ->toBeTrue();
 
-    expect($file->openAiVectorStore->ready_until->toDateTimeString())
+    expect($file->openAiVectorStores->first()->ready_until->toDateTimeString())
         ->toBe($expiresAt->subHours(2)->toDateTimeString());
 });
 
@@ -342,10 +342,10 @@ it('can delete an existing vector store file to ensure storage space is used eff
         ->has(OpenAiVectorStore::factory()->state([
             'deployment_hash' => $service->getDeploymentHash(),
             'ready_until' => null,
-        ]))
+        ]), 'openAiVectorStores')
         ->create();
 
-    expect($file->openAiVectorStore->vector_store_file_id)
+    expect($file->openAiVectorStores->first()->vector_store_file_id)
         ->not->toBeNull();
 
     expect($service->areFilesReady([$file]))
@@ -369,7 +369,7 @@ it('can upload a file and create a new vector store', function () {
     expect($service->areFilesReady([$file]))
         ->toBeFalse();
 
-    expect($file->openAiVectorStore)
+    expect($file->openAiVectorStores->first())
         ->vector_store_file_id->toBe($fileId)
         ->vector_store_id->toBe($vectorStoreId);
 });
