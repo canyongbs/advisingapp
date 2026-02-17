@@ -81,7 +81,7 @@ test('The correct details are displayed on the ListProspectStatuses page', funct
             )
             ->assertTableColumnFormattedStateSet(
                 'color',
-                $prospectStatus->color,
+                $prospectStatus->color->value,
                 $prospectStatus
             )
         // Currently setting not test for cases_count as there is no easy way to check now, relying on underlying package tests
