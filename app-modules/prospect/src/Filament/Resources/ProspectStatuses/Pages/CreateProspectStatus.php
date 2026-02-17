@@ -39,6 +39,8 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResource;
+use App\Features\ProspectStatusFeature;
+use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
@@ -67,7 +69,13 @@ class CreateProspectStatus extends CreateRecord
                     ->searchable()
                     ->options(ProspectStatusColorOptions::class)
                     ->required()
+                    ->visible(! ProspectStatusFeature::active())
                     ->enum(ProspectStatusColorOptions::class),
+                ColorSelect::make('color')
+                    ->label('Color')
+                    ->searchable()
+                    ->visible(ProspectStatusFeature::active())
+                    ->required(),
             ]);
     }
 }

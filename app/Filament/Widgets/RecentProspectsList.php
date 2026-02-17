@@ -38,6 +38,7 @@ namespace App\Filament\Widgets;
 
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Features\ProspectStatusFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -86,7 +87,7 @@ class RecentProspectsList extends BaseWidget
                         return $record->status->name;
                     })
                     ->color(function (Prospect $record) {
-                        return $record->status->color->value;
+                        return ProspectStatusFeature::active() ? $record->status->color : $record->status->color->value;
                     })
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('source.name')

@@ -38,7 +38,9 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages;
 
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Features\ProspectStatusFeature;
 use Filament\Actions\EditAction;
+use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
@@ -79,7 +81,11 @@ class ViewProspectStatus extends ViewRecord
                         TextEntry::make('color')
                             ->label('Color')
                             ->badge()
-                            ->color(fn (ProspectStatus $prospectStatus) => $prospectStatus->color->value),
+                            ->visible(! ProspectStatusFeature::active())
+                            ->color(fn (ProspectStatus $prospectStatus) => ProspectStatusFeature::active() ? $prospectStatus->color : $prospectStatus->color->value),
+                        ColorEntry::make('color')
+                            ->visible(ProspectStatusFeature::active())
+                            ->label('Color'),
                         TextEntry::make('sort')
                             ->numeric(),
                     ])
