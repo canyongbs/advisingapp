@@ -57,9 +57,9 @@ class ViewCalendarEvent extends ViewRecord
                         TextEntry::make('title'),
                         TextEntry::make('description'),
                         TextEntry::make('starts_at')
-                            ->dateTime(timezone: auth()->user()->timezone ?? config('app.timezone')),
+                            ->dateTime(),
                         TextEntry::make('ends_at')
-                            ->dateTime(timezone: auth()->user()->timezone ?? config('app.timezone')),
+                            ->dateTime(),
                         TextEntry::make('transparency')
                             ->badge(),
                         TextEntry::make('attendees')
