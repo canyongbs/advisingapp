@@ -38,6 +38,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages\ListProspectS
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Features\ProspectStatusFeature;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -81,7 +82,7 @@ test('The correct details are displayed on the ListProspectStatuses page', funct
             )
             ->assertTableColumnFormattedStateSet(
                 'color',
-                $prospectStatus->color->value,
+                ProspectStatusFeature::active() ? $prospectStatus->color->getLabel() : $prospectStatus->color->value,
                 $prospectStatus
             )
         // Currently setting not test for cases_count as there is no easy way to check now, relying on underlying package tests
