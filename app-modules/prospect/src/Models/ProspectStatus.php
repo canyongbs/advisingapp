@@ -42,6 +42,7 @@ use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Observers\ProspectStatusObserver;
 use App\Features\ProspectStatusFeature;
 use App\Models\BaseModel;
+use CanyonGBS\Common\Enums\Color;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -87,7 +88,7 @@ class ProspectStatus extends BaseModel implements Auditable
     protected function casts(): array
     {
         return [
-            'color' => ProspectStatusFeature::active() ? 'string' : ProspectStatusColorOptions::class,
+            'color' => ProspectStatusFeature::active() ? Color::class : ProspectStatusColorOptions::class,
         ];
     }
 }

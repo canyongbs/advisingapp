@@ -38,7 +38,6 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
-use App\Features\ProspectStatusFeature;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -112,7 +111,7 @@ class MostEngagedProspectsTable extends BaseWidget
                     ->label('Email'),
                 TextColumn::make('status.name')
                     ->badge()
-                    ->color(fn (Prospect $record) => ProspectStatusFeature::active() ? $record->status->color : $record->status->color->value),
+                    ->color(fn (Prospect $record) => $record->status->color->value),
                 TextColumn::make('engagements_count')
                     ->label('Engagements'),
                 TextColumn::make('createdBy.name')

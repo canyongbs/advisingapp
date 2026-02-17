@@ -38,7 +38,6 @@ namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Tables;
 
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
-use App\Features\ProspectStatusFeature;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -74,7 +73,7 @@ class ProspectsTable
                         return $record->status->name;
                     })
                     ->color(function (Prospect $record) {
-                        return ProspectStatusFeature::active() ? $record->status->color : $record->status->color->value;
+                        return $record->status->color->value;
                     })
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query

@@ -56,7 +56,6 @@ use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Enums\CareTeamRoleType;
 use App\Enums\TagType;
-use App\Features\ProspectStatusFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Tag;
 use Filament\Actions\ActionGroup;
@@ -105,7 +104,7 @@ class ListProspects extends ListRecords
                     ->sortable(),
                 TextColumn::make('status.name')
                     ->badge()
-                    ->color(fn (Prospect $record) => ProspectStatusFeature::active() ? $record->status->color : $record->status->color->value)
+                    ->color(fn (Prospect $record) => $record->status->color->value)
                     ->toggleable()
                     ->sortable(['sort']),
                 TextColumn::make('source.name')

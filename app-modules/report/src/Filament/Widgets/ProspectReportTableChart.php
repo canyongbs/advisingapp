@@ -39,7 +39,6 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Exports\MostRecentProspectsExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
-use App\Features\ProspectStatusFeature;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Tables\Columns\TextColumn;
@@ -115,7 +114,7 @@ class ProspectReportTableChart extends TableWidget
                     ->label('Email'),
                 TextColumn::make('status.name')
                     ->badge()
-                    ->color(fn (Prospect $record) => ProspectStatusFeature::active() ? $record->status->color : $record->status->color->value),
+                    ->color(fn (Prospect $record) => $record->status->color->value),
                 TextColumn::make('createdBy.name')
                     ->label('Created By'),
                 TextColumn::make('created_at')

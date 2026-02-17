@@ -38,7 +38,6 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages;
 
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Features\ProspectStatusFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -47,7 +46,6 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -74,10 +72,7 @@ class ListProspectStatuses extends ListRecords
                 TextColumn::make('color')
                     ->label('Color')
                     ->badge()
-                    ->color(fn (ProspectStatus $prospectStatus) => ProspectStatusFeature::active() ? $prospectStatus->color : $prospectStatus->color->value),
-                //TODO: #ProspectStatusFeature Uncomment color column and remove text column when you remove the feature flag,
-                // ColorColumn::make('color'),
-
+                    ->color(fn (ProspectStatus $prospectStatus) => $prospectStatus->color->value),
                 TextColumn::make('prospects_count')
                     ->label('# of Prospects')
                     ->counts('prospects')

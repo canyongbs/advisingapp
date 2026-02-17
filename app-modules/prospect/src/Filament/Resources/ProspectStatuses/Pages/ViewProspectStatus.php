@@ -83,7 +83,7 @@ class ViewProspectStatus extends ViewRecord
                             ->label('Color')
                             ->badge()
                             ->visible(! ProspectStatusFeature::active())
-                            ->color(fn (ProspectStatus $prospectStatus) => ProspectStatusFeature::active() ? $prospectStatus->color : $prospectStatus->color->value),
+                            ->color(fn (ProspectStatus $prospectStatus) => $prospectStatus->color->value),
                         ColorEntry::make('color')
                             ->visible(ProspectStatusFeature::active())
                             ->label('Color'),
