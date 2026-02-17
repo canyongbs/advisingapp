@@ -108,7 +108,7 @@ class OutlookCalendarManager implements CalendarInterface
                     $response = $this->executeWithRetry($request);
                 }
 
-                if ($retryAfter = $exception->getResponse()->getHeader('Retry-After')) {
+                if ($retryAfter = $exception->getResponse()->getHeaderLine('Retry-After')) {
                     throw new MicrosoftGraphRateLimited(previous: $exception, retryAfterSeconds: (int) $retryAfter);
                 }
 
@@ -151,7 +151,7 @@ class OutlookCalendarManager implements CalendarInterface
                 $response = $this->executeWithRetry($request);
             }
 
-            if ($retryAfter = $exception->getResponse()->getHeader('Retry-After')) {
+            if ($retryAfter = $exception->getResponse()->getHeaderLine('Retry-After')) {
                 throw new MicrosoftGraphRateLimited(previous: $exception, retryAfterSeconds: (int) $retryAfter);
             }
 
@@ -183,7 +183,7 @@ class OutlookCalendarManager implements CalendarInterface
                 $response = $this->executeWithRetry($request);
             }
 
-            if ($retryAfter = $exception->getResponse()->getHeader('Retry-After')) {
+            if ($retryAfter = $exception->getResponse()->getHeaderLine('Retry-After')) {
                 throw new MicrosoftGraphRateLimited(previous: $exception, retryAfterSeconds: (int) $retryAfter);
             }
 
@@ -214,7 +214,7 @@ class OutlookCalendarManager implements CalendarInterface
                 $this->executeWithRetry($request);
             }
 
-            if ($retryAfter = $exception->getResponse()->getHeader('Retry-After')) {
+            if ($retryAfter = $exception->getResponse()->getHeaderLine('Retry-After')) {
                 throw new MicrosoftGraphRateLimited(previous: $exception, retryAfterSeconds: (int) $retryAfter);
             }
 
