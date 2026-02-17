@@ -9,7 +9,7 @@
     "platform": "github",
     "repositories": ["canyongbs/advisingapp"],
     "enabledManagers": ["custom.regex"],
-    "reviewers": ["Orrison"],
+    "reviewers": ["orrison"],
     "vulnerabilityAlerts": {
         "enabled": false
     },
