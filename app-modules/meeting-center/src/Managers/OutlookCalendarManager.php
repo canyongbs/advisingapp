@@ -106,13 +106,11 @@ class OutlookCalendarManager implements CalendarInterface
                     $request->setAccessToken($calendar->oauth_token);
 
                     $response = $this->executeWithRetry($request);
-                }
-
-                if ($retryAfter = $exception->getResponse()->getHeaderLine('Retry-After')) {
+                } elseif ($retryAfter = $exception->getResponse()->getHeaderLine('Retry-After')) {
                     throw new MicrosoftGraphRateLimited(previous: $exception, retryAfterSeconds: (int) $retryAfter);
+                } else {
+                    throw $exception;
                 }
-
-                throw $exception;
             }
 
             $events = array_merge($events, $response->getResponseAsObject(Event::class));
@@ -149,13 +147,11 @@ class OutlookCalendarManager implements CalendarInterface
                 $request->setAccessToken($calendar->oauth_token);
 
                 $response = $this->executeWithRetry($request);
-            }
-
-            if ($retryAfter = $exception->getResponse()->getHeaderLine('Retry-After')) {
+            } elseif ($retryAfter = $exception->getResponse()->getHeaderLine('Retry-After')) {
                 throw new MicrosoftGraphRateLimited(previous: $exception, retryAfterSeconds: (int) $retryAfter);
+            } else {
+                throw $exception;
             }
-
-            throw $exception;
         }
 
         $event->provider_id = $response->getResponseAsObject(Event::class)->getId();
@@ -181,13 +177,11 @@ class OutlookCalendarManager implements CalendarInterface
                 $request->setAccessToken($calendar->oauth_token);
 
                 $response = $this->executeWithRetry($request);
-            }
-
-            if ($retryAfter = $exception->getResponse()->getHeaderLine('Retry-After')) {
+            } elseif ($retryAfter = $exception->getResponse()->getHeaderLine('Retry-After')) {
                 throw new MicrosoftGraphRateLimited(previous: $exception, retryAfterSeconds: (int) $retryAfter);
+            } else {
+                throw $exception;
             }
-
-            throw $exception;
         }
 
         $event->provider_id = $response->getResponseAsObject(Event::class)->getId();
@@ -212,13 +206,11 @@ class OutlookCalendarManager implements CalendarInterface
                 $request->setAccessToken($calendar->oauth_token);
 
                 $this->executeWithRetry($request);
-            }
-
-            if ($retryAfter = $exception->getResponse()->getHeaderLine('Retry-After')) {
+            } elseif ($retryAfter = $exception->getResponse()->getHeaderLine('Retry-After')) {
                 throw new MicrosoftGraphRateLimited(previous: $exception, retryAfterSeconds: (int) $retryAfter);
+            } else {
+                throw $exception;
             }
-
-            throw $exception;
         }
     }
 
