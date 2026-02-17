@@ -141,8 +141,10 @@ class ListCalendarEvents extends ListRecords
                 TextColumn::make('title')
                     ->sortable(),
                 TextColumn::make('starts_at')
+                    ->dateTime()
                     ->sortable(),
                 TextColumn::make('ends_at')
+                    ->dateTime()
                     ->sortable(),
                 TextColumn::make('attendees')
                     ->badge()

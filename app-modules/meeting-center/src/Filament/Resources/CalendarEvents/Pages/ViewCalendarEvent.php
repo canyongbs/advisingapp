@@ -56,8 +56,10 @@ class ViewCalendarEvent extends ViewRecord
                     ->schema([
                         TextEntry::make('title'),
                         TextEntry::make('description'),
-                        TextEntry::make('starts_at'),
-                        TextEntry::make('ends_at'),
+                        TextEntry::make('starts_at')
+                            ->dateTime(),
+                        TextEntry::make('ends_at')
+                            ->dateTime(),
                         TextEntry::make('transparency')
                             ->badge(),
                         TextEntry::make('attendees')

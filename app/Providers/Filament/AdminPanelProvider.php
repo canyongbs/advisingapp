@@ -44,6 +44,7 @@ use App\Filament\Pages\ProductHealth;
 use App\Models\Tenant;
 use App\Multitenancy\Http\Middleware\NeedsTenant;
 use App\Settings\CollegeBrandingSettings;
+use App\Settings\DisplaySettings;
 use Filament\Actions\Action;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ImportAction;
@@ -202,7 +203,8 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentSpatieLaravelHealthPlugin::make()
                     ->usingPage(ProductHealth::class),
-                FilamentFullCalendarPlugin::make(),
+                FilamentFullCalendarPlugin::make()
+                    ->timezone(fn () => app(DisplaySettings::class)->getTimezone()),
             ])
             ->userMenuItems([
                 MenuItem::make()
