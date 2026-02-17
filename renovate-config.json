@@ -22,6 +22,14 @@
             "extractVersionTemplate": "^v?(?<version>.*)$",
             "datasourceTemplate": "github-releases",
             "depNameTemplate": "ImageMagick/ImageMagick"
+        },
+        {
+            "customType": "regex",
+            "description": "RoadRunner Version Updates",
+            "managerFilePatterns": ["/^Dockerfile$/"],
+            "matchStrings": ["COPY --from=ghcr\\.io/roadrunner-server/roadrunner:(?<currentValue>[\\d.]+)"],
+            "datasourceTemplate": "github-releases",
+            "depNameTemplate": "roadrunner-server/roadrunner"
         }
     ]
 }
