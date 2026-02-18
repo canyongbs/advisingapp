@@ -46,7 +46,6 @@ class EnsureSubmissibleIsEmbeddableAndAuthorized
 {
     public function handle(Request $request, Closure $next, string $binding): Response
     {
-        /** @var Submissible $submissible */
         $submissible = $request->route($binding);
 
         if (is_string($submissible)) {
@@ -58,6 +57,7 @@ class EnsureSubmissibleIsEmbeddableAndAuthorized
             }
         }
 
+        /** @var Submissible $submissible */
         if (! $submissible instanceof Submissible) {
             abort(404);
         }
