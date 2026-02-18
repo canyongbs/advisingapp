@@ -38,6 +38,7 @@ namespace AdvisingApp\Form\Http\Middleware;
 
 use AdvisingApp\Form\Models\Submissible;
 use Closure;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -47,6 +48,19 @@ class EnsureSubmissibleIsEmbeddableAndAuthorized
     {
         /** @var Submissible $submissible */
         $submissible = $request->route($binding);
+
+        if (is_string($submissible)) {
+            $modelClass = Relation::getMorphedModel($binding);
+
+            if ($modelClass) {
+                $submissible = (new $modelClass())->resolveRouteBinding($submissible);
+                $request->route()->setParameter($binding, $submissible);
+            }
+        }
+
+        if (! $submissible instanceof Submissible) {
+            abort(404);
+        }
 
         $requestingUrlHeader = $request->headers->get('origin') ?? $request->headers->get('referer');
 
