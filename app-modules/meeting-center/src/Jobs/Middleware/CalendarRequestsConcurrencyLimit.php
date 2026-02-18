@@ -57,7 +57,7 @@ class CalendarRequestsConcurrencyLimit
             return;
         }
 
-        Redis::funnel("calendar-concurrency-{$job->calendar->provider_id}")
+        Redis::funnel("{calendar-concurrency-{$job->calendar->provider_id}}")
             ->block(10)
             ->limit(4)
             ->then(function () use ($job, $next) {
