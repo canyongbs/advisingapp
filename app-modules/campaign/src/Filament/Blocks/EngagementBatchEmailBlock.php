@@ -47,9 +47,12 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
@@ -164,8 +167,22 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
             ]),
             Group::make()
                 ->schema([
+                    ToggleButtons::make('input_type')
+                        ->label('How would you like to select when this step occurs?')
+                        ->options([
+                            'fixed' => 'Fixed Date',
+                            'relative' => 'Relative Date',
+                        ])
+                        ->inline()
+                        ->live()
+                        ->visible(function (Component $component) {
+                            logger()->info($component->getStatePath());
+                            return true;
+                        })
+                        ->required(),
                     DateTimePicker::make('execute_at')
                         ->label('When should the journey step be executed?')
+                        ->visible(fn(Get $get) => $get('input_type') === 'fixed')
                         ->columnSpanFull()
                         ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
                         ->hintIconTooltip('This time is set in ' . app(CampaignSettings::class)->getActionExecutionTimezoneLabel() . '.')
@@ -173,6 +190,29 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                         ->helperText(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
                         ->required()
                         ->minDate(now()),
+                    Section::make('How long after the previous step should this occur?')
+                        ->schema([
+                            TextInput::make('days')
+                                ->translateLabel()
+                                ->numeric()
+                                ->step(1)
+                                ->minValue(0)
+                                ->default(0),
+                            TextInput::make('hours')
+                                ->translateLabel()
+                                ->numeric()
+                                ->step(1)
+                                ->minValue(0)
+                                ->default(0),
+                            TextInput::make('minutes')
+                                ->translateLabel()
+                                ->numeric()
+                                ->step(1)
+                                ->minValue(0)
+                                ->default(0),
+                        ])
+                        ->visible(fn(Get $get) => $get('input_type') === 'relative')
+                        ->columns(3),
                 ]),
         ];
     }
