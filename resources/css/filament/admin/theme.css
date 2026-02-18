@@ -293,3 +293,22 @@
 .prose-toc {
     @apply mb-16;
 }
+
+/* Active Wizard Step Styling */
+.fi-sc-wizard .fi-sc-wizard-header .fi-sc-wizard-header-step.fi-active {
+    .fi-sc-wizard-header-step-btn {
+        & .fi-sc-wizard-header-step-icon-ctn {
+            @apply bg-primary-600 dark:bg-primary-500;
+
+            & .fi-sc-wizard-header-step-number {
+                @apply text-white font-semibold;
+            }
+        }
+
+        & .fi-sc-wizard-header-step-text {
+            & .fi-sc-wizard-header-step-label {
+                @apply font-semibold;
+            }
+        }
+    }
+}
