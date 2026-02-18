@@ -38,6 +38,7 @@ namespace AdvisingApp\MeetingCenter\Managers;
 
 use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Exceptions\CouldNotRefreshToken;
+use AdvisingApp\MeetingCenter\Exceptions\MicrosoftGraphRateLimited;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
@@ -105,6 +106,8 @@ class OutlookCalendarManager implements CalendarInterface
                     $request->setAccessToken($calendar->oauth_token);
 
                     $response = $this->executeWithRetry($request);
+                } elseif ($retryAfter = $exception->getResponse()->getHeaderLine('Retry-After')) {
+                    throw new MicrosoftGraphRateLimited(previous: $exception, retryAfterSeconds: (int) $retryAfter);
                 } else {
                     throw $exception;
                 }
@@ -144,6 +147,8 @@ class OutlookCalendarManager implements CalendarInterface
                 $request->setAccessToken($calendar->oauth_token);
 
                 $response = $this->executeWithRetry($request);
+            } elseif ($retryAfter = $exception->getResponse()->getHeaderLine('Retry-After')) {
+                throw new MicrosoftGraphRateLimited(previous: $exception, retryAfterSeconds: (int) $retryAfter);
             } else {
                 throw $exception;
             }
@@ -172,6 +177,8 @@ class OutlookCalendarManager implements CalendarInterface
                 $request->setAccessToken($calendar->oauth_token);
 
                 $response = $this->executeWithRetry($request);
+            } elseif ($retryAfter = $exception->getResponse()->getHeaderLine('Retry-After')) {
+                throw new MicrosoftGraphRateLimited(previous: $exception, retryAfterSeconds: (int) $retryAfter);
             } else {
                 throw $exception;
             }
@@ -199,6 +206,8 @@ class OutlookCalendarManager implements CalendarInterface
                 $request->setAccessToken($calendar->oauth_token);
 
                 $this->executeWithRetry($request);
+            } elseif ($retryAfter = $exception->getResponse()->getHeaderLine('Retry-After')) {
+                throw new MicrosoftGraphRateLimited(previous: $exception, retryAfterSeconds: (int) $retryAfter);
             } else {
                 throw $exception;
             }
