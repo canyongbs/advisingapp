@@ -78,7 +78,7 @@ class ViewProspectStatus extends ViewRecord
                             ->label('Name'),
                         TextEntry::make('classification')
                             ->label('Classification'),
-                        //TODO: Remove TextEntry when you remove feature flag and just use ColorEntry
+                        //TODO: FeatureFlag Cleanup - Remove TextEntry when you remove feature flag and just use ColorEntry
                         TextEntry::make('color')
                             ->label('Color')
                             ->badge()

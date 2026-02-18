@@ -84,7 +84,11 @@ class ProspectStatus extends BaseModel implements Auditable
         return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 
-    // TODO: #ProspectStatusFeature When cleaning up the feature flag, remove this casts() method and move the 'color' cast definition to the $casts property. Additionally, remove the ProspectStatusColorOptions enum if it is no longer used elsewhere in the codebase.
+    /**
+     * TODO: FeatureFlag Cleanup - After ProspectStatusFeature is removed:
+     * - Remove this casts() method and move the 'color' cast definition to the $casts property
+     * - Additionally, Remove the ProspectStatusColorOptions enum if it is no longer used elsewhere in the codebase.
+     */
     protected function casts(): array
     {
         return [
