@@ -49,6 +49,7 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
@@ -161,15 +162,19 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                     ->fieldPrefix($fieldPrefix)
                     ->mergeTags($mergeTags),
             ]),
-            DateTimePicker::make('execute_at')
-                ->label('When should the journey step be executed?')
-                ->columnSpanFull()
-                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
-                ->hintIconTooltip('This time is set in ' . app(CampaignSettings::class)->getActionExecutionTimezoneLabel() . '.')
-                ->lazy()
-                ->helperText(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
-                ->required()
-                ->minDate(now()),
+            Group::make()
+                ->schema([
+                    DateTimePicker::make('execute_at')
+                        ->label('When should the journey step be executed?')
+                        ->columnSpanFull()
+                        ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+                        ->hintIconTooltip('This time is set in ' . app(CampaignSettings::class)->getActionExecutionTimezoneLabel() . '.')
+                        ->lazy()
+                        ->helperText(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
+                        ->required()
+                        ->minDate(now()),
+                ]),
+            
         ];
     }
 
