@@ -175,15 +175,11 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                         ])
                         ->inline()
                         ->live()
-                        ->visible(function (Component $component) {
-                            logger()->info($component->getStatePath());
-
-                            return true;
-                        })
+                        ->visible(fn (Get $get, Component $component) => array_key_first($get('../../')) !== explode('.', $component->getStatePath())[2])
                         ->required(),
                     DateTimePicker::make('execute_at')
                         ->label('When should the journey step be executed?')
-                        ->visible(fn (Get $get) => $get('input_type') === 'fixed')
+                        ->visible(fn (Get $get, Component $component) => array_key_first($get('../../')) === explode('.', $component->getStatePath())[2] || $get('input_type') === 'fixed')
                         ->columnSpanFull()
                         ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
                         ->hintIconTooltip('This time is set in ' . app(CampaignSettings::class)->getActionExecutionTimezoneLabel() . '.')
@@ -212,7 +208,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                                 ->minValue(0)
                                 ->default(0),
                         ])
-                        ->visible(fn (Get $get) => $get('input_type') === 'relative')
+                        ->visible(fn (Get $get, Component $component) => array_key_first($get('../../')) !== explode('.', $component->getStatePath())[2] && $get('input_type') === 'relative')
                         ->columns(3),
                 ]),
         ];
