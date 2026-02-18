@@ -75,10 +75,7 @@ test('A successful action on the EditProspectStatus page', function () {
     assertEquals($editRequest['name'], $prospectStatus->fresh()->name);
     assertEquals($editRequest['classification'], $prospectStatus->fresh()->classification);
 
-    $actualColor = $prospectStatus->fresh()->color;
-    $actualColorValue = $actualColor->value;
-
-    assertEquals($editRequest['color'], $actualColorValue);
+    assertEquals($editRequest['color'], $prospectStatus->fresh()->color->value);
 });
 
 test('EditProspectStatus requires valid data', function ($data, $errors) {
@@ -148,9 +145,7 @@ test('EditProspectStatus is gated with proper access control', function () {
 
     assertEquals($request['name'], $prospectStatus->fresh()->name);
 
-    $actualColor = $prospectStatus->fresh()->color;
-    $actualColorValue = $actualColor->value;
-    assertEquals($request['color'], $actualColorValue);
+    assertEquals($request['color'], $prospectStatus->fresh()->color->value);
 });
 
 test('EditProspectStatus is gated with proper system protection access control', function () {
@@ -188,7 +183,5 @@ test('EditProspectStatus is gated with proper system protection access control',
 
     assertEquals($request['name'], $prospectStatus->fresh()->name);
 
-    $actualColor = $prospectStatus->fresh()->color;
-    $actualColorValue = $actualColor->value;
-    assertEquals($request['color'], $actualColorValue);
+    assertEquals($request['color'], $prospectStatus->fresh()->color->value);
 });

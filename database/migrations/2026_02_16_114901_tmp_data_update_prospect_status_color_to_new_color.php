@@ -50,9 +50,10 @@ return new class () extends Migration {
                     $newColor = match ($status->color) {
                         'success' => 'green',
                         'danger' => 'red',
-                        'warning' => 'amber',
-                        'info' => 'blue',
-                        'primary', 'gray' => 'gray',
+                        'warning' => 'yellow',
+                        'info' => 'sky',
+                        'primary' => 'blue',
+                        'gray' => 'gray',
                         default => 'gray',
                     };
 
@@ -82,8 +83,9 @@ return new class () extends Migration {
                     $oldColor = match ($status->color) {
                         'green' => 'success',
                         'red' => 'danger',
-                        'amber' => 'warning',
-                        'blue' => 'info',
+                        'yellow' => 'warning',
+                        'sky' => 'info',
+                        'blue' => 'primary',
                         'gray' => 'gray',
                         default => 'gray',
                     };
