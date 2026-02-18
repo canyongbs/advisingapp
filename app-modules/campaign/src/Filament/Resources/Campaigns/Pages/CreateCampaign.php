@@ -41,6 +41,7 @@ use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Group\Models\Group;
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Select;
@@ -123,11 +124,20 @@ class CreateCampaign extends CreateRecord
                         ->dehydrated(false)
                         ->validationAttribute('journey steps')
                         ->saveRelationshipsUsing(function (Builder $component, Campaign $record) {
+                            $executeAt = null;
+
                             foreach ($component->getChildComponentContainers() as $item) {
                                 /** @var CampaignActionBlock $block */
                                 $block = $item->getParentComponent();
 
                                 $itemData = $item->getState(shouldCallHooksBefore: false);
+
+                                if(isset($itemData['execute_at']) ) {
+                                    $executeAt = $itemData['execute_at'];
+                                } else {
+                                    $executeAt = Carbon::parse($executeAt)->addDays($itemData['days'])->addHours($itemData['hours'])->addMinutes($itemData['minutes']);
+                                    $itemData['execute_at'] = $executeAt;
+                                }
 
                                 $action = $record->actions()->create([
                                     'type' => $block->getName(),

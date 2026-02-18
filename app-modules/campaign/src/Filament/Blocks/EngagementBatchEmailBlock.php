@@ -37,6 +37,8 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftEngagementBlockWithAi;
+use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\CreateCampaign;
+use AdvisingApp\Campaign\Filament\Resources\Campaigns\RelationManagers\CampaignActionsRelationManager;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Engagement\Models\EmailTemplate;
@@ -49,6 +51,7 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Group;
@@ -175,11 +178,18 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                         ])
                         ->inline()
                         ->live()
-                        ->visible(fn (Get $get, Component $component) => array_key_first($get('../../')) !== explode('.', $component->getStatePath())[2])
+                        ->visible(fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire) => 
+                            array_key_first($get('../../')) !== explode('.', $component->getStatePath())[2] &&
+                            $livewire instanceof CreateCampaign
+                        )
                         ->required(),
                     DateTimePicker::make('execute_at')
                         ->label('When should the journey step be executed?')
-                        ->visible(fn (Get $get, Component $component) => array_key_first($get('../../')) === explode('.', $component->getStatePath())[2] || $get('input_type') === 'fixed')
+                        ->visible(fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire) => 
+                            ! ($livewire instanceof CreateCampaign) ||
+                            array_key_first($get('../../')) === explode('.', $component->getStatePath())[2] ||
+                            $get('input_type') === 'fixed'
+                        )
                         ->columnSpanFull()
                         ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
                         ->hintIconTooltip('This time is set in ' . app(CampaignSettings::class)->getActionExecutionTimezoneLabel() . '.')
@@ -208,7 +218,11 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                                 ->minValue(0)
                                 ->default(0),
                         ])
-                        ->visible(fn (Get $get, Component $component) => array_key_first($get('../../')) !== explode('.', $component->getStatePath())[2] && $get('input_type') === 'relative')
+                        ->visible(fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire) => 
+                            array_key_first($get('../../')) !== explode('.', $component->getStatePath())[2] &&
+                            $get('input_type') === 'relative' &&
+                            $livewire instanceof CreateCampaign
+                        )
                         ->columns(3),
                 ]),
         ];
