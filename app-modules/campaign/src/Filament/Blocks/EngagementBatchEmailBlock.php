@@ -178,15 +178,15 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                         ])
                         ->inline()
                         ->live()
-                        ->visible(fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire) => 
-                            array_key_first($get('../../')) !== explode('.', $component->getStatePath())[2] &&
+                        ->visible(
+                            fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire) => array_key_first($get('../../')) !== explode('.', $component->getStatePath())[2] &&
                             $livewire instanceof CreateCampaign
                         )
                         ->required(),
                     DateTimePicker::make('execute_at')
                         ->label('When should the journey step be executed?')
-                        ->visible(fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire) => 
-                            ! ($livewire instanceof CreateCampaign) ||
+                        ->visible(
+                            fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire) => ! ($livewire instanceof CreateCampaign) ||
                             array_key_first($get('../../')) === explode('.', $component->getStatePath())[2] ||
                             $get('input_type') === 'fixed'
                         )
@@ -218,8 +218,8 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                                 ->minValue(0)
                                 ->default(0),
                         ])
-                        ->visible(fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire) => 
-                            array_key_first($get('../../')) !== explode('.', $component->getStatePath())[2] &&
+                        ->visible(
+                            fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire) => array_key_first($get('../../')) !== explode('.', $component->getStatePath())[2] &&
                             $get('input_type') === 'relative' &&
                             $livewire instanceof CreateCampaign
                         )
