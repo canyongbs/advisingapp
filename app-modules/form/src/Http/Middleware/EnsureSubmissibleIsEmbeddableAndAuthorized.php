@@ -57,10 +57,11 @@ class EnsureSubmissibleIsEmbeddableAndAuthorized
             }
         }
 
-        /** @var Submissible $submissible */
         if (! $submissible instanceof Submissible) {
-            abort(404);
+            return response()->json(['error' => 'Resource not found.'], 404);
         }
+
+        /** @var Submissible $submissible */
 
         $requestingUrlHeader = $request->headers->get('origin') ?? $request->headers->get('referer');
 
