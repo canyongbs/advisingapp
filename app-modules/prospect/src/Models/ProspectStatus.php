@@ -85,7 +85,7 @@ class ProspectStatus extends BaseModel implements Auditable
     }
 
     /**
-     * TODO: FeatureFlag Cleanup - After ProspectStatusFeature is removed:
+     * TODO: ProspectStatusFeature Cleanup - After ProspectStatusFeature is removed:
      * - Remove this casts() method and move the 'color' cast definition to the $casts property
      * - Additionally, Remove the ProspectStatusColorOptions enum if it is no longer used elsewhere in the codebase.
      */

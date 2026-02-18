@@ -69,7 +69,7 @@ class EditProspectStatus extends EditRecord
                     ->options(SystemProspectClassification::class)
                     ->required()
                     ->enum(SystemProspectClassification::class),
-                //TODO: FeatureFlag Cleanup - Remove Select when you remove feature flag and just use ColorSelect
+                //TODO: ProspectStatusFeature Cleanup - Remove Select when you remove feature flag and just use ColorSelect
                 Select::make('color')
                     ->label('Color')
                     ->searchable()
