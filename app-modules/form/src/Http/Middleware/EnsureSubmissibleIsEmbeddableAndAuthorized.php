@@ -62,7 +62,6 @@ class EnsureSubmissibleIsEmbeddableAndAuthorized
         }
 
         /** @var Submissible $submissible */
-
         $requestingUrlHeader = $request->headers->get('origin') ?? $request->headers->get('referer');
 
         if (! $requestingUrlHeader) {
