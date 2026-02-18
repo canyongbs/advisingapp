@@ -100,10 +100,10 @@ class EngagementBatchSmsBlock extends CampaignActionBlock
                     DateTimePicker::make('execute_at')
                         ->label('When should the journey step be executed?')
                         ->visible(
-                                    fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire) => ! ($livewire instanceof CreateCampaign) ||
+                            fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire) => ! ($livewire instanceof CreateCampaign) ||
                                     array_key_first($get('../../')) === explode('.', $component->getStatePath())[2] ||
                                     $get('input_type') === 'fixed'
-                                )
+                        )
                         ->columnSpanFull()
                         ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
                         ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
