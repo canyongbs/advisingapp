@@ -174,7 +174,6 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                         ->required()
                         ->minDate(now()),
                 ]),
-            
         ];
     }
 
