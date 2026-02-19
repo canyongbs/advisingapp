@@ -88,7 +88,7 @@ class ViewProspectStatus extends ViewRecord
                         ColorEntry::make('color')
                             ->visible(ProspectStatusFeature::active())
                             ->label('Color')
-                            ->state(fn (ProspectStatus $record): ?string => $record->color ? Color::convertToRgb(Color::all()[$record->color->value][600]) : null),
+                            ->state(fn (ProspectStatus $record): string => Color::convertToRgb(Color::all()[$record->color->value][600])),
                         TextEntry::make('sort')
                             ->numeric(),
                     ])
