@@ -37,6 +37,7 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftEngagementBlockWithAi;
+use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\CreateCampaign;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\RelationManagers\CampaignActionsRelationManager;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
@@ -82,63 +83,7 @@ class EngagementBatchSmsBlock extends CampaignActionBlock
                         'recipient preferred name',
                     ]),
             ]),
-            Group::make()
-                ->schema([
-                    ToggleButtons::make('input_type')
-                        ->label('How would you like to select when this step occurs?')
-                        ->options([
-                            'fixed' => 'Fixed Date',
-                            'relative' => 'Relative Date',
-                        ])
-                        ->inline()
-                        ->live()
-                        ->visible(
-                            fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire) => array_key_first($get('../../')) !== explode('.', $component->getStatePath())[2] &&
-                            $livewire instanceof CreateCampaign
-                        )
-                        ->required(),
-                    DateTimePicker::make('execute_at')
-                        ->label('When should the journey step be executed?')
-                        ->visible(
-                            fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire) => ! ($livewire instanceof CreateCampaign) ||
-                                    array_key_first($get('../../')) === explode('.', $component->getStatePath())[2] ||
-                                    $get('input_type') === 'fixed'
-                        )
-                        ->columnSpanFull()
-                        ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
-                        ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
-                        ->lazy()
-                        ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
-                        ->required()
-                        ->minDate(now()),
-                    Section::make('How long after the previous step should this occur?')
-                        ->schema([
-                            TextInput::make('days')
-                                ->translateLabel()
-                                ->numeric()
-                                ->step(1)
-                                ->minValue(0)
-                                ->default(0),
-                            TextInput::make('hours')
-                                ->translateLabel()
-                                ->numeric()
-                                ->step(1)
-                                ->minValue(0)
-                                ->default(0),
-                            TextInput::make('minutes')
-                                ->translateLabel()
-                                ->numeric()
-                                ->step(1)
-                                ->minValue(0)
-                                ->default(0),
-                        ])
-                        ->visible(
-                            fn (Get $get, Component $component, Page|CampaignActionsRelationManager $livewire) => array_key_first($get('../../')) !== explode('.', $component->getStatePath())[2] &&
-                            $get('input_type') === 'relative' &&
-                            $livewire instanceof CreateCampaign
-                        )
-                        ->columns(3),
-                ]),
+            CampaignDateTimeInput::make(),
         ];
     }
 

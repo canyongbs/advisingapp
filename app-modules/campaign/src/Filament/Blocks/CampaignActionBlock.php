@@ -68,7 +68,7 @@ abstract class CampaignActionBlock extends Block
 
     abstract public static function type(): string;
 
-    public function generateUserTimezoneHint(CarbonInterface $dateTime): ?string
+    public static function generateUserTimezoneHint(CarbonInterface $dateTime): ?string
     {
         if (blank(auth()->user()->timezone)) {
             return null;
