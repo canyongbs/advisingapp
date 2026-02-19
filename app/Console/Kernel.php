@@ -144,7 +144,7 @@ class Kernel extends ConsoleKernel
                         ->name("Dispatch AutomaticallyEndQnaAdvisors | Tenant {$tenant->domain}")
                         ->monitorName("Dispatch AutomaticallyEndQnaAdvisors | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
-                    
+
                     $schedule->call(function () use ($tenant) {
                         $tenant->execute(function () {
                             dispatch(new UpdateCurrentQnaAdvisorLinks());
