@@ -41,7 +41,6 @@ use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Support\Facades\Route;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 Route::middleware([
     'api',
@@ -55,8 +54,6 @@ Route::middleware([
         Route::prefix('api/{application}')
             ->name('api.')
             ->middleware([
-                // TODO: Determine if this stateful middleware is needed
-                // EnsureFrontendRequestsAreStateful::class,
                 EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':application',
             ])
             ->group(function () {
