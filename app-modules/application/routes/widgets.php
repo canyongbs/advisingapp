@@ -37,8 +37,8 @@
 use AdvisingApp\Application\Http\Controllers\ApplicationWidgetController;
 use AdvisingApp\Application\Http\Middleware\ApplicationsWidgetCors;
 use AdvisingApp\Application\Http\Middleware\EnsureOnlineAdmissionsFeatureIsActive;
+use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
-use AdvisingApp\Form\Models\Form;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
@@ -80,7 +80,7 @@ Route::middleware([
 
                 // Handle preflight CORS requests for all routes in this group
                 // MUST remain the last route in this group
-                Route::options('/{any}', function (Request $request, Form $form) {
+                Route::options('/{any}', function (Request $request, Application $application) {
                     return response()->noContent();
                 })
                     ->where('any', '.*')
