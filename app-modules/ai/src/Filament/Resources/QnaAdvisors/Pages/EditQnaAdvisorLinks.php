@@ -39,9 +39,11 @@ namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisorLink;
+use App\Features\CurrentQnaAdvisorLinks;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
@@ -94,6 +96,10 @@ class EditQnaAdvisorLinks extends EditRecord
                             ->required()
                             ->disabled(fn (?QnaAdvisorLink $record): bool => $record !== null)
                             ->url(),
+                        Toggle::make('is_current')
+                            ->visible(CurrentQnaAdvisorLinks::active())
+                            ->label('Keep Current')
+                            ->helperText('Select this option if you would like to this AI advisor to check for updates on a monthly basis.'),
                     ])
                     ->relationship()
                     ->hiddenLabel()
