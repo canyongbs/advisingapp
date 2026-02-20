@@ -34,25 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Tests\Tenant\ProspectStatus\RequestFactories;
+namespace App\Features;
 
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use App\Features\ProspectStatusFeature;
-use CanyonGBS\Common\Enums\Color;
-use Laravel\Pennant\Feature;
-use Worksome\RequestFactories\RequestFactory;
+use App\Support\AbstractFeatureFlag;
 
-class CreateProspectStatusRequestFactory extends RequestFactory
+class ProspectStatusFeature extends AbstractFeatureFlag
 {
-    public function definition(): array
+    public function resolve(mixed $scope): mixed
     {
-        return [
-            'classification' => fake()->randomElement(SystemProspectClassification::cases()),
-            'name' => fake()->name(),
-            'color' => Feature::active(ProspectStatusFeature::class)
-              ? fake()->randomElement(Color::cases())->value
-              : fake()->randomElement(ProspectStatusColorOptions::cases()),
-        ];
+        return false;
     }
 }

@@ -38,6 +38,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages\ViewProspectS
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Features\ProspectStatusFeature;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -47,6 +48,18 @@ use function Tests\asSuperAdmin;
 test('The correct details are displayed on the ViewProspectStatus page', function () {
     $prospectStatus = ProspectStatus::factory()->create();
 
+    $assertSeeText = [
+        'Name',
+        $prospectStatus->name,
+        'Classification',
+        $prospectStatus->classification->getLabel(),
+        'Color',
+    ];
+
+    if (! ProspectStatusFeature::active()) {
+        $assertSeeText[] = $prospectStatus->color->value;
+    }
+
     asSuperAdmin()
         ->get(
             ProspectStatusResource::getUrl('view', [
@@ -54,16 +67,7 @@ test('The correct details are displayed on the ViewProspectStatus page', functio
             ])
         )
         ->assertSuccessful()
-        ->assertSeeTextInOrder(
-            [
-                'Name',
-                $prospectStatus->name,
-                'Classification',
-                $prospectStatus->classification->getLabel(),
-                'Color',
-                $prospectStatus->color,
-            ]
-        );
+        ->assertSeeTextInOrder($assertSeeText);
 });
 
 // Permission Tests

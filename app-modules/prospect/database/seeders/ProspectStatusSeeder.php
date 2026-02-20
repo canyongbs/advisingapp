@@ -39,7 +39,10 @@ namespace AdvisingApp\Prospect\Database\Seeders;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Features\ProspectStatusFeature;
+use CanyonGBS\Common\Enums\Color;
 use Illuminate\Database\Seeder;
+use Laravel\Pennant\Feature;
 
 class ProspectStatusSeeder extends Seeder
 {
@@ -51,34 +54,34 @@ class ProspectStatusSeeder extends Seeder
                     [
                         'classification' => SystemProspectClassification::New,
                         'name' => 'New',
-                        'color' => ProspectStatusColorOptions::Info->value,
+                        'color' => Feature::active(ProspectStatusFeature::class) ? Color::Sky->value : ProspectStatusColorOptions::Info->value,
                         'is_system_protected' => true,
                     ],
                     [
                         'classification' => SystemProspectClassification::Assigned,
                         'name' => 'Assigned',
-                        'color' => ProspectStatusColorOptions::Warning->value,
+                        'color' => Feature::active(ProspectStatusFeature::class) ? Color::Yellow->value : ProspectStatusColorOptions::Warning->value,
                     ],
                     [
                         'classification' => SystemProspectClassification::InProgress,
                         'name' => 'In-Progress',
-                        'color' => ProspectStatusColorOptions::Primary->value,
+                        'color' => Feature::active(ProspectStatusFeature::class) ? Color::Blue->value : ProspectStatusColorOptions::Primary->value,
                     ],
                     [
                         'classification' => SystemProspectClassification::Converted,
                         'name' => 'Converted',
-                        'color' => ProspectStatusColorOptions::Success->value,
+                        'color' => Feature::active(ProspectStatusFeature::class) ? Color::Green->value : ProspectStatusColorOptions::Success->value,
                         'is_system_protected' => true,
                     ],
                     [
                         'classification' => SystemProspectClassification::Recycled,
                         'name' => 'Recycled',
-                        'color' => ProspectStatusColorOptions::Gray->value,
+                        'color' => Feature::active(ProspectStatusFeature::class) ? Color::Gray->value : ProspectStatusColorOptions::Gray->value,
                     ],
                     [
                         'classification' => SystemProspectClassification::NotInterested,
                         'name' => 'Not Interested',
-                        'color' => ProspectStatusColorOptions::Danger->value,
+                        'color' => Feature::active(ProspectStatusFeature::class) ? Color::Red->value : ProspectStatusColorOptions::Danger->value,
                     ],
                 ]
             );

@@ -40,7 +40,9 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Observers\ProspectStatusObserver;
+use App\Features\ProspectStatusFeature;
 use App\Models\BaseModel;
+use CanyonGBS\Common\Enums\Color;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -65,7 +67,6 @@ class ProspectStatus extends BaseModel implements Auditable
 
     protected $casts = [
         'classification' => SystemProspectClassification::class,
-        'color' => ProspectStatusColorOptions::class,
         'sort' => 'integer',
         'is_system_protected' => 'boolean',
     ];
@@ -81,5 +82,17 @@ class ProspectStatus extends BaseModel implements Auditable
     protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+    }
+
+    /**
+     * TODO: ProspectStatusFeature Cleanup - After ProspectStatusFeature is removed:
+     * - Remove this casts() method and move the 'color' cast definition to the $casts property
+     * - Additionally, Remove the ProspectStatusColorOptions enum if it is no longer used elsewhere in the codebase.
+     */
+    protected function casts(): array
+    {
+        return [
+            'color' => ProspectStatusFeature::active() ? Color::class : ProspectStatusColorOptions::class,
+        ];
     }
 }
