@@ -45,6 +45,16 @@ use App\Features\ResourceHubKnowledgeFeature;
 
 class AiAssistantObserver
 {
+    public function created(AiAssistant $assistant): void
+    {
+        if (
+            ResourceHubKnowledgeFeature::active()
+            && $assistant->has_resource_hub_knowledge
+        ) {
+            UploadAssistantFilesToVectorStore::dispatch($assistant);
+        }
+    }
+
     public function updating(AiAssistant $assistant): void
     {
         if ($assistant->application === AiAssistantApplication::PersonalAssistant && $assistant->is_default) {

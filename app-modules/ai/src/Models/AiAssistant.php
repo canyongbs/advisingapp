@@ -239,7 +239,7 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
         return ResourceHubArticle::query()
             ->public()
             ->whereNotNull('article_details')
-            ->get()
+            ->get(['id', 'updated_at'])
             ->all();
     }
 }
