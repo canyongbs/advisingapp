@@ -34,46 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Models;
+namespace AdvisingApp\ResourceHub\Observers;
 
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\IntegrationOpenAi\Jobs\SyncResourceHubArticlesToAssistantVectorStores;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 
-/**
- * @mixin IdeHelperOpenAiVectorStore
- */
-class OpenAiVectorStore extends BaseModel
+class ResourceHubArticleObserver
 {
-    use SoftDeletes;
-
-    public $fillable = [
-        'context_type',
-        'context_id',
-        'deployment_hash',
-        'ready_until',
-        'vector_store_id',
-        'vector_store_file_id',
-    ];
-
-    protected $casts = [
-        'ready_until' => 'immutable_datetime',
-    ];
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function file(): MorphTo
+    public function created(ResourceHubArticle $article): void
     {
-        return $this->morphTo('file');
+        if (! $article->public) {
+            return;
+        }
+
+        SyncResourceHubArticlesToAssistantVectorStores::dispatch();
     }
 
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function context(): MorphTo
+    public function updated(ResourceHubArticle $article): void
     {
-        return $this->morphTo('context');
+        if (! $article->isDirty(['public', 'article_details', 'title'])) {
+            return;
+        }
+
+        SyncResourceHubArticlesToAssistantVectorStores::dispatch();
+    }
+
+    public function deleted(ResourceHubArticle $article): void
+    {
+        SyncResourceHubArticlesToAssistantVectorStores::dispatch();
     }
 }

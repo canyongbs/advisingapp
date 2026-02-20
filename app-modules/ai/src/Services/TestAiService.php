@@ -47,6 +47,7 @@ use AdvisingApp\Research\Models\ResearchRequest;
 use Closure;
 use Exception;
 use Generator;
+use Illuminate\Database\Eloquent\Model;
 use Prism\Prism\Contracts\Message;
 
 class TestAiService implements AiService
@@ -131,7 +132,7 @@ class TestAiService implements AiService
     /**
      * @param array<AiFile> $files
      */
-    public function areFilesReady(array $files): bool
+    public function areFilesReady(array $files, ?Model $context = null): bool
     {
         return true;
     }

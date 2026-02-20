@@ -41,7 +41,7 @@ use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use App\Models\BaseModel;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -109,10 +109,10 @@ class AiAssistantFile extends BaseModel implements AiFile, HasMedia
     }
 
     /**
-     * @return MorphOne<OpenAiVectorStore, $this>
+     * @return MorphMany<OpenAiVectorStore, $this>
      */
-    public function openAiVectorStore(): MorphOne
+    public function openAiVectorStores(): MorphMany
     {
-        return $this->morphOne(OpenAiVectorStore::class, 'file');
+        return $this->morphMany(OpenAiVectorStore::class, 'file');
     }
 }

@@ -34,46 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Models;
+use App\Features\ResourceHubKnowledgeFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
-/**
- * @mixin IdeHelperOpenAiVectorStore
- */
-class OpenAiVectorStore extends BaseModel
-{
-    use SoftDeletes;
-
-    public $fillable = [
-        'context_type',
-        'context_id',
-        'deployment_hash',
-        'ready_until',
-        'vector_store_id',
-        'vector_store_file_id',
-    ];
-
-    protected $casts = [
-        'ready_until' => 'immutable_datetime',
-    ];
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function file(): MorphTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->morphTo('file');
+        DB::transaction(function () {
+            Schema::table('ai_assistants', function (Blueprint $table) {
+                $table->boolean('has_resource_hub_knowledge')->default(false);
+            });
+
+            ResourceHubKnowledgeFeature::activate();
+        });
     }
 
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function context(): MorphTo
+    public function down(): void
     {
-        return $this->morphTo('context');
+        DB::transaction(function () {
+            ResourceHubKnowledgeFeature::deactivate();
+
+            Schema::table('ai_assistants', function (Blueprint $table) {
+                $table->dropColumn('has_resource_hub_knowledge');
+            });
+        });
     }
-}
+};
