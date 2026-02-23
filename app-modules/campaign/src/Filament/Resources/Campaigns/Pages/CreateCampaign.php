@@ -132,10 +132,10 @@ class CreateCampaign extends CreateRecord
 
                                 $itemData = $item->getState(shouldCallHooksBefore: false);
 
-                                if (isset($itemData['execute_at'])) {
+                                if (isset($itemData['execute_at']) && (($itemData['input_type'] ?? null) !== 'relative')) {
                                     $executeAt = $itemData['execute_at'];
                                 } else {
-                                    $executeAt = Carbon::parse($executeAt)->addDays($itemData['days'])->addHours($itemData['hours'])->addMinutes($itemData['minutes']);
+                                    $executeAt = Carbon::parse($executeAt ?? null)->addDays($itemData['days'])->addHours($itemData['hours'])->addMinutes($itemData['minutes']);
                                     $itemData['execute_at'] = $executeAt;
                                 }
 

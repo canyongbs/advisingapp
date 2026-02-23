@@ -33,10 +33,27 @@
 --}}
 @php
     use AdvisingApp\Campaign\Enums\CampaignActionType;
+    use Illuminate\Support\Carbon;
 
-    $actions = collect($getLivewire()->data['actions']);
+    $actions = [];
 
-    $sortedActions = $actions->sortBy(function ($item, $key) {
+    foreach ($getLivewire()->data['actions'] as $action) {
+        $itemData = $action['data'];
+
+        if (isset($itemData['execute_at']) && (($itemData['input_type'] ?? null) !== 'relative')) {
+            $executeAt = $itemData['execute_at'];
+        } else {
+            $executeAt = Carbon::parse($executeAt ?? null)->addDays(intval($itemData['days'] ?? 0))->addHours(intval($itemData['hours'] ?? 0))->addMinutes(intval($itemData['minutes'] ?? 0));
+            $itemData['execute_at'] = $executeAt;
+        }
+
+        $actions[] = [
+            'type' => $action['type'],
+            'data' => $itemData,
+        ];
+    }
+
+    $sortedActions = collect($actions)->sortBy(function ($item, $key) {
         return $item['data']['execute_at'];
     });
 @endphp
