@@ -45,6 +45,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudent
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudentTasks;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudentActivityFeed;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudentAlerts;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use Filament\Resources\Resource;
@@ -119,6 +120,7 @@ class StudentResource extends Resource
             'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
             'subscriptions' => ManageStudentSubscriptions::route('/{record}/subscriptions'),
             'tasks' => ManageStudentTasks::route('/{record}/tasks'),
+            'alerts' => ViewStudentAlerts::route('/{record}/alerts'),
         ];
     }
 }

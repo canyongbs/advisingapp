@@ -33,6 +33,7 @@
 --}}
 
 @php
+    use AdvisingApp\Alert\Filament\Widgets\StudentAlertInfoBarWidget;
     use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableActivityFeedWidget;
     use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableConcernsWidget;
     use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableCareTeamWidget;
@@ -69,6 +70,12 @@
 
         <div class="flex flex-col gap-8 lg:col-span-1 xl:col-span-2">
             @livewire(StudentAcademicStats::class, ['record' => $this->getRecord()])
+
+            @livewire(StudentAlertInfoBarWidget::class, [
+                'record' => $this->getRecord(),
+                'alertsUrl' => StudentResource::getUrl('alerts', ['record' => $this->getRecord()]),
+            ])
+
             <x-student-data-model::filament.resources.educatables.view-educatable.relation-managers :managers="[
                 'programs' => ProgramsRelationManager::class,
                 'enrollments' => EnrollmentsRelationManager::class,
