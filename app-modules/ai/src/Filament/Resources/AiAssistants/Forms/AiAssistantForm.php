@@ -40,12 +40,14 @@ use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
+use App\Features\ResourceHubKnowledgeFeature;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use App\Models\User;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
@@ -113,6 +115,12 @@ class AiAssistantForm
                     ->label('Created By')
                     ->relationship('createdBy', 'name')
                     ->visible(auth()->user()->isSuperAdmin()),
+                Section::make('Institutional Data')
+                    ->schema([
+                        Toggle::make('has_resource_hub_knowledge')
+                            ->label('Resource Hub'),
+                    ])
+                    ->visible(fn (): bool => ResourceHubKnowledgeFeature::active()),
                 Section::make('Configure AI Advisor')
                     ->description('Design the capability of your advisor by including detailed instructions below.')
                     ->schema([

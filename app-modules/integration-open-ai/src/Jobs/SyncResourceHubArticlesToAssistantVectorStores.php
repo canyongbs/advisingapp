@@ -36,68 +36,32 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
-use Illuminate\Bus\Batchable;
+use AdvisingApp\Ai\Models\AiAssistant;
+use App\Features\ResourceHubKnowledgeFeature;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 use Spatie\Multitenancy\Jobs\TenantAware;
 
-class UploadQnaAdvisorFilesToVectorStore implements ShouldQueue, TenantAware, ShouldBeUnique
+class SyncResourceHubArticlesToAssistantVectorStores implements ShouldQueue, TenantAware
 {
-    use Batchable;
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
-    /**
-     * @var int
-     */
-    public $tries = 15;
-
-    public function __construct(
-        protected QnaAdvisor $advisor,
-    ) {}
-
     public function handle(): void
     {
-        $service = $this->advisor->model->getService();
-
-        if (! ($service instanceof BaseOpenAiService)) {
+        if (! ResourceHubKnowledgeFeature::active()) {
             return;
         }
 
-        $parsedFiles = [
-            ...$this->advisor->files()->whereNotNull('parsing_results')->get()->all(),
-            ...$this->advisor->links()->whereNotNull('parsing_results')->get()->all(),
-        ];
-
-        if ($parsedFiles && (! $service->areFilesReady($parsedFiles, $this->advisor))) {
-            Log::info("The Qna Advisor [{$this->advisor->getKey()}] files and links are not ready for use yet.");
-
-            ($this->attempts() < 15) && $this->release(now()->addMinute());
-
-            return;
-        }
-
-        if (
-            $this->advisor->files()->whereNull('parsing_results')->where('created_at', '<=', now()->subMinutes(15))->exists()
-            || $this->advisor->links()->whereNull('parsing_results')->where('created_at', '<=', now()->subMinutes(15))->exists()
-        ) {
-            Log::info("The Qna Advisor [{$this->advisor->getKey()}] has files or links that are not parsed yet.");
-
-            ($this->attempts() < 15) && $this->release(now()->addMinute());
-        }
-    }
-
-    public function uniqueId(): string
-    {
-        return $this->advisor->getKey();
+        AiAssistant::query()
+            ->where('has_resource_hub_knowledge', true)
+            ->each(function (AiAssistant $assistant) {
+                UploadAssistantFilesToVectorStore::dispatch($assistant);
+            });
     }
 }

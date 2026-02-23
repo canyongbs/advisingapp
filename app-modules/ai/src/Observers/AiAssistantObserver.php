@@ -40,9 +40,21 @@ use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiThreadLockedReason;
 use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
 use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\IntegrationOpenAi\Jobs\UploadAssistantFilesToVectorStore;
+use App\Features\ResourceHubKnowledgeFeature;
 
 class AiAssistantObserver
 {
+    public function created(AiAssistant $assistant): void
+    {
+        if (
+            ResourceHubKnowledgeFeature::active()
+            && $assistant->has_resource_hub_knowledge
+        ) {
+            UploadAssistantFilesToVectorStore::dispatch($assistant);
+        }
+    }
+
     public function updating(AiAssistant $assistant): void
     {
         if ($assistant->application === AiAssistantApplication::PersonalAssistant && $assistant->is_default) {
@@ -63,6 +75,13 @@ class AiAssistantObserver
                 'locked_at' => now(),
                 'locked_reason' => AiThreadLockedReason::AssistantUpdated,
             ]);
+        }
+
+        if (
+            ResourceHubKnowledgeFeature::active()
+            && $assistant->wasChanged('has_resource_hub_knowledge')
+        ) {
+            UploadAssistantFilesToVectorStore::dispatch($assistant);
         }
     }
 }

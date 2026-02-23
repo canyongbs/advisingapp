@@ -34,46 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Models;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
-/**
- * @mixin IdeHelperOpenAiVectorStore
- */
-class OpenAiVectorStore extends BaseModel
-{
-    use SoftDeletes;
-
-    public $fillable = [
-        'context_type',
-        'context_id',
-        'deployment_hash',
-        'ready_until',
-        'vector_store_id',
-        'vector_store_file_id',
-    ];
-
-    protected $casts = [
-        'ready_until' => 'immutable_datetime',
-    ];
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function file(): MorphTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->morphTo('file');
+        Schema::table('open_ai_vector_stores', function (Blueprint $table) {
+            $table->nullableUuidMorphs('context');
+        });
     }
 
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function context(): MorphTo
+    public function down(): void
     {
-        return $this->morphTo('context');
+        Schema::table('open_ai_vector_stores', function (Blueprint $table) {
+            $table->dropMorphs('context');
+        });
     }
-}
+};
