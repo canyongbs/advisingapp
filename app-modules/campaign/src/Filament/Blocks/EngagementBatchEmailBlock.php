@@ -37,14 +37,12 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftEngagementBlockWithAi;
+use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
 use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Actions;
@@ -161,15 +159,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                     ->fieldPrefix($fieldPrefix)
                     ->mergeTags($mergeTags),
             ]),
-            DateTimePicker::make('execute_at')
-                ->label('When should the journey step be executed?')
-                ->columnSpanFull()
-                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
-                ->hintIconTooltip('This time is set in ' . app(CampaignSettings::class)->getActionExecutionTimezoneLabel() . '.')
-                ->lazy()
-                ->helperText(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
-                ->required()
-                ->minDate(now()),
+            CampaignDateTimeInput::make(),
         ];
     }
 

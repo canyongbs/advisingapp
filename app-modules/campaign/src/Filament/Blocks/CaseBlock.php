@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use AdvisingApp\Campaign\Settings\CampaignSettings;
+use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
 use AdvisingApp\CaseManagement\Enums\CaseTypeAssignmentTypes;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Models\CasePriority;
@@ -44,9 +44,7 @@ use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Division\Models\Division;
 use App\Models\User;
-use Carbon\CarbonImmutable;
 use Closure;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Utilities\Get;
@@ -155,15 +153,7 @@ class CaseBlock extends CampaignActionBlock
                 ->label('Internal Case Details')
                 ->nullable()
                 ->string(),
-            DateTimePicker::make('execute_at')
-                ->label('When should the journey step be executed?')
-                ->columnSpanFull()
-                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
-                ->hintIconTooltip('This time is set in ' . app(CampaignSettings::class)->getActionExecutionTimezoneLabel() . '.')
-                ->lazy()
-                ->helperText(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
-                ->required()
-                ->minDate(now()),
+            CampaignDateTimeInput::make(),
         ];
     }
 

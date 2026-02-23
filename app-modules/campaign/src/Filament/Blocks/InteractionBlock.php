@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use AdvisingApp\Campaign\Settings\CampaignSettings;
+use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionDriver;
@@ -46,7 +46,6 @@ use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
-use Carbon\CarbonImmutable;
 use Closure;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -161,15 +160,7 @@ class InteractionBlock extends CampaignActionBlock
                     Textarea::make($fieldPrefix . 'description')
                         ->required(),
                 ]),
-            DateTimePicker::make('execute_at')
-                ->label('When should the journey step be executed?')
-                ->columnSpanFull()
-                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
-                ->hintIconTooltip('This time is set in ' . app(CampaignSettings::class)->getActionExecutionTimezoneLabel() . '.')
-                ->lazy()
-                ->helperText(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
-                ->required()
-                ->minDate(now()),
+            CampaignDateTimeInput::make(),
         ];
     }
 

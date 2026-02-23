@@ -36,10 +36,8 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use AdvisingApp\Campaign\Settings\CampaignSettings;
+use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
 use AdvisingApp\MeetingCenter\Models\Event;
-use Carbon\CarbonImmutable;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 
 class EventBlock extends CampaignActionBlock
@@ -63,15 +61,7 @@ class EventBlock extends CampaignActionBlock
                 ->options(Event::where('ends_at', '>=', now())->pluck('title', 'id')->toArray())
                 ->nullable()
                 ->searchable(),
-            DateTimePicker::make('execute_at')
-                ->label('When should the journey step be executed?')
-                ->columnSpanFull()
-                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
-                ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
-                ->lazy()
-                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
-                ->required()
-                ->minDate(now()),
+            CampaignDateTimeInput::make(),
         ];
     }
 
