@@ -37,7 +37,7 @@
 
     $actions = [];
 
-    foreach ($getLivewire()->data['actions'] as $action) {
+    foreach ($getLivewire()->data['actions'] as $actionIndex => $action) {
         $itemData = $action['data'];
 
         if (isset($itemData['execute_at']) && ($itemData['input_type'] ?? null) !== 'relative') {
@@ -50,7 +50,7 @@
             $itemData['execute_at'] = $executeAt;
         }
 
-        $actions[] = [
+        $actions[$actionIndex] = [
             'type' => $action['type'],
             'data' => $itemData,
         ];
