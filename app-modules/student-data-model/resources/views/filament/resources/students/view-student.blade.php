@@ -71,12 +71,10 @@
         <div class="flex flex-col gap-8 lg:col-span-1 xl:col-span-2">
             @livewire(StudentAcademicStats::class, ['record' => $this->getRecord()])
 
-            @if (StudentAlertInfoBarWidget::canView())
-                @livewire(StudentAlertInfoBarWidget::class, [
-                    'record' => $this->getRecord(),
-                    'alertsUrl' => StudentResource::getUrl('alerts', ['record' => $this->getRecord()]),
-                ])
-            @endif
+            @livewire(StudentAlertInfoBarWidget::class, [
+                'record' => $this->getRecord(),
+                'alertsUrl' => StudentResource::getUrl('alerts', ['record' => $this->getRecord()]),
+            ])
 
             <x-student-data-model::filament.resources.educatables.view-educatable.relation-managers :managers="[
                 'programs' => ProgramsRelationManager::class,

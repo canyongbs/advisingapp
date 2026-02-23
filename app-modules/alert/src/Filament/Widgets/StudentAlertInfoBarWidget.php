@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Alert\Filament\Widgets;
 
-use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Alert\Models\StudentAlert;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Widgets\Widget;
@@ -51,11 +50,6 @@ class StudentAlertInfoBarWidget extends Widget
 
     #[Locked]
     public string $alertsUrl;
-
-    public static function canView(): bool
-    {
-        return auth()->user()->can('viewAny', AlertConfiguration::class);
-    }
 
     public function getActiveAlertCount(): int
     {
