@@ -40,16 +40,20 @@
 <x-filament::callout
     :color="$hasAlerts ? 'warning' : 'success'"
     icon="heroicon-o-bell-alert"
-    :description="'This student currently has ' . $count . ' ' . Str::plural('activated alert', $count) . '.'"
-    class="student-alert-callout"
 >
-    <x-slot name="footer">
-        <x-filament::button
-            tag="a"
-            :href="$this->alertsUrl"
-            size="sm"
-        >
-            Learn More
-        </x-filament::button>
+    <x-slot name="heading">
+        <div class="flex flex-col items-center justify-between gap-6 sm:flex-row">
+            <div>
+                This student currently has {{ $count }} {{ Str::plural('activated alert', $count) }}.
+            </div>
+
+            <x-filament::link
+                tag="a"
+                :href="$this->alertsUrl"
+                size="sm"
+            >
+                Learn More
+            </x-filament::link>
+        </div>
     </x-slot>
 </x-filament::callout>

@@ -312,16 +312,3 @@
         }
     }
 }
-
-/* Student Alert Info Bar */
-.student-alert-callout {
-    @apply items-center;
-}
-
-.student-alert-callout .fi-callout-main {
-    @apply flex! flex-row items-center mt-0!;
-}
-
-.student-alert-callout .fi-callout-text {
-    @apply flex-1;
-}
