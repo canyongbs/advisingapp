@@ -39,7 +39,9 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResource;
+use App\Features\ProspectStatusFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -67,12 +69,19 @@ class EditProspectStatus extends EditRecord
                     ->options(SystemProspectClassification::class)
                     ->required()
                     ->enum(SystemProspectClassification::class),
+                //TODO: ProspectStatusFeature Cleanup - Remove Select when you remove feature flag and just use ColorSelect
                 Select::make('color')
                     ->label('Color')
                     ->searchable()
                     ->options(ProspectStatusColorOptions::class)
                     ->required()
+                    ->visible(! ProspectStatusFeature::active())
                     ->enum(ProspectStatusColorOptions::class),
+                ColorSelect::make('color')
+                    ->label('Color')
+                    ->searchable()
+                    ->visible(ProspectStatusFeature::active())
+                    ->required(),
                 TextInput::make('sort')
                     ->required()
                     ->integer()
