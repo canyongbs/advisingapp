@@ -240,36 +240,36 @@ class ManagePersonalBookingPage extends ProfilePage
                                             ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
                                     ]),
                             ])->visible(fn (Get $get) => $get('is_enabled')),
-                    ]),
-                Section::make('Availability')
-                    ->schema([
-                        Grid::make()
-                            ->columns([
-                                'sm' => 1,
-                                'md' => 1,
-                                'lg' => 1,
-                                'xl' => 2,
-                                '2xl' => 2,
-                            ])
+                        Section::make('Availability')
                             ->schema([
-                                Toggle::make('is_default_appointment_buffer_enabled')
-                                    ->label('Buffer Time')
-                                    ->live()
-                                    ->columnStart(1),
-                                DurationInput::make('default_appointment_buffer_before_duration', isRequired: true, hasDays: false)
-                                    ->label('Before')
-                                    ->columnStart(1)
-                                    ->visible(fn (Get $get): bool => $get('is_default_appointment_buffer_enabled')),
-                                DurationInput::make('default_appointment_buffer_after_duration', isRequired: true, hasDays: false)
-                                    ->label('After')
-                                    ->visible(fn (Get $get): bool => $get('is_default_appointment_buffer_enabled')),
-                                DailyHoursRepeater::make('available_appointment_hours')
-                                    ->label('Days and Hours')
-                                    ->columnSpanFull(),
+                                Grid::make()
+                                    ->columns([
+                                        'sm' => 1,
+                                        'md' => 1,
+                                        'lg' => 1,
+                                        'xl' => 2,
+                                        '2xl' => 2,
+                                    ])
+                                    ->schema([
+                                        Toggle::make('is_default_appointment_buffer_enabled')
+                                            ->label('Buffer Time')
+                                            ->live()
+                                            ->columnStart(1),
+                                        DurationInput::make('default_appointment_buffer_before_duration', isRequired: true, hasDays: false)
+                                            ->label('Before')
+                                            ->columnStart(1)
+                                            ->visible(fn (Get $get): bool => $get('is_default_appointment_buffer_enabled')),
+                                        DurationInput::make('default_appointment_buffer_after_duration', isRequired: true, hasDays: false)
+                                            ->label('After')
+                                            ->visible(fn (Get $get): bool => $get('is_default_appointment_buffer_enabled')),
+                                        DailyHoursRepeater::make('available_appointment_hours')
+                                            ->label('Days and Hours')
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->columns(2),
                             ])
-                            ->columns(2),
-                    ])
-                    ->visible(fn (): bool => PersonalBookingAvailabilityFeature::active()),
+                            ->visible(fn (): bool => PersonalBookingAvailabilityFeature::active()),
+                    ]),
             ]);
     }
 
