@@ -39,6 +39,9 @@ namespace AdvisingApp\MeetingCenter\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperBookingGroupAppointment
+ */
 class BookingGroupAppointment extends BaseModel
 {
     protected $fillable = [
