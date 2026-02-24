@@ -38,7 +38,7 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Actions\ResolveEducatableFromEmail;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
@@ -102,7 +102,7 @@ class BookingGroupAppointments extends ManageRelatedRecords
                     ->label('Duration')
                     ->state(function (BookingGroupAppointment $record): string {
                         $minutes = $record->starts_at->diffInMinutes($record->ends_at);
-                        $hours = intdiv($minutes, 60);
+                        $hours = intdiv(intval($minutes), 60);
                         $remainingMinutes = $minutes % 60;
 
                         if ($hours > 0 && $remainingMinutes > 0) {

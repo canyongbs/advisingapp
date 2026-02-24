@@ -37,8 +37,8 @@
 use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
 use AdvisingApp\MeetingCenter\Http\Controllers\EventRegistrationFormModalController;
 use AdvisingApp\MeetingCenter\Http\Controllers\GoogleCalendarController;
-use AdvisingApp\MeetingCenter\Http\Controllers\OutlookCalendarController;
 use AdvisingApp\MeetingCenter\Http\Controllers\GroupBookingPageViewController;
+use AdvisingApp\MeetingCenter\Http\Controllers\OutlookCalendarController;
 use AdvisingApp\MeetingCenter\Http\Controllers\PersonalBookingPageViewController;
 use AdvisingApp\MeetingCenter\Livewire\RenderEventRegistrationForm;
 use Illuminate\Support\Facades\Route;

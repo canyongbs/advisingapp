@@ -68,6 +68,10 @@ class EditBookingGroup extends EditRecord
 
     public function form(Schema $schema): Schema
     {
+        $bookingGroup = $this->getRecord();
+
+        assert($bookingGroup instanceof BookingGroup);
+
         return $schema->components([
             Section::make('Booking Group Details')
                 ->schema([
@@ -110,7 +114,7 @@ class EditBookingGroup extends EditRecord
                         ->required()
                         ->rules([
                             'alpha_dash',
-                            Rule::unique(BookingGroup::class, 'slug')->ignore($this->getRecord()->id),
+                            Rule::unique(BookingGroup::class, 'slug')->ignore($bookingGroup->getKey()),
                         ])
                         ->prefix(config('app.url') . '/group-booking/')
                         ->maxLength(255)
@@ -142,13 +146,17 @@ class EditBookingGroup extends EditRecord
 
     protected function getHeaderActions(): array
     {
+        $bookingGroup = $this->getRecord();
+
+        assert($bookingGroup instanceof BookingGroup);
+
         return [
             Action::make('view_booking_page')
                 ->label('View Booking Page')
                 ->icon('heroicon-o-eye')
-                ->url(fn (): string => route('group-booking.show', ['slug' => $this->getRecord()->slug]))
+                ->url(fn (): string => route('group-booking.show', ['slug' => $bookingGroup->slug]))
                 ->openUrlInNewTab()
-                ->visible(fn (): bool => GroupBookingFeature::active() && ! empty($this->getRecord()->slug)),
+                ->visible(fn (): bool => GroupBookingFeature::active() && ! empty($bookingGroup->slug)),
             ViewAction::make(),
             DeleteAction::make(),
         ];

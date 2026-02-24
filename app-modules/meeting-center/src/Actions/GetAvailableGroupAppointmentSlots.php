@@ -82,26 +82,26 @@ class GetAvailableGroupAppointmentSlots
         $now = now();
         $blocks = [];
 
-        $period = CarbonPeriod::create($monthStart, $monthEnd);
+        CarbonPeriod::create($monthStart, $monthEnd)
+            ->each(function (Carbon $date) use (&$blocks, $groupHours, $members, $allBusyPeriods, $bufferBefore, $bufferAfter, $now) {
+                $dayBlocks = $this->getAvailableBlocksForDay(
+                    $date,
+                    $groupHours,
+                    $members,
+                    $allBusyPeriods,
+                    $bufferBefore,
+                    $bufferAfter,
+                    $now,
+                );
 
-        foreach ($period as $date) {
-            $dayBlocks = $this->getAvailableBlocksForDay(
-                $date,
-                $groupHours,
-                $members,
-                $allBusyPeriods,
-                $bufferBefore,
-                $bufferAfter,
-                $now,
-            );
-
-            $blocks = array_merge($blocks, $dayBlocks);
-        }
+                $blocks = array_merge($blocks, $dayBlocks);
+            });
 
         return $blocks;
     }
 
     /**
+     * @param array<string, mixed> $groupHours
      * @param Collection<int, User> $members
      * @param Collection<int, array{start: Carbon, end: Carbon}> $allBusyPeriods
      *
@@ -207,6 +207,8 @@ class GetAvailableGroupAppointmentSlots
     }
 
     /**
+     * @param array<string, mixed> $groupHours
+     *
      * @return array{starts_at: string, ends_at: string}|null
      */
     protected function getGroupHoursForDay(array $groupHours, string $dayOfWeek): ?array
@@ -242,7 +244,7 @@ class GetAvailableGroupAppointmentSlots
     }
 
     /**
-     * @param array<string, mixed>|null $hoursSettings
+     * @param array<string, array<string, mixed>>|null $hoursSettings
      *
      * @return array<int, array<string, mixed>>
      */
@@ -259,7 +261,7 @@ class GetAvailableGroupAppointmentSlots
         }
 
         if (isset($dayHours['enabled'])) {
-            if (! ($dayHours['enabled'] ?? false)) {
+            if (! $dayHours['enabled']) {
                 return [];
             }
 
@@ -349,10 +351,10 @@ class GetAvailableGroupAppointmentSlots
     {
         $result = [];
 
-        foreach ($blocksA as $a) {
-            foreach ($blocksB as $b) {
-                $overlapStart = $a['start']->max($b['start']);
-                $overlapEnd = $a['end']->min($b['end']);
+        foreach ($blocksA as $blockA) {
+            foreach ($blocksB as $blockB) {
+                $overlapStart = $blockA['start']->max($blockB['start']);
+                $overlapEnd = $blockA['end']->min($blockB['end']);
 
                 if ($overlapStart->lt($overlapEnd)) {
                     $result[] = [
