@@ -143,8 +143,19 @@ class GroupBookingPageWidgetController extends Controller
             ], 422);
         }
 
-        return DB::transaction(function () use ($bookingGroup, $members, $startsAt, $endsAt, $request) {
-            // Check for overlapping events across ALL members' calendars
+        $bufferBefore = $bookingGroup->is_default_appointment_buffer_enabled
+            ? $bookingGroup->default_appointment_buffer_before_duration
+            : 0;
+
+        $bufferAfter = $bookingGroup->is_default_appointment_buffer_enabled
+            ? $bookingGroup->default_appointment_buffer_after_duration
+            : 0;
+
+        $conflictCheckStart = $startsAt->copy()->subSeconds($bufferBefore);
+        $conflictCheckEnd = $endsAt->copy()->addSeconds($bufferAfter);
+
+        return DB::transaction(function () use ($bookingGroup, $members, $startsAt, $endsAt, $conflictCheckStart, $conflictCheckEnd, $request) {
+            // Check for overlapping events across ALL members' calendars, accounting for buffer time
             foreach ($members as $member) {
                 if (! $member->calendar) {
                     continue;
@@ -152,8 +163,8 @@ class GroupBookingPageWidgetController extends Controller
 
                 $hasConflict = CalendarEvent::query()
                     ->where('calendar_id', $member->calendar->id)
-                    ->where('starts_at', '<', $endsAt)
-                    ->where('ends_at', '>', $startsAt)
+                    ->where('starts_at', '<', $conflictCheckEnd)
+                    ->where('ends_at', '>', $conflictCheckStart)
                     ->lockForUpdate()
                     ->exists();
 
