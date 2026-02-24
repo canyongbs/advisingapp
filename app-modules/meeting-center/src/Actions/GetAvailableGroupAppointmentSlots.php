@@ -178,8 +178,8 @@ class GetAvailableGroupAppointmentSlots
             $availableBlocks = collect($availableBlocks)
                 ->map(function (array $block) use ($bufferBefore, $bufferAfter) {
                     return [
-                        'start' => $block['start']->copy()->addSeconds($bufferBefore),
-                        'end' => $block['end']->copy()->subSeconds($bufferAfter),
+                        'start' => $block['start']->copy()->addMinutes($bufferBefore),
+                        'end' => $block['end']->copy()->subMinutes($bufferAfter),
                     ];
                 })
                 ->filter(fn (array $block) => $block['start']->lt($block['end']))
@@ -296,8 +296,8 @@ class GetAvailableGroupAppointmentSlots
             ->flatMap(fn (User $member) => $this->getBusyPeriodsFor($member, $start, $end))
             ->map(function (array $busy) use ($maxBuffer) {
                 return [
-                    'start' => $busy['start']->copy()->subSeconds($maxBuffer),
-                    'end' => $busy['end']->copy()->addSeconds($maxBuffer),
+                    'start' => $busy['start']->copy()->subMinutes($maxBuffer),
+                    'end' => $busy['end']->copy()->addMinutes($maxBuffer),
                 ];
             })
             ->values();

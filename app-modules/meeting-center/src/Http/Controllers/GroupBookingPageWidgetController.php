@@ -148,8 +148,8 @@ class GroupBookingPageWidgetController extends Controller
             ? max($bookingGroup->default_appointment_buffer_before_duration, $bookingGroup->default_appointment_buffer_after_duration)
             : 0;
 
-        $conflictCheckStart = $startsAt->copy()->subSeconds($maxBuffer);
-        $conflictCheckEnd = $endsAt->copy()->addSeconds($maxBuffer);
+        $conflictCheckStart = $startsAt->copy()->subMinutes($maxBuffer);
+        $conflictCheckEnd = $endsAt->copy()->addMinutes($maxBuffer);
 
         $bufferBefore = $bookingGroup->is_default_appointment_buffer_enabled
             ? $bookingGroup->default_appointment_buffer_before_duration
@@ -159,8 +159,8 @@ class GroupBookingPageWidgetController extends Controller
             ? $bookingGroup->default_appointment_buffer_after_duration
             : 0;
 
-        $calendarStartsAt = $startsAt->copy()->subSeconds($bufferBefore);
-        $calendarEndsAt = $endsAt->copy()->addSeconds($bufferAfter);
+        $calendarStartsAt = $startsAt->copy()->subMinutes($bufferBefore);
+        $calendarEndsAt = $endsAt->copy()->addMinutes($bufferAfter);
 
         // Validate the requested slot fits within regenerated available blocks
         $availableBlocks = app(GetAvailableGroupAppointmentSlots::class)(
@@ -217,11 +217,11 @@ class GroupBookingPageWidgetController extends Controller
                     $description .= "\n\nAppointment: " . $startsAt->format('g:i A') . ' - ' . $endsAt->format('g:i A');
 
                     if ($bufferBefore > 0) {
-                        $description .= "\nBuffer before: " . CarbonInterval::seconds($bufferBefore)->cascade()->forHumans(['short' => true]);
+                        $description .= "\nBuffer before: " . CarbonInterval::minutes($bufferBefore)->cascade()->forHumans(['short' => true]);
                     }
 
                     if ($bufferAfter > 0) {
-                        $description .= "\nBuffer after: " . CarbonInterval::seconds($bufferAfter)->cascade()->forHumans(['short' => true]);
+                        $description .= "\nBuffer after: " . CarbonInterval::minutes($bufferAfter)->cascade()->forHumans(['short' => true]);
                     }
                 }
 
