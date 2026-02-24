@@ -42,20 +42,16 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('booking_groups', function (Blueprint $table) {
-                $table->string('slug')->unique();
-                $table->string('book_with')->default('all');
-            });
+        Schema::table('booking_groups', function (Blueprint $table) {
+            $table->string('slug')->nullable()->unique();
+            $table->string('book_with')->default('all');
         });
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('booking_groups', function (Blueprint $table) {
-                $table->dropColumn(['slug', 'book_with']);
-            });
+        Schema::table('booking_groups', function (Blueprint $table) {
+            $table->dropColumn(['slug', 'book_with']);
         });
     }
 };

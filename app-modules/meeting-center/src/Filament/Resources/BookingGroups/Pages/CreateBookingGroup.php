@@ -105,19 +105,22 @@ class CreateBookingGroup extends CreateRecord
                         ->prefix(config('app.url') . '/group-booking/')
                         ->maxLength(255)
                         ->default(fn (Get $get) => Str::slug($get('name') ?? ''))
-                        ->visible(GroupBookingFeature::active()),
+                        ->visible(GroupBookingFeature::active())
+                        ->columnSpanFull(),
                     DurationInput::make('default_appointment_duration', isRequired: true, hasDays: true)
-                        ->label('Meeting Duration'),
+                        ->label('Meeting Duration')
+                        ->columnSpanFull(),
                     Toggle::make('is_default_appointment_buffer_enabled')
                         ->label('Buffer Time')
                         ->live()
-                        ->columnStart(1),
+                        ->columnSpanFull(),
                     DurationInput::make('default_appointment_buffer_before_duration', isRequired: true, hasDays: false)
                         ->label('Before')
-                        ->columnStart(1)
+                        ->columnSpanFull()
                         ->visible(fn (Get $get): bool => $get('is_default_appointment_buffer_enabled')),
                     DurationInput::make('default_appointment_buffer_after_duration', isRequired: true, hasDays: false)
                         ->label('After')
+                        ->columnSpanFull()
                         ->visible(fn (Get $get): bool => $get('is_default_appointment_buffer_enabled')),
                     DailyHoursRepeater::make('available_appointment_hours')
                         ->label('Days and Hours')
