@@ -18,7 +18,7 @@ COPYRIGHT = <<EOM
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor\u2019s trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -33,17 +33,22 @@ COPYRIGHT = <<EOM
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 EOM
 
-def evaluateFile(filePath, startTag, endTag)
-    fullCopyright = "#{startTag}\n#{COPYRIGHT}\n#{endTag}"
+# Blade-specific copyright: 6-space continuation indent reduced to 4-space,
+# and empty lines padded with 4 spaces to match prettier-plugin-blade output.
+BLADE_COPYRIGHT = COPYRIGHT.gsub(/^ {6}/, "    ").gsub(/^$/, "    ").sub(/\n\z/, "\n    ")
+
+def evaluateFile(filePath, startTag, endTag, copyrightText = COPYRIGHT)
+    fullCopyright = "#{startTag}\n#{copyrightText}\n#{endTag}"
 
     if copyrightTagExists(startTag, endTag, filePath)
         if copyrightNeedsUpdate(
             startTag,
             endTag,
-            filePath
+            filePath,
+            copyrightText
         )
             puts "Updating copyright in #{filePath}...".brown
-            replace(filePath, startTag, endTag, "\n#{COPYRIGHT}\n")
+            replace(filePath, startTag, endTag, "\n#{copyrightText}\n")
         else
             puts "No changes needed in #{filePath}, skipping...".green
         end
@@ -57,8 +62,8 @@ def copyrightTagExists(startTag, endTag, filePath)
     !File.read(filePath).scan(/(?<=#{Regexp.escape(startTag)})([\S\s]*?)(?=#{Regexp.escape(endTag)})/m).empty?
 end
 
-def copyrightNeedsUpdate(startTag, endTag, filePath)
-    File.read(filePath).scan(/(?<=#{Regexp.escape(startTag)})(\n#{Regexp.escape(COPYRIGHT)}\n)(?=#{Regexp.escape(endTag)})/m).empty?
+def copyrightNeedsUpdate(startTag, endTag, filePath, copyrightText = COPYRIGHT)
+    File.read(filePath).scan(/(?<=#{Regexp.escape(startTag)})(\n#{Regexp.escape(copyrightText)}\n)(?=#{Regexp.escape(endTag)})/m).empty?
 end
 
 def insert(filePath, tag)
@@ -77,10 +82,21 @@ def replace(filePath, startTag, endTag, replacement)
 end
 
 def blade(filePath)
-    startTag = "{{--\n<COPYRIGHT>"
-    endTag = "</COPYRIGHT>\n--}}"
+    oldStartTag = "{{--\n<COPYRIGHT>"
+    oldEndTag = "</COPYRIGHT>\n--}}"
+    newStartTag = "{{--\n    <COPYRIGHT>"
+    newEndTag = "    </COPYRIGHT>\n--}}"
 
-    evaluateFile(filePath, startTag, endTag)
+    content = File.read(filePath)
+
+    # Migrate old tag format to new indented format (prettier-compatible)
+    if content.include?(oldStartTag)
+        content = content.sub(oldStartTag, newStartTag)
+                         .sub(oldEndTag, newEndTag)
+        File.write(filePath, content)
+    end
+
+    evaluateFile(filePath, newStartTag, newEndTag, BLADE_COPYRIGHT)
 end
 
 def php(filePath)
