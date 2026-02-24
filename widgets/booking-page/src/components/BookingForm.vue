@@ -44,7 +44,7 @@
             type: String,
             required: true,
         },
-        userName: {
+        displayName: {
             type: String,
             required: true,
         },
@@ -170,7 +170,7 @@
         <div class="mb-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-2 tracking-tight">Confirm Your Booking</h3>
             <div class="bg-primary-50 rounded-lg p-4 border border-primary-200">
-                <p class="text-sm text-primary-900 font-medium mb-1">Meeting with {{ userName }}</p>
+                <p class="text-sm text-primary-900 font-medium mb-1">Meeting with {{ displayName }}</p>
                 <p class="text-sm text-primary-700">{{ formattedSlotTime }}</p>
                 <p class="text-xs text-primary-600 mt-1">Duration: {{ duration }} minutes</p>
             </div>

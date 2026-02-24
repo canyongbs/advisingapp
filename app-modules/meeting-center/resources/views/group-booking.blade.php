@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
@@ -32,34 +30,12 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
 
-namespace AdvisingApp\MeetingCenter\Actions;
-
-use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use Illuminate\Support\Facades\Storage;
-use RuntimeException;
-
-class GeneratePersonalBookingPageEmbedCode
-{
-    public function __invoke(PersonalBookingPage $bookingPage): string
-    {
-        $manifestPath = Storage::disk('public')->get('widgets/booking-page/.vite/manifest.json');
-
-        if (is_null($manifestPath)) {
-            throw new RuntimeException('Vite manifest file not found.');
-        }
-
-        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
-        $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
-
-        $loaderScriptUrl = url("widgets/booking-page/{$manifest['src/loader.js']['file']}");
-
-        $assetsUrl = route(name: 'widgets.booking-page.personal.api.assets', parameters: ['slug' => $bookingPage->slug]);
-
-        return <<<EOD
-        <booking-page-embed url="{$assetsUrl}"></booking-page-embed>
-        <script src="{$loaderScriptUrl}"></script>
-        EOD;
-    }
-}
+<x-layouts.app :title="'Book with ' . $bookingGroup->name">
+    <div class="flex items-center justify-center px-4 py-16">
+        <div class="w-full max-w-4xl">
+            {!! $embedCode !!}
+        </div>
+    </div>
+</x-layouts.app>

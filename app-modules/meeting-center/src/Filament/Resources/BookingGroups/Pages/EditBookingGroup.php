@@ -37,9 +37,12 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use App\Features\GroupBookingFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -50,12 +53,18 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class EditBookingGroup extends EditRecord
 {
     use EditPageRedirection;
 
     protected static string $resource = BookingGroupResource::class;
+
+    protected static ?string $navigationLabel = 'Group Configuration';
+
+    protected static ?int $navigationSort = 10;
 
     public function form(Schema $schema): Schema
     {
@@ -75,6 +84,12 @@ class EditBookingGroup extends EditRecord
                 ]),
             Section::make('Members')
                 ->schema([
+                    Select::make('book_with')
+                        ->label('Book With')
+                        ->options(['all' => 'All'])
+                        ->default('all')
+                        ->required()
+                        ->visible(GroupBookingFeature::active()),
                     Select::make('users')
                         ->label('Users')
                         ->multiple()
@@ -90,6 +105,17 @@ class EditBookingGroup extends EditRecord
                 ]),
             Section::make('Availability')
                 ->schema([
+                    TextInput::make('slug')
+                        ->label('URL Slug')
+                        ->required()
+                        ->rules([
+                            'alpha_dash',
+                            Rule::unique(BookingGroup::class, 'slug')->ignore($this->getRecord()->id),
+                        ])
+                        ->prefix(config('app.url') . '/group-booking/')
+                        ->maxLength(255)
+                        ->default(fn (Get $get) => Str::slug($get('name') ?? ''))
+                        ->visible(GroupBookingFeature::active()),
                     DurationInput::make('default_appointment_duration', isRequired: true, hasDays: true)
                         ->label('Meeting Duration'),
                     Toggle::make('is_default_appointment_buffer_enabled')
@@ -114,6 +140,12 @@ class EditBookingGroup extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('view_booking_page')
+                ->label('View Booking Page')
+                ->icon('heroicon-o-eye')
+                ->url(fn (): string => route('group-booking.show', ['slug' => $this->getRecord()->slug]))
+                ->openUrlInNewTab()
+                ->visible(fn (): bool => GroupBookingFeature::active() && ! empty($this->getRecord()->slug)),
             ViewAction::make(),
             DeleteAction::make(),
         ];

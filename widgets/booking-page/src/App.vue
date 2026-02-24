@@ -44,7 +44,7 @@
             required: true,
         },
     });
-    const userName = ref('');
+    const displayName = ref('');
     const duration = ref(30);
     const userTimezone = ref('');
     const visitorTimezone = ref('');
@@ -158,7 +158,7 @@
                 throw new Error('Failed to load booking page data');
             }
             const data = await response.json();
-            userName.value = data.user_name;
+            displayName.value = data.display_name;
             slug.value = data.slug;
             duration.value = data.duration;
             userTimezone.value = data.timezone;
@@ -299,7 +299,7 @@
         </div>
         <div v-else class="max-w-6xl mx-auto">
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-semibold mb-2 tracking-tight">Book a meeting with {{ userName }}</h1>
+                <h1 class="text-3xl font-semibold mb-2 tracking-tight">Book a meeting with {{ displayName }}</h1>
                 <p class="text-lg opacity-90">{{ duration }} minute appointment</p>
             </div>
 
@@ -335,7 +335,7 @@
                     <BookingForm
                         :selected-slot="selectedSlot"
                         :booking-url="bookingUrl"
-                        :user-name="userName"
+                        :display-name="displayName"
                         :duration="duration"
                         @booking-success="handleBookingSuccess"
                         @booking-conflict="handleBookingConflict"
@@ -367,7 +367,7 @@
                 <div class="flex-1 min-w-0">
                     <h4 class="text-sm font-semibold text-primary-900 mb-1">Timezone Information</h4>
                     <p class="text-sm text-primary-800 leading-relaxed">
-                        {{ userName }}'s availability is based on
+                        {{ displayName }}'s availability is based on
                         <span class="font-medium">{{ userTimezone }}</span> timezone. All times shown below are
                         automatically converted to your local timezone (<span class="font-medium">{{
                             visitorTimezone

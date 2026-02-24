@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,33 +31,25 @@
 
 </COPYRIGHT>
 */
+import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
+import App from './App.vue';
+import styles from './widget.css?inline';
 
-namespace AdvisingApp\MeetingCenter\Actions;
+customElements.define(
+    'booking-page-embed',
+    defineCustomElement({
+        styles: [styles],
+        setup(props) {
+            const app = createApp();
 
-use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use Illuminate\Support\Facades\Storage;
-use RuntimeException;
+            app.config.devtools = true;
 
-class GeneratePersonalBookingPageEmbedCode
-{
-    public function __invoke(PersonalBookingPage $bookingPage): string
-    {
-        $manifestPath = Storage::disk('public')->get('widgets/booking-page/.vite/manifest.json');
+            const inst = getCurrentInstance();
+            Object.assign(inst.appContext, app._context);
+            Object.assign(inst.provides, app._context.provides);
 
-        if (is_null($manifestPath)) {
-            throw new RuntimeException('Vite manifest file not found.');
-        }
-
-        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
-        $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
-
-        $loaderScriptUrl = url("widgets/booking-page/{$manifest['src/loader.js']['file']}");
-
-        $assetsUrl = route(name: 'widgets.booking-page.personal.api.assets', parameters: ['slug' => $bookingPage->slug]);
-
-        return <<<EOD
-        <booking-page-embed url="{$assetsUrl}"></booking-page-embed>
-        <script src="{$loaderScriptUrl}"></script>
-        EOD;
-    }
-}
+            return () => h(App, props);
+        },
+        props: ['entryUrl'],
+    }),
+);

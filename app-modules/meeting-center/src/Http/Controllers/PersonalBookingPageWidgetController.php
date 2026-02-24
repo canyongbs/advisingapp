@@ -62,16 +62,16 @@ class PersonalBookingPageWidgetController extends Controller
             ->firstOrFail();
 
         // Read the Vite manifest to determine the correct asset paths
-        $manifestPath = public_path('storage/widgets/personal-booking-page/.vite/manifest.json');
+        $manifestPath = public_path('storage/widgets/booking-page/.vite/manifest.json');
         /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
         $manifest = json_decode(File::get($manifestPath), true, 512, JSON_THROW_ON_ERROR);
 
         $widgetEntry = $manifest['src/widget.js'];
 
         return response()->json([
-            'asset_url' => route('widgets.personal-booking-page.asset'),
-            'entry' => route('widgets.personal-booking-page.api.entry', ['slug' => $slug]),
-            'js' => route('widgets.personal-booking-page.asset', ['file' => $widgetEntry['file']]),
+            'asset_url' => route('widgets.booking-page.asset'),
+            'entry' => route('widgets.booking-page.personal.api.entry', ['slug' => $slug]),
+            'js' => route('widgets.booking-page.asset', ['file' => $widgetEntry['file']]),
         ]);
     }
 
@@ -81,7 +81,7 @@ class PersonalBookingPageWidgetController extends Controller
             abort(404, 'File not found.');
         }
 
-        $path = "widgets/personal-booking-page/{$file}";
+        $path = "widgets/booking-page/{$file}";
 
         $disk = Storage::disk('public');
 
@@ -120,13 +120,13 @@ class PersonalBookingPageWidgetController extends Controller
             ->all();
 
         return response()->json([
-            'user_name' => $bookingPage->user->name,
+            'display_name' => $bookingPage->user->name,
             'slug' => $bookingPage->slug,
             'duration' => $bookingPage->default_appointment_duration,
             'timezone' => $bookingPage->user->timezone ?? config('app.timezone'),
             'primary_color' => $primaryColor,
-            'booking_url' => route('widgets.personal-booking-page.api.book', ['slug' => $slug]),
-            'available_slots_url' => route('widgets.personal-booking-page.api.available-slots', ['slug' => $slug]),
+            'booking_url' => route('widgets.booking-page.personal.api.book', ['slug' => $slug]),
+            'available_slots_url' => route('widgets.booking-page.personal.api.available-slots', ['slug' => $slug]),
         ]);
     }
 
