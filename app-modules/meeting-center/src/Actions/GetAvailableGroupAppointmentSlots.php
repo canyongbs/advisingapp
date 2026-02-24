@@ -64,9 +64,15 @@ class GetAvailableGroupAppointmentSlots
             return [];
         }
 
-        $maxBuffer = $bookingGroup->is_default_appointment_buffer_enabled
-            ? max($bookingGroup->default_appointment_buffer_before_duration, $bookingGroup->default_appointment_buffer_after_duration)
+        $bufferBefore = $bookingGroup->is_default_appointment_buffer_enabled
+            ? $bookingGroup->default_appointment_buffer_before_duration
             : 0;
+
+        $bufferAfter = $bookingGroup->is_default_appointment_buffer_enabled
+            ? $bookingGroup->default_appointment_buffer_after_duration
+            : 0;
+
+        $maxBuffer = max($bufferBefore, $bufferAfter);
 
         $monthStart = Carbon::create($year, $month, 1)->startOfDay();
         $monthEnd = Carbon::create($year, $month, 1)->endOfMonth()->endOfDay();
@@ -84,6 +90,8 @@ class GetAvailableGroupAppointmentSlots
                 $groupHours,
                 $members,
                 $allBusyPeriods,
+                $bufferBefore,
+                $bufferAfter,
                 $now,
             );
 
@@ -104,6 +112,8 @@ class GetAvailableGroupAppointmentSlots
         array $groupHours,
         Collection $members,
         Collection $allBusyPeriods,
+        int $bufferBefore,
+        int $bufferAfter,
         Carbon $now,
     ): array {
         $dayOfWeek = strtolower($date->format('l'));
@@ -157,6 +167,24 @@ class GetAvailableGroupAppointmentSlots
 
         foreach ($allBusyPeriods as $busy) {
             $availableBlocks = $this->splitBlocksAroundBusyPeriod($availableBlocks, $busy);
+
+            if (empty($availableBlocks)) {
+                return [];
+            }
+        }
+
+        // Shrink blocks by buffer so the frontend only offers slots with room for buffer
+        if ($bufferBefore > 0 || $bufferAfter > 0) {
+            $availableBlocks = collect($availableBlocks)
+                ->map(function (array $block) use ($bufferBefore, $bufferAfter) {
+                    return [
+                        'start' => $block['start']->copy()->addSeconds($bufferBefore),
+                        'end' => $block['end']->copy()->subSeconds($bufferAfter),
+                    ];
+                })
+                ->filter(fn (array $block) => $block['start']->lt($block['end']))
+                ->values()
+                ->all();
 
             if (empty($availableBlocks)) {
                 return [];
