@@ -1,35 +1,35 @@
 {{--
-<COPYRIGHT>
-
+    <COPYRIGHT>
+    
     Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
-
+    
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
+    
     Notice:
-
+    
     - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
+    service, where the service provides users with access to any substantial set of
+    the features or functionality of the software.
     - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
+    in the software, and you may not remove or obscure any functionality in the
+    software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
+    of the licensor in the software. Any use of the licensor’s trademarks is subject
+    to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
+    same in return. Canyon GBS™ and Advising App™ are registered trademarks of
+    Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+    Software as a Service (SaaS) by Canyon GBS LLC.
     - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
+    in the Elastic License 2.0.
+    
     For more information or inquiries please visit our website at
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
+    
+    </COPYRIGHT>
 --}}
 @php
     use AdvisingApp\InAppCommunication\Enums\ConversationType;
@@ -76,16 +76,19 @@
 
                             @if (count($conversations))
                                 <ul
-                                    class="border-gray-950/5 flex flex-col gap-y-1 rounded-xl border bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
+                                    class="border-gray-950/5 flex flex-col gap-y-1 rounded-xl border bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
+                                >
                                     @foreach ($conversations as $conversationItem)
                                         @php
                                             /** @var TwilioConversation $conversationItem */
                                         @endphp
-                                        <li @class([
-                                            'px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
-                                            'bg-gray-100 dark:bg-white/5' =>
-                                                $conversation?->getKey() === $conversationItem->getKey(),
-                                        ])>
+
+                                        <li
+                                            @class([
+                                                'px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
+                                                'bg-gray-100 dark:bg-white/5' => $conversation?->getKey() === $conversationItem->getKey(),
+                                            ])
+                                        >
                                             <button
                                                 type="button"
                                                 @class([
@@ -93,13 +96,13 @@
                                                 ])
                                                 wire:click="selectConversation('{{ $conversationItem->getKey() }}')"
                                             >
-                                                <span @class([
-                                                    'flex-1 truncate',
-                                                    'text-gray-700 dark:text-gray-200' =>
-                                                        $conversation?->getKey() !== $conversationItem->getKey(),
-                                                    'text-primary-600 dark:text-primary-400' =>
-                                                        $conversation?->getKey() === $conversationItem->getKey(),
-                                                ])>
+                                                <span
+                                                    @class([
+                                                        'flex-1 truncate',
+                                                        'text-gray-700 dark:text-gray-200' => $conversation?->getKey() !== $conversationItem->getKey(),
+                                                        'text-primary-600 dark:text-primary-400' => $conversation?->getKey() === $conversationItem->getKey(),
+                                                    ])
+                                                >
                                                     {{ $conversationItem->getLabel() }}
                                                 </span>
                                                 <div class="flex items-center gap-1">
@@ -109,26 +112,27 @@
                                                         </x-filament::badge>
                                                     @endif
 
-                                                    @if (!$conversationItem->participant->last_read_at)
-                                                        <x-filament::badge color="warning">
-                                                            New
-                                                        </x-filament::badge>
+                                                    @if (! $conversationItem->participant->last_read_at)
+                                                        <x-filament::badge color="warning">New</x-filament::badge>
                                                     @endif
 
-                                                    <x-filament::loading-indicator :attributes="new \Illuminate\View\ComponentAttributeBag([
-                                                        'wire:loading.delay.' .
-                                                        config('filament.livewire_loading_delay', 'default') => '',
-                                                        'wire:target' =>
-                                                            'selectConversation(\'' .
-                                                            $conversationItem->getKey() .
-                                                            '\')',
-                                                    ])->class(['w-5 h-5'])" />
+                                                    <x-filament::loading-indicator
+                                                        :attributes="new \Illuminate\View\ComponentAttributeBag([
+                                                            'wire:loading.delay.' .
+                                                            config('filament.livewire_loading_delay', 'default') => '',
+                                                            'wire:target' =>
+                                                                'selectConversation(\'' .
+                                                                $conversationItem->getKey() .
+                                                                '\')',
+                                                        ])->class(['w-5 h-5'])"
+                                                    />
                                                 </div>
                                             </button>
                                             @php
                                                 /** @var TwilioConversationUser $participant */
                                                 $participant = $conversationItem->participant;
                                             @endphp
+
                                             @if ($participant->is_pinned)
                                                 {{ ($this->togglePinChannelAction)(['id' => $conversationItem->getKey()])->icon('heroicon-s-star')->tooltip('Unpin') }}
                                             @else
@@ -139,8 +143,7 @@
                                 </ul>
                             @elseif ($loop->first)
                                 <div class="text-sm">
-                                    You do not belong to any channels yet.
-                                    You can
+                                    You do not belong to any channels yet. You can
                                     {{ (clone $this->joinChannelsAction)->link()->label('browse a list')->tooltip(null)->icon(null) }}
                                     or
                                     {{ (clone $this->newChannelAction)->link()->label('create a new one')->tooltip(null)->icon(null) }}
@@ -161,27 +164,21 @@
             @php
                 /** @var TwilioConversation $conversation */
             @endphp
+
             @if ($conversation)
                 <div
                     class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3"
                     x-data="userToUserChat({
-                        selectedConversation: @js($conversation->getKey()),
-                        users: @js($users),
-                        activeUsers: $wire.$entangle('conversationActiveUsers'),
-                    })"
+                                selectedConversation: @js($conversation->getKey()),
+                                users: @js($users),
+                                activeUsers: $wire.$entangle('conversationActiveUsers'),
+                            })"
                     wire:key="conversation-{{ $conversation->getKey() }}"
                     wire:poll.60s="loadConversationActiveUsers"
                 >
-                    <div
-                        class="flex flex-col items-center self-center"
-                        x-show="loading"
-                        x-transition.delay.800ms
-                    >
+                    <div class="flex flex-col items-center self-center" x-show="loading" x-transition.delay.800ms>
                         <x-filament::loading-indicator class="text-primary-500 h-12 w-12" />
-                        <p
-                            class="text-center"
-                            x-text="loadingMessage"
-                        ></p>
+                        <p class="text-center" x-text="loadingMessage"></p>
                     </div>
                     <template x-if="!loading && error">
                         <div class="flex flex-col items-center self-center">
@@ -190,15 +187,8 @@
                                 icon="heroicon-m-exclamation-triangle"
                             />
                             <p class="text-center">Something went wrong...</p>
-                            <p
-                                class="text-center"
-                                x-text="errorMessage"
-                            ></p>
-                            <x-filament::button
-                                class="mt-2"
-                                x-on:click="errorRetry"
-                            >Retry
-                            </x-filament::button>
+                            <p class="text-center" x-text="errorMessage"></p>
+                            <x-filament::button class="mt-2" x-on:click="errorRetry">Retry</x-filament::button>
                         </div>
                     </template>
                     <div
@@ -207,16 +197,15 @@
                         x-transition.delay.850ms
                     >
                         <div
-                            class="border-gray-950/5 flex max-h-[calc(100vh-24rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
+                            class="border-gray-950/5 flex max-h-[calc(100vh-24rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
+                        >
                             <div class="divide-y divide-gray-200 dark:divide-gray-700">
-                                <template
-                                    x-for="message in messages"
-                                    :key="message.message.index"
-                                >
+                                <template x-for="message in messages" :key="message.message.index">
                                     <div class="group w-full dark:bg-gray-800">
                                         <div class="m-auto justify-center px-6 py-3 text-base">
                                             <div
-                                                class="mx-auto flex flex-1 gap-6 text-base md:max-w-2xl lg:max-w-[38rem] xl:max-w-3xl">
+                                                class="mx-auto flex flex-1 gap-6 text-base md:max-w-2xl lg:max-w-[38rem] xl:max-w-3xl"
+                                            >
                                                 <div class="relative mt-1 flex flex-shrink-0 flex-col items-end">
                                                     <div class="relative">
                                                         <x-filament::avatar
@@ -229,15 +218,15 @@
                                                         <div
                                                             class="absolute bottom-0 end-0 h-3 w-3 rounded-full"
                                                             x-bind:class="{
-                                                                'bg-success-500': activeUsers.includes(message
-                                                                    .authorId),
-                                                                'bg-gray-500': !activeUsers.includes(message.authorId),
+                                                                'bg-success-500': activeUsers.includes(message.authorId),
+                                                                'bg-gray-500': ! activeUsers.includes(message.authorId),
                                                             }"
                                                         ></div>
                                                     </div>
                                                 </div>
                                                 <div
-                                                    class="relative flex w-[calc(100%-50px)] flex-col lg:w-[calc(100%-115px)]">
+                                                    class="relative flex w-[calc(100%-50px)] flex-col lg:w-[calc(100%-115px)]"
+                                                >
                                                     <div class="flex max-w-full flex-grow flex-col gap-y-1">
                                                         <div class="flex items-center gap-2 text-sm">
                                                             <span
@@ -251,10 +240,11 @@
                                                         </div>
 
                                                         <div
-                                                            class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
+                                                            class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words"
+                                                        >
                                                             <div
-                                                                x-html="generateHTML(JSON.parse(message.message.body))">
-                                                            </div>
+                                                                x-html="generateHTML(JSON.parse(message.message.body))"
+                                                            ></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -279,18 +269,23 @@
 
                         <form @submit.prevent="submit">
                             <div
-                                class="border-gray-950/5 w-full overflow-hidden rounded-xl border bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
+                                class="border-gray-950/5 w-full overflow-hidden rounded-xl border bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700"
+                            >
                                 <div class="bg-white dark:bg-gray-800">
                                     <div
                                         x-data="chatEditor({ currentUser: @js(auth()->id()), users: @js($users) })"
                                         x-model="message"
-                                        x-on:click.outside="$refs.colorPicker.close(); $refs.emojiPicker.close()"
+                                        x-on:click.outside="
+                                            $refs.colorPicker.close()
+                                            $refs.emojiPicker.close()
+                                        "
                                         wire:ignore
                                         x-modelable="content"
                                     >
                                         <template x-if="isLoaded()">
                                             <div
-                                                class="flex flex-wrap items-center gap-1 border-b px-3 py-2 dark:border-gray-700">
+                                                class="flex flex-wrap items-center gap-1 border-b px-3 py-2 dark:border-gray-700"
+                                            >
                                                 <button
                                                     class="rounded p-0.5"
                                                     type="button"
@@ -304,7 +299,9 @@
                                                     class="rounded p-0.5"
                                                     type="button"
                                                     x-on:click="toggleItalic()"
-                                                    x-bind:class="{ 'bg-gray-200 dark:bg-gray-700': isActive('italic', updatedAt) }"
+                                                    x-bind:class="{
+                                                        'bg-gray-200 dark:bg-gray-700': isActive('italic', updatedAt),
+                                                    }"
                                                 >
                                                     @svg('icon-italic', 'h-5 w-5')
                                                 </button>
@@ -313,7 +310,9 @@
                                                     class="rounded p-0.5"
                                                     type="button"
                                                     x-on:click="toggleUnderline()"
-                                                    x-bind:class="{ 'bg-gray-200 dark:bg-gray-700': isActive('underline', updatedAt) }"
+                                                    x-bind:class="{
+                                                        'bg-gray-200 dark:bg-gray-700': isActive('underline', updatedAt),
+                                                    }"
                                                 >
                                                     @svg('icon-underline', 'h-5 w-5')
                                                 </button>
@@ -355,10 +354,7 @@
                                                         </label>
 
                                                         <div class="flex flex-wrap items-center gap-3">
-                                                            <x-filament::button
-                                                                type="submit"
-                                                                size="sm"
-                                                            >
+                                                            <x-filament::button type="submit" size="sm">
                                                                 Save
                                                             </x-filament::button>
 
@@ -381,8 +377,7 @@
                                                         type="button"
                                                         x-on:click="$refs.colorPicker.toggle"
                                                         x-bind:class="{
-                                                            'bg-gray-200 dark:bg-gray-700': isActive('textStyle',
-                                                                updatedAt)
+                                                            'bg-gray-200 dark:bg-gray-700': isActive('textStyle', updatedAt),
                                                         }"
                                                     >
                                                         @svg('heroicon-c-swatch', 'mt-0.5 h-4 w-4')
@@ -403,17 +398,14 @@
                                                                 x-on:click="removeColor()"
                                                                 x-bind:class="{
                                                                     'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900':
-                                                                        !isActive(
-                                                                            'textStyle', updatedAt),
+                                                                        ! isActive('textStyle', updatedAt),
                                                                 }"
                                                             >
-                                                                <span class="sr-only">
-                                                                    None
-                                                                </span>
+                                                                <span class="sr-only">None</span>
 
                                                                 <div
-                                                                    class="flex-1 rotate-45 border-t dark:border-gray-400">
-                                                                </div>
+                                                                    class="flex-1 rotate-45 border-t dark:border-gray-400"
+                                                                ></div>
                                                             </button>
 
                                                             <button
@@ -421,13 +413,11 @@
                                                                 type="button"
                                                                 x-on:click="setColor('#ef4444')"
                                                                 x-bind:class="{
-                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900': updatedAt &&
-                                                                        isActive('textStyle', { color: '#ef4444' }),
+                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900':
+                                                                        updatedAt && isActive('textStyle', { color: '#ef4444' }),
                                                                 }"
                                                             >
-                                                                <span class="sr-only">
-                                                                    Red
-                                                                </span>
+                                                                <span class="sr-only">Red</span>
                                                             </button>
 
                                                             <button
@@ -435,13 +425,11 @@
                                                                 type="button"
                                                                 x-on:click="setColor('#ec4899')"
                                                                 x-bind:class="{
-                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900': updatedAt &&
-                                                                        isActive('textStyle', { color: '#ec4899' }),
+                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900':
+                                                                        updatedAt && isActive('textStyle', { color: '#ec4899' }),
                                                                 }"
                                                             >
-                                                                <span class="sr-only">
-                                                                    Pink
-                                                                </span>
+                                                                <span class="sr-only">Pink</span>
                                                             </button>
 
                                                             <button
@@ -449,13 +437,11 @@
                                                                 type="button"
                                                                 x-on:click="setColor('#3b82f6')"
                                                                 x-bind:class="{
-                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900': updatedAt &&
-                                                                        isActive('textStyle', { color: '#3b82f6' }),
+                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900':
+                                                                        updatedAt && isActive('textStyle', { color: '#3b82f6' }),
                                                                 }"
                                                             >
-                                                                <span class="sr-only">
-                                                                    Blue
-                                                                </span>
+                                                                <span class="sr-only">Blue</span>
                                                             </button>
 
                                                             <button
@@ -463,13 +449,11 @@
                                                                 type="button"
                                                                 x-on:click="setColor('#22c55e')"
                                                                 x-bind:class="{
-                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900': updatedAt &&
-                                                                        isActive('textStyle', { color: '#22c55e' }),
+                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900':
+                                                                        updatedAt && isActive('textStyle', { color: '#22c55e' }),
                                                                 }"
                                                             >
-                                                                <span class="sr-only">
-                                                                    Green
-                                                                </span>
+                                                                <span class="sr-only">Green</span>
                                                             </button>
 
                                                             <button
@@ -477,13 +461,11 @@
                                                                 type="button"
                                                                 x-on:click="setColor('#eab308')"
                                                                 x-bind:class="{
-                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900': updatedAt &&
-                                                                        isActive('textStyle', { color: '#eab308' }),
+                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900':
+                                                                        updatedAt && isActive('textStyle', { color: '#eab308' }),
                                                                 }"
                                                             >
-                                                                <span class="sr-only">
-                                                                    Yellow
-                                                                </span>
+                                                                <span class="sr-only">Yellow</span>
                                                             </button>
 
                                                             <button
@@ -491,13 +473,11 @@
                                                                 type="button"
                                                                 x-on:click="setColor('#737373')"
                                                                 x-bind:class="{
-                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900': updatedAt &&
-                                                                        isActive('textStyle', { color: '#737373' }),
+                                                                    'ring-2 ring-offset-2 ring-primary-600 dark:ring-offset-gray-900':
+                                                                        updatedAt && isActive('textStyle', { color: '#737373' }),
                                                                 }"
                                                             >
-                                                                <span class="sr-only">
-                                                                    Gray
-                                                                </span>
+                                                                <span class="sr-only">Gray</span>
                                                             </button>
                                                         </div>
                                                     </div>
@@ -544,11 +524,10 @@
                                     </div>
                                 </div>
                                 <div
-                                    class="flex items-center justify-between border-t border-gray-200 px-3 py-2 dark:border-gray-600">
+                                    class="flex items-center justify-between border-t border-gray-200 px-3 py-2 dark:border-gray-600"
+                                >
                                     <div class="flex items-center gap-3">
-                                        <x-filament::button type="submit">
-                                            Send
-                                        </x-filament::button>
+                                        <x-filament::button type="submit">Send</x-filament::button>
 
                                         <div
                                             class="relative flex h-6 items-center justify-center gap-0.5"
@@ -625,17 +604,14 @@
                 outline-color: transparent;
             }
 
-            span[data-type="mention"][data-id="{{ auth()->id() }}"] {
+            span[data-type='mention'][data-id='{{ auth()->id() }}'] {
                 background-color: #fcd34d55;
                 border-radius: 3px;
             }
         </style>
     </div>
 
-    <x-filament::modal
-        id="confirmSafeLink"
-        width="2xl"
-    >
+    <x-filament::modal id="confirmSafeLink" width="2xl">
         <x-slot name="heading">
             <h3 class="text-3xl">Link confirmation</h3>
         </x-slot>
@@ -647,10 +623,7 @@
                 x-on:open-modal.window="href = $event.detail.href"
             >
                 You are about to open another browser tab and visit:
-                <strong
-                    class="mt-2"
-                    x-text="href"
-                ></strong>
+                <strong class="mt-2" x-text="href"></strong>
             </div>
         </x-slot>
 
@@ -660,26 +633,11 @@
                 x-data="{ href: null }"
                 x-on:open-modal.window="href = $event.detail.href"
             >
-                <x-filament::button
-                    x-on:click="close()"
-                    color="gray"
-                    outlined
-                >
-                    Cancel
-                </x-filament::button>
-                <a
-                    :href="href"
-                    target="_blank"
-                >
-                    <x-filament::button
-                        color="primary"
-                        x-on:click="close()"
-                    >
-                        Continue
-                    </x-filament::button>
+                <x-filament::button x-on:click="close()" color="gray" outlined>Cancel</x-filament::button>
+                <a :href="href" target="_blank">
+                    <x-filament::button color="primary" x-on:click="close()">Continue</x-filament::button>
                 </a>
             </div>
         </x-slot>
     </x-filament::modal>
-
 </x-filament-panels::page>

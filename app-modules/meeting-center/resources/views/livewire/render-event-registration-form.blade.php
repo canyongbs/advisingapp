@@ -1,35 +1,35 @@
 {{--
-<COPYRIGHT>
-
+    <COPYRIGHT>
+    
     Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
-
+    
     Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
+    
     Notice:
-
+    
     - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
+    service, where the service provides users with access to any substantial set of
+    the features or functionality of the software.
     - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
+    in the software, and you may not remove or obscure any functionality in the
+    software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
+    of the licensor in the software. Any use of the licensor’s trademarks is subject
+    to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
+    same in return. Canyon GBS™ and Advising App™ are registered trademarks of
+    Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+    Software as a Service (SaaS) by Canyon GBS LLC.
     - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
+    in the Elastic License 2.0.
+    
     For more information or inquiries please visit our website at
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
+    
+    </COPYRIGHT>
 --}}
 @php
     use App\Settings\DisplaySettings;
@@ -46,7 +46,7 @@
                         class="h-full w-full object-contain"
                         src="{{ $this->heroImageUrl }}"
                         alt="{{ $event->title }}"
-                    >
+                    />
                 </div>
             @endif
 
@@ -57,9 +57,7 @@
                             {{ $event->title }}
                         </h1>
                         @if ($this->createdByName)
-                            <p class="mt-1 text-sm text-gray-600">
-                                By {{ $this->createdByName }}
-                            </p>
+                            <p class="mt-1 text-sm text-gray-600">By {{ $this->createdByName }}</p>
                         @endif
                     </div>
                     @if ($this->heroImageUrl)
@@ -77,6 +75,7 @@
                         @if ($event->location)
                             <p>{{ $event->location }}</p>
                         @endif
+
                         @if ($event->starts_at && $event->ends_at)
                             <p>
                                 {{ $event->starts_at->setTimezone($displaySettings->timezone ?: config('app.timezone', 'UTC'))->format('M d, Y') }}
@@ -90,7 +89,7 @@
                 @endif
 
                 @if ($this->descriptionHtml)
-                    <hr class="my-6 border-gray-200">
+                    <hr class="my-6 border-gray-200" />
                     <div class="space-y-4">
                         <h2 class="text-lg font-semibold text-gray-900">Event Description</h2>
                         <div class="prose prose-sm max-w-none text-gray-700">
@@ -126,25 +125,15 @@
 
             <div
                 class="relative flex w-full max-w-[95vw] flex-col overflow-hidden rounded-lg bg-white shadow-xl sm:max-w-[90vw] md:max-w-[85vw] lg:max-w-5xl"
-                style="max-height: 90vh;"
+                style="max-height: 90vh"
             >
                 <button
                     class="absolute right-4 top-4 z-10 rounded-full bg-white p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-sky-500"
                     wire:click="closeRegistrationModal"
                 >
                     <span class="sr-only">Close</span>
-                    <svg
-                        class="h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M6 18L18 6M6 6l12 12"
-                        />
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
 
@@ -154,7 +143,7 @@
                             class="h-full w-full border-0"
                             src="{{ route('event-registration.form-modal', ['event' => $this->event]) }}"
                             title="Event Registration Form"
-                            style="min-height: calc(90vh - 3rem);"
+                            style="min-height: calc(90vh - 3rem)"
                         ></iframe>
                     @else
                         <div class="p-4 py-12 text-center sm:p-6">
