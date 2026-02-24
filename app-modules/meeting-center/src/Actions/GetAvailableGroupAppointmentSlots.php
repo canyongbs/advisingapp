@@ -36,21 +36,17 @@
 
 namespace AdvisingApp\MeetingCenter\Actions;
 
+use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use App\Models\User;
 use Carbon\CarbonPeriod;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 class GetAvailableGroupAppointmentSlots
 {
-    protected GetAvailableAppointmentSlots $personalSlots;
-
-    public function __construct()
-    {
-        $this->personalSlots = new GetAvailableAppointmentSlots();
-    }
-
     /**
      * @return array<int, array{start: string, end: string}>
      */
@@ -62,136 +58,335 @@ class GetAvailableGroupAppointmentSlots
             return [];
         }
 
-        $period = CarbonPeriod::create(
-            Carbon::create($year, $month, 1)->startOfDay(),
-            Carbon::create($year, $month, 1)->endOfMonth()->endOfDay()
-        );
+        $groupHours = $bookingGroup->available_appointment_hours;
 
-        assert($period->start instanceof Carbon);
-        assert($period->end instanceof Carbon);
-
-        // Get available blocks for each member individually
-        $memberBlocks = $members->map(function (User $user) use ($year, $month): array {
-            return ($this->personalSlots)($user, $year, $month);
-        });
-
-        // Find the intersection: only times where ALL members are available
-        return $this->intersectBlocks($memberBlocks, $bookingGroup, $year, $month);
-    }
-
-    /**
-     * @param Collection<int, array<int, array{start: string, end: string}>> $memberBlocks
-     *
-     * @return array<int, array{start: string, end: string}>
-     */
-    protected function intersectBlocks(Collection $memberBlocks, BookingGroup $bookingGroup, int $year, int $month): array
-    {
-        if ($memberBlocks->isEmpty()) {
+        if (empty($groupHours)) {
             return [];
         }
 
-        // Start with the group's configured hours as the base
-        $groupBlocks = $this->getGroupScheduleBlocks($bookingGroup, $year, $month);
+        $bufferBefore = $bookingGroup->is_default_appointment_buffer_enabled
+            ? $bookingGroup->default_appointment_buffer_before_duration
+            : 0;
 
-        if (empty($groupBlocks)) {
-            return [];
-        }
+        $bufferAfter = $bookingGroup->is_default_appointment_buffer_enabled
+            ? $bookingGroup->default_appointment_buffer_after_duration
+            : 0;
 
-        // Intersect with each member's available blocks
-        $intersected = $groupBlocks;
+        $monthStart = Carbon::create($year, $month, 1)->startOfDay();
+        $monthEnd = Carbon::create($year, $month, 1)->endOfMonth()->endOfDay();
 
-        foreach ($memberBlocks as $blocks) {
-            $intersected = $this->intersectTwoBlockSets($intersected, $blocks);
-
-            if (empty($intersected)) {
-                return [];
-            }
-        }
-
-        return $intersected;
-    }
-
-    /**
-     * @return array<int, array{start: string, end: string}>
-     */
-    protected function getGroupScheduleBlocks(BookingGroup $bookingGroup, int $year, int $month): array
-    {
-        $hours = $bookingGroup->available_appointment_hours;
-
-        if (empty($hours)) {
-            return [];
-        }
+        $allBusyPeriods = $this->getAllMemberBusyPeriods($members, $monthStart, $monthEnd, $bufferBefore, $bufferAfter);
 
         $now = now();
         $blocks = [];
 
-        $start = Carbon::create($year, $month, 1)->startOfDay();
-        $end = Carbon::create($year, $month, 1)->endOfMonth()->endOfDay();
-
-        $period = CarbonPeriod::create($start, $end);
+        $period = CarbonPeriod::create($monthStart, $monthEnd);
 
         foreach ($period as $date) {
-            $dayOfWeek = strtolower($date->format('l'));
-            $dayConfig = $hours[$dayOfWeek] ?? null;
+            $dayBlocks = $this->getAvailableBlocksForDay(
+                $date,
+                $groupHours,
+                $members,
+                $allBusyPeriods,
+                $now,
+            );
 
-            if (! $dayConfig || ! ($dayConfig['is_enabled'] ?? false)) {
-                continue;
-            }
-
-            $startsAt = $dayConfig['starts_at'] ?? null;
-            $endsAt = $dayConfig['ends_at'] ?? null;
-
-            if (! $startsAt || ! $endsAt) {
-                continue;
-            }
-
-            $blockStart = Carbon::parse("{$date->toDateString()} {$startsAt}", 'UTC');
-            $blockEnd = Carbon::parse("{$date->toDateString()} {$endsAt}", 'UTC');
-
-            if ($blockEnd->isAfter($now)) {
-                $effectiveStart = $blockStart->isBefore($now) ? $now->copy() : $blockStart;
-
-                $blocks[] = [
-                    'start' => $effectiveStart->toIso8601String(),
-                    'end' => $blockEnd->toIso8601String(),
-                ];
-            }
+            $blocks = array_merge($blocks, $dayBlocks);
         }
 
         return $blocks;
     }
 
     /**
-     * @param array<int, array{start: string, end: string}> $blocksA
-     * @param array<int, array{start: string, end: string}> $blocksB
+     * @param Collection<int, User> $members
+     * @param Collection<int, array{start: Carbon, end: Carbon}> $allBusyPeriods
      *
      * @return array<int, array{start: string, end: string}>
+     */
+    protected function getAvailableBlocksForDay(
+        Carbon $date,
+        array $groupHours,
+        Collection $members,
+        Collection $allBusyPeriods,
+        Carbon $now,
+    ): array {
+        $dayOfWeek = strtolower($date->format('l'));
+
+        $groupDayHours = $this->getGroupHoursForDay($groupHours, $dayOfWeek);
+
+        if ($groupDayHours === null) {
+            return [];
+        }
+
+        $groupStart = Carbon::parse("{$date->toDateString()} {$groupDayHours['starts_at']}", 'UTC');
+        $groupEnd = Carbon::parse("{$date->toDateString()} {$groupDayHours['ends_at']}", 'UTC');
+
+        if ($groupEnd->lte($now)) {
+            return [];
+        }
+
+        // Intersect group hours with each member's personal hours
+        $intersectedBlocks = [['start' => $groupStart, 'end' => $groupEnd]];
+
+        foreach ($members as $member) {
+            if ($this->isOutOfOffice($member, $date)) {
+                return [];
+            }
+
+            $memberHours = $this->getMemberHoursForDay($member, $dayOfWeek);
+
+            if (empty($memberHours)) {
+                return [];
+            }
+
+            $memberBlocks = collect($memberHours)->map(function (array $period) use ($date) {
+                $startTime = $period['start'] ?? $period['starts_at'];
+                $endTime = $period['end'] ?? $period['ends_at'];
+
+                return [
+                    'start' => Carbon::parse("{$date->toDateString()} {$startTime}", 'UTC'),
+                    'end' => Carbon::parse("{$date->toDateString()} {$endTime}", 'UTC'),
+                ];
+            })->all();
+
+            $intersectedBlocks = $this->intersectTwoBlockSets($intersectedBlocks, $memberBlocks);
+
+            if (empty($intersectedBlocks)) {
+                return [];
+            }
+        }
+
+        // Carve out busy periods (already expanded by buffer) from the intersected blocks
+        $availableBlocks = $intersectedBlocks;
+
+        foreach ($allBusyPeriods as $busy) {
+            $availableBlocks = $this->splitBlocksAroundBusyPeriod($availableBlocks, $busy);
+
+            if (empty($availableBlocks)) {
+                return [];
+            }
+        }
+
+        // Filter out past blocks and adjust start times
+        return collect($availableBlocks)
+            ->filter(fn (array $block) => $block['end']->isAfter($now))
+            ->map(function (array $block) use ($now) {
+                $start = $block['start']->isBefore($now) ? $now->copy() : $block['start'];
+
+                return [
+                    'start' => $start->toIso8601String(),
+                    'end' => $block['end']->toIso8601String(),
+                ];
+            })
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return array{starts_at: string, ends_at: string}|null
+     */
+    protected function getGroupHoursForDay(array $groupHours, string $dayOfWeek): ?array
+    {
+        $dayConfig = $groupHours[$dayOfWeek] ?? null;
+
+        if (! $dayConfig || ! ($dayConfig['is_enabled'] ?? false)) {
+            return null;
+        }
+
+        $startsAt = $dayConfig['starts_at'] ?? null;
+        $endsAt = $dayConfig['ends_at'] ?? null;
+
+        if (! $startsAt || ! $endsAt) {
+            return null;
+        }
+
+        return ['starts_at' => $startsAt, 'ends_at' => $endsAt];
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    protected function getMemberHoursForDay(User $member, string $dayOfWeek): array
+    {
+        $officeHours = $this->getHoursFromSettings($member->office_hours_are_enabled, $member->office_hours, $dayOfWeek);
+
+        if (! empty($officeHours)) {
+            return $officeHours;
+        }
+
+        return $this->getHoursFromSettings($member->working_hours_are_enabled, $member->working_hours, $dayOfWeek);
+    }
+
+    /**
+     * @param array<string, mixed>|null $hoursSettings
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    protected function getHoursFromSettings(bool $isEnabled, ?array $hoursSettings, string $dayOfWeek): array
+    {
+        if (! $isEnabled || $hoursSettings === null) {
+            return [];
+        }
+
+        $dayHours = $hoursSettings[$dayOfWeek] ?? [];
+
+        if (empty($dayHours)) {
+            return [];
+        }
+
+        if (isset($dayHours['enabled'])) {
+            if (! ($dayHours['enabled'] ?? false)) {
+                return [];
+            }
+
+            return [$dayHours];
+        }
+
+        return collect($dayHours)
+            ->filter(fn (array $period) => $period['enabled'] ?? false)
+            ->values()
+            ->all();
+    }
+
+    protected function isOutOfOffice(User $user, Carbon $date): bool
+    {
+        if (! $user->out_of_office_is_enabled) {
+            return false;
+        }
+
+        if (! $user->out_of_office_starts_at || ! $user->out_of_office_ends_at) {
+            return false;
+        }
+
+        return $date->between($user->out_of_office_starts_at, $user->out_of_office_ends_at);
+    }
+
+    /**
+     * @param Collection<int, User> $members
+     *
+     * @return Collection<int, array{start: Carbon, end: Carbon}>
+     */
+    protected function getAllMemberBusyPeriods(Collection $members, Carbon $start, Carbon $end, int $bufferBefore, int $bufferAfter): Collection
+    {
+        return $members
+            ->flatMap(fn (User $member) => $this->getBusyPeriodsFor($member, $start, $end))
+            ->map(function (array $busy) use ($bufferBefore, $bufferAfter) {
+                return [
+                    'start' => $busy['start']->copy()->subSeconds($bufferBefore),
+                    'end' => $busy['end']->copy()->addSeconds($bufferAfter),
+                ];
+            })
+            ->values();
+    }
+
+    /**
+     * @return Collection<int, array{start: Carbon, end: Carbon}>
+     */
+    protected function getBusyPeriodsFor(User $user, Carbon $start, Carbon $end): Collection
+    {
+        return $this->getCalendarEventsFor($user, $start, $end)
+            ->map(fn (CalendarEvent $event) => [
+                'start' => $event->starts_at,
+                'end' => $event->ends_at,
+            ])
+            ->values();
+    }
+
+    /**
+     * @return Collection<int, CalendarEvent>
+     */
+    protected function getCalendarEventsFor(User $user, Carbon $start, Carbon $end): Collection
+    {
+        return CalendarEvent::query()
+            ->whereHas('calendar', fn (Builder $query) => $query->whereBelongsTo($user))
+            ->where(function (Builder $query) use ($start, $end) {
+                $query->whereBetween('starts_at', [$start, $end])
+                    ->orWhereBetween('ends_at', [$start, $end])
+                    ->orWhere(fn (Builder $subQuery) => $subQuery->where('starts_at', '<=', $start)->where('ends_at', '>=', $end));
+            })
+            ->where(function (Builder $query) {
+                $query->whereIn('transparency', [
+                    EventTransparency::Busy->value,
+                    EventTransparency::Tentative->value,
+                    EventTransparency::OutOfOffice->value,
+                    EventTransparency::WorkingElsewhere->value,
+                ]);
+            })
+            ->get();
+    }
+
+    /**
+     * @param array<int, array{start: Carbon, end: Carbon}> $blocksA
+     * @param array<int, array{start: Carbon, end: Carbon}> $blocksB
+     *
+     * @return array<int, array{start: Carbon, end: Carbon}>
      */
     protected function intersectTwoBlockSets(array $blocksA, array $blocksB): array
     {
         $result = [];
 
         foreach ($blocksA as $a) {
-            $aStart = Carbon::parse($a['start']);
-            $aEnd = Carbon::parse($a['end']);
-
             foreach ($blocksB as $b) {
-                $bStart = Carbon::parse($b['start']);
-                $bEnd = Carbon::parse($b['end']);
-
-                // Find the overlap
-                $overlapStart = $aStart->max($bStart);
-                $overlapEnd = $aEnd->min($bEnd);
+                $overlapStart = $a['start']->max($b['start']);
+                $overlapEnd = $a['end']->min($b['end']);
 
                 if ($overlapStart->lt($overlapEnd)) {
                     $result[] = [
-                        'start' => $overlapStart->toIso8601String(),
-                        'end' => $overlapEnd->toIso8601String(),
+                        'start' => $overlapStart->copy(),
+                        'end' => $overlapEnd->copy(),
                     ];
                 }
             }
         }
 
         return $result;
+    }
+
+    /**
+     * @param array<int, array{start: Carbon, end: Carbon}> $blocks
+     * @param array{start: Carbon, end: Carbon} $busy
+     *
+     * @return array<int, array{start: Carbon, end: Carbon}>
+     */
+    protected function splitBlocksAroundBusyPeriod(array $blocks, array $busy): array
+    {
+        $busyStart = $busy['start'];
+        $busyEnd = $busy['end'];
+
+        return collect($blocks)
+            ->flatMap(fn (array $block) => $this->splitBlockIfOverlaps($block, $busyStart, $busyEnd))
+            ->all();
+    }
+
+    /**
+     * @param array{start: Carbon, end: Carbon} $block
+     *
+     * @return array<int, array{start: Carbon, end: Carbon}>
+     */
+    protected function splitBlockIfOverlaps(array $block, Carbon $busyStart, Carbon $busyEnd): array
+    {
+        $blockStart = $block['start'];
+        $blockEnd = $block['end'];
+
+        if ($busyEnd->lte($blockStart) || $busyStart->gte($blockEnd)) {
+            return [$block];
+        }
+
+        if ($busyStart->lte($blockStart) && $busyEnd->gte($blockEnd)) {
+            return [];
+        }
+
+        if ($busyStart->gt($blockStart) && $busyEnd->lt($blockEnd)) {
+            return [
+                ['start' => $blockStart, 'end' => $busyStart->copy()],
+                ['start' => $busyEnd->copy(), 'end' => $blockEnd],
+            ];
+        }
+
+        if ($busyStart->lte($blockStart)) {
+            return [['start' => $busyEnd->copy(), 'end' => $blockEnd]];
+        }
+
+        return [['start' => $blockStart, 'end' => $busyStart->copy()]];
     }
 }
