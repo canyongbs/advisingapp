@@ -321,7 +321,7 @@ class ManagePersonalBookingPage extends ProfilePage
             return $bookingData;
         }
 
-        $data = [
+        $userData = [
             'is_enabled' => false,
             'slug' => Str::slug($user->name),
             'default_appointment_duration' => 30,
@@ -337,8 +337,8 @@ class ManagePersonalBookingPage extends ProfilePage
         ];
 
         if (PersonalBookingAvailabilityFeature::active()) {
-            $data = [
-                ...$data,
+            $userData = [
+                ...$userData,
                 'is_default_appointment_buffer_enabled' => false,
                 'default_appointment_buffer_before_duration' => DurationInput::mutateDataBeforeFill(0, hasDays: false),
                 'default_appointment_buffer_after_duration' => DurationInput::mutateDataBeforeFill(0, hasDays: false),
@@ -346,7 +346,7 @@ class ManagePersonalBookingPage extends ProfilePage
             ];
         }
 
-        return $data;
+        return $userData;
     }
 
     public function handleRecordUpdate(Model $record, array $data): Model
