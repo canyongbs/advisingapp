@@ -162,7 +162,28 @@ class GroupBookingPageWidgetController extends Controller
         $calendarStartsAt = $startsAt->copy()->subSeconds($bufferBefore);
         $calendarEndsAt = $endsAt->copy()->addSeconds($bufferAfter);
 
-        return DB::transaction(function () use ($bookingGroup, $members, $startsAt, $endsAt, $calendarStartsAt, $calendarEndsAt, $conflictCheckStart, $conflictCheckEnd, $request) {
+        // Validate the requested slot fits within regenerated available blocks
+        $availableBlocks = app(GetAvailableGroupAppointmentSlots::class)(
+            $bookingGroup,
+            $startsAt->year,
+            $startsAt->month,
+        );
+
+        $slotIsValid = collect($availableBlocks)->contains(function (array $block) use ($startsAt, $endsAt) {
+            $blockStart = Carbon::parse($block['start']);
+            $blockEnd = Carbon::parse($block['end']);
+
+            return $startsAt->gte($blockStart) && $endsAt->lte($blockEnd);
+        });
+
+        if (! $slotIsValid) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This time slot is no longer available. Please select another time.',
+            ], 409);
+        }
+
+        return DB::transaction(function () use ($bookingGroup, $members, $startsAt, $endsAt, $calendarStartsAt, $calendarEndsAt, $conflictCheckStart, $conflictCheckEnd, $bufferBefore, $bufferAfter, $request) {
             // Check for overlapping events across ALL members' calendars, accounting for buffer time
             foreach ($members as $member) {
                 if (! $member->calendar) {
