@@ -82,20 +82,22 @@ class GetAvailableGroupAppointmentSlots
         $now = now();
         $blocks = [];
 
-        CarbonPeriod::create($monthStart, $monthEnd)
-            ->each(function (Carbon $date) use (&$blocks, $groupHours, $members, $allBusyPeriods, $bufferBefore, $bufferAfter, $now) {
-                $dayBlocks = $this->getAvailableBlocksForDay(
-                    $date,
-                    $groupHours,
-                    $members,
-                    $allBusyPeriods,
-                    $bufferBefore,
-                    $bufferAfter,
-                    $now,
-                );
+        /** @var iterable<Carbon> $period */
+        $period = CarbonPeriod::create($monthStart, $monthEnd); /** @phpstan-ignore varTag.nativeType */
 
-                $blocks = array_merge($blocks, $dayBlocks);
-            });
+        foreach ($period as $date) {
+            $dayBlocks = $this->getAvailableBlocksForDay(
+                $date,
+                $groupHours,
+                $members,
+                $allBusyPeriods,
+                $bufferBefore,
+                $bufferAfter,
+                $now,
+            );
+
+            $blocks = array_merge($blocks, $dayBlocks);
+        }
 
         return $blocks;
     }
