@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\MeetingCenter\Actions;
 
-use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 
-class GeneratePersonalBookingPageEmbedCode
+class GenerateGroupBookingPageEmbedCode
 {
-    public function __invoke(PersonalBookingPage $bookingPage): string
+    public function __invoke(BookingGroup $bookingGroup): string
     {
         $manifestPath = Storage::disk('public')->get('widgets/booking-page/.vite/manifest.json');
 
@@ -55,7 +55,7 @@ class GeneratePersonalBookingPageEmbedCode
 
         $loaderScriptUrl = url("widgets/booking-page/{$manifest['src/loader.js']['file']}");
 
-        $assetsUrl = route(name: 'widgets.booking-page.personal.api.assets', parameters: ['slug' => $bookingPage->slug]);
+        $assetsUrl = route(name: 'widgets.booking-page.group.api.assets', parameters: ['slug' => $bookingGroup->slug]);
 
         return <<<EOD
         <booking-page-embed url="{$assetsUrl}"></booking-page-embed>

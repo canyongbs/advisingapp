@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,33 +31,34 @@
 
 </COPYRIGHT>
 */
+(function () {
+    // Get the embed element
+    const embedElement = document.querySelector('booking-page-embed');
+    if (!embedElement) throw new Error('Embed not found');
 
-namespace AdvisingApp\MeetingCenter\Actions;
+    // Get the assets URL from the element
+    const assetsUrl = embedElement.getAttribute('url');
+    if (!assetsUrl) throw new Error('Assets URL not found');
 
-use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use Illuminate\Support\Facades\Storage;
-use RuntimeException;
+    // Fetch the latest assets URLs
+    fetch(assetsUrl)
+        .then((response) => response.json())
+        .then((assets) => {
+            if (!assets || !assets.asset_url || !assets.entry || !assets.js) {
+                throw Error('Assets are missing or incomplete.');
+            }
 
-class GeneratePersonalBookingPageEmbedCode
-{
-    public function __invoke(PersonalBookingPage $bookingPage): string
-    {
-        $manifestPath = Storage::disk('public')->get('widgets/booking-page/.vite/manifest.json');
+            embedElement.setAttribute('entry-url', assets.entry);
 
-        if (is_null($manifestPath)) {
-            throw new RuntimeException('Vite manifest file not found.');
-        }
+            // Set up the global variable for Vite's dynamic imports using the asset endpoint
+            window.__VITE_BOOKING_PAGE_ASSET_URL__ = assets.asset_url;
 
-        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
-        $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
-
-        $loaderScriptUrl = url("widgets/booking-page/{$manifest['src/loader.js']['file']}");
-
-        $assetsUrl = route(name: 'widgets.booking-page.personal.api.assets', parameters: ['slug' => $bookingPage->slug]);
-
-        return <<<EOD
-        <booking-page-embed url="{$assetsUrl}"></booking-page-embed>
-        <script src="{$loaderScriptUrl}"></script>
-        EOD;
-    }
-}
+            const scriptElement = document.createElement('script');
+            scriptElement.src = assets.js;
+            scriptElement.type = 'module';
+            document.body.appendChild(scriptElement);
+        })
+        .catch((error) => {
+            console.error('Failed to load widget assets:', error);
+        });
+})();

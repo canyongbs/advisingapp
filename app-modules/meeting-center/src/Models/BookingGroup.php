@@ -44,6 +44,8 @@ use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -60,6 +62,8 @@ class BookingGroup extends BaseModel implements Auditable
     protected $fillable = [
         'name',
         'description',
+        'slug',
+        'book_with',
         'default_appointment_duration',
         'is_default_appointment_buffer_enabled',
         'default_appointment_buffer_before_duration',
@@ -101,5 +105,29 @@ class BookingGroup extends BaseModel implements Auditable
             ->using(BookingGroupTeam::class)
             ->withPivot('id')
             ->withTimestamps();
+    }
+
+    /**
+     * @return HasMany<BookingGroupAppointment, $this>
+     */
+    public function bookingGroupAppointments(): HasMany
+    {
+        return $this->hasMany(BookingGroupAppointment::class);
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function allMembers(): Collection
+    {
+        $directUsers = $this->users()->get();
+
+        $teamIds = $this->teams()->pluck('teams.id');
+
+        $teamMembers = $teamIds->isNotEmpty()
+            ? User::query()->whereIn('team_id', $teamIds)->get()
+            : new Collection();
+
+        return $directUsers->merge($teamMembers)->unique('id')->values();
     }
 }

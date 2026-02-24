@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,47 +33,37 @@
 
 </COPYRIGHT>
 */
-import vue from '@vitejs/plugin-vue';
-import { resolve } from 'path';
-import { defineConfig } from 'vite';
 
-export default defineConfig({
-    plugins: [vue()],
-    experimental: {
-        renderBuiltUrl(filename) {
-            return {
-                runtime: `window.__VITE_PERSONAL_BOOKING_PAGE_ASSET_URL__.replace(/\\/$/, '') + '/' + ${JSON.stringify(filename)}`,
-            };
-        },
-    },
-    build: {
-        manifest: true,
-        rollupOptions: {
-            input: {
-                widget: resolve(__dirname, './src/widget.js'),
-                loader: resolve(__dirname, './src/loader.js'),
-            },
-            output: {
-                entryFileNames: (chunkInfo) => {
-                    return chunkInfo.name === 'loader'
-                        ? 'advising-app-personal-booking-page-widget.js'
-                        : 'advising-app-personal-booking-page-widget-app-[hash].js';
-                },
-                assetFileNames: (assetInfo) => {
-                    return '[name]-[hash][extname]';
-                },
-                // Place chunks directly in the root
-                chunkFileNames: '[name]-[hash].js',
-            },
-        },
-        outDir: resolve(__dirname, '../../storage/app/public/widgets/personal-booking-page'),
-        emptyOutDir: true,
-        sourcemap: true,
-    },
-    resolve: {
-        alias: {
-            '@': resolve(__dirname, 'src'),
-        },
-    },
-    define: { 'process.env.NODE_ENV': '"production"' },
-});
+use App\Features\GroupBookingFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+
+return new class () extends Migration {
+    public function up(): void
+    {
+        DB::transaction(function () {
+            Schema::create('booking_group_appointments', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->foreignUuid('booking_group_id')->constrained('booking_groups')->cascadeOnDelete();
+                $table->string('name');
+                $table->string('email');
+                $table->timestamp('starts_at');
+                $table->timestamp('ends_at');
+                $table->timestamps();
+            });
+
+            GroupBookingFeature::activate();
+        });
+    }
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            GroupBookingFeature::deactivate();
+
+            Schema::dropIfExists('booking_group_appointments');
+        });
+    }
+};

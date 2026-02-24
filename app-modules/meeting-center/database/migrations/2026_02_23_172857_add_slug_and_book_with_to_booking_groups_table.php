@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,25 +33,29 @@
 
 </COPYRIGHT>
 */
-import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import App from './App.vue';
-import styles from './widget.css?inline';
 
-customElements.define(
-    'personal-booking-page-embed',
-    defineCustomElement({
-        styles: [styles],
-        setup(props) {
-            const app = createApp();
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-            app.config.devtools = true;
+return new class () extends Migration {
+    public function up(): void
+    {
+        DB::transaction(function () {
+            Schema::table('booking_groups', function (Blueprint $table) {
+                $table->string('slug')->unique();
+                $table->string('book_with')->default('all');
+            });
+        });
+    }
 
-            const inst = getCurrentInstance();
-            Object.assign(inst.appContext, app._context);
-            Object.assign(inst.provides, app._context.provides);
-
-            return () => h(App, props);
-        },
-        props: ['entryUrl'],
-    }),
-);
+    public function down(): void
+    {
+        DB::transaction(function () {
+            Schema::table('booking_groups', function (Blueprint $table) {
+                $table->dropColumn(['slug', 'book_with']);
+            });
+        });
+    }
+};

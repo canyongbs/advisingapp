@@ -47,6 +47,10 @@ class ViewBookingGroup extends ViewRecord
 {
     protected static string $resource = BookingGroupResource::class;
 
+    protected static ?string $navigationLabel = 'Group Configuration';
+
+    protected static ?int $navigationSort = 10;
+
     public function infolist(Schema $schema): Schema
     {
         return $schema->schema([

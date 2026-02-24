@@ -34,32 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Actions;
+namespace AdvisingApp\MeetingCenter\Http\Requests;
 
-use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use Illuminate\Support\Facades\Storage;
-use RuntimeException;
+use Illuminate\Foundation\Http\FormRequest;
 
-class GeneratePersonalBookingPageEmbedCode
+class BookGroupCalendarSlotRequest extends FormRequest
 {
-    public function __invoke(PersonalBookingPage $bookingPage): string
+    /**
+     * @return array<string, array<int, string>>
+     */
+    public function rules(): array
     {
-        $manifestPath = Storage::disk('public')->get('widgets/booking-page/.vite/manifest.json');
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
+            'starts_at' => ['required', 'date'],
+            'ends_at' => ['required', 'date', 'after:starts_at'],
+        ];
+    }
 
-        if (is_null($manifestPath)) {
-            throw new RuntimeException('Vite manifest file not found.');
-        }
-
-        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
-        $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
-
-        $loaderScriptUrl = url("widgets/booking-page/{$manifest['src/loader.js']['file']}");
-
-        $assetsUrl = route(name: 'widgets.booking-page.personal.api.assets', parameters: ['slug' => $bookingPage->slug]);
-
-        return <<<EOD
-        <booking-page-embed url="{$assetsUrl}"></booking-page-embed>
-        <script src="{$loaderScriptUrl}"></script>
-        EOD;
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Please provide your name.',
+            'email.required' => 'Please provide your email address.',
+            'email.email' => 'Please provide a valid email address.',
+            'starts_at.required' => 'Please select a start time.',
+            'ends_at.required' => 'Please select an end time.',
+            'ends_at.after' => 'The end time must be after the start time.',
+        ];
     }
 }
