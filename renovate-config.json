@@ -21,7 +21,8 @@
             "matchStrings": ["ARG IMAGEMAGICK_VERSION=['\"]?(?<currentValue>[\\d.]+-\\d+)['\"]?"],
             "extractVersionTemplate": "^v?(?<version>.*)$",
             "datasourceTemplate": "github-releases",
-            "depNameTemplate": "ImageMagick/ImageMagick"
+            "depNameTemplate": "ImageMagick/ImageMagick",
+            "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-(?<build>\\d+)$"
         },
         {
             "customType": "regex",
