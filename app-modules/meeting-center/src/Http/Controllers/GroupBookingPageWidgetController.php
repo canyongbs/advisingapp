@@ -45,6 +45,7 @@ use App\Features\GroupBookingFeature;
 use App\Http\Controllers\Controller;
 use App\Settings\CollegeBrandingSettings;
 use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -143,6 +144,13 @@ class GroupBookingPageWidgetController extends Controller
             ], 422);
         }
 
+        $maxBuffer = $bookingGroup->is_default_appointment_buffer_enabled
+            ? max($bookingGroup->default_appointment_buffer_before_duration, $bookingGroup->default_appointment_buffer_after_duration)
+            : 0;
+
+        $conflictCheckStart = $startsAt->copy()->subSeconds($maxBuffer);
+        $conflictCheckEnd = $endsAt->copy()->addSeconds($maxBuffer);
+
         $bufferBefore = $bookingGroup->is_default_appointment_buffer_enabled
             ? $bookingGroup->default_appointment_buffer_before_duration
             : 0;
@@ -151,10 +159,10 @@ class GroupBookingPageWidgetController extends Controller
             ? $bookingGroup->default_appointment_buffer_after_duration
             : 0;
 
-        $conflictCheckStart = $startsAt->copy()->subSeconds($bufferBefore);
-        $conflictCheckEnd = $endsAt->copy()->addSeconds($bufferAfter);
+        $calendarStartsAt = $startsAt->copy()->subSeconds($bufferBefore);
+        $calendarEndsAt = $endsAt->copy()->addSeconds($bufferAfter);
 
-        return DB::transaction(function () use ($bookingGroup, $members, $startsAt, $endsAt, $conflictCheckStart, $conflictCheckEnd, $request) {
+        return DB::transaction(function () use ($bookingGroup, $members, $startsAt, $endsAt, $calendarStartsAt, $calendarEndsAt, $conflictCheckStart, $conflictCheckEnd, $request) {
             // Check for overlapping events across ALL members' calendars, accounting for buffer time
             foreach ($members as $member) {
                 if (! $member->calendar) {
@@ -176,18 +184,32 @@ class GroupBookingPageWidgetController extends Controller
                 }
             }
 
-            // Create calendar events on each member's connected calendar
+            // Create calendar events on each member's connected calendar with buffer included
             foreach ($members as $member) {
                 if (! $member->calendar) {
                     continue;
                 }
 
+                $description = 'Booked via group booking page: ' . $bookingGroup->name;
+
+                if ($bufferBefore > 0 || $bufferAfter > 0) {
+                    $description .= "\n\nAppointment: " . $startsAt->format('g:i A') . ' - ' . $endsAt->format('g:i A');
+
+                    if ($bufferBefore > 0) {
+                        $description .= "\nBuffer before: " . CarbonInterval::seconds($bufferBefore)->cascade()->forHumans(['short' => true]);
+                    }
+
+                    if ($bufferAfter > 0) {
+                        $description .= "\nBuffer after: " . CarbonInterval::seconds($bufferAfter)->cascade()->forHumans(['short' => true]);
+                    }
+                }
+
                 CalendarEvent::create([
                     'calendar_id' => $member->calendar->id,
                     'title' => 'Group Meeting with ' . $request->validated('name'),
-                    'description' => 'Booked via group booking page: ' . $bookingGroup->name,
-                    'starts_at' => $startsAt,
-                    'ends_at' => $endsAt,
+                    'description' => $description,
+                    'starts_at' => $calendarStartsAt,
+                    'ends_at' => $calendarEndsAt,
                     'attendees' => [
                         $request->validated('email'),
                     ],
