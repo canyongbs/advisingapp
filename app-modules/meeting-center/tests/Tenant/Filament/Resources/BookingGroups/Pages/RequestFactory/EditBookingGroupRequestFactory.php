@@ -44,6 +44,7 @@ class EditBookingGroupRequestFactory extends RequestFactory
     {
         return [
             'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
+            'slug' => str($this->faker->unique()->words(3, true))->slug()->toString(),
             'description' => $this->faker->paragraph(),
         ];
     }

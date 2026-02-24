@@ -103,6 +103,10 @@ it('validates the inputs', function (EditBookingGroupRequestFactory $data, array
         EditBookingGroupRequestFactory::new()->state(['name' => str()->random(256)]),
         ['name' => 'max'],
     ],
+    'slug required' => fn () => [
+        EditBookingGroupRequestFactory::new()->state(['slug' => null]),
+        ['slug' => 'required'],
+    ],
     'description string' => fn () => [
         EditBookingGroupRequestFactory::new()->state(['description' => 1]),
         ['description' => 'string'],

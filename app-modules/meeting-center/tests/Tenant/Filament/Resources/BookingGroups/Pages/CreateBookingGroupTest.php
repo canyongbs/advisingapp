@@ -92,6 +92,10 @@ it('validates the inputs', function (CreateBookingGroupRequestFactory $data, arr
         CreateBookingGroupRequestFactory::new()->state(['name' => str()->random(256)]),
         ['name' => 'max'],
     ],
+    'slug required' => fn () => [
+        CreateBookingGroupRequestFactory::new()->without('slug'),
+        ['slug' => 'required'],
+    ],
     'description string' => fn () => [
         CreateBookingGroupRequestFactory::new()->state(['description' => 1]),
         ['description' => 'string'],
