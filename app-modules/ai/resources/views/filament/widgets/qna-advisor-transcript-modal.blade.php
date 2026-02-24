@@ -40,9 +40,7 @@
         <div class="{{ $message->is_advisor ? 'justify-start' : 'justify-end' }} flex">
             <div class="max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl">
                 <div
-                    class="{{
-                        $message->is_advisor ? 'bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700' : 'bg-primary-500 text-white'
-                    }} rounded-lg px-5 py-4"
+                    class="{{ $message->is_advisor ? 'bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700' : 'bg-primary-500 text-white' }} rounded-lg px-5 py-4"
                 >
                     <div
                         class="{{ $message->is_advisor ? 'text-gray-600 dark:text-gray-300' : 'text-primary-100' }} mb-3"
@@ -52,9 +50,7 @@
                     </div>
 
                     <div
-                        class="{{
-                            $message->is_advisor ? 'text-gray-900 dark:text-gray-100 dark:prose-invert prose-p:mb-3 prose-p:leading-relaxed' : 'text-white prose-invert prose-p:mb-3 prose-p:leading-relaxed'
-                        }} prose prose-sm max-w-none leading-relaxed"
+                        class="{{ $message->is_advisor ? 'text-gray-900 dark:text-gray-100 dark:prose-invert prose-p:mb-3 prose-p:leading-relaxed' : 'text-white prose-invert prose-p:mb-3 prose-p:leading-relaxed' }} prose prose-sm max-w-none leading-relaxed"
                     >
                         {!! str($message->content)->markdown() !!}
                     </div>

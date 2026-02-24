@@ -216,7 +216,7 @@
                                 x-model="state"
                                 :data-column="$loop->index"
                                 :x-bind:value="'availablePermissions[group]['.Js::from($operation).
-                                                                ']'"
+                                                                                                ']'"
                                 :x-bind:disabled="(($operation === 'view-any') || $isDisabled) ? null:
                                     '! state.includes(availablePermissions[group][\'view-any\'])'"
                                 :x-on:change="(($operation === 'view-any') && (! $isDisabled)) ? '$event.target.checked ? (availablePermissions[group].view ? state.push(availablePermissions[group].view) : null) : deselectPermissionsInGroup(group)' : null"
