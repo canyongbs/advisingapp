@@ -64,18 +64,14 @@ class GetAvailableGroupAppointmentSlots
             return [];
         }
 
-        $bufferBefore = $bookingGroup->is_default_appointment_buffer_enabled
-            ? $bookingGroup->default_appointment_buffer_before_duration
-            : 0;
-
-        $bufferAfter = $bookingGroup->is_default_appointment_buffer_enabled
-            ? $bookingGroup->default_appointment_buffer_after_duration
+        $maxBuffer = $bookingGroup->is_default_appointment_buffer_enabled
+            ? max($bookingGroup->default_appointment_buffer_before_duration, $bookingGroup->default_appointment_buffer_after_duration)
             : 0;
 
         $monthStart = Carbon::create($year, $month, 1)->startOfDay();
         $monthEnd = Carbon::create($year, $month, 1)->endOfMonth()->endOfDay();
 
-        $allBusyPeriods = $this->getAllMemberBusyPeriods($members, $monthStart, $monthEnd, $bufferBefore, $bufferAfter);
+        $allBusyPeriods = $this->getAllMemberBusyPeriods($members, $monthStart, $monthEnd, $maxBuffer);
 
         $now = now();
         $blocks = [];
@@ -266,14 +262,14 @@ class GetAvailableGroupAppointmentSlots
      *
      * @return Collection<int, array{start: Carbon, end: Carbon}>
      */
-    protected function getAllMemberBusyPeriods(Collection $members, Carbon $start, Carbon $end, int $bufferBefore, int $bufferAfter): Collection
+    protected function getAllMemberBusyPeriods(Collection $members, Carbon $start, Carbon $end, int $maxBuffer): Collection
     {
         return $members
             ->flatMap(fn (User $member) => $this->getBusyPeriodsFor($member, $start, $end))
-            ->map(function (array $busy) use ($bufferBefore, $bufferAfter) {
+            ->map(function (array $busy) use ($maxBuffer) {
                 return [
-                    'start' => $busy['start']->copy()->subSeconds($bufferBefore),
-                    'end' => $busy['end']->copy()->addSeconds($bufferAfter),
+                    'start' => $busy['start']->copy()->subSeconds($maxBuffer),
+                    'end' => $busy['end']->copy()->addSeconds($maxBuffer),
                 ];
             })
             ->values();
