@@ -38,6 +38,7 @@ use App\Features\PersonalBookingAvailabilityFeature;
 use App\Settings\DisplaySettings;
 use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -48,7 +49,7 @@ return new class () extends Migration {
     {
         DB::transaction(function () {
             DB::table('users')
-                ->where(function ($query) {
+                ->where(function (Builder $query) {
                     $query->whereNotNull('office_hours')
                         ->orWhereNotNull('working_hours');
                 })
@@ -88,7 +89,7 @@ return new class () extends Migration {
         DB::transaction(function () {
             PersonalBookingAvailabilityFeature::deactivate();
             DB::table('users')
-                ->where(function ($query) {
+                ->where(function (Builder $query) {
                     $query->whereNotNull('office_hours')
                         ->orWhereNotNull('working_hours');
                 })
@@ -122,6 +123,11 @@ return new class () extends Migration {
         });
     }
 
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     */
     private function convertOldToNewFormat(array $data): array
     {
         $result = [];
@@ -166,6 +172,11 @@ return new class () extends Migration {
         }
     }
 
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     */
     private function convertNewToOldFormat(array $data): array
     {
         $result = [];
