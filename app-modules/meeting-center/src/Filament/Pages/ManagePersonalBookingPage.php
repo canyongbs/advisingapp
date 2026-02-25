@@ -41,7 +41,6 @@ use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use App\Features\PersonalBookingAvailabilityFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
-use App\Filament\Forms\Components\DurationInput;
 use App\Filament\Pages\ProfilePage;
 use App\Models\User;
 use Closure;
@@ -155,7 +154,7 @@ class ManagePersonalBookingPage extends ProfilePage
                                                 }
 
                                                 $hasAnyEnabledDay = collect($workingHours)
-                                                    ->filter(fn ($day) => ($day['enabled'] ?? false) === true && ! empty($day['starts_at']) && ! empty($day['ends_at']))
+                                                    ->filter(fn ($day) => ((PersonalBookingAvailabilityFeature::active() ? $day['is_enabled'] : $day['enabled']) ?? false) === true && ! empty($day['starts_at']) && ! empty($day['ends_at']))
                                                     ->isNotEmpty();
 
                                                 if (! $hasAnyEnabledDay) {
@@ -169,7 +168,14 @@ class ManagePersonalBookingPage extends ProfilePage
                                     ->visible(fn (Get $get) => $get('working_hours_are_enabled'))
                                     ->live(),
                                 Section::make('Days')
-                                    ->schema($this->getHoursForDays('working_hours'))
+                                    ->schema(
+                                        ! PersonalBookingAvailabilityFeature::active() ? $this->getHoursForDays('working_hours') :
+                                        [
+                                            DailyHoursRepeater::make('working_hours')
+                                                ->label('Days and Hours')
+                                                ->columnSpanFull(),
+                                        ]
+                                    )
                                     ->visible(fn (Get $get) => $get('working_hours_are_enabled')),
                             ])
                             ->visible(fn (Get $get) => $get('is_enabled')),
@@ -196,7 +202,7 @@ class ManagePersonalBookingPage extends ProfilePage
                                                 }
 
                                                 $hasAnyEnabledDay = collect($officeHours)
-                                                    ->filter(fn ($day) => ($day['enabled'] ?? false) === true && ! empty($day['starts_at']) && ! empty($day['ends_at']))
+                                                    ->filter(fn ($day) => ((PersonalBookingAvailabilityFeature::active() ? $day['is_enabled'] : $day['enabled']) ?? false) === true && ! empty($day['starts_at']) && ! empty($day['ends_at']))
                                                     ->isNotEmpty();
 
                                                 if (! $hasAnyEnabledDay) {
@@ -209,7 +215,14 @@ class ManagePersonalBookingPage extends ProfilePage
                                     ->label('Restrict appointments to existing students')
                                     ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
                                 Section::make('Days')
-                                    ->schema($this->getHoursForDays('office_hours'))
+                                    ->schema(
+                                        ! PersonalBookingAvailabilityFeature::active() ? $this->getHoursForDays('office_hours') :
+                                    [
+                                        DailyHoursRepeater::make('office_hours')
+                                            ->label('Days and Hours')
+                                            ->columnSpanFull(),
+                                    ]
+                                    )
                                     ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
                             ])
                             ->visible(fn (Get $get) => $get('is_enabled')),
@@ -240,35 +253,6 @@ class ManagePersonalBookingPage extends ProfilePage
                                             ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
                                     ]),
                             ])->visible(fn (Get $get) => $get('is_enabled')),
-                        Section::make('Availability')
-                            ->schema([
-                                Grid::make()
-                                    ->columns([
-                                        'sm' => 1,
-                                        'md' => 1,
-                                        'lg' => 1,
-                                        'xl' => 2,
-                                        '2xl' => 2,
-                                    ])
-                                    ->schema([
-                                        Toggle::make('is_default_appointment_buffer_enabled')
-                                            ->label('Buffer Time')
-                                            ->live()
-                                            ->columnStart(1),
-                                        DurationInput::make('default_appointment_buffer_before_duration', isRequired: true, hasDays: false)
-                                            ->label('Before')
-                                            ->columnStart(1)
-                                            ->visible(fn (Get $get): bool => $get('is_default_appointment_buffer_enabled')),
-                                        DurationInput::make('default_appointment_buffer_after_duration', isRequired: true, hasDays: false)
-                                            ->label('After')
-                                            ->visible(fn (Get $get): bool => $get('is_default_appointment_buffer_enabled')),
-                                        DailyHoursRepeater::make('available_appointment_hours')
-                                            ->label('Days and Hours')
-                                            ->columnSpanFull(),
-                                    ])
-                                    ->columns(2),
-                            ])
-                            ->visible(fn (): bool => PersonalBookingAvailabilityFeature::active()),
                     ]),
             ]);
     }
@@ -280,16 +264,6 @@ class ManagePersonalBookingPage extends ProfilePage
         $bookingPage = PersonalBookingPage::query()->whereBelongsTo($user)->first();
         $hasCalendar = Calendar::query()->whereBelongsTo($user)->exists();
 
-        $defaultAvailableHours = [
-            ['day' => 'monday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-            ['day' => 'tuesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-            ['day' => 'wednesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-            ['day' => 'thursday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-            ['day' => 'friday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-            ['day' => 'saturday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-            ['day' => 'sunday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-        ];
-
         if ($bookingPage) {
             $bookingData = [
                 'is_enabled' => $hasCalendar ? $bookingPage->is_enabled : false,
@@ -297,56 +271,32 @@ class ManagePersonalBookingPage extends ProfilePage
                 'default_appointment_duration' => $bookingPage->default_appointment_duration,
                 'working_hours_are_enabled' => $user->working_hours_are_enabled,
                 'are_working_hours_visible_on_profile' => $user->are_working_hours_visible_on_profile,
-                'working_hours' => $user->working_hours,
+                'working_hours' => PersonalBookingAvailabilityFeature::active() ? DailyHoursRepeater::mutateDataBeforeFill($user->working_hours) : $user->working_hours,
                 'office_hours_are_enabled' => $user->office_hours_are_enabled,
                 'appointments_are_restricted_to_existing_students' => $user->appointments_are_restricted_to_existing_students,
-                'office_hours' => $user->office_hours,
+                'office_hours' => PersonalBookingAvailabilityFeature::active() ? DailyHoursRepeater::mutateDataBeforeFill($user->office_hours) : $user->office_hours,
                 'out_of_office_is_enabled' => $user->out_of_office_is_enabled,
                 'out_of_office_starts_at' => $user->out_of_office_starts_at,
                 'out_of_office_ends_at' => $user->out_of_office_ends_at,
             ];
 
-            if (PersonalBookingAvailabilityFeature::active()) {
-                $bookingData = [
-                    ...$bookingData,
-                    'is_default_appointment_buffer_enabled' => $bookingPage->is_default_appointment_buffer_enabled,
-                    'default_appointment_buffer_before_duration' => DurationInput::mutateDataBeforeFill($bookingPage->default_appointment_buffer_before_duration ?? 0, hasDays: false),
-                    'default_appointment_buffer_after_duration' => DurationInput::mutateDataBeforeFill($bookingPage->default_appointment_buffer_after_duration ?? 0, hasDays: false),
-                    'available_appointment_hours' => $bookingPage->available_appointment_hours
-                        ? DailyHoursRepeater::mutateDataBeforeFill($bookingPage->available_appointment_hours)
-                        : $defaultAvailableHours,
-                ];
-            }
-
             return $bookingData;
         }
 
-        $userData = [
+        return [
             'is_enabled' => false,
             'slug' => Str::slug($user->name),
             'default_appointment_duration' => 30,
             'working_hours_are_enabled' => $user->working_hours_are_enabled,
             'are_working_hours_visible_on_profile' => $user->are_working_hours_visible_on_profile,
-            'working_hours' => $user->working_hours,
+            'working_hours' => PersonalBookingAvailabilityFeature::active() ? DailyHoursRepeater::mutateDataBeforeFill($user->working_hours) : $user->working_hours,
             'office_hours_are_enabled' => $user->office_hours_are_enabled,
             'appointments_are_restricted_to_existing_students' => $user->appointments_are_restricted_to_existing_students,
-            'office_hours' => $user->office_hours,
+            'office_hours' => PersonalBookingAvailabilityFeature::active() ? DailyHoursRepeater::mutateDataBeforeFill($user->office_hours) : $user->office_hours,
             'out_of_office_is_enabled' => $user->out_of_office_is_enabled,
             'out_of_office_starts_at' => $user->out_of_office_starts_at,
             'out_of_office_ends_at' => $user->out_of_office_ends_at,
         ];
-
-        if (PersonalBookingAvailabilityFeature::active()) {
-            $userData = [
-                ...$userData,
-                'is_default_appointment_buffer_enabled' => false,
-                'default_appointment_buffer_before_duration' => DurationInput::mutateDataBeforeFill(0, hasDays: false),
-                'default_appointment_buffer_after_duration' => DurationInput::mutateDataBeforeFill(0, hasDays: false),
-                'available_appointment_hours' => $defaultAvailableHours,
-            ];
-        }
-
-        return $userData;
     }
 
     public function handleRecordUpdate(Model $record, array $data): Model
@@ -358,22 +308,15 @@ class ManagePersonalBookingPage extends ProfilePage
         $bookingPage->is_enabled = $data['is_enabled'] ?? false;
         $bookingPage->slug = $data['slug'] ?? Str::slug($user->name);
         $bookingPage->default_appointment_duration = $data['default_appointment_duration'] ?? 30;
-
-        if (PersonalBookingAvailabilityFeature::active()) {
-            $bookingPage->is_default_appointment_buffer_enabled = $data['is_default_appointment_buffer_enabled'] ?? false;
-            $bookingPage->default_appointment_buffer_before_duration = isset($data['default_appointment_buffer_before_duration']) ? DurationInput::mutateDataBeforeSave($data['default_appointment_buffer_before_duration']) : 0;
-            $bookingPage->default_appointment_buffer_after_duration = isset($data['default_appointment_buffer_after_duration']) ? DurationInput::mutateDataBeforeSave($data['default_appointment_buffer_after_duration']) : 0;
-            $bookingPage->available_appointment_hours = isset($data['available_appointment_hours']) ? DailyHoursRepeater::mutateDataBeforeSave($data['available_appointment_hours']) : null;
-        }
         $bookingPage->save();
 
         $user->update([
             'working_hours_are_enabled' => $data['working_hours_are_enabled'] ?? false,
             'are_working_hours_visible_on_profile' => $data['are_working_hours_visible_on_profile'] ?? false,
-            'working_hours' => $data['working_hours'] ?? null,
+            'working_hours' => PersonalBookingAvailabilityFeature::active() ? DailyHoursRepeater::mutateDataBeforeSave($data['working_hours'] ?? null) : ($data['working_hours'] ?? null),
             'office_hours_are_enabled' => $data['office_hours_are_enabled'] ?? false,
             'appointments_are_restricted_to_existing_students' => $data['appointments_are_restricted_to_existing_students'] ?? false,
-            'office_hours' => $data['office_hours'] ?? null,
+            'office_hours' => PersonalBookingAvailabilityFeature::active() ? DailyHoursRepeater::mutateDataBeforeSave($data['office_hours'] ?? null) : ($data['office_hours'] ?? null),
             'out_of_office_is_enabled' => $data['out_of_office_is_enabled'] ?? false,
             'out_of_office_starts_at' => $data['out_of_office_starts_at'] ?? null,
             'out_of_office_ends_at' => $data['out_of_office_ends_at'] ?? null,
