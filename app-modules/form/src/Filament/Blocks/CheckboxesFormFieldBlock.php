@@ -43,10 +43,13 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\FormRepeaterFeature;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\TextInput;
 
 class CheckboxesFormFieldBlock extends FormFieldBlock
 {
+    public string $width = '2xl';
+
     public string $preview = 'form::blocks.previews.checkboxes';
 
     public string $rendered = 'form::blocks.submissions.checkboxes';
@@ -69,11 +72,14 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
         return [
             Repeater::make('options')
                 ->saveRelationshipsUsing(fn () => null)
+                ->table([
+                    TableColumn::make('Value'),
+                    TableColumn::make('Label'),
+                ])
                 ->schema([
                     TextInput::make('value')->required(),
                     TextInput::make('label')->required(),
                 ])
-                ->columns(2)
                 ->reorderable(),
         ];
     }
