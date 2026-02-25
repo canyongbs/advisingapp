@@ -265,7 +265,7 @@ class ManagePersonalBookingPage extends ProfilePage
         $hasCalendar = Calendar::query()->whereBelongsTo($user)->exists();
 
         if ($bookingPage) {
-            $bookingData = [
+            return [
                 'is_enabled' => $hasCalendar ? $bookingPage->is_enabled : false,
                 'slug' => $bookingPage->slug,
                 'default_appointment_duration' => $bookingPage->default_appointment_duration,
@@ -279,8 +279,6 @@ class ManagePersonalBookingPage extends ProfilePage
                 'out_of_office_starts_at' => $user->out_of_office_starts_at,
                 'out_of_office_ends_at' => $user->out_of_office_ends_at,
             ];
-
-            return $bookingData;
         }
 
         return [
