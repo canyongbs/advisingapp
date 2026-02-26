@@ -54,9 +54,9 @@ class FormResource extends Resource
 {
     protected static ?string $model = Form::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Digital Forms';
+    protected static string | UnitEnum | null $navigationGroup = 'CRM';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 120;
 
     protected static ?string $navigationLabel = 'Online Forms';
 
