@@ -52,9 +52,9 @@ class ApplicationResource extends Resource
 {
     protected static ?string $model = Application::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Online Admissions';
+    protected static string | UnitEnum | null $navigationGroup = 'CRM';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 130;
 
     protected static ?string $navigationLabel = 'Admissions';
 
