@@ -40,6 +40,7 @@ use AdvisingApp\Pipeline\Settings\ProspectPipelineSettings;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Enums\Feature;
 use App\Filament\Clusters\ProjectManagement;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -47,6 +48,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Gate;
 
 class PipelineSettings extends SettingsPage
 {
@@ -62,6 +64,12 @@ class PipelineSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
+        if (! Gate::check(
+            collect(self::requiredFeatures())->map(fn (Feature $feature) => $feature->getGateName())
+        )) {
+            return false;
+        }
+
         /** @var User $user */
         $user = auth()->user();
 
@@ -70,6 +78,14 @@ class PipelineSettings extends SettingsPage
         }
 
         return $user->can(['settings.view-any']);
+    }
+
+    /**
+     * @return array<Feature>
+     */
+    public static function requiredFeatures(): array
+    {
+        return [Feature::ProjectManagement];
     }
 
     public function form(Schema $schema): Schema

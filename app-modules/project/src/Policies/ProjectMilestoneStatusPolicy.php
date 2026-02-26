@@ -37,11 +37,29 @@
 namespace AdvisingApp\Project\Policies;
 
 use AdvisingApp\Project\Models\ProjectMilestoneStatus;
+use App\Concerns\PerformsFeatureChecks;
+use App\Enums\Feature;
 use App\Models\Authenticatable;
+use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
+use App\Support\FeatureAccessResponse;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Gate;
 
-class ProjectMilestoneStatusPolicy
+class ProjectMilestoneStatusPolicy implements PerformsChecksBeforeAuthorization
 {
+    use PerformsFeatureChecks;
+
+    public function before(Authenticatable $authenticatable): ?Response
+    {
+        if (! Gate::check(
+            collect($this->requiredFeatures())->map(fn (Feature $feature) => $feature->getGateName())
+        )) {
+            return FeatureAccessResponse::deny();
+        }
+
+        return null;
+    }
+
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
@@ -104,5 +122,10 @@ class ProjectMilestoneStatusPolicy
             abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permissions to force delete this project milestone status.'
         );
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [Feature::ProjectManagement];
     }
 }
