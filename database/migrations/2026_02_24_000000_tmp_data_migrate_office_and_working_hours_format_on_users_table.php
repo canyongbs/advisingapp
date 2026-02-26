@@ -35,7 +35,6 @@
 */
 
 use App\Features\PersonalBookingAvailabilityFeature;
-use App\Settings\DisplaySettings;
 use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
@@ -154,17 +153,12 @@ return new class () extends Migration {
         }
 
         try {
-            $displayTimezone = app(DisplaySettings::class)->getTimezone();
-            $appTimezone = config('app.timezone');
-
             if ($format === 'new') {
-                $carbon = Carbon::createFromFormat('H:i:s', $time, $displayTimezone)
-                    ->setTimezone($appTimezone);
+                $carbon = Carbon::createFromFormat('H:i:s', $time);
 
                 return $carbon->format('H:i');
             }
-            $carbon = Carbon::createFromFormat('H:i', $time, $appTimezone)
-                ->setTimezone($displayTimezone);
+            $carbon = Carbon::createFromFormat('H:i', $time);
 
             return $carbon->format('H:i:s');
         } catch (Throwable) {
