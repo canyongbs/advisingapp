@@ -12243,16 +12243,16 @@
         },
         {
             "name": "saade/filament-fullcalendar",
-            "version": "v4.0.0-beta3",
+            "version": "v4.0.0-beta4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/saade/filament-fullcalendar.git",
-                "reference": "4de29adc03ef82f1fcf2fb26d323d8048f9a9543"
+                "reference": "f1275cdec0f0a5e564fa334306cd9fd46077b57a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/saade/filament-fullcalendar/zipball/4de29adc03ef82f1fcf2fb26d323d8048f9a9543",
-                "reference": "4de29adc03ef82f1fcf2fb26d323d8048f9a9543",
+                "url": "https://api.github.com/repos/saade/filament-fullcalendar/zipball/f1275cdec0f0a5e564fa334306cd9fd46077b57a",
+                "reference": "f1275cdec0f0a5e564fa334306cd9fd46077b57a",
                 "shasum": ""
             },
             "require": {
@@ -12305,7 +12305,7 @@
             ],
             "support": {
                 "issues": "https://github.com/saade/filament-fullcalendar/issues",
-                "source": "https://github.com/saade/filament-fullcalendar/tree/v4.0.0-beta3"
+                "source": "https://github.com/saade/filament-fullcalendar/tree/v4.0.0-beta4"
             },
             "funding": [
                 {
@@ -12313,7 +12313,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-12T19:21:32+00:00"
+            "time": "2026-02-26T18:32:09+00:00"
         },
         {
             "name": "scrivo/highlight.php",
