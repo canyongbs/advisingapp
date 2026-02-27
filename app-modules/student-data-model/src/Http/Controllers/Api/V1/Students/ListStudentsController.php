@@ -64,7 +64,7 @@ class ListStudentsController
     #[QueryParameter('filter[gender]', description: 'Filter the results where the student\'s gender contains the provided string.', type: 'string')]
     #[QueryParameter('filter[ethnicity]', description: 'Filter the results where the student\'s ethnicity contains the provided string.', type: 'string')]
     #[QueryParameter('filter[emailAddress]', description: 'Filter the results where any of the student\'s email addresses contains the provided string.', type: 'string')]
-    #[QueryParameter('filter[primaryEmailAddress]', description: 'Filter the results where the student\'s institutional email address contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[primaryEmailAddress]', description: 'Filter the results where the student\'s primary email address contains the provided string.', type: 'string')]
     #[QueryParameter('filter[birthdate]', description: 'Filter the results where the student\'s birthdate matches the provided date.', type: 'date')]
     #[QueryParameter('filter[dfw]', description: 'Filter the results where the student\'s DFW date matches the provided date.', type: 'date')]
     #[QueryParameter('filter[lastlmslogin]', description: 'Filter the results where the student\'s last LMS login matches the provided date.', type: 'date')]
