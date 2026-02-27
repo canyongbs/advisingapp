@@ -65,7 +65,7 @@ class PipelineSettings extends SettingsPage
     public static function canAccess(): bool
     {
         if (! Gate::check(
-            collect(self::requiredFeatures())->map(fn (Feature $feature) => $feature->getGateName())
+            collect([Feature::ProjectManagement])->map(fn (Feature $feature) => $feature->getGateName())
         )) {
             return false;
         }
@@ -78,14 +78,6 @@ class PipelineSettings extends SettingsPage
         }
 
         return $user->can(['settings.view-any']);
-    }
-
-    /**
-     * @return array<Feature>
-     */
-    public static function requiredFeatures(): array
-    {
-        return [Feature::ProjectManagement];
     }
 
     public function form(Schema $schema): Schema
