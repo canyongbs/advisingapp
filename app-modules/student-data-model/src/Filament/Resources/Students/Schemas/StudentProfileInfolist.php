@@ -76,7 +76,7 @@ class StudentProfileInfolist
                                 ->listWithLineBreaks()
                                 ->visible(fn (?array $state): bool => filled($state)),
                             TextEntry::make('primaryEmailAddress')
-                                ->label('Primary Email Address')
+                                ->label('Institutional Email Address')
                                 ->state(fn (Student $record): View => view('student-data-model::components.filament.resources.educatables.view-educatable.email-address-detail', ['emailAddress' => $record->primaryEmailAddress]))
                                 ->visible(fn (Student $record): bool => filled($record->primaryEmailAddress)),
                             TextEntry::make('additionalEmailAddresses')

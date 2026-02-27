@@ -87,7 +87,7 @@ class ListStudents extends ListRecords
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('primaryEmailAddress.address')
-                    ->label('Primary Email')
+                    ->label('Institutional Email')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('primaryPhoneNumber.number')
