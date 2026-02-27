@@ -146,8 +146,7 @@ class EditGroup extends EditRecord implements HasTable
 
                         $emailLabel = match ($this->getRecord()->model->class()) {
                             Student::class => 'institutional',
-                            Prospect::class => 'primary',
-                            default => 'provided',
+                            default => 'primary',
                         };
 
                         return "Of the {$count} {$this->getRecord()->model->getPluralLabel()} who will be a member of this group, {$unhealthyEmailPercent}% are unable to receive emails to their {$emailLabel} email address and {$unhealthyPhonePercent}% are unable to receive SMS to their primary phone on file. Campaigns or bulk messages will skip these {$this->getRecord()->model->getPluralLabel()}.";
