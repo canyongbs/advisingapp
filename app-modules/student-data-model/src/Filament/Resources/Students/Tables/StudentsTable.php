@@ -103,7 +103,7 @@ class StudentsTable
                             ->label('Other ID')
                             ->icon('heroicon-m-finger-print'),
                         TextConstraint::make('email')
-                            ->label('Primary Email')
+                            ->label('Institutional Email')
                             ->relationship('primaryEmailAddress', 'address')
                             ->icon('heroicon-m-envelope'),
                         TextConstraint::make('phone')

@@ -107,7 +107,7 @@ class StudentDeliverableTable extends BaseWidget
                     ->color(fn (Student $record) => $record->canReceiveEmail() ? 'info' : 'warning')
                     ->state(fn (Student $record) => $record->canReceiveEmail() ? 'Healthy' : 'Unhealthy'),
                 IconColumn::make('primary_email_set')
-                    ->label('Primary Email Set')
+                    ->label('Institutional Email Set')
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-x-circle')

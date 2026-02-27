@@ -144,7 +144,13 @@ class EditGroup extends EditRecord implements HasTable
                             ->count();
                         $unhealthyPhonePercent = bcround(($count > 0) ? bcmul(bcdiv((string) $unhealthyPhoneCount, (string) $count, 4), '100', 2) : '0', 2);
 
-                        return "Of the {$count} {$this->getRecord()->model->getPluralLabel()} who will be a member of this group, {$unhealthyEmailPercent}% are unable to receive emails to their primary email address and {$unhealthyPhonePercent}% are unable to receive SMS to their primary phone on file. Campaigns or bulk messages will skip these {$this->getRecord()->model->getPluralLabel()}.";
+                        $emailLabel = match ($this->getRecord()->model->class()) {
+                            Student::class => 'institutional',
+                            Prospect::class => 'primary',
+                            default => 'provided',
+                        };
+
+                        return "Of the {$count} {$this->getRecord()->model->getPluralLabel()} who will be a member of this group, {$unhealthyEmailPercent}% are unable to receive emails to their {$emailLabel} email address and {$unhealthyPhonePercent}% are unable to receive SMS to their primary phone on file. Campaigns or bulk messages will skip these {$this->getRecord()->model->getPluralLabel()}.";
                     })
                     ->warning()
                     ->visible(function (): bool {

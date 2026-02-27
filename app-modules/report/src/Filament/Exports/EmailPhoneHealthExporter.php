@@ -58,7 +58,7 @@ class EmailPhoneHealthExporter extends Exporter
                 ->label('Email Status'),
             ExportColumn::make('is_primary_email_set')
                 ->state(fn (Student $record) => filled($record->primaryEmailAddress) ? 'Yes' : 'No')
-                ->label('Primary Email Set'),
+                ->label('Institutional Email Set'),
             ExportColumn::make('email_bounced')
                 ->state(fn (Student $record) => $record->primaryEmailAddress && ($record->primaryEmailAddress->bounced !== null) ? 'Yes' : 'No')
                 ->label('Email Bounce'),
