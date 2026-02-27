@@ -103,7 +103,7 @@ it('returns false when student primary email address is opted out', function () 
     assertFalse($student->canReceiveEmail());
 });
 
-it('returns true when student primarys email address is opted in', function () {
+it('returns true when student primary email address is opted in', function () {
     $student = Student::factory()->create();
 
     $emailAddress = StudentEmailAddress::factory()
