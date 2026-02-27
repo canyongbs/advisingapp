@@ -110,7 +110,7 @@ it('deletes a student email address', function () {
     ]);
 });
 
-it('swaps out the current institutional email address for a student with another when the institutional email address is deleted', function () {
+it('swaps out the current primary email address for a student with another when the primary email address is deleted', function () {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;
     $studentConfigurationSettings->save();
