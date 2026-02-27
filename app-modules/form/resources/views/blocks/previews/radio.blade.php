@@ -32,9 +32,8 @@
     </COPYRIGHT>
 --}}
 
-@use('App\Features\FormRepeaterFeature')
 @php
-    $optionsData = FormRepeaterFeature::active() && array_is_list($options) ? collect($options)->pluck('label') : $options;
+    $optionsData = array_is_list($options) ? collect($options)->pluck('label') : $options;
 @endphp
 
 <x-form::blocks.field-wrapper :$label :$isRequired :description="$description ?? null">

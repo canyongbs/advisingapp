@@ -40,8 +40,6 @@ use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\FormRepeaterFeature;
-use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\TextInput;
@@ -63,14 +61,6 @@ class RadioFormFieldBlock extends FormFieldBlock
 
     public function fields(): array
     {
-        if (! FormRepeaterFeature::active()) {
-            return [
-                KeyValue::make('options')
-                    ->keyLabel('Value')
-                    ->valueLabel('Label'),
-            ];
-        }
-
         return [
             Repeater::make('options')
                 ->saveRelationshipsUsing(fn () => null)
@@ -100,16 +90,6 @@ class RadioFormFieldBlock extends FormFieldBlock
 
     public static function getValidationRules(SubmissibleField $field): array
     {
-        if (! FormRepeaterFeature::active()) {
-            /** @var array<string, string> */
-            $configOptions = $field->config['options'];
-
-            return [
-                'string',
-                'in:' . collect($configOptions)->keys()->join(','),
-            ];
-        }
-
         /** @var array<int, array<string, string>>|array<string, string> */
         $options = $field->config['options'];
         $values = collect($options);
