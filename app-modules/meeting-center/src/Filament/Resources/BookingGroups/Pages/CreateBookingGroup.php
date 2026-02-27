@@ -37,6 +37,8 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use App\Features\GroupBookingFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
 use Filament\Forms\Components\Select;
@@ -47,6 +49,8 @@ use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class CreateBookingGroup extends CreateRecord
 {
@@ -70,6 +74,12 @@ class CreateBookingGroup extends CreateRecord
                 ]),
             Section::make('Members')
                 ->schema([
+                    Select::make('book_with')
+                        ->label('Book With')
+                        ->options(['all' => 'All'])
+                        ->default('all')
+                        ->required()
+                        ->visible(GroupBookingFeature::active()),
                     Select::make('users')
                         ->label('Users')
                         ->multiple()
@@ -85,18 +95,32 @@ class CreateBookingGroup extends CreateRecord
                 ]),
             Section::make('Availability')
                 ->schema([
+                    TextInput::make('slug')
+                        ->label('URL Slug')
+                        ->required()
+                        ->rules([
+                            'alpha_dash',
+                            Rule::unique(BookingGroup::class, 'slug'),
+                        ])
+                        ->prefix(config('app.url') . '/group-booking/')
+                        ->maxLength(255)
+                        ->default(fn (Get $get) => Str::slug($get('name') ?? ''))
+                        ->visible(GroupBookingFeature::active())
+                        ->columnSpanFull(),
                     DurationInput::make('default_appointment_duration', isRequired: true, hasDays: true)
-                        ->label('Meeting Duration'),
+                        ->label('Meeting Duration')
+                        ->columnSpanFull(),
                     Toggle::make('is_default_appointment_buffer_enabled')
                         ->label('Buffer Time')
                         ->live()
-                        ->columnStart(1),
+                        ->columnSpanFull(),
                     DurationInput::make('default_appointment_buffer_before_duration', isRequired: true, hasDays: false)
                         ->label('Before')
-                        ->columnStart(1)
+                        ->columnSpanFull()
                         ->visible(fn (Get $get): bool => $get('is_default_appointment_buffer_enabled')),
                     DurationInput::make('default_appointment_buffer_after_duration', isRequired: true, hasDays: false)
                         ->label('After')
+                        ->columnSpanFull()
                         ->visible(fn (Get $get): bool => $get('is_default_appointment_buffer_enabled')),
                     DailyHoursRepeater::make('available_appointment_hours')
                         ->label('Days and Hours')

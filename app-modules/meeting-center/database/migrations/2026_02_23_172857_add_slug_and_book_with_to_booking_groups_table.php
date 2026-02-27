@@ -34,32 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Actions;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use Illuminate\Support\Facades\Storage;
-use RuntimeException;
-
-class GeneratePersonalBookingPageEmbedCode
-{
-    public function __invoke(PersonalBookingPage $bookingPage): string
+return new class () extends Migration {
+    public function up(): void
     {
-        $manifestPath = Storage::disk('public')->get('widgets/booking-page/.vite/manifest.json');
-
-        if (is_null($manifestPath)) {
-            throw new RuntimeException('Vite manifest file not found.');
-        }
-
-        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
-        $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
-
-        $loaderScriptUrl = url("widgets/booking-page/{$manifest['src/loader.js']['file']}");
-
-        $assetsUrl = route(name: 'widgets.booking-page.personal.api.assets', parameters: ['slug' => $bookingPage->slug]);
-
-        return <<<EOD
-        <booking-page-embed url="{$assetsUrl}"></booking-page-embed>
-        <script src="{$loaderScriptUrl}"></script>
-        EOD;
+        Schema::table('booking_groups', function (Blueprint $table) {
+            $table->string('slug')->nullable()->unique();
+            $table->string('book_with')->default('all');
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('booking_groups', function (Blueprint $table) {
+            $table->dropColumn(['slug', 'book_with']);
+        });
+    }
+};

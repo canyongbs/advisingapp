@@ -37,6 +37,7 @@
 use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
 use AdvisingApp\MeetingCenter\Http\Controllers\EventRegistrationFormModalController;
 use AdvisingApp\MeetingCenter\Http\Controllers\GoogleCalendarController;
+use AdvisingApp\MeetingCenter\Http\Controllers\GroupBookingPageViewController;
 use AdvisingApp\MeetingCenter\Http\Controllers\OutlookCalendarController;
 use AdvisingApp\MeetingCenter\Http\Controllers\PersonalBookingPageViewController;
 use AdvisingApp\MeetingCenter\Livewire\RenderEventRegistrationForm;
@@ -65,5 +66,13 @@ Route::middleware('web')
     ->name('direct-booking.')
     ->group(function () {
         Route::get('/{slug}', PersonalBookingPageViewController::class)
+            ->name('show');
+    });
+
+Route::middleware('web')
+    ->prefix('group-booking')
+    ->name('group-booking.')
+    ->group(function () {
+        Route::get('/{slug}', GroupBookingPageViewController::class)
             ->name('show');
     });

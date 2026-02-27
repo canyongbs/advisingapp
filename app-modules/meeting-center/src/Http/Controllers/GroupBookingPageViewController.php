@@ -34,46 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups;
+namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
-use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\BookingGroupAppointments;
-use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\CreateBookingGroup;
-use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\EditBookingGroup;
-use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
-use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ViewBookingGroup;
+use AdvisingApp\MeetingCenter\Actions\GenerateGroupBookingPageEmbedCode;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use App\Filament\Clusters\GroupAppointments;
-use Filament\Resources\Pages\Page;
-use Filament\Resources\Resource;
+use App\Features\GroupBookingFeature;
+use App\Http\Controllers\Controller;
+use Illuminate\View\View;
 
-class BookingGroupResource extends Resource
+class GroupBookingPageViewController extends Controller
 {
-    protected static ?string $navigationLabel = 'Configuration';
-
-    protected static ?string $breadcrumb = 'Configuration';
-
-    protected static ?int $navigationSort = 20;
-
-    protected static ?string $model = BookingGroup::class;
-
-    protected static ?string $cluster = GroupAppointments::class;
-
-    public static function getRecordSubNavigation(Page $page): array
+    public function __invoke(string $slug, GenerateGroupBookingPageEmbedCode $generateEmbedCode): View
     {
-        return $page->generateNavigationItems([
-            EditBookingGroup::class,
-            BookingGroupAppointments::class,
+        abort_unless(GroupBookingFeature::active(), 404);
+
+        $bookingGroup = BookingGroup::query()
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        $embedCode = $generateEmbedCode($bookingGroup);
+
+        return view('meeting-center::group-booking', [
+            'bookingGroup' => $bookingGroup,
+            'embedCode' => $embedCode,
         ]);
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListBookingGroups::route('/'),
-            'create' => CreateBookingGroup::route('/create'),
-            'view' => ViewBookingGroup::route('/{record}'),
-            'edit' => EditBookingGroup::route('/{record}/edit'),
-            'appointments' => BookingGroupAppointments::route('/{record}/appointments'),
-        ];
     }
 }

@@ -34,46 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups;
+namespace AdvisingApp\MeetingCenter\Actions;
 
-use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\BookingGroupAppointments;
-use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\CreateBookingGroup;
-use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\EditBookingGroup;
-use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
-use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ViewBookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use App\Filament\Clusters\GroupAppointments;
-use Filament\Resources\Pages\Page;
-use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 
-class BookingGroupResource extends Resource
+class GenerateGroupBookingPageEmbedCode
 {
-    protected static ?string $navigationLabel = 'Configuration';
-
-    protected static ?string $breadcrumb = 'Configuration';
-
-    protected static ?int $navigationSort = 20;
-
-    protected static ?string $model = BookingGroup::class;
-
-    protected static ?string $cluster = GroupAppointments::class;
-
-    public static function getRecordSubNavigation(Page $page): array
+    public function __invoke(BookingGroup $bookingGroup): string
     {
-        return $page->generateNavigationItems([
-            EditBookingGroup::class,
-            BookingGroupAppointments::class,
-        ]);
-    }
+        $manifestPath = Storage::disk('public')->get('widgets/booking-page/.vite/manifest.json');
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListBookingGroups::route('/'),
-            'create' => CreateBookingGroup::route('/create'),
-            'view' => ViewBookingGroup::route('/{record}'),
-            'edit' => EditBookingGroup::route('/{record}/edit'),
-            'appointments' => BookingGroupAppointments::route('/{record}/appointments'),
-        ];
+        if (is_null($manifestPath)) {
+            throw new RuntimeException('Vite manifest file not found.');
+        }
+
+        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+        $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
+
+        $loaderScriptUrl = url("widgets/booking-page/{$manifest['src/loader.js']['file']}");
+
+        $assetsUrl = route(name: 'widgets.booking-page.group.api.assets', parameters: ['slug' => $bookingGroup->slug]);
+
+        return <<<EOD
+        <booking-page-embed url="{$assetsUrl}"></booking-page-embed>
+        <script src="{$loaderScriptUrl}"></script>
+        EOD;
     }
 }

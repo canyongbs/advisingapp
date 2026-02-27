@@ -36,7 +36,7 @@ import App from './App.vue';
 import styles from './widget.css?inline';
 
 customElements.define(
-    'personal-booking-page-embed',
+    'booking-page-embed',
     defineCustomElement({
         styles: [styles],
         setup(props) {

@@ -34,46 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups;
+namespace AdvisingApp\MeetingCenter\Http\Requests;
 
-use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\BookingGroupAppointments;
-use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\CreateBookingGroup;
-use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\EditBookingGroup;
-use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
-use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ViewBookingGroup;
-use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use App\Filament\Clusters\GroupAppointments;
-use Filament\Resources\Pages\Page;
-use Filament\Resources\Resource;
+use Illuminate\Foundation\Http\FormRequest;
 
-class BookingGroupResource extends Resource
+class BookGroupCalendarSlotRequest extends FormRequest
 {
-    protected static ?string $navigationLabel = 'Configuration';
-
-    protected static ?string $breadcrumb = 'Configuration';
-
-    protected static ?int $navigationSort = 20;
-
-    protected static ?string $model = BookingGroup::class;
-
-    protected static ?string $cluster = GroupAppointments::class;
-
-    public static function getRecordSubNavigation(Page $page): array
-    {
-        return $page->generateNavigationItems([
-            EditBookingGroup::class,
-            BookingGroupAppointments::class,
-        ]);
-    }
-
-    public static function getPages(): array
+    /**
+     * @return array<string, array<int, string>>
+     */
+    public function rules(): array
     {
         return [
-            'index' => ListBookingGroups::route('/'),
-            'create' => CreateBookingGroup::route('/create'),
-            'view' => ViewBookingGroup::route('/{record}'),
-            'edit' => EditBookingGroup::route('/{record}/edit'),
-            'appointments' => BookingGroupAppointments::route('/{record}/appointments'),
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
+            'starts_at' => ['required', 'date'],
+            'ends_at' => ['required', 'date', 'after:starts_at'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Please provide your name.',
+            'email.required' => 'Please provide your email address.',
+            'email.email' => 'Please provide a valid email address.',
+            'starts_at.required' => 'Please select a start time.',
+            'ends_at.required' => 'Please select an end time.',
+            'ends_at.after' => 'The end time must be after the start time.',
         ];
     }
 }
