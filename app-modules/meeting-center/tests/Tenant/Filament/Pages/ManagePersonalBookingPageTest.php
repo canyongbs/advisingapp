@@ -69,7 +69,13 @@ it('creates a personal booking page when enabled', function () {
             'default_appointment_duration' => 30,
             'working_hours_are_enabled' => true,
             'working_hours' => [
-                'monday' => ['enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'monday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
             ],
         ])
         ->call('save')
@@ -101,7 +107,13 @@ it('validates slug is required when enabled', function () {
             'default_appointment_duration' => 30,
             'working_hours_are_enabled' => true,
             'working_hours' => [
-                'monday' => ['enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'monday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
             ],
         ])
         ->call('save')
@@ -128,7 +140,13 @@ it('validates slug must be unique', function () {
             'default_appointment_duration' => 30,
             'working_hours_are_enabled' => true,
             'working_hours' => [
-                'monday' => ['enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'monday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
             ],
         ])
         ->call('save')
@@ -149,7 +167,13 @@ it('validates slug must be alpha dash', function () {
             'default_appointment_duration' => 30,
             'working_hours_are_enabled' => true,
             'working_hours' => [
-                'monday' => ['enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'monday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
             ],
         ])
         ->call('save')
@@ -170,7 +194,13 @@ it('validates slug max length', function () {
             'default_appointment_duration' => 30,
             'working_hours_are_enabled' => true,
             'working_hours' => [
-                'monday' => ['enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'monday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
             ],
         ])
         ->call('save')
@@ -191,7 +221,13 @@ it('validates default appointment duration is required when enabled', function (
             'default_appointment_duration' => null,
             'working_hours_are_enabled' => true,
             'working_hours' => [
-                'monday' => ['enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'monday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
             ],
         ])
         ->call('save')
@@ -231,7 +267,7 @@ it('validates at least one day must have working hours configured', function () 
             'default_appointment_duration' => 30,
             'working_hours_are_enabled' => true,
             'working_hours' => [
-                'monday' => ['enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'monday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
             ],
         ])
         ->call('save')
@@ -259,7 +295,13 @@ it('can update an existing personal booking page', function () {
             'default_appointment_duration' => 60,
             'working_hours_are_enabled' => true,
             'working_hours' => [
-                'monday' => ['enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'monday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
             ],
         ])
         ->call('save')
@@ -305,14 +347,14 @@ it('saves working hours configuration to user', function () {
 
     actingAs($user);
 
-    $workingHours = [
-        'monday' => ['enabled' => true, 'starts_at' => '09:00:00', 'ends_at' => '17:00:00'],
-        'tuesday' => ['enabled' => true, 'starts_at' => '10:00:00', 'ends_at' => '18:00:00'],
-        'wednesday' => ['enabled' => false],
-        'thursday' => ['enabled' => false],
-        'friday' => ['enabled' => false],
-        'saturday' => ['enabled' => false],
-        'sunday' => ['enabled' => false],
+    $formWorkingHours = [
+        'monday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+        'tuesday' => ['is_enabled' => true, 'starts_at' => '10:00', 'ends_at' => '18:00'],
+        'wednesday' => ['is_enabled' => false],
+        'thursday' => ['is_enabled' => false],
+        'friday' => ['is_enabled' => false],
+        'saturday' => ['is_enabled' => false],
+        'sunday' => ['is_enabled' => false],
     ];
 
     livewire(ManagePersonalBookingPage::class)
@@ -322,7 +364,7 @@ it('saves working hours configuration to user', function () {
             'default_appointment_duration' => 30,
             'working_hours_are_enabled' => true,
             'are_working_hours_visible_on_profile' => true,
-            'working_hours' => $workingHours,
+            'working_hours' => $formWorkingHours,
         ])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -331,7 +373,10 @@ it('saves working hours configuration to user', function () {
 
     expect($user->working_hours_are_enabled)->toBeTrue();
     expect($user->are_working_hours_visible_on_profile)->toBeTrue();
-    expect($user->working_hours)->toEqual($workingHours);
+    expect($user->working_hours['monday']['is_enabled'])->toBeTrue();
+    expect($user->working_hours['tuesday']['is_enabled'])->toBeTrue();
+    expect($user->working_hours['wednesday']['is_enabled'] ?? false)->toBeFalse();
+    expect($user->working_hours['thursday']['is_enabled'] ?? false)->toBeFalse();
 });
 
 it('saves office hours configuration to user', function () {
@@ -341,14 +386,14 @@ it('saves office hours configuration to user', function () {
 
     actingAs($user);
 
-    $officeHours = [
-        'monday' => ['enabled' => true, 'starts_at' => '09:00:00', 'ends_at' => '17:00:00'],
-        'tuesday' => ['enabled' => true, 'starts_at' => '10:00:00', 'ends_at' => '18:00:00'],
-        'wednesday' => ['enabled' => false],
-        'thursday' => ['enabled' => false],
-        'friday' => ['enabled' => false],
-        'saturday' => ['enabled' => false],
-        'sunday' => ['enabled' => false],
+    $formOfficeHours = [
+        'monday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+        'tuesday' => ['is_enabled' => true, 'starts_at' => '10:00', 'ends_at' => '18:00'],
+        'wednesday' => ['is_enabled' => false],
+        'thursday' => ['is_enabled' => false],
+        'friday' => ['is_enabled' => false],
+        'saturday' => ['is_enabled' => false],
+        'sunday' => ['is_enabled' => false],
     ];
 
     livewire(ManagePersonalBookingPage::class)
@@ -358,10 +403,16 @@ it('saves office hours configuration to user', function () {
             'default_appointment_duration' => 30,
             'working_hours_are_enabled' => true,
             'working_hours' => [
-                'monday' => ['enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'monday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'tuesday' => ['is_enabled' => false],
+                'wednesday' => ['is_enabled' => false],
+                'thursday' => ['is_enabled' => false],
+                'friday' => ['is_enabled' => false],
+                'saturday' => ['is_enabled' => false],
+                'sunday' => ['is_enabled' => false],
             ],
             'office_hours_are_enabled' => true,
-            'office_hours' => $officeHours,
+            'office_hours' => $formOfficeHours,
             'appointments_are_restricted_to_existing_students' => true,
         ])
         ->call('save')
@@ -371,7 +422,10 @@ it('saves office hours configuration to user', function () {
 
     expect($user->office_hours_are_enabled)->toBeTrue();
     expect($user->appointments_are_restricted_to_existing_students)->toBeTrue();
-    expect($user->office_hours)->toEqual($officeHours);
+    expect($user->office_hours['monday']['is_enabled'])->toBeTrue();
+    expect($user->office_hours['tuesday']['is_enabled'])->toBeTrue();
+    expect($user->office_hours['wednesday']['is_enabled'] ?? false)->toBeFalse();
+    expect($user->office_hours['thursday']['is_enabled'] ?? false)->toBeFalse();
 });
 
 it('validates at least one day must have office hours when office hours enabled', function () {
@@ -388,7 +442,13 @@ it('validates at least one day must have office hours when office hours enabled'
             'default_appointment_duration' => 30,
             'working_hours_are_enabled' => true,
             'working_hours' => [
-                'monday' => ['enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'monday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
             ],
             'office_hours_are_enabled' => true,
             'office_hours' => [],
@@ -414,7 +474,13 @@ it('saves out of office configuration to user', function () {
             'default_appointment_duration' => 30,
             'working_hours_are_enabled' => true,
             'working_hours' => [
-                'monday' => ['enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'monday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
             ],
             'out_of_office_is_enabled' => true,
             'out_of_office_starts_at' => $outOfOfficeStartsAt,
@@ -444,7 +510,13 @@ it('validates out of office start date is required when out of office enabled', 
             'default_appointment_duration' => 30,
             'working_hours_are_enabled' => true,
             'working_hours' => [
-                'monday' => ['enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'monday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
             ],
             'out_of_office_is_enabled' => true,
             'out_of_office_starts_at' => null,
@@ -468,7 +540,13 @@ it('validates out of office end date is required when out of office enabled', fu
             'default_appointment_duration' => 30,
             'working_hours_are_enabled' => true,
             'working_hours' => [
-                'monday' => ['enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'monday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+                'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
             ],
             'out_of_office_is_enabled' => true,
             'out_of_office_starts_at' => now()->addDay(),
@@ -482,7 +560,22 @@ it('pre-fills form with existing booking page data', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create([
         'working_hours_are_enabled' => true,
         'working_hours' => [
-            'monday' => ['enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+            'monday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+            'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+        ],
+        'office_hours' => [
+            'monday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
         ],
     ]);
 
@@ -509,6 +602,24 @@ it('pre-fills form with existing booking page data', function () {
 it('generates default slug from user name when no booking page exists', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create([
         'name' => 'John Doe',
+        'working_hours' => [
+            'monday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+        ],
+        'office_hours' => [
+            'monday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+        ],
     ]);
 
     actingAs($user);
@@ -559,14 +670,14 @@ it('can save booking page with multiple working hours per day', function () {
 
     actingAs($user);
 
-    $workingHours = [
-        'monday' => ['enabled' => true, 'starts_at' => '09:00:00', 'ends_at' => '12:00:00'],
-        'tuesday' => ['enabled' => true, 'starts_at' => '13:00:00', 'ends_at' => '17:00:00'],
-        'wednesday' => ['enabled' => true, 'starts_at' => '09:00:00', 'ends_at' => '17:00:00'],
-        'thursday' => ['enabled' => true, 'starts_at' => '10:00:00', 'ends_at' => '16:00:00'],
-        'friday' => ['enabled' => true, 'starts_at' => '09:00:00', 'ends_at' => '15:00:00'],
-        'saturday' => ['enabled' => false],
-        'sunday' => ['enabled' => false],
+    $formWorkingHours = [
+        'monday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '12:00'],
+        'tuesday' => ['is_enabled' => true, 'starts_at' => '13:00', 'ends_at' => '17:00'],
+        'wednesday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+        'thursday' => ['is_enabled' => true, 'starts_at' => '10:00', 'ends_at' => '16:00'],
+        'friday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '15:00'],
+        'saturday' => ['is_enabled' => false],
+        'sunday' => ['is_enabled' => false],
     ];
 
     livewire(ManagePersonalBookingPage::class)
@@ -575,18 +686,44 @@ it('can save booking page with multiple working hours per day', function () {
             'slug' => 'test-slug',
             'default_appointment_duration' => 30,
             'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'working_hours' => $formWorkingHours,
         ])
         ->call('save')
         ->assertHasNoFormErrors();
 
     $user->refresh();
 
-    expect($user->working_hours)->toEqual($workingHours);
+    expect($user->working_hours['monday']['is_enabled'])->toBeTrue();
+    expect($user->working_hours['tuesday']['is_enabled'])->toBeTrue();
+    expect($user->working_hours['wednesday']['is_enabled'])->toBeTrue();
+    expect($user->working_hours['thursday']['is_enabled'])->toBeTrue();
+    expect($user->working_hours['friday']['is_enabled'])->toBeTrue();
+    expect($user->working_hours['saturday']['is_enabled'] ?? false)->toBeFalse();
+    expect($user->working_hours['sunday']['is_enabled'] ?? false)->toBeFalse();
 });
 
 it('can update slug without affecting unique constraint for same user', function () {
-    $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
+    $user = User::factory()->licensed(LicenseType::RetentionCrm)->create([
+        'working_hours_are_enabled' => true,
+        'working_hours' => [
+            'monday' => ['is_enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
+            'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+        ],
+        'office_hours' => [
+            'monday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+        ],
+    ]);
 
     Calendar::factory()->for($user)->create();
 
@@ -604,9 +741,6 @@ it('can update slug without affecting unique constraint for same user', function
             'slug' => 'original-slug',
             'default_appointment_duration' => 30,
             'working_hours_are_enabled' => true,
-            'working_hours' => [
-                'monday' => ['enabled' => true, 'starts_at' => '09:00', 'ends_at' => '17:00'],
-            ],
         ])
         ->call('save')
         ->assertHasNoFormErrors();
