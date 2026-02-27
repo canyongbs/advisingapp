@@ -34,9 +34,7 @@
 
 <x-form::blocks.field-wrapper class="py-3" :$label :$isRequired :description="$description ?? null">
     @php
-        $normalizedOptions = array_is_list(
-            $options,
-        )
+        $normalizedOptions = array_is_list($options)
             ? collect($options)
                 ->pluck('label', 'value')
                 ->all()
