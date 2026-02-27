@@ -69,8 +69,8 @@ class CreateStudentData extends Data
         public string | Optional | null $dfw,
         public string | Optional | null $ethnicity,
         public string | Optional | null $lastlmslogin,
-        public string | Optional | null $feTerm,
-        public string | Optional | null $mreTerm,
+        public string | Optional | null $fETerm, // @phpstan-ignore-line
+        public string | Optional | null $mrETerm, // @phpstan-ignore-line
         #[DataCollectionOf(CreateStudentEmailAddressData::class)]
         public array | Optional | null $emailAddresses,
         #[DataCollectionOf(CreateStudentPhoneNumberData::class)]
