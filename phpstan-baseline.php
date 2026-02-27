@@ -3312,18 +3312,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/RadioFormFieldBlock.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TKey in call to function collect$#',
-    'identifier' => 'argument.templateType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/RadioFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TValue in call to function collect$#',
-    'identifier' => 'argument.templateType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/RadioFormFieldBlock.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\SelectFormFieldBlock\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -6636,30 +6624,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/ResolveEducatableFromEmail.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter name "fETerm" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.parameterNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/DataTransferObjects/CreateStudentData.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter name "mrETerm" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.parameterNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/DataTransferObjects/CreateStudentData.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter name "fETerm" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.parameterNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/DataTransferObjects/UpdateStudentData.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter name "mrETerm" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.parameterNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/DataTransferObjects/UpdateStudentData.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Match arm comparison between \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Enums\\\\SisSystem\\)&AdvisingApp\\\\StudentDataModel\\\\Enums\\\\SisSystem\\:\\:ThesisElements and AdvisingApp\\\\StudentDataModel\\\\Enums\\\\SisSystem\\:\\:ThesisElements is always true\\.$#',
     'identifier' => 'match.alwaysTrue',
     'count' => 4,
@@ -6684,12 +6648,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Actions/ImportStudentDataAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Actions/StudentTagsBulkAction.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sisid\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -6708,20 +6666,8 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Imports/StudentPhoneNumberImporter.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Pages\\\\ManageStudentConfiguration\\:\\:getFormActions\\(\\) has invalid return type AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Pages\\\\Action\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Pages/ManageStudentConfiguration.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Pages\\\\ManageStudentConfiguration\\:\\:getFormActions\\(\\) has invalid return type AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Pages\\\\ActionGroup\\.$#',
     'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Pages/ManageStudentConfiguration.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Pages\\\\ManageStudentConfiguration\\:\\:getFormActions\\(\\) should return array\\<AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Pages\\\\Action\\|AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Pages\\\\ActionGroup\\> but returns array\\<Filament\\\\Actions\\\\Action\\|Filament\\\\Actions\\\\ActionGroup\\>\\.$#',
-    'identifier' => 'return.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Pages/ManageStudentConfiguration.php',
 ];
@@ -7150,12 +7096,6 @@ $ignoreErrors[] = [
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/survey/src/Filament/Resources/Surveys/Pages/EditSurvey.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Filament/Resources/Surveys/Pages/ListSurveys.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Form\\\\Models\\\\Submissible\\:\\:\\$is_authenticated\\.$#',
