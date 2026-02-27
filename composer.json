@@ -200,7 +200,7 @@
             "rm -f ./.php-cs-fixer.cache"
         ],
         "prettier": [
-            "./node_modules/.bin/prettier . --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
+            "./node_modules/.bin/prettier . --config ./.prettierrc.json --ignore-path ./.prettierignore --cache --cache-strategy content"
         ],
         "prettier-format": [
             "@prettier --write"
