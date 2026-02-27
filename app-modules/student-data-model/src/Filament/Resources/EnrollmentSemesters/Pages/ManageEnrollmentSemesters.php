@@ -36,7 +36,11 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters\Pages;
 
+use AdvisingApp\StudentDataModel\Filament\Actions\SyncAllEnrollmentsAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters\EnrollmentSemesterResource;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 
@@ -48,8 +52,22 @@ class ManageEnrollmentSemesters extends ManageRecords
 
     protected function getHeaderActions(): array
     {
+        $unsyncedEnrollments = Enrollment::query()
+                        ->whereNotIn('semester_name', EnrollmentSemester::query()->select('name'))
+                        ->distinct('semester_name')
+                        ->orderBy('semester_name');
         return [
-            CreateAction::make(),
+            Action::make('syncAll')
+              ->label('Sync All (' . $unsyncedEnrollments->count() . ')')
+              ->visible(fn() => $unsyncedEnrollments->count() > 0)
+              ->action(function () use ($unsyncedEnrollments) {
+                $unsyncedEnrollments->lazy()->each(fn (Enrollment $enrollment) => EnrollmentSemester::create(['name' => $enrollment->semester_name]));
+              }),
+            CreateAction::make()
+              ->label('Sync Select')
+              ->modalHeading('Sync Enrollment Semester')
+              ->modalSubmitActionLabel('Sync')
+              ->createAnotherAction(fn (Action $action) => $action->label('Sync & Sync Another')),
         ];
     }
 }
