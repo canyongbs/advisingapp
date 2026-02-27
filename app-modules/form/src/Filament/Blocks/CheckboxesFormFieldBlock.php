@@ -58,7 +58,7 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
     }
 
     public function fields(): array
-    {     
+    {
         return [
             Repeater::make('options')
                 ->saveRelationshipsUsing(fn () => null)
@@ -87,7 +87,7 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
     }
 
     public static function getValidationRules(SubmissibleField $field): array
-    {      
+    {
         /** @var array<int, array<string, string>>|array<string, string> */
         $options = $field->config['options'];
         $values = collect($options);
@@ -105,7 +105,7 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
     }
 
     public static function getSubmissionState(SubmissibleField $field, mixed $response): array
-    {       
+    {
         $options = collect($field->config['options']);
 
         if (isset($field->config['options'][0]) && is_array($field->config['options'][0])) {
