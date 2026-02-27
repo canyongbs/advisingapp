@@ -40,8 +40,6 @@ use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\FormRepeaterFeature;
-use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\TextInput;
@@ -60,15 +58,7 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
     }
 
     public function fields(): array
-    {
-        if (! FormRepeaterFeature::active()) {
-            return [
-                KeyValue::make('options')
-                    ->keyLabel('Value')
-                    ->valueLabel('Label'),
-            ];
-        }
-
+    {     
         return [
             Repeater::make('options')
                 ->saveRelationshipsUsing(fn () => null)
@@ -97,17 +87,7 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
     }
 
     public static function getValidationRules(SubmissibleField $field): array
-    {
-        if (! FormRepeaterFeature::active()) {
-            /** @var array<string, string> */
-            $configOptions = $field->config['options'];
-
-            return [
-                'array',
-                'in:' . collect($configOptions)->keys()->join(','),
-            ];
-        }
-
+    {      
         /** @var array<int, array<string, string>>|array<string, string> */
         $options = $field->config['options'];
         $values = collect($options);
@@ -125,16 +105,7 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
     }
 
     public static function getSubmissionState(SubmissibleField $field, mixed $response): array
-    {
-        if (! FormRepeaterFeature::active()) {
-            return [
-                ...parent::getSubmissionState($field, $response),
-                'response' => collect($field->config['options'])
-                    ->mapWithKeys(fn ($label, $key) => [$label => in_array($key, $response)])
-                    ->toArray(),
-            ];
-        }
-
+    {       
         $options = collect($field->config['options']);
 
         if (isset($field->config['options'][0]) && is_array($field->config['options'][0])) {

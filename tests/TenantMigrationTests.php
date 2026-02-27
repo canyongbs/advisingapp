@@ -42,7 +42,6 @@ use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormField;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
-use App\Features\FormRepeaterFeature;
 use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\Console\Command\Command;
@@ -187,8 +186,6 @@ describe('2026_02_04_120050_tmp_data_convert_form_fields_options_to_repeater_for
                 ]);
 
                 expect($selectField->config)->toBe(['description' => 'desc', 'options' => ['1' => '1', '2' => '2', '3' => '3']]);
-
-                FormRepeaterFeature::activate();
 
                 try {
                     $validationRules = RadioFormFieldBlock::getValidationRules($radioField);

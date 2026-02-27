@@ -32,11 +32,10 @@
     </COPYRIGHT>
 --}}
 
-@use('App\Features\FormRepeaterFeature')
 <x-form::blocks.field-wrapper class="py-3" :$label :$isRequired :description="$description ?? null">
     @php
         $normalizedOptions =
-            FormRepeaterFeature::active() && array_is_list($options)
+            array_is_list($options)
                 ? collect($options)
                     ->pluck('label', 'value')
                     ->all()
