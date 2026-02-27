@@ -200,7 +200,7 @@
             "rm -f ./.php-cs-fixer.cache"
         ],
         "prettier": [
-            "./node_modules/.bin/prettier . --config ./.prettierrc.json --ignore-path ./.prettierignore --cache --cache-strategy content"
+            "./node_modules/.bin/prettier . --config ./.prettierrc.json --ignore-path ./.prettierignore --cache --cache-location .cache/prettier/ --cache-strategy content"
         ],
         "prettier-format": [
             "@prettier --write"
@@ -209,7 +209,7 @@
             "@prettier --check"
         ],
         "clear-prettier-cache": [
-            "rm -f ./node_modules/.cache/prettier/.prettier-cache"
+            "rm -rf ./.cache/prettier"
         ],
         "format-dryrun": [
             "@php-cs-format-dryrun",

@@ -5,6 +5,7 @@
 /public/storage
 /storage/*.key
 /vendor
+.cache
 .npm
 .composer
 .env
