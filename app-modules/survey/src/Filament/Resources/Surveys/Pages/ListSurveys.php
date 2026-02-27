@@ -51,7 +51,6 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 
 class ListSurveys extends ListRecords
 {
@@ -87,7 +86,7 @@ class ListSurveys extends ListRecords
                                 ->required(),
                         ]);
                     })
-                    ->beforeReplicaSaved(function (Model $replica, array $data): void {
+                    ->beforeReplicaSaved(function (Survey $replica, array $data): void {
                         $replica->name = $data['name'];
                     })
                     ->after(function (Survey $replica, Survey $record): void {
