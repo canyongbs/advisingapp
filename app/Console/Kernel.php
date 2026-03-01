@@ -37,6 +37,7 @@
 namespace App\Console;
 
 use AdvisingApp\Ai\Jobs\QnaAdvisors\AutomaticallyEndQnaAdvisors;
+use AdvisingApp\Ai\Jobs\QnaAdvisors\UpdateCurrentQnaAdvisorLinks;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
@@ -143,6 +144,16 @@ class Kernel extends ConsoleKernel
                         ->name("Dispatch AutomaticallyEndQnaAdvisors | Tenant {$tenant->domain}")
                         ->monitorName("Dispatch AutomaticallyEndQnaAdvisors | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
+
+                    $schedule->call(function () use ($tenant) {
+                        $tenant->execute(function () {
+                            dispatch(new UpdateCurrentQnaAdvisorLinks());
+                        });
+                    })
+                        ->monthlyOn(1, '0:0')
+                        ->name("Dispatch UpdateCurrentQnaAdvisorLinks | Tenant {$tenant->domain}")
+                        ->monitorName("Dispatch UpdateCurrentQnaAdvisorLinks | Tenant {$tenant->domain}")
+                        ->withoutOverlapping(60);
 
                     $schedule->command("tenants:artisan \"cache:prune-stale-tags\" --tenant={$tenant->id}")
                         ->hourly()
