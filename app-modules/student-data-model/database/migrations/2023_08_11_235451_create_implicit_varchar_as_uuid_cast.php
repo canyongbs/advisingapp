@@ -54,10 +54,14 @@ return new class () extends Migration {
             return;
         }
 
-        DB::unprepared('ALTER TYPE uuid OWNER TO CURRENT_USER;');
+        try {
+            DB::unprepared('ALTER TYPE uuid OWNER TO CURRENT_USER;');
 
-        DB::unprepared('DROP CAST IF EXISTS (VARCHAR AS uuid)');
+            DB::unprepared('DROP CAST IF EXISTS (VARCHAR AS uuid)');
 
-        DB::unprepared('CREATE CAST (VARCHAR AS uuid) WITH INOUT AS IMPLICIT');
+            DB::unprepared('CREATE CAST (VARCHAR AS uuid) WITH INOUT AS IMPLICIT');
+        } catch (Throwable $exception) {
+            report($exception);
+        }
     }
 };
