@@ -37,7 +37,6 @@
 namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
 use AdvisingApp\Ai\Models\AiAssistant;
-use App\Features\ResourceHubKnowledgeFeature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -54,10 +53,6 @@ class SyncResourceHubArticlesToAssistantVectorStores implements ShouldQueue, Ten
 
     public function handle(): void
     {
-        if (! ResourceHubKnowledgeFeature::active()) {
-            return;
-        }
-
         AiAssistant::query()
             ->where('has_resource_hub_knowledge', true)
             ->each(function (AiAssistant $assistant) {
