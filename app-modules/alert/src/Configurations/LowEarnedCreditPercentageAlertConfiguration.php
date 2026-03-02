@@ -34,31 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Providers;
+namespace AdvisingApp\Alert\Configurations;
 
-use AdvisingApp\Alert\AlertPlugin;
-use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
-use AdvisingApp\Alert\Configurations\LowEarnedCreditPercentageAlertConfiguration;
-use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
+use AdvisingApp\Alert\Contracts\AlertPresetConfiguration;
+use AdvisingApp\Alert\Database\Factories\Configurations\LowEarnedCreditPercentageAlertConfigurationFactory;
 use AdvisingApp\Alert\Models\AlertConfiguration;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class AlertServiceProvider extends ServiceProvider
+/**
+ * @mixin IdeHelperLowEarnedCreditPercentageAlertConfiguration
+ */
+class LowEarnedCreditPercentageAlertConfiguration extends BaseModel implements AlertPresetConfiguration, Auditable
 {
-    public function register()
-    {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new AlertPlugin()));
-    }
+    use AuditableTrait;
 
-    public function boot(): void
+    /** @use HasFactory<LowEarnedCreditPercentageAlertConfigurationFactory> */
+    use HasFactory;
+
+    protected $fillable = [
+        'minimum_earned_credit_percentage',
+    ];
+
+    protected $casts = [
+        'minimum_earned_credit_percentage' => 'integer',
+    ];
+
+    /**
+     * @return MorphOne<AlertConfiguration, $this>
+     */
+    public function alertConfiguration(): MorphOne
     {
-        Relation::morphMap([
-            'alert_configuration' => AlertConfiguration::class,
-            'adult_learner_alert_configuration' => AdultLearnerAlertConfiguration::class,
-            'new_student_alert_configuration' => NewStudentAlertConfiguration::class,
-            'low_earned_credit_percentage_alert_configuration' => LowEarnedCreditPercentageAlertConfiguration::class,
-        ]);
+        return $this->morphOne(AlertConfiguration::class, 'configuration');
     }
 }
