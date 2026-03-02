@@ -338,7 +338,7 @@ jobs:
             - name: 'Restore result cache'
               uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 #5.0.3
               with:
-                  path: tmp
+                  path: .cache/phpstan
                   key: 'linting-result-cache-${{ github.run_id }}'
                   restore-keys: |
                       linting-result-cache-
@@ -350,7 +350,7 @@ jobs:
               uses: actions/cache/save@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 #5.0.3
               if: ${{ !cancelled() }}
               with:
-                  path: tmp
+                  path: .cache/phpstan
                   key: 'linting-result-cache-${{ github.run_id }}'
 
     renovate-config-validator:
