@@ -197,7 +197,7 @@
             "@php-cs-format --dry-run --stop-on-violation"
         ],
         "php-cs-clear-cache": [
-            "rm -f ./.php-cs-fixer.cache"
+            "rm -rf ./.cache/php-cs-fixer"
         ],
         "prettier": [
             "./node_modules/.bin/prettier . --config ./.prettierrc.json --ignore-path ./.prettierignore --cache --cache-location .cache/prettier/ --cache-strategy content"
