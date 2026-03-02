@@ -136,7 +136,7 @@ enum AlertPreset: string implements HasLabel
                 'number_of_semesters' => 1,
             ],
             self::LowEarnedCreditPercentage => [
-                'minimum_earned_credit_percentage' => 80,
+                'minimum_earned_credit_percentage' => 0,
             ],
             default => [],
         };
