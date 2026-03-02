@@ -45,7 +45,7 @@ return new class () extends Migration {
     {
         DB::transaction(function () {
             $configuration = LowEarnedCreditPercentageAlertConfiguration::create([
-                'minimum_earned_credit_percentage' => null,
+                'minimum_earned_credit_percentage' => 0,
             ]);
 
             $configuration->alertConfiguration()->create([

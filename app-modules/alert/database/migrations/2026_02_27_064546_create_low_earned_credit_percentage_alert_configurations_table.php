@@ -43,7 +43,7 @@ return new class () extends Migration {
     {
         Schema::create('low_earned_credit_percentage_alert_configurations', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->unsignedInteger('minimum_earned_credit_percentage')->nullable();
+            $table->unsignedInteger('minimum_earned_credit_percentage');
             $table->timestamps();
         });
     }
