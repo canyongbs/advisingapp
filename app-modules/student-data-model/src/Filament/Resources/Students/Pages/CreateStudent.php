@@ -175,7 +175,7 @@ class CreateStudent extends CreateRecord
                                     ]),
                             ])
                             ->orderColumn('order')
-                            ->itemLabel(fn (Repeater $component, Schema $schema): string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary email address' : 'Additional email address')
+                            ->itemLabel(fn (Repeater $component, Schema $schema): string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Institutional email address' : 'Additional email address')
                             ->extraItemActions([
                                 $makeRepeaterItemPrimaryAction(),
                             ])
