@@ -59,7 +59,7 @@ class UploadFilesToVectorStores extends Command
             ->where(fn (Builder $query) => $query
                 ->whereHas('files')
                 ->orWhereHas('links')
-            ->orWhere('has_resource_hub_knowledge', true))
+                ->orWhere('has_resource_hub_knowledge', true))
             ->eachById(function (AiAssistant $assistant) {
                 try {
                     dispatch(new UploadAssistantFilesToVectorStore($assistant));
