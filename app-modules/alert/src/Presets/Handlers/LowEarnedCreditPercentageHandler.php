@@ -63,7 +63,6 @@ class LowEarnedCreditPercentageHandler implements AlertPresetHandler
                 ->numeric()
                 ->minValue(0)
                 ->maxValue(100)
-                ->required()
                 ->prefix('%')
                 ->helperText('Students whose earned credit percentage falls below this value will trigger this alert.'),
         ];
