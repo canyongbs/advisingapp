@@ -41,7 +41,10 @@ use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRecords;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class ManageEnrollmentSemesters extends ManageRecords
 {
@@ -58,10 +61,30 @@ class ManageEnrollmentSemesters extends ManageRecords
 
         return [
             Action::make('syncAll')
-                ->label('Sync All (' . $unsyncedEnrollments->count() . ')')
+                ->label(fn () => 'Sync All (' . $unsyncedEnrollments->count() . ')')
                 ->visible(fn () => $unsyncedEnrollments->count() > 0)
                 ->action(function () use ($unsyncedEnrollments) {
-                    $unsyncedEnrollments->lazy()->each(fn (Enrollment $enrollment) => EnrollmentSemester::create(['name' => $enrollment->semester_name]));
+                    try {
+                        DB::beginTransaction();
+
+                        $unsyncedEnrollments->lazy()->each(fn (Enrollment $enrollment) => is_null($enrollment->semester_name) ?: EnrollmentSemester::create(['name' => $enrollment->semester_name]));
+
+                        DB::commit();
+
+                        Notification::make()
+                            ->success()
+                            ->title('Sync Successful')
+                            ->send();
+                    } catch (Throwable $throw) {
+                        DB::rollBack();
+
+                        Notification::make()
+                            ->danger()
+                            ->title('Sync Failed')
+                            ->send();
+
+                        throw $throw;
+                    }
                 }),
             CreateAction::make()
                 ->label('Sync Select')
