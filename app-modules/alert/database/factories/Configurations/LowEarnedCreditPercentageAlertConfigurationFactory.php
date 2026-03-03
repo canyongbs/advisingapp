@@ -34,55 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Database\Factories;
+namespace AdvisingApp\Alert\Database\Factories\Configurations;
 
-use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
 use AdvisingApp\Alert\Configurations\LowEarnedCreditPercentageAlertConfiguration;
-use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
-use AdvisingApp\Alert\Models\AlertConfiguration;
-use AdvisingApp\Alert\Presets\AlertPreset;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<AlertConfiguration>
+ * @extends Factory<LowEarnedCreditPercentageAlertConfiguration>
  */
-class AlertConfigurationFactory extends Factory
+class LowEarnedCreditPercentageAlertConfigurationFactory extends Factory
 {
+    protected $model = LowEarnedCreditPercentageAlertConfiguration::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
     public function definition(): array
     {
         return [
-            'preset' => $this->faker->randomElement(AlertPreset::cases()),
-            'is_enabled' => $this->faker->boolean(80),
-            'configuration_type' => function (array $attributes) {
-                return match ($attributes['preset']) {
-                    AlertPreset::AdultLearner => new AdultLearnerAlertConfiguration()->getMorphClass(),
-                    AlertPreset::NewStudent => new NewStudentAlertConfiguration()->getMorphClass(),
-                    AlertPreset::LowEarnedCreditPercentage => new LowEarnedCreditPercentageAlertConfiguration()->getMorphClass(),
-                    default => null,
-                };
-            },
-            'configuration_id' => function (array $attributes) {
-                return match ($attributes['preset']) {
-                    AlertPreset::AdultLearner => AdultLearnerAlertConfiguration::factory(),
-                    AlertPreset::NewStudent => NewStudentAlertConfiguration::factory(),
-                    AlertPreset::LowEarnedCreditPercentage => LowEarnedCreditPercentageAlertConfiguration::factory(),
-                    default => null,
-                };
-            },
+            'minimum_earned_credit_percentage' => $this->faker->numberBetween(1, 100),
         ];
-    }
-
-    public function enabled(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'is_enabled' => true,
-        ]);
-    }
-
-    public function disabled(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'is_enabled' => false,
-        ]);
     }
 }

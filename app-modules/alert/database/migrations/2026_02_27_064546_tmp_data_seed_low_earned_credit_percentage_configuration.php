@@ -34,31 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Providers;
-
-use AdvisingApp\Alert\AlertPlugin;
-use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
 use AdvisingApp\Alert\Configurations\LowEarnedCreditPercentageAlertConfiguration;
-use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Alert\Presets\AlertPreset;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-class AlertServiceProvider extends ServiceProvider
-{
-    public function register()
+return new class () extends Migration {
+    public function up(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new AlertPlugin()));
+        DB::transaction(function () {
+            $configuration = LowEarnedCreditPercentageAlertConfiguration::create([
+                'minimum_earned_credit_percentage' => 0,
+            ]);
+
+            $configuration->alertConfiguration()->create([
+                'preset' => AlertPreset::LowEarnedCreditPercentage->value,
+            ]);
+        });
     }
 
-    public function boot(): void
+    public function down(): void
     {
-        Relation::morphMap([
-            'alert_configuration' => AlertConfiguration::class,
-            'adult_learner_alert_configuration' => AdultLearnerAlertConfiguration::class,
-            'new_student_alert_configuration' => NewStudentAlertConfiguration::class,
-            'low_earned_credit_percentage_alert_configuration' => LowEarnedCreditPercentageAlertConfiguration::class,
-        ]);
+        DB::transaction(function () {
+            AlertConfiguration::where('preset', AlertPreset::LowEarnedCreditPercentage->value)
+                ->each(function (AlertConfiguration $config) {
+                    $config->configuration?->delete();
+                    $config->delete();
+                });
+        });
     }
-}
+};

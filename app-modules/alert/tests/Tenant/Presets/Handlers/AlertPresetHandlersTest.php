@@ -38,6 +38,7 @@ namespace AdvisingApp\Alert\Tests\Tenant;
 
 use AdvisingApp\Alert\Actions\GenerateStudentAlertsView;
 use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
+use AdvisingApp\Alert\Configurations\LowEarnedCreditPercentageAlertConfiguration;
 use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Alert\Models\StudentAlert;
@@ -1299,4 +1300,172 @@ it('correctly combines concern raised alerts with other alert types', function (
     expect(StudentAlert::where('sisid', $studentWithBoth->sisid)->count())->toBe(2);
     expect(StudentAlert::where('sisid', $studentWithConcernOnly->sisid)->count())->toBe(1);
     expect(StudentAlert::where('sisid', $studentWithGradeOnly->sisid)->count())->toBe(1);
+});
+
+it('can identify student with low earned credit percentage (LowEarnedCreditPercentageHandler)', function () {
+    $config = LowEarnedCreditPercentageAlertConfiguration::factory()->create([
+        'minimum_earned_credit_percentage' => 26,
+    ]);
+
+    $alertConfig = AlertConfiguration::factory()
+        ->state([
+            'preset' => AlertPreset::LowEarnedCreditPercentage,
+            'configuration_id' => $config->id,
+            'configuration_type' => $config->getMorphClass(),
+        ])
+        ->enabled()
+        ->create();
+
+    $studentBelowThreshold = Student::factory()->create();
+
+    Enrollment::factory()->create([
+        'sisid' => $studentBelowThreshold->sisid,
+        'unt_taken' => 100,
+        'unt_earned' => 20,
+    ]);
+
+    $studentJustBelowThreshold = Student::factory()->create();
+    Enrollment::factory()->create([
+        'sisid' => $studentJustBelowThreshold->sisid,
+        'unt_taken' => 100,
+        'unt_earned' => 25,
+    ]);
+
+    // Test that a student at the threshold does not get an alert
+    $studentAtThreshold = Student::factory()->create();
+    Enrollment::factory()->create([
+        'sisid' => $studentAtThreshold->sisid,
+        'unt_taken' => 100,
+        'unt_earned' => 26,
+    ]);
+
+    $studentAboveThreshold = Student::factory()->create();
+    Enrollment::factory()->create([
+        'sisid' => $studentAboveThreshold->sisid,
+        'unt_taken' => 100,
+        'unt_earned' => 30,
+    ]);
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $studentBelowThreshold->sisid,
+        'alert_configuration_id' => $alertConfig->id,
+    ]);
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $studentJustBelowThreshold->sisid,
+        'alert_configuration_id' => $alertConfig->id,
+    ]);
+
+    expect(StudentAlert::where('sisid', $studentAtThreshold->sisid)->exists())->toBeFalse();
+
+    expect(StudentAlert::where('sisid', $studentAboveThreshold->sisid)->exists())->toBeFalse();
+});
+
+it('does not alert students with zero units taken (LowEarnedCreditPercentageHandler)', function () {
+    $config = LowEarnedCreditPercentageAlertConfiguration::factory()->create([
+        'minimum_earned_credit_percentage' => 50,
+    ]);
+
+    $alertConfig = AlertConfiguration::factory()
+        ->state([
+            'preset' => AlertPreset::LowEarnedCreditPercentage,
+            'configuration_id' => $config->id,
+            'configuration_type' => $config->getMorphClass(),
+        ])
+        ->enabled()
+        ->create();
+
+    $studentWithZeroTaken = Student::factory()->create();
+
+    Enrollment::factory()->create([
+        'sisid' => $studentWithZeroTaken->sisid,
+        'unt_taken' => 0,
+        'unt_earned' => 0,
+    ]);
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    expect(StudentAlert::where('sisid', $studentWithZeroTaken->sisid)->exists())->toBeFalse();
+});
+
+it('can aggregate multiple enrollment rows per student (LowEarnedCreditPercentageHandler)', function () {
+    $config = LowEarnedCreditPercentageAlertConfiguration::factory()->create([
+        'minimum_earned_credit_percentage' => 60,
+    ]);
+
+    $alertConfig = AlertConfiguration::factory()
+        ->state([
+            'preset' => AlertPreset::LowEarnedCreditPercentage,
+            'configuration_id' => $config->id,
+            'configuration_type' => $config->getMorphClass(),
+        ])
+        ->enabled()
+        ->create();
+
+    $studentBelowWhenAggregated = Student::factory()->create();
+    Enrollment::factory()->create([
+        'sisid' => $studentBelowWhenAggregated->sisid,
+        'unt_taken' => 100,
+        'unt_earned' => 40,
+    ]);
+    Enrollment::factory()->create([
+        'sisid' => $studentBelowWhenAggregated->sisid,
+        'unt_taken' => 100,
+        'unt_earned' => 10,
+    ]);
+
+    $studentAboveWhenAggregated = Student::factory()->create();
+    Enrollment::factory()->create([
+        'sisid' => $studentAboveWhenAggregated->sisid,
+        'unt_taken' => 100,
+        'unt_earned' => 50,
+    ]);
+    Enrollment::factory()->create([
+        'sisid' => $studentAboveWhenAggregated->sisid,
+        'unt_taken' => 100,
+        'unt_earned' => 70,
+    ]);
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    assertDatabaseHas('student_alerts', [
+        'sisid' => $studentBelowWhenAggregated->sisid,
+        'alert_configuration_id' => $alertConfig->id,
+    ]);
+
+    expect(StudentAlert::where('sisid', $studentAboveWhenAggregated->sisid)->exists())->toBeFalse();
+});
+
+it('can exclude soft-deleted enrollments when calculating earned credit percentage (LowEarnedCreditPercentageHandler)', function () {
+    $config = LowEarnedCreditPercentageAlertConfiguration::factory()->create([
+        'minimum_earned_credit_percentage' => 60,
+    ]);
+
+    $alertConfig = AlertConfiguration::factory()
+        ->state([
+            'preset' => AlertPreset::LowEarnedCreditPercentage,
+            'configuration_id' => $config->id,
+            'configuration_type' => $config->getMorphClass(),
+        ])
+        ->enabled()
+        ->create();
+
+    $student = Student::factory()->create();
+    Enrollment::factory()->create([
+        'sisid' => $student->sisid,
+        'unt_taken' => 100,
+        'unt_earned' => 80,
+    ]);
+    Enrollment::factory()->create([
+        'sisid' => $student->sisid,
+        'unt_taken' => 100,
+        'unt_earned' => 0,
+        'deleted_at' => now(),
+    ]);
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    expect(StudentAlert::where('sisid', $student->sisid)->exists())->toBeFalse();
 });

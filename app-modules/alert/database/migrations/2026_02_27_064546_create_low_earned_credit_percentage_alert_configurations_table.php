@@ -34,31 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Providers;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Alert\AlertPlugin;
-use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
-use AdvisingApp\Alert\Configurations\LowEarnedCreditPercentageAlertConfiguration;
-use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
-use AdvisingApp\Alert\Models\AlertConfiguration;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
-
-class AlertServiceProvider extends ServiceProvider
-{
-    public function register()
+return new class () extends Migration {
+    public function up(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new AlertPlugin()));
+        Schema::create('low_earned_credit_percentage_alert_configurations', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->unsignedInteger('minimum_earned_credit_percentage');
+            $table->timestamps();
+        });
     }
 
-    public function boot(): void
+    public function down(): void
     {
-        Relation::morphMap([
-            'alert_configuration' => AlertConfiguration::class,
-            'adult_learner_alert_configuration' => AdultLearnerAlertConfiguration::class,
-            'new_student_alert_configuration' => NewStudentAlertConfiguration::class,
-            'low_earned_credit_percentage_alert_configuration' => LowEarnedCreditPercentageAlertConfiguration::class,
-        ]);
+        Schema::dropIfExists('low_earned_credit_percentage_alert_configurations');
     }
-}
+};
