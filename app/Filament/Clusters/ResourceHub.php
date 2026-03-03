@@ -43,5 +43,5 @@ class ResourceHub extends Cluster
 {
     protected static string | UnitEnum | null $navigationGroup = 'Settings';
 
-    protected static ?int $navigationSort = 80;
+    protected static ?int $navigationSort = 110;
 }

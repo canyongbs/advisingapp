@@ -50,7 +50,7 @@ class InteractionManagement extends Cluster
 {
     protected static string | UnitEnum | null $navigationGroup = 'Settings';
 
-    protected static ?int $navigationSort = 90;
+    protected static ?int $navigationSort = 80;
 
     /**
      * @var array<class-string<Resource>>

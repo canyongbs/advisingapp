@@ -43,5 +43,7 @@ class OnlineAdmissions extends Cluster
 {
     protected static string | UnitEnum | null $navigationGroup = 'Settings';
 
-    protected static ?int $navigationSort = 100;
+    protected static ?int $navigationSort = 10;
+
+    protected static ?string $title = 'Admissions';
 }
