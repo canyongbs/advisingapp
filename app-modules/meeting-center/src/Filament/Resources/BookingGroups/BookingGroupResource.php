@@ -42,6 +42,7 @@ use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBooking
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ViewBookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use App\Filament\Clusters\GroupAppointments;
+use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Resources\Resource;
 
 class BookingGroupResource extends Resource
@@ -55,6 +56,8 @@ class BookingGroupResource extends Resource
     protected static ?string $model = BookingGroup::class;
 
     protected static ?string $cluster = GroupAppointments::class;
+
+    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     public static function getPages(): array
     {
