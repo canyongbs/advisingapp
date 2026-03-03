@@ -81,9 +81,10 @@ class ManageEnrollmentSemesters extends ManageRecords
                         Notification::make()
                             ->danger()
                             ->title('Sync Failed')
+                            ->body('Please try again. If this issue persists, reach out to support.')
                             ->send();
 
-                        throw $throw;
+                        report($throw);
                     }
                 }),
             CreateAction::make()

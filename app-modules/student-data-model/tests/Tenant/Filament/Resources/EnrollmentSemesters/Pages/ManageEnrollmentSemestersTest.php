@@ -43,6 +43,7 @@ use Illuminate\Database\Eloquent\Factories\Sequence;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
+use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -92,4 +93,54 @@ test('it can successfully sync all semesters', function () {
         ->assertNotified();
 
     assertDatabaseCount(EnrollmentSemester::class, $count);
+});
+
+test('it will add new semesters without removing old ones', function () {
+    asSuperAdmin();
+
+    $count = random_int(1, 10);
+
+    EnrollmentSemester::factory(3)->create();
+
+    Enrollment::factory($count)->sequence(fn (Sequence $seq) => ['semester_name' => "Name {$seq->index}"])->create();
+
+    livewire(ManageEnrollmentSemesters::class)
+        ->callAction('syncAll')
+        ->assertSuccessful()
+        ->assertNotified();
+
+    assertDatabaseCount(EnrollmentSemester::class, $count+3);
+});
+
+test('it will only add unique semesters', function () {
+    asSuperAdmin();
+
+    Enrollment::factory(2, ['semester_name' => 'test semester'])->create();
+
+    livewire(ManageEnrollmentSemesters::class)
+        ->callAction('syncAll')
+        ->assertSuccessful()
+        ->assertNotified();
+
+    assertDatabaseCount(EnrollmentSemester::class, 1);
+});
+
+test('it will not add semesters that are already ordered', function () {
+    asSuperAdmin();
+
+    EnrollmentSemester::factory(['name' => 'test semester'])->create();
+
+    Enrollment::factory(['semester_name' => 'test semester'])->create();
+
+    Enrollment::factory(['semester_name' => 'test semester 2'])->create();
+
+    livewire(ManageEnrollmentSemesters::class)
+        ->callAction('syncAll')
+        ->assertSuccessful()
+        ->assertNotified();
+
+    assertDatabaseCount(EnrollmentSemester::class, 2);
+
+    assertDatabaseHas(EnrollmentSemester::class, ['name' => 'test semester']);
+    assertDatabaseHas(EnrollmentSemester::class, ['name' => 'test semester 2']);
 });
