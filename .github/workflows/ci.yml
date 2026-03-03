@@ -88,7 +88,7 @@ jobs:
             - name: Cache PHP CS Fixer
               uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 #5.0.3
               with:
-                  path: .php-cs-fixer.cache
+                  path: .cache/php-cs-fixer/.php-cs-fixer.cache
                   key: ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-${{ github.run_id }}
                   restore-keys: |
                       ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-
@@ -96,7 +96,7 @@ jobs:
             - name: Cache Prettier
               uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 #5.0.3
               with:
-                  path: ./node_modules/.cache/prettier/.prettier-cache
+                  path: .cache/prettier
                   key: ${{ runner.OS }}-${{ github.repository }}-prettier-${{ github.run_id }}
                   restore-keys: |
                       ${{ runner.OS }}-${{ github.repository }}-prettier-
@@ -338,7 +338,7 @@ jobs:
             - name: 'Restore result cache'
               uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 #5.0.3
               with:
-                  path: tmp
+                  path: .cache/phpstan
                   key: 'linting-result-cache-${{ github.run_id }}'
                   restore-keys: |
                       linting-result-cache-
@@ -350,7 +350,7 @@ jobs:
               uses: actions/cache/save@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 #5.0.3
               if: ${{ !cancelled() }}
               with:
-                  path: tmp
+                  path: .cache/phpstan
                   key: 'linting-result-cache-${{ github.run_id }}'
 
     renovate-config-validator:
