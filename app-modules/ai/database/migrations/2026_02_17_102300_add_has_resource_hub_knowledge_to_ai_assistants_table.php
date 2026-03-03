@@ -35,26 +35,21 @@
 */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('ai_assistants', function (Blueprint $table) {
-                $table->boolean('has_resource_hub_knowledge')->default(false);
-            });
+        Schema::table('ai_assistants', function (Blueprint $table) {
+            $table->boolean('has_resource_hub_knowledge')->default(false);
         });
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('ai_assistants', function (Blueprint $table) {
-                $table->dropColumn('has_resource_hub_knowledge');
-            });
+        Schema::table('ai_assistants', function (Blueprint $table) {
+            $table->dropColumn('has_resource_hub_knowledge');
         });
     }
 };
