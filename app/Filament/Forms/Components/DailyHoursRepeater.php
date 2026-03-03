@@ -218,10 +218,8 @@ class DailyHoursRepeater
 
         for ($hour = 0; $hour < 24; $hour++) {
             for ($minute = 0; $minute < 60; $minute += 15) {
-                $time = Carbon::createFromTime($hour, $minute, 0, config('app.timezone'))
-                    ->setTimezone($displayTimezone);
-
                 $value = sprintf('%02d:%02d', $hour, $minute);
+                $time = Carbon::createFromTime($hour, $minute, 0, $displayTimezone);
                 $label = $time->format('g:i A');
 
                 $options[$value] = $label;
