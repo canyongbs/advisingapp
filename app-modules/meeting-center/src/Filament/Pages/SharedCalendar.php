@@ -39,6 +39,7 @@ namespace AdvisingApp\MeetingCenter\Filament\Pages;
 use App\Enums\Feature;
 use App\Filament\Clusters\GroupAppointments;
 use App\Models\User;
+use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Gate;
 
@@ -49,6 +50,8 @@ class SharedCalendar extends Page
     protected string $view = 'filament.pages.coming-soon';
 
     protected static ?string $cluster = GroupAppointments::class;
+
+    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     protected static ?string $navigationLabel = 'Shared Calendar';
 
