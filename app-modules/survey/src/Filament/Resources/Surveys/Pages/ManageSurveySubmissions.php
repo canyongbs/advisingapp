@@ -97,7 +97,7 @@ class ManageSurveySubmissions extends ManageRelatedRecords
                 Action::make('export')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->action(function () {
-                        $filename = str("form-submissions-{$this->getOwnerRecord()->name}-")
+                        $filename = str("survey-submissions-{$this->getOwnerRecord()->name}-")
                             ->append(now()->format('Y-m-d-Hisv'))
                             ->slug()
                             ->append('.csv');
@@ -127,7 +127,7 @@ class ManageSurveySubmissions extends ManageRelatedRecords
                     BulkAction::make('Export')
                         ->icon('heroicon-o-arrow-down-tray')
                         ->action(function ($records) {
-                            $filename = str("selected-form-submissions-{$this->getOwnerRecord()->name}-")
+                            $filename = str("selected-survey-submissions-{$this->getOwnerRecord()->name}-")
                                 ->append(now()->format('Y-m-d-Hisv'))
                                 ->slug()
                                 ->append('.csv');
