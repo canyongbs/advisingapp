@@ -45,5 +45,5 @@ class InstitutionDetails extends Cluster
 
     protected static ?string $navigationLabel = 'Institution Details';
 
-    protected static ?int $navigationSort = 130;
+    protected static ?int $navigationSort = 70;
 }

@@ -36,15 +36,12 @@
 
 namespace App\Filament\Clusters;
 
-use BackedEnum;
 use Filament\Clusters\Cluster;
 use UnitEnum;
 
-class ProjectManagement extends Cluster
+class EarlyAlerts extends Cluster
 {
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
-
     protected static string | UnitEnum | null $navigationGroup = 'Settings';
 
-    protected static ?int $navigationSort = 100;
+    protected static ?int $navigationSort = 60;
 }

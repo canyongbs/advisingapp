@@ -43,5 +43,5 @@ class ProfileManagement extends Cluster
 {
     protected static string | UnitEnum | null $navigationGroup = 'Settings';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 90;
 }
