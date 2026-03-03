@@ -1324,11 +1324,19 @@ it('can identify student with low earned credit percentage (LowEarnedCreditPerce
         'unt_earned' => 20,
     ]);
 
+    $studentJustBelowThreshold = Student::factory()->create();
+    Enrollment::factory()->create([
+        'sisid' => $studentJustBelowThreshold->sisid,
+        'unt_taken' => 100,
+        'unt_earned' => 25,
+    ]);
+
+    // Test that a student at the threshold does not get an alert
     $studentAtThreshold = Student::factory()->create();
     Enrollment::factory()->create([
         'sisid' => $studentAtThreshold->sisid,
         'unt_taken' => 100,
-        'unt_earned' => 25,
+        'unt_earned' => 26,
     ]);
 
     $studentAboveThreshold = Student::factory()->create();
@@ -1346,9 +1354,11 @@ it('can identify student with low earned credit percentage (LowEarnedCreditPerce
     ]);
 
     assertDatabaseHas('student_alerts', [
-        'sisid' => $studentAtThreshold->sisid,
+        'sisid' => $studentJustBelowThreshold->sisid,
         'alert_configuration_id' => $alertConfig->id,
     ]);
+
+    expect(StudentAlert::where('sisid', $studentAtThreshold->sisid)->exists())->toBeFalse();
 
     expect(StudentAlert::where('sisid', $studentAboveThreshold->sisid)->exists())->toBeFalse();
 });
