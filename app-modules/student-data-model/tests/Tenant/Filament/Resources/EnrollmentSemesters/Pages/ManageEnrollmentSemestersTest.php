@@ -40,12 +40,9 @@ use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
-use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
-use function Pest\Laravel\get;
-use function Pest\Laravel\withoutExceptionHandling;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -69,30 +66,30 @@ test('it displays the sync button with a correct count when appropriate', functi
     asSuperAdmin();
 
     livewire(ManageEnrollmentSemesters::class)
-      ->assertActionHidden('syncAll');
+        ->assertActionHidden('syncAll');
 
-    $count = rand(1,10);
+    $count = rand(1, 10);
 
     Enrollment::factory($count)->sequence(fn (Sequence $seq) => ['semester_name' => "Name {$seq->index}"])->create();
 
     livewire(ManageEnrollmentSemesters::class)
-      ->assertActionVisible('syncAll')
-      ->assertActionHasLabel('syncAll', 'Sync All (' . $count . ')');
+        ->assertActionVisible('syncAll')
+        ->assertActionHasLabel('syncAll', 'Sync All (' . $count . ')');
 });
 
 test('it can successfully sync all semesters', function () {
     asSuperAdmin();
 
-    $count = rand(1,10);
+    $count = rand(1, 10);
 
     Enrollment::factory($count)->sequence(fn (Sequence $seq) => ['semester_name' => "Name {$seq->index}"])->create();
 
     assertDatabaseCount(EnrollmentSemester::class, 0);
 
     livewire(ManageEnrollmentSemesters::class)
-      ->callAction('syncAll')
-      ->assertSuccessful()
-      ->assertNotified();
+        ->callAction('syncAll')
+        ->assertSuccessful()
+        ->assertNotified();
 
     assertDatabaseCount(EnrollmentSemester::class, $count);
 });
