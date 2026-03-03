@@ -68,7 +68,7 @@ test('it displays the sync button with a correct count when appropriate', functi
     livewire(ManageEnrollmentSemesters::class)
         ->assertActionHidden('syncAll');
 
-    $count = rand(1, 10);
+    $count = random_int(1, 10);
 
     Enrollment::factory($count)->sequence(fn (Sequence $seq) => ['semester_name' => "Name {$seq->index}"])->create();
 
@@ -80,7 +80,7 @@ test('it displays the sync button with a correct count when appropriate', functi
 test('it can successfully sync all semesters', function () {
     asSuperAdmin();
 
-    $count = rand(1, 10);
+    $count = random_int(1, 10);
 
     Enrollment::factory($count)->sequence(fn (Sequence $seq) => ['semester_name' => "Name {$seq->index}"])->create();
 
