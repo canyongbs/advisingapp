@@ -45,7 +45,6 @@ use AdvisingApp\Ai\Models\Scopes\AiAssistantConfidentialScope;
 use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\Team\Models\Team;
-use App\Features\ResourceHubKnowledgeFeature;
 use App\Models\BaseModel;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
@@ -228,10 +227,6 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
      */
     public function getResourceHubArticles(): array
     {
-        if (! ResourceHubKnowledgeFeature::active()) {
-            return [];
-        }
-
         if (! $this->has_resource_hub_knowledge) {
             return [];
         }

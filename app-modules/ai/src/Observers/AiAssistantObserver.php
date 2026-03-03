@@ -41,16 +41,12 @@ use AdvisingApp\Ai\Enums\AiThreadLockedReason;
 use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadAssistantFilesToVectorStore;
-use App\Features\ResourceHubKnowledgeFeature;
 
 class AiAssistantObserver
 {
     public function created(AiAssistant $assistant): void
     {
-        if (
-            ResourceHubKnowledgeFeature::active()
-            && $assistant->has_resource_hub_knowledge
-        ) {
+        if ($assistant->has_resource_hub_knowledge) {
             UploadAssistantFilesToVectorStore::dispatch($assistant);
         }
     }
@@ -77,10 +73,7 @@ class AiAssistantObserver
             ]);
         }
 
-        if (
-            ResourceHubKnowledgeFeature::active()
-            && $assistant->wasChanged('has_resource_hub_knowledge')
-        ) {
+        if ($assistant->wasChanged('has_resource_hub_knowledge')) {
             UploadAssistantFilesToVectorStore::dispatch($assistant);
         }
     }

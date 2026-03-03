@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadAssistantFilesToVectorStore;
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadQnaAdvisorFilesToVectorStore;
-use App\Features\ResourceHubKnowledgeFeature;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
@@ -60,8 +59,7 @@ class UploadFilesToVectorStores extends Command
             ->where(fn (Builder $query) => $query
                 ->whereHas('files')
                 ->orWhereHas('links')
-                ->when(ResourceHubKnowledgeFeature::active(), fn (Builder $query) => $query
-                    ->orWhere('has_resource_hub_knowledge', true)))
+                ->orWhere('has_resource_hub_knowledge', true))
             ->eachById(function (AiAssistant $assistant) {
                 try {
                     dispatch(new UploadAssistantFilesToVectorStore($assistant));
