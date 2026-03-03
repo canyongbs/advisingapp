@@ -109,7 +109,7 @@ test('it will add new semesters without removing old ones', function () {
         ->assertSuccessful()
         ->assertNotified();
 
-    assertDatabaseCount(EnrollmentSemester::class, $count+3);
+    assertDatabaseCount(EnrollmentSemester::class, $count + 3);
 });
 
 test('it will only add unique semesters', function () {
