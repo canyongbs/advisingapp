@@ -37,6 +37,8 @@
 namespace AdvisingApp\Form\Exports;
 
 use AdvisingApp\Form\Models\FormField;
+use AdvisingApp\Survey\Models\Survey;
+use AdvisingApp\Survey\Models\SurveyField;
 use Illuminate\Database\Eloquent\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -57,7 +59,7 @@ class FormSubmissionExport implements FromCollection, WithHeadings, WithMapping
 
         return [
             'id',
-            'form_id',
+            $submissible instanceof Survey ? 'survey_id' : 'form_id',
             ...$submissible?->fields()->pluck('label')->all() ?? [],
             'created_at',
             'updated_at',
@@ -70,7 +72,7 @@ class FormSubmissionExport implements FromCollection, WithHeadings, WithMapping
             $row->id,
             $row->form_id,
             ...$row->submissible->fields
-                ->map(fn (FormField $field) => $row->fields->where('id', $field->id)->first()?->pivot->response)
+                ->map(fn (FormField|SurveyField $field) => $row->fields->where('id', $field->id)->first()?->pivot->response)
                 ->all(),
             $row->created_at,
             $row->updated_at,
