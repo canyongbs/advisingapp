@@ -54,7 +54,7 @@
                 @endif
             @endif
 
-            {!! tiptap_converter()->asHTML($state, toc: true, maxDepth: 3) !!}
+            {!! tiptap_converter()->record($record, attribute: $getName())->asHTML($state, toc: true, maxDepth: 3) !!}
         @endif
     </div>
 </div>
