@@ -115,6 +115,8 @@ class DailyHoursRepeater
             ->afterStateHydrated(static function (Repeater $component, ?array $rawState): void {
                 if (empty($rawState)) {
                     $rawState = DailyHoursRepeater::defaultValue();
+                } elseif (DailyHoursRepeater::isKeyedByDay($rawState)) {
+                    $rawState = DailyHoursRepeater::convertKeyedToIndexed($rawState);
                 }
 
                 $items = [];
@@ -152,19 +154,26 @@ class DailyHoursRepeater
     }
 
     /**
-     * @param array{
-     *     monday: array{is_enabled: bool, starts_at: ?string, ends_at: ?string},
-     *     tuesday: array{is_enabled: bool, starts_at: ?string, ends_at: ?string},
-     *     wednesday: array{is_enabled: bool, starts_at: ?string, ends_at: ?string},
-     *     thursday: array{is_enabled: bool, starts_at: ?string, ends_at: ?string},
-     *     friday: array{is_enabled: bool, starts_at: ?string, ends_at: ?string},
-     *     saturday: array{is_enabled: bool, starts_at: ?string, ends_at: ?string},
-     *     sunday: array{is_enabled: bool, starts_at: ?string, ends_at: ?string},
-     * } $data
+     * Check if the given array is keyed by day names (DB format)
+     * as opposed to indexed (component format).
+     *
+     * @param array<array-key, mixed> $data
+     */
+    public static function isKeyedByDay(array $data): bool
+    {
+        $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+        return ! empty(array_intersect(array_keys($data), $days));
+    }
+
+    /**
+     * Convert day-keyed DB format to indexed component format with timezone conversion.
+     *
+     * @param array<string, array<string, mixed>> $data
      *
      * @return array<array{day: string, is_enabled: bool, starts_at: ?string, ends_at: ?string}>
      */
-    public static function mutateDataBeforeFill(array $data): array
+    public static function convertKeyedToIndexed(array $data): array
     {
         $orderedDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
         $displayTimezone = app(DisplaySettings::class)->getTimezone();
@@ -172,7 +181,7 @@ class DailyHoursRepeater
 
         return array_map(
             function (string $day) use ($data, $displayTimezone, $appTimezone): array {
-                $dayData = $data[$day];
+                $dayData = $data[$day] ?? ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null];
 
                 if (filled($dayData['starts_at'] ?? null)) {
                     $dayData['starts_at'] = Carbon::parse($dayData['starts_at'], $appTimezone)
