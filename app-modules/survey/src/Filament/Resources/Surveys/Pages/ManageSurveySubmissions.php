@@ -113,16 +113,17 @@ class ManageSurveySubmissions extends ManageRelatedRecords
                     ->modalHeading(fn (SurveySubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
                     ->schema(function (SurveySubmission $record): ?array {
                         assert($record->submissible instanceof Survey);
+
                         return ($record->author && $record->submissible->is_authenticated) ? [
-                        Section::make('Authenticated author')
-                            ->schema([
-                                TextEntry::make('author.' . $record->author::displayNameKey())
-                                    ->label('Name'),
-                                TextEntry::make('author.primaryEmailAddress.address')
-                                    ->label('Email address'),
-                            ])
-                            ->columns(2),
-                    ] : null;
+                            Section::make('Authenticated author')
+                                ->schema([
+                                    TextEntry::make('author.' . $record->author::displayNameKey())
+                                        ->label('Name'),
+                                    TextEntry::make('author.primaryEmailAddress.address')
+                                        ->label('Email address'),
+                                ])
+                                ->columns(2),
+                        ] : null;
                     })
                     ->modalContent(fn (SurveySubmission $record) => view('survey::submission', ['submission' => $record]))
                     ->visible(fn (SurveySubmission $record) => $record->submitted_at),

@@ -109,6 +109,7 @@ class EngagementsRelationManager extends RelationManager
                                         EngagementBody::make('body')
                                             ->state(function (Timeline $record): HtmlString {
                                                 assert($record->timelineable instanceof Engagement);
+
                                                 return $record->timelineable->getBody();
                                             })
                                             ->columnSpanFull(),
@@ -149,6 +150,7 @@ class EngagementsRelationManager extends RelationManager
                         TextEntry::make('subject')
                             ->state(function (Timeline $record): ?string {
                                 assert($record->timelineable instanceof EngagementResponse);
+
                                 return $record->timelineable->subject;
                             })
                             ->hidden(fn ($state): bool => blank($state))
@@ -156,6 +158,7 @@ class EngagementsRelationManager extends RelationManager
                         EngagementBody::make('body')
                             ->state(function (Timeline $record): HtmlString {
                                 assert($record->timelineable instanceof EngagementResponse);
+
                                 return $record->timelineable->getBody();
                             })
                             ->columnSpanFull(),
@@ -165,6 +168,7 @@ class EngagementsRelationManager extends RelationManager
                             ->dateTime()
                             ->state(function (Timeline $record): string {
                                 assert($record->timelineable instanceof EngagementResponse);
+
                                 return $record->timelineable->sent_at;
                             }),
                     ])->grow(false),
