@@ -50,6 +50,8 @@
     use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\ProgramsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\CasesRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Widgets\StudentAcademicStats;
+    use App\Enums\Feature;
+    use Illuminate\Support\Facades\Gate;
 @endphp
 
 <x-filament-panels::page>
@@ -74,13 +76,15 @@
         <div class="flex flex-col gap-8 lg:col-span-1 xl:col-span-2">
             @livewire(StudentAcademicStats::class, ['record' => $this->getRecord()])
 
-            @livewire(
-                StudentAlertInfoBarWidget::class,
-                [
-                    'record' => $this->getRecord(),
-                    'alertsUrl' => StudentResource::getUrl('alerts', ['record' => $this->getRecord()]),
-                ]
-            )
+            @if (Gate::check(Feature::EarlyAlert->getGateName()))
+                @livewire(
+                    StudentAlertInfoBarWidget::class,
+                    [
+                        'record' => $this->getRecord(),
+                        'alertsUrl' => StudentResource::getUrl('alerts', ['record' => $this->getRecord()]),
+                    ]
+                )
+            @endif
 
             <x-student-data-model::filament.resources.educatables.view-educatable.relation-managers
                 :managers="[

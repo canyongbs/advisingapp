@@ -43,14 +43,39 @@ use AdvisingApp\Alert\Presets\AlertPreset;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
+use App\Models\User;
+use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
 beforeEach(function () {
     DB::statement('DROP VIEW IF EXISTS student_alerts');
+});
+
+it('is gated with proper access control', function () {
+    $user = User::factory()->create();
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->earlyAlert = false;
+    $settings->save();
+
+    actingAs($user);
+
+    get(ManageAlerts::getUrl())->assertForbidden();
+
+    $settings->data->addons->earlyAlert = true;
+    $settings->save();
+
+    get(ManageAlerts::getUrl())->assertForbidden();
+
+    $user->givePermissionTo('settings.view-any');
+
+    get(ManageAlerts::getUrl())->assertSuccessful();
 });
 
 it('saves without showing modal when no alerts are being disabled', function () {

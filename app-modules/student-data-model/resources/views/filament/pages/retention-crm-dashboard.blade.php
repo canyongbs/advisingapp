@@ -35,6 +35,8 @@
     use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
     use AdvisingApp\Alert\Filament\Widgets\AlertStats;
     use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
+    use App\Enums\Feature;
+    use Illuminate\Support\Facades\Gate;
 
     $visibleWidgets = collect($this->getVisibleWidgets())->reject(fn ($widget) => $widget->widget === RefreshWidget::class);
 
@@ -55,15 +57,18 @@
 
     {{ $this->filtersForm }}
 
-    <x-filament::section>
-        <x-slot name="heading">Alert Insights</x-slot>
+    @if (Gate::check(Feature::EarlyAlert->getGateName()))
+        <x-filament::section>
+            <x-slot name="heading">Alert Insights</x-slot>
 
-        <x-filament-widgets::widgets
-            :columns="$this->getColumns()"
-            :data="['pageFilters' => $this->filters, ...$this->getWidgetData()]"
-            :widgets="$alertWidgets"
-        />
-    </x-filament::section>
+            <x-filament-widgets::widgets
+                :columns="$this->getColumns()"
+                :data="['pageFilters' => $this->filters, ...$this->getWidgetData()]"
+                :widgets="$alertWidgets"
+            />
+        </x-filament::section>
+    @endif
+    
 
     <x-filament-widgets::widgets
         :columns="$this->getColumns()"

@@ -43,6 +43,7 @@ use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
+use App\Enums\Feature;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\PaginationMode;
@@ -50,6 +51,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Gate;
 
 class StudentsActionCenterWidget extends TableWidget
 {
@@ -92,6 +94,7 @@ class StudentsActionCenterWidget extends TableWidget
                     ->openUrlInNewTab(),
                 TextColumn::make('alerts_count')
                     ->label('Alerts')
+                    ->visible(Gate::check(Feature::EarlyAlert->getGateName()))
                     ->sortable(),
                 TextColumn::make('engagement_responses_count')
                     ->label('New Messages')

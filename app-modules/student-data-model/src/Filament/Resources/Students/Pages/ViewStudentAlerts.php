@@ -41,6 +41,7 @@ use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\Concerns\HasStudentHeader;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Enums\Feature;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
@@ -50,6 +51,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\Gate;
 
 class ViewStudentAlerts extends Page implements HasTable
 {
@@ -70,6 +72,10 @@ class ViewStudentAlerts extends Page implements HasTable
 
     public static function canAccess(array $parameters = []): bool
     {
+        if (! Gate::check(Feature::EarlyAlert->getGateName())) {
+            return false;
+        }
+        
         if (isset($parameters['record']) && ! static::getResource()::canView($parameters['record'])) {
             return false;
         }
