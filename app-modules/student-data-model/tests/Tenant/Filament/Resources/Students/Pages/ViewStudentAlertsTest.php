@@ -68,10 +68,10 @@ it('requires proper access', function () {
         'record' => $student->getKey(),
     ])
         ->assertForbidden();
-    
+
     $settings->data->addons->earlyAlert = true;
     $settings->save();
-    
+
     livewire(ViewStudentAlerts::class, [
         'record' => $student->getKey(),
     ])
