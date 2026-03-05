@@ -38,9 +38,7 @@ namespace AdvisingApp\Alert\Filament\Widgets;
 
 use AdvisingApp\Alert\Models\StudentAlert;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Enums\Feature;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
 
 class StudentAlertInfoBarWidget extends Widget

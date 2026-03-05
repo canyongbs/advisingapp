@@ -68,7 +68,6 @@
             />
         </x-filament::section>
     @endif
-    
 
     <x-filament-widgets::widgets
         :columns="$this->getColumns()"

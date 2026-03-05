@@ -75,7 +75,7 @@ class ViewStudentAlerts extends Page implements HasTable
         if (! Gate::check(Feature::EarlyAlert->getGateName())) {
             return false;
         }
-        
+
         if (isset($parameters['record']) && ! static::getResource()::canView($parameters['record'])) {
             return false;
         }
