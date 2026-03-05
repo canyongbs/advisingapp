@@ -48,6 +48,7 @@ use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\Timeline\Models\Timeline;
 use App\Infolists\Components\EngagementBody;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -106,7 +107,10 @@ class EngagementsRelationManager extends RelationManager
                                             ->visible(fn (Timeline $record): bool => $record->timelineable instanceof Engagement && $record->timelineable->channel === NotificationChannel::Email)
                                             ->columnSpanFull(),
                                         EngagementBody::make('body')
-                                            ->state(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
+                                            ->state(function (Timeline $record): HtmlString {
+                                                assert($record->timelineable instanceof Engagement);
+                                                return $record->timelineable->getBody();
+                                            })
                                             ->columnSpanFull(),
                                     ]),
                             ]),
@@ -128,7 +132,7 @@ class EngagementsRelationManager extends RelationManager
                                         Section::make()
                                             ->schema([
                                                 TextEntry::make('type')
-                                                    ->state(fn (EmailMessageEvent|SmsMessageEvent $record): string => $record->type?->getLabel()),
+                                                    ->state(fn (EmailMessageEvent|SmsMessageEvent $record): string => $record->type->getLabel()),
                                                 TextEntry::make('occured_at')
                                                     ->dateTime()
                                                     ->state(fn (EmailMessageEvent|SmsMessageEvent $record): string => $record->occurred_at->format('Y-m-d H:i:s')),
@@ -143,22 +147,32 @@ class EngagementsRelationManager extends RelationManager
                 Flex::make([
                     Section::make([
                         TextEntry::make('subject')
-                            ->state(fn (Timeline $record): ?string => $record->timelineable->subject)
+                            ->state(function (Timeline $record): ?string {
+                                assert($record->timelineable instanceof EngagementResponse);
+                                return $record->timelineable->subject;
+                            })
                             ->hidden(fn ($state): bool => blank($state))
                             ->columnSpanFull(),
                         EngagementBody::make('body')
-                            ->state(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
+                            ->state(function (Timeline $record): HtmlString {
+                                assert($record->timelineable instanceof EngagementResponse);
+                                return $record->timelineable->getBody();
+                            })
                             ->columnSpanFull(),
                     ]),
                     Section::make([
                         TextEntry::make('sent_at')
                             ->dateTime()
-                            ->state(fn (Timeline $record): string => $record->timelineable->sent_at),
+                            ->state(function (Timeline $record): string {
+                                assert($record->timelineable instanceof EngagementResponse);
+                                return $record->timelineable->sent_at;
+                            }),
                     ])->grow(false),
                 ])
                     ->from('md')
                     ->columnSpanFull(),
             ],
+            default => throw new Exception('Invalid timelineable item.'),
         });
     }
 
@@ -196,11 +210,13 @@ class EngagementsRelationManager extends RelationManager
                     ->icon(fn (string $state) => match ($state) {
                         'Outbound' => 'heroicon-o-arrow-up-tray',
                         'Inbound' => 'heroicon-o-arrow-down-tray',
+                        default => null,
                     }),
                 TextColumn::make('status')
                     ->state(fn (Timeline $record) => match ($record->timelineable::class) {
                         EngagementResponse::class => $record->timelineable->status,
                         Engagement::class => EngagementDisplayStatus::getStatus($record->timelineable),
+                        default => 'N/A',
                     })
                     ->badge(),
                 TextColumn::make('subject')

@@ -154,7 +154,7 @@ class SurveyWidgetController extends Controller
         $authentication = new SurveyAuthentication();
         $authentication->author()->associate($author);
         $authentication->submissible()->associate($survey);
-        $authentication->code = Hash::make($code);
+        $authentication->code = Hash::make((string) $code);
         $authentication->save();
 
         Notification::route('mail', [
@@ -183,7 +183,7 @@ class SurveyWidgetController extends Controller
 
         $request->validate([
             'code' => ['required', 'integer', 'digits:6', function (string $attribute, int $value, Closure $fail) use ($authentication) {
-                if (Hash::check($value, $authentication->code)) {
+                if (Hash::check((string) $value, $authentication->code)) {
                     return;
                 }
 
@@ -245,7 +245,7 @@ class SurveyWidgetController extends Controller
             $authentication->delete();
         }
 
-        $submission->submitted_at = now();
+        $submission->submitted_at = now()->toImmutable();
 
         $submission->save();
 

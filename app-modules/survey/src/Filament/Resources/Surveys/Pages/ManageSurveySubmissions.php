@@ -40,6 +40,7 @@ use AdvisingApp\Form\Enums\FormSubmissionStatus;
 use AdvisingApp\Form\Exports\FormSubmissionExport;
 use AdvisingApp\Form\Filament\Tables\Filters\FormSubmissionStatusFilter;
 use AdvisingApp\Survey\Filament\Resources\Surveys\SurveyResource;
+use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Survey\Models\SurveySubmission;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\Action;
@@ -54,6 +55,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ManageSurveySubmissions extends ManageRelatedRecords
@@ -97,6 +99,7 @@ class ManageSurveySubmissions extends ManageRelatedRecords
                 Action::make('export')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->action(function () {
+                        assert($this->getOwnerRecord() instanceof Survey);
                         $filename = str("survey-submissions-{$this->getOwnerRecord()->name}-")
                             ->append(now()->format('Y-m-d-Hisv'))
                             ->slug()
@@ -108,7 +111,9 @@ class ManageSurveySubmissions extends ManageRelatedRecords
             ->recordActions([
                 ViewAction::make()
                     ->modalHeading(fn (SurveySubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
-                    ->schema(fn (SurveySubmission $record): ?array => ($record->author && $record->submissible->is_authenticated) ? [
+                    ->schema(function (SurveySubmission $record): ?array {
+                        assert($record->submissible instanceof Survey);
+                        return ($record->author && $record->submissible->is_authenticated) ? [
                         Section::make('Authenticated author')
                             ->schema([
                                 TextEntry::make('author.' . $record->author::displayNameKey())
@@ -117,7 +122,8 @@ class ManageSurveySubmissions extends ManageRelatedRecords
                                     ->label('Email address'),
                             ])
                             ->columns(2),
-                    ] : null)
+                    ] : null;
+                    })
                     ->modalContent(fn (SurveySubmission $record) => view('survey::submission', ['submission' => $record]))
                     ->visible(fn (SurveySubmission $record) => $record->submitted_at),
                 DeleteAction::make(),
@@ -126,7 +132,8 @@ class ManageSurveySubmissions extends ManageRelatedRecords
                 BulkActionGroup::make([
                     BulkAction::make('Export')
                         ->icon('heroicon-o-arrow-down-tray')
-                        ->action(function ($records) {
+                        ->action(function (Collection $records) {
+                            assert($this->getOwnerRecord() instanceof Survey);
                             $filename = str("selected-survey-submissions-{$this->getOwnerRecord()->name}-")
                                 ->append(now()->format('Y-m-d-Hisv'))
                                 ->slug()
