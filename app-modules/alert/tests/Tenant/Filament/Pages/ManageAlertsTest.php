@@ -55,6 +55,10 @@ use function Tests\asSuperAdmin;
 
 beforeEach(function () {
     DB::statement('DROP VIEW IF EXISTS student_alerts');
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->earlyAlert = true;
+    $settings->save();
 });
 
 it('is gated with proper access control', function () {
