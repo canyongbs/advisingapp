@@ -111,7 +111,28 @@ class DailyHoursRepeater
             ->addable(false)
             ->minItems(7)
             ->maxItems(7)
-            ->default(static::defaultValue());
+            ->default(static::defaultValue())
+            ->afterStateHydrated(static function (Repeater $component, ?array $rawState): void {
+                if (empty($rawState)) {
+                    $rawState = DailyHoursRepeater::defaultValue();
+                }
+
+                $items = [];
+
+                foreach ($rawState as $itemData) {
+                    $day = $itemData['day'] ?? null;
+
+                    if ($day) {
+                        $items[$day] = $itemData;
+                    } elseif ($uuid = $component->generateUuid()) {
+                        $items[$uuid] = $itemData;
+                    } else {
+                        $items[] = $itemData;
+                    }
+                }
+
+                $component->rawState($items);
+            });
     }
 
     /**
