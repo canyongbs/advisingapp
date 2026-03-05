@@ -111,15 +111,23 @@ class DailyHoursRepeater
             ->addable(false)
             ->minItems(7)
             ->maxItems(7)
-            ->default([
-                ['day' => 'monday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'tuesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'wednesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'thursday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'friday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'saturday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'sunday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-            ]);
+            ->default(static::defaultValue());
+    }
+
+    /**
+     * @return array<array{day: string, is_enabled: bool, starts_at: null, ends_at: null}>
+     */
+    public static function defaultValue(): array
+    {
+        return [
+            ['day' => 'monday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            ['day' => 'tuesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            ['day' => 'wednesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            ['day' => 'thursday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            ['day' => 'friday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            ['day' => 'saturday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            ['day' => 'sunday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+        ];
     }
 
     /**
