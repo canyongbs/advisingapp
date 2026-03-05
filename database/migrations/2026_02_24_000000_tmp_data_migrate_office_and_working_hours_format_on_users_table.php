@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\PersonalBookingAvailabilityFeature;
 use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
@@ -46,80 +45,74 @@ return new class () extends Migration {
 
     public function up(): void
     {
-        DB::transaction(function () {
-            DB::table('users')
-                ->where(function (Builder $query) {
-                    $query->whereNotNull('office_hours')
-                        ->orWhereNotNull('working_hours');
-                })
-                ->chunkById(100, function (Collection $users) {
-                    foreach ($users as $user) {
-                        $updates = [];
+        DB::table('users')
+            ->where(function (Builder $query) {
+                $query->whereNotNull('office_hours')
+                    ->orWhereNotNull('working_hours');
+            })
+            ->chunkById(100, function (Collection $users) {
+                foreach ($users as $user) {
+                    $updates = [];
 
-                        if (! is_null($user->office_hours)) {
-                            $officeHours = json_decode($user->office_hours, true);
+                    if (! is_null($user->office_hours)) {
+                        $officeHours = json_decode($user->office_hours, true);
 
-                            if (is_array($officeHours)) {
-                                $updates['office_hours'] = json_encode($this->convertOldToNewFormat($officeHours));
-                            }
-                        }
-
-                        if (! is_null($user->working_hours)) {
-                            $workingHours = json_decode($user->working_hours, true);
-
-                            if (is_array($workingHours)) {
-                                $updates['working_hours'] = json_encode($this->convertOldToNewFormat($workingHours));
-                            }
-                        }
-
-                        if (! empty($updates)) {
-                            DB::table('users')
-                                ->where('id', $user->id)
-                                ->update($updates);
+                        if (is_array($officeHours)) {
+                            $updates['office_hours'] = json_encode($this->convertOldToNewFormat($officeHours));
                         }
                     }
-                });
-            PersonalBookingAvailabilityFeature::activate();
-        });
+
+                    if (! is_null($user->working_hours)) {
+                        $workingHours = json_decode($user->working_hours, true);
+
+                        if (is_array($workingHours)) {
+                            $updates['working_hours'] = json_encode($this->convertOldToNewFormat($workingHours));
+                        }
+                    }
+
+                    if (! empty($updates)) {
+                        DB::table('users')
+                            ->where('id', $user->id)
+                            ->update($updates);
+                    }
+                }
+            });
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            PersonalBookingAvailabilityFeature::deactivate();
-            DB::table('users')
-                ->where(function (Builder $query) {
-                    $query->whereNotNull('office_hours')
-                        ->orWhereNotNull('working_hours');
-                })
-                ->chunkById(100, function (Collection $users) {
-                    foreach ($users as $user) {
-                        $updates = [];
+        DB::table('users')
+            ->where(function (Builder $query) {
+                $query->whereNotNull('office_hours')
+                    ->orWhereNotNull('working_hours');
+            })
+            ->chunkById(100, function (Collection $users) {
+                foreach ($users as $user) {
+                    $updates = [];
 
-                        if (! is_null($user->office_hours)) {
-                            $officeHours = json_decode($user->office_hours, true);
+                    if (! is_null($user->office_hours)) {
+                        $officeHours = json_decode($user->office_hours, true);
 
-                            if (is_array($officeHours)) {
-                                $updates['office_hours'] = json_encode($this->convertNewToOldFormat($officeHours));
-                            }
-                        }
-
-                        if (! is_null($user->working_hours)) {
-                            $workingHours = json_decode($user->working_hours, true);
-
-                            if (is_array($workingHours)) {
-                                $updates['working_hours'] = json_encode($this->convertNewToOldFormat($workingHours));
-                            }
-                        }
-
-                        if (! empty($updates)) {
-                            DB::table('users')
-                                ->where('id', $user->id)
-                                ->update($updates);
+                        if (is_array($officeHours)) {
+                            $updates['office_hours'] = json_encode($this->convertNewToOldFormat($officeHours));
                         }
                     }
-                });
-        });
+
+                    if (! is_null($user->working_hours)) {
+                        $workingHours = json_decode($user->working_hours, true);
+
+                        if (is_array($workingHours)) {
+                            $updates['working_hours'] = json_encode($this->convertNewToOldFormat($workingHours));
+                        }
+                    }
+
+                    if (! empty($updates)) {
+                        DB::table('users')
+                            ->where('id', $user->id)
+                            ->update($updates);
+                    }
+                }
+            });
     }
 
     /**
