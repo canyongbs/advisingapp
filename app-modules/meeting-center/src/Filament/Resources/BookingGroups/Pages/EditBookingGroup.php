@@ -124,7 +124,6 @@ class EditBookingGroup extends EditRecord
         $data['default_appointment_duration'] = DurationInput::mutateDataBeforeFill($data['default_appointment_duration'], hasDays: true);
         $data['default_appointment_buffer_before_duration'] = DurationInput::mutateDataBeforeFill($data['default_appointment_buffer_before_duration'], hasDays: false);
         $data['default_appointment_buffer_after_duration'] = DurationInput::mutateDataBeforeFill($data['default_appointment_buffer_after_duration'], hasDays: false);
-        $data['available_appointment_hours'] = DailyHoursRepeater::mutateDataBeforeFill($data['available_appointment_hours']);
 
         return $data;
     }

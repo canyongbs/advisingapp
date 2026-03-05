@@ -51,13 +51,13 @@ class CreateBookingGroupRequestFactory extends RequestFactory
                 'minutes' => $this->faker->numberBetween(0, 59),
             ],
             'available_appointment_hours' => [
-                ['day' => 'monday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'tuesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'wednesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'thursday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'friday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'saturday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'sunday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'monday' => ['day' => 'monday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'tuesday' => ['day' => 'tuesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'wednesday' => ['day' => 'wednesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'thursday' => ['day' => 'thursday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'friday' => ['day' => 'friday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'saturday' => ['day' => 'saturday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'sunday' => ['day' => 'sunday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
             ],
         ];
     }
