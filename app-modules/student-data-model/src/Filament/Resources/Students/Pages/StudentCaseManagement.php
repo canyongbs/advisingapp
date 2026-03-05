@@ -77,6 +77,9 @@ class StudentCaseManagement extends ManageRelatedRecords
         return static::managers($this->getRecord());
     }
 
+    /**
+     * @return array<CasesRelationManager>
+     */
     private static function managers(?Model $record = null): array
     {
         return collect([

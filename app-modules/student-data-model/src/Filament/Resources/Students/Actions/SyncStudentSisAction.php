@@ -76,8 +76,8 @@ class SyncStudentSisAction
                     }
 
                     return;
-                } catch (Throwable $e) {
-                    report($e);
+                } catch (Throwable $exception) {
+                    report($exception);
                 }
 
                 Notification::make()

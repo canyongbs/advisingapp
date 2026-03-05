@@ -75,6 +75,9 @@ class StudentAddress extends BaseModel implements Auditable
         return $this->belongsTo(Student::class, 'sisid', 'sisid');
     }
 
+    /**
+     * @return Attribute<string, string>
+     */
     protected function full(): Attribute
     {
         return Attribute::make(
