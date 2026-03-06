@@ -38,11 +38,13 @@ namespace AdvisingApp\MeetingCenter\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\MeetingCenter\Database\Factories\BookingGroupFactory;
+use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
@@ -64,6 +66,7 @@ class BookingGroup extends BaseModel implements Auditable
         'description',
         'slug',
         'book_with',
+        'meeting_owner_id',
         'default_appointment_duration',
         'is_default_appointment_buffer_enabled',
         'default_appointment_buffer_before_duration',
@@ -73,6 +76,7 @@ class BookingGroup extends BaseModel implements Auditable
 
     protected $casts = [
         'default_appointment_duration' => 'integer',
+        'book_with' => BookingGroupBookWith::class,
         'is_default_appointment_buffer_enabled' => 'boolean',
         'default_appointment_buffer_before_duration' => 'integer',
         'default_appointment_buffer_after_duration' => 'integer',
@@ -108,11 +112,34 @@ class BookingGroup extends BaseModel implements Auditable
     }
 
     /**
-     * @return HasMany<BookingGroupAppointment, $this>
+     * @return BelongsTo<User, $this>
      */
+    public function meetingOwner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'meeting_owner_id');
+    }
+
+    /**
+      * @return HasMany<BookingGroupAppointment, $this>
+      */
     public function bookingGroupAppointments(): HasMany
     {
         return $this->hasMany(BookingGroupAppointment::class);
+    }
+
+    /**
+     * @return Collection<int, string>
+     */
+    public function eligibleMeetingOwnerIds(): Collection
+    {
+        $directUserIds = $this->users()->pluck('users.id');
+        $teamIds = $this->teams()->pluck('teams.id');
+
+        $teamUserIds = $teamIds->isNotEmpty()
+            ? User::query()->whereIn('team_id', $teamIds)->pluck('id')
+            : collect();
+
+        return $directUserIds->merge($teamUserIds)->unique()->values();
     }
 
     /**

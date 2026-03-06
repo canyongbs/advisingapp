@@ -47,11 +47,16 @@ return new class () extends Migration {
             Schema::create('booking_group_appointments', function (Blueprint $table) {
                 $table->uuid('id')->primary();
                 $table->foreignUuid('booking_group_id')->constrained('booking_groups')->cascadeOnDelete();
+                $table->string('calendar_event_provider_uid')->nullable();
                 $table->string('name');
                 $table->string('email');
                 $table->timestamp('starts_at');
                 $table->timestamp('ends_at');
                 $table->timestamps();
+            });
+
+            Schema::table('calendar_events', function (Blueprint $table) {
+                $table->string('provider_uid')->nullable();
             });
 
             GroupBookingFeature::activate();
@@ -62,6 +67,10 @@ return new class () extends Migration {
     {
         DB::transaction(function () {
             GroupBookingFeature::deactivate();
+
+            Schema::table('calendar_events', function (Blueprint $table) {
+                $table->dropColumn('provider_uid');
+            });
 
             Schema::dropIfExists('booking_group_appointments');
         });

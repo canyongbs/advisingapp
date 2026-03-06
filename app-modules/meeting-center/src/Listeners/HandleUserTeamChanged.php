@@ -34,23 +34,33 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+namespace AdvisingApp\MeetingCenter\Listeners;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        Schema::table('booking_groups', function (Blueprint $table) {
-            $table->string('slug')->nullable()->unique();
-            $table->string('book_with')->default('all');
-        });
-    }
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use App\Events\UserTeamChanged;
+use App\Features\GroupBookingFeature;
 
-    public function down(): void
+class HandleUserTeamChanged
+{
+    public function handle(UserTeamChanged $event): void
     {
-        Schema::table('booking_groups', function (Blueprint $table) {
-            $table->dropColumn(['slug', 'book_with']);
-        });
+        if (! GroupBookingFeature::active()) {
+            return;
+        }
+
+        if (blank($event->previousTeamId) || $event->previousTeamId === $event->currentTeamId) {
+            return;
+        }
+
+        BookingGroup::query()
+            ->where('meeting_owner_id', $event->user->id)
+            ->whereHas('teams', fn ($query) => $query->whereKey($event->previousTeamId))
+            ->whereDoesntHave('users', fn ($query) => $query->whereKey($event->user->id))
+            ->when(
+                filled($event->currentTeamId),
+                fn ($query) => $query->whereDoesntHave('teams', fn ($teamQuery) => $teamQuery->whereKey($event->currentTeamId)),
+            )
+            ->get()
+            ->each(fn (BookingGroup $bookingGroup): mixed => $bookingGroup->users()->syncWithoutDetaching([$event->user->id]));
     }
-};
+}

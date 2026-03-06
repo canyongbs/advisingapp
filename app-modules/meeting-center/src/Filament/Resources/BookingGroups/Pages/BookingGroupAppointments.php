@@ -74,6 +74,19 @@ class BookingGroupAppointments extends ManageRelatedRecords
                 TextColumn::make('name')
                     ->label('Name')
                     ->searchable()
+                    ->state(function (BookingGroupAppointment $record): string {
+                        $educatable = app(ResolveEducatableFromEmail::class)($record->email);
+
+                        if ($educatable instanceof Student) {
+                            return "{$record->name} (Student)";
+                        }
+
+                        if ($educatable instanceof Prospect) {
+                            return "{$record->name} (Prospect)";
+                        }
+
+                        return $record->name;
+                    })
                     ->url(function (BookingGroupAppointment $record): ?string {
                         $educatable = app(ResolveEducatableFromEmail::class)($record->email);
 

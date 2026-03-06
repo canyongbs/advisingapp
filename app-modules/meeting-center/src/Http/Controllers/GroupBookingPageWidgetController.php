@@ -45,7 +45,6 @@ use App\Features\GroupBookingFeature;
 use App\Http\Controllers\Controller;
 use App\Settings\CollegeBrandingSettings;
 use Carbon\Carbon;
-use Carbon\CarbonInterval;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -133,6 +132,21 @@ class GroupBookingPageWidgetController extends Controller
             ->firstOrFail();
 
         $members = $bookingGroup->allMembers();
+        $meetingOwner = $bookingGroup->meetingOwner;
+
+        if (! $meetingOwner || ! $members->contains('id', $meetingOwner->id)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This booking group does not have a valid meeting owner configured.',
+            ], 422);
+        }
+
+        if (! $meetingOwner->calendar?->provider_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This booking group does not have a valid meeting owner calendar configured.',
+            ], 422);
+        }
 
         $startsAt = Carbon::parse($request->validated('starts_at'));
         $endsAt = Carbon::parse($request->validated('ends_at'));
@@ -150,17 +164,6 @@ class GroupBookingPageWidgetController extends Controller
 
         $conflictCheckStart = $startsAt->copy()->subMinutes($maxBuffer);
         $conflictCheckEnd = $endsAt->copy()->addMinutes($maxBuffer);
-
-        $bufferBefore = $bookingGroup->is_default_appointment_buffer_enabled
-            ? $bookingGroup->default_appointment_buffer_before_duration
-            : 0;
-
-        $bufferAfter = $bookingGroup->is_default_appointment_buffer_enabled
-            ? $bookingGroup->default_appointment_buffer_after_duration
-            : 0;
-
-        $calendarStartsAt = $startsAt->copy()->subMinutes($bufferBefore);
-        $calendarEndsAt = $endsAt->copy()->addMinutes($bufferAfter);
 
         // Validate the requested slot fits within regenerated available blocks
         $availableBlocks = app(GetAvailableGroupAppointmentSlots::class)(
@@ -183,7 +186,7 @@ class GroupBookingPageWidgetController extends Controller
             ], 409);
         }
 
-        return DB::transaction(function () use ($bookingGroup, $members, $startsAt, $endsAt, $calendarStartsAt, $calendarEndsAt, $conflictCheckStart, $conflictCheckEnd, $bufferBefore, $bufferAfter, $request) {
+        return DB::transaction(function () use ($bookingGroup, $members, $meetingOwner, $startsAt, $endsAt, $conflictCheckStart, $conflictCheckEnd, $request) {
             // Check for overlapping events across ALL members' calendars, accounting for buffer time
             foreach ($members as $member) {
                 if (! $member->calendar) {
@@ -205,40 +208,42 @@ class GroupBookingPageWidgetController extends Controller
                 }
             }
 
-            // Create calendar events on each member's connected calendar with buffer included
-            foreach ($members as $member) {
-                if (! $member->calendar) {
-                    continue;
-                }
+            $groupAppointmentConflict = BookingGroupAppointment::query()
+                ->whereBelongsTo($bookingGroup)
+                ->where('starts_at', '<', $conflictCheckEnd)
+                ->where('ends_at', '>', $conflictCheckStart)
+                ->lockForUpdate()
+                ->exists();
 
-                $description = 'Booked via group booking page: ' . $bookingGroup->name;
-
-                if ($bufferBefore > 0 || $bufferAfter > 0) {
-                    $description .= "\n\nAppointment: " . $startsAt->format('g:i A') . ' - ' . $endsAt->format('g:i A');
-
-                    if ($bufferBefore > 0) {
-                        $description .= "\nBuffer before: " . CarbonInterval::minutes($bufferBefore)->cascade()->forHumans(['short' => true]);
-                    }
-
-                    if ($bufferAfter > 0) {
-                        $description .= "\nBuffer after: " . CarbonInterval::minutes($bufferAfter)->cascade()->forHumans(['short' => true]);
-                    }
-                }
-
-                CalendarEvent::create([
-                    'calendar_id' => $member->calendar->id,
-                    'title' => 'Group Meeting with ' . $request->validated('name'),
-                    'description' => $description,
-                    'starts_at' => $calendarStartsAt,
-                    'ends_at' => $calendarEndsAt,
-                    'attendees' => [
-                        $request->validated('email'),
-                    ],
-                ]);
+            if ($groupAppointmentConflict) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This time slot has already been booked. Please select another time.',
+                ], 409);
             }
+
+            $description = 'Booked via group booking page: ' . $bookingGroup->name;
+
+            $attendees = $members
+                ->pluck('email')
+                ->push($request->validated('email'))
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
+
+            $calendarEvent = CalendarEvent::create([
+                'calendar_id' => $meetingOwner->calendar->id,
+                'title' => 'Group Meeting with ' . $request->validated('name'),
+                'description' => $description,
+                'starts_at' => $startsAt,
+                'ends_at' => $endsAt,
+                'attendees' => $attendees,
+            ]);
 
             $appointment = BookingGroupAppointment::create([
                 'booking_group_id' => $bookingGroup->id,
+                'calendar_event_provider_uid' => $calendarEvent->provider_uid,
                 'name' => $request->validated('name'),
                 'email' => $request->validated('email'),
                 'starts_at' => $startsAt,

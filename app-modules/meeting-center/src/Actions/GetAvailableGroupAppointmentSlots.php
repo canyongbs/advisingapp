@@ -38,6 +38,7 @@ namespace AdvisingApp\MeetingCenter\Actions;
 
 use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use App\Models\User;
 use Carbon\CarbonPeriod;
@@ -78,6 +79,9 @@ class GetAvailableGroupAppointmentSlots
         $monthEnd = Carbon::create($year, $month, 1)->endOfMonth()->endOfDay();
 
         $allBusyPeriods = $this->getAllMemberBusyPeriods($members, $monthStart, $monthEnd, $maxBuffer);
+        $allBusyPeriods = $allBusyPeriods->merge(
+            $this->getGroupAppointmentBusyPeriods($bookingGroup, $monthStart, $monthEnd, $maxBuffer),
+        );
 
         $now = now();
         $blocks = [];
@@ -302,6 +306,25 @@ class GetAvailableGroupAppointmentSlots
                 return [
                     'start' => $busy['start']->copy()->subMinutes($maxBuffer),
                     'end' => $busy['end']->copy()->addMinutes($maxBuffer),
+                ];
+            })
+            ->values();
+    }
+
+    /**
+     * @return Collection<int, array{start: Carbon, end: Carbon}>
+     */
+    protected function getGroupAppointmentBusyPeriods(BookingGroup $bookingGroup, Carbon $start, Carbon $end, int $maxBuffer): Collection
+    {
+        return BookingGroupAppointment::query()
+            ->whereBelongsTo($bookingGroup)
+            ->where('starts_at', '<', $end)
+            ->where('ends_at', '>', $start)
+            ->get()
+            ->map(function (BookingGroupAppointment $appointment) use ($maxBuffer) {
+                return [
+                    'start' => $appointment->starts_at->copy()->subMinutes($maxBuffer),
+                    'end' => $appointment->ends_at->copy()->addMinutes($maxBuffer),
                 ];
             })
             ->values();

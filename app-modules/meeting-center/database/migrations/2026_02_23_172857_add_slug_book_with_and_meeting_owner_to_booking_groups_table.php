@@ -34,21 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory;
-
 use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
-use Worksome\RequestFactories\RequestFactory;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-class EditBookingGroupRequestFactory extends RequestFactory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
-            'slug' => str($this->faker->unique()->words(3, true))->slug()->toString(),
-            'description' => $this->faker->paragraph(),
-            'book_with' => BookingGroupBookWith::All->value,
-            'meeting_owner_id' => null,
-        ];
+        Schema::table('booking_groups', function (Blueprint $table) {
+            $table->string('slug')->nullable()->unique();
+            $table->string('book_with')->default(BookingGroupBookWith::All->value);
+            $table->foreignUuid('meeting_owner_id')->nullable()->constrained('users')->nullOnDelete();
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('booking_groups', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('meeting_owner_id');
+            $table->dropColumn(['slug', 'book_with']);
+        });
+    }
+};
