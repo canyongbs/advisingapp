@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Report\Filament\Exports\MostRecentStudentsExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
@@ -103,7 +104,8 @@ class MostRecentStudentsTable extends BaseWidget
             })
             ->columns([
                 TextColumn::make(Student::displayNameKey())
-                    ->label('Name'),
+                    ->label('Name')
+                    ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record])),
                 TextColumn::make('primaryEmailAddress.address')
                     ->label('Email'),
                 TextColumn::make('sisid')
