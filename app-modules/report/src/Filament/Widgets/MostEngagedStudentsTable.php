@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Report\Filament\Exports\MostActivelyEngagedStudentsExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
@@ -107,7 +108,9 @@ class MostEngagedStudentsTable extends BaseWidget
             ->paginated(false)
             ->columns([
                 TextColumn::make('full_name')
-                    ->label('Name'),
+                    ->label('Name')
+                    ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record]))
+                    ->openUrlInNewTab(),
                 TextColumn::make('primaryEmailAddress.address')
                     ->label('Email'),
                 TextColumn::make('engagements_count')
