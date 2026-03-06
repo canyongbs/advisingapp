@@ -182,6 +182,8 @@ class ManageLicenseSettings extends SettingsPage
                                 ->live(),
                             Toggle::make('data.addons.projectManagement')
                                 ->label('Project Management'),
+                            Toggle::make('data.addons.earlyAlert')
+                                ->label('Early Alert'),
                         ]
                     ),
             ])
