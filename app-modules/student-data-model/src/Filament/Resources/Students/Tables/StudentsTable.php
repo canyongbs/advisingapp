@@ -179,17 +179,11 @@ class StudentsTable
                             ->label('Number of Programs')
                             ->attributeLabel(fn (array $settings): string => Str::plural('program', $settings['count']))
                             ->icon('heroicon-m-academic-cap'),
-                        TextConstraint::make('programSisid')
-                            ->label('Program SISID')
-                            ->relationship('programs', 'sisid'),
-                        TextConstraint::make('programOtherid')
-                            ->label('Program STUID')
-                            ->relationship('programs', 'otherid'),
                         TextConstraint::make('programDivision')
                             ->label('Program College')
                             ->relationship('programs', 'division'),
-                        TextConstraint::make('programDescr')
-                            ->label('Program Description')
+                        TextConstraint::make('programName')
+                            ->label('Program Name')
                             ->relationship('programs', 'descr'),
                         TextConstraint::make('programFoi')
                             ->label('Program Field of Interest')
