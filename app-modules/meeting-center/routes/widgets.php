@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\MeetingCenter\Http\Controllers\EventRegistrationWidgetController;
+use AdvisingApp\MeetingCenter\Http\Controllers\GroupBookingPageWidgetController;
 use AdvisingApp\MeetingCenter\Http\Controllers\PersonalBookingPageWidgetController;
 use AdvisingApp\MeetingCenter\Http\Middleware\EnsureEventRegistrationFormIsEmbeddableAndAuthorized;
 use AdvisingApp\MeetingCenter\Http\Middleware\EventRegistrationWidgetCors;
@@ -92,11 +93,12 @@ Route::middleware([
     'api',
     EncryptCookies::class,
 ])
-    ->prefix('widgets/personal-booking-page')
-    ->name('widgets.personal-booking-page.')
+    ->prefix('widgets/booking-page')
+    ->name('widgets.booking-page.')
     ->group(function () {
-        Route::prefix('api/{slug}')
-            ->name('api.')
+        // Personal booking API routes
+        Route::prefix('personal/api/{slug}')
+            ->name('personal.api.')
             ->group(function () {
                 Route::get('/', [PersonalBookingPageWidgetController::class, 'assets'])
                     ->name('assets');
@@ -111,6 +113,24 @@ Route::middleware([
                     ->name('book');
             });
 
+        // Group booking API routes
+        Route::prefix('group/api/{slug}')
+            ->name('group.api.')
+            ->group(function () {
+                Route::get('/', [GroupBookingPageWidgetController::class, 'assets'])
+                    ->name('assets');
+
+                Route::get('entry', [GroupBookingPageWidgetController::class, 'view'])
+                    ->name('entry');
+
+                Route::get('available-slots', [GroupBookingPageWidgetController::class, 'availableSlots'])
+                    ->name('available-slots');
+
+                Route::post('book', [GroupBookingPageWidgetController::class, 'book'])
+                    ->name('book');
+            });
+
+        // Shared asset serving route for both personal and group booking widgets
         // This route MUST remain at /widgets/... in order to catch requests to asset files and return the correct headers
         // NGINX has been configured to route all requests for assets under /widgets to the application
         Route::get('{file?}', [PersonalBookingPageWidgetController::class, 'asset'])

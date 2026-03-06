@@ -36,6 +36,7 @@
 
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\CreateBookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory\CreateBookingGroupRequestFactory;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
@@ -92,6 +93,10 @@ it('validates the inputs', function (CreateBookingGroupRequestFactory $data, arr
         CreateBookingGroupRequestFactory::new()->state(['name' => str()->random(256)]),
         ['name' => 'max'],
     ],
+    'slug required' => fn () => [
+        CreateBookingGroupRequestFactory::new()->state(['slug' => null]),
+        ['slug' => 'required'],
+    ],
     'description string' => fn () => [
         CreateBookingGroupRequestFactory::new()->state(['description' => 1]),
         ['description' => 'string'],
@@ -99,6 +104,10 @@ it('validates the inputs', function (CreateBookingGroupRequestFactory $data, arr
     'description max' => fn () => [
         CreateBookingGroupRequestFactory::new()->state(['description' => str()->random(65536)]),
         ['description' => 'max'],
+    ],
+    'meeting owner required' => fn () => [
+        CreateBookingGroupRequestFactory::new(),
+        ['meeting_owner_id' => 'required'],
     ],
 ]);
 
@@ -114,10 +123,13 @@ it('can create a booking group with users and teams', function () {
 
     $users = User::factory()->count(3)->create();
     $teams = Team::factory()->count(2)->create();
+    $meetingOwner = $users->first();
+    Calendar::factory()->for($meetingOwner)->create(['provider_id' => 'owner-calendar-id']);
 
     $request = CreateBookingGroupRequestFactory::new()->state([
         'users' => $users->pluck('id')->toArray(),
         'teams' => $teams->pluck('id')->toArray(),
+        'meeting_owner_id' => $meetingOwner->id,
     ])->create();
 
     livewire(CreateBookingGroup::class)
@@ -133,6 +145,7 @@ it('can create a booking group with users and teams', function () {
 
     expect($bookingGroup->users)->toHaveCount(3);
     expect($bookingGroup->teams)->toHaveCount(2);
+    expect($bookingGroup->meeting_owner_id)->toBe($meetingOwner->id);
 
     $undoRepeaterFake();
 });
@@ -147,7 +160,13 @@ it('tracks created_by user correctly', function () {
 
     actingAs($user);
 
-    $request = CreateBookingGroupRequestFactory::new()->create();
+    $meetingOwner = User::factory()->create();
+    Calendar::factory()->for($meetingOwner)->create(['provider_id' => 'owner-calendar-id']);
+
+    $request = CreateBookingGroupRequestFactory::new()->state([
+        'users' => [$meetingOwner->id],
+        'meeting_owner_id' => $meetingOwner->id,
+    ])->create();
 
     livewire(CreateBookingGroup::class)
         ->fillForm($request)
@@ -160,4 +179,38 @@ it('tracks created_by user correctly', function () {
     expect($bookingGroup->last_updated_by_id)->toBe($user->id);
 
     $undoRepeaterFake();
+});
+
+it('validates meeting owner must be in the group', function () {
+    asSuperAdmin();
+
+    $groupUser = User::factory()->create();
+    $meetingOwner = User::factory()->create();
+    Calendar::factory()->for($meetingOwner)->create(['provider_id' => 'owner-calendar-id']);
+
+    $request = CreateBookingGroupRequestFactory::new()->state([
+        'users' => [$groupUser->id],
+        'meeting_owner_id' => $meetingOwner->id,
+    ])->create();
+
+    livewire(CreateBookingGroup::class)
+        ->fillForm($request)
+        ->call('create')
+        ->assertHasFormErrors(['meeting_owner_id']);
+});
+
+it('validates meeting owner must have a connected calendar', function () {
+    asSuperAdmin();
+
+    $meetingOwner = User::factory()->create();
+
+    $request = CreateBookingGroupRequestFactory::new()->state([
+        'users' => [$meetingOwner->id],
+        'meeting_owner_id' => $meetingOwner->id,
+    ])->create();
+
+    livewire(CreateBookingGroup::class)
+        ->fillForm($request)
+        ->call('create')
+        ->assertHasFormErrors(['meeting_owner_id']);
 });

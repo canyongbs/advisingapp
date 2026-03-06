@@ -41,6 +41,7 @@ use AdvisingApp\MeetingCenter\Observers\CalendarEventObserver;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @mixin IdeHelperCalendarEvent
@@ -54,6 +55,7 @@ class CalendarEvent extends BaseModel
         'starts_at',
         'ends_at',
         'provider_id',
+        'provider_uid',
         'calendar_id',
         'attendees',
         'transparency',
@@ -72,5 +74,13 @@ class CalendarEvent extends BaseModel
     public function calendar(): BelongsTo
     {
         return $this->belongsTo(Calendar::class);
+    }
+
+    /**
+     * @return HasOne<BookingGroupAppointment, $this>
+     */
+    public function bookingGroupAppointment(): HasOne
+    {
+        return $this->hasOne(BookingGroupAppointment::class, 'calendar_event_provider_uid', 'provider_uid');
     }
 }

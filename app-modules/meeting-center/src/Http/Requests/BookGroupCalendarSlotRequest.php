@@ -34,21 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory;
+namespace AdvisingApp\MeetingCenter\Http\Requests;
 
-use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
-use Worksome\RequestFactories\RequestFactory;
+use Illuminate\Foundation\Http\FormRequest;
 
-class EditBookingGroupRequestFactory extends RequestFactory
+class BookGroupCalendarSlotRequest extends FormRequest
 {
-    public function definition(): array
+    /**
+     * @return array<string, array<int, string>>
+     */
+    public function rules(): array
     {
         return [
-            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
-            'slug' => str($this->faker->unique()->words(3, true))->slug()->toString(),
-            'description' => $this->faker->paragraph(),
-            'book_with' => BookingGroupBookWith::All->value,
-            'meeting_owner_id' => null,
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
+            'starts_at' => ['required', 'date'],
+            'ends_at' => ['required', 'date', 'after:starts_at'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Please provide your name.',
+            'email.required' => 'Please provide your email address.',
+            'email.email' => 'Please provide a valid email address.',
+            'starts_at.required' => 'Please select a start time.',
+            'ends_at.required' => 'Please select an end time.',
+            'ends_at.after' => 'The end time must be after the start time.',
         ];
     }
 }

@@ -34,21 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory;
+namespace AdvisingApp\MeetingCenter\Actions;
 
-use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 
-class EditBookingGroupRequestFactory extends RequestFactory
+class GenerateGroupBookingPageEmbedCode
 {
-    public function definition(): array
+    public function __invoke(BookingGroup $bookingGroup): string
     {
-        return [
-            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
-            'slug' => str($this->faker->unique()->words(3, true))->slug()->toString(),
-            'description' => $this->faker->paragraph(),
-            'book_with' => BookingGroupBookWith::All->value,
-            'meeting_owner_id' => null,
-        ];
+        $manifestPath = Storage::disk('public')->get('widgets/booking-page/.vite/manifest.json');
+
+        if (is_null($manifestPath)) {
+            throw new RuntimeException('Vite manifest file not found.');
+        }
+
+        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+        $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
+
+        $loaderScriptUrl = url("widgets/booking-page/{$manifest['src/loader.js']['file']}");
+
+        $assetsUrl = route(name: 'widgets.booking-page.group.api.assets', parameters: ['slug' => $bookingGroup->slug]);
+
+        return <<<EOD
+        <booking-page-embed url="{$assetsUrl}"></booking-page-embed>
+        <script src="{$loaderScriptUrl}"></script>
+        EOD;
     }
 }

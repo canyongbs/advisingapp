@@ -36,6 +36,7 @@
 
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\EditBookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory\EditBookingGroupRequestFactory;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
@@ -103,6 +104,10 @@ it('validates the inputs', function (EditBookingGroupRequestFactory $data, array
         EditBookingGroupRequestFactory::new()->state(['name' => str()->random(256)]),
         ['name' => 'max'],
     ],
+    'slug required' => fn () => [
+        EditBookingGroupRequestFactory::new()->state(['slug' => null]),
+        ['slug' => 'required'],
+    ],
     'description string' => fn () => [
         EditBookingGroupRequestFactory::new()->state(['description' => 1]),
         ['description' => 'string'],
@@ -110,6 +115,10 @@ it('validates the inputs', function (EditBookingGroupRequestFactory $data, array
     'description max' => fn () => [
         EditBookingGroupRequestFactory::new()->state(['description' => str()->random(65536)]),
         ['description' => 'max'],
+    ],
+    'meeting owner required' => fn () => [
+        EditBookingGroupRequestFactory::new(),
+        ['meeting_owner_id' => 'required'],
     ],
 ]);
 
@@ -123,8 +132,12 @@ it('can edit a booking group', function () {
 
     $users = User::factory()->count(3)->create();
     $teams = Team::factory()->count(2)->create();
+    $meetingOwner = $users->first();
+    Calendar::factory()->for($meetingOwner)->create(['provider_id' => 'owner-calendar-id']);
 
-    $bookingGroup = BookingGroup::factory()->for($user, 'createdBy')->create();
+    $bookingGroup = BookingGroup::factory()->for($user, 'createdBy')->create([
+        'meeting_owner_id' => $meetingOwner->id,
+    ]);
 
     $bookingGroup->users()->attach($users);
     $bookingGroup->teams()->attach($teams);
@@ -132,6 +145,9 @@ it('can edit a booking group', function () {
     $request = EditBookingGroupRequestFactory::new()->state([
         'name' => 'Updated Name',
         'description' => 'Updated Description',
+        'users' => $users->pluck('id')->toArray(),
+        'teams' => $teams->pluck('id')->toArray(),
+        'meeting_owner_id' => $meetingOwner->id,
     ])->create();
 
     livewire(EditBookingGroup::class, [
@@ -146,6 +162,7 @@ it('can edit a booking group', function () {
 
     expect($bookingGroup->name)->toBe('Updated Name');
     expect($bookingGroup->description)->toBe('Updated Description');
+    expect($bookingGroup->meeting_owner_id)->toBe($meetingOwner->id);
 });
 
 it('tracks last_updated_by user correctly', function () {
@@ -155,14 +172,23 @@ it('tracks last_updated_by user correctly', function () {
     $editor->givePermissionTo('group_appointment.view-any');
     $editor->givePermissionTo('group_appointment.*.update');
 
-    $bookingGroup = BookingGroup::factory()->for($creator, 'createdBy')->create();
+    $meetingOwner = User::factory()->create();
+    Calendar::factory()->for($meetingOwner)->create(['provider_id' => 'owner-calendar-id']);
+
+    $bookingGroup = BookingGroup::factory()->for($creator, 'createdBy')->create([
+        'meeting_owner_id' => $meetingOwner->id,
+    ]);
+    $bookingGroup->users()->attach($meetingOwner);
 
     expect($bookingGroup->created_by_id)->toBe($creator->id);
     expect($bookingGroup->last_updated_by_id)->toBe(null);
 
     actingAs($editor);
 
-    $request = EditBookingGroupRequestFactory::new()->create();
+    $request = EditBookingGroupRequestFactory::new()->state([
+        'users' => [$meetingOwner->id],
+        'meeting_owner_id' => $meetingOwner->id,
+    ])->create();
 
     livewire(EditBookingGroup::class, [
         'record' => $bookingGroup->getRouteKey(),
@@ -175,4 +201,54 @@ it('tracks last_updated_by user correctly', function () {
 
     expect($bookingGroup->created_by_id)->toBe($creator->id);
     expect($bookingGroup->last_updated_by_id)->toBe($editor->id);
+});
+
+it('blocks save when meeting owner is no longer in selected users or teams', function () {
+    asSuperAdmin();
+
+    $meetingOwner = User::factory()->create();
+    Calendar::factory()->for($meetingOwner)->create(['provider_id' => 'owner-calendar-id']);
+
+    $bookingGroup = BookingGroup::factory()
+        ->for(User::factory(), 'createdBy')
+        ->create(['meeting_owner_id' => $meetingOwner->id]);
+
+    $bookingGroup->users()->attach($meetingOwner);
+
+    $request = EditBookingGroupRequestFactory::new()->state([
+        'users' => [],
+        'teams' => [],
+        'meeting_owner_id' => $meetingOwner->id,
+    ])->create();
+
+    livewire(EditBookingGroup::class, [
+        'record' => $bookingGroup->getRouteKey(),
+    ])
+        ->fillForm($request)
+        ->call('save')
+        ->assertHasFormErrors(['meeting_owner_id']);
+});
+
+it('validates meeting owner must have a connected calendar', function () {
+    asSuperAdmin();
+
+    $meetingOwner = User::factory()->create();
+    $bookingGroup = BookingGroup::factory()
+        ->for(User::factory(), 'createdBy')
+        ->create([
+            'meeting_owner_id' => $meetingOwner->id,
+        ]);
+    $bookingGroup->users()->attach($meetingOwner);
+
+    $request = EditBookingGroupRequestFactory::new()->state([
+        'users' => [$meetingOwner->id],
+        'meeting_owner_id' => $meetingOwner->id,
+    ])->create();
+
+    livewire(EditBookingGroup::class, [
+        'record' => $bookingGroup->getRouteKey(),
+    ])
+        ->fillForm($request)
+        ->call('save')
+        ->assertHasFormErrors(['meeting_owner_id']);
 });

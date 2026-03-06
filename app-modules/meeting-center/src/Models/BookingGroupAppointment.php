@@ -34,21 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory;
+namespace AdvisingApp\MeetingCenter\Models;
 
-use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
-use Worksome\RequestFactories\RequestFactory;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class EditBookingGroupRequestFactory extends RequestFactory
+/**
+ * @mixin IdeHelperBookingGroupAppointment
+ */
+class BookingGroupAppointment extends BaseModel
 {
-    public function definition(): array
+    protected $fillable = [
+        'booking_group_id',
+        'calendar_event_provider_uid',
+        'name',
+        'email',
+        'starts_at',
+        'ends_at',
+    ];
+
+    protected $casts = [
+        'starts_at' => 'datetime',
+        'ends_at' => 'datetime',
+    ];
+
+    /**
+     * @return BelongsTo<BookingGroup, $this>
+     */
+    public function bookingGroup(): BelongsTo
     {
-        return [
-            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
-            'slug' => str($this->faker->unique()->words(3, true))->slug()->toString(),
-            'description' => $this->faker->paragraph(),
-            'book_with' => BookingGroupBookWith::All->value,
-            'meeting_owner_id' => null,
-        ];
+        return $this->belongsTo(BookingGroup::class);
+    }
+
+    /**
+     * @return HasMany<CalendarEvent, $this>
+     */
+    public function calendarEvents(): HasMany
+    {
+        return $this->hasMany(CalendarEvent::class, 'provider_uid', 'calendar_event_provider_uid');
     }
 }

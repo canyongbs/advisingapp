@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,22 +31,34 @@
 
 </COPYRIGHT>
 */
+(function () {
+    // Get the embed element
+    const embedElement = document.querySelector('booking-page-embed');
+    if (!embedElement) throw new Error('Embed not found');
 
-namespace AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory;
+    // Get the assets URL from the element
+    const assetsUrl = embedElement.getAttribute('url');
+    if (!assetsUrl) throw new Error('Assets URL not found');
 
-use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
-use Worksome\RequestFactories\RequestFactory;
+    // Fetch the latest assets URLs
+    fetch(assetsUrl)
+        .then((response) => response.json())
+        .then((assets) => {
+            if (!assets || !assets.asset_url || !assets.entry || !assets.js) {
+                throw Error('Assets are missing or incomplete.');
+            }
 
-class EditBookingGroupRequestFactory extends RequestFactory
-{
-    public function definition(): array
-    {
-        return [
-            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
-            'slug' => str($this->faker->unique()->words(3, true))->slug()->toString(),
-            'description' => $this->faker->paragraph(),
-            'book_with' => BookingGroupBookWith::All->value,
-            'meeting_owner_id' => null,
-        ];
-    }
-}
+            embedElement.setAttribute('entry-url', assets.entry);
+
+            // Set up the global variable for Vite's dynamic imports using the asset endpoint
+            window.__VITE_BOOKING_PAGE_ASSET_URL__ = assets.asset_url;
+
+            const scriptElement = document.createElement('script');
+            scriptElement.src = assets.js;
+            scriptElement.type = 'module';
+            document.body.appendChild(scriptElement);
+        })
+        .catch((error) => {
+            console.error('Failed to load widget assets:', error);
+        });
+})();

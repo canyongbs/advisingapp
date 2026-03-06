@@ -34,21 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory;
+namespace AdvisingApp\MeetingCenter\Listeners;
 
-use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use App\Events\UserTeamChanged;
+use App\Features\GroupBookingFeature;
 
-class EditBookingGroupRequestFactory extends RequestFactory
+class HandleUserTeamChanged
 {
-    public function definition(): array
+    public function handle(UserTeamChanged $event): void
     {
-        return [
-            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
-            'slug' => str($this->faker->unique()->words(3, true))->slug()->toString(),
-            'description' => $this->faker->paragraph(),
-            'book_with' => BookingGroupBookWith::All->value,
-            'meeting_owner_id' => null,
-        ];
+        if (! GroupBookingFeature::active()) {
+            return;
+        }
+
+        if (blank($event->previousTeamId) || $event->previousTeamId === $event->currentTeamId) {
+            return;
+        }
+
+        BookingGroup::query()
+            ->where('meeting_owner_id', $event->user->id)
+            ->whereHas('teams', fn ($query) => $query->whereKey($event->previousTeamId))
+            ->whereDoesntHave('users', fn ($query) => $query->whereKey($event->user->id))
+            ->when(
+                filled($event->currentTeamId),
+                fn ($query) => $query->whereDoesntHave('teams', fn ($teamQuery) => $teamQuery->whereKey($event->currentTeamId)),
+            )
+            ->get()
+            ->each(fn (BookingGroup $bookingGroup): mixed => $bookingGroup->users()->syncWithoutDetaching([$event->user->id]));
     }
 }

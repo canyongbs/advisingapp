@@ -34,21 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory;
+namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
-use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\MeetingCenter\Actions\GenerateGroupBookingPageEmbedCode;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use App\Features\GroupBookingFeature;
+use App\Http\Controllers\Controller;
+use Illuminate\View\View;
 
-class EditBookingGroupRequestFactory extends RequestFactory
+class GroupBookingPageViewController extends Controller
 {
-    public function definition(): array
+    public function __invoke(string $slug, GenerateGroupBookingPageEmbedCode $generateEmbedCode): View
     {
-        return [
-            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
-            'slug' => str($this->faker->unique()->words(3, true))->slug()->toString(),
-            'description' => $this->faker->paragraph(),
-            'book_with' => BookingGroupBookWith::All->value,
-            'meeting_owner_id' => null,
-        ];
+        abort_unless(GroupBookingFeature::active(), 404);
+
+        $bookingGroup = BookingGroup::query()
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        $embedCode = $generateEmbedCode($bookingGroup);
+
+        return view('meeting-center::group-booking', [
+            'bookingGroup' => $bookingGroup,
+            'embedCode' => $embedCode,
+        ]);
     }
 }

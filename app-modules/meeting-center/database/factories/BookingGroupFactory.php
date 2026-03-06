@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Database\Factories;
 
+use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -54,6 +55,9 @@ class BookingGroupFactory extends Factory
         return [
             'name' => $this->faker->word(),
             'description' => $this->faker->optional()->sentence(),
+            'slug' => $this->faker->unique()->slug(),
+            'book_with' => BookingGroupBookWith::All,
+            'meeting_owner_id' => null,
             'default_appointment_duration' => 60,
             'available_appointment_hours' => [
                 'monday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
