@@ -75,7 +75,7 @@ class ProgramsRelationManager extends RelationManager
                     ->placeholder('-')
                     ->visible($sisSystem?->hasProgramsDivision() ?? true),
                 TextEntry::make('descr')
-                    ->label('Program')
+                    ->label('Program Name')
                     ->placeholder('-')
                     ->visible($sisSystem?->hasProgramsDescr() ?? true),
                 TextEntry::make('acad_plan')
@@ -154,7 +154,33 @@ class ProgramsRelationManager extends RelationManager
                     ->label('College')
                     ->visible($sisSystem?->hasProgramsDivision() ?? true),
                 TextColumn::make('descr')
-                    ->label('Program')
+                    ->label('Name')
+                    ->description(function (Program $record): ?string {
+                        $acadPlan = $record->acad_plan;
+
+                        if (blank($acadPlan)) {
+                            return null;
+                        }
+
+                        $majors = $acadPlan['major'] ?? [];
+                        $minors = $acadPlan['minor'] ?? [];
+
+                        if (blank($majors) && blank($minors)) {
+                            return null;
+                        }
+
+                        $state = [];
+
+                        if (filled($majors)) {
+                            $state[] = 'Major: ' . implode(', ', $majors);
+                        }
+
+                        if (filled($minors)) {
+                            $state[] = 'Minor: ' . implode(', ', $minors);
+                        }
+
+                        return implode('; ', $state);
+                    })
                     ->visible($sisSystem?->hasProgramsDescr() ?? true),
                 TextColumn::make('foi')
                     ->label('Field of Interest')
@@ -175,7 +201,8 @@ class ProgramsRelationManager extends RelationManager
                     ->placeholder('N/A'),
             ])
             ->recordActions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->modalHeading('Program Information'),
                 EditAction::make(),
                 DeleteAction::make()
                     ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed'),
@@ -252,8 +279,54 @@ class ProgramsRelationManager extends RelationManager
                     ->maxLength(255)
                     ->label('Division'),
                 TextInput::make('acad_plan')
-                    ->required()
-                    ->label('Academic Plan'),
+                    ->label('Academic Plan')
+                    ->afterStateHydrated(function (TextInput $component, mixed $state): void {
+                        if (! is_array($state)) {
+                            $component->state(null);
+
+                            return;
+                        }
+
+                        $majors = $state['major'] ?? [];
+                        $minors = $state['minor'] ?? [];
+
+                        if (blank($majors) && blank($minors)) {
+                            $component->state(null);
+
+                            return;
+                        }
+
+                        $parts = [];
+
+                        if (filled($majors)) {
+                            $parts[] = 'Major: ' . implode(', ', $majors);
+                        }
+
+                        if (filled($minors)) {
+                            $parts[] = 'Minor: ' . implode(', ', $minors);
+                        }
+
+                        $component->state(implode('; ', $parts));
+                    })
+                    ->dehydrateStateUsing(function (?string $state): ?array {
+                        if (blank($state)) {
+                            return null;
+                        }
+
+                        $result = ['major' => [], 'minor' => []];
+
+                        foreach (explode(';', $state) as $part) {
+                            $part = trim($part);
+
+                            if (str_starts_with(strtolower($part), 'major:')) {
+                                $result['major'] = array_map('trim', explode(',', substr($part, 6)));
+                            } elseif (str_starts_with(strtolower($part), 'minor:')) {
+                                $result['minor'] = array_map('trim', explode(',', substr($part, 6)));
+                            }
+                        }
+
+                        return $result;
+                    }),
                 TextInput::make('prog_status')
                     ->label('Program Status')
                     ->default('AC'),
