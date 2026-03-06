@@ -162,6 +162,8 @@ trait HasSharedFormConfiguration
                 $survey = $record instanceof Survey ? $record : $record->submissible;
                 $surveyStep = $record instanceof SurveyStep ? $record : null;
 
+                assert($survey instanceof Survey);
+
                 SurveyField::query()
                     ->whereBelongsTo($survey, 'submissible')
                     ->when($surveyStep, fn (EloquentBuilder $query) => $query->whereBelongsTo($surveyStep, 'step'))

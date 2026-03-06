@@ -3158,13 +3158,13 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Unable to resolve the template type TKey in call to function collect$#',
     'identifier' => 'argument.templateType',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/CheckboxesFormFieldBlock.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Unable to resolve the template type TValue in call to function collect$#',
     'identifier' => 'argument.templateType',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/CheckboxesFormFieldBlock.php',
 ];
 $ignoreErrors[] = [
@@ -6726,18 +6726,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableCareTeamWidget.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable&Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:subscribedUsers\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableSubscriptionsWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Educatables\\\\Widgets\\\\EducatableSubscriptionsWidget\\:\\:getSubscribedUsers\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableSubscriptionsWidget.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Educatables\\\\Widgets\\\\EducatableTasksWidget\\:\\:getStatusCounts\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -6748,12 +6736,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/StudentTags/StudentTagResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$e" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Actions/SyncStudentSisAction.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Comparison operation "\\>" between int\\<1, max\\> and 0 is always true\\.$#',
@@ -6810,8 +6792,8 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/StudentCaseManagement.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Students\\\\Pages\\\\StudentCaseManagement\\:\\:managers\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
+    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Students\\\\Pages\\\\StudentCaseManagement\\:\\:getRelationManagers\\(\\) should return array\\<class\\-string\\<Filament\\\\Resources\\\\RelationManagers\\\\RelationManager\\>\\|Filament\\\\Resources\\\\RelationManagers\\\\RelationGroup\\|Filament\\\\Resources\\\\RelationManagers\\\\RelationManagerConfiguration\\> but returns array\\<AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Students\\\\RelationManagers\\\\CasesRelationManager\\>\\.$#',
+    'identifier' => 'return.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/StudentCaseManagement.php',
 ];
@@ -6828,44 +6810,14 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sent_at\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/RelationManagers/EngagementsRelationManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$subject\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/RelationManagers/EngagementsRelationManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:getBody\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/RelationManagers/EngagementsRelationManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Match expression does not handle remaining value\\: class\\-string\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>&literal\\-string$#',
-    'identifier' => 'match.unhandled',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/RelationManagers/EngagementsRelationManager.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Match expression does not handle remaining value\\: string$#',
     'identifier' => 'match.unhandled',
-    'count' => 3,
+    'count' => 2,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/RelationManagers/EngagementsRelationManager.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$morphQuery of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/RelationManagers/EngagementsRelationManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe method call on non\\-nullable type AdvisingApp\\\\Notification\\\\Enums\\\\EmailMessageEventType\\|AdvisingApp\\\\Notification\\\\Enums\\\\SmsMessageEventType\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/RelationManagers/EngagementsRelationManager.php',
 ];
@@ -6876,46 +6828,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/RelationManagers/EnrollmentsRelationManager.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Students\\\\RelationManagers\\\\EventsRelationManager\\:\\:getHeaderActions\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/RelationManagers/EventsRelationManager.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Comparison operation "\\>" between int\\<1, max\\> and 0 is always true\\.$#',
     'identifier' => 'greater.alwaysTrue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/RelationManagers/ProgramsRelationManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$otherid\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/StudentResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$preferred\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/StudentResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryEmailAddress\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/StudentResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$primaryPhoneNumber\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/StudentResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sisid\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/StudentResource.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Students\\\\StudentResource\\:\\:getGlobalSearchEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
@@ -6990,18 +6906,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Scopes/LicensedToEducatable.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:displayName\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Casts\\\\Attribute does not specify its types\\: TGet, TSet$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:fullAddress\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Casts\\\\Attribute does not specify its types\\: TGet, TSet$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:orderedEngagementResponses\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -7012,12 +6916,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Student.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\StudentAddress\\:\\:full\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Casts\\\\Attribute does not specify its types\\: TGet, TSet$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/StudentAddress.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\StudentDataModel\\\\Models\\\\IdeHelperStudentAddress\\:\\:\\$order \\(int\\) does not accept Illuminate\\\\Contracts\\\\Database\\\\Query\\\\Expression\\.$#',
@@ -7074,12 +6972,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/survey/src/Filament/Resources/Surveys/Pages/CreateSurvey.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$survey of method AdvisingApp\\\\Survey\\\\Filament\\\\Resources\\\\Surveys\\\\Pages\\\\CreateSurvey\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\Survey\\\\Models\\\\Survey, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Filament/Resources/Surveys/Pages/CreateSurvey.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Survey\\\\Filament\\\\Resources\\\\Surveys\\\\Pages\\\\EditSurvey\\:\\:saveFieldsFromComponents\\(\\) has parameter \\$components with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -7092,58 +6984,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/survey/src/Filament/Resources/Surveys/Pages/EditSurvey.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$survey of method AdvisingApp\\\\Survey\\\\Filament\\\\Resources\\\\Surveys\\\\Pages\\\\EditSurvey\\:\\:saveFieldsFromComponents\\(\\) expects AdvisingApp\\\\Survey\\\\Models\\\\Survey, AdvisingApp\\\\Form\\\\Models\\\\Submissible given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Filament/Resources/Surveys/Pages/EditSurvey.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Form\\\\Models\\\\Submissible\\:\\:\\$is_authenticated\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Filament/Resources/Surveys/Pages/ManageSurveySubmissions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/survey/src/Filament/Resources/Surveys/Pages/ManageSurveySubmissions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$submissions\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Filament/Resources/Surveys/Pages/ManageSurveySubmissions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$records of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Filament/Resources/Surveys/Pages/ManageSurveySubmissions.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Survey\\\\Filament\\\\Resources\\\\Surveys\\\\SurveyResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/survey/src/Filament/Resources/Surveys/SurveyResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$value of static method Illuminate\\\\Support\\\\Facades\\\\Hash\\:\\:check\\(\\) expects string, int given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Http/Controllers/SurveyWidgetController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$value of static method Illuminate\\\\Support\\\\Facades\\\\Hash\\:\\:make\\(\\) expects string, int\\<100000, 999999\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Http/Controllers/SurveyWidgetController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Survey\\\\Models\\\\IdeHelperSurveySubmission\\:\\:\\$submitted_at \\(Carbon\\\\CarbonImmutable\\|null\\) does not accept Illuminate\\\\Support\\\\Carbon\\.$#',
-    'identifier' => 'assign.propertyType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Http/Controllers/SurveyWidgetController.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Survey\\\\Livewire\\\\RenderSurvey\\:\\:\\$data type has no value type specified in iterable type array\\.$#',
