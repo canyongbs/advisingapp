@@ -105,7 +105,8 @@ class MostRecentStudentsTable extends BaseWidget
             ->columns([
                 TextColumn::make(Student::displayNameKey())
                     ->label('Name')
-                    ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record])),
+                    ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record]))
+                    ->openUrlInNewTab(),
                 TextColumn::make('primaryEmailAddress.address')
                     ->label('Email'),
                 TextColumn::make('sisid')

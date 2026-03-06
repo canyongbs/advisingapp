@@ -109,7 +109,8 @@ class MostEngagedStudentsTable extends BaseWidget
             ->columns([
                 TextColumn::make('full_name')
                     ->label('Name')
-                    ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record])),
+                    ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record]))
+                    ->openUrlInNewTab(),
                 TextColumn::make('primaryEmailAddress.address')
                     ->label('Email'),
                 TextColumn::make('engagements_count')
