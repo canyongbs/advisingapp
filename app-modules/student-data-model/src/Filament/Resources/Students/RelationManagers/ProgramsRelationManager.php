@@ -279,8 +279,54 @@ class ProgramsRelationManager extends RelationManager
                     ->maxLength(255)
                     ->label('Division'),
                 TextInput::make('acad_plan')
-                    ->required()
-                    ->label('Academic Plan'),
+                    ->label('Academic Plan')
+                    ->afterStateHydrated(function (TextInput $component, mixed $state): void {
+                        if (! is_array($state)) {
+                            $component->state(null);
+
+                            return;
+                        }
+
+                        $majors = $state['major'] ?? [];
+                        $minors = $state['minor'] ?? [];
+
+                        if (blank($majors) && blank($minors)) {
+                            $component->state(null);
+
+                            return;
+                        }
+
+                        $parts = [];
+
+                        if (filled($majors)) {
+                            $parts[] = 'Major: ' . implode(', ', $majors);
+                        }
+
+                        if (filled($minors)) {
+                            $parts[] = 'Minor: ' . implode(', ', $minors);
+                        }
+
+                        $component->state(implode('; ', $parts));
+                    })
+                    ->dehydrateStateUsing(function (?string $state): ?array {
+                        if (blank($state)) {
+                            return null;
+                        }
+
+                        $result = ['major' => [], 'minor' => []];
+
+                        foreach (explode(';', $state) as $part) {
+                            $part = trim($part);
+
+                            if (str_starts_with(strtolower($part), 'major:')) {
+                                $result['major'] = array_map('trim', explode(',', substr($part, 6)));
+                            } elseif (str_starts_with(strtolower($part), 'minor:')) {
+                                $result['minor'] = array_map('trim', explode(',', substr($part, 6)));
+                            }
+                        }
+
+                        return $result;
+                    }),
                 TextInput::make('prog_status')
                     ->label('Program Status')
                     ->default('AC'),
