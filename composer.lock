@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f7a0dd9a942ee99ddd8d997084b5746",
+    "content-hash": "5d858f9d574041a89d0f0e7cae26b7df",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -2270,16 +2270,16 @@
         },
         {
             "name": "canyongbs/filament-tiptap-editor",
-            "version": "2.3.2",
+            "version": "2.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/filament-tiptap-editor.git",
-                "reference": "d5458f73f0cf9ecddd737888d035c2ddc21ed175"
+                "reference": "67925fc687042575d669cec9779817910c655034"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/filament-tiptap-editor/zipball/d5458f73f0cf9ecddd737888d035c2ddc21ed175",
-                "reference": "d5458f73f0cf9ecddd737888d035c2ddc21ed175",
+                "url": "https://api.github.com/repos/canyongbs/filament-tiptap-editor/zipball/67925fc687042575d669cec9779817910c655034",
+                "reference": "67925fc687042575d669cec9779817910c655034",
                 "shasum": ""
             },
             "require": {
@@ -2340,9 +2340,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/filament-tiptap-editor/issues",
-                "source": "https://github.com/canyongbs/filament-tiptap-editor/tree/2.3.2"
+                "source": "https://github.com/canyongbs/filament-tiptap-editor/tree/2.3.3"
             },
-            "time": "2026-03-04T21:00:45+00:00"
+            "time": "2026-03-06T14:43:58+00:00"
         },
         {
             "name": "canyongbs/model-state-machine",
