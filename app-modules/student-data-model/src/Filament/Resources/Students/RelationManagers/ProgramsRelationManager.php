@@ -75,7 +75,7 @@ class ProgramsRelationManager extends RelationManager
                     ->placeholder('-')
                     ->visible($sisSystem?->hasProgramsDivision() ?? true),
                 TextEntry::make('descr')
-                    ->label('Program')
+                    ->label('Program Name')
                     ->placeholder('-')
                     ->visible($sisSystem?->hasProgramsDescr() ?? true),
                 TextEntry::make('acad_plan')
@@ -154,7 +154,33 @@ class ProgramsRelationManager extends RelationManager
                     ->label('College')
                     ->visible($sisSystem?->hasProgramsDivision() ?? true),
                 TextColumn::make('descr')
-                    ->label('Program')
+                    ->label('Name')
+                    ->description(function (Program $record): ?string {
+                        $acadPlan = $record->acad_plan;
+
+                        if (blank($acadPlan)) {
+                            return null;
+                        }
+
+                        $majors = $acadPlan['major'] ?? [];
+                        $minors = $acadPlan['minor'] ?? [];
+
+                        if (blank($majors) && blank($minors)) {
+                            return null;
+                        }
+
+                        $state = [];
+
+                        if (filled($majors)) {
+                            $state[] = 'Major: ' . implode(', ', $majors);
+                        }
+
+                        if (filled($minors)) {
+                            $state[] = 'Minor: ' . implode(', ', $minors);
+                        }
+
+                        return implode('; ', $state);
+                    })
                     ->visible($sisSystem?->hasProgramsDescr() ?? true),
                 TextColumn::make('foi')
                     ->label('Field of Interest')
@@ -175,7 +201,8 @@ class ProgramsRelationManager extends RelationManager
                     ->placeholder('N/A'),
             ])
             ->recordActions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->modalHeading('Program Information'),
                 EditAction::make(),
                 DeleteAction::make()
                     ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed'),
