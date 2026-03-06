@@ -40,6 +40,7 @@ use AdvisingApp\Alert\Actions\FindGroupsUsingAlerts;
 use AdvisingApp\Alert\Actions\GenerateStudentAlertsView;
 use AdvisingApp\Alert\Jobs\RemoveAlertFiltersFromGroupsJob;
 use AdvisingApp\Alert\Models\AlertConfiguration;
+use App\Enums\Feature;
 use App\Filament\Clusters\EarlyAlerts;
 use App\Filament\Forms\Components\Heading;
 use App\Filament\Forms\Components\Paragraph;
@@ -56,6 +57,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -92,6 +94,10 @@ class ManageAlerts extends Page implements HasForms
 
     public static function canAccess(): bool
     {
+        if (! Gate::check(Feature::EarlyAlert->getGateName())) {
+            return false;
+        }
+
         $user = auth()->user();
 
         assert($user instanceof User);
