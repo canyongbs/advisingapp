@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Tables\Columns\TextColumn;
@@ -106,7 +107,8 @@ class MostEngagedProspectsTable extends BaseWidget
             ->paginated(false)
             ->columns([
                 TextColumn::make('full_name')
-                    ->label('Name'),
+                    ->label('Name')
+                    ->url(fn (Prospect $record): string => ProspectResource::getUrl('view', ['record' => $record])),
                 TextColumn::make('primaryEmailAddress.address')
                     ->label('Email'),
                 TextColumn::make('status.name')
