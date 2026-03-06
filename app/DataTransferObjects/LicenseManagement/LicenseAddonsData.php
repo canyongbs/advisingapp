@@ -59,5 +59,6 @@ class LicenseAddonsData extends Data
         public bool $qnaAdvisor = false,
         public bool $dataAdvisor = false,
         public bool $projectManagement = false,
+        public bool $earlyAlert = false,
     ) {}
 }

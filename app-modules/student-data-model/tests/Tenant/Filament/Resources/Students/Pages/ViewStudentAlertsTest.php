@@ -42,15 +42,35 @@ use AdvisingApp\Alert\Presets\AlertPreset;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudentAlerts;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
+beforeEach(function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->earlyAlert = true;
+    $settings->save();
+});
+
 it('requires proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $student = Student::factory()->create();
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->earlyAlert = false;
+    $settings->save();
 
     actingAs($user);
+
+    livewire(ViewStudentAlerts::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertForbidden();
+
+    $settings->data->addons->earlyAlert = true;
+    $settings->save();
 
     livewire(ViewStudentAlerts::class, [
         'record' => $student->getKey(),
