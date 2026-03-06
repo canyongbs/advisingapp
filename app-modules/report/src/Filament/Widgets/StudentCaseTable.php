@@ -40,6 +40,7 @@ use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Report\Filament\Exports\StudentCaseExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ViewAction;
@@ -108,7 +109,13 @@ class StudentCaseTable extends BaseWidget
                         assert($respondent instanceof Student);
 
                         return $respondent->{Student::displayNameKey()};
-                    }),
+                    })
+                    ->url(function (CaseModel $record): string {
+                        $respondent = $record->respondent;
+                        assert($respondent instanceof Student);
+
+                        return StudentResource::getUrl('view', ['record' => $respondent]);
+                    }, shouldOpenInNewTab: true),
                 TextColumn::make('respondent.sisid')
                     ->label('SISID'),
                 TextColumn::make('respondent.otherid')
