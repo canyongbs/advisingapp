@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
 use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Actions\ViewAction;
@@ -106,7 +107,13 @@ class ProspectCaseTable extends BaseWidget
                         assert($respondent instanceof Prospect);
 
                         return $respondent->{Prospect::displayNameKey()};
-                    }),
+                    })
+                    ->url(function (CaseModel $record): string {
+                        $respondent = $record->respondent;
+                        assert($respondent instanceof Prospect);
+
+                        return ProspectResource::getUrl('view', ['record' => $respondent]);
+                    }, shouldOpenInNewTab: true),
                 TextColumn::make('assignedTo.user.name')
                     ->label('Assigned To'),
                 TextColumn::make('sla_response_seconds')

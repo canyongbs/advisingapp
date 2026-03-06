@@ -46,7 +46,6 @@ use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryEmailAd
 use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\ExportAction;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\PaginationMode;
@@ -100,7 +99,9 @@ class StudentDeliverableTable extends BaseWidget
             ->columns([
                 TextColumn::make('full_name')
                     ->label('Name')
-                    ->searchable(),
+                    ->searchable()
+                    ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record]))
+                    ->openUrlInNewTab(),
                 TextColumn::make('email_status')
                     ->label('Email Status')
                     ->badge()
@@ -196,12 +197,6 @@ class StudentDeliverableTable extends BaseWidget
 
                         return $query;
                     }),
-            ])
-            ->recordActions([
-                ViewAction::make()
-                    ->label('Go to Student')
-                    ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record]), shouldOpenInNewTab: true)
-                    ->icon('heroicon-m-arrow-top-right-on-square'),
             ])
             ->headerActions([
                 ExportAction::make('export')
