@@ -113,7 +113,8 @@ class OutlookCalendarManager implements CalendarInterface
                 }
             }
 
-            $events = array_merge($events, $response->getResponseAsObject(Event::class));
+            $responseEvents = $response->getResponseAsObject(Event::class);
+            $events = array_merge($events, is_array($responseEvents) ? $responseEvents : [$responseEvents]);
 
             if ($response->getNextLink() !== null) {
                 $request = $client->createCollectionRequest(

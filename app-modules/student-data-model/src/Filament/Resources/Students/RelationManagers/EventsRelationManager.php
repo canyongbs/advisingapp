@@ -44,6 +44,7 @@ use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use App\Enums\Feature;
 use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\Action;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -84,6 +85,9 @@ class EventsRelationManager extends RelationManager
             ]));
     }
 
+    /**
+     * @return array<Action>
+     */
     protected function getHeaderActions(): array
     {
         return [

@@ -37,7 +37,10 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets;
 
 use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Locked;
@@ -57,8 +60,13 @@ class EducatableSubscriptionsWidget extends Widget
         return auth()->user()->can('viewAny', Subscription::class);
     }
 
+    /**
+     * @return array<User>
+     */
     protected function getSubscribedUsers(): array
     {
+        assert($this->educatable instanceof Student || $this->educatable instanceof Prospect);
+
         return $this->educatable->subscribedUsers()
             ->orderByDesc('subscriptions.created_at')
             ->get()
