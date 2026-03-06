@@ -94,7 +94,7 @@ it('validates the inputs', function (CreateBookingGroupRequestFactory $data, arr
         ['name' => 'max'],
     ],
     'slug required' => fn () => [
-        CreateBookingGroupRequestFactory::new()->without('slug'),
+        CreateBookingGroupRequestFactory::new()->state(['slug' => null]),
         ['slug' => 'required'],
     ],
     'description string' => fn () => [
