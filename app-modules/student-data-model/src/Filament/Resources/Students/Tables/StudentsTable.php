@@ -55,6 +55,10 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\ContainsOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EndsWithOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EqualsOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\StartsWithOperator;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
@@ -185,6 +189,9 @@ class StudentsTable
                         TextConstraint::make('programName')
                             ->label('Program Name')
                             ->relationship('programs', 'descr'),
+                        TextConstraint::make('programDetail')
+                            ->label('Program Detail')
+                            ->relationship('programs', 'acad_plan'),
                         TextConstraint::make('programFoi')
                             ->label('Program Field of Interest')
                             ->relationship('programs', 'foi'),
