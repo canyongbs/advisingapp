@@ -44,10 +44,10 @@ use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMaxOperatorWithEnrollmentSemester;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMinOperatorWithEnrollmentSemester;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsEmptyOperatorWithEnrollmentSemester;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\JsonbArrayContainsOperator;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\JsonbArrayEndsWithOperator;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\JsonbArrayEqualsOperator;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\JsonbArrayStartsWithOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\ContainsOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EndsWithOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EqualsOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\StartsWithOperator;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -193,10 +193,34 @@ class StudentsTable
                             ->label('Program Detail')
                             ->relationship('programs', 'acad_plan')
                             ->operators([
-                                JsonbArrayContainsOperator::class,
-                                JsonbArrayStartsWithOperator::class,
-                                JsonbArrayEndsWithOperator::class,
-                                JsonbArrayEqualsOperator::class,
+                                ContainsOperator::make()
+                                    ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
+                                        $text = strtolower(trim($settings['text']));
+                                        $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(kv.value) AS elem WHERE lower(elem) LIKE ?)";
+
+                                        return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, ["%{$text}%"]);
+                                    }),
+                                StartsWithOperator::make()
+                                    ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
+                                        $text = strtolower(trim($settings['text']));
+                                        $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(kv.value) AS elem WHERE lower(elem) LIKE ?)";
+
+                                        return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, ["{$text}%"]);
+                                    }),
+                                EndsWithOperator::make()
+                                    ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
+                                        $text = strtolower(trim($settings['text']));
+                                        $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(kv.value) AS elem WHERE lower(elem) LIKE ?)";
+
+                                        return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, ["%{$text}"]);
+                                    }),
+                                EqualsOperator::make()
+                                    ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
+                                        $text = strtolower(trim($settings['text']));
+                                        $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(kv.value) AS elem WHERE lower(elem) = ?)";
+
+                                        return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, [$text]);
+                                    }),
                             ]),
                         TextConstraint::make('programFoi')
                             ->label('Program Field of Interest')
