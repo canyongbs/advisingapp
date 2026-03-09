@@ -40,11 +40,14 @@ use Filament\Support\Contracts\HasLabel;
 
 enum SisSystem: string implements HasLabel
 {
+    case EllucianEthos = 'ellucian_ethos';
+
     case ThesisElements = 'thesis_elements';
 
     public function getLabel(): string
     {
         return match ($this) {
+            SisSystem::EllucianEthos => 'Ellucian Ethos',
             SisSystem::ThesisElements => 'Thesis Elements',
         };
     }
@@ -61,7 +64,7 @@ enum SisSystem: string implements HasLabel
     public function hasProgramsDivision(): bool
     {
         return match ($this) {
-            SisSystem::ThesisElements => false,
+            SisSystem::EllucianEthos, SisSystem::ThesisElements => false,
             default => true,
         };
     }
@@ -83,7 +86,7 @@ enum SisSystem: string implements HasLabel
     public function hasProgramsFoi(): bool
     {
         return match ($this) {
-            SisSystem::ThesisElements => false,
+            SisSystem::EllucianEthos, SisSystem::ThesisElements => false,
             default => true,
         };
     }
@@ -91,7 +94,7 @@ enum SisSystem: string implements HasLabel
     public function hasProgramsCumGpa(): bool
     {
         return match ($this) {
-            SisSystem::ThesisElements => false,
+            SisSystem::EllucianEthos, SisSystem::ThesisElements => false,
             default => true,
         };
     }
@@ -120,7 +123,7 @@ enum SisSystem: string implements HasLabel
     public function hasProgramsConferredDt(): bool
     {
         return match ($this) {
-            SisSystem::ThesisElements => false,
+            SisSystem::EllucianEthos, SisSystem::ThesisElements => false,
             default => true,
         };
     }
