@@ -76,6 +76,7 @@ class UploadQnaAdvisorFilesToVectorStore implements ShouldQueue, TenantAware, Sh
         $parsedFiles = [
             ...$this->advisor->files()->whereNotNull('parsing_results')->get()->all(),
             ...$this->advisor->links()->whereNotNull('parsing_results')->get()->all(),
+            ...$this->advisor->getResourceHubArticles(),
         ];
 
         if ($parsedFiles && (! $service->areFilesReady($parsedFiles, $this->advisor))) {
