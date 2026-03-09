@@ -118,7 +118,16 @@ class RolesRelationManager extends RelationManager
                                     ->limit(50)
                                     ->pluck('name', 'id')
                                     ->toArray();
-                            }),
+                            })
+                            ->getOptionLabelUsing(fn ($value): ?string => filled($value)
+                                ? Role::query()
+                                    ->when(
+                                        ! auth()->user()->isSuperAdmin(),
+                                        fn (Builder $query) => $query->whereNotIn('name', [Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE, Authenticatable::AI_ADMIN_ROLE])
+                                    )
+                                    ->whereKey($value)
+                                    ->value('name')
+                                : null),
                     ])
                     ->multiple()
                     ->preloadRecordSelect(),

@@ -70,6 +70,12 @@ class RequestFormSubmission extends Action
                             ->limit(50)
                             ->pluck('name', 'id')
                             ->all())
+                        ->getOptionLabelUsing(fn ($value): ?string => filled($value)
+                            ? Form::query()
+                                ->where('is_authenticated', true)
+                                ->whereKey($value)
+                                ->value('name')
+                            : null)
                         ->searchable()
                         ->helperText('Forms must have authentication enabled to be requested, to verify the identity of the respondent.'),
                 ]),

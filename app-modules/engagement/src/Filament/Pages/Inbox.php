@@ -165,6 +165,9 @@ class Inbox extends Page implements HasTable
                             ->limit(20)
                             ->pluck('name', 'id')
                     )
+                    ->getOptionLabelUsing(fn ($value): ?string => filled($value)
+                        ? auth()->user()->groups()->whereKey($value)->value('name')
+                        : null)
                     ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
                 SelectFilter::make('all_groups')
                     ->label('All Population Groups')
@@ -179,6 +182,9 @@ class Inbox extends Page implements HasTable
                             ->limit(20)
                             ->pluck('name', 'id')
                     )
+                    ->getOptionLabelUsing(fn ($value): ?string => filled($value)
+                        ? Group::query()->whereKey($value)->value('name')
+                        : null)
                     ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
                 SelectFilter::make('status')
                     ->multiple()

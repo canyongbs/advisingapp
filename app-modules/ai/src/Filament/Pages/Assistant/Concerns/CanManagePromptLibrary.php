@@ -191,6 +191,47 @@ trait CanManagePromptLibrary
                                 fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
                             ));
                     })
+                    ->getOptionLabelUsing(function (Get $get, $value) use ($getPromptOptions): ?string {
+                        if (blank($value)) {
+                            return null;
+                        }
+
+                        $options = $getPromptOptions(Prompt::query()
+                            ->whereKey($value)
+                            ->limit(1)
+                            ->when(
+                                $get('isSmart'),
+                                fn (Builder $query) => $query->where('is_smart', true),
+                            )
+                            ->when(
+                                ! $get('isSmart'),
+                                fn (Builder $query) => $query->where('is_smart', false),
+                            )
+                            ->when(
+                                filled($get('typeId')),
+                                fn (Builder $query) => $query->where('type_id', $get('typeId')),
+                            )
+                            ->when(
+                                filled($get('myPrompts')),
+                                fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
+                            )
+                            ->when(
+                                $get('myTeamPrompts'),
+                                function (Builder $query) {
+                                    /** @var User $user */
+                                    $user = auth()->user();
+                                    $teamUsers = $user->team?->users;
+
+                                    if ($teamUsers) {
+                                        $query->whereHas('user', function (Builder $query) use ($teamUsers) {
+                                            return $query->whereIn('id', $teamUsers->pluck('id'));
+                                        });
+                                    }
+                                },
+                            ));
+
+                        return $options[$value] ?? null;
+                    })
                     ->live()
                     ->suffixAction(function (?string $state): ?Action {
                         if (blank($state)) {

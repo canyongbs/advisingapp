@@ -87,6 +87,7 @@ trait HasFiltersForm
                             ->label('Select Group')
                             ->options(fn (): array => $this->getGroupOptions($groupModel))
                             ->getSearchResultsUsing(fn (string $search): array => $this->getGroupOptions($groupModel, $search))
+                            ->getOptionLabelUsing(fn ($value): ?string => $this->getGroupOptionLabel($groupModel, $value))
                             ->searchable(),
                     ])
                     ->heading('Advanced Filtering')
@@ -111,5 +112,17 @@ trait HasFiltersForm
             ->limit(20)
             ->pluck('name', 'id')
             ->all();
+    }
+
+    protected function getGroupOptionLabel(?GroupModel $model, mixed $value): ?string
+    {
+        if (! $model || blank($value)) {
+            return null;
+        }
+
+        return Group::query()
+            ->where('model', $model)
+            ->whereKey($value)
+            ->value('name');
     }
 }

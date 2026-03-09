@@ -152,6 +152,24 @@ trait CanManageThreads
                             ])
                             ->all();
                     })
+                    ->getOptionLabelUsing(function ($value): ?string {
+                        if (blank($value)) {
+                            return null;
+                        }
+
+                        $assistant = AiAssistant::query()
+                            ->where('application', static::APPLICATION)
+                            ->whereNull('archived_at')
+                            ->where('is_default', false)
+                            ->whereKey($value)
+                            ->withCount('threads')
+                            ->withCount('upvotes')
+                            ->first();
+
+                        return $assistant
+                            ? view('ai::components.options.assistant', ['assistant' => $assistant])->render()
+                            : null;
+                    })
                     ->live()
                     ->afterStateUpdated(function ($component, $state) {
                         if (blank($state)) {

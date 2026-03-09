@@ -149,6 +149,26 @@ class ManageFormEmailAutoReply extends EditRecord
                                                 ->limit(50)
                                                 ->pluck('name', 'id')
                                                 ->toArray();
+                                        })
+                                        ->getOptionLabelUsing(function (Get $get, $value): ?string {
+                                            if (blank($value)) {
+                                                return null;
+                                            }
+
+                                            /** @var User $user */
+                                            $user = auth()->user();
+
+                                            return EmailTemplate::query()
+                                                ->when(
+                                                    $get('onlyMyTemplates'),
+                                                    fn (Builder $query) => $query->whereBelongsTo($user)
+                                                )
+                                                ->when(
+                                                    $get('onlyMyTeamTemplates'),
+                                                    fn (Builder $query) => $query->whereIn('user_id', $user->team->users->pluck('id'))
+                                                )
+                                                ->whereKey($value)
+                                                ->value('name');
                                         }),
                                     Checkbox::make('onlyMyTemplates')
                                         ->label('Only show my templates')
