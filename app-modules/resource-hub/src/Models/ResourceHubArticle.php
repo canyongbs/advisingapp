@@ -143,6 +143,7 @@ class ResourceHubArticle extends BaseModel implements AiFile, Auditable, HasMedi
 
     /**
      * @param Builder<ResourceHubArticle> $query
+     *
      * @return Builder<ResourceHubArticle>
      */
     public function scopePublic(Builder $query): Builder

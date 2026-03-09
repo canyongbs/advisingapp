@@ -107,6 +107,7 @@ class SurveySubmission extends Submission
 
     /**
      * @param Builder<SurveySubmission> $query
+     *
      * @return Builder<SurveySubmission>
      */
     public function scopeRequested(Builder $query): Builder
@@ -116,6 +117,7 @@ class SurveySubmission extends Submission
 
     /**
      * @param Builder<SurveySubmission> $query
+     *
      * @return Builder<SurveySubmission>
      */
     public function scopeSubmitted(Builder $query): Builder
@@ -125,6 +127,7 @@ class SurveySubmission extends Submission
 
     /**
      * @param Builder<SurveySubmission> $query
+     *
      * @return Builder<SurveySubmission>
      */
     public function scopeCanceled(Builder $query): Builder
@@ -134,6 +137,7 @@ class SurveySubmission extends Submission
 
     /**
      * @param Builder<SurveySubmission> $query
+     *
      * @return Builder<SurveySubmission>
      */
     public function scopeNotSubmitted(Builder $query): Builder
@@ -143,6 +147,7 @@ class SurveySubmission extends Submission
 
     /**
      * @param Builder<SurveySubmission> $query
+     *
      * @return Builder<SurveySubmission>
      */
     public function scopeNotCanceled(Builder $query): Builder

@@ -126,7 +126,7 @@ class StudentPhoneNumberImporter extends Importer
     public function afterCreate(): void
     {
         assert($this->record instanceof Student);
-        
+
         if ($this->data['is_primary'] ?? null) {
             DB::statement("
                 with ordered_results as (
