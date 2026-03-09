@@ -65,7 +65,6 @@ enum SisSystem: string implements HasLabel
     {
         return match ($this) {
             SisSystem::EllucianEthos, SisSystem::ThesisElements => false,
-            default => true,
         };
     }
 
@@ -87,7 +86,6 @@ enum SisSystem: string implements HasLabel
     {
         return match ($this) {
             SisSystem::EllucianEthos, SisSystem::ThesisElements => false,
-            default => true,
         };
     }
 
@@ -95,7 +93,6 @@ enum SisSystem: string implements HasLabel
     {
         return match ($this) {
             SisSystem::EllucianEthos, SisSystem::ThesisElements => false,
-            default => true,
         };
     }
 
@@ -124,7 +121,6 @@ enum SisSystem: string implements HasLabel
     {
         return match ($this) {
             SisSystem::EllucianEthos, SisSystem::ThesisElements => false,
-            default => true,
         };
     }
 }

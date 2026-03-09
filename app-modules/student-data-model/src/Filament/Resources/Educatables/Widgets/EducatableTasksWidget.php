@@ -58,6 +58,9 @@ class EducatableTasksWidget extends Widget
         return auth()->user()->can('viewAny', Task::class);
     }
 
+    /**
+     * @return array<string, int>
+     */
     protected function getStatusCounts(): array
     {
         $counts = $this->educatable->tasks()
