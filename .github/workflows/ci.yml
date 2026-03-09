@@ -73,14 +73,14 @@ jobs:
               run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
               shell: bash
 
-            - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 #6.2.0
+            - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #6.3.0
               with:
                   node-version-file: '.nvmrc'
                   cache: 'npm'
             - run: npm install
 
             - name: Set up Ruby
-              uses: ruby/setup-ruby@09a7688d3b55cf0e976497ff046b70949eeaccfd #1.288.0
+              uses: ruby/setup-ruby@6ca151fd1bfcfd6fe0c4eb6837eb0584d0134a0c #1.290.0
 
             - name: Run Ruby Script
               run: ruby ./copyright.rb
@@ -208,7 +208,7 @@ jobs:
               run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
               shell: bash
 
-            - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 #6.2.0
+            - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #6.3.0
               with:
                   node-version-file: '.nvmrc'
                   cache: 'npm'
