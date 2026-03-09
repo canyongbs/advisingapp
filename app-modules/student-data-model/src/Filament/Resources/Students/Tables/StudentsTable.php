@@ -44,6 +44,10 @@ use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMaxOperatorWithEnrollmentSemester;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMinOperatorWithEnrollmentSemester;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsEmptyOperatorWithEnrollmentSemester;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\JsonbArrayContainsOperator;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\JsonbArrayEndsWithOperator;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\JsonbArrayEqualsOperator;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\JsonbArrayStartsWithOperator;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -187,7 +191,13 @@ class StudentsTable
                             ->relationship('programs', 'descr'),
                         TextConstraint::make('programDetail')
                             ->label('Program Detail')
-                            ->relationship('programs', 'acad_plan'),
+                            ->relationship('programs', 'acad_plan')
+                            ->operators([
+                                JsonbArrayContainsOperator::class,
+                                JsonbArrayStartsWithOperator::class,
+                                JsonbArrayEndsWithOperator::class,
+                                JsonbArrayEqualsOperator::class,
+                            ]),
                         TextConstraint::make('programFoi')
                             ->label('Program Field of Interest')
                             ->relationship('programs', 'foi'),
