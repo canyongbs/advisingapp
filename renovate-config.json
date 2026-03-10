@@ -70,6 +70,11 @@
             "matchDepNames": ["nvm-sh/nvm", "node", "npm"],
             "matchUpdateTypes": ["major"],
             "enabled": false
+        },
+        {
+            "matchDepNames": ["nvm-sh/nvm", "node", "npm"],
+            "groupName": "Node.js toolchain",
+            "groupSlug": "node-toolchain"
         }
     ]
 }
