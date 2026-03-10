@@ -150,7 +150,7 @@ class ManageFormEmailAutoReply extends EditRecord
                                                 ->pluck('name', 'id')
                                                 ->toArray();
                                         })
-                                        ->getOptionLabelUsing(function (Get $get, mixed$value): ?string {
+                                        ->getOptionLabelUsing(function (Get $get, mixed $value): ?string {
                                             if (blank($value)) {
                                                 return null;
                                             }
