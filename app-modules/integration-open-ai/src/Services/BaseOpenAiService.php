@@ -181,12 +181,12 @@ abstract class BaseOpenAiService implements AiService
      * @param array<AiFile> $files
      * @param array<string, mixed> $options
      */
-    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = []): Closure
+    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?Model $filesContext = null): Closure
     {
         $aiSettings = app(AiSettings::class);
 
         try {
-            $vectorStoreId = $this->getReadyVectorStoreId($files);
+            $vectorStoreId = $this->getReadyVectorStoreId($files, $filesContext);
 
             $request = Prism::text()
                 ->using('azure_open_ai', $this->getModel())
@@ -310,12 +310,12 @@ abstract class BaseOpenAiService implements AiService
      * @param array<string, mixed> $options
      * @param ?array<Message> $messages
      */
-    public function streamRaw(?string $prompt = null, ?string $content = null, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null, bool $hasImageGeneration = false): Closure
+    public function streamRaw(?string $prompt = null, ?string $content = null, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null, bool $hasImageGeneration = false, ?Model $filesContext = null): Closure
     {
         $aiSettings = app(AiSettings::class);
 
         try {
-            $vectorStoreId = $this->getReadyVectorStoreId($files);
+            $vectorStoreId = $this->getReadyVectorStoreId($files, $filesContext);
 
             $request = Prism::text()
                 ->using('azure_open_ai', $this->getModel())

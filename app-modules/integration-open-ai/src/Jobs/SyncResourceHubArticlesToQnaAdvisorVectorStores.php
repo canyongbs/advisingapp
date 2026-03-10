@@ -34,52 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Console\Commands;
+namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
-use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\IntegrationOpenAi\Jobs\UploadAssistantFilesToVectorStore;
-use AdvisingApp\IntegrationOpenAi\Jobs\UploadQnaAdvisorFilesToVectorStore;
-use App\Features\QnaAdvisorResourceHubFeature;
-use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Builder;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
-use Throwable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Spatie\Multitenancy\Jobs\TenantAware;
 
-class UploadFilesToVectorStores extends Command
+class SyncResourceHubArticlesToQnaAdvisorVectorStores implements ShouldQueue, TenantAware
 {
-    use TenantAware;
-
-    protected $signature = 'integration-open-ai:upload-files-to-vector-stores {--tenant=*}';
-
-    protected $description = 'Uploads AI files to a vector stores once they have been parsed.';
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public function handle(): void
     {
-        AiAssistant::query()
-            ->where(fn (Builder $query) => $query
-                ->whereHas('files')
-                ->orWhereHas('links')
-                ->orWhere('has_resource_hub_knowledge', true))
-            ->eachById(function (AiAssistant $assistant) {
-                try {
-                    dispatch(new UploadAssistantFilesToVectorStore($assistant));
-                } catch (Throwable $exception) {
-                    report($exception);
-                }
-            });
-
         QnaAdvisor::query()
-            ->where(fn (Builder $query) => $query
-                ->whereHas('files')
-                ->orWhereHas('links')
-                ->when(QnaAdvisorResourceHubFeature::active(), fn (Builder $query) => $query->orWhere('has_resource_hub_knowledge', true)))
+            ->where('has_resource_hub_knowledge', true)
             ->eachById(function (QnaAdvisor $advisor) {
-                try {
-                    dispatch(new UploadQnaAdvisorFilesToVectorStore($advisor));
-                } catch (Throwable $exception) {
-                    report($exception);
-                }
+                UploadQnaAdvisorFilesToVectorStore::dispatch($advisor);
             });
     }
 }

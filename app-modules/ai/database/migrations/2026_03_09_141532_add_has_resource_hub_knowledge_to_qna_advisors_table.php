@@ -34,38 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Observers;
-
-use AdvisingApp\IntegrationOpenAi\Jobs\SyncResourceHubArticlesToAssistantVectorStores;
-use AdvisingApp\IntegrationOpenAi\Jobs\SyncResourceHubArticlesToQnaAdvisorVectorStores;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use App\Features\QnaAdvisorResourceHubFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-class ResourceHubArticleObserver
-{
-    public function created(ResourceHubArticle $article): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (! $article->public) {
-            return;
-        }
+        DB::transaction(function () {
+            Schema::table('qna_advisors', function (Blueprint $table) {
+                $table->boolean('has_resource_hub_knowledge')->default(false);
+            });
 
-        SyncResourceHubArticlesToAssistantVectorStores::dispatch();
-        QnaAdvisorResourceHubFeature::active() && SyncResourceHubArticlesToQnaAdvisorVectorStores::dispatch();
+            QnaAdvisorResourceHubFeature::activate();
+        });
     }
 
-    public function updated(ResourceHubArticle $article): void
+    public function down(): void
     {
-        if (! $article->isDirty(['public', 'article_details', 'title'])) {
-            return;
-        }
+        DB::transaction(function () {
+            QnaAdvisorResourceHubFeature::deactivate();
 
-        SyncResourceHubArticlesToAssistantVectorStores::dispatch();
-        QnaAdvisorResourceHubFeature::active() && SyncResourceHubArticlesToQnaAdvisorVectorStores::dispatch();
+            Schema::table('qna_advisors', function (Blueprint $table) {
+                $table->dropColumn('has_resource_hub_knowledge');
+            });
+        });
     }
-
-    public function deleted(ResourceHubArticle $article): void
-    {
-        SyncResourceHubArticlesToAssistantVectorStores::dispatch();
-        QnaAdvisorResourceHubFeature::active() && SyncResourceHubArticlesToQnaAdvisorVectorStores::dispatch();
-    }
-}
+};

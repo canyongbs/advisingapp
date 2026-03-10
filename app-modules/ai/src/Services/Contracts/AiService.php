@@ -62,7 +62,7 @@ interface AiService
      * @param array<AiFile> $files
      * @param array<string, mixed> $options
      */
-    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = []): Closure;
+    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?Model $filesContext = null): Closure;
 
     /**
      * This method is passed a prompt and message and should return a stream of plain text chunks.
@@ -71,7 +71,7 @@ interface AiService
      * @param array<string, mixed> $options
      * @param ?array<Message> $messages
      */
-    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null, bool $hasImageGeneration = false): Closure;
+    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null, bool $hasImageGeneration = false, ?Model $filesContext = null): Closure;
 
     /**
      * This method is passed an unsaved `AiMessage` model and should send the

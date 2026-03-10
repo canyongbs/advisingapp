@@ -34,52 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Console\Commands;
+namespace AdvisingApp\Ai\Observers;
 
-use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\IntegrationOpenAi\Jobs\UploadAssistantFilesToVectorStore;
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadQnaAdvisorFilesToVectorStore;
-use App\Features\QnaAdvisorResourceHubFeature;
-use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Builder;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
-use Throwable;
 
-class UploadFilesToVectorStores extends Command
+class QnaAdvisorObserver
 {
-    use TenantAware;
-
-    protected $signature = 'integration-open-ai:upload-files-to-vector-stores {--tenant=*}';
-
-    protected $description = 'Uploads AI files to a vector stores once they have been parsed.';
-
-    public function handle(): void
+    public function created(QnaAdvisor $advisor): void
     {
-        AiAssistant::query()
-            ->where(fn (Builder $query) => $query
-                ->whereHas('files')
-                ->orWhereHas('links')
-                ->orWhere('has_resource_hub_knowledge', true))
-            ->eachById(function (AiAssistant $assistant) {
-                try {
-                    dispatch(new UploadAssistantFilesToVectorStore($assistant));
-                } catch (Throwable $exception) {
-                    report($exception);
-                }
-            });
+        if ($advisor->has_resource_hub_knowledge) {
+            UploadQnaAdvisorFilesToVectorStore::dispatch($advisor);
+        }
+    }
 
-        QnaAdvisor::query()
-            ->where(fn (Builder $query) => $query
-                ->whereHas('files')
-                ->orWhereHas('links')
-                ->when(QnaAdvisorResourceHubFeature::active(), fn (Builder $query) => $query->orWhere('has_resource_hub_knowledge', true)))
-            ->eachById(function (QnaAdvisor $advisor) {
-                try {
-                    dispatch(new UploadQnaAdvisorFilesToVectorStore($advisor));
-                } catch (Throwable $exception) {
-                    report($exception);
-                }
-            });
+    public function updated(QnaAdvisor $advisor): void
+    {
+        if ($advisor->wasChanged('has_resource_hub_knowledge')) {
+            UploadQnaAdvisorFilesToVectorStore::dispatch($advisor);
+        }
     }
 }
