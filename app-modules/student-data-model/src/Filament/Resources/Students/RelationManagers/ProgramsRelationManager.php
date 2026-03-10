@@ -342,8 +342,9 @@ class ProgramsRelationManager extends RelationManager
     /**
      * Format the academic plan for display.
      *
-     * @param string|array<string, array<string>>|null $acadPlan 
-     * @return string|null 
+     * @param string|array<string, array<string>>|null $acadPlan
+     *
+     * @return string|null
      */
     private function formatAcadPlan(string|array|null $acadPlan): ?string
     {
