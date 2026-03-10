@@ -230,6 +230,7 @@ class ProgramsRelationManager extends RelationManager
                     ->maxLength(255)
                     ->label('Division'),
                 TextInput::make('acad_plan')
+                    ->required()
                     ->helperText('Example - Major: Computer Science, Mathematics; Minor: Philosophy')
                     ->label('Academic Plan')
                     ->rule(function (): Closure {
