@@ -37,9 +37,14 @@
 namespace App\Filament\Resources\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 trait HasGlobalSearchResultScoring
 {
+    /**
+     * @param Builder<Model> $query
+     * @param array<string, int> $attributeScores
+     */
     protected static function scoreGlobalSearchResults(
         Builder $query,
         string $search,

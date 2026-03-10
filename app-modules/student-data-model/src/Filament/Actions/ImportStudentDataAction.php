@@ -206,8 +206,8 @@ class ImportStudentDataAction
                 $exampleRows = [];
 
                 foreach ($columnExamples as $exampleData) {
-                    for ($i = 0; $i < $exampleRowsCount; $i++) {
-                        $exampleRows[$i][] = $exampleData[$i] ?? '';
+                    for ($iter = 0; $iter < $exampleRowsCount; $iter++) {
+                        $exampleRows[$iter][] = $exampleData[$iter] ?? '';
                     }
                 }
 

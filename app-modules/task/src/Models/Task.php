@@ -211,11 +211,17 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, H
         return $this->concern;
     }
 
+    /**
+     * @param Builder<Task> $query
+     */
     public function scopeByNextDue(Builder $query): void
     {
         $query->orderBy('due');
     }
 
+    /**
+     * @param Builder<Task> $query
+     */
     public function scopeOpen(Builder $query): void
     {
         $query->where('status', '=', TaskStatus::Pending)
