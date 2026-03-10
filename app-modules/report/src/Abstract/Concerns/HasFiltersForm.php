@@ -114,7 +114,7 @@ trait HasFiltersForm
             ->all();
     }
 
-    protected function getGroupOptionLabel(?GroupModel $model, mixed $value): ?string
+    protected function getGroupOptionLabel(?GroupModel $model, string|int|null $value): ?string
     {
         if (! $model || blank($value)) {
             return null;

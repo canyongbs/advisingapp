@@ -319,7 +319,7 @@ class SendEngagementAction extends Action
                                                     ->pluck('name', 'id')
                                                     ->toArray();
                                             })
-                                            ->getOptionLabelUsing(function (Get $get, $value): ?string {
+                                            ->getOptionLabelUsing(function (Get $get, string|int|null $value): ?string {
                                                 if (blank($value)) {
                                                     return null;
                                                 }
