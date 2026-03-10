@@ -55,6 +55,10 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\ContainsOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EndsWithOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EqualsOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\StartsWithOperator;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
@@ -185,6 +189,39 @@ class StudentsTable
                         TextConstraint::make('programName')
                             ->label('Program Name')
                             ->relationship('programs', 'descr'),
+                        TextConstraint::make('programDetail')
+                            ->label('Program Detail')
+                            ->relationship('programs', 'acad_plan')
+                            ->operators([
+                                ContainsOperator::make()
+                                    ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
+                                        $text = strtolower(trim($settings['text']));
+                                        $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(kv.value) AS elem WHERE lower(elem) LIKE ?)";
+
+                                        return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, ["%{$text}%"]);
+                                    }),
+                                StartsWithOperator::make()
+                                    ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
+                                        $text = strtolower(trim($settings['text']));
+                                        $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(kv.value) AS elem WHERE lower(elem) LIKE ?)";
+
+                                        return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, ["{$text}%"]);
+                                    }),
+                                EndsWithOperator::make()
+                                    ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
+                                        $text = strtolower(trim($settings['text']));
+                                        $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(kv.value) AS elem WHERE lower(elem) LIKE ?)";
+
+                                        return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, ["%{$text}"]);
+                                    }),
+                                EqualsOperator::make()
+                                    ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
+                                        $text = strtolower(trim($settings['text']));
+                                        $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(kv.value) AS elem WHERE lower(elem) = ?)";
+
+                                        return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, [$text]);
+                                    }),
+                            ]),
                         TextConstraint::make('programFoi')
                             ->label('Program Field of Interest')
                             ->relationship('programs', 'foi'),
