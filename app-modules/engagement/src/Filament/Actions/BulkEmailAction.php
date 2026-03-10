@@ -115,7 +115,7 @@ class BulkEmailAction
                                                 ->limit(50)
                                                 ->pluck('name', 'id')
                                                 ->toArray();
-                                            })
+                                        })
                                         ->getSearchResultsUsing(function (Get $get, string $search): array {
                                             return EmailTemplate::query()
                                                 ->when(
