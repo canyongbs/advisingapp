@@ -2052,7 +2052,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/case-management/src/Models/CaseFormSubmission.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$submission of method AdvisingApp\\\\Form\\\\Enums\\\\FormSubmissionRequestDeliveryMethod\\:\\:deliver\\(\\) expects AdvisingApp\\\\Form\\\\Models\\\\FormSubmission, \\$this\\(AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseFormSubmission\\) given\\.$#',
+    'message' => '#^Parameter \\#1 \\$submission of method AdvisingApp\\\\Form\\\\Enums\\\\FormSubmissionRequestDeliveryMethod\\:\\:deliver\\(\\) expects AdvisingApp\\\\Form\\\\Models\\\\FormSubmission\\|AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission, \\$this\\(AdvisingApp\\\\CaseManagement\\\\Models\\\\CaseFormSubmission\\) given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/case-management/src/Models/CaseFormSubmission.php',
@@ -5658,18 +5658,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/ProspectResource.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\ProspectResource\\:\\:scoreGlobalSearchResults\\(\\) has parameter \\$attributeScores with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/ProspectResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Prospect\\\\Filament\\\\Resources\\\\Prospects\\\\ProspectResource\\:\\:scoreGlobalSearchResults\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/ProspectResource.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:additionalAddresses\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -6474,70 +6462,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/resource-hub/src/Jobs/ResourceHubArticleDownloadExternalMedia.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\ResourceHub\\\\Models\\\\ResourceHubArticle\\:\\:scopePublic\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Models/ResourceHubArticle.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\ResourceHub\\\\Models\\\\ResourceHubArticle\\:\\:scopePublic\\(\\) has parameter \\$query with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/resource-hub/src/Models/ResourceHubArticle.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Using nullsafe property access "\\?\\-\\>id" on left side of \\?\\? is unnecessary\\. Use \\-\\> instead\\.$#',
-    'identifier' => 'nullsafe.neverNull',
-    'count' => 4,
-    'path' => __DIR__ . '/app-modules/resource-hub/tests/Tenant/ResourceHubArticle/RequestFactories/CreateResourceHubArticleRequestFactory.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Faker\\\\Generator\\:\\:state\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/database/factories/StudentAddressFactory.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Database\\\\Factories\\\\StudentPhoneNumberFactory\\:\\:canNotReceiveSms\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Factories\\\\Factory does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/database/factories/StudentPhoneNumberFactory.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Database\\\\Factories\\\\StudentPhoneNumberFactory\\:\\:canReceiveSms\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Factories\\\\Factory does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/database/factories/StudentPhoneNumberFactory.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Database\\\\Factories\\\\StudentPhoneNumberFactory\\:\\:withExtension\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Factories\\\\Factory does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/database/factories/StudentPhoneNumberFactory.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/student\\-data\\-model/database/migrations/2024_08_19_204749_seed_permissions_add_manage_sis_settings\\.php\\:40\\:\\:\\$guards type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/database/migrations/2024_08_19_204749_seed_permissions_add_manage_sis_settings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/student\\-data\\-model/database/migrations/2024_08_19_204749_seed_permissions_add_manage_sis_settings\\.php\\:40\\:\\:\\$permissions type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/database/migrations/2024_08_19_204749_seed_permissions_add_manage_sis_settings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/student\\-data\\-model/database/migrations/2024_10_01_133436_seed_permissions_for_student_record_manager\\.php\\:42\\:\\:\\$guards type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/database/migrations/2024_10_01_133436_seed_permissions_for_student_record_manager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/student\\-data\\-model/database/migrations/2024_10_01_133436_seed_permissions_for_student_record_manager\\.php\\:42\\:\\:\\$permissions type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/database/migrations/2024_10_01_133436_seed_permissions_for_student_record_manager.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method Illuminate\\\\Database\\\\Schema\\\\Blueprint\\:\\:float\\(\\) invoked with 3 parameters, 1\\-2 required\\.$#',
@@ -6546,68 +6474,8 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/database/migrations/2024_11_25_150149_update_programs_table_columns.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/student\\-data\\-model/database/migrations/2025_01_03_155805_seed_permissions_add_remaining_student_permissions\\.php\\:40\\:\\:\\$guards type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/database/migrations/2025_01_03_155805_seed_permissions_add_remaining_student_permissions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/student\\-data\\-model/database/migrations/2025_01_03_155805_seed_permissions_add_remaining_student_permissions\\.php\\:40\\:\\:\\$permissions type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/database/migrations/2025_01_03_155805_seed_permissions_add_remaining_student_permissions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/student\\-data\\-model/database/migrations/2025_01_06_190706_seed_permissions_add_remaining_enrollment_permissions\\.php\\:40\\:\\:\\$guards type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/database/migrations/2025_01_06_190706_seed_permissions_add_remaining_enrollment_permissions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/student\\-data\\-model/database/migrations/2025_01_06_190706_seed_permissions_add_remaining_enrollment_permissions\\.php\\:40\\:\\:\\$permissions type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/database/migrations/2025_01_06_190706_seed_permissions_add_remaining_enrollment_permissions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/student\\-data\\-model/database/migrations/2025_01_06_190750_seed_permissions_add_remaining_program_permissions\\.php\\:40\\:\\:\\$guards type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/database/migrations/2025_01_06_190750_seed_permissions_add_remaining_program_permissions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/student\\-data\\-model/database/migrations/2025_01_06_190750_seed_permissions_add_remaining_program_permissions\\.php\\:40\\:\\:\\$permissions type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/database/migrations/2025_01_06_190750_seed_permissions_add_remaining_program_permissions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/student\\-data\\-model/database/migrations/2025_03_19_185332_data_seed_record_sync_permissions\\.php\\:42\\:\\:\\$guards type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/database/migrations/2025_03_19_185332_data_seed_record_sync_permissions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/student\\-data\\-model/database/migrations/2025_03_19_185332_data_seed_record_sync_permissions\\.php\\:42\\:\\:\\$permissions type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/database/migrations/2025_03_19_185332_data_seed_record_sync_permissions.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Instanceof between Illuminate\\\\Contracts\\\\Auth\\\\Authenticatable and Illuminate\\\\Contracts\\\\Auth\\\\Authenticatable will always evaluate to true\\.$#',
     'identifier' => 'instanceof.alwaysTrue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/CompleteStudentDataImport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\StudentDataModel\\\\Models\\\\IdeHelperStudentDataImport\\:\\:\\$canceled_at \\(Carbon\\\\CarbonImmutable\\|null\\) does not accept Illuminate\\\\Support\\\\Carbon\\.$#',
-    'identifier' => 'assign.propertyType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/CompleteStudentDataImport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\StudentDataModel\\\\Models\\\\IdeHelperStudentDataImport\\:\\:\\$completed_at \\(Carbon\\\\CarbonImmutable\\|null\\) does not accept Illuminate\\\\Support\\\\Carbon\\.$#',
-    'identifier' => 'assign.propertyType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/CompleteStudentDataImport.php',
 ];
@@ -6624,12 +6492,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/ResolveEducatableFromEmail.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Match arm comparison between \\$this\\(AdvisingApp\\\\StudentDataModel\\\\Enums\\\\SisSystem\\)&AdvisingApp\\\\StudentDataModel\\\\Enums\\\\SisSystem\\:\\:ThesisElements and AdvisingApp\\\\StudentDataModel\\\\Enums\\\\SisSystem\\:\\:ThesisElements is always true\\.$#',
-    'identifier' => 'match.alwaysTrue',
-    'count' => 4,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Enums/SisSystem.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Foundation\\\\Bus\\\\PendingChain\\:\\:finally\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
@@ -6640,36 +6502,6 @@ $ignoreErrors[] = [
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Actions/ImportStudentDataAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$i" is shorter than minimum length of 3 characters\\.$#',
-    'identifier' => 'MeliorStan.shortVariable',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Actions/ImportStudentDataAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sisid\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Imports/StudentAddressImporter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sisid\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Imports/StudentEmailAddressImporter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$sisid\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Imports/StudentPhoneNumberImporter.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Pages\\\\ManageStudentConfiguration\\:\\:getFormActions\\(\\) has invalid return type AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Pages\\\\ActionGroup\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Pages/ManageStudentConfiguration.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$event\\.$#',
@@ -6724,12 +6556,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableCareTeamWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Educatables\\\\Widgets\\\\EducatableTasksWidget\\:\\:getStatusCounts\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Educatables/Widgets/EducatableTasksWidget.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\StudentTags\\\\StudentTagResource\\:\\:getEloquentQuery\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
@@ -6844,24 +6670,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/StudentResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Students\\\\StudentResource\\:\\:scoreGlobalSearchResults\\(\\) has parameter \\$attributeScores with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/StudentResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Filament\\\\Resources\\\\Students\\\\StudentResource\\:\\:scoreGlobalSearchResults\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/StudentResource.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Http\\\\Controllers\\\\UpdateStudentInformationSystemSettingsController\\:\\:__invoke\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Http/Controllers/UpdateStudentInformationSystemSettingsController.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to protected property Spatie\\\\Invade\\\\Invader\\<Illuminate\\\\Filesystem\\\\AwsS3V3Adapter\\>\\:\\:\\$client\\.$#',
@@ -6996,94 +6804,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/survey/src/Livewire/RenderSurvey.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:notSubmitted\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\:\\:scopeCanceled\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\:\\:scopeCanceled\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\:\\:scopeNotCanceled\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\:\\:scopeNotCanceled\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\:\\:scopeNotSubmitted\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\:\\:scopeNotSubmitted\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\:\\:scopeRequested\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\:\\:scopeRequested\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\:\\:scopeSubmitted\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\:\\:scopeSubmitted\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$submission of method AdvisingApp\\\\Form\\\\Enums\\\\FormSubmissionRequestDeliveryMethod\\:\\:deliver\\(\\) expects AdvisingApp\\\\Form\\\\Models\\\\FormSubmission, \\$this\\(AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission\\) given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(AdvisingApp\\\\Task\\\\Models\\\\Task\\)\\: bool given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/task/src/Filament/RelationManagers/BaseTaskRelationManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Task\\\\Models\\\\Task\\:\\:scopeByNextDue\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Task\\\\Models\\\\Task\\:\\:scopeOpen\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$concern\\.$#',
@@ -7192,18 +6916,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/timeline/src/Models/History.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Timeline\\\\Models\\\\Timeline\\:\\:scopeForEntity\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/timeline/src/Models/Timeline.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Timeline\\\\Models\\\\Timeline\\:\\:scopeForEntity\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/timeline/src/Models/Timeline.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method AdvisingApp\\\\Timeline\\\\Models\\\\Contracts\\\\HasHistory\\:\\:getAttributes\\(\\)\\.$#',

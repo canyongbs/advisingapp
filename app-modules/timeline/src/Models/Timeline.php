@@ -65,7 +65,12 @@ class Timeline extends BaseModel
         return $this->morphTo();
     }
 
-    public function scopeForEntity(Builder $query, Model $entity)
+    /**
+     * @param Builder<Model> $query
+     *
+     * @return Builder<Model>
+     */
+    public function scopeForEntity(Builder $query, Model $entity): Builder
     {
         return $query->where('entity_type', $entity->getMorphClass())
             ->where('entity_id', $entity->getKey());
