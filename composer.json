@@ -102,7 +102,7 @@
         "socialiteproviders/microsoft-azure": "^5.2",
         "spatie/laravel-cookie-consent": "^3.3",
         "spatie/laravel-data": "^4.0",
-        "spatie/laravel-health": "^1.32.4",
+        "spatie/laravel-health": "^1.39.0",
         "spatie/laravel-json-api-paginate": "^1.16",
         "spatie/laravel-medialibrary": "^11.3",
         "spatie/laravel-multitenancy": "^4.0",
