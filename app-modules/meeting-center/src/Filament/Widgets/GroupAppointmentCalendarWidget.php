@@ -36,11 +36,9 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Widgets;
 
-use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
 use Livewire\Attributes\On;
 use Saade\FilamentFullCalendar\Data\EventData;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
@@ -70,7 +68,16 @@ class GroupAppointmentCalendarWidget extends FullCalendarWidget
         }
 
         if ($this->groupFilter === 'my_groups') {
-            $query->whereIn('booking_group_id', $this->getMyGroupIds());
+            $user = auth()->user();
+            assert($user instanceof User);
+
+            $query->whereHas('bookingGroup', function (Builder $query) use ($user): void {
+                $query->whereHas('users', fn (Builder $query) => $query->where('users.id', $user->id));
+
+                if ($user->team_id) {
+                    $query->orWhereHas('teams', fn (Builder $query) => $query->where('teams.id', $user->team_id));
+                }
+            });
         } elseif (! empty($this->selectedGroupIds)) {
             $query->whereIn('booking_group_id', $this->selectedGroupIds);
         }
@@ -105,26 +112,5 @@ class GroupAppointmentCalendarWidget extends FullCalendarWidget
         $this->refreshRecords();
     }
 
-    /**
-     * @return Collection<int, string>
-     */
-    protected function getMyGroupIds(): Collection
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        $directGroupIds = BookingGroup::whereHas(
-            'users',
-            fn (Builder $query) => $query->where('users.id', $user->id)
-        )->pluck('id');
-
-        $teamGroupIds = $user->team_id
-            ? BookingGroup::whereHas(
-                'teams',
-                fn (Builder $query) => $query->where('teams.id', $user->team_id)
-            )->pluck('id')
-            : collect();
-
-        return $directGroupIds->merge($teamGroupIds)->unique()->values();
-    }
 }
+

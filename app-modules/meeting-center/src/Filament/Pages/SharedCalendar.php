@@ -59,7 +59,6 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Url;
 
@@ -157,7 +156,16 @@ class SharedCalendar extends Page implements HasForms, HasTable
                 }
 
                 if ($groupFilter === 'my_groups') {
-                    $query->whereIn('booking_group_id', $this->getMyGroupIds());
+                    $user = auth()->user();
+                    assert($user instanceof User);
+
+                    $query->whereHas('bookingGroup', function (Builder $query) use ($user): void {
+                        $query->whereHas('users', fn (Builder $query) => $query->where('users.id', $user->id));
+
+                        if ($user->team_id) {
+                            $query->orWhereHas('teams', fn (Builder $query) => $query->where('teams.id', $user->team_id));
+                        }
+                    });
                 } elseif (! empty($selectedGroupIds)) {
                     $query->whereIn('booking_group_id', $selectedGroupIds);
                 }
@@ -227,29 +235,6 @@ class SharedCalendar extends Page implements HasForms, HasTable
                     }),
             ])
             ->defaultSort('starts_at', 'desc');
-    }
-
-    /**
-     * @return Collection<int, string>
-     */
-    protected function getMyGroupIds(): Collection
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        $directGroupIds = BookingGroup::whereHas(
-            'users',
-            fn (Builder $query) => $query->where('users.id', $user->id)
-        )->pluck('id');
-
-        $teamGroupIds = $user->team_id
-            ? BookingGroup::whereHas(
-                'teams',
-                fn (Builder $query) => $query->where('teams.id', $user->team_id)
-            )->pluck('id')
-            : collect();
-
-        return $directGroupIds->merge($teamGroupIds)->unique()->values();
     }
 
     protected function dispatchCalendarRefresh(): void
