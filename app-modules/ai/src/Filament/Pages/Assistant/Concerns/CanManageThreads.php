@@ -152,7 +152,7 @@ trait CanManageThreads
                             ])
                             ->all();
                     })
-                    ->getOptionLabelUsing(function ($value): ?string {
+                    ->getOptionLabelUsing(function (string | int | null $value): ?string {
                         if (blank($value)) {
                             return null;
                         }
@@ -171,7 +171,7 @@ trait CanManageThreads
                             : null;
                     })
                     ->live()
-                    ->afterStateUpdated(function ($component, $state) {
+                    ->afterStateUpdated(function (Select $component, mixed $state) {
                         if (blank($state)) {
                             return;
                         }

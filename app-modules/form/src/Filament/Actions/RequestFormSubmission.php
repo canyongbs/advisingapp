@@ -70,7 +70,7 @@ class RequestFormSubmission extends Action
                             ->limit(50)
                             ->pluck('name', 'id')
                             ->all())
-                        ->getOptionLabelUsing(fn ($value): ?string => filled($value)
+                        ->getOptionLabelUsing(fn (string | int | null $value): ?string => filled($value)
                             ? Form::query()
                                 ->where('is_authenticated', true)
                                 ->whereKey($value)

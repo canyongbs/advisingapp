@@ -165,7 +165,7 @@ class Inbox extends Page implements HasTable
                             ->limit(20)
                             ->pluck('name', 'id')
                     )
-                    ->getOptionLabelUsing(fn ($value): ?string => filled($value)
+                    ->getOptionLabelUsing(fn (string | int | null $value): ?string => filled($value)
                         ? auth()->user()->groups()->whereKey($value)->value('name')
                         : null)
                     ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
@@ -182,7 +182,7 @@ class Inbox extends Page implements HasTable
                             ->limit(20)
                             ->pluck('name', 'id')
                     )
-                    ->getOptionLabelUsing(fn ($value): ?string => filled($value)
+                    ->getOptionLabelUsing(fn (string | int | null $value): ?string => filled($value)
                         ? Group::query()->whereKey($value)->value('name')
                         : null)
                     ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
