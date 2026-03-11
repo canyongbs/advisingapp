@@ -191,7 +191,7 @@ trait CanManagePromptLibrary
                                 fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
                             ));
                     })
-                    ->getOptionLabelUsing(function (Get $get, $value) use ($getPromptOptions): ?string {
+                    ->getOptionLabelUsing(function (Get $get, string | int | null $value) use ($getPromptOptions): ?string {
                         if (blank($value)) {
                             return null;
                         }
