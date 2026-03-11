@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e93aae3e4f5b4c14fad499c201a9ba97",
+    "content-hash": "9de9e40e64c207635201bd910df8929c",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -19208,16 +19208,16 @@
         },
         {
             "name": "tpetry/laravel-postgresql-enhanced",
-            "version": "3.5.0",
+            "version": "3.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tpetry/laravel-postgresql-enhanced.git",
-                "reference": "a0634a8f90375a065377381df36b8f3d1c7c4b4c"
+                "reference": "dcfa5869671260aaf4057155deb66de6b600bda5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tpetry/laravel-postgresql-enhanced/zipball/a0634a8f90375a065377381df36b8f3d1c7c4b4c",
-                "reference": "a0634a8f90375a065377381df36b8f3d1c7c4b4c",
+                "url": "https://api.github.com/repos/tpetry/laravel-postgresql-enhanced/zipball/dcfa5869671260aaf4057155deb66de6b600bda5",
+                "reference": "dcfa5869671260aaf4057155deb66de6b600bda5",
                 "shasum": ""
             },
             "require": {
@@ -19274,9 +19274,9 @@
             ],
             "support": {
                 "issues": "https://github.com/tpetry/laravel-postgresql-enhanced/issues",
-                "source": "https://github.com/tpetry/laravel-postgresql-enhanced/tree/3.5.0"
+                "source": "https://github.com/tpetry/laravel-postgresql-enhanced/tree/3.5.1"
             },
-            "time": "2025-11-24T10:21:44+00:00"
+            "time": "2026-03-10T19:24:48+00:00"
         },
         {
             "name": "twilio/sdk",

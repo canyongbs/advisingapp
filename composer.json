@@ -117,7 +117,7 @@
         "stechstudio/filament-impersonate": "^4.0",
         "talkroute/message-segment-calculator": "^1.0",
         "telnyx/telnyx-php": "^3.0",
-        "tpetry/laravel-postgresql-enhanced": "^3.0",
+        "tpetry/laravel-postgresql-enhanced": "^3.5.1",
         "twilio/sdk": "^8.5.0",
         "ysfkaya/filament-phone-input": "^4.1.2"
     },
