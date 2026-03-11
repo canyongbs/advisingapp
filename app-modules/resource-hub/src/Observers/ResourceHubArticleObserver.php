@@ -37,7 +37,9 @@
 namespace AdvisingApp\ResourceHub\Observers;
 
 use AdvisingApp\IntegrationOpenAi\Jobs\SyncResourceHubArticlesToAssistantVectorStores;
+use AdvisingApp\IntegrationOpenAi\Jobs\SyncResourceHubArticlesToQnaAdvisorVectorStores;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use App\Features\QnaAdvisorResourceHubFeature;
 
 class ResourceHubArticleObserver
 {
@@ -48,6 +50,7 @@ class ResourceHubArticleObserver
         }
 
         SyncResourceHubArticlesToAssistantVectorStores::dispatch();
+        QnaAdvisorResourceHubFeature::active() && SyncResourceHubArticlesToQnaAdvisorVectorStores::dispatch();
     }
 
     public function updated(ResourceHubArticle $article): void
@@ -57,10 +60,12 @@ class ResourceHubArticleObserver
         }
 
         SyncResourceHubArticlesToAssistantVectorStores::dispatch();
+        QnaAdvisorResourceHubFeature::active() && SyncResourceHubArticlesToQnaAdvisorVectorStores::dispatch();
     }
 
     public function deleted(ResourceHubArticle $article): void
     {
         SyncResourceHubArticlesToAssistantVectorStores::dispatch();
+        QnaAdvisorResourceHubFeature::active() && SyncResourceHubArticlesToQnaAdvisorVectorStores::dispatch();
     }
 }

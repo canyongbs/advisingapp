@@ -87,6 +87,12 @@ class SendQnaAdvisorMessage implements ShouldQueue
         try {
             $aiService = $this->advisor->model->getService();
 
+            $files = [
+                ...$this->advisor->files()->whereNotNull('parsing_results')->get()->all(),
+                ...$this->advisor->links()->whereNotNull('parsing_results')->get()->all(),
+                ...$this->advisor->getResourceHubArticles(),
+            ];
+
             $messages = $isStartOfConversation
                 ? $this->thread->messages()
                     ->orderBy('created_at')
@@ -100,12 +106,10 @@ class SendQnaAdvisorMessage implements ShouldQueue
             $stream = $aiService->streamRaw(
                 prompt: $context = $getQnaAdvisorInstructions->execute($this->advisor),
                 content: $this->content,
-                files: [
-                    ...$this->advisor->files()->whereNotNull('parsing_results')->get()->all(),
-                    ...$this->advisor->links()->whereNotNull('parsing_results')->get()->all(),
-                ],
+                files: $files,
                 options: $this->thread->messages()->where('is_advisor', true)->latest()->value('next_request_options') ?? [],
                 messages: $messages,
+                filesContext: $this->advisor,
             );
 
             $response = new QnaAdvisorMessage();

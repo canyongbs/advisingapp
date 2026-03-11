@@ -111,7 +111,8 @@ class ProspectReportTableChart extends TableWidget
             ->columns([
                 TextColumn::make('full_name')
                     ->label('Name')
-                    ->url(fn (Prospect $record): string => ProspectResource::getUrl('view', ['record' => $record])),
+                    ->url(fn (Prospect $record): string => ProspectResource::getUrl('view', ['record' => $record]))
+                    ->openUrlInNewTab(),
                 TextColumn::make('primaryEmailAddress.address')
                     ->label('Email'),
                 TextColumn::make('status.name')

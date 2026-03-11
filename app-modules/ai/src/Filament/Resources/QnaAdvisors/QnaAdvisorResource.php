@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\EditQnaAdvisorLinks;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ListQnaAdvisors;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ManageCategories;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ManageQnaAdditionalKnowledge;
+use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ManageQnaAdvisorResourceHub;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ManageQnaQuestions;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\PreviewQnaAdvisor;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\QnaAdvisorEmbed;
@@ -72,6 +73,7 @@ class QnaAdvisorResource extends Resource
             'manage-categories' => ManageCategories::route('/{record}/categories'),
             'manage-questions' => ManageQnaQuestions::route('/{record}/questions'),
             'manage-additional-knowledge' => ManageQnaAdditionalKnowledge::route('/{record}/additional-knowledge'),
+            'manage-resource-hub' => ManageQnaAdvisorResourceHub::route('/{record}/resource-hub'),
             'preview' => PreviewQnaAdvisor::route('/{record}/preview'),
             'embed' => QnaAdvisorEmbed::route('/{record}/embed'),
         ];
@@ -85,6 +87,7 @@ class QnaAdvisorResource extends Resource
             ManageCategories::class,
             ManageQnaQuestions::class,
             ManageQnaAdditionalKnowledge::class,
+            ManageQnaAdvisorResourceHub::class,
             EditQnaAdvisorLinks::class,
             PreviewQnaAdvisor::class,
             QnaAdvisorEmbed::class,

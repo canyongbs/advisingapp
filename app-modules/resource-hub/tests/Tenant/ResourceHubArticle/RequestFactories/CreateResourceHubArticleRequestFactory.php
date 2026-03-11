@@ -50,10 +50,10 @@ class CreateResourceHubArticleRequestFactory extends RequestFactory
             'title' => fake()->words(5, true),
             'public' => fake()->boolean(),
             'notes' => fake()->paragraph(),
-            'quality_id' => ResourceHubQuality::inRandomOrder()->first()?->id ?? ResourceHubQuality::factory()->create()->id,
-            'status_id' => ResourceHubStatus::inRandomOrder()->first()?->id ?? ResourceHubStatus::factory()->create()->id,
-            'category_id' => ResourceHubCategory::inRandomOrder()->first()?->id ?? ResourceHubCategory::factory()->create()->id,
-            'division' => [Division::inRandomOrder()->first()?->id ?? Division::factory()->create()->id],
+            'quality_id' => ResourceHubQuality::inRandomOrder()->first()->id ?? ResourceHubQuality::factory()->create()->id,
+            'status_id' => ResourceHubStatus::inRandomOrder()->first()->id ?? ResourceHubStatus::factory()->create()->id,
+            'category_id' => ResourceHubCategory::inRandomOrder()->first()->id ?? ResourceHubCategory::factory()->create()->id,
+            'division' => [Division::inRandomOrder()->first()->id ?? Division::factory()->create()->id],
         ];
     }
 }

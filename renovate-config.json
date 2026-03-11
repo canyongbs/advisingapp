@@ -31,6 +31,50 @@
             "matchStrings": ["COPY --from=ghcr\\.io/roadrunner-server/roadrunner:(?<currentValue>[\\d.]+)"],
             "datasourceTemplate": "github-releases",
             "depNameTemplate": "roadrunner-server/roadrunner"
+        },
+        {
+            "customType": "regex",
+            "description": "NVM Version Updates",
+            "managerFilePatterns": ["/^Dockerfile$/"],
+            "matchStrings": ["ENV NVM_VERSION=v(?<currentValue>[\\d.]+)"],
+            "datasourceTemplate": "github-releases",
+            "depNameTemplate": "nvm-sh/nvm"
+        },
+        {
+            "customType": "regex",
+            "description": "Node.js Version Updates (Dockerfile)",
+            "managerFilePatterns": ["/^Dockerfile$/"],
+            "matchStrings": ["ENV NODE_VERSION=(?<currentValue>[\\d.]+)"],
+            "datasourceTemplate": "node-version",
+            "depNameTemplate": "node"
+        },
+        {
+            "customType": "regex",
+            "description": "Node.js Version Updates (.nvmrc)",
+            "managerFilePatterns": ["/^\\.nvmrc$/"],
+            "matchStrings": ["(?<currentValue>\\d+\\.\\d+\\.\\d+)"],
+            "datasourceTemplate": "node-version",
+            "depNameTemplate": "node"
+        },
+        {
+            "customType": "regex",
+            "description": "NPM Version Updates",
+            "managerFilePatterns": ["/^Dockerfile$/"],
+            "matchStrings": ["ENV NPM_VERSION=\\^(?<currentValue>[\\d.]+)"],
+            "datasourceTemplate": "npm",
+            "depNameTemplate": "npm"
+        }
+    ],
+    "packageRules": [
+        {
+            "matchDepNames": ["nvm-sh/nvm", "node", "npm"],
+            "matchUpdateTypes": ["major"],
+            "enabled": false
+        },
+        {
+            "matchDepNames": ["nvm-sh/nvm", "node", "npm"],
+            "groupName": "Node.js toolchain",
+            "groupSlug": "node-toolchain"
         }
     ]
 }

@@ -34,32 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Enums;
+namespace App\Features;
 
-use AdvisingApp\Form\Actions\DeliverFormSubmissionRequestByEmail;
-use AdvisingApp\Form\Actions\DeliverFormSubmissionRequestBySms;
-use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Survey\Models\SurveySubmission;
-use Filament\Support\Contracts\HasLabel;
+use App\Support\AbstractFeatureFlag;
 
-enum FormSubmissionRequestDeliveryMethod: string implements HasLabel
+class QnaAdvisorResourceHubFeature extends AbstractFeatureFlag
 {
-    case Email = 'email';
-    case Sms = 'sms';
-
-    public function getLabel(): ?string
+    public function resolve(mixed $scope): mixed
     {
-        return match ($this) {
-            static::Email => 'Email',
-            static::Sms => 'SMS',
-        };
-    }
-
-    public function deliver(FormSubmission|SurveySubmission $submission): void
-    {
-        match ($this) {
-            static::Email => DeliverFormSubmissionRequestByEmail::dispatch($submission),
-            static::Sms => DeliverFormSubmissionRequestBySms::dispatch($submission),
-        };
+        return false;
     }
 }

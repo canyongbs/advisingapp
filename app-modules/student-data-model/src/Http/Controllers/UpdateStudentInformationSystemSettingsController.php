@@ -40,6 +40,7 @@ use AdvisingApp\StudentDataModel\Enums\SisSystem;
 use AdvisingApp\StudentDataModel\Http\Requests\UpdateStudentInformationSystemSettingsRequest;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UpdateStudentInformationSystemSettingsController extends Controller
@@ -47,7 +48,7 @@ class UpdateStudentInformationSystemSettingsController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(UpdateStudentInformationSystemSettingsRequest $request)
+    public function __invoke(UpdateStudentInformationSystemSettingsRequest $request): JsonResponse
     {
         $settings = app(StudentInformationSystemSettings::class);
 

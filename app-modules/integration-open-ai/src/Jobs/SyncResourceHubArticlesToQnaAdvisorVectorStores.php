@@ -34,32 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Enums;
+namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
-use AdvisingApp\Form\Actions\DeliverFormSubmissionRequestByEmail;
-use AdvisingApp\Form\Actions\DeliverFormSubmissionRequestBySms;
-use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Survey\Models\SurveySubmission;
-use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Spatie\Multitenancy\Jobs\TenantAware;
 
-enum FormSubmissionRequestDeliveryMethod: string implements HasLabel
+class SyncResourceHubArticlesToQnaAdvisorVectorStores implements ShouldQueue, TenantAware
 {
-    case Email = 'email';
-    case Sms = 'sms';
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    public function getLabel(): ?string
+    public function handle(): void
     {
-        return match ($this) {
-            static::Email => 'Email',
-            static::Sms => 'SMS',
-        };
-    }
-
-    public function deliver(FormSubmission|SurveySubmission $submission): void
-    {
-        match ($this) {
-            static::Email => DeliverFormSubmissionRequestByEmail::dispatch($submission),
-            static::Sms => DeliverFormSubmissionRequestBySms::dispatch($submission),
-        };
+        QnaAdvisor::query()
+            ->where('has_resource_hub_knowledge', true)
+            ->eachById(function (QnaAdvisor $advisor) {
+                UploadQnaAdvisorFilesToVectorStore::dispatch($advisor);
+            });
     }
 }

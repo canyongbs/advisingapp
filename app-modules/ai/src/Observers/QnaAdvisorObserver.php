@@ -34,32 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Enums;
+namespace AdvisingApp\Ai\Observers;
 
-use AdvisingApp\Form\Actions\DeliverFormSubmissionRequestByEmail;
-use AdvisingApp\Form\Actions\DeliverFormSubmissionRequestBySms;
-use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Survey\Models\SurveySubmission;
-use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\IntegrationOpenAi\Jobs\UploadQnaAdvisorFilesToVectorStore;
 
-enum FormSubmissionRequestDeliveryMethod: string implements HasLabel
+class QnaAdvisorObserver
 {
-    case Email = 'email';
-    case Sms = 'sms';
-
-    public function getLabel(): ?string
+    public function created(QnaAdvisor $advisor): void
     {
-        return match ($this) {
-            static::Email => 'Email',
-            static::Sms => 'SMS',
-        };
+        if ($advisor->has_resource_hub_knowledge) {
+            UploadQnaAdvisorFilesToVectorStore::dispatch($advisor);
+        }
     }
 
-    public function deliver(FormSubmission|SurveySubmission $submission): void
+    public function updated(QnaAdvisor $advisor): void
     {
-        match ($this) {
-            static::Email => DeliverFormSubmissionRequestByEmail::dispatch($submission),
-            static::Sms => DeliverFormSubmissionRequestBySms::dispatch($submission),
-        };
+        if ($advisor->wasChanged('has_resource_hub_knowledge')) {
+            UploadQnaAdvisorFilesToVectorStore::dispatch($advisor);
+        }
     }
 }

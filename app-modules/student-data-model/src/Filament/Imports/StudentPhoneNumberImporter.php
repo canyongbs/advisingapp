@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Imports;
 
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use App\Settings\ImportSettings;
 use Filament\Actions\Imports\ImportColumn;
@@ -124,6 +125,8 @@ class StudentPhoneNumberImporter extends Importer
 
     public function afterCreate(): void
     {
+        assert($this->record instanceof Student);
+
         if ($this->data['is_primary'] ?? null) {
             DB::statement("
                 with ordered_results as (

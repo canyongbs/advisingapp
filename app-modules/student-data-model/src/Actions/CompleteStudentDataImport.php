@@ -142,7 +142,7 @@ class CompleteStudentDataImport
         }
 
         if ($totalFailedRowsCount) {
-            $import->canceled_at = now();
+            $import->canceled_at = now()->toImmutable();
             $import->save();
 
             $body = 'Your student data import has finished, but there were issues so nothing was saved.';
@@ -212,7 +212,7 @@ class CompleteStudentDataImport
             return;
         }
 
-        $import->completed_at = now();
+        $import->completed_at = now()->toImmutable();
         $import->save();
 
         $body = 'Your student data import has completed and ' . number_format($import->studentsImport->successful_rows) . ' ' . Str::plural('student', $import->studentsImport->successful_rows) . ' imported.';

@@ -59,6 +59,9 @@ class StudentPhoneNumberFactory extends Factory
         ];
     }
 
+    /**
+     * @return Factory<StudentPhoneNumber>
+     */
     public function canNotReceiveSms(): Factory
     {
         return $this->state(function (array $attributes) {
@@ -68,6 +71,9 @@ class StudentPhoneNumberFactory extends Factory
         });
     }
 
+    /**
+     * @return Factory<StudentPhoneNumber>
+     */
     public function canReceiveSms(): Factory
     {
         return $this->state(function (array $attributes) {
@@ -77,6 +83,9 @@ class StudentPhoneNumberFactory extends Factory
         });
     }
 
+    /**
+     * @return Factory<StudentPhoneNumber>
+     */
     public function withExtension(): Factory
     {
         return $this->state(function (array $attributes) {
