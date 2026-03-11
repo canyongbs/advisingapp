@@ -254,7 +254,7 @@ COPY --chmod=755 docker/etc/php/8.4/cli/php.ini /etc/php/8.4/cli/php.ini
 WORKDIR /var/www/html
 
 # Install JS package management
-ENV NVM_VERSION=v0.40.3
+ENV NVM_VERSION=v0.40.4
 # If we change this version, remember to also update the .nvmrc file
 ENV NODE_VERSION=24.14.0
 ENV NPM_VERSION=^11.11.0
