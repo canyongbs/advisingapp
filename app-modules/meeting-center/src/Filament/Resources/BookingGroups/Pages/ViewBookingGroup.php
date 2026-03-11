@@ -37,6 +37,9 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use App\Features\GroupBookingFeature;
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
@@ -46,6 +49,10 @@ use Filament\Schemas\Schema;
 class ViewBookingGroup extends ViewRecord
 {
     protected static string $resource = BookingGroupResource::class;
+
+    protected static ?string $navigationLabel = 'View Group';
+
+    protected static ?int $navigationSort = 10;
 
     public function infolist(Schema $schema): Schema
     {
@@ -70,7 +77,17 @@ class ViewBookingGroup extends ViewRecord
 
     protected function getHeaderActions(): array
     {
+        $bookingGroup = $this->getRecord();
+
+        assert($bookingGroup instanceof BookingGroup);
+
         return [
+            Action::make('view_booking_page')
+                ->label('View Booking Page')
+                ->icon('heroicon-o-eye')
+                ->url(fn (): string => route('group-booking.show', ['slug' => $bookingGroup->slug]))
+                ->openUrlInNewTab()
+                ->visible(fn (): bool => GroupBookingFeature::active() && filled($bookingGroup->slug)),
             EditAction::make(),
         ];
     }

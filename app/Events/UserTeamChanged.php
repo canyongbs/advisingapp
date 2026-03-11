@@ -34,21 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory;
+namespace App\Events;
 
-use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
-use Worksome\RequestFactories\RequestFactory;
+use App\Models\User;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
-class EditBookingGroupRequestFactory extends RequestFactory
+class UserTeamChanged
 {
-    public function definition(): array
-    {
-        return [
-            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
-            'slug' => str($this->faker->unique()->words(3, true))->slug()->toString(),
-            'description' => $this->faker->paragraph(),
-            'book_with' => BookingGroupBookWith::All->value,
-            'meeting_owner_id' => null,
-        ];
-    }
+    use Dispatchable;
+    use SerializesModels;
+
+    public function __construct(
+        public User $user,
+        public ?string $previousTeamId,
+        public ?string $currentTeamId,
+    ) {}
 }

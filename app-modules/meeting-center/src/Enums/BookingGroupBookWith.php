@@ -34,21 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory;
+namespace AdvisingApp\MeetingCenter\Enums;
 
-use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
-use Worksome\RequestFactories\RequestFactory;
+use Filament\Support\Contracts\HasLabel;
 
-class EditBookingGroupRequestFactory extends RequestFactory
+enum BookingGroupBookWith: string implements HasLabel
 {
-    public function definition(): array
+    case All = 'all';
+
+    public function getLabel(): string
     {
-        return [
-            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
-            'slug' => str($this->faker->unique()->words(3, true))->slug()->toString(),
-            'description' => $this->faker->paragraph(),
-            'book_with' => BookingGroupBookWith::All->value,
-            'meeting_owner_id' => null,
-        ];
+        return match ($this) {
+            self::All => 'All',
+        };
     }
 }

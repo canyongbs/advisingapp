@@ -34,21 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\Builder;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
-use Worksome\RequestFactories\RequestFactory;
-
-class EditBookingGroupRequestFactory extends RequestFactory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
-            'slug' => str($this->faker->unique()->words(3, true))->slug()->toString(),
-            'description' => $this->faker->paragraph(),
-            'book_with' => BookingGroupBookWith::All->value,
-            'meeting_owner_id' => null,
-        ];
+        Schema::table('booking_groups', function (Blueprint $table) {
+            $table->string('slug')->nullable();
+            $table->string('book_with')->default('all');
+            $table->foreignUuid('meeting_owner_id')->nullable()->constrained('users')->nullOnDelete();
+
+            $table->uniqueIndex(['slug'])->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('booking_groups', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('meeting_owner_id');
+            $table->dropColumn(['slug', 'book_with']);
+        });
+    }
+};

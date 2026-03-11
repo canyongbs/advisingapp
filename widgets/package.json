@@ -3,7 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "npm run build:application && npm run build:form && npm run build:survey && npm run build:qna-advisor && npm run build:event-registration && npm run build:case-form && npm run build:case-feedback-form && npm run build:personal-booking-page",
+        "build": "npm run build:application && npm run build:form && npm run build:survey && npm run build:qna-advisor && npm run build:event-registration && npm run build:case-form && npm run build:case-feedback-form && npm run build:booking-page",
         "build:application": "(cd application && vite build)",
         "build:event-registration": "(cd event-registration && vite build)",
         "build:form": "(cd form && vite build)",
@@ -11,10 +11,10 @@
         "build:survey": "(cd survey && vite build)",
         "build:qna-advisor": "(cd qna-advisor && vite build)",
         "build:case-feedback-form": "(cd case-feedback-form && vite build)",
-        "build:personal-booking-page": "(cd personal-booking-page && vite build)",
+        "build:booking-page": "(cd booking-page && vite build)",
         "dev:application": "(cd application && vite)",
         "dev:form": "(cd form && vite)",
-        "dev:personal-booking-page": "(cd personal-booking-page && vite)",
+        "dev:booking-page": "(cd booking-page && vite)",
         "postinstall": "node ../npm-postinstall.cjs"
     },
     "dependencies": {

@@ -155,7 +155,7 @@ class GetAvailableAppointmentSlots
         $now = now();
 
         return $hours
-            ->filter(fn (array $period) => $period['enabled'] ?? false)
+            ->filter(fn (array $period) => ($period['enabled'] ?? $period['is_enabled'] ?? false))
             ->flatMap(function (array $period) use ($date, $busyPeriods) {
                 // Office hours are stored in UTC, so we parse them as UTC first
                 $startTime = $period['start'] ?? $period['starts_at'];
@@ -237,7 +237,7 @@ class GetAvailableAppointmentSlots
      */
     protected function formatHoursAsCollection(array $dayHours): Collection
     {
-        if (isset($dayHours['enabled'])) {
+        if (isset($dayHours['enabled']) || isset($dayHours['is_enabled'])) {
             /** @var Collection<int, array<string, mixed>> */
             return new Collection([$dayHours]);
         }
