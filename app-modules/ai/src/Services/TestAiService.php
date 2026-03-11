@@ -168,6 +168,8 @@ class TestAiService implements AiService
 
     public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void {}
 
+    public function deleteResearchRequestExternalResources(ResearchRequest $researchRequest): void {}
+
     public function hasImageGeneration(): bool
     {
         return false;

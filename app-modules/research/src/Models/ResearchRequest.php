@@ -38,9 +38,11 @@ namespace AdvisingApp\Research\Models;
 
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
+use AdvisingApp\IntegrationOpenAi\Models\OpenAiResearchRequestVectorStore;
 use AdvisingApp\Research\Database\Factories\ResearchRequestFactory;
 use App\Models\BaseModel;
 use App\Models\User;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -82,6 +84,22 @@ class ResearchRequest extends BaseModel implements HasMedia
         'remaining_outline' => 'array',
         'sources' => 'array',
     ];
+
+    protected static function booted(): void
+    {
+        static::deleting(function (self $researchRequest): void {
+            if (! $researchRequest->vectorStores()->whereNotNull('vector_store_id')->exists()) {
+                return;
+            }
+
+            if (! $researchRequest->research_model?->hasService()) {
+                throw new Exception('Unable to safely delete research request [' . $researchRequest->getKey() . '] because external vector store cleanup could not be initialized.');
+            }
+
+            // Ensure external vector store files are deleted before DB cascade removes local IDs.
+            $researchRequest->research_model->getService()->deleteResearchRequestExternalResources($researchRequest);
+        });
+    }
 
     /**
      * @return HasMany<ResearchRequestQuestion, $this>
@@ -151,6 +169,14 @@ class ResearchRequest extends BaseModel implements HasMedia
     public function parsedSearchResults(): HasMany
     {
         return $this->hasMany(ResearchRequestParsedSearchResults::class);
+    }
+
+    /**
+     * @return HasMany<OpenAiResearchRequestVectorStore, $this>
+     */
+    public function vectorStores(): HasMany
+    {
+        return $this->hasMany(OpenAiResearchRequestVectorStore::class);
     }
 
     public function getProgress(): int

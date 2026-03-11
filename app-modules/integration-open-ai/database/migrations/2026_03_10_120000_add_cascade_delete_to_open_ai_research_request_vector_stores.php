@@ -35,7 +35,6 @@
 */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
@@ -43,9 +42,7 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('open_ai_research_request_vector_stores', function (Blueprint $table) {
-            // Constraint name can vary due identifier-length truncation across environments.
-            DB::statement('ALTER TABLE open_ai_research_request_vector_stores DROP CONSTRAINT IF EXISTS open_ai_research_request_vector_stores_research_request_id_foreign');
-            DB::statement('ALTER TABLE open_ai_research_request_vector_stores DROP CONSTRAINT IF EXISTS open_ai_research_request_vector_stores_research_request_id_fore');
+        $table->dropForeign(['research_request_id']);
 
             $table->foreign('research_request_id', 'open_ai_rr_vs_research_request_id_fk')
                 ->references('id')
@@ -57,9 +54,9 @@ return new class () extends Migration {
     public function down(): void
     {
         Schema::table('open_ai_research_request_vector_stores', function (Blueprint $table) {
-            $table->dropForeign('open_ai_rr_vs_research_request_id_fk');
+        $table->dropForeign('open_ai_rr_vs_research_request_id_fk');
 
-            $table->foreign('research_request_id', 'open_ai_research_request_vector_stores_research_request_id_fore')
+        $table->foreign('research_request_id')
                 ->references('id')
                 ->on('research_requests');
         });
