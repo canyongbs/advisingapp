@@ -257,7 +257,7 @@ WORKDIR /var/www/html
 ENV NVM_VERSION=v0.40.4
 # If we change this version, remember to also update the .nvmrc file
 ENV NODE_VERSION=24.14.0
-ENV NPM_VERSION=^11.11.0
+ENV NPM_VERSION=^11.11.1
 ENV NVM_DIR=/usr/local/nvm
 RUN mkdir "$NVM_DIR"
 
