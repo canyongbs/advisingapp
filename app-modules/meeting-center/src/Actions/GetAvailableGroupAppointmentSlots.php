@@ -264,8 +264,8 @@ class GetAvailableGroupAppointmentSlots
             return [];
         }
 
-        if (isset($dayHours['enabled'])) {
-            if (! $dayHours['enabled']) {
+        if (isset($dayHours['enabled']) || isset($dayHours['is_enabled'])) {
+            if (! ($dayHours['enabled'] ?? $dayHours['is_enabled'] ?? false)) {
                 return [];
             }
 
@@ -273,7 +273,7 @@ class GetAvailableGroupAppointmentSlots
         }
 
         return collect($dayHours)
-            ->filter(fn (array $period) => $period['enabled'] ?? false)
+            ->filter(fn (array $period) => ($period['enabled'] ?? $period['is_enabled'] ?? false))
             ->values()
             ->all();
     }
