@@ -82,7 +82,9 @@ class SharedCalendar extends Page implements HasForms, HasTable
     #[Url(as: 'view')]
     public string $viewType = 'table';
 
-    /** @var array<string, mixed> */
+    /**
+     * @var array<string, mixed>
+     */
     public array $data = [];
 
     public function mount(): void
@@ -227,7 +229,9 @@ class SharedCalendar extends Page implements HasForms, HasTable
             ->defaultSort('starts_at', 'desc');
     }
 
-    /** @return Collection<int, string> */
+    /**
+     * @return Collection<int, string>
+     */
     protected function getMyGroupIds(): Collection
     {
         /** @var User $user */

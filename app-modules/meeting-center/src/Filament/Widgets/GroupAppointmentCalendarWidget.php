@@ -49,12 +49,16 @@ class GroupAppointmentCalendarWidget extends FullCalendarWidget
 {
     public string $groupFilter = 'my_groups';
 
-    /** @var array<int, string> */
+    /**
+     * @var array<int, string>
+     */
     public array $selectedGroupIds = [];
 
     public bool $hidePast = true;
 
-    /** @param  array<string, mixed>  $info
+    /**
+     * @param  array<string, mixed>  $info
+     *
      * @return array<int, mixed>
      */
     public function fetchEvents(array $info): array
@@ -81,13 +85,17 @@ class GroupAppointmentCalendarWidget extends FullCalendarWidget
             ->toArray();
     }
 
-    /** @param  array<string, mixed>  $event */
+    /**
+     * @param  array<string, mixed>  $event
+     */
     public function onEventClick(array $event): void
     {
         // No action on event click, to avoid error in the plugin
     }
 
-    /** @param  array<int, string>  $selectedGroupIds */
+    /**
+     * @param  array<int, string>  $selectedGroupIds
+     */
     #[On('refresh-group-events')]
     public function onRefreshGroupEvents(string $groupFilter, array $selectedGroupIds, bool $hidePast): void
     {
@@ -97,7 +105,9 @@ class GroupAppointmentCalendarWidget extends FullCalendarWidget
         $this->refreshRecords();
     }
 
-    /** @return Collection<int, string> */
+    /**
+     * @return Collection<int, string>
+     */
     protected function getMyGroupIds(): Collection
     {
         /** @var User $user */
