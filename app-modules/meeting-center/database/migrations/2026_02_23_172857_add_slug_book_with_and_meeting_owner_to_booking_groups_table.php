@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\Builder;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
@@ -43,9 +43,11 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('booking_groups', function (Blueprint $table) {
-            $table->string('slug')->nullable()->unique();
-            $table->string('book_with')->default(BookingGroupBookWith::All->value);
+            $table->string('slug')->nullable();
+            $table->string('book_with')->default('all');
             $table->foreignUuid('meeting_owner_id')->nullable()->constrained('users')->nullOnDelete();
+
+            $table->uniqueIndex(['slug'])->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
         });
     }
 

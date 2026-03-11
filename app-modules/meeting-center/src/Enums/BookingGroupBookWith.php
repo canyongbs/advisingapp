@@ -36,7 +36,16 @@
 
 namespace AdvisingApp\MeetingCenter\Enums;
 
-enum BookingGroupBookWith: string
+use Filament\Support\Contracts\HasLabel;
+
+enum BookingGroupBookWith: string implements HasLabel
 {
     case All = 'all';
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::All => 'All',
+        };
+    }
 }

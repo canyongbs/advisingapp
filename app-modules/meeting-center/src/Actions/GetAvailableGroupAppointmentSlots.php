@@ -73,14 +73,12 @@ class GetAvailableGroupAppointmentSlots
             ? $bookingGroup->default_appointment_buffer_after_duration
             : 0;
 
-        $maxBuffer = max($bufferBefore, $bufferAfter);
-
         $monthStart = Carbon::create($year, $month, 1)->startOfDay();
         $monthEnd = Carbon::create($year, $month, 1)->endOfMonth()->endOfDay();
 
-        $allBusyPeriods = $this->getAllMemberBusyPeriods($members, $monthStart, $monthEnd, $maxBuffer);
+        $allBusyPeriods = $this->getAllMemberBusyPeriods($members, $monthStart, $monthEnd);
         $allBusyPeriods = $allBusyPeriods->merge(
-            $this->getGroupAppointmentBusyPeriods($bookingGroup, $monthStart, $monthEnd, $maxBuffer),
+            $this->getGroupAppointmentBusyPeriods($bookingGroup, $monthStart, $monthEnd),
         );
 
         $now = now();
@@ -168,7 +166,7 @@ class GetAvailableGroupAppointmentSlots
             }
         }
 
-        // Carve out busy periods (already expanded by buffer) from the intersected blocks
+        // Carve out busy periods from the intersected blocks
         $availableBlocks = $intersectedBlocks;
 
         foreach ($allBusyPeriods as $busy) {
@@ -298,33 +296,27 @@ class GetAvailableGroupAppointmentSlots
      *
      * @return Collection<int, array{start: Carbon, end: Carbon}>
      */
-    protected function getAllMemberBusyPeriods(Collection $members, Carbon $start, Carbon $end, int $maxBuffer): Collection
+    protected function getAllMemberBusyPeriods(Collection $members, Carbon $start, Carbon $end): Collection
     {
         return $members
             ->flatMap(fn (User $member) => $this->getBusyPeriodsFor($member, $start, $end))
-            ->map(function (array $busy) use ($maxBuffer) {
-                return [
-                    'start' => $busy['start']->copy()->subMinutes($maxBuffer),
-                    'end' => $busy['end']->copy()->addMinutes($maxBuffer),
-                ];
-            })
             ->values();
     }
 
     /**
      * @return Collection<int, array{start: Carbon, end: Carbon}>
      */
-    protected function getGroupAppointmentBusyPeriods(BookingGroup $bookingGroup, Carbon $start, Carbon $end, int $maxBuffer): Collection
+    protected function getGroupAppointmentBusyPeriods(BookingGroup $bookingGroup, Carbon $start, Carbon $end): Collection
     {
         return BookingGroupAppointment::query()
             ->whereBelongsTo($bookingGroup)
             ->where('starts_at', '<', $end)
             ->where('ends_at', '>', $start)
             ->get()
-            ->map(function (BookingGroupAppointment $appointment) use ($maxBuffer) {
+            ->map(function (BookingGroupAppointment $appointment) {
                 return [
-                    'start' => $appointment->starts_at->copy()->subMinutes($maxBuffer),
-                    'end' => $appointment->ends_at->copy()->addMinutes($maxBuffer),
+                    'start' => $appointment->starts_at->copy(),
+                    'end' => $appointment->ends_at->copy(),
                 ];
             })
             ->values();

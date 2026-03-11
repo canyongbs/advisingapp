@@ -38,7 +38,6 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
 use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
-use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use App\Features\GroupBookingFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
@@ -55,7 +54,6 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 
 class CreateBookingGroup extends CreateRecord
 {
@@ -158,10 +156,8 @@ class CreateBookingGroup extends CreateRecord
                     TextInput::make('slug')
                         ->label('URL Slug')
                         ->required()
-                        ->rules([
-                            'alpha_dash',
-                            Rule::unique(BookingGroup::class, 'slug'),
-                        ])
+                        ->alphaDash()
+                        ->scopedUnique()
                         ->prefix(config('app.url') . '/group-booking/')
                         ->maxLength(255)
                         ->default(fn (Get $get) => Str::slug($get('name') ?? ''))

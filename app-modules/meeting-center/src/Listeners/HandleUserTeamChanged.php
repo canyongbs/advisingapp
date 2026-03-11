@@ -60,7 +60,6 @@ class HandleUserTeamChanged
                 filled($event->currentTeamId),
                 fn ($query) => $query->whereDoesntHave('teams', fn ($teamQuery) => $teamQuery->whereKey($event->currentTeamId)),
             )
-            ->get()
-            ->each(fn (BookingGroup $bookingGroup): mixed => $bookingGroup->users()->syncWithoutDetaching([$event->user->id]));
+            ->eachById(fn (BookingGroup $bookingGroup): mixed => $bookingGroup->users()->syncWithoutDetaching([$event->user->id]));
     }
 }

@@ -64,6 +64,7 @@ class BookingGroupResource extends Resource
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
+            ViewBookingGroup::class,
             EditBookingGroup::class,
             BookingGroupAppointments::class,
         ]);

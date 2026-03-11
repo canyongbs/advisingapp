@@ -45,6 +45,7 @@ use App\Features\GroupBookingFeature;
 use App\Http\Controllers\Controller;
 use App\Settings\CollegeBrandingSettings;
 use Carbon\Carbon;
+use Exception;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -158,12 +159,16 @@ class GroupBookingPageWidgetController extends Controller
             ], 422);
         }
 
-        $maxBuffer = $bookingGroup->is_default_appointment_buffer_enabled
-            ? max($bookingGroup->default_appointment_buffer_before_duration, $bookingGroup->default_appointment_buffer_after_duration)
+        $bufferBefore = $bookingGroup->is_default_appointment_buffer_enabled
+            ? $bookingGroup->default_appointment_buffer_before_duration
             : 0;
 
-        $conflictCheckStart = $startsAt->copy()->subMinutes($maxBuffer);
-        $conflictCheckEnd = $endsAt->copy()->addMinutes($maxBuffer);
+        $bufferAfter = $bookingGroup->is_default_appointment_buffer_enabled
+            ? $bookingGroup->default_appointment_buffer_after_duration
+            : 0;
+
+        $conflictCheckStart = $startsAt->copy()->subMinutes($bufferBefore);
+        $conflictCheckEnd = $endsAt->copy()->addMinutes($bufferAfter);
 
         // Validate the requested slot fits within regenerated available blocks
         $availableBlocks = app(GetAvailableGroupAppointmentSlots::class)(
@@ -240,6 +245,10 @@ class GroupBookingPageWidgetController extends Controller
                 'ends_at' => $endsAt,
                 'attendees' => $attendees,
             ]);
+
+            if ($calendarEvent->provider_uid === null) {
+                report(new Exception('Calendar event was created but provider UID was not returned.'));
+            }
 
             $appointment = BookingGroupAppointment::create([
                 'booking_group_id' => $bookingGroup->id,

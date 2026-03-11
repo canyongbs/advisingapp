@@ -59,7 +59,6 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 
 class EditBookingGroup extends EditRecord
 {
@@ -172,10 +171,8 @@ class EditBookingGroup extends EditRecord
                     TextInput::make('slug')
                         ->label('URL Slug')
                         ->required()
-                        ->rules([
-                            'alpha_dash',
-                            Rule::unique(BookingGroup::class, 'slug')->ignore($bookingGroup->getKey()),
-                        ])
+                        ->alphaDash()
+                        ->scopedUnique()
                         ->prefix(config('app.url') . '/group-booking/')
                         ->maxLength(255)
                         ->default(fn (Get $get) => Str::slug($get('name') ?? ''))
@@ -216,7 +213,7 @@ class EditBookingGroup extends EditRecord
                 ->icon('heroicon-o-eye')
                 ->url(fn (): string => route('group-booking.show', ['slug' => $bookingGroup->slug]))
                 ->openUrlInNewTab()
-                ->visible(fn (): bool => GroupBookingFeature::active() && ! empty($bookingGroup->slug)),
+                ->visible(fn (): bool => GroupBookingFeature::active() && filled($bookingGroup->slug)),
             ViewAction::make(),
             DeleteAction::make(),
         ];
