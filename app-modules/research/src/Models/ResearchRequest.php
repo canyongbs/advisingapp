@@ -85,22 +85,6 @@ class ResearchRequest extends BaseModel implements HasMedia
         'sources' => 'array',
     ];
 
-    protected static function booted(): void
-    {
-        static::deleting(function (self $researchRequest): void {
-            if (! $researchRequest->vectorStores()->whereNotNull('vector_store_id')->exists()) {
-                return;
-            }
-
-            if (! $researchRequest->research_model?->hasService()) {
-                throw new Exception('Unable to safely delete research request [' . $researchRequest->getKey() . '] because external vector store cleanup could not be initialized.');
-            }
-
-            // Ensure external vector store files are deleted before DB cascade removes local IDs.
-            $researchRequest->research_model->getService()->deleteResearchRequestExternalResources($researchRequest);
-        });
-    }
-
     /**
      * @return HasMany<ResearchRequestQuestion, $this>
      */
@@ -324,5 +308,21 @@ class ResearchRequest extends BaseModel implements HasMedia
         }
 
         return ($progress / $progressTotal) * 100;
+    }
+
+    protected static function booted(): void
+    {
+        static::deleting(function (self $researchRequest): void {
+            if (! $researchRequest->vectorStores()->whereNotNull('vector_store_id')->exists()) {
+                return;
+            }
+
+            if (! $researchRequest->research_model?->hasService()) {
+                throw new Exception('Unable to safely delete research request [' . $researchRequest->getKey() . '] because external vector store cleanup could not be initialized.');
+            }
+
+            // Ensure external vector store files are deleted before DB cascade removes local IDs.
+            $researchRequest->research_model->getService()->deleteResearchRequestExternalResources($researchRequest);
+        });
     }
 }

@@ -42,7 +42,7 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('open_ai_research_request_vector_stores', function (Blueprint $table) {
-        $table->dropForeign(['research_request_id']);
+            $table->dropForeign(['research_request_id']);
 
             $table->foreign('research_request_id', 'open_ai_rr_vs_research_request_id_fk')
                 ->references('id')
@@ -54,9 +54,9 @@ return new class () extends Migration {
     public function down(): void
     {
         Schema::table('open_ai_research_request_vector_stores', function (Blueprint $table) {
-        $table->dropForeign('open_ai_rr_vs_research_request_id_fk');
+            $table->dropForeign('open_ai_rr_vs_research_request_id_fk');
 
-        $table->foreign('research_request_id')
+            $table->foreign('research_request_id')
                 ->references('id')
                 ->on('research_requests');
         });
