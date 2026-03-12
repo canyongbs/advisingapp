@@ -94,7 +94,7 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
         'is_generate_prospects_enabled' => 'boolean',
         'is_introductory_message_enabled' => 'boolean',
         'is_introductory_message_dynamic' => 'boolean',
-        'has_resource_hub_knowledge' => 'boolean'
+        'has_resource_hub_knowledge' => 'boolean',
     ];
 
     /**
