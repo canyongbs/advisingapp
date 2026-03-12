@@ -121,7 +121,7 @@ trait ImportColumns
                     'max:255',
                 ]),
             ImportColumn::make('descr')
-                ->label('DESCR')
+                ->label('Name')
                 ->example('Loream ipsum')
                 ->rules([
                     'nullable',
