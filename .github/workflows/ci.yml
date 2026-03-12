@@ -137,24 +137,6 @@ jobs:
         timeout-minutes: 15
 
         services:
-            postgres:
-                # Docker Hub image
-                image: postgres:15
-                ports:
-                    - 5432:5432
-                # Provide the password for postgres
-                env:
-                    PGPASSWORD: ${{ env.DB_PASSWORD }}
-                    POSTGRES_DB: ${{ env.DB_DATABASE }}
-                    POSTGRES_USER: ${{ env.DB_USERNAME }}
-                    POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
-                # Set health checks to wait until postgres has started
-                options: >-
-                    --health-cmd pg_isready
-                    --health-interval 10s
-                    --health-timeout 5s
-                    --health-retries 5
-
             redis:
                 image: redis
                 ports:
@@ -162,10 +144,31 @@ jobs:
                 options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
         steps:
+            - name: Start PostgreSQL
+              run: |
+                  docker run -d \
+                    --name postgres \
+                    -p 5432:5432 \
+                    -e POSTGRES_DB=${{ env.DB_DATABASE }} \
+                    -e POSTGRES_USER=${{ env.DB_USERNAME }} \
+                    -e POSTGRES_PASSWORD=${{ env.DB_PASSWORD }} \
+                    --health-cmd pg_isready \
+                    --health-interval 10s \
+                    --health-timeout 5s \
+                    --health-retries 5 \
+                    postgres:15 \
+                    -c max_locks_per_transaction=256
+
+            - name: Wait for PostgreSQL
+              run: |
+                  until docker inspect --format='{{.State.Health.Status}}' postgres | grep -q healthy; do
+                    sleep 2
+                  done
+
             - name: Create tenant database
-              run: psql -h 127.0.0.1 -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
+              run: psql -h 127.0.0.1 -d ${{ env.DB_DATABASE }} -U ${{ env.DB_USERNAME }} -c 'CREATE DATABASE testing_tenant;'
               env:
-                  PGPASSWORD: root
+                  PGPASSWORD: ${{ env.DB_PASSWORD }}
 
             - name: Setup cache environment
               id: extcache
