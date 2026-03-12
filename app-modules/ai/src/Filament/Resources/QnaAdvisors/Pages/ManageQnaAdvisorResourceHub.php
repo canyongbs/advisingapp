@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use App\Features\QnaAdvisorResourceHubFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
@@ -58,11 +57,6 @@ class ManageQnaAdvisorResourceHub extends EditRecord
     protected static string | UnitEnum | null $navigationGroup = 'Configuration';
 
     protected static ?string $breadcrumb = 'Resource Hub';
-
-    public static function canAccess(array $parameters = []): bool
-    {
-        return QnaAdvisorResourceHubFeature::active() && parent::canAccess($parameters);
-    }
 
     /**
      * @return array<int|string, string|null>

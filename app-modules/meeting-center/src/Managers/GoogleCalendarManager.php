@@ -42,7 +42,6 @@ use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Notifications\CalendarRequiresReconnectNotification;
 use AdvisingApp\MeetingCenter\Settings\GoogleCalendarSettings;
-use App\Features\GroupBookingFeature;
 use DateTime;
 use DateTimeInterface;
 use Exception;
@@ -138,7 +137,7 @@ class GoogleCalendarManager implements CalendarInterface
 
         $event->updateQuietly([
             'provider_id' => $googleEvent->id,
-            ...(GroupBookingFeature::active() ? ['provider_uid' => $googleEvent->getICalUID()] : []),
+            'provider_uid' => $googleEvent->getICalUID(),
         ]);
     }
 
@@ -172,7 +171,7 @@ class GoogleCalendarManager implements CalendarInterface
                     $data = [
                         'title' => filled($event->summary) ? $event->summary : '(No Subject)',
                         'description' => $event->description,
-                        ...(GroupBookingFeature::active() ? ['provider_uid' => $event->getICalUID()] : []),
+                        'provider_uid' => $event->getICalUID(),
                         'starts_at' => $event->start->dateTime,
                         'ends_at' => $event->end->dateTime,
                         'attendees' => collect($event->getAttendees())

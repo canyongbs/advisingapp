@@ -38,7 +38,6 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
 use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
-use App\Features\GroupBookingFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
 use App\Models\User;
@@ -90,8 +89,7 @@ class CreateBookingGroup extends CreateRecord
                         ->options(BookingGroupBookWith::class)
                         ->default(BookingGroupBookWith::All)
                         ->live()
-                        ->required()
-                        ->visible(GroupBookingFeature::active()),
+                        ->required(),
                     Select::make('users')
                         ->label('Users')
                         ->multiple()
@@ -115,8 +113,8 @@ class CreateBookingGroup extends CreateRecord
                             ->all())
                         ->searchable()
                         ->preload()
-                        ->visible(fn (Get $get): bool => GroupBookingFeature::active() && $this->isBookWithAll($get))
-                        ->required(fn (Get $get): bool => GroupBookingFeature::active() && $this->isBookWithAll($get))
+                        ->visible(fn (Get $get): bool => $this->isBookWithAll($get))
+                        ->required(fn (Get $get): bool => $this->isBookWithAll($get))
                         ->rules([
                             function (Get $get): Closure {
                                 return function (string $attribute, mixed $value, Closure $fail) use ($get) {
@@ -161,7 +159,6 @@ class CreateBookingGroup extends CreateRecord
                         ->prefix(config('app.url') . '/group-booking/')
                         ->maxLength(255)
                         ->default(fn (Get $get) => Str::slug($get('name') ?? ''))
-                        ->visible(GroupBookingFeature::active())
                         ->columnSpanFull(),
                     DurationInput::make('default_appointment_duration', isRequired: true, hasDays: true)
                         ->label('Meeting Duration')

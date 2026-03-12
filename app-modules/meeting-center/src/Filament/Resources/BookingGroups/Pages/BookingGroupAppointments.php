@@ -43,7 +43,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Actions\ResolveEducatableFromEmail;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\GroupBookingFeature;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -61,11 +60,6 @@ class BookingGroupAppointments extends ManageRelatedRecords
     protected static ?string $title = 'Appointments';
 
     protected static ?int $navigationSort = 20;
-
-    public static function canAccess(array $parameters = []): bool
-    {
-        return GroupBookingFeature::active();
-    }
 
     public function table(Table $table): Table
     {

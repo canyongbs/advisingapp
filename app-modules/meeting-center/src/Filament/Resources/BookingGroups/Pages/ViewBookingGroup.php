@@ -38,7 +38,6 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use App\Features\GroupBookingFeature;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
@@ -87,7 +86,7 @@ class ViewBookingGroup extends ViewRecord
                 ->icon('heroicon-o-eye')
                 ->url(fn (): string => route('group-booking.show', ['slug' => $bookingGroup->slug]))
                 ->openUrlInNewTab()
-                ->visible(fn (): bool => GroupBookingFeature::active() && filled($bookingGroup->slug)),
+                ->visible(fn (): bool => filled($bookingGroup->slug)),
             EditAction::make(),
         ];
     }

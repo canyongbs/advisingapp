@@ -41,7 +41,6 @@ use AdvisingApp\MeetingCenter\Http\Requests\BookGroupCalendarSlotRequest;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
-use App\Features\GroupBookingFeature;
 use App\Http\Controllers\Controller;
 use App\Settings\CollegeBrandingSettings;
 use Carbon\Carbon;
@@ -56,8 +55,6 @@ class GroupBookingPageWidgetController extends Controller
 {
     public function assets(Request $request, string $slug): JsonResponse
     {
-        abort_unless(GroupBookingFeature::active(), 404);
-
         BookingGroup::query()
             ->where('slug', $slug)
             ->firstOrFail();
@@ -77,8 +74,6 @@ class GroupBookingPageWidgetController extends Controller
 
     public function view(Request $request, string $slug): JsonResponse
     {
-        abort_unless(GroupBookingFeature::active(), 404);
-
         $bookingGroup = BookingGroup::query()
             ->where('slug', $slug)
             ->firstOrFail();
@@ -104,8 +99,6 @@ class GroupBookingPageWidgetController extends Controller
 
     public function availableSlots(Request $request, string $slug, GetAvailableGroupAppointmentSlots $getAvailableSlots): JsonResponse
     {
-        abort_unless(GroupBookingFeature::active(), 404);
-
         $bookingGroup = BookingGroup::query()
             ->where('slug', $slug)
             ->firstOrFail();
@@ -126,8 +119,6 @@ class GroupBookingPageWidgetController extends Controller
 
     public function book(BookGroupCalendarSlotRequest $request, string $slug): JsonResponse
     {
-        abort_unless(GroupBookingFeature::active(), 404);
-
         $bookingGroup = BookingGroup::query()
             ->where('slug', $slug)
             ->firstOrFail();

@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\GroupBookingFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
@@ -58,16 +57,12 @@ return new class () extends Migration {
             Schema::table('calendar_events', function (Blueprint $table) {
                 $table->string('provider_uid')->nullable();
             });
-
-            GroupBookingFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            GroupBookingFeature::deactivate();
-
             Schema::table('calendar_events', function (Blueprint $table) {
                 $table->dropColumn('provider_uid');
             });

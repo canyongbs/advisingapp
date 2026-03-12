@@ -38,7 +38,6 @@ namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
 use AdvisingApp\MeetingCenter\Actions\GenerateGroupBookingPageEmbedCode;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use App\Features\GroupBookingFeature;
 use App\Http\Controllers\Controller;
 use Illuminate\View\View;
 
@@ -46,8 +45,6 @@ class GroupBookingPageViewController extends Controller
 {
     public function __invoke(string $slug, GenerateGroupBookingPageEmbedCode $generateEmbedCode): View
     {
-        abort_unless(GroupBookingFeature::active(), 404);
-
         $bookingGroup = BookingGroup::query()
             ->where('slug', $slug)
             ->firstOrFail();

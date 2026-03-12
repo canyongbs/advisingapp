@@ -44,7 +44,6 @@ use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Notifications\CalendarRequiresReconnectNotification;
 use AdvisingApp\MeetingCenter\Settings\AzureCalendarSettings;
-use App\Features\GroupBookingFeature;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeInterface;
@@ -159,9 +158,7 @@ class OutlookCalendarManager implements CalendarInterface
         $providerEvent = $response->getResponseAsObject(Event::class);
         $event->provider_id = $providerEvent->getId();
 
-        if (GroupBookingFeature::active()) {
-            $event->provider_uid = $providerEvent->getICalUId();
-        }
+        $event->provider_uid = $providerEvent->getICalUId();
         $event->saveQuietly();
     }
 
@@ -194,9 +191,7 @@ class OutlookCalendarManager implements CalendarInterface
         $providerEvent = $response->getResponseAsObject(Event::class);
         $event->provider_id = $providerEvent->getId();
 
-        if (GroupBookingFeature::active()) {
-            $event->provider_uid = $providerEvent->getICalUId();
-        }
+        $event->provider_uid = $providerEvent->getICalUId();
         $event->saveQuietly();
     }
 
@@ -239,7 +234,7 @@ class OutlookCalendarManager implements CalendarInterface
 
                 $userEvent->fill([
                     'provider_id' => $providerEvent->getId(),
-                    ...(GroupBookingFeature::active() ? ['provider_uid' => $providerEvent->getICalUId()] : []),
+                    'provider_uid' => $providerEvent->getICalUId(),
                     'title' => filled($providerEvent->getSubject()) ? $providerEvent->getSubject() : '(No Subject)',
                     'description' => $providerEvent->getBodyPreview(),
                     'starts_at' => Carbon::parse($providerEvent->getStart()->getDateTime(), $providerEvent->getStart()->getTimeZone()),
