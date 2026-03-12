@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Providers;
 
-use AdvisingApp\IntegrationOpenAi\Observers\ResearchRequestObserver;
 use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
+use AdvisingApp\IntegrationOpenAi\Observers\ResearchRequestObserver;
 use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi;
 use AdvisingApp\Research\Models\ResearchRequest;
 use Filament\Panel;

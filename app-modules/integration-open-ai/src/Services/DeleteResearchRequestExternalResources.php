@@ -70,7 +70,7 @@ class DeleteResearchRequestExternalResources
 
     private function resolveServiceForDeploymentHash(string $deploymentHash): ?BaseOpenAiService
     {
-      foreach ($this->getOpenAiServiceClasses() as $serviceClass) {
+        foreach ($this->getOpenAiServiceClasses() as $serviceClass) {
             /** @var BaseOpenAiService $service */
             $service = app($serviceClass);
 
@@ -82,27 +82,27 @@ class DeleteResearchRequestExternalResources
         return null;
     }
 
-  /**
-   * @return array<class-string<BaseOpenAiService>>
-   */
-  private function getOpenAiServiceClasses(): array
-  {
-    $serviceClasses = [];
+    /**
+     * @return array<class-string<BaseOpenAiService>>
+     */
+    private function getOpenAiServiceClasses(): array
+    {
+        $serviceClasses = [];
 
-    foreach (AiModel::cases() as $model) {
-      if (! $model->hasService()) {
-        continue;
-      }
+        foreach (AiModel::cases() as $model) {
+            if (! $model->hasService()) {
+                continue;
+            }
 
-      $serviceClass = $model->getServiceClass();
+            $serviceClass = $model->getServiceClass();
 
-      if (! is_subclass_of($serviceClass, BaseOpenAiService::class)) {
-        continue;
-      }
+            if (! is_subclass_of($serviceClass, BaseOpenAiService::class)) {
+                continue;
+            }
 
-      $serviceClasses[$serviceClass] = $serviceClass;
+            $serviceClasses[$serviceClass] = $serviceClass;
+        }
+
+        return array_values($serviceClasses);
     }
-
-    return array_values($serviceClasses);
-  }
 }
