@@ -166,9 +166,15 @@ class TestAiService implements AiService
         yield fake()->paragraph();
     }
 
-    public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void {}
+    public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void
+    {
+        // No-op by design: the test service does not create vector-store resources.
+    }
 
-    public function deleteResearchRequestExternalResources(ResearchRequest $researchRequest): void {}
+    public function deleteResearchRequestExternalResources(ResearchRequest $researchRequest): void
+    {
+        // No-op by design: test mode has no external provider resources to delete.
+    }
 
     public function hasImageGeneration(): bool
     {
