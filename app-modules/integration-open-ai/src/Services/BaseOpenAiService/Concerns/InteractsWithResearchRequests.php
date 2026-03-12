@@ -248,6 +248,7 @@ trait InteractsWithResearchRequests
     {
         $vectorStores = OpenAiResearchRequestVectorStore::query()
             ->whereBelongsTo($researchRequest)
+            ->where('deployment_hash', $this->getDeploymentHash())
             ->whereNotNull('vector_store_id')
             ->get();
 

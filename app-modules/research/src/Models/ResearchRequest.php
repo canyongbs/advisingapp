@@ -38,11 +38,9 @@ namespace AdvisingApp\Research\Models;
 
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
-use AdvisingApp\IntegrationOpenAi\Models\OpenAiResearchRequestVectorStore;
 use AdvisingApp\Research\Database\Factories\ResearchRequestFactory;
 use App\Models\BaseModel;
 use App\Models\User;
-use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -153,14 +151,6 @@ class ResearchRequest extends BaseModel implements HasMedia
     public function parsedSearchResults(): HasMany
     {
         return $this->hasMany(ResearchRequestParsedSearchResults::class);
-    }
-
-    /**
-     * @return HasMany<OpenAiResearchRequestVectorStore, $this>
-     */
-    public function vectorStores(): HasMany
-    {
-        return $this->hasMany(OpenAiResearchRequestVectorStore::class);
     }
 
     public function getProgress(): int

@@ -34,32 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Providers;
+namespace AdvisingApp\IntegrationOpenAi\Observers;
 
-use AdvisingApp\IntegrationOpenAi\Observers\ResearchRequestObserver;
-use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
-use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi;
+use AdvisingApp\IntegrationOpenAi\Services\DeleteResearchRequestExternalResources;
 use AdvisingApp\Research\Models\ResearchRequest;
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Prism\Prism\Providers\Provider;
 
-class IntegrationOpenAiServiceProvider extends ServiceProvider
+class ResearchRequestObserver
 {
-    public function register()
+    public function deleting(ResearchRequest $researchRequest): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new IntegrationOpenAiPlugin()));
-    }
-
-    public function boot()
-    {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
-
-        ResearchRequest::observe(ResearchRequestObserver::class);
-
-        $this->app['prism-manager']->extend(
-            'azure_open_ai',
-            fn (): Provider => app(AzureOpenAi::class),
-        );
+        app(DeleteResearchRequestExternalResources::class)
+            ->execute($researchRequest);
     }
 }
