@@ -38,16 +38,11 @@ namespace AdvisingApp\MeetingCenter\Listeners;
 
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use App\Events\UserTeamChanged;
-use App\Features\GroupBookingFeature;
 
 class HandleUserTeamChanged
 {
     public function handle(UserTeamChanged $event): void
     {
-        if (! GroupBookingFeature::active()) {
-            return;
-        }
-
         if (blank($event->previousTeamId) || $event->previousTeamId === $event->currentTeamId) {
             return;
         }

@@ -39,7 +39,6 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use App\Features\GroupBookingFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -105,8 +104,7 @@ class EditBookingGroup extends EditRecord
                         ->options(BookingGroupBookWith::class)
                         ->default(BookingGroupBookWith::All)
                         ->live()
-                        ->required()
-                        ->visible(GroupBookingFeature::active()),
+                        ->required(),
                     Select::make('users')
                         ->label('Users')
                         ->multiple()
@@ -130,8 +128,8 @@ class EditBookingGroup extends EditRecord
                             ->all())
                         ->searchable()
                         ->preload()
-                        ->visible(fn (Get $get): bool => GroupBookingFeature::active() && $this->isBookWithAll($get))
-                        ->required(fn (Get $get): bool => GroupBookingFeature::active() && $this->isBookWithAll($get))
+                        ->visible(fn (Get $get): bool => $this->isBookWithAll($get))
+                        ->required(fn (Get $get): bool => $this->isBookWithAll($get))
                         ->rules([
                             function (Get $get): Closure {
                                 return function (string $attribute, mixed $value, Closure $fail) use ($get) {
@@ -176,7 +174,6 @@ class EditBookingGroup extends EditRecord
                         ->prefix(config('app.url') . '/group-booking/')
                         ->maxLength(255)
                         ->default(fn (Get $get) => Str::slug($get('name') ?? ''))
-                        ->visible(GroupBookingFeature::active())
                         ->columnSpanFull(),
                     DurationInput::make('default_appointment_duration', isRequired: true, hasDays: true)
                         ->label('Meeting Duration')
@@ -213,7 +210,7 @@ class EditBookingGroup extends EditRecord
                 ->icon('heroicon-o-eye')
                 ->url(fn (): string => route('group-booking.show', ['slug' => $bookingGroup->slug]))
                 ->openUrlInNewTab()
-                ->visible(fn (): bool => GroupBookingFeature::active() && filled($bookingGroup->slug)),
+                ->visible(fn (): bool => filled($bookingGroup->slug)),
             ViewAction::make(),
             DeleteAction::make(),
         ];
