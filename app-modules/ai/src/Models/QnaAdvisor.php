@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use AdvisingApp\Ai\Observers\QnaAdvisorObserver;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use App\Features\QnaAdvisorResourceHubFeature;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -95,6 +94,7 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
         'is_generate_prospects_enabled' => 'boolean',
         'is_introductory_message_enabled' => 'boolean',
         'is_introductory_message_dynamic' => 'boolean',
+        'has_resource_hub_knowledge' => 'boolean'
     ];
 
     /**
@@ -178,10 +178,6 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
      */
     public function getResourceHubArticles(): array
     {
-        if (! QnaAdvisorResourceHubFeature::active()) {
-            return [];
-        }
-
         if (! $this->has_resource_hub_knowledge) {
             return [];
         }
@@ -191,16 +187,5 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
             ->whereNotNull('article_details')
             ->get(['id', 'updated_at'])
             ->all();
-    }
-
-    /**
-     * TODO: QnaAdvisorResourceHubFeature Cleanup - After QnaAdvisorResourceHubFeature is removed:
-     * - Remove this casts() method and move the 'has_resource_hub_knowledge' cast definition to the $casts property
-     */
-    protected function casts(): array
-    {
-        return QnaAdvisorResourceHubFeature::active()
-            ? ['has_resource_hub_knowledge' => 'boolean']
-            : [];
     }
 }
