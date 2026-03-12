@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
 use AdvisingApp\MeetingCenter\Actions\GetAvailableGroupAppointmentSlots;
+use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Http\Requests\BookGroupCalendarSlotRequest;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
@@ -235,6 +236,7 @@ class GroupBookingPageWidgetController extends Controller
                 'starts_at' => $startsAt,
                 'ends_at' => $endsAt,
                 'attendees' => $attendees,
+                'transparency' => EventTransparency::Busy,
             ]);
 
             if ($calendarEvent->provider_uid === null) {
