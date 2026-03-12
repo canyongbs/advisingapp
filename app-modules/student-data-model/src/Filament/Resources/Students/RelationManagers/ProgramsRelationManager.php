@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManag
 
 use AdvisingApp\StudentDataModel\Filament\Imports\ProgramImporter;
 use AdvisingApp\StudentDataModel\Models\Program;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use Closure;
@@ -57,6 +58,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
 
 class ProgramsRelationManager extends RelationManager
@@ -82,7 +84,7 @@ class ProgramsRelationManager extends RelationManager
                 TextEntry::make('acad_plan')
                     ->label('Program details')
                     ->placeholder('-')
-                    ->state(fn (Program $record): ?string => $this->formatAcadPlan($record->acad_plan))
+                    ->state(fn (Program $record): ?string => $record->formatted_acad_plan)
                     ->visible($sisSystem?->hasProgramsAcadPlan() ?? true)
                     ->columnSpanFull(),
                 TextEntry::make('foi')
@@ -131,7 +133,7 @@ class ProgramsRelationManager extends RelationManager
                     ->visible($sisSystem?->hasProgramsDivision() ?? true),
                 TextColumn::make('descr')
                     ->label('Name')
-                    ->description(fn (Program $record): ?string => $this->formatAcadPlan($record->acad_plan))
+                    ->description(fn (Program $record): ?string => $record->formatted_acad_plan)
                     ->visible($sisSystem?->hasProgramsDescr() ?? true),
                 TextColumn::make('foi')
                     ->label('Field of Interest')
@@ -154,7 +156,29 @@ class ProgramsRelationManager extends RelationManager
             ->recordActions([
                 ViewAction::make()
                     ->modalHeading('Program Information'),
-                EditAction::make(),
+                EditAction::make()
+                    ->mutateRecordDataUsing(function (array $data): array {
+                        $acadPlan = $data['acad_plan'] ?? [];
+
+                        $data['acad_plan_major'] = implode(', ', $acadPlan['major'] ?? []);
+                        $data['acad_plan_minor'] = implode(', ', $acadPlan['minor'] ?? []);
+
+                        return $data;
+                    })
+                    ->using(function (array $data, Model $record): void {
+                        $data['acad_plan'] = [
+                            'major' => filled($data['acad_plan_major'] ?? null)
+                                ? array_values(array_filter(array_map('trim', explode(',', $data['acad_plan_major']))))
+                                : [],
+                            'minor' => filled($data['acad_plan_minor'] ?? null)
+                                ? array_values(array_filter(array_map('trim', explode(',', $data['acad_plan_minor']))))
+                                : [],
+                        ];
+
+                        unset($data['acad_plan_major'], $data['acad_plan_minor']);
+
+                        $record->update($data);
+                    }),
                 DeleteAction::make()
                     ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed'),
             ])
@@ -209,7 +233,23 @@ class ProgramsRelationManager extends RelationManager
                 ]),
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->using(function (array $data, RelationManager $livewire): Model {
+                        $data['acad_plan'] = [
+                            'major' => filled($data['acad_plan_major'] ?? null)
+                                ? array_values(array_filter(array_map('trim', explode(',', $data['acad_plan_major']))))
+                                : [],
+                            'minor' => filled($data['acad_plan_minor'] ?? null)
+                                ? array_values(array_filter(array_map('trim', explode(',', $data['acad_plan_minor']))))
+                                : [],
+                        ];
+
+                        unset($data['acad_plan_major'], $data['acad_plan_minor']);
+                        $student = $livewire->getOwnerRecord();
+                        assert($student instanceof Student);
+                        
+                        return $student->programs()->create($data);
+                    }),
                 ImportAction::make()
                     ->importer(ProgramImporter::class)
                     ->authorize('import', Program::class)
@@ -229,79 +269,53 @@ class ProgramsRelationManager extends RelationManager
                     ->string()
                     ->maxLength(255)
                     ->label('Division'),
-                TextInput::make('acad_plan')
-                    ->required()
-                    ->helperText('Example - Major: Computer Science, Mathematics; Minor: Philosophy')
-                    ->label('Academic Plan')
+                TextInput::make('acad_plan_major')
+                    ->label('Major(s)')
+                    ->helperText('Comma-separated, e.g. Computer Science, Mathematics')
                     ->rule(function (): Closure {
                         return function (string $attribute, mixed $value, Closure $fail): void {
                             if (blank($value)) {
                                 return;
                             }
 
-                            $parts = array_map('trim', explode(';', $value));
-                            $seen = [];
-
-                            foreach ($parts as $part) {
-                                // Must start with exactly "Major:" or "Minor:" (case-insensitive)
-                                if (! preg_match('/^(major|minor):\s*(.+)$/i', $part, $matches)) {
-                                    $fail('The Academic Plan must follow the format: Major: Computer Science, Mathematics; Minor: Philosophy');
+                            foreach (array_map('trim', explode(',', $value)) as $item) {
+                                if (blank($item)) {
+                                    $fail('Each major must not be empty.');
 
                                     return;
                                 }
 
-                                $key = strtolower($matches[1]);
-                                $values = $matches[2];
-
-                                if (in_array($key, $seen)) {
-                                    $fail('Each section (Major/Minor) can only appear once.');
+                                if (str_contains($item, ':')) {
+                                    $fail('Majors must not contain a colon.');
 
                                     return;
                                 }
-
-                                // Each value in the comma-separated list must not itself contain a colon
-                                // (prevents "Major: computer: Major" or embedded "Minor: X" inside a value)
-                                foreach (array_map('trim', explode(',', $values)) as $item) {
-                                    if (blank($item)) {
-                                        $fail('Each value in the Academic Plan must not be empty.');
-
-                                        return;
-                                    }
-
-                                    if (str_contains($item, ':')) {
-                                        $fail('The Academic Plan must follow the format: Major: Computer Science, Mathematics; Minor: Philosophy');
-
-                                        return;
-                                    }
-                                }
-
-                                $seen[] = $key;
                             }
                         };
-                    })
-                    ->afterStateHydrated(function (TextInput $component, mixed $state): void {
-                        $component->state(
-                            (is_array($state) || is_string($state)) ? $this->formatAcadPlan($state) : null
-                        );
-                    })
-                    ->dehydrateStateUsing(function (?string $state): ?array {
-                        if (blank($state)) {
-                            return null;
-                        }
-
-                        $result = ['major' => [], 'minor' => []];
-
-                        foreach (explode(';', $state) as $part) {
-                            $part = trim($part);
-
-                            if (str_starts_with(strtolower($part), 'major:')) {
-                                $result['major'] = array_map('trim', explode(',', substr($part, 6)));
-                            } elseif (str_starts_with(strtolower($part), 'minor:')) {
-                                $result['minor'] = array_map('trim', explode(',', substr($part, 6)));
+                    }),
+                TextInput::make('acad_plan_minor')
+                    ->label('Minor(s)')
+                    ->helperText('Comma-separated, e.g. Philosophy')
+                    ->rule(function (): Closure {
+                        return function (string $attribute, mixed $value, Closure $fail): void {
+                            if (blank($value)) {
+                                return;
                             }
-                        }
 
-                        return $result;
+                            foreach (array_map('trim', explode(',', $value)) as $item) {
+                                if (blank($item)) {
+                                    $fail('Each minor must not be empty.');
+
+                                    return;
+                                }
+
+                                if (str_contains($item, ':')) {
+                                    $fail('Minors must not contain a colon.');
+
+                                    return;
+                                }
+                            }
+                        };
                     }),
                 TextInput::make('prog_status')
                     ->label('Program Status')
@@ -338,42 +352,5 @@ class ProgramsRelationManager extends RelationManager
                 TextInput::make('catalog_year')
                     ->label('Catalog Year'),
             ]);
-    }
-
-    /**
-     * Format the academic plan for display.
-     *
-     * @param string|array<string, array<string>>|null $acadPlan
-     *
-     * @return string|null
-     */
-    private function formatAcadPlan(string|array|null $acadPlan): ?string
-    {
-        if (is_string($acadPlan)) {
-            $acadPlan = json_decode($acadPlan, true);
-        }
-
-        if (blank($acadPlan)) {
-            return null;
-        }
-
-        $majors = $acadPlan['major'] ?? [];
-        $minors = $acadPlan['minor'] ?? [];
-
-        if (blank($majors) && blank($minors)) {
-            return null;
-        }
-
-        $parts = [];
-
-        if (filled($majors)) {
-            $parts[] = 'Major: ' . implode(', ', $majors);
-        }
-
-        if (filled($minors)) {
-            $parts[] = 'Minor: ' . implode(', ', $minors);
-        }
-
-        return implode('; ', $parts);
     }
 }
