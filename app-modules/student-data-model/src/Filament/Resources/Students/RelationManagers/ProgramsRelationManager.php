@@ -247,7 +247,7 @@ class ProgramsRelationManager extends RelationManager
                         unset($data['acad_plan_major'], $data['acad_plan_minor']);
                         $student = $livewire->getOwnerRecord();
                         assert($student instanceof Student);
-                        
+
                         return $student->programs()->create($data);
                     }),
                 ImportAction::make()
