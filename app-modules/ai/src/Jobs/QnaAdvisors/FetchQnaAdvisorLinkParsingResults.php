@@ -43,6 +43,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Http\Client\Response;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
@@ -60,14 +61,16 @@ class FetchQnaAdvisorLinkParsingResults implements ShouldQueue, TenantAware, Sho
 
     public function __construct(
         protected QnaAdvisorLink $link,
+        protected bool $refreshExistingParsingResults = false,
     ) {}
 
     public function handle(): void
     {
-        if (filled($this->link->parsing_results)) {
+        if (filled($this->link->parsing_results) && ! $this->refreshExistingParsingResults) {
             return;
         }
 
+        /** @var Response $response */
         $response = Http::withToken(app(AiIntegrationsSettings::class)->jina_deepsearch_v1_api_key)
             ->withHeaders([
                 'X-Retain-Images' => 'none',
@@ -85,5 +88,10 @@ class FetchQnaAdvisorLinkParsingResults implements ShouldQueue, TenantAware, Sho
     public function uniqueId(): string
     {
         return $this->link->id;
+    }
+
+    public function refreshesExistingParsingResults(): bool
+    {
+        return $this->refreshExistingParsingResults;
     }
 }

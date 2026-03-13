@@ -55,7 +55,7 @@ class UpdateCurrentQnaAdvisorLinks implements ShouldQueue
             ->where('is_current', true)
             ->chunkById(100, function (Collection $links) {
                 foreach ($links as $link) {
-                    dispatch(new FetchQnaAdvisorLinkParsingResults($link));
+                    dispatch(new FetchQnaAdvisorLinkParsingResults($link, refreshExistingParsingResults: true));
                 }
             });
     }
