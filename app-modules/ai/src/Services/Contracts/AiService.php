@@ -108,6 +108,8 @@ interface AiService
 
     public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void;
 
+    public function deleteResearchRequestExternalResources(ResearchRequest $researchRequest): void;
+
     /**
      * @return array<string>
      */
