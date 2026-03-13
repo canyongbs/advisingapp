@@ -36,10 +36,12 @@
 
 namespace AdvisingApp\Ai\Models;
 
+use AdvisingApp\Ai\Database\Factories\QnaAdvisorLinkFactory;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use App\Models\BaseModel;
 use Exception;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -51,6 +53,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  */
 class QnaAdvisorLink extends BaseModel implements AiFile, Auditable
 {
+    /** @use HasFactory<QnaAdvisorLinkFactory>*/
+    use HasFactory;
+
     use SoftDeletes;
     use AuditableTrait;
 
@@ -58,6 +63,7 @@ class QnaAdvisorLink extends BaseModel implements AiFile, Auditable
         'url',
         'advisor_id',
         'parsing_results',
+        'is_current',
     ];
 
     /**
