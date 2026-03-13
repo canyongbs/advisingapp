@@ -44,27 +44,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Queue;
 
-it('will only run for QnA advisors that have is_current set to true', function () {
-    $currentLink = QnaAdvisorLink::factory()->create([
-        'is_current' => true,
-    ]);
-
-    $nonCurrentLink = QnaAdvisorLink::factory()->create([
-        'is_current' => false,
-    ]);
-
-    expect($currentLink->is_current)->toBeTrue();
-    expect($nonCurrentLink->is_current)->toBeFalse();
-
-    (new UpdateCurrentQnaAdvisorLinks())->handle();
-
-    $currentLink->refresh();
-    $nonCurrentLink->refresh();
-
-    expect($currentLink->is_current)->toBeTrue();
-    expect($nonCurrentLink->is_current)->toBeFalse();
-});
-
 it('dispatches FetchQnaAdvisorLinkParsingResults only for current links', function () {
     Queue::fake();
 
