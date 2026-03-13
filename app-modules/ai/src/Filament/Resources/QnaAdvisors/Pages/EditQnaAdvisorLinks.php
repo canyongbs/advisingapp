@@ -99,7 +99,7 @@ class EditQnaAdvisorLinks extends EditRecord
                         Toggle::make('is_current')
                             ->visible(CurrentQnaAdvisorLinks::active())
                             ->label('Keep Current')
-                            ->helperText('Select this option if you would like to this AI advisor to check for updates on a monthly basis.'),
+                            ->helperText('Select this option if you would like this AI advisor to check for updates on a monthly basis.'),
                     ])
                     ->relationship()
                     ->hiddenLabel()

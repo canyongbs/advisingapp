@@ -37,13 +37,15 @@
 namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
 
 use AdvisingApp\Ai\Models\QnaAdvisorLink;
+use App\Features\CurrentQnaAdvisorLinks;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
+use Spatie\Multitenancy\Jobs\TenantAware;
 
-class UpdateCurrentQnaAdvisorLinks implements ShouldQueue
+class UpdateCurrentQnaAdvisorLinks implements ShouldQueue, TenantAware
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -51,6 +53,9 @@ class UpdateCurrentQnaAdvisorLinks implements ShouldQueue
 
     public function handle(): void
     {
+        if (! CurrentQnaAdvisorLinks::active()) {
+            return;
+        }
         QnaAdvisorLink::query()
             ->where('is_current', true)
             ->chunkById(100, function (Collection $links) {
