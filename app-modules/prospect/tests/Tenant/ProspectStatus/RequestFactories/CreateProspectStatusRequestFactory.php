@@ -36,11 +36,8 @@
 
 namespace AdvisingApp\Prospect\Tests\Tenant\ProspectStatus\RequestFactories;
 
-use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use App\Features\ProspectStatusFeature;
 use CanyonGBS\Common\Enums\Color;
-use Laravel\Pennant\Feature;
 use Worksome\RequestFactories\RequestFactory;
 
 class CreateProspectStatusRequestFactory extends RequestFactory
@@ -50,9 +47,7 @@ class CreateProspectStatusRequestFactory extends RequestFactory
         return [
             'classification' => fake()->randomElement(SystemProspectClassification::cases()),
             'name' => fake()->name(),
-            'color' => Feature::active(ProspectStatusFeature::class)
-              ? fake()->randomElement(Color::cases())->value
-              : fake()->randomElement(ProspectStatusColorOptions::cases()),
+            'color' => fake()->randomElement(Color::cases())->value,
         ];
     }
 }
