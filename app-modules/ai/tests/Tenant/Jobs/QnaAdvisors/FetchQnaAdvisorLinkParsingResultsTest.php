@@ -76,4 +76,3 @@ it('does not refresh existing parsing results when not explicitly requested', fu
 
     expect($link->parsing_results)->toBe('stale parsing results');
 });
-
