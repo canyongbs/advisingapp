@@ -52,27 +52,20 @@ class BookingGroupAppointmentFactory extends Factory
      */
     public function definition(): array
     {
-        $startsAt = $this->faker->dateTimeBetween('+1 day', '+30 days');
-        $endsAt = (clone $startsAt)->modify('+1 hour');
-
         return [
             'booking_group_id' => BookingGroup::factory(),
             'name' => $this->faker->name(),
             'email' => $this->faker->safeEmail(),
-            'starts_at' => $startsAt,
-            'ends_at' => $endsAt,
+            'starts_at' => $this->faker->dateTimeBetween('+1 day', '+30 days'),
+            'ends_at' => fn (array $attributes) => (clone $attributes['starts_at'])->modify('+1 hour'),
         ];
     }
 
     public function past(): static
     {
         return $this->state(function () {
-            $startsAt = $this->faker->dateTimeBetween('-30 days', '-1 day');
-            $endsAt = (clone $startsAt)->modify('+1 hour');
-
             return [
-                'starts_at' => $startsAt,
-                'ends_at' => $endsAt,
+                'starts_at' => $this->faker->dateTimeBetween('-30 days', '-1 day'),
             ];
         });
     }
