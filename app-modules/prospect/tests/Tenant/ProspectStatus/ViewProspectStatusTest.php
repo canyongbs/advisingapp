@@ -38,7 +38,6 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages\ViewProspectS
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Features\ProspectStatusFeature;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -55,10 +54,6 @@ test('The correct details are displayed on the ViewProspectStatus page', functio
         $prospectStatus->classification->getLabel(),
         'Color',
     ];
-
-    if (! ProspectStatusFeature::active()) {
-        $assertSeeText[] = $prospectStatus->color->value;
-    }
 
     asSuperAdmin()
         ->get(
