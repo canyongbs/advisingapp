@@ -56,7 +56,7 @@ class QnaAdvisorLinkFactory extends Factory
             'url' => $this->faker->url(),
             'advisor_id' => QnaAdvisor::factory(),
             'parsing_results' => null,
-            'is_current' => true,
+            'is_keep_current_enabled' => true,
         ];
     }
 }

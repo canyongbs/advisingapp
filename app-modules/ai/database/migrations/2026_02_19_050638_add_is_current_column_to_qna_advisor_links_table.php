@@ -45,7 +45,7 @@ return new class () extends Migration {
     {
         DB::transaction(function () {
             Schema::table('qna_advisor_links', function (Blueprint $table) {
-                $table->boolean('is_current')->default(false);
+                $table->boolean('is_keep_current_enabled')->default(false);
             });
 
             CurrentQnaAdvisorLinks::activate();
@@ -58,7 +58,7 @@ return new class () extends Migration {
             CurrentQnaAdvisorLinks::deactivate();
 
             Schema::table('qna_advisor_links', function (Blueprint $table) {
-                $table->dropColumn('is_current');
+                $table->dropColumn('is_keep_current_enabled');
             });
         });
     }

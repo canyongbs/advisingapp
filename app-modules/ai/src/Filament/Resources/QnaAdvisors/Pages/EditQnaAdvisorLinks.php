@@ -96,7 +96,7 @@ class EditQnaAdvisorLinks extends EditRecord
                             ->required()
                             ->disabled(fn (?QnaAdvisorLink $record): bool => $record !== null)
                             ->url(),
-                        Toggle::make('is_current')
+                        Toggle::make('is_keep_current_enabled')
                             ->visible(CurrentQnaAdvisorLinks::active())
                             ->label('Keep Current')
                             ->helperText('Select this option if you would like this AI advisor to check for updates on a monthly basis.'),

@@ -152,8 +152,7 @@ class Kernel extends ConsoleKernel
                     })
                         ->monthlyOn(1, '0:0')
                         ->name("Dispatch UpdateCurrentQnaAdvisorLinks | Tenant {$tenant->domain}")
-                        ->monitorName("Dispatch UpdateCurrentQnaAdvisorLinks | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(60);
+                        ->monitorName("Dispatch UpdateCurrentQnaAdvisorLinks | Tenant {$tenant->domain}");
 
                     $schedule->command("tenants:artisan \"cache:prune-stale-tags\" --tenant={$tenant->id}")
                         ->hourly()

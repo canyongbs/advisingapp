@@ -42,7 +42,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Collection;
 use Spatie\Multitenancy\Jobs\TenantAware;
 
 class UpdateCurrentQnaAdvisorLinks implements ShouldQueue, TenantAware
@@ -57,11 +56,9 @@ class UpdateCurrentQnaAdvisorLinks implements ShouldQueue, TenantAware
             return;
         }
         QnaAdvisorLink::query()
-            ->where('is_current', true)
-            ->chunkById(100, function (Collection $links) {
-                foreach ($links as $link) {
-                    dispatch(new FetchQnaAdvisorLinkParsingResults($link, refreshExistingParsingResults: true));
-                }
+            ->where('is_keep_current_enabled', true)
+            ->each(function (QnaAdvisorLink $link) {
+                dispatch(new FetchQnaAdvisorLinkParsingResults($link, refreshExistingParsingResults: true));
             });
     }
 }

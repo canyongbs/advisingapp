@@ -57,3 +57,23 @@ it('refreshes existing parsing results when explicitly requested', function () {
 
     expect($link->parsing_results)->toBe('fresh parsing results');
 });
+
+it('does not refresh existing parsing results when not explicitly requested', function () {
+    Http::fake([
+        'https://r.jina.ai/*' => Http::response('fresh parsing results', 200),
+    ]);
+
+    $settings = app(AiIntegrationsSettings::class);
+    $settings->jina_deepsearch_v1_api_key = 'test-api-key';
+
+    $link = QnaAdvisorLink::factory()->create([
+        'parsing_results' => 'stale parsing results',
+    ]);
+
+    (new FetchQnaAdvisorLinkParsingResults($link, refreshExistingParsingResults: false))->handle();
+
+    $link->refresh();
+
+    expect($link->parsing_results)->toBe('stale parsing results');
+});
+

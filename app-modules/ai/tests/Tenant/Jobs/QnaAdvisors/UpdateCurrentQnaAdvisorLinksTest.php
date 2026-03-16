@@ -48,11 +48,11 @@ it('dispatches FetchQnaAdvisorLinkParsingResults only for current links', functi
     Queue::fake();
 
     $currentLink = QnaAdvisorLink::factory()->create([
-        'is_current' => true,
+        'is_keep_current_enabled' => true,
     ]);
 
     $nonCurrentLink = QnaAdvisorLink::factory()->create([
-        'is_current' => false,
+        'is_keep_current_enabled' => false,
     ]);
 
     (new UpdateCurrentQnaAdvisorLinks())->handle();

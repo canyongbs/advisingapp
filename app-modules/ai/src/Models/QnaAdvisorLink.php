@@ -63,7 +63,7 @@ class QnaAdvisorLink extends BaseModel implements AiFile, Auditable
         'url',
         'advisor_id',
         'parsing_results',
-        'is_current',
+        'is_keep_current_enabled',
     ];
 
     /**
