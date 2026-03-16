@@ -32,7 +32,7 @@ jobs:
 
             - name: Login to Amazon ECR
               id: login-ecr
-              uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 #2.0.1
+              uses: aws-actions/amazon-ecr-login@c962da2960ed15f492addc26fffa274485265950 #2.0.2
 
             - name: Build, tag, and push image to Amazon ECR
               id: build-image
@@ -122,7 +122,7 @@ jobs:
 
             - name: Login to Amazon ECR
               id: login-ecr
-              uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 #2.0.1
+              uses: aws-actions/amazon-ecr-login@c962da2960ed15f492addc26fffa274485265950 #2.0.2
 
             - name: Build, tag, and push image to Amazon ECR
               id: build-image
@@ -212,7 +212,7 @@ jobs:
 
             - name: Login to Amazon ECR
               id: login-ecr
-              uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 #2.0.1
+              uses: aws-actions/amazon-ecr-login@c962da2960ed15f492addc26fffa274485265950 #2.0.2
 
             - name: Build, tag, and push image to Amazon ECR
               id: build-image
@@ -302,7 +302,7 @@ jobs:
 
             - name: Login to Amazon ECR
               id: login-ecr
-              uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 #2.0.1
+              uses: aws-actions/amazon-ecr-login@c962da2960ed15f492addc26fffa274485265950 #2.0.2
 
             - name: Build, tag, and push image to Amazon ECR
               id: build-image

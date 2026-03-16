@@ -39,7 +39,7 @@ jobs:
 
             - name: Setup cache environment
               id: extcache
-              uses: shivammathur/cache-extensions@4595bea7d6630821b0a3a4894f816402faaf324c #1.13.0
+              uses: shivammathur/cache-extensions@389c69f0238dbb05da9577ba7ddd9da9973068ab #1.14.1
               with:
                   php-version: ${{ env.php-version }}
                   extensions: ${{ env.php-extensions }}
@@ -52,7 +52,7 @@ jobs:
                   key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
                   restore-keys: ${{ runner.os }}-phpext-${{ env.php-version }}
 
-            - uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 #2.36.0
+            - uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f #2.37.0
               with:
                   php-version: ${{ env.php-version }}
                   coverage: none
@@ -80,7 +80,7 @@ jobs:
             - run: npm install
 
             - name: Set up Ruby
-              uses: ruby/setup-ruby@6ca151fd1bfcfd6fe0c4eb6837eb0584d0134a0c #1.290.0
+              uses: ruby/setup-ruby@dffb23f65a78bba8db45d387d5ea1bbd6be3ef18 #1.293.0
 
             - name: Run Ruby Script
               run: ruby ./copyright.rb
@@ -172,7 +172,7 @@ jobs:
 
             - name: Setup cache environment
               id: extcache
-              uses: shivammathur/cache-extensions@4595bea7d6630821b0a3a4894f816402faaf324c #1.13.0
+              uses: shivammathur/cache-extensions@389c69f0238dbb05da9577ba7ddd9da9973068ab #1.14.1
               with:
                   php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
                   extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
@@ -185,7 +185,7 @@ jobs:
                   key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
                   restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
 
-            - uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 #2.36.0
+            - uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f #2.37.0
               with:
                   php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
                   coverage: none
@@ -287,7 +287,7 @@ jobs:
         steps:
             - name: Setup cache environment
               id: extcache
-              uses: shivammathur/cache-extensions@4595bea7d6630821b0a3a4894f816402faaf324c #1.13.0
+              uses: shivammathur/cache-extensions@389c69f0238dbb05da9577ba7ddd9da9973068ab #1.14.1
               with:
                   php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
                   extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
@@ -300,7 +300,7 @@ jobs:
                   key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
                   restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
 
-            - uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 #2.36.0
+            - uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f #2.37.0
               with:
                   php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
                   coverage: none
