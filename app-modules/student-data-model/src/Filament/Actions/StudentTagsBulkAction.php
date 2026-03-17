@@ -39,7 +39,6 @@ namespace AdvisingApp\StudentDataModel\Filament\Actions;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\TagType;
 use App\Models\Tag;
-use Exception;
 use Filament\Actions\BulkAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -77,9 +76,7 @@ class StudentTagsBulkAction
                     ->hintIconTooltip('If checked, all prior tags assignments will be removed.'),
             ])
             ->action(function (array $data, Collection $records) {
-                $records->each(function ($record) use ($data) {
-                    throw_unless($record instanceof Student, new Exception('Record must be of type student.'));
-
+                $records->each(function (Student $record) use ($data) {
                     if (! empty($data['tag_ids'])) {
                         $record->tags()
                             ->sync(

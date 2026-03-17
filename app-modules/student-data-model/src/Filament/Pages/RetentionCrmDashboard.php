@@ -97,6 +97,7 @@ class RetentionCrmDashboard extends StudentReport
                             ->label('Select Group')
                             ->options(fn (): array => $this->getGroupOptions($groupModel))
                             ->getSearchResultsUsing(fn (string $search): array => $this->getGroupOptions($groupModel, $search))
+                            ->getOptionLabelUsing(fn (string | int | null $value): ?string => $this->getGroupOptionLabel($groupModel, $value))
                             ->searchable(),
                     ])
                     ->heading('Advanced Filtering')

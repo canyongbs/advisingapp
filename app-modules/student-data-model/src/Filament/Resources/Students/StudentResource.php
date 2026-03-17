@@ -99,6 +99,8 @@ class StudentResource extends Resource
 
     public static function getGlobalSearchResultDetails(Model $record): array
     {
+        assert($record instanceof Student);
+
         return array_filter([
             'Student ID' => $record->sisid,
             'Other ID' => $record->otherid,

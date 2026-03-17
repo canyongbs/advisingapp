@@ -39,6 +39,7 @@ namespace AdvisingApp\Form\Enums;
 use AdvisingApp\Form\Actions\DeliverFormSubmissionRequestByEmail;
 use AdvisingApp\Form\Actions\DeliverFormSubmissionRequestBySms;
 use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Survey\Models\SurveySubmission;
 use Filament\Support\Contracts\HasLabel;
 
 enum FormSubmissionRequestDeliveryMethod: string implements HasLabel
@@ -54,7 +55,7 @@ enum FormSubmissionRequestDeliveryMethod: string implements HasLabel
         };
     }
 
-    public function deliver(FormSubmission $submission): void
+    public function deliver(FormSubmission|SurveySubmission $submission): void
     {
         match ($this) {
             static::Email => DeliverFormSubmissionRequestByEmail::dispatch($submission),

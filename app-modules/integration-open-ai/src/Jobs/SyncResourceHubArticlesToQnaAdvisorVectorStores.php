@@ -34,14 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
-use App\Support\AbstractFeatureFlag;
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Spatie\Multitenancy\Jobs\TenantAware;
 
-class FormRepeaterFeature extends AbstractFeatureFlag
+class SyncResourceHubArticlesToQnaAdvisorVectorStores implements ShouldQueue, TenantAware
 {
-    public function resolve(mixed $scope): mixed
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public function handle(): void
     {
-        return false;
+        QnaAdvisor::query()
+            ->where('has_resource_hub_knowledge', true)
+            ->eachById(function (QnaAdvisor $advisor) {
+                UploadQnaAdvisorFilesToVectorStore::dispatch($advisor);
+            });
     }
 }

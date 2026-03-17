@@ -113,7 +113,8 @@ class OutlookCalendarManager implements CalendarInterface
                 }
             }
 
-            $events = array_merge($events, $response->getResponseAsObject(Event::class));
+            $responseEvents = $response->getResponseAsObject(Event::class);
+            $events = array_merge($events, is_array($responseEvents) ? $responseEvents : [$responseEvents]);
 
             if ($response->getNextLink() !== null) {
                 $request = $client->createCollectionRequest(
@@ -154,7 +155,10 @@ class OutlookCalendarManager implements CalendarInterface
             }
         }
 
-        $event->provider_id = $response->getResponseAsObject(Event::class)->getId();
+        $providerEvent = $response->getResponseAsObject(Event::class);
+        $event->provider_id = $providerEvent->getId();
+
+        $event->provider_uid = $providerEvent->getICalUId();
         $event->saveQuietly();
     }
 
@@ -184,7 +188,10 @@ class OutlookCalendarManager implements CalendarInterface
             }
         }
 
-        $event->provider_id = $response->getResponseAsObject(Event::class)->getId();
+        $providerEvent = $response->getResponseAsObject(Event::class);
+        $event->provider_id = $providerEvent->getId();
+
+        $event->provider_uid = $providerEvent->getICalUId();
         $event->saveQuietly();
     }
 
@@ -227,6 +234,7 @@ class OutlookCalendarManager implements CalendarInterface
 
                 $userEvent->fill([
                     'provider_id' => $providerEvent->getId(),
+                    'provider_uid' => $providerEvent->getICalUId(),
                     'title' => filled($providerEvent->getSubject()) ? $providerEvent->getSubject() : '(No Subject)',
                     'description' => $providerEvent->getBodyPreview(),
                     'starts_at' => Carbon::parse($providerEvent->getStart()->getDateTime(), $providerEvent->getStart()->getTimeZone()),

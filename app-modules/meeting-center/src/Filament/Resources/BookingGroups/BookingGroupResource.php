@@ -36,12 +36,15 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups;
 
+use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\BookingGroupAppointments;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\CreateBookingGroup;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\EditBookingGroup;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ViewBookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use App\Filament\Clusters\GroupAppointments;
+use Filament\Pages\Enums\SubNavigationPosition;
+use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 
 class BookingGroupResource extends Resource
@@ -56,6 +59,17 @@ class BookingGroupResource extends Resource
 
     protected static ?string $cluster = GroupAppointments::class;
 
+    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            ViewBookingGroup::class,
+            EditBookingGroup::class,
+            BookingGroupAppointments::class,
+        ]);
+    }
+
     public static function getPages(): array
     {
         return [
@@ -63,6 +77,7 @@ class BookingGroupResource extends Resource
             'create' => CreateBookingGroup::route('/create'),
             'view' => ViewBookingGroup::route('/{record}'),
             'edit' => EditBookingGroup::route('/{record}/edit'),
+            'appointments' => BookingGroupAppointments::route('/{record}/appointments'),
         ];
     }
 }

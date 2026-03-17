@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory;
 
+use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use Worksome\RequestFactories\RequestFactory;
 
 class CreateBookingGroupRequestFactory extends RequestFactory
@@ -44,20 +45,23 @@ class CreateBookingGroupRequestFactory extends RequestFactory
     {
         return [
             'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
+            'slug' => str($this->faker->unique()->words(3, true))->slug()->toString(),
             'description' => $this->faker->paragraph(),
+            'book_with' => BookingGroupBookWith::All->value,
+            'meeting_owner_id' => null,
             'default_appointment_duration' => [
                 'days' => $this->faker->numberBetween(0, 27),
                 'hours' => $this->faker->numberBetween(0, 23),
                 'minutes' => $this->faker->numberBetween(0, 59),
             ],
             'available_appointment_hours' => [
-                ['day' => 'monday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'tuesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'wednesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'thursday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'friday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'saturday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'sunday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'monday' => ['day' => 'monday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'tuesday' => ['day' => 'tuesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'wednesday' => ['day' => 'wednesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'thursday' => ['day' => 'thursday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'friday' => ['day' => 'friday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'saturday' => ['day' => 'saturday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'sunday' => ['day' => 'sunday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
             ],
         ];
     }

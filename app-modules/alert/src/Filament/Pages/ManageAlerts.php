@@ -40,7 +40,8 @@ use AdvisingApp\Alert\Actions\FindGroupsUsingAlerts;
 use AdvisingApp\Alert\Actions\GenerateStudentAlertsView;
 use AdvisingApp\Alert\Jobs\RemoveAlertFiltersFromGroupsJob;
 use AdvisingApp\Alert\Models\AlertConfiguration;
-use App\Filament\Clusters\ConstituentManagement;
+use App\Enums\Feature;
+use App\Filament\Clusters\EarlyAlerts;
 use App\Filament\Forms\Components\Heading;
 use App\Filament\Forms\Components\Paragraph;
 use App\Models\User;
@@ -56,11 +57,11 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Throwable;
-use UnitEnum;
 
 /**
  * @property-read Schema $form
@@ -69,17 +70,15 @@ class ManageAlerts extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?string $cluster = ConstituentManagement::class;
+    protected static ?string $cluster = EarlyAlerts::class;
 
     protected static ?string $navigationLabel = 'Alerts';
 
     protected string $view = 'alert::filament.pages.manage-alerts';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $title = 'Student Alerts';
-
-    protected static string | UnitEnum | null $navigationGroup = 'Students';
 
     /** @var array<string, mixed> $data */
     public ?array $data = [];
@@ -95,6 +94,10 @@ class ManageAlerts extends Page implements HasForms
 
     public static function canAccess(): bool
     {
+        if (! Gate::check(Feature::EarlyAlert->getGateName())) {
+            return false;
+        }
+
         $user = auth()->user();
 
         assert($user instanceof User);

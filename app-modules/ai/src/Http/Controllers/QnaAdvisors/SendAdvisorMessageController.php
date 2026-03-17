@@ -66,9 +66,11 @@ class SendAdvisorMessageController
                         files: [
                             ...$advisor->files()->whereNotNull('parsing_results')->get()->all(),
                             ...$advisor->links()->whereNotNull('parsing_results')->get()->all(),
+                            ...$advisor->getResourceHubArticles(),
                         ],
                         shouldTrack: false,
                         options: $data['options'] ?? [],
+                        filesContext: $advisor,
                     ),
                     headers: [
                         'Content-Type' => 'text/html; charset=utf-8;',

@@ -46,5 +46,5 @@ class ProjectManagement extends Cluster
 
     protected static string | UnitEnum | null $navigationGroup = 'Settings';
 
-    protected static ?int $navigationSort = 120;
+    protected static ?int $navigationSort = 100;
 }

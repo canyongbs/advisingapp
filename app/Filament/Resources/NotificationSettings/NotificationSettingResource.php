@@ -48,7 +48,7 @@ class NotificationSettingResource extends Resource
 {
     protected static ?string $model = NotificationSetting::class;
 
-    protected static ?int $navigationSort = 110;
+    protected static ?int $navigationSort = 120;
 
     protected static ?string $cluster = Communication::class;
 

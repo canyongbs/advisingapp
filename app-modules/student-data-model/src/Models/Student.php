@@ -589,6 +589,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         });
     }
 
+    /**
+     * @return Attribute<string, string>
+     */
     protected function displayName(): Attribute
     {
         return Attribute::make(
@@ -596,6 +599,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         );
     }
 
+    /**
+     * @return Attribute<string, string>
+     */
     protected function fullAddress(): Attribute
     {
         return Attribute::make(

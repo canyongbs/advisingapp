@@ -137,6 +137,7 @@ class GoogleCalendarManager implements CalendarInterface
 
         $event->updateQuietly([
             'provider_id' => $googleEvent->id,
+            'provider_uid' => $googleEvent->getICalUID(),
         ]);
     }
 
@@ -170,6 +171,7 @@ class GoogleCalendarManager implements CalendarInterface
                     $data = [
                         'title' => filled($event->summary) ? $event->summary : '(No Subject)',
                         'description' => $event->description,
+                        'provider_uid' => $event->getICalUID(),
                         'starts_at' => $event->start->dateTime,
                         'ends_at' => $event->end->dateTime,
                         'attendees' => collect($event->getAttendees())

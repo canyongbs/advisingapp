@@ -42,12 +42,18 @@ use Illuminate\Support\Facades\DB;
 return new class () extends Migration {
     use CanModifyPermissions;
 
+    /**
+     * @var array<string, string>
+     */
     private array $permissions = [
         'record_sync.*.view' => 'Record Sync',
         'record_sync.create' => 'Record Sync',
         'record_sync.view-any' => 'Record Sync',
     ];
 
+    /**
+     * @var array<string>
+     */
     private array $guards = [
         'web',
     ];

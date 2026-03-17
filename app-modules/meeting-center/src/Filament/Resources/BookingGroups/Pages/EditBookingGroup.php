@@ -36,10 +36,15 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
+use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use App\Models\User;
+use Closure;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -49,7 +54,10 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class EditBookingGroup extends EditRecord
 {
@@ -57,8 +65,16 @@ class EditBookingGroup extends EditRecord
 
     protected static string $resource = BookingGroupResource::class;
 
+    protected static ?string $navigationLabel = 'Group Configuration';
+
+    protected static ?int $navigationSort = 10;
+
     public function form(Schema $schema): Schema
     {
+        $bookingGroup = $this->getRecord();
+
+        assert($bookingGroup instanceof BookingGroup);
+
         return $schema->components([
             Section::make('Booking Group Details')
                 ->schema([
@@ -66,6 +82,14 @@ class EditBookingGroup extends EditRecord
                         ->required()
                         ->string()
                         ->maxLength(255)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(function (Get $get, Set $set, ?string $state): void {
+                            if (filled($get('slug'))) {
+                                return;
+                            }
+
+                            $set('slug', Str::slug($state ?? ''));
+                        })
                         ->label('Name'),
                     Textarea::make('description')
                         ->string()
@@ -75,33 +99,96 @@ class EditBookingGroup extends EditRecord
                 ]),
             Section::make('Members')
                 ->schema([
+                    Select::make('book_with')
+                        ->label('Book With')
+                        ->options(BookingGroupBookWith::class)
+                        ->default(BookingGroupBookWith::All)
+                        ->live()
+                        ->required(),
                     Select::make('users')
                         ->label('Users')
                         ->multiple()
                         ->relationship('users', 'name')
                         ->searchable()
-                        ->preload(),
+                        ->preload()
+                        ->live(),
                     Select::make('teams')
                         ->label('Teams')
                         ->multiple()
                         ->relationship('teams', 'name')
                         ->searchable()
-                        ->preload(),
+                        ->preload()
+                        ->live(),
+                    Select::make('meeting_owner_id')
+                        ->label('Meeting Owner')
+                        ->options(fn (Get $get): array => User::query()
+                            ->whereIn('id', $this->getEligibleMeetingOwnerIds($get))
+                            ->orderBy('name')
+                            ->pluck('name', 'id')
+                            ->all())
+                        ->searchable()
+                        ->preload()
+                        ->visible(fn (Get $get): bool => $this->isBookWithAll($get))
+                        ->required(fn (Get $get): bool => $this->isBookWithAll($get))
+                        ->rules([
+                            function (Get $get): Closure {
+                                return function (string $attribute, mixed $value, Closure $fail) use ($get) {
+                                    if (! $this->isBookWithAll($get)) {
+                                        return;
+                                    }
+
+                                    if (blank($value)) {
+                                        return;
+                                    }
+
+                                    if (! in_array($value, $this->getEligibleMeetingOwnerIds($get), true)) {
+                                        $fail('Meeting Owner must be selected from users in this booking group.');
+                                    }
+                                };
+                            },
+                            function (Get $get): Closure {
+                                return function (string $attribute, mixed $value, Closure $fail) use ($get) {
+                                    if (! $this->isBookWithAll($get) || blank($value)) {
+                                        return;
+                                    }
+
+                                    $hasCalendar = User::query()
+                                        ->whereKey($value)
+                                        ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('provider_id'))
+                                        ->exists();
+
+                                    if (! $hasCalendar) {
+                                        $fail('Meeting Owner must have a connected calendar.');
+                                    }
+                                };
+                            },
+                        ]),
                 ]),
             Section::make('Availability')
                 ->schema([
+                    TextInput::make('slug')
+                        ->label('URL Slug')
+                        ->required()
+                        ->alphaDash()
+                        ->scopedUnique()
+                        ->prefix(config('app.url') . '/group-booking/')
+                        ->maxLength(255)
+                        ->default(fn (Get $get) => Str::slug($get('name') ?? ''))
+                        ->columnSpanFull(),
                     DurationInput::make('default_appointment_duration', isRequired: true, hasDays: true)
-                        ->label('Meeting Duration'),
+                        ->label('Meeting Duration')
+                        ->columnSpanFull(),
                     Toggle::make('is_default_appointment_buffer_enabled')
                         ->label('Buffer Time')
                         ->live()
-                        ->columnStart(1),
+                        ->columnSpanFull(),
                     DurationInput::make('default_appointment_buffer_before_duration', isRequired: true, hasDays: false)
                         ->label('Before')
-                        ->columnStart(1)
+                        ->columnSpanFull()
                         ->visible(fn (Get $get): bool => $get('is_default_appointment_buffer_enabled')),
                     DurationInput::make('default_appointment_buffer_after_duration', isRequired: true, hasDays: false)
                         ->label('After')
+                        ->columnSpanFull()
                         ->visible(fn (Get $get): bool => $get('is_default_appointment_buffer_enabled')),
                     DailyHoursRepeater::make('available_appointment_hours')
                         ->label('Days and Hours')
@@ -113,7 +200,17 @@ class EditBookingGroup extends EditRecord
 
     protected function getHeaderActions(): array
     {
+        $bookingGroup = $this->getRecord();
+
+        assert($bookingGroup instanceof BookingGroup);
+
         return [
+            Action::make('view_booking_page')
+                ->label('View Booking Page')
+                ->icon('heroicon-o-eye')
+                ->url(fn (): string => route('group-booking.show', ['slug' => $bookingGroup->slug]))
+                ->openUrlInNewTab()
+                ->visible(fn (): bool => filled($bookingGroup->slug)),
             ViewAction::make(),
             DeleteAction::make(),
         ];
@@ -124,13 +221,16 @@ class EditBookingGroup extends EditRecord
         $data['default_appointment_duration'] = DurationInput::mutateDataBeforeFill($data['default_appointment_duration'], hasDays: true);
         $data['default_appointment_buffer_before_duration'] = DurationInput::mutateDataBeforeFill($data['default_appointment_buffer_before_duration'], hasDays: false);
         $data['default_appointment_buffer_after_duration'] = DurationInput::mutateDataBeforeFill($data['default_appointment_buffer_after_duration'], hasDays: false);
-        $data['available_appointment_hours'] = DailyHoursRepeater::mutateDataBeforeFill($data['available_appointment_hours']);
 
         return $data;
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
+        if ($this->toBookWithEnum($data['book_with'] ?? null) !== BookingGroupBookWith::All) {
+            $data['meeting_owner_id'] = null;
+        }
+
         $data['default_appointment_duration'] = DurationInput::mutateDataBeforeSave($data['default_appointment_duration']);
 
         if (array_key_exists('default_appointment_buffer_before_duration', $data)) {
@@ -144,5 +244,47 @@ class EditBookingGroup extends EditRecord
         $data['available_appointment_hours'] = DailyHoursRepeater::mutateDataBeforeSave($data['available_appointment_hours']);
 
         return $data;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function getEligibleMeetingOwnerIds(Get $get): array
+    {
+        $users = $get('users');
+        $selectedUserIds = array_values(array_map(
+            'strval',
+            array_filter(is_array($users) ? $users : []),
+        ));
+
+        $teams = $get('teams');
+        $selectedTeamIds = array_values(array_map(
+            'strval',
+            array_filter(is_array($teams) ? $teams : []),
+        ));
+
+        $teamUserIds = ! empty($selectedTeamIds)
+            ? User::query()->whereIn('team_id', $selectedTeamIds)->pluck('id')->map(fn ($id): string => (string) $id)->all()
+            : [];
+
+        return array_values(array_unique([...$selectedUserIds, ...$teamUserIds]));
+    }
+
+    protected function isBookWithAll(Get $get): bool
+    {
+        return $this->toBookWithEnum($get('book_with')) === BookingGroupBookWith::All;
+    }
+
+    protected function toBookWithEnum(mixed $value): ?BookingGroupBookWith
+    {
+        if ($value instanceof BookingGroupBookWith) {
+            return $value;
+        }
+
+        if (is_string($value)) {
+            return BookingGroupBookWith::tryFrom($value);
+        }
+
+        return null;
     }
 }

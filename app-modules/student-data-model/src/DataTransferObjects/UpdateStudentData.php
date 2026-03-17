@@ -63,8 +63,8 @@ class UpdateStudentData extends Data
         public string | Optional | null $dfw,
         public string | Optional | null $ethnicity,
         public string | Optional | null $lastlmslogin,
-        public string | Optional | null $fETerm,
-        public string | Optional | null $mrETerm,
+        public string | Optional | null $fETerm, // @phpstan-ignore-line
+        public string | Optional | null $mrETerm, // @phpstan-ignore-line
         public string | Optional | null $primaryEmailId = null,
         public string | Optional | null $primaryPhoneId = null,
     ) {}

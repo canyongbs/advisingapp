@@ -40,10 +40,16 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     use CanModifyPermissions;
 
+    /**
+     * @var array<string, string>
+     */
     private array $permissions = [
         'sis.manage_sis_settings' => 'Student Information System',
     ];
 
+    /**
+     * @var array<string>
+     */
     private array $guards = [
         'web',
     ];

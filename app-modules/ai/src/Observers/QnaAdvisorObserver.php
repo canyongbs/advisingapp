@@ -34,26 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Enums;
+namespace AdvisingApp\Ai\Observers;
 
-use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\IntegrationOpenAi\Jobs\UploadQnaAdvisorFilesToVectorStore;
 
-enum ProspectStatusColorOptions: string implements HasLabel
+class QnaAdvisorObserver
 {
-    case Success = 'success';
-
-    case Danger = 'danger';
-
-    case Warning = 'warning';
-
-    case Info = 'info';
-
-    case Primary = 'primary';
-
-    case Gray = 'gray';
-
-    public function getLabel(): string
+    public function created(QnaAdvisor $advisor): void
     {
-        return $this->value;
+        if ($advisor->has_resource_hub_knowledge) {
+            UploadQnaAdvisorFilesToVectorStore::dispatch($advisor);
+        }
+    }
+
+    public function updated(QnaAdvisor $advisor): void
+    {
+        if ($advisor->wasChanged('has_resource_hub_knowledge')) {
+            UploadQnaAdvisorFilesToVectorStore::dispatch($advisor);
+        }
     }
 }

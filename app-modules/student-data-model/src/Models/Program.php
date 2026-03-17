@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Models;
 
 use AdvisingApp\StudentDataModel\Database\Factories\ProgramFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -94,6 +95,43 @@ class Program extends Model
         'graduation_dt' => 'datetime',
         'conferred_dt' => 'datetime',
     ];
+
+    /**
+     * Format the academic plan for display.
+     *
+     * @return Attribute<string|null, never>
+     */
+    public function formattedAcadPlan(): Attribute
+    {
+        return Attribute::make(
+            get: function (): ?string {
+                $acadPlan = $this->acad_plan;
+
+                if (blank($acadPlan)) {
+                    return null;
+                }
+
+                $majors = $acadPlan['major'] ?? [];
+                $minors = $acadPlan['minor'] ?? [];
+
+                if (blank($majors) && blank($minors)) {
+                    return null;
+                }
+
+                $parts = [];
+
+                if (filled($majors)) {
+                    $parts[] = 'Major: ' . implode(', ', $majors);
+                }
+
+                if (filled($minors)) {
+                    $parts[] = 'Minor: ' . implode(', ', $minors);
+                }
+
+                return implode('; ', $parts);
+            }
+        );
+    }
 
     /**
      * @return BelongsTo<Student, $this>

@@ -31,34 +31,25 @@
 
 </COPYRIGHT>
 */
-(function () {
-    // Get the embed element
-    const embedElement = document.querySelector('personal-booking-page-embed');
-    if (!embedElement) throw new Error('Embed not found');
+import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
+import App from './App.vue';
+import styles from './widget.css?inline';
 
-    // Get the assets URL from the element
-    const assetsUrl = embedElement.getAttribute('url');
-    if (!assetsUrl) throw new Error('Assets URL not found');
+customElements.define(
+    'booking-page-embed',
+    defineCustomElement({
+        styles: [styles],
+        setup(props) {
+            const app = createApp();
 
-    // Fetch the latest assets URLs
-    fetch(assetsUrl)
-        .then((response) => response.json())
-        .then((assets) => {
-            if (!assets || !assets.asset_url || !assets.entry || !assets.js) {
-                throw Error('Assets are missing or incomplete.');
-            }
+            app.config.devtools = true;
 
-            embedElement.setAttribute('entry-url', assets.entry);
+            const inst = getCurrentInstance();
+            Object.assign(inst.appContext, app._context);
+            Object.assign(inst.provides, app._context.provides);
 
-            // Set up the global variable for Vite's dynamic imports using the asset endpoint
-            window.__VITE_PERSONAL_BOOKING_PAGE_ASSET_URL__ = assets.asset_url;
-
-            const scriptElement = document.createElement('script');
-            scriptElement.src = assets.js;
-            scriptElement.type = 'module';
-            document.body.appendChild(scriptElement);
-        })
-        .catch((error) => {
-            console.error('Failed to load widget assets:', error);
-        });
-})();
+            return () => h(App, props);
+        },
+        props: ['entryUrl'],
+    }),
+);

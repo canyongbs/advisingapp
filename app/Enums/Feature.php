@@ -71,6 +71,8 @@ enum Feature: string
 
     case ProjectManagement = 'project-management';
 
+    case EarlyAlert = 'early-alert';
+
     public function generateGate(): void
     {
         // If features are added that are not based on a License Addon we will need to update this

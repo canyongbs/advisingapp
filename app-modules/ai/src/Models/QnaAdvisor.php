@@ -38,7 +38,10 @@ namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use AdvisingApp\Ai\Observers\QnaAdvisorObserver;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -52,6 +55,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 /**
  * @mixin IdeHelperQnaAdvisor
  */
+#[ObservedBy([QnaAdvisorObserver::class])]
 class QnaAdvisor extends BaseModel implements HasMedia, Auditable
 {
     use CanAddAssistantLicenseGlobalScope;
@@ -78,6 +82,7 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
         'button_background_color',
         'button_background_hover_color',
         'default_theme',
+        'has_resource_hub_knowledge',
     ];
 
     protected $casts = [
@@ -89,6 +94,7 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
         'is_generate_prospects_enabled' => 'boolean',
         'is_introductory_message_enabled' => 'boolean',
         'is_introductory_message_dynamic' => 'boolean',
+        'has_resource_hub_knowledge' => 'boolean',
     ];
 
     /**
@@ -165,5 +171,21 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
     public function threads(): HasMany
     {
         return $this->hasMany(QnaAdvisorThread::class, 'advisor_id');
+    }
+
+    /**
+     * @return array<int, ResourceHubArticle>
+     */
+    public function getResourceHubArticles(): array
+    {
+        if (! $this->has_resource_hub_knowledge) {
+            return [];
+        }
+
+        return ResourceHubArticle::query()
+            ->public()
+            ->whereNotNull('article_details')
+            ->get(['id', 'updated_at'])
+            ->all();
     }
 }

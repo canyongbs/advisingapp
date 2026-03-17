@@ -156,11 +156,11 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
 
         return [
             Stat::make(
-                'Primary Email Missing',
+                'Institutional Email Missing',
                 Number::format($primaryEmailMissingPercentage, 2) . '%'
             ),
             Stat::make(
-                'Primary Email Unhealthy',
+                'Institutional Email Unhealthy',
                 Number::format($primaryEmailUnhealthyPercentage, 2) . '%'
             ),
             Stat::make(

@@ -1,6 +1,6 @@
 includes:
-    - ./phpstan.neon.dist
+    - phpstan.neon.dist
 
 parameters:
-    tmpDir: tmp
+    tmpDir: .cache/phpstan
     errorFormat: github

@@ -38,7 +38,6 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages;
 
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Features\ProspectStatusFeature;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -79,14 +78,7 @@ class ViewProspectStatus extends ViewRecord
                             ->label('Name'),
                         TextEntry::make('classification')
                             ->label('Classification'),
-                        //TODO: ProspectStatusFeature Cleanup - Remove TextEntry when you remove feature flag and just use ColorEntry
-                        TextEntry::make('color')
-                            ->label('Color')
-                            ->badge()
-                            ->visible(! ProspectStatusFeature::active())
-                            ->color(fn (ProspectStatus $prospectStatus) => $prospectStatus->color->value),
                         ColorEntry::make('color')
-                            ->visible(ProspectStatusFeature::active())
                             ->label('Color')
                             ->state(fn (ProspectStatus $record): string => Color::convertToRgb(Color::all()[$record->color->value][600])),
                         TextEntry::make('sort')

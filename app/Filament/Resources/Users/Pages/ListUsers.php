@@ -157,6 +157,29 @@ class ListUsers extends ListRecords
                         ]
                     )
                     ->getSearchResultsUsing(fn (string $search): array => ['Team' => Team::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->pluck('name', 'id')->toArray()])
+                    ->getOptionLabelsUsing(function (array $values): array {
+                        $values = array_values(array_filter($values, filled(...)));
+
+                        $labels = [];
+
+                        if (in_array('unassigned', $values, true)) {
+                            $labels['unassigned'] = 'Unassigned';
+                        }
+
+                        $teamIds = array_values(array_filter($values, fn ($value) => $value !== 'unassigned'));
+
+                        if ($teamIds !== []) {
+                            $labels = [
+                                ...$labels,
+                                ...Team::query()
+                                    ->whereIn('id', $teamIds)
+                                    ->pluck('name', 'id')
+                                    ->toArray(),
+                            ];
+                        }
+
+                        return $labels;
+                    })
                     ->query(function (Builder $query, array $data) {
                         if (empty($data['values'])) {
                             return;
@@ -183,6 +206,29 @@ class ListUsers extends ListRecords
                         ]
                     )
                     ->getSearchResultsUsing(fn (string $search): array => ['Roles' => Role::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->orderBy('name')->pluck('name', 'id')->toArray()])
+                    ->getOptionLabelsUsing(function (array $values): array {
+                        $values = array_values(array_filter($values, filled(...)));
+
+                        $labels = [];
+
+                        if (in_array('none', $values, true)) {
+                            $labels['none'] = 'None';
+                        }
+
+                        $roleIds = array_values(array_filter($values, fn ($value) => $value !== 'none'));
+
+                        if ($roleIds !== []) {
+                            $labels = [
+                                ...$labels,
+                                ...Role::query()
+                                    ->whereIn('id', $roleIds)
+                                    ->pluck('name', 'id')
+                                    ->toArray(),
+                            ];
+                        }
+
+                        return $labels;
+                    })
                     ->query(
                         function (Builder $query, array $data) {
                             if (empty($data['values'])) {
@@ -213,6 +259,26 @@ class ListUsers extends ListRecords
                         ]
                     )
                     ->getSearchResultsUsing(fn (string $search): array => ['Licenses' => collect(LicenseType::cases())->filter(fn ($case) => str_contains(strtolower($case->name), strtolower($search)))->mapWithKeys(fn ($case) => [$case->value => $case->name])->toArray()])
+                    ->getOptionLabelsUsing(function (array $values): array {
+                        $values = array_values(array_filter($values, filled(...)));
+
+                        $labels = [];
+
+                        if (in_array('no_assigned_license', $values, true)) {
+                            $labels['no_assigned_license'] = 'No Assigned License';
+                        }
+
+                        $licenseLabelsByValue = collect(LicenseType::cases())
+                            ->mapWithKeys(fn (LicenseType $licenseType): array => [$licenseType->value => $licenseType->name]);
+
+                        foreach ($values as $value) {
+                            if ($licenseLabelsByValue->has($value)) {
+                                $labels[$value] = $licenseLabelsByValue->get($value);
+                            }
+                        }
+
+                        return $labels;
+                    })
                     ->query(
                         function (Builder $query, array $data) {
                             if (empty($data['values'])) {

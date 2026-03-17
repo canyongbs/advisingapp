@@ -96,13 +96,14 @@ class EnrollmentSemesterResource extends Resource
             ->columns([
                 TextColumn::make('name'),
             ])
-            ->defaultSort('order')
+            ->defaultSort('order', 'desc')
             ->reorderable('order', condition: auth()->user()->can('settings.*.update'))
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
+            ->paginated([50, 100, 500, 1000])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

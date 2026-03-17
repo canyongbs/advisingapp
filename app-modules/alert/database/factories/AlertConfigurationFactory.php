@@ -37,6 +37,7 @@
 namespace AdvisingApp\Alert\Database\Factories;
 
 use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
+use AdvisingApp\Alert\Configurations\LowEarnedCreditPercentageAlertConfiguration;
 use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Alert\Presets\AlertPreset;
@@ -56,6 +57,7 @@ class AlertConfigurationFactory extends Factory
                 return match ($attributes['preset']) {
                     AlertPreset::AdultLearner => new AdultLearnerAlertConfiguration()->getMorphClass(),
                     AlertPreset::NewStudent => new NewStudentAlertConfiguration()->getMorphClass(),
+                    AlertPreset::LowEarnedCreditPercentage => new LowEarnedCreditPercentageAlertConfiguration()->getMorphClass(),
                     default => null,
                 };
             },
@@ -63,6 +65,7 @@ class AlertConfigurationFactory extends Factory
                 return match ($attributes['preset']) {
                     AlertPreset::AdultLearner => AdultLearnerAlertConfiguration::factory(),
                     AlertPreset::NewStudent => NewStudentAlertConfiguration::factory(),
+                    AlertPreset::LowEarnedCreditPercentage => LowEarnedCreditPercentageAlertConfiguration::factory(),
                     default => null,
                 };
             },

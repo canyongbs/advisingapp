@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory;
 
+use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use Worksome\RequestFactories\RequestFactory;
 
 class EditBookingGroupRequestFactory extends RequestFactory
@@ -44,7 +45,10 @@ class EditBookingGroupRequestFactory extends RequestFactory
     {
         return [
             'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
+            'slug' => str($this->faker->unique()->words(3, true))->slug()->toString(),
             'description' => $this->faker->paragraph(),
+            'book_with' => BookingGroupBookWith::All->value,
+            'meeting_owner_id' => null,
         ];
     }
 }

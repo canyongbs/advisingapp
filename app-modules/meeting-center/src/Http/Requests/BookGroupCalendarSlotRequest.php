@@ -34,14 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\MeetingCenter\Http\Requests;
 
-use App\Support\AbstractFeatureFlag;
+use Illuminate\Foundation\Http\FormRequest;
 
-class ResourceHubKnowledgeFeature extends AbstractFeatureFlag
+class BookGroupCalendarSlotRequest extends FormRequest
 {
-    public function resolve(mixed $scope): mixed
+    /**
+     * @return array<string, array<int, string>>
+     */
+    public function rules(): array
     {
-        return false;
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
+            'starts_at' => ['required', 'date'],
+            'ends_at' => ['required', 'date', 'after:starts_at'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Please provide your name.',
+            'email.required' => 'Please provide your email address.',
+            'email.email' => 'Please provide a valid email address.',
+            'starts_at.required' => 'Please select a start time.',
+            'ends_at.required' => 'Please select an end time.',
+            'ends_at.after' => 'The end time must be after the start time.',
+        ];
     }
 }

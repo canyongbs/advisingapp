@@ -44,7 +44,7 @@ class GeneratePersonalBookingPageEmbedCode
 {
     public function __invoke(PersonalBookingPage $bookingPage): string
     {
-        $manifestPath = Storage::disk('public')->get('widgets/personal-booking-page/.vite/manifest.json');
+        $manifestPath = Storage::disk('public')->get('widgets/booking-page/.vite/manifest.json');
 
         if (is_null($manifestPath)) {
             throw new RuntimeException('Vite manifest file not found.');
@@ -53,12 +53,12 @@ class GeneratePersonalBookingPageEmbedCode
         /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
         $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
 
-        $loaderScriptUrl = url("widgets/personal-booking-page/{$manifest['src/loader.js']['file']}");
+        $loaderScriptUrl = url("widgets/booking-page/{$manifest['src/loader.js']['file']}");
 
-        $assetsUrl = route(name: 'widgets.personal-booking-page.api.assets', parameters: ['slug' => $bookingPage->slug]);
+        $assetsUrl = route(name: 'widgets.booking-page.personal.api.assets', parameters: ['slug' => $bookingPage->slug]);
 
         return <<<EOD
-        <personal-booking-page-embed url="{$assetsUrl}"></personal-booking-page-embed>
+        <booking-page-embed url="{$assetsUrl}"></booking-page-embed>
         <script src="{$loaderScriptUrl}"></script>
         EOD;
     }

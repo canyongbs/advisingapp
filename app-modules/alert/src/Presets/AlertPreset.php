@@ -42,6 +42,7 @@ use AdvisingApp\Alert\Presets\Handlers\Contracts\AlertPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\CourseWithdrawalPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\DorfGradePresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\FirstGenerationStudentPresetHandler;
+use AdvisingApp\Alert\Presets\Handlers\LowEarnedCreditPercentageHandler;
 use AdvisingApp\Alert\Presets\Handlers\MultipleCourseWithdrawalsPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\MultipleDorfGradesPresetHandler;
 use AdvisingApp\Alert\Presets\Handlers\NewInboundMessagePresetHandler;
@@ -61,6 +62,7 @@ enum AlertPreset: string implements HasLabel
     case NewStudent = 'new_student';
     case NewInboundMessage = 'new_inbound_message';
     case ConcernRaised = 'concern_raised';
+    case LowEarnedCreditPercentage = 'low_earned_credit_percentage';
 
     public function getLabel(): string
     {
@@ -75,11 +77,12 @@ enum AlertPreset: string implements HasLabel
             self::CourseWithdrawal => 3,
             self::MultipleCourseWithdrawals => 4,
             self::RepeatedCourseAttempt => 5,
-            self::ConcernRaised => 6,
-            self::NewInboundMessage => 7,
-            self::NewStudent => 8,
-            self::AdultLearner => 9,
-            self::FirstGenerationStudent => 10,
+            self::LowEarnedCreditPercentage => 6,
+            self::ConcernRaised => 7,
+            self::NewInboundMessage => 8,
+            self::NewStudent => 9,
+            self::AdultLearner => 10,
+            self::FirstGenerationStudent => 11,
         };
     }
 
@@ -91,6 +94,7 @@ enum AlertPreset: string implements HasLabel
             self::CourseWithdrawal => 'Course Withdrawal',
             self::MultipleCourseWithdrawals => 'Repeated Course Withdrawal',
             self::RepeatedCourseAttempt => 'Repeated Course',
+            self::LowEarnedCreditPercentage => 'Low Earned Credit Percentage',
             self::ConcernRaised => 'Open Concerns',
             self::NewInboundMessage => 'New Messages',
             self::NewStudent => 'New Student',
@@ -110,6 +114,7 @@ enum AlertPreset: string implements HasLabel
             self::CourseWithdrawal => new CourseWithdrawalPresetHandler(),
             self::MultipleCourseWithdrawals => new MultipleCourseWithdrawalsPresetHandler(),
             self::RepeatedCourseAttempt => new RepeatedCourseAttemptPresetHandler(),
+            self::LowEarnedCreditPercentage => new LowEarnedCreditPercentageHandler(),
             self::ConcernRaised => new ConcernRaisedPresetHandler(),
             self::FirstGenerationStudent => new FirstGenerationStudentPresetHandler(),
             self::NewInboundMessage => new NewInboundMessagePresetHandler(),
@@ -129,6 +134,9 @@ enum AlertPreset: string implements HasLabel
             ],
             self::NewStudent => [
                 'number_of_semesters' => 1,
+            ],
+            self::LowEarnedCreditPercentage => [
+                'minimum_earned_credit_percentage' => 0,
             ],
             default => [],
         };

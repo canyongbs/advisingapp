@@ -34,17 +34,27 @@
 </COPYRIGHT>
 */
 
-use App\Features\FormRepeaterFeature;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\MeetingCenter\Listeners;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        FormRepeaterFeature::activate();
-    }
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use App\Events\UserTeamChanged;
 
-    public function down(): void
+class HandleUserTeamChanged
+{
+    public function handle(UserTeamChanged $event): void
     {
-        FormRepeaterFeature::deactivate();
+        if (blank($event->previousTeamId) || $event->previousTeamId === $event->currentTeamId) {
+            return;
+        }
+
+        BookingGroup::query()
+            ->where('meeting_owner_id', $event->user->id)
+            ->whereHas('teams', fn ($query) => $query->whereKey($event->previousTeamId))
+            ->whereDoesntHave('users', fn ($query) => $query->whereKey($event->user->id))
+            ->when(
+                filled($event->currentTeamId),
+                fn ($query) => $query->whereDoesntHave('teams', fn ($teamQuery) => $teamQuery->whereKey($event->currentTeamId)),
+            )
+            ->eachById(fn (BookingGroup $bookingGroup): mixed => $bookingGroup->users()->syncWithoutDetaching([$event->user->id]));
     }
-};
+}

@@ -38,6 +38,7 @@ namespace AdvisingApp\Alert\Providers;
 
 use AdvisingApp\Alert\AlertPlugin;
 use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
+use AdvisingApp\Alert\Configurations\LowEarnedCreditPercentageAlertConfiguration;
 use AdvisingApp\Alert\Configurations\NewStudentAlertConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use Filament\Panel;
@@ -57,6 +58,7 @@ class AlertServiceProvider extends ServiceProvider
             'alert_configuration' => AlertConfiguration::class,
             'adult_learner_alert_configuration' => AdultLearnerAlertConfiguration::class,
             'new_student_alert_configuration' => NewStudentAlertConfiguration::class,
+            'low_earned_credit_percentage_alert_configuration' => LowEarnedCreditPercentageAlertConfiguration::class,
         ]);
     }
 }

@@ -1,5 +1,5 @@
 ARG BASE_IMAGE="public.ecr.aws/lts/ubuntu:24.04"
-ARG IMAGEMAGICK_VERSION='7.1.2-15'
+ARG IMAGEMAGICK_VERSION='7.1.2-17'
 
 FROM ${BASE_IMAGE} AS setup
 
@@ -254,10 +254,10 @@ COPY --chmod=755 docker/etc/php/8.4/cli/php.ini /etc/php/8.4/cli/php.ini
 WORKDIR /var/www/html
 
 # Install JS package management
-ENV NVM_VERSION=v0.40.3
+ENV NVM_VERSION=v0.40.4
 # If we change this version, remember to also update the .nvmrc file
 ENV NODE_VERSION=24.14.0
-ENV NPM_VERSION=^11.7.0
+ENV NPM_VERSION=^11.11.1
 ENV NVM_DIR=/usr/local/nvm
 RUN mkdir "$NVM_DIR"
 
@@ -295,7 +295,7 @@ RUN apt-get update \
 
 COPY docker/etc/nginx/ /etc/nginx/
 
-COPY --from=ghcr.io/roadrunner-server/roadrunner:2025.1.8 --chown=$PUID:$PGID --chmod=0755 /usr/bin/rr /usr/local/bin/rr
+COPY --from=ghcr.io/roadrunner-server/roadrunner:2025.1.11 --chown=$PUID:$PGID --chmod=0755 /usr/bin/rr /usr/local/bin/rr
 
 COPY --chmod=755 ./docker/web/s6-overlay/ /etc/s6-overlay/
 

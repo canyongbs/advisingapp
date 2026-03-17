@@ -42,7 +42,7 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-            $obsoleteFilterTypes = ['sms_opt_out', 'email_bounce'];
+            $obsoleteFilterTypes = ['programSisid', 'programOtherid'];
 
             DB::table('segments')
                 ->whereNotNull('filters')

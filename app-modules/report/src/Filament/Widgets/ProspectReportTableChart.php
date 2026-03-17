@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Exports\MostRecentProspectsExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
@@ -109,7 +110,9 @@ class ProspectReportTableChart extends TableWidget
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('full_name')
-                    ->label('Name'),
+                    ->label('Name')
+                    ->url(fn (Prospect $record): string => ProspectResource::getUrl('view', ['record' => $record]))
+                    ->openUrlInNewTab(),
                 TextColumn::make('primaryEmailAddress.address')
                     ->label('Email'),
                 TextColumn::make('status.name')

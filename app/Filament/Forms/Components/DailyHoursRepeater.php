@@ -111,31 +111,69 @@ class DailyHoursRepeater
             ->addable(false)
             ->minItems(7)
             ->maxItems(7)
-            ->default([
-                ['day' => 'monday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'tuesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'wednesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'thursday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'friday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'saturday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                ['day' => 'sunday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-            ]);
+            ->default(static::defaultValue())
+            ->afterStateHydrated(static function (Repeater $component, ?array $rawState): void {
+                if (empty($rawState)) {
+                    $rawState = DailyHoursRepeater::defaultValue();
+                } elseif (DailyHoursRepeater::isKeyedByDay($rawState)) {
+                    $rawState = DailyHoursRepeater::convertKeyedToIndexed($rawState);
+                }
+
+                $items = [];
+
+                foreach ($rawState as $itemData) {
+                    $day = $itemData['day'] ?? null;
+
+                    if ($day) {
+                        $items[$day] = $itemData;
+                    } elseif ($uuid = $component->generateUuid()) {
+                        $items[$uuid] = $itemData;
+                    } else {
+                        $items[] = $itemData;
+                    }
+                }
+
+                $component->rawState($items);
+            });
     }
 
     /**
-     * @param array{
-     *     monday: array{is_enabled: bool, starts_at: ?string, ends_at: ?string},
-     *     tuesday: array{is_enabled: bool, starts_at: ?string, ends_at: ?string},
-     *     wednesday: array{is_enabled: bool, starts_at: ?string, ends_at: ?string},
-     *     thursday: array{is_enabled: bool, starts_at: ?string, ends_at: ?string},
-     *     friday: array{is_enabled: bool, starts_at: ?string, ends_at: ?string},
-     *     saturday: array{is_enabled: bool, starts_at: ?string, ends_at: ?string},
-     *     sunday: array{is_enabled: bool, starts_at: ?string, ends_at: ?string},
-     * } $data
+     * @return array<array{day: string, is_enabled: bool, starts_at: null, ends_at: null}>
+     */
+    public static function defaultValue(): array
+    {
+        return [
+            ['day' => 'monday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            ['day' => 'tuesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            ['day' => 'wednesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            ['day' => 'thursday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            ['day' => 'friday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            ['day' => 'saturday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            ['day' => 'sunday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+        ];
+    }
+
+    /**
+     * Check if the given array is keyed by day names (DB format)
+     * as opposed to indexed (component format).
+     *
+     * @param array<array-key, mixed> $data
+     */
+    public static function isKeyedByDay(array $data): bool
+    {
+        $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+        return ! empty(array_intersect(array_keys($data), $days));
+    }
+
+    /**
+     * Convert day-keyed DB format to indexed component format with timezone conversion.
+     *
+     * @param array<string, array<string, mixed>> $data
      *
      * @return array<array{day: string, is_enabled: bool, starts_at: ?string, ends_at: ?string}>
      */
-    public static function mutateDataBeforeFill(array $data): array
+    public static function convertKeyedToIndexed(array $data): array
     {
         $orderedDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
         $displayTimezone = app(DisplaySettings::class)->getTimezone();
@@ -143,7 +181,7 @@ class DailyHoursRepeater
 
         return array_map(
             function (string $day) use ($data, $displayTimezone, $appTimezone): array {
-                $dayData = $data[$day];
+                $dayData = $data[$day] ?? ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null];
 
                 if (filled($dayData['starts_at'] ?? null)) {
                     $dayData['starts_at'] = Carbon::parse($dayData['starts_at'], $appTimezone)
@@ -218,10 +256,8 @@ class DailyHoursRepeater
 
         for ($hour = 0; $hour < 24; $hour++) {
             for ($minute = 0; $minute < 60; $minute += 15) {
-                $time = Carbon::createFromTime($hour, $minute, 0, config('app.timezone'))
-                    ->setTimezone($displayTimezone);
-
                 $value = sprintf('%02d:%02d', $hour, $minute);
+                $time = Carbon::createFromTime($hour, $minute, 0, $displayTimezone);
                 $label = $time->format('g:i A');
 
                 $options[$value] = $label;

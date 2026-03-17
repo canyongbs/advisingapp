@@ -59,7 +59,7 @@ test('The correct details are displayed on the ViewCaseStatus page', function ()
                 'Name',
                 $caseStatus->name,
                 'Color',
-                $caseStatus->color,
+                $caseStatus->color->value,
             ]
         );
 });

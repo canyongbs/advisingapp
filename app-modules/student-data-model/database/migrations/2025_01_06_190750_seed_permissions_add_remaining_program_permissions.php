@@ -40,6 +40,9 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     use CanModifyPermissions;
 
+    /**
+     * @var array<string, string>
+     */
     private array $permissions = [
         'program.create' => 'Program',
         'program.*.update' => 'Program',
@@ -49,6 +52,9 @@ return new class () extends Migration {
         'program.import' => 'Program',
     ];
 
+    /**
+     * @var array<string>
+     */
     private array $guards = [
         'web',
         'api',

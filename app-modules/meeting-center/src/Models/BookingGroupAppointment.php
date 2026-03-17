@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,25 +33,50 @@
 
 </COPYRIGHT>
 */
-import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import App from './App.vue';
-import styles from './widget.css?inline';
 
-customElements.define(
-    'personal-booking-page-embed',
-    defineCustomElement({
-        styles: [styles],
-        setup(props) {
-            const app = createApp();
+namespace AdvisingApp\MeetingCenter\Models;
 
-            app.config.devtools = true;
+use AdvisingApp\MeetingCenter\Database\Factories\BookingGroupAppointmentFactory;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-            const inst = getCurrentInstance();
-            Object.assign(inst.appContext, app._context);
-            Object.assign(inst.provides, app._context.provides);
+/**
+ * @mixin IdeHelperBookingGroupAppointment
+ */
+class BookingGroupAppointment extends BaseModel
+{
+    /** @use HasFactory<BookingGroupAppointmentFactory> */
+    use HasFactory;
 
-            return () => h(App, props);
-        },
-        props: ['entryUrl'],
-    }),
-);
+    protected $fillable = [
+        'booking_group_id',
+        'calendar_event_provider_uid',
+        'name',
+        'email',
+        'starts_at',
+        'ends_at',
+    ];
+
+    protected $casts = [
+        'starts_at' => 'datetime',
+        'ends_at' => 'datetime',
+    ];
+
+    /**
+     * @return BelongsTo<BookingGroup, $this>
+     */
+    public function bookingGroup(): BelongsTo
+    {
+        return $this->belongsTo(BookingGroup::class);
+    }
+
+    /**
+     * @return HasMany<CalendarEvent, $this>
+     */
+    public function calendarEvents(): HasMany
+    {
+        return $this->hasMany(CalendarEvent::class, 'provider_uid', 'calendar_event_provider_uid');
+    }
+}

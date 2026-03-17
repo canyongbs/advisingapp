@@ -318,6 +318,23 @@ class SendEngagementAction extends Action
                                                     ->limit(50)
                                                     ->pluck('name', 'id')
                                                     ->toArray();
+                                            })
+                                            ->getOptionLabelUsing(function (Get $get, string|int|null $value): ?string {
+                                                if (blank($value)) {
+                                                    return null;
+                                                }
+
+                                                return EmailTemplate::query()
+                                                    ->when(
+                                                        $get('onlyMyTemplates'),
+                                                        fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+                                                    )
+                                                    ->when(
+                                                        $get('onlyMyTeamTemplates'),
+                                                        fn (Builder $query) => $query->whereIn('user_id', auth()->user()->team->users()->pluck('id'))
+                                                    )
+                                                    ->whereKey($value)
+                                                    ->value('name');
                                             }),
                                         Checkbox::make('onlyMyTemplates')
                                             ->label('Only show my templates')

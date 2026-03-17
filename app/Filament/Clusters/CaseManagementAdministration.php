@@ -43,7 +43,7 @@ class CaseManagementAdministration extends Cluster
 {
     protected static string | UnitEnum | null $navigationGroup = 'Settings';
 
-    protected static ?int $navigationSort = 70;
+    protected static ?int $navigationSort = 30;
 
     protected static ?string $title = 'Case Management';
 }
