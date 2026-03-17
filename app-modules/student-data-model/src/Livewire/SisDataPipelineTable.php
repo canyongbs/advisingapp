@@ -114,8 +114,7 @@ class SisDataPipelineTable extends Component implements HasActions, HasForms, Ha
                 ->get("integrations/{$tenantId}/sis-sync-pipeline-data");
 
             if ($response->successful()) {
-                $responseData = $response->json()
-                    ->withOptions(app()->environment('local') ? ['verify' => false] : []);
+                $responseData = $response->json();
                 $data = $responseData['data'] ?? [];
 
                 return $data;
