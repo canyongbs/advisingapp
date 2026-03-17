@@ -61,10 +61,16 @@ class DeleteResearchRequestExternalResources
             $service = $this->resolveServiceForDeploymentHash($deploymentHash);
 
             if (! $service) {
-                throw new Exception('Unable to safely delete research request [' . $researchRequest->getKey() . '] because no OpenAI service is configured for deployment hash [' . $deploymentHash . '].');
+                report(new Exception('Unable to resolve OpenAI service while deleting external resources for research request [' . $researchRequest->getKey() . '] and deployment hash [' . $deploymentHash . '].'));
+
+                continue;
             }
 
-            $service->deleteResearchRequestExternalResources($researchRequest);
+            try {
+                $service->deleteResearchRequestExternalResources($researchRequest);
+            } catch (Exception $exception) {
+                report($exception);
+            }
         }
     }
 
