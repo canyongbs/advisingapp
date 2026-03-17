@@ -79,9 +79,9 @@ class CreateTenant extends Command
         Tenant::where('domain', $domain)->delete();
 
         $tenant = app(CreateTenantAction::class)(
-            $name,
-            $domain,
-            new TenantConfig(
+            name: $name,
+            domain: $domain,
+            config: new TenantConfig(
                 database: new TenantDatabaseConfig(
                     host: config('database.connections.landlord.host'),
                     port: config('database.connections.landlord.port'),
@@ -116,8 +116,7 @@ class CreateTenant extends Command
                     fromName: config('mail.from.name')
                 ),
             ),
-            null,
-            new LicenseData(
+            licenseData: new LicenseData(
                 updatedAt: now(),
                 subscription: new LicenseSubscriptionData(
                     clientName: 'Jane Smith',
