@@ -58,9 +58,9 @@ class CreateTenantController
         $rootName = Str::snake($request->validated('domain')) . '_' . (new Sqids())->encode([time()]);
 
         $tenant = app(CreateTenant::class)(
-            $request->validated('domain'),
-            $request->validated('domain'),
-            new TenantConfig(
+            name: $request->validated('domain'),
+            domain: $request->validated('domain'),
+            config: new TenantConfig(
                 database: new TenantDatabaseConfig(
                     host: config('database.connections.landlord.host'),
                     port: config('database.connections.landlord.port'),
@@ -95,14 +95,13 @@ class CreateTenantController
                     fromName: config('mail.from.name')
                 ),
             ),
-            null,
-            new LicenseData(
+            licenseData: new LicenseData(
                 updatedAt: now(),
                 subscription: LicenseSubscriptionData::from($request->validated('subscription')),
                 limits: LicenseLimitsData::from($request->validated('limits')),
                 addons: LicenseAddonsData::from($request->validated('addons')),
             ),
-            new ThemeConfig(
+            themeConfig: new ThemeConfig(
                 colorOverrides: $request->validated('theme.color_overrides') ?? [],
                 hasDarkMode: $request->validated('theme.has_dark_mode') ?? true,
                 url: $request->validated('theme.url'),
