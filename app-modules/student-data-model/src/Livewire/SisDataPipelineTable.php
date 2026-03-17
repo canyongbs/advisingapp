@@ -111,6 +111,7 @@ class SisDataPipelineTable extends Component implements HasActions, HasForms, Ha
             $tenantId = Tenant::current()->getKey();
 
             $response = app(Olympus::class)->makeRequest()
+                ->withOptions(app()->environment('local') ? ['verify' => false] : [])
                 ->get("integrations/{$tenantId}/sis-sync-pipeline-data");
 
             if ($response->successful()) {

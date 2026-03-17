@@ -62,6 +62,7 @@ class InformOlympusOfDeploymentEvent implements ShouldQueue, NotTenantAware
 
         app(Olympus::class)->makeRequest()
             ->asJson()
+            ->withOptions(app()->environment('local') ? ['verify' => false] : [])
             ->post(
                 url: "/api/deployment/{$tenantId}/report-event",
                 data: match (true) {
