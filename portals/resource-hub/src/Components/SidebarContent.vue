@@ -67,7 +67,7 @@
 
 <template>
     <nav>
-        <div class="flex flex-col gap-1 px-6 py-4 border-b">
+        <div class="flex flex-col gap-1 px-6 py-4 border-b border-gray-200">
             <router-link :to="{ name: 'home' }">
                 <h3 class="text-2xl text-primary-800 font-semibold">
                     <span class="mr-1">🛟</span> <span>Help Center</span>

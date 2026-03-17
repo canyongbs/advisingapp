@@ -44,7 +44,7 @@
 
 <template>
     <div
-        class="overflow-hidden rounded bg-gray-200 shadow-sm ring-1 ring-black/5 sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0"
+        class="overflow-hidden rounded bg-gray-200 shadow-xs ring-1 ring-black/5 sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0"
     >
         <div
             v-for="(category, categoryId) in categories"
