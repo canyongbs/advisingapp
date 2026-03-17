@@ -34,64 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
-
+use AdvisingApp\Ai\Jobs\QnaAdvisors\FetchQnaAdvisorLinkParsingResults;
 use AdvisingApp\Ai\Models\QnaAdvisorLink;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Http\Client\Response;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
-use Spatie\Multitenancy\Jobs\TenantAware;
 
-class FetchQnaAdvisorLinkParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
-{
-    use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+it('refreshes existing parsing results when explicitly requested', function () {
+    Http::fake([
+        'https://r.jina.ai/*' => Http::response('fresh parsing results', 200),
+    ]);
 
-    public int $timeout = 600;
+    $settings = app(AiIntegrationsSettings::class);
+    $settings->jina_deepsearch_v1_api_key = 'test-api-key';
 
-    public function __construct(
-        protected QnaAdvisorLink $link,
-        protected bool $refreshExistingParsingResults = false,
-    ) {}
+    $link = QnaAdvisorLink::factory()->create([
+        'parsing_results' => 'stale parsing results',
+    ]);
 
-    public function handle(): void
-    {
-        if (filled($this->link->parsing_results) && ! $this->refreshExistingParsingResults) {
-            return;
-        }
+    (new FetchQnaAdvisorLinkParsingResults($link, refreshExistingParsingResults: true))->handle();
 
-        /** @var Response $response */
-        $response = Http::withToken(app(AiIntegrationsSettings::class)->jina_deepsearch_v1_api_key)
-            ->withHeaders([
-                'X-Retain-Images' => 'none',
-            ])
-            ->get("https://r.jina.ai/{$this->link->url}");
+    $link->refresh();
 
-        if (! $response->successful()) {
-            return;
-        }
+    expect($link->parsing_results)->toBe('fresh parsing results');
+});
 
-        $this->link->parsing_results = $response->body();
-        $this->link->save();
-    }
+it('does not refresh existing parsing results when not explicitly requested', function () {
+    Http::fake([
+        'https://r.jina.ai/*' => Http::response('fresh parsing results', 200),
+    ]);
 
-    public function uniqueId(): string
-    {
-        return $this->link->id;
-    }
+    $settings = app(AiIntegrationsSettings::class);
+    $settings->jina_deepsearch_v1_api_key = 'test-api-key';
 
-    public function refreshesExistingParsingResults(): bool
-    {
-        return $this->refreshExistingParsingResults;
-    }
-}
+    $link = QnaAdvisorLink::factory()->create([
+        'parsing_results' => 'stale parsing results',
+    ]);
+
+    (new FetchQnaAdvisorLinkParsingResults($link, refreshExistingParsingResults: false))->handle();
+
+    $link->refresh();
+
+    expect($link->parsing_results)->toBe('stale parsing results');
+});
