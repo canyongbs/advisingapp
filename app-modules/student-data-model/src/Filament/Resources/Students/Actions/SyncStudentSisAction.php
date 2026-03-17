@@ -61,6 +61,7 @@ class SyncStudentSisAction
                 try {
                     $response = app(Olympus::class)->makeRequest()
                         ->asJson()
+                        ->withOptions(app()->environment('local') ? ['verify' => false] : [])
                         ->post("integrations/{$tenantId}/student-on-demand-sync", [
                             'sisid' => $student->getKey(),
                             'otherid' => $student->otherid,
