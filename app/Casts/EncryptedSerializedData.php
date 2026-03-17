@@ -36,60 +36,27 @@
 
 namespace App\Casts;
 
-use App\Models\Tenant;
-use App\Multitenancy\Exceptions\TenantAppKeyIsNull;
-use App\Multitenancy\Exceptions\UnableToResolveTenantForEncryptionKey;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Encryption\Encrypter;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Crypt;
 
-class TenantEncrypted implements CastsAttributes
+class EncryptedSerializedData implements CastsAttributes
 {
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        $appKey = $model instanceof Tenant
-            ? (new Encrypter($this->parseKey(app('originalAppKey')), config('app.cipher')))->decrypt($attributes['key'])
-            : (
-                Tenant::checkCurrent()
-                    ? Tenant::current()->key
-                    : throw new UnableToResolveTenantForEncryptionKey()
-            );
-
-        if (is_null($appKey)) {
-            throw new TenantAppKeyIsNull();
+        if (is_null($value)) {
+            return null;
         }
 
-        $encrypter = new Encrypter($this->parseKey($appKey), config('app.cipher'));
-
-        return $encrypter->decrypt($value);
+        return Crypt::decrypt($value);
     }
 
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        $appKey = $model instanceof Tenant
-            ? (new Encrypter($this->parseKey(app('originalAppKey')), config('app.cipher')))->decrypt($attributes['key'])
-            : (
-                Tenant::checkCurrent()
-                ? Tenant::current()->key
-                : throw new UnableToResolveTenantForEncryptionKey()
-            );
-
-        if (is_null($appKey)) {
-            throw new TenantAppKeyIsNull();
+        if (is_null($value)) {
+            return null;
         }
 
-        $encrypter = new Encrypter($this->parseKey($appKey), config('app.cipher'));
-
-        return $encrypter->encrypt($value);
-    }
-
-    protected function parseKey(string $configKey): false|string
-    {
-        if (Str::startsWith($key = $configKey, $prefix = 'base64:')) {
-            $key = base64_decode(Str::after($key, $prefix));
-        }
-
-        return $key;
+        return Crypt::encrypt($value);
     }
 }

@@ -34,39 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Multitenancy\Tasks;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use App\Actions\ChangeAppKey;
-use App\Models\Tenant;
-use Exception;
-use Spatie\Multitenancy\Contracts\IsTenant;
-use Spatie\Multitenancy\Tasks\SwitchTenantTask;
-
-class SwitchAppKey implements SwitchTenantTask
-{
-    public function __construct(
-        protected ?string $originalAppKey = null,
-    ) {
-        $this->originalAppKey ??= config('app.key');
-    }
-
-    public function makeCurrent(IsTenant $tenant): void
+return new class () extends Migration {
+    public function up(): void
     {
-        throw_if(
-            ! $tenant instanceof Tenant,
-            new Exception('Tenant is not an instance of Tenant')
-        );
-
-        $this->setAppKey($tenant->key);
+        Schema::table('tenants', function (Blueprint $table) {
+            $table->dropColumn('key');
+        });
     }
 
-    public function forgetCurrent(): void
+    public function down(): void
     {
-        $this->setAppKey($this->originalAppKey);
+        Schema::table('tenants', function (Blueprint $table) {
+            $table->string('key')->nullable();
+        });
     }
-
-    protected function setAppKey(string $appKey): void
-    {
-        app(ChangeAppKey::class)($appKey);
-    }
-}
+};
