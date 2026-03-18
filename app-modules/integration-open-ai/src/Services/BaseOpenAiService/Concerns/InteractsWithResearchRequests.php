@@ -174,7 +174,7 @@ trait InteractsWithResearchRequests
         );
 
         return [
-            'response' => $response['properties'] ?? [],
+            'response' => $response,
             'nextRequestOptions' => filled($responseId) ? [
                 'previous_response_id' => $responseId,
             ] : [],
