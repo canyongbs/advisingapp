@@ -59,7 +59,7 @@ class Tenant extends SpatieTenant
     ];
 
     protected $casts = [
-        'config' => 'encrypted',
+        'config' => 'encrypted:object',
         'setup_complete' => 'boolean',
     ];
 
