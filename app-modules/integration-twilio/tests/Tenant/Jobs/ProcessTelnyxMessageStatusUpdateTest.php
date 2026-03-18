@@ -72,78 +72,78 @@ it('will appropriately create a message event based on the payload received', fu
 ]);
 
 it('creates a BouncedPhoneNumber record when delivery fails with a bounce error code', function () {
-  SmsMessage::factory()->create([
-    'external_reference_id' => 'ac012cbf-5e09-46af-a69a-7c0e2d90993c',
-  ]);
+    SmsMessage::factory()->create([
+        'external_reference_id' => 'ac012cbf-5e09-46af-a69a-7c0e2d90993c',
+    ]);
 
-  assertDatabaseMissing(BouncedPhoneNumber::class, [
-    'number' => '+13125000000',
-  ]);
+    assertDatabaseMissing(BouncedPhoneNumber::class, [
+        'number' => '+13125000000',
+    ]);
 
-  $job = new ProcessTelnyxMessageStatusUpdate(
-    loadFixtureFromModule('integration-twilio', 'Telnyx/StatusUpdates/delivery_failed')['data']
-  );
+    $job = new ProcessTelnyxMessageStatusUpdate(
+        loadFixtureFromModule('integration-twilio', 'Telnyx/StatusUpdates/delivery_failed')['data']
+    );
 
-  $job->handle();
+    $job->handle();
 
-  assertDatabaseHas(BouncedPhoneNumber::class, [
-    'number' => '+13125000000',
-    'external_error_code' => '40001',
-  ]);
+    assertDatabaseHas(BouncedPhoneNumber::class, [
+        'number' => '+13125000000',
+        'external_error_code' => '40001',
+    ]);
 });
 
 it('does not create a BouncedPhoneNumber record when delivery fails with a non-bounce error code', function () {
-  SmsMessage::factory()->create([
-    'external_reference_id' => 'ac012cbf-5e09-46af-a69a-7c0e2d90993c',
-  ]);
+    SmsMessage::factory()->create([
+        'external_reference_id' => 'ac012cbf-5e09-46af-a69a-7c0e2d90993c',
+    ]);
 
-  $job = new ProcessTelnyxMessageStatusUpdate(
-    loadFixtureFromModule('integration-twilio', 'Telnyx/StatusUpdates/delivery_failed_with_non_bounce_code')['data']
-  );
+    $job = new ProcessTelnyxMessageStatusUpdate(
+        loadFixtureFromModule('integration-twilio', 'Telnyx/StatusUpdates/delivery_failed_with_non_bounce_code')['data']
+    );
 
-  $job->handle();
+    $job->handle();
 
-  assertDatabaseMissing(BouncedPhoneNumber::class, [
-    'number' => '+13125000000',
-  ]);
+    assertDatabaseMissing(BouncedPhoneNumber::class, [
+        'number' => '+13125000000',
+    ]);
 });
 
 it('does not create a duplicate BouncedPhoneNumber record when the same number fails delivery again', function () {
-  SmsMessage::factory()->create([
-    'external_reference_id' => 'ac012cbf-5e09-46af-a69a-7c0e2d90993c',
-  ]);
+    SmsMessage::factory()->create([
+        'external_reference_id' => 'ac012cbf-5e09-46af-a69a-7c0e2d90993c',
+    ]);
 
-  BouncedPhoneNumber::factory()->create([
-    'number' => '+13125000000',
-    'external_error_code' => '40001',
-  ]);
+    BouncedPhoneNumber::factory()->create([
+        'number' => '+13125000000',
+        'external_error_code' => '40001',
+    ]);
 
-  assertDatabaseCount(BouncedPhoneNumber::class, 1);
+    assertDatabaseCount(BouncedPhoneNumber::class, 1);
 
-  $job = new ProcessTelnyxMessageStatusUpdate(
-    loadFixtureFromModule('integration-twilio', 'Telnyx/StatusUpdates/delivery_failed')['data']
-  );
+    $job = new ProcessTelnyxMessageStatusUpdate(
+        loadFixtureFromModule('integration-twilio', 'Telnyx/StatusUpdates/delivery_failed')['data']
+    );
 
-  $job->handle();
+    $job->handle();
 
-  assertDatabaseCount(BouncedPhoneNumber::class, 1);
+    assertDatabaseCount(BouncedPhoneNumber::class, 1);
 });
 
 it('logs a warning when delivery fails with an error code', function () {
-  Log::spy();
+    Log::spy();
 
-  SmsMessage::factory()->create([
-    'external_reference_id' => 'ac012cbf-5e09-46af-a69a-7c0e2d90993c',
-  ]);
+    SmsMessage::factory()->create([
+        'external_reference_id' => 'ac012cbf-5e09-46af-a69a-7c0e2d90993c',
+    ]);
 
-  $job = new ProcessTelnyxMessageStatusUpdate(
-    loadFixtureFromModule('integration-twilio', 'Telnyx/StatusUpdates/delivery_failed')['data']
-  );
+    $job = new ProcessTelnyxMessageStatusUpdate(
+        loadFixtureFromModule('integration-twilio', 'Telnyx/StatusUpdates/delivery_failed')['data']
+    );
 
-  $job->handle();
+    $job->handle();
 
-  Log::shouldHaveReceived('warning')
-    ->once()
-    ->withArgs(fn (string $message, array $context) => $message === 'Telnyx SMS delivery failure'
-      && $context['error_code'] === '40001');
+    Log::shouldHaveReceived('warning')
+        ->once()
+        ->withArgs(fn (string $message, array $context) => $message === 'Telnyx SMS delivery failure'
+          && $context['error_code'] === '40001');
 });

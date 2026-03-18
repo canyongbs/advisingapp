@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
 use AdvisingApp\StudentDataModel\Observers\StudentPhoneNumberObserver;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
