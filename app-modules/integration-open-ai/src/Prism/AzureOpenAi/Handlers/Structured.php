@@ -44,6 +44,30 @@ use Prism\Prism\Structured\Request;
 
 class Structured extends BaseStructured
 {
+    protected function handleAutoMode(Request $request): Response
+    {
+        if (data_get($request->schema()->toArray(), 'type') === 'object') {
+            return $this->handleStructuredMode($request);
+        }
+
+        return $this->handleJsonMode($request);
+    }
+
+    protected function handleStructuredMode(Request $request): Response
+    {
+        /** @var array{type: 'json_schema', name: string, schema: array<mixed>, strict?: bool} $responseFormat */
+        $responseFormat = Arr::whereNotNull([
+            'type' => 'json_schema',
+            'name' => $request->schema()->name(),
+            'schema' => $request->schema()->toArray(),
+            'strict' => is_null($request->providerOptions('schema.strict'))
+                ? null
+                : $request->providerOptions('schema.strict'),
+        ]);
+
+        return $this->sendRequest($request, $responseFormat);
+    }
+
     /**
      * @param  array{type: 'json_schema', name: string, schema: array<mixed>, strict?: bool}|array{type: 'json_object'}  $responseFormat
      */

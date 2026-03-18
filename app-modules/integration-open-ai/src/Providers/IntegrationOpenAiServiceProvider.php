@@ -37,7 +37,9 @@
 namespace AdvisingApp\IntegrationOpenAi\Providers;
 
 use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
+use AdvisingApp\IntegrationOpenAi\Observers\ResearchRequestObserver;
 use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi;
+use AdvisingApp\Research\Models\ResearchRequest;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use Prism\Prism\Providers\Provider;
@@ -52,6 +54,8 @@ class IntegrationOpenAiServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
+
+        ResearchRequest::observe(ResearchRequestObserver::class);
 
         $this->app['prism-manager']->extend(
             'azure_open_ai',

@@ -173,10 +173,17 @@ trait CanManageRequests
                     return;
                 }
 
+                $isSelected = $this->selectedRequestId === $request->getKey();
+
                 $request->delete();
 
                 $this->requestsWithoutAFolder = $this->getRequestsWithoutAFolder();
                 $this->folders = $this->getFolders();
+
+                if ($isSelected) {
+                    $this->request = null;
+                    $this->selectedRequestId = null;
+                }
             })
             ->icon('heroicon-m-trash')
             ->color('danger')

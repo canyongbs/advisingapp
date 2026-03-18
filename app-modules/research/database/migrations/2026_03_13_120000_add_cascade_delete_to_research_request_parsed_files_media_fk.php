@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,9 +33,32 @@
 
 </COPYRIGHT>
 */
-import preset from './tailwind.config.preset.js';
 
-export default {
-    presets: [preset],
-    content: ['./src/**/*.vue', '../../widgets/form/src/FormKit/theme.js'],
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('research_request_parsed_files', function (Blueprint $table) {
+            $table->dropForeign(['media_id']);
+
+            $table->foreign('media_id')
+                ->references('id')
+                ->on('media')
+                ->cascadeOnDelete();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('research_request_parsed_files', function (Blueprint $table) {
+            $table->dropForeign(['media_id']);
+
+            $table->foreign('media_id')
+                ->references('id')
+                ->on('media');
+        });
+    }
 };
