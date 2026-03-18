@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Observers;
 
-use AdvisingApp\IntegrationOpenAi\Services\DeleteResearchRequestExternalResources;
+use AdvisingApp\IntegrationOpenAi\Actions\DeleteResearchRequestExternalResources;
 use AdvisingApp\Research\Models\ResearchRequest;
 
 class ResearchRequestObserver

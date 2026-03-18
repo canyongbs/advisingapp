@@ -34,10 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Services;
+namespace AdvisingApp\IntegrationOpenAi\Actions;
 
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiResearchRequestVectorStore;
+use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
 use AdvisingApp\Research\Models\ResearchRequest;
 use Exception;
 
@@ -76,10 +77,7 @@ class DeleteResearchRequestExternalResources
 
     private function resolveServiceForDeploymentHash(string $deploymentHash): ?BaseOpenAiService
     {
-        foreach ($this->getOpenAiServiceClasses() as $serviceClass) {
-            /** @var BaseOpenAiService $service */
-            $service = app($serviceClass);
-
+        foreach ($this->getConfiguredOpenAiServices() as $service) {
             if ($service->getDeploymentHash() === $deploymentHash) {
                 return $service;
             }
@@ -89,11 +87,11 @@ class DeleteResearchRequestExternalResources
     }
 
     /**
-     * @return array<class-string<BaseOpenAiService>>
+     * @return array<BaseOpenAiService>
      */
-    private function getOpenAiServiceClasses(): array
+    private function getConfiguredOpenAiServices(): array
     {
-        $serviceClasses = [];
+        $services = [];
 
         foreach (AiModel::cases() as $model) {
             if (! $model->hasService()) {
@@ -106,9 +104,20 @@ class DeleteResearchRequestExternalResources
                 continue;
             }
 
-            $serviceClasses[$serviceClass] = $serviceClass;
+            if (array_key_exists($serviceClass, $services)) {
+                continue;
+            }
+
+            /** @var BaseOpenAiService $service */
+            $service = app($serviceClass);
+
+            if (! filled($service->getApiKey()) || ! filled($service->getDeployment())) {
+                continue;
+            }
+
+            $services[$serviceClass] = $service;
         }
 
-        return array_values($serviceClasses);
+        return array_values($services);
     }
 }
