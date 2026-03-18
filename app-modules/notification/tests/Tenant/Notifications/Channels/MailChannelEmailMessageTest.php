@@ -41,6 +41,7 @@ use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Tests\Fixtures\TestEmailNotification;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Multitenancy\DataTransferObjects\TenantConfig;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
@@ -61,6 +62,7 @@ it('will create an EmailMessage for the notification', function () {
 it('will not send emails in demo mode and record a BlockedByDemoMode event', function () {
     $user = User::factory()->create();
 
+    /** @var TenantConfig $tenantConfig */
     $tenantConfig = Tenant::current()->config;
     $tenantConfig->mail->isDemoModeEnabled = true;
     Tenant::current()->update([
@@ -82,6 +84,7 @@ it('will not send emails in demo mode and record a BlockedByDemoMode event', fun
 it('will send system notifications in demo mode', function () {
     $user = User::factory()->create();
 
+    /** @var TenantConfig $tenantConfig */
     $tenantConfig = Tenant::current()->config;
     $tenantConfig->mail->isDemoModeEnabled = true;
     $tenantConfig->mail->isExcludingSystemNotificationsFromDemoMode = true;
@@ -104,6 +107,7 @@ it('will send system notifications in demo mode', function () {
 it('will not send system notifications in demo mode when system notifications are not excluded', function () {
     $user = User::factory()->create();
 
+    /** @var TenantConfig $tenantConfig */
     $tenantConfig = Tenant::current()->config;
     $tenantConfig->mail->isDemoModeEnabled = true;
     $tenantConfig->mail->isExcludingSystemNotificationsFromDemoMode = false;

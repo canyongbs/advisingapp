@@ -53,6 +53,7 @@ use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Multitenancy\DataTransferObjects\TenantConfig;
 use App\Settings\LicenseSettings;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
@@ -128,7 +129,10 @@ class MailChannel extends BaseMailChannel
         }
 
         $tenant = Tenant::current();
-        $tenantMailConfig = $tenant?->config->mail;
+
+        /** @var TenantConfig|null $tenantConfig */
+        $tenantConfig = $tenant?->config;
+        $tenantMailConfig = $tenantConfig?->mail;
 
         $notificationReflection = new ReflectionClass($notification);
         $isSystemNotification = filled($notificationReflection->getAttributes(SystemNotification::class));

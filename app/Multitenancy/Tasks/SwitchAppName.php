@@ -37,6 +37,7 @@
 namespace App\Multitenancy\Tasks;
 
 use App\Models\Tenant;
+use App\Multitenancy\DataTransferObjects\TenantConfig;
 use Exception;
 use Spatie\Multitenancy\Contracts\IsTenant;
 use Spatie\Multitenancy\Tasks\SwitchTenantTask;
@@ -56,6 +57,7 @@ class SwitchAppName implements SwitchTenantTask
             new Exception('Tenant is not an instance of Tenant')
         );
 
+        /** @var TenantConfig $config */
         $config = $tenant->config;
 
         $appName = $config->applicationName ?? config('app.name');

@@ -37,6 +37,7 @@
 namespace App\Multitenancy\Tasks;
 
 use App\Models\Tenant;
+use App\Multitenancy\DataTransferObjects\TenantConfig;
 use Exception;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Multitenancy\Contracts\IsTenant;
@@ -77,6 +78,7 @@ class SwitchS3FilesystemTask implements SwitchTenantTask
             new Exception('Tenant is not an instance of Tenant')
         );
 
+        /** @var TenantConfig $config */
         $config = $tenant->config;
 
         $this->setFilesystemConfig(

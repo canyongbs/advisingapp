@@ -39,6 +39,7 @@ namespace App\Multitenancy\Tasks;
 use AdvisingApp\Notification\Notifications\ChannelManager;
 use AdvisingApp\Notification\Notifications\Channels\MailChannel;
 use App\Models\Tenant;
+use App\Multitenancy\DataTransferObjects\TenantConfig;
 use Exception;
 use Illuminate\Contracts\Mail\Factory;
 use Illuminate\Contracts\Mail\Mailer;
@@ -66,7 +67,9 @@ class SwitchMailTask implements SwitchTenantTask
             new Exception('Tenant is not an instance of Tenant')
         );
 
-        $config = $tenant->config->mail;
+        /** @var TenantConfig $config */
+        $config = $tenant->config;
+        $mailConfig = $config->mail;
 
         preg_match('/^(.+)\.[^.]+\.[^.]+$/', $tenant->domain, $matches);
 
@@ -74,7 +77,7 @@ class SwitchMailTask implements SwitchTenantTask
 
         $this->setMailConfig(
             fromAddress: $subDomainBasedEmail,
-            fromName: $config->fromName,
+            fromName: $mailConfig->fromName,
         );
     }
 

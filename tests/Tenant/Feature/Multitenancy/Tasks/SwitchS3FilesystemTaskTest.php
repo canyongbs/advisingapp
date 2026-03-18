@@ -35,6 +35,7 @@
 */
 
 use App\Models\Tenant;
+use App\Multitenancy\DataTransferObjects\TenantConfig;
 
 use function PHPUnit\Framework\assertEquals;
 
@@ -57,6 +58,9 @@ it('switches the s3 storage configs', function () {
 
     $tenant = Tenant::first()->makeCurrent();
 
+    /** @var TenantConfig $config */
+    $config = $tenant->config;
+
     $after = config()->getMany([
         'filesystems.disks.s3.key',
         'filesystems.disks.s3.secret',
@@ -70,15 +74,15 @@ it('switches the s3 storage configs', function () {
     ]);
 
     assertEquals($after, [
-        'filesystems.disks.s3.key' => $tenant->config->s3Filesystem->key,
-        'filesystems.disks.s3.secret' => $tenant->config->s3Filesystem->secret,
-        'filesystems.disks.s3.region' => $tenant->config->s3Filesystem->region,
-        'filesystems.disks.s3.bucket' => $tenant->config->s3Filesystem->bucket,
-        'filesystems.disks.s3.url' => $tenant->config->s3Filesystem->url,
-        'filesystems.disks.s3.endpoint' => $tenant->config->s3Filesystem->endpoint,
-        'filesystems.disks.s3.use_path_style_endpoint' => $tenant->config->s3Filesystem->usePathStyleEndpoint,
-        'filesystems.disks.s3.throw' => $tenant->config->s3Filesystem->throw,
-        'filesystems.disks.s3.root' => $tenant->config->s3Filesystem->root,
+        'filesystems.disks.s3.key' => $config->s3Filesystem->key,
+        'filesystems.disks.s3.secret' => $config->s3Filesystem->secret,
+        'filesystems.disks.s3.region' => $config->s3Filesystem->region,
+        'filesystems.disks.s3.bucket' => $config->s3Filesystem->bucket,
+        'filesystems.disks.s3.url' => $config->s3Filesystem->url,
+        'filesystems.disks.s3.endpoint' => $config->s3Filesystem->endpoint,
+        'filesystems.disks.s3.use_path_style_endpoint' => $config->s3Filesystem->usePathStyleEndpoint,
+        'filesystems.disks.s3.throw' => $config->s3Filesystem->throw,
+        'filesystems.disks.s3.root' => $config->s3Filesystem->root,
     ]);
 
     Tenant::forgetCurrent();

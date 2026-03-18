@@ -37,6 +37,7 @@
 namespace App\Multitenancy\Tasks;
 
 use App\Models\Tenant;
+use App\Multitenancy\DataTransferObjects\TenantConfig;
 use Exception;
 use Illuminate\Bus\BatchRepository;
 use Illuminate\Bus\DatabaseBatchRepository;
@@ -81,6 +82,7 @@ class SwitchTenantDatabasesTask implements SwitchTenantTask
             new Exception('Tenant is not an instance of Tenant')
         );
 
+        /** @var TenantConfig $config */
         $config = $tenant->config;
 
         $this->setTenantDatabase(

@@ -37,6 +37,7 @@
 use AdvisingApp\IntegrationAwsSesEventHandling\Filament\Pages\ManageAmazonSesSettings;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Multitenancy\DataTransferObjects\TenantConfig;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -104,5 +105,8 @@ it('correctly edits the Amazon SES settings for the Tenant', function () {
 
     $tenant->refresh();
 
-    expect($tenant->config->mail->fromName)->toBe('new-from-name');
+    /** @var TenantConfig $config */
+    $config = $tenant->config;
+
+    expect($config->mail->fromName)->toBe('new-from-name');
 });

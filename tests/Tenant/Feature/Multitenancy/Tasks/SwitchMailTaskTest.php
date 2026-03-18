@@ -35,6 +35,7 @@
 */
 
 use App\Models\Tenant;
+use App\Multitenancy\DataTransferObjects\TenantConfig;
 
 use function PHPUnit\Framework\assertEquals;
 
@@ -50,6 +51,9 @@ it('switches the mail configs', function () {
 
     $tenant = Tenant::first()->makeCurrent();
 
+    /** @var TenantConfig $config */
+    $config = $tenant->config;
+
     $after = config()->getMany([
         'mail.from.address',
         'mail.from.name',
@@ -61,7 +65,7 @@ it('switches the mail configs', function () {
 
     assertEquals($after, [
         'mail.from.address' => $subDomainBasedEmail,
-        'mail.from.name' => $tenant->config->mail->fromName,
+        'mail.from.name' => $config->mail->fromName,
     ]);
 
     Tenant::forgetCurrent();
