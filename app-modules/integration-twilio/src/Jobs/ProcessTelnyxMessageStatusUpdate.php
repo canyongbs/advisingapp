@@ -40,6 +40,7 @@ use AdvisingApp\IntegrationAwsSesEventHandling\Exceptions\CouldNotFindSmsMessage
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
 use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
+use App\Features\BouncedPhoneNumberFeature;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -80,7 +81,7 @@ class ProcessTelnyxMessageStatusUpdate implements ShouldQueue
     {
         $status = $this->data['payload']['to'][0]['status'];
 
-        if ($status === 'delivery_failed' || $status === 'sending_failed') {
+        if (BouncedPhoneNumberFeature::active() && ($status === 'delivery_failed' || $status === 'sending_failed')) {
             $this->processDeliveryFailure();
         }
 
