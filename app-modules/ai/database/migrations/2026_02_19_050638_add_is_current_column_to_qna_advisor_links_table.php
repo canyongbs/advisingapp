@@ -34,49 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace App\Listeners;
+use App\Features\CurrentQnaAdvisorLinks;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use App\Multitenancy\Events\NewTenantSetupComplete;
-use App\Multitenancy\Events\NewTenantSetupFailure;
-use App\Services\Olympus;
-use App\Settings\OlympusSettings;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
-use Spatie\Multitenancy\Landlord;
-
-class InformOlympusOfDeploymentEvent implements ShouldQueue, NotTenantAware
-{
-    public function handle(NewTenantSetupComplete|NewTenantSetupFailure $event): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $isConfigured = Landlord::execute(function (): bool {
-            $settings = app(OlympusSettings::class);
+        DB::transaction(function () {
+            Schema::table('qna_advisor_links', function (Blueprint $table) {
+                $table->boolean('is_keep_current_enabled')->default(false);
+            });
 
-            return ! is_null($settings->key);
+            CurrentQnaAdvisorLinks::activate();
         });
-
-        if (! $isConfigured) {
-            return;
-        }
-
-        $tenantId = $event->tenant->getKey();
-
-        app(Olympus::class)->makeRequest()
-            ->asJson()
-            ->withOptions(app()->environment('local') ? ['verify' => false] : [])
-            ->post(
-                url: "/api/deployment/{$tenantId}/report-event",
-                data: match (true) {
-                    $event instanceof NewTenantSetupComplete => [
-                        'type' => 'complete',
-                        'occurred_at' => now()->toDateTimeString('millisecond'),
-                    ],
-                    $event instanceof NewTenantSetupFailure => [
-                        'type' => 'error',
-                        'occurred_at' => now()->toDateTimeString('millisecond'),
-                        'message' => $event->exception->getMessage(),
-                    ],
-                }
-            )
-            ->throw();
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            CurrentQnaAdvisorLinks::deactivate();
+
+            Schema::table('qna_advisor_links', function (Blueprint $table) {
+                $table->dropColumn('is_keep_current_enabled');
+            });
+        });
+    }
+};

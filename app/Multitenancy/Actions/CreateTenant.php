@@ -39,13 +39,11 @@ namespace App\Multitenancy\Actions;
 use AdvisingApp\Theme\DataTransferObjects\ThemeConfig;
 use AdvisingApp\Theme\Jobs\UpdateTenantTheme;
 use App\DataTransferObjects\LicenseManagement\LicenseData;
-use App\Jobs\CreateTenantUser;
 use App\Jobs\MigrateTenantDatabase;
 use App\Jobs\SeedTenantDatabase;
 use App\Jobs\UpdateTenantLicenseData;
 use App\Models\Tenant;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
-use App\Multitenancy\DataTransferObjects\TenantUser;
 use App\Multitenancy\Events\NewTenantSetupComplete;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Bus;
@@ -57,7 +55,6 @@ class CreateTenant
         string $name,
         string $domain,
         TenantConfig $config,
-        ?TenantUser $user = null,
         ?LicenseData $licenseData = null,
         ?ThemeConfig $themeConfig = null,
         bool $seedTenantDatabase = true,
@@ -75,7 +72,6 @@ class CreateTenant
                 ...($seedTenantDatabase ? [new SeedTenantDatabase($tenant)] : []),
                 ...($licenseData ? [new UpdateTenantLicenseData($tenant, $licenseData)] : []),
                 ...($themeConfig ? [new UpdateTenantTheme($tenant, $themeConfig)] : []),
-                ...($user ? [new CreateTenantUser($tenant, $user)] : []),
             ],
         ])
             ->name("deploy-tenant-{$tenant->getKey()}-{$domain}")

@@ -34,54 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Jobs;
+namespace App\Features;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Authorization\Models\Role;
-use App\Jobs\Concerns\UsedDuringNewTenantSetup;
-use App\Models\Authenticatable;
-use App\Models\Tenant;
-use App\Models\User;
-use App\Multitenancy\DataTransferObjects\TenantUser;
-use Illuminate\Bus\Batchable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
-use Illuminate\Support\Arr;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
+use App\Support\AbstractFeatureFlag;
 
-class CreateTenantUser implements ShouldQueue, NotTenantAware
+class CurrentQnaAdvisorLinks extends AbstractFeatureFlag
 {
-    use Batchable;
-    use UsedDuringNewTenantSetup;
-    use Queueable;
-
-    public function __construct(
-        public Tenant $tenant,
-        public TenantUser $data,
-    ) {}
-
-    /**
-     * @return array<int, SkipIfBatchCancelled>
-     */
-    public function middleware(): array
+    public function resolve(mixed $scope): mixed
     {
-        return [new SkipIfBatchCancelled()];
-    }
-
-    public function handle(): void
-    {
-        $this->tenant->executeWithLandlordJobFailureAndBatching(function () {
-            $user = User::create($this->data->toArray());
-
-            foreach (Arr::wrap(LicenseType::cases()) as $licenseType) {
-                /** @var LicenseType $licenseType */
-                if ($licenseType->hasAvailableLicenses()) {
-                    $user->licenses()->create(['type' => $licenseType]);
-                }
-            }
-
-            $user->roles()->sync(Role::where('name', Authenticatable::PARTNER_ADMIN_ROLE)->firstOrFail());
-        });
+        return false;
     }
 }

@@ -34,49 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Listeners;
+namespace AdvisingApp\Ai\Database\Factories;
 
-use App\Multitenancy\Events\NewTenantSetupComplete;
-use App\Multitenancy\Events\NewTenantSetupFailure;
-use App\Services\Olympus;
-use App\Settings\OlympusSettings;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
-use Spatie\Multitenancy\Landlord;
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\QnaAdvisorLink;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class InformOlympusOfDeploymentEvent implements ShouldQueue, NotTenantAware
+/**
+ * @extends Factory<QnaAdvisorLink>
+ */
+class QnaAdvisorLinkFactory extends Factory
 {
-    public function handle(NewTenantSetupComplete|NewTenantSetupFailure $event): void
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        $isConfigured = Landlord::execute(function (): bool {
-            $settings = app(OlympusSettings::class);
-
-            return ! is_null($settings->key);
-        });
-
-        if (! $isConfigured) {
-            return;
-        }
-
-        $tenantId = $event->tenant->getKey();
-
-        app(Olympus::class)->makeRequest()
-            ->asJson()
-            ->withOptions(app()->environment('local') ? ['verify' => false] : [])
-            ->post(
-                url: "/api/deployment/{$tenantId}/report-event",
-                data: match (true) {
-                    $event instanceof NewTenantSetupComplete => [
-                        'type' => 'complete',
-                        'occurred_at' => now()->toDateTimeString('millisecond'),
-                    ],
-                    $event instanceof NewTenantSetupFailure => [
-                        'type' => 'error',
-                        'occurred_at' => now()->toDateTimeString('millisecond'),
-                        'message' => $event->exception->getMessage(),
-                    ],
-                }
-            )
-            ->throw();
+        return [
+            'url' => $this->faker->url(),
+            'advisor_id' => QnaAdvisor::factory(),
+            'parsing_results' => null,
+            'is_keep_current_enabled' => true,
+        ];
     }
 }
