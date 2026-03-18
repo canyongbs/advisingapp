@@ -205,12 +205,48 @@ return new class () extends Migration {
                 REFERENCES cases(id)
                 ON DELETE CASCADE
             ');
+
+            DB::statement('
+                ALTER TABLE students
+                ALTER COLUMN primary_email_id TYPE uuid
+                USING primary_email_id::uuid
+            ');
+
+            DB::statement('
+                ALTER TABLE students
+                ALTER COLUMN primary_phone_id TYPE uuid
+                USING primary_phone_id::uuid
+            ');
+
+            DB::statement('
+                ALTER TABLE students
+                ALTER COLUMN primary_address_id TYPE uuid
+                USING primary_address_id::uuid
+            ');
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
+            DB::statement('
+                ALTER TABLE students
+                ALTER COLUMN primary_email_id TYPE varchar(255)
+                USING primary_email_id::text
+            ');
+
+            DB::statement('
+                ALTER TABLE students
+                ALTER COLUMN primary_phone_id TYPE varchar(255)
+                USING primary_phone_id::text
+            ');
+
+            DB::statement('
+                ALTER TABLE students
+                ALTER COLUMN primary_address_id TYPE varchar(255)
+                USING primary_address_id::text
+            ');
+
             DB::statement('
                 ALTER TABLE case_feedback
                 DROP CONSTRAINT case_feedback_case_id_foreign
