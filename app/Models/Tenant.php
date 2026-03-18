@@ -36,6 +36,7 @@
 
 namespace App\Models;
 
+use App\Multitenancy\DataTransferObjects\TenantConfig;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Multitenancy\Actions\MakeTenantCurrentAction;
@@ -59,7 +60,7 @@ class Tenant extends SpatieTenant
     ];
 
     protected $casts = [
-        'config' => 'encrypted:object',
+        'config' => TenantConfig::class . ':encrypted',
         'setup_complete' => 'boolean',
     ];
 
