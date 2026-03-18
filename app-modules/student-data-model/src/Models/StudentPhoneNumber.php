@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
 use AdvisingApp\StudentDataModel\Observers\StudentPhoneNumberObserver;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -81,5 +82,13 @@ class StudentPhoneNumber extends BaseModel implements Auditable
     public function smsOptOut(): HasOne
     {
         return $this->hasOne(SmsOptOutPhoneNumber::class, 'number', 'number');
+    }
+
+    /**
+     * @return HasOne<BouncedPhoneNumber, $this>
+     */
+    public function bounced(): HasOne
+    {
+        return $this->hasOne(BouncedPhoneNumber::class, 'number', 'number');
     }
 }

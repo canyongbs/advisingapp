@@ -23,9 +23,9 @@
             "encoding": "GSM-7",
             "errors": [
                 {
-                    "code": "40001",
-                    "title": "Not routable",
-                    "detail": "Destination is a landline or non-routable number"
+                    "code": "40011",
+                    "title": "Rate limit exceeded (upstream)",
+                    "detail": "Exceeded carrier throughput limit"
                 }
             ],
             "from": {

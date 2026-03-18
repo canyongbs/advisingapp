@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,62 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Models;
+namespace AdvisingApp\StudentDataModel\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Prospect\Observers\ProspectPhoneNumberObserver;
-use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
+use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
+use AdvisingApp\StudentDataModel\Database\Factories\BouncedPhoneNumberFactory;
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @mixin IdeHelperProspectPhoneNumber
+ * @mixin IdeHelperBouncedPhoneNumber
  */
-#[ObservedBy(ProspectPhoneNumberObserver::class)]
-class ProspectPhoneNumber extends BaseModel implements Auditable
+class BouncedPhoneNumber extends BaseModel implements Auditable
 {
-    use AuditableTrait;
     use HasUuids;
+    use AuditableTrait;
+
+    /** @use HasFactory<BouncedPhoneNumberFactory> */
+    use HasFactory;
 
     protected $fillable = [
-        'prospect_id',
         'number',
-        'ext',
-        'type',
-        'can_receive_sms',
-        'order',
-    ];
-
-    protected $casts = [
-        'can_receive_sms' => 'boolean',
+        'external_error_code',
     ];
 
     /**
-     * @return BelongsTo<Prospect, $this>
+     * @return BelongsTo<StudentPhoneNumber, $this>
      */
-    public function prospect(): BelongsTo
+    public function studentPhoneNumber(): BelongsTo
     {
-        return $this->belongsTo(Prospect::class);
+        return $this->belongsTo(StudentPhoneNumber::class, 'number', 'number');
     }
 
     /**
-     * @return HasOne<SmsOptOutPhoneNumber, $this>
+     * @return BelongsTo<ProspectPhoneNumber, $this>
      */
-    public function smsOptOut(): HasOne
+    public function prospectPhoneNumber(): BelongsTo
     {
-        return $this->hasOne(SmsOptOutPhoneNumber::class, 'number', 'number');
-    }
-
-    /**
-     * @return HasOne<BouncedPhoneNumber, $this>
-     */
-    public function bounced(): HasOne
-    {
-        return $this->hasOne(BouncedPhoneNumber::class, 'number', 'number');
+        return $this->belongsTo(ProspectPhoneNumber::class, 'number', 'number');
     }
 }

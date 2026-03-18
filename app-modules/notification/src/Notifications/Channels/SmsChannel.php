@@ -41,6 +41,7 @@ use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
 use AdvisingApp\Notification\Enums\SmsMessagingProvider;
+use AdvisingApp\Notification\Exceptions\BouncedSmsException;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\Exceptions\SmsOptOutException;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
@@ -51,6 +52,7 @@ use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -133,6 +135,18 @@ class SmsChannel
             ]);
 
             throw new SmsOptOutException($recipientNumber);
+        }
+
+        if ($recipientNumber && is_string($recipientNumber) && $this->isNumberBounced($recipientNumber)) {
+            $smsMessage->events()->create([
+                'type' => SmsMessageEventType::FailedDispatch,
+                'payload' => [
+                    'error' => 'Recipient phone number has previously bounced.',
+                ],
+                'occurred_at' => now(),
+            ]);
+
+            throw new BouncedSmsException($recipientNumber);
         }
 
         try {
@@ -325,6 +339,13 @@ class SmsChannel
         return $notifiable->phoneNumbers()
             ->where('number', $recipientNumber)
             ->whereHas('smsOptOut')
+            ->exists();
+    }
+
+    protected function isNumberBounced(string $recipientNumber): bool
+    {
+        return BouncedPhoneNumber::query()
+            ->where('number', $recipientNumber)
             ->exists();
     }
 }
