@@ -46,6 +46,7 @@ use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
@@ -56,7 +57,6 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Support\Facades\Gate;
 use UnitEnum;
 
@@ -233,19 +233,21 @@ class ManagePortalSettings extends SettingsPage
                         ColorPicker::make('footer_color')
                             ->label('Color')
                             ->hexColor(),
-                        TiptapEditor::make('footer_copyright_statement')
+                        RichEditor::make('footer_copyright_statement')
                             ->label('Copyright statement')
-                            ->tools(['bold', 'underline', 'italic', 'link'])
+                            ->toolbarButtons(['bold', 'underline', 'italic', 'link'])
+                            ->json()
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
 
                 Section::make('GDPR Banner Notice')
                     ->schema([
-                        TiptapEditor::make('gdpr_banner_text')
+                        RichEditor::make('gdpr_banner_text')
                             ->label('GDPR Banner Text')
                             ->required()
-                            ->tools(['link'])
+                            ->toolbarButtons(['link'])
+                            ->json()
                             ->columnSpanFull(),
                         Select::make('gdpr_banner_button_label')
                             ->options(GdprBannerButtonLabel::class)
