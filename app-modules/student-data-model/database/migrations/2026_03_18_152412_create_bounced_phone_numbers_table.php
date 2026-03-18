@@ -34,62 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Models;
+use App\Features\BouncedPhoneNumberFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Prospect\Observers\ProspectPhoneNumberObserver;
-use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use OwenIt\Auditing\Contracts\Auditable;
-
-/**
- * @mixin IdeHelperProspectPhoneNumber
- */
-#[ObservedBy(ProspectPhoneNumberObserver::class)]
-class ProspectPhoneNumber extends BaseModel implements Auditable
-{
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'prospect_id',
-        'number',
-        'ext',
-        'type',
-        'can_receive_sms',
-        'order',
-    ];
-
-    protected $casts = [
-        'can_receive_sms' => 'boolean',
-    ];
-
-    /**
-     * @return BelongsTo<Prospect, $this>
-     */
-    public function prospect(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(Prospect::class);
+        DB::transaction(function () {
+            Schema::create('bounced_phone_numbers', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->string('number')->unique();
+                $table->string('external_error_code')->nullable();
+                $table->timestamps();
+
+                $table->index('number');
+            });
+
+            BouncedPhoneNumberFeature::activate();
+        });
     }
 
-    /**
-     * @return HasOne<SmsOptOutPhoneNumber, $this>
-     */
-    public function smsOptOut(): HasOne
+    public function down(): void
     {
-        return $this->hasOne(SmsOptOutPhoneNumber::class, 'number', 'number');
-    }
+        DB::transaction(function () {
+            BouncedPhoneNumberFeature::deactivate();
 
-    /**
-     * @return HasOne<BouncedPhoneNumber, $this>
-     */
-    public function bounced(): HasOne
-    {
-        return $this->hasOne(BouncedPhoneNumber::class, 'number', 'number');
+            Schema::dropIfExists('bounced_phone_numbers');
+        });
     }
-}
+};

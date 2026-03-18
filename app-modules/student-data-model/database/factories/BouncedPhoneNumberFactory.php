@@ -34,62 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Models;
+namespace AdvisingApp\StudentDataModel\Database\Factories;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Prospect\Observers\ProspectPhoneNumberObserver;
 use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperProspectPhoneNumber
+ * @extends Factory<BouncedPhoneNumber>
  */
-#[ObservedBy(ProspectPhoneNumberObserver::class)]
-class ProspectPhoneNumber extends BaseModel implements Auditable
+class BouncedPhoneNumberFactory extends Factory
 {
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'prospect_id',
-        'number',
-        'ext',
-        'type',
-        'can_receive_sms',
-        'order',
-    ];
-
-    protected $casts = [
-        'can_receive_sms' => 'boolean',
-    ];
-
     /**
-     * @return BelongsTo<Prospect, $this>
+     * @return array<string, mixed>
      */
-    public function prospect(): BelongsTo
+    public function definition(): array
     {
-        return $this->belongsTo(Prospect::class);
-    }
-
-    /**
-     * @return HasOne<SmsOptOutPhoneNumber, $this>
-     */
-    public function smsOptOut(): HasOne
-    {
-        return $this->hasOne(SmsOptOutPhoneNumber::class, 'number', 'number');
-    }
-
-    /**
-     * @return HasOne<BouncedPhoneNumber, $this>
-     */
-    public function bounced(): HasOne
-    {
-        return $this->hasOne(BouncedPhoneNumber::class, 'number', 'number');
+        return [
+            'number' => $this->faker->unique()->e164PhoneNumber(),
+            'external_error_code' => null,
+        ];
     }
 }

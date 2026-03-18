@@ -82,4 +82,12 @@ class StudentPhoneNumber extends BaseModel implements Auditable
     {
         return $this->hasOne(SmsOptOutPhoneNumber::class, 'number', 'number');
     }
+
+    /**
+     * @return HasOne<BouncedPhoneNumber, $this>
+     */
+    public function bounced(): HasOne
+    {
+        return $this->hasOne(BouncedPhoneNumber::class, 'number', 'number');
+    }
 }

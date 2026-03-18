@@ -37,9 +37,14 @@
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\IntegrationTwilio\Tests\Fixtures\ClientMock;
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
+use AdvisingApp\Notification\Exceptions\BouncedSmsException;
 use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\Notification\Tests\Fixtures\TestSmsNotification;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
+
+use function Pest\Laravel\assertDatabaseHas;
+
 use Twilio\Rest\Api\V2010;
 use Twilio\Rest\Api\V2010\Account\MessageInstance;
 use Twilio\Rest\Api\V2010\Account\MessageList;
@@ -96,6 +101,30 @@ it('will create an SmsMessage for the notification', function () {
     expect($smsMessages->count())->toBe(1);
     expect($smsMessages->first()->notification_class)->toBe(TestSmsNotification::class);
     expect($smsMessages->first()->events->first()->type)->toBe(SmsMessageEventType::Dispatched);
+});
+
+it('will not send an SMS if recipient phone number has previously bounced', function () {
+    $notifiable = Prospect::factory()->create();
+
+    $phoneNumber = $notifiable->phoneNumbers()->create([
+        'number' => '+13125000001',
+        'can_receive_sms' => true,
+    ]);
+
+    $notifiable->primaryPhoneNumber()->associate($phoneNumber)->save();
+
+    BouncedPhoneNumber::factory()->create([
+        'number' => '+13125000001',
+        'external_error_code' => '40001',
+    ]);
+
+    try {
+        expect(fn () => $notifiable->notify(new TestSmsNotification()))->toThrow(BouncedSmsException::class);
+    } finally {
+        assertDatabaseHas('sms_message_events', [
+            'type' => SmsMessageEventType::FailedDispatch,
+        ]);
+    }
 });
 
 // TODO Add more tests for SMS Demo mode etc.
