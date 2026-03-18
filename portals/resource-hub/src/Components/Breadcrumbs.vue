@@ -53,14 +53,14 @@
             <li>
                 <div>
                     <router-link :to="{ name: 'home' }" class="text-gray-400 hover:text-gray-500">
-                        <HomeIcon class="h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                        <HomeIcon class="h-5 w-5 shrink-0" aria-hidden="true" />
                         <span class="sr-only">Home</span>
                     </router-link>
                 </div>
             </li>
             <li v-for="crumb in breadcrumbs" :key="crumb.route">
                 <div class="flex items-center">
-                    <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                    <ChevronRightIcon class="h-5 w-5 shrink-0 text-gray-400" aria-hidden="true" />
 
                     <router-link
                         :to="{ name: crumb.route }"
@@ -72,7 +72,7 @@
             </li>
             <li>
                 <div class="flex items-center">
-                    <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                    <ChevronRightIcon class="h-5 w-5 shrink-0 text-gray-400" aria-hidden="true" />
 
                     <div class="ml-4 text-sm font-medium text-primary-600">
                         {{ currentCrumb }}

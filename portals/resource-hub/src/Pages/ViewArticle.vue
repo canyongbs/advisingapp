@@ -115,15 +115,15 @@
                                 <h1>{{ article.name }}</h1>
                                 <div class="flex mb-4">
                                     <div class="text-gray-500 flex items-center space-x-1 mr-2">
-                                        <EyeIcon class="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                                        <EyeIcon class="h-4 w-4 shrink-0" aria-hidden="true" />
                                         <span class="text-xs">{{ portalViewCount }} Views</span>
                                     </div>
                                     <div class="text-gray-500 flex items-center space-x-1">
-                                        <ClockIcon class="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                                        <ClockIcon class="h-4 w-4 shrink-0" aria-hidden="true" />
                                         <span class="text-xs">Last updated: {{ article.lastUpdated }}</span>
                                     </div>
                                 </div>
-                                <div class="border-t"></div>
+                                <div class="border-t border-gray-200"></div>
                                 <div v-html="DOMPurify.sanitize(article.content)"></div>
                             </div>
                         </div>
