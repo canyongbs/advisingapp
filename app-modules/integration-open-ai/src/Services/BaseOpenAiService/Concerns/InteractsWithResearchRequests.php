@@ -174,7 +174,7 @@ trait InteractsWithResearchRequests
         );
 
         return [
-            'response' => $response['properties'] ?? [],
+            'response' => $response,
             'nextRequestOptions' => filled($responseId) ? [
                 'previous_response_id' => $responseId,
             ] : [],
@@ -241,6 +241,29 @@ trait InteractsWithResearchRequests
             report($exception);
 
             throw new MessageResponseException('Failed to complete the prompt: [' . $exception->getMessage() . '].');
+        }
+    }
+
+    public function deleteResearchRequestExternalResources(ResearchRequest $researchRequest): void
+    {
+        $vectorStores = OpenAiResearchRequestVectorStore::query()
+            ->whereBelongsTo($researchRequest)
+            ->where('deployment_hash', $this->getDeploymentHash())
+            ->whereNotNull('vector_store_id')
+            ->get();
+
+        foreach ($vectorStores as $vectorStore) {
+            $this->deleteExistingResearchRequestVectorStoreFiles($researchRequest, $vectorStore);
+
+            $deleteVectorStoreResponse = $this->vectorStoresHttpClient()
+                ->delete("vector_stores/{$vectorStore->vector_store_id}");
+
+            if ((! $deleteVectorStoreResponse->successful()) && (! $deleteVectorStoreResponse->notFound())) {
+                report(new Exception('Failed to delete vector store [' . $vectorStore->vector_store_id . '] for research request [' . $researchRequest->getKey() . '], as a [' . $deleteVectorStoreResponse->status() . '] response was returned: [' . $deleteVectorStoreResponse->body() . '].'));
+            }
+
+            // Best effort cleanup: do not keep a stale local record once request deletion is in progress.
+            $vectorStore->delete();
         }
     }
 
@@ -349,16 +372,23 @@ trait InteractsWithResearchRequests
         return null;
     }
 
-    protected function deleteExistingResearchRequestVectorStoreFiles(ResearchRequest $researchRequest, OpenAiResearchRequestVectorStore $vectorStore): void
+    protected function deleteExistingResearchRequestVectorStoreFiles(ResearchRequest $researchRequest, OpenAiResearchRequestVectorStore $vectorStore): bool
     {
         $listFilesResponse = $this->vectorStoresHttpClient()
             ->get("vector_stores/{$vectorStore->vector_store_id}/files");
 
+        if ($listFilesResponse->notFound()) {
+            // If the vector store is already gone, there are no external files left to delete.
+            return true;
+        }
+
         if ((! $listFilesResponse->successful()) || ! is_array($listFilesResponse->json('data'))) {
             report(new Exception('Failed to list files for vector store [' . $vectorStore->vector_store_id . '] for research request [' . $researchRequest->getKey() . '], as a [' . $listFilesResponse->status() . '] response was returned: [' . $listFilesResponse->body() . '].'));
 
-            return;
+            return false;
         }
+
+        $allFilesDeleted = true;
 
         foreach (Arr::pluck($listFilesResponse->json('data'), 'id') as $fileId) {
             $deleteFileResponse = $this->filesHttpClient()
@@ -366,8 +396,12 @@ trait InteractsWithResearchRequests
 
             if ((! $deleteFileResponse->successful()) && (! $deleteFileResponse->notFound())) {
                 report(new Exception('Failed to delete file [' . $fileId . '] associated with vector store [' . $vectorStore->vector_store_id . '] for research request [' . $researchRequest->getKey() . '], as a [' . $deleteFileResponse->status() . '] response was returned: [' . $deleteFileResponse->body() . '].'));
+
+                $allFilesDeleted = false;
             }
         }
+
+        return $allFilesDeleted;
     }
 
     protected function createVectorStoreForResearchRequest(ResearchRequest $researchRequest, OpenAiResearchRequestVectorStore $vectorStore): void

@@ -34,32 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Providers;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\IntegrationOpenAi\IntegrationOpenAiPlugin;
-use AdvisingApp\IntegrationOpenAi\Observers\ResearchRequestObserver;
-use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi;
-use AdvisingApp\Research\Models\ResearchRequest;
-use Filament\Panel;
-use Illuminate\Support\ServiceProvider;
-use Prism\Prism\Providers\Provider;
-
-class IntegrationOpenAiServiceProvider extends ServiceProvider
-{
-    public function register()
+return new class () extends Migration {
+    public function up(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new IntegrationOpenAiPlugin()));
+        Schema::table('open_ai_research_request_vector_stores', function (Blueprint $table) {
+            $table->dropForeign(['research_request_id']);
+
+            $table->foreign('research_request_id', 'open_ai_rr_vs_research_request_id_fk')
+                ->references('id')
+                ->on('research_requests')
+                ->cascadeOnDelete();
+        });
     }
 
-    public function boot()
+    public function down(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
+        Schema::table('open_ai_research_request_vector_stores', function (Blueprint $table) {
+            $table->dropForeign('open_ai_rr_vs_research_request_id_fk');
 
-        ResearchRequest::observe(ResearchRequestObserver::class);
-
-        $this->app['prism-manager']->extend(
-            'azure_open_ai',
-            fn (): Provider => app(AzureOpenAi::class),
-        );
+            $table->foreign('research_request_id')
+                ->references('id')
+                ->on('research_requests');
+        });
     }
-}
+};
