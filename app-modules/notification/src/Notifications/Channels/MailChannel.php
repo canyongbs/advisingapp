@@ -140,7 +140,7 @@ class MailChannel extends BaseMailChannel
         try {
             if (
                 (! ($tenantMailConfig?->isDemoModeEnabled ?? false))
-                || ($isSystemNotification && $tenantMailConfig?->isExcludingSystemNotificationsFromDemoMode)
+                || ($isSystemNotification && $tenantMailConfig->isExcludingSystemNotificationsFromDemoMode)
             ) {
                 $message->withSymfonyMessage(function (Email $message) use ($tenant, $emailMessage) {
                     $settings = app(SesSettings::class);
