@@ -78,7 +78,7 @@ class ProcessTelnyxMessageStatusUpdate implements ShouldQueue
 
     public function handle(): void
     {
-        $status = $this->data['payload']['to'][0]['status'] ?? null;
+        $status = $this->data['payload']['to'][0]['status'];
 
         if ($status === 'delivery_failed' || $status === 'sending_failed') {
             $this->processDeliveryFailure();
@@ -109,8 +109,8 @@ class ProcessTelnyxMessageStatusUpdate implements ShouldQueue
 
     protected function processDeliveryFailure(): void
     {
-        $recipientNumber = $this->data['payload']['to'][0]['phone_number'] ?? null;
-        $errors = $this->data['payload']['errors'] ?? [];
+        $recipientNumber = $this->data['payload']['to'][0]['phone_number'];
+        $errors = $this->data['payload']['errors'];
 
         if (empty($errors)) {
             Log::warning('Telnyx SMS delivery failure received with no error codes', [
@@ -121,7 +121,7 @@ class ProcessTelnyxMessageStatusUpdate implements ShouldQueue
         }
 
         foreach ($errors as $error) {
-            $code = (string) ($error['code'] ?? 'unknown');
+            $code = $error['code'];
 
             Log::warning('Telnyx SMS delivery failure', [
                 'error_code' => $code,

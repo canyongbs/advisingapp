@@ -118,10 +118,8 @@ it('will not send an SMS if recipient phone number has previously bounced', func
         'external_error_code' => '40001',
     ]);
 
-    $this->expectException(BouncedSmsException::class);
-
     try {
-        $notifiable->notify(new TestSmsNotification());
+        expect(fn () => $notifiable->notify(new TestSmsNotification()))->toThrow(BouncedSmsException::class);
     } finally {
         assertDatabaseHas('sms_message_events', [
             'type' => SmsMessageEventType::FailedDispatch,

@@ -130,7 +130,10 @@ it('does not create a duplicate BouncedPhoneNumber record when the same number f
 });
 
 it('logs a warning when delivery fails with an error code', function () {
-    Log::spy();
+    Log::shouldReceive('warning')
+        ->once()
+        ->withArgs(fn (string $message, array $context) => $message === 'Telnyx SMS delivery failure'
+            && $context['error_code'] === '40001');
 
     SmsMessage::factory()->create([
         'external_reference_id' => 'ac012cbf-5e09-46af-a69a-7c0e2d90993c',
@@ -141,9 +144,4 @@ it('logs a warning when delivery fails with an error code', function () {
     );
 
     $job->handle();
-
-    Log::shouldHaveReceived('warning')
-        ->once()
-        ->withArgs(fn (string $message, array $context) => $message === 'Telnyx SMS delivery failure'
-          && $context['error_code'] === '40001');
 });
