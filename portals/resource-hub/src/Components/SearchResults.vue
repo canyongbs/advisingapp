@@ -62,7 +62,9 @@
             Search results: <span class="font-normal">{{ searchQuery }}</span>
         </h3>
 
-        <div class="flex flex-col divide-y divide-gray-200 ring-1 ring-black/5 shadow-xs px-3 pt-3 pb-1 rounded bg-white">
+        <div
+            class="flex flex-col divide-y divide-gray-200 ring-1 ring-black/5 shadow-xs px-3 pt-3 pb-1 rounded bg-white"
+        >
             <h4 class="text-lg font-semibold text-gray-800 px-3 pt-1 pb-3">
                 Articles ({{ searchResults.data.articles.length }})
             </h4>
@@ -95,7 +97,9 @@
             </div>
         </div>
 
-        <div class="flex flex-col divide-y divide-gray-200 ring-1 ring-black/5 shadow-xs px-3 pt-3 pb-1 rounded bg-white">
+        <div
+            class="flex flex-col divide-y divide-gray-200 ring-1 ring-black/5 shadow-xs px-3 pt-3 pb-1 rounded bg-white"
+        >
             <h4 class="text-lg font-semibold text-gray-800 px-3 pt-1 pb-3">Categories</h4>
 
             <div v-if="searchResults.data.categories.length > 0">

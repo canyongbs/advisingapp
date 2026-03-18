@@ -31,7 +31,7 @@
 
 </COPYRIGHT>
 */
-@import "tailwindcss";
+@import 'tailwindcss';
 @import '../../../widgets/form/src/FormKit/index.css';
 
 @plugin "@tailwindcss/forms";
@@ -58,7 +58,7 @@
     --radius-lg: var(--rounding-lg);
     --radius-full: var(--rounding-sm);
 
-    --font-signature: "Satisfy", cursive;
+    --font-signature: 'Satisfy', cursive;
 }
 
 .bg-gradient {
