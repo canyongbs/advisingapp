@@ -7,6 +7,7 @@ use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use UnexpectedValueException;
 
 return new class () extends Migration {
     public function up(): void
@@ -20,14 +21,14 @@ return new class () extends Migration {
                 ->each(function (object $tenant) use ($encrypter) {
                     $decrypted = $encrypter->decrypt($tenant->config);
 
-                    $json = ($decrypted instanceof TenantConfig)
-                        ? $decrypted->toJson()
-                        : json_encode($decrypted);
+                    if (! ($decrypted instanceof TenantConfig)) {
+                        throw new UnexpectedValueException("Decrypted tenant config is not an instance of TenantConfig for tenant ID {$tenant->id}");
+                    }
 
                     DB::connection('landlord')
                         ->table('tenants')
                         ->where('id', $tenant->id)
-                        ->update(['config' => Crypt::encryptString($json)]);
+                        ->update(['config' => Crypt::encryptString($decrypted->toJson())]);
                 });
 
             TenantConfigEncryptionFeature::activate();
@@ -59,7 +60,7 @@ return new class () extends Migration {
 
     private function makeLandlordEncrypter(): Encrypter
     {
-        $key = app('originalAppKey');
+        $key = config('app.key');
 
         if (Str::startsWith($key, 'base64:')) {
             $key = base64_decode(Str::after($key, 'base64:'));

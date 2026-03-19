@@ -45,14 +45,14 @@ class LandlordEncrypted implements CastsAttributes
 {
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        $encrypter = new Encrypter($this->parseKey(app('originalAppKey')), config('app.cipher'));
+        $encrypter = new Encrypter($this->parseKey(config('app.key')), config('app.cipher'));
 
         return $encrypter->decrypt($value);
     }
 
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        $encrypter = new Encrypter($this->parseKey(app('originalAppKey')), config('app.cipher'));
+        $encrypter = new Encrypter($this->parseKey(config('app.key')), config('app.cipher'));
 
         return $encrypter->encrypt($value);
     }
