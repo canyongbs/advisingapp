@@ -145,6 +145,7 @@ it('does not redirect if the password is not set', function () {
 
     actingAs($user);
 
-    get(route('filament.admin.auth.set-password'))
-        ->assertOk();
+    livewire(SetPassword::class)
+        ->assertOk()
+        ->assertNoRedirect();
 });
