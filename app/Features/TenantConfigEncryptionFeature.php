@@ -37,9 +37,25 @@
 namespace App\Features;
 
 use App\Support\AbstractFeatureFlag;
+use Illuminate\Support\Facades\DB;
 
 class TenantConfigEncryptionFeature extends AbstractFeatureFlag
 {
+    public static function active(): bool
+    {
+        $record = DB::connection('landlord')
+            ->table('features')
+            ->where('name', static::class)
+            ->where('scope', '__laravel_null')
+            ->first();
+
+        if ($record === null) {
+            return false;
+        }
+
+        return json_decode($record->value, true) === true;
+    }
+
     public function resolve(mixed $scope): mixed
     {
         return false;
