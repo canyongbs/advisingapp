@@ -40,8 +40,8 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 
-use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseCount;
+use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 use function Tests\loadFixtureFromModule;
 
@@ -125,7 +125,6 @@ it('logs a warning when HELP autoresponse is received from Telnyx webhook', func
         'content' => $data['payload']['text'],
     ]);
 });
-
 
 it('touches updated_at for existing sms opt-out record when duplicate STOP autoresponse is received', function () {
     $data = loadFixtureFromModule('integration-twilio', 'Telnyx/MessageReceived/message_received_autoresponse_stop')['data'];

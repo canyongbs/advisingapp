@@ -56,11 +56,11 @@ class ProcessTelnyxMessageReceived implements ShouldQueue
 
     public function handle(): void
     {
-      if (isset($this->data['payload']['autoresponse_type'])) {
-        $this->handleAutoResponseType();
+        if (isset($this->data['payload']['autoresponse_type'])) {
+            $this->handleAutoResponseType();
 
-        return;
-      }
+            return;
+        }
 
         $createEngagementResponse = resolve(CreateEngagementResponse::class);
 
@@ -72,37 +72,37 @@ class ProcessTelnyxMessageReceived implements ShouldQueue
 
     protected function handleAutoResponseType(): void
     {
-      $autoResponseType = $this->data['payload']['autoresponse_type'];
-      $phoneNumber = $this->data['payload']['from']['phone_number'];
+        $autoResponseType = $this->data['payload']['autoresponse_type'];
+        $phoneNumber = $this->data['payload']['from']['phone_number'];
 
-      match ($autoResponseType) {
-        'STOP' => $this->handleStop($phoneNumber),
-        'START' => $this->handleStart($phoneNumber),
-        'HELP' => $this->handleHelp(),
-        default => null,
-      };
+        match ($autoResponseType) {
+            'STOP' => $this->handleStop($phoneNumber),
+            'START' => $this->handleStart($phoneNumber),
+            'HELP' => $this->handleHelp(),
+            default => null,
+        };
     }
 
     protected function handleStop(string $phoneNumber): void
     {
-      $smsOptOutPhoneNumber = SmsOptOutPhoneNumber::firstOrCreate([
-        'number' => $phoneNumber,
-      ]);
+        $smsOptOutPhoneNumber = SmsOptOutPhoneNumber::firstOrCreate([
+            'number' => $phoneNumber,
+        ]);
 
-      if (! $smsOptOutPhoneNumber->wasRecentlyCreated) {
-        $smsOptOutPhoneNumber->touch();
-      }
+        if (! $smsOptOutPhoneNumber->wasRecentlyCreated) {
+            $smsOptOutPhoneNumber->touch();
+        }
     }
 
     protected function handleStart(string $phoneNumber): void
     {
-      SmsOptOutPhoneNumber::where('number', $phoneNumber)->delete();
+        SmsOptOutPhoneNumber::where('number', $phoneNumber)->delete();
     }
 
     protected function handleHelp(): void
     {
-      Log::warning('Telnyx autoresponse_type HELP received', [
-        'payload' => $this->data,
-      ]);
+        Log::warning('Telnyx autoresponse_type HELP received', [
+            'payload' => $this->data,
+        ]);
     }
 }
