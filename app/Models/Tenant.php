@@ -46,6 +46,8 @@ use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
 use Spatie\Multitenancy\Models\Tenant as SpatieTenant;
 
 /**
+ * @property TenantConfig $config
+ *
  * @mixin IdeHelperTenant
  */
 class Tenant extends SpatieTenant
