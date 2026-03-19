@@ -31,7 +31,7 @@
 
 </COPYRIGHT>
 */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @import './FormKit/index.css';
 
@@ -60,7 +60,7 @@
     --radius-lg: var(--rounding-lg);
     --radius-full: var(--rounding-sm);
 
-    --font-signature: "Satisfy", cursive;
+    --font-signature: 'Satisfy', cursive;
 }
 
 .formkit-inner {
