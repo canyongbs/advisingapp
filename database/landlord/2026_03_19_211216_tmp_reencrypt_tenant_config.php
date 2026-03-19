@@ -79,6 +79,7 @@ return new class () extends Migration {
             DB::connection('landlord')
                 ->table('tenants')
                 ->whereNotNull('config')
+                ->orderBy('id')
                 ->each(function (object $tenant) use ($encrypter) {
                     $json = Crypt::decryptString($tenant->config);
 
