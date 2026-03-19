@@ -7,7 +7,6 @@ use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use UnexpectedValueException;
 
 return new class () extends Migration {
     public function up(): void
@@ -18,6 +17,7 @@ return new class () extends Migration {
             DB::connection('landlord')
                 ->table('tenants')
                 ->whereNotNull('config')
+                ->orderBy('id')
                 ->each(function (object $tenant) use ($encrypter) {
                     $decrypted = $encrypter->decrypt($tenant->config);
 
