@@ -243,7 +243,8 @@ class AdminPanelProvider extends PanelProvider
 
                     return new HtmlString(Blade::render('<livewire:branding-bar />'));
                 },
-            );
+            )
+            ->globalSearchResourceOptIn();
     }
 
     public function boot(): void {}
