@@ -98,7 +98,7 @@
                             active ? 'ring-2 ring-primary-600 ring-offset-2' : '',
                             checked
                                 ? 'bg-primary-600 text-white hover:bg-primary-500'
-                                : 'ring-1 ring-inset ring-gray-300 bg-white text-gray-900 hover:bg-gray-50',
+                                : 'border border-gray-300 bg-white text-gray-900 hover:bg-gray-50',
                             'flex items-center justify-center rounded py-1 px-2 text-sm font-medium cursor-pointer focus:outline-none',
                         ]"
                     >
@@ -112,7 +112,7 @@
                             active ? 'ring-2 ring-primary-600 ring-offset-2' : '',
                             checked
                                 ? 'bg-primary-600 text-white hover:bg-primary-500'
-                                : 'ring-1 ring-inset ring-gray-300 bg-white text-gray-900 hover:bg-gray-50',
+                                : 'border border-gray-300 bg-white text-gray-900 hover:bg-gray-50',
                             'flex items-center justify-center rounded py-1 px-2 text-sm font-medium cursor-pointer focus:outline-none',
                         ]"
                     >

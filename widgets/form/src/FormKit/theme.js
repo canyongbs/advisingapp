@@ -57,7 +57,7 @@ export default {
     // Family styles apply to all inputs that share a common family
     'family:box': {
         decorator:
-            'block relative h-5 w-5 mr-2 rounded bg-white bg-gradient-to-b from-transparent to-gray-200 ring-1 ring-gray-400 peer-checked:ring-primary-500 text-transparent peer-checked:text-primary-500',
+            'block relative h-5 w-5 mr-2 rounded bg-white bg-gradient-to-b from-transparent to-gray-200 border border-gray-400 peer-checked:border-primary-500 text-transparent peer-checked:text-primary-500',
         decoratorIcon: 'flex p-[3px] w-full h-full absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2',
         help: 'mb-2 mt-1.5',
         input: 'absolute w-0 h-0 overflow-hidden opacity-0 pointer-events-none peer',
@@ -75,7 +75,7 @@ export default {
         dropdownWrapper: 'my-2 w-full shadow-lg rounded [&::-webkit-scrollbar]:hidden',
         emptyMessageInner:
             'flex items-center justify-center text-sm p-2 text-center w-full text-gray-500 [&>span]:mr-3 [&>span]:ml-0',
-        inner: 'max-w-md relative flex ring-1 ring-gray-400 focus-within:ring-primary-500 focus-within:ring-2 rounded mb-2 formkit-disabled:focus-within:ring-gray-400 formkit-disabled:focus-within:ring-1 [&>span:first-child]:focus-within:text-primary-500',
+        inner: 'max-w-md relative flex border border-gray-400 focus-within:border-primary-500 rounded mb-2 formkit-disabled:focus-within:border-gray-400 [&>span:first-child]:focus-within:text-primary-500',
         input: 'w-full px-3 py-2',
         listbox: 'bg-white shadow-lg rounded overflow-hidden',
         listboxButton: 'flex w-12 self-stretch justify-center mx-auto',
@@ -93,11 +93,11 @@ export default {
         selectIcon: 'flex box-content w-4 px-2 self-stretch grow-0 shrink-0 [&>svg]:w-[1em] cursor-pointer',
     },
     'family:text': {
-        inner: 'flex items-center max-w-md ring-1 ring-gray-400 focus-within:ring-primary-500 focus-within:ring-2 [&>label:first-child]:focus-within:text-primary-500 rounded mb-1',
+        inner: 'flex items-center max-w-md border border-gray-400 focus-within:border-primary-500 [&>label:first-child]:focus-within:text-primary-500 rounded mb-1',
         input: 'w-full px-3 py-2 border-none text-base text-gray-700 placeholder-gray-400',
     },
     'family:date': {
-        inner: 'flex items-center max-w-md ring-1 ring-gray-400 focus-within:ring-primary-500 focus-within:ring-2 [&>label:first-child]:focus-within:text-primary-500 rounded mb-1',
+        inner: 'flex items-center max-w-md border border-gray-400 focus-within:border-primary-500 [&>label:first-child]:focus-within:text-primary-500 rounded mb-1',
         input: 'w-full px-3 py-2 border-none text-gray-700 placeholder-gray-400',
     },
 
@@ -133,13 +133,13 @@ export default {
             '$reset w-4 ml-1 flex self-stretch grow-0 shrink-0 [&>svg]:max-w-[1em] [&>svg]:max-h-[1em] [&>svg]:m-auto',
     },
     select: {
-        inner: 'flex relative max-w-md items-center rounded mb-1 ring-1 ring-gray-400 focus-within:ring-primary-500 focus-within:ring-2 [&>span:first-child]:focus-within:text-primary-500',
+        inner: 'flex relative max-w-md items-center rounded mb-1 border border-gray-400 focus-within:border-primary-500 [&>span:first-child]:focus-within:text-primary-500',
         input: 'w-full appearance-none pl-3 pr-8 py-2 border-none text-base text-gray-700 placeholder-gray-400 formkit-multiple:p-0 data-[placeholder="true"]:text-gray-400 formkit-multiple:data-[placeholder="true"]:text-inherit',
         selectIcon: 'hidden p-[3px] shrink-0 w-5 mr-2 -ml-[1.5em] h-full pointer-events-none [&>svg]:w-[1em]',
         option: 'formkit-multiple:p-3 formkit-multiple:text-sm text-gray-700',
     },
     textarea: {
-        inner: 'flex max-w-md rounded mb-1 ring-1 ring-gray-400 focus-within:ring-primary-500 [&>label:first-child]:focus-within:text-primary-500',
+        inner: 'flex max-w-md rounded mb-1 border border-gray-400 focus-within:border-primary-500 [&>label:first-child]:focus-within:text-primary-500',
         input: 'block w-full h-32 px-3 py-3 border-none text-base text-gray-700 placeholder-gray-400 focus:shadow-outline',
     },
 
@@ -166,8 +166,8 @@ export default {
       relative
       inline-flex
       group-[[data-inline]]:shadow-none
-      group-[[data-inline]]:!ring-1
-      group-[[data-inline]]:!ring-gray-400
+      group-[[data-inline]]:!border
+      group-[[data-inline]]:!border-gray-400
     `,
         swatchPreview: `
       w-full

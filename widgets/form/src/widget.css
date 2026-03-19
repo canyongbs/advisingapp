@@ -31,12 +31,38 @@
 
 </COPYRIGHT>
 */
+@import "tailwindcss";
+
 @import './FormKit/index.css';
 
 /* TODO: Look into moving this back into the upload Vue component, or something else */
 @import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
 @import 'filepond/dist/filepond.min.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+@plugin "@formkit/themes/tailwindcss";
+
+@source "./FormKit/theme.js";
+
+@theme inline {
+    --color-primary-50: rgba(var(--primary-50));
+    --color-primary-100: rgba(var(--primary-100));
+    --color-primary-200: rgba(var(--primary-200));
+    --color-primary-300: rgba(var(--primary-300));
+    --color-primary-400: rgba(var(--primary-400));
+    --color-primary-500: rgba(var(--primary-500));
+    --color-primary-600: rgba(var(--primary-600));
+    --color-primary-700: rgba(var(--primary-700));
+    --color-primary-800: rgba(var(--primary-800));
+    --color-primary-900: rgba(var(--primary-900));
+    --color-primary-950: rgba(var(--primary-950));
+
+    --radius-sm: var(--rounding-sm);
+    --radius: var(--rounding);
+    --radius-md: var(--rounding-md);
+    --radius-lg: var(--rounding-lg);
+    --radius-full: var(--rounding-sm);
+
+    --font-signature: "Satisfy", cursive;
+}
