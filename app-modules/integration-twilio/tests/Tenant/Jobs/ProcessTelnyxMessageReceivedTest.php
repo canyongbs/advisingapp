@@ -35,9 +35,13 @@
 */
 
 use AdvisingApp\IntegrationTwilio\Jobs\ProcessTelnyxMessageReceived;
+use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseMissing;
 use function Tests\loadFixtureFromModule;
 
@@ -52,7 +56,7 @@ it('will not create an engagement response when it cannot find an associated mes
     ]);
 });
 
-it('will create an engagement response when a message is received', function () {
+it('will create an engagement response when a message is received without autoresponse_type', function () {
     $data = loadFixtureFromModule('integration-twilio', 'Telnyx/MessageReceived/message_received')['data'];
 
     $student = Student::factory()->create();
@@ -70,4 +74,80 @@ it('will create an engagement response when a message is received', function () 
         'sender_type' => (new Student())->getMorphClass(),
         'content' => $data['payload']['text'],
     ]);
+});
+
+it('creates an sms opt-out record when STOP autoresponse is received from Telnyx webhook', function () {
+    $data = loadFixtureFromModule('integration-twilio', 'Telnyx/MessageReceived/message_received_autoresponse_stop')['data'];
+
+    $job = new ProcessTelnyxMessageReceived($data);
+    $job->handle();
+
+    assertDatabaseHas(SmsOptOutPhoneNumber::class, [
+        'number' => $data['payload']['from']['phone_number'],
+    ]);
+
+    assertDatabaseMissing('engagement_responses', [
+        'content' => $data['payload']['text'],
+    ]);
+});
+
+it('deletes sms opt-out record when START autoresponse is received from Telnyx webhook', function () {
+    $data = loadFixtureFromModule('integration-twilio', 'Telnyx/MessageReceived/message_received_autoresponse_start')['data'];
+
+    SmsOptOutPhoneNumber::factory()->create([
+        'number' => $data['payload']['from']['phone_number'],
+    ]);
+
+    $job = new ProcessTelnyxMessageReceived($data);
+    $job->handle();
+
+    assertDatabaseMissing(SmsOptOutPhoneNumber::class, [
+        'number' => $data['payload']['from']['phone_number'],
+    ]);
+
+    assertDatabaseMissing('engagement_responses', [
+        'content' => $data['payload']['text'],
+    ]);
+});
+
+it('logs a warning when HELP autoresponse is received from Telnyx webhook', function () {
+    $data = loadFixtureFromModule('integration-twilio', 'Telnyx/MessageReceived/message_received_autoresponse_help')['data'];
+
+    Log::shouldReceive('warning')
+        ->once()
+        ->withArgs(fn (string $message, array $context): bool => $message === 'Telnyx autoresponse_type HELP received'
+            && $context['payload'] === $data);
+
+    $job = new ProcessTelnyxMessageReceived($data);
+    $job->handle();
+
+    assertDatabaseMissing('engagement_responses', [
+        'content' => $data['payload']['text'],
+    ]);
+});
+
+
+it('touches updated_at for existing sms opt-out record when duplicate STOP autoresponse is received', function () {
+    $data = loadFixtureFromModule('integration-twilio', 'Telnyx/MessageReceived/message_received_autoresponse_stop')['data'];
+
+    $smsOptOutPhoneNumber = SmsOptOutPhoneNumber::factory()->create([
+        'number' => $data['payload']['from']['phone_number'],
+    ]);
+
+    $initialUpdatedAt = $smsOptOutPhoneNumber->updated_at;
+
+    Carbon::setTestNow(now()->addMinute());
+
+    try {
+        $job = new ProcessTelnyxMessageReceived($data);
+        $job->handle();
+
+        $smsOptOutPhoneNumber->refresh();
+
+        expect($smsOptOutPhoneNumber->updated_at->gt($initialUpdatedAt))->toBeTrue();
+
+        assertDatabaseCount(SmsOptOutPhoneNumber::class, 1);
+    } finally {
+        Carbon::setTestNow();
+    }
 });
