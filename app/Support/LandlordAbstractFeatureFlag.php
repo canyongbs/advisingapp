@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,14 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace App\Support;
 
-use App\Support\LandlordAbstractFeatureFlag;
+use Laravel\Pennant\Feature;
 
-class TenantConfigEncryptionFeature extends LandlordAbstractFeatureFlag
+abstract class LandlordAbstractFeatureFlag
 {
-    public function resolve(mixed $scope): mixed
+    public static function active(): bool
     {
-        return false;
+        return Feature::store('landlord')->active(static::class);
+    }
+
+    public static function activate(): void
+    {
+        Feature::store('landlord')->activate(static::class);
+    }
+
+    public static function deactivate(): void
+    {
+        Feature::store('landlord')->deactivate(static::class);
+    }
+
+    public static function purge(): void
+    {
+        Feature::store('landlord')->purge(static::class);
     }
 }
