@@ -63,6 +63,8 @@ class ResourceHubArticleResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
 
+    protected static bool $isGloballySearchable = true;
+
     public static function getGloballySearchableAttributes(): array
     {
         return ['title', 'article_details'];

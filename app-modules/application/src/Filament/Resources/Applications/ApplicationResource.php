@@ -64,6 +64,8 @@ class ApplicationResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static bool $isGloballySearchable = true;
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->with(['fields']);
