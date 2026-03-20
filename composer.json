@@ -261,7 +261,8 @@
         },
         "audit": {
             "abandoned": "report"
-        }
+        },
+        "source-fallback": false
     },
     "prefer-stable": true,
     "minimum-stability": "stable",
