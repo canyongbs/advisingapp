@@ -43,12 +43,14 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\Task\Enums\TaskStatus;
+use App\Enums\Feature;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Reactive;
 
 class ProspectsActionCenterWidget extends TableWidget
@@ -103,6 +105,7 @@ class ProspectsActionCenterWidget extends TableWidget
                     ->sortable(),
                 TextColumn::make('cases_count')
                     ->label('Open Cases')
+                    ->visible(Gate::check(Feature::CaseManagement->getGateName()))
                     ->counts(['cases' => fn (Builder $query) => $query->whereRelation('status', 'classification', '!=', SystemCaseClassification::Closed)])
                     ->sortable(),
             ])
@@ -118,6 +121,7 @@ class ProspectsActionCenterWidget extends TableWidget
                     }),
                 SelectFilter::make('cases')
                     ->options(['open' => 'Open', 'closed' => 'Closed'])
+                    ->visible(Gate::check(Feature::CaseManagement->getGateName()))
                     ->query(function (Builder $query, array $data): Builder {
                         if (blank($data['value'] ?? null)) {
                             return $query;
