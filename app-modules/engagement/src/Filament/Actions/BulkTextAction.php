@@ -50,7 +50,6 @@ use Filament\Schemas\Schema;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class BulkTextAction
 {
@@ -86,15 +85,8 @@ class BulkTextAction
                     channel: NotificationChannel::Sms,
                     subject: $data['subject'] ?? null,
                     body: $data['body'] ?? null,
-                    temporaryBodyImages: array_map(
-                        fn (TemporaryUploadedFile $file): array => [
-                            'extension' => $file->getClientOriginalExtension(),
-                            'path' => (fn () => $this->path)->call($file),
-                        ],
-                        /**@phpstan-ignore-next-line */
-                        $schema->getFlatFields()['body']->getTemporaryImages(),
-                    ),
                     scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['scheduled_at'] ?? null) : null,
+                    schema: $schema,
                 ));
             })
             ->modalSubmitActionLabel('Send')

@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,22 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StockMedia\Providers;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\StockMedia\StockMediaPlugin;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
-
-class StockMediaServiceProvider extends ServiceProvider
-{
-    public function register()
+return new class () extends Migration {
+    public function up(): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new StockMediaPlugin()));
+        Schema::table('email_templates', function (Blueprint $table) {
+            $table->json('content')->nullable()->change();
+        });
+
+        Schema::table('sms_templates', function (Blueprint $table) {
+            $table->json('content')->nullable()->change();
+        });
     }
 
-    public function boot(): void
+    public function down(): void
     {
-        Relation::morphMap([]);
+        Schema::table('email_templates', function (Blueprint $table) {
+            $table->json('content')->nullable(false)->change();
+        });
+
+        Schema::table('sms_templates', function (Blueprint $table) {
+            $table->json('content')->nullable(false)->change();
+        });
     }
-}
+};

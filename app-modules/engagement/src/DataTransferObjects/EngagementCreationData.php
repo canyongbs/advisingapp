@@ -41,6 +41,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use App\Models\User;
 use Carbon\CarbonInterface;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelData\Data;
@@ -50,7 +51,6 @@ class EngagementCreationData extends Data
     /**
      * @param array<string, mixed>|null $subject
      * @param array<string, mixed>|null $body
-     * @param array<array<string, mixed>> $temporaryBodyImages
      */
     public function __construct(
         public User $user,
@@ -59,9 +59,9 @@ class EngagementCreationData extends Data
         public NotificationChannel $channel,
         public ?array $subject = null,
         public ?array $body = null,
-        public array $temporaryBodyImages = [],
         public ?CarbonInterface $scheduledAt = null,
         public ?string $recipientRoute = null,
         public ?CampaignAction $campaignAction = null,
+        public ?Schema $schema = null,
     ) {}
 }

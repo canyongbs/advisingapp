@@ -44,16 +44,14 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class EngagementBatchEmailBlock extends CampaignActionBlock
 {
@@ -71,8 +69,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
         return [
             Hidden::make($fieldPrefix . 'channel')
                 ->default(NotificationChannel::Email->value),
-            TiptapEditor::make($fieldPrefix . 'subject')
-                ->recordAttribute('data.subject')
+            RichEditor::make($fieldPrefix . 'subject')
                 ->label('Subject')
                 ->mergeTags($mergeTags = [
                     'recipient first name',
@@ -81,15 +78,14 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                     'recipient email',
                     'recipient preferred name',
                 ])
-                ->profile('sms')
+                ->toolbarButtons([])
+                ->json()
                 ->placeholder('Enter the email subject here...')
-                ->showMergeTagsInBlocksPanel(false)
                 ->required()
                 ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                 ->columnSpanFull(),
-            TiptapEditor::make($fieldPrefix . 'body')
-                ->recordAttribute('data.body')
-                ->disk('s3-public')
+            RichEditor::make($fieldPrefix . 'body')
+                ->fileAttachmentsDisk('s3-public')
                 ->label('Body')
                 ->mergeTags($mergeTags = [
                     'recipient first name',
@@ -98,9 +94,12 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                     'recipient email',
                     'recipient preferred name',
                 ])
-                ->profile('email')
+                ->toolbarButtons([['bold', 'italic', 'small', 'link'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles'], ['mergeTags']])
+                ->activePanel('mergeTags')
+                ->resizableImages()
+                ->json()
                 ->required()
-                ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
+                ->hintAction(fn (RichEditor $component) => Action::make('loadEmailTemplate')
                     ->schema([
                         Select::make('emailTemplate')
                             ->searchable()
@@ -164,9 +163,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                             return;
                         }
 
-                        $component->state(
-                            $component->generateImageUrls($template->content),
-                        );
+                        $component->state($template->content);
                     }))
                 ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                 ->columnSpanFull(),
@@ -187,30 +184,6 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
 
     public function afterCreated(CampaignAction $action, Schema $schema): void
     {
-        $bodyField = $schema->getComponent(fn (Component $component): bool => ($component instanceof TiptapEditor) && str($component->getName())->endsWith('body'));
-
-        if (! ($bodyField instanceof TiptapEditor)) {
-            return;
-        }
-
-        [$newBody] = tiptap_converter()->saveImages(
-            $action['data']['body'],
-            disk: 's3-public',
-            record: $action,
-            recordAttribute: 'data.body',
-            newImages: array_map(
-                fn (TemporaryUploadedFile $file): array => [
-                    'extension' => $file->getClientOriginalExtension(),
-                    'path' => (fn () => $this->path)->call($file),
-                ],
-                $bodyField->getTemporaryImages(),
-            ),
-        );
-
-        $actionData = $action->data;
-        $actionData['body'] = $newBody;
-
-        $action->data = $actionData;
-        $action->save();
+        $schema->model($action)->saveRelationships();
     }
 }

@@ -45,6 +45,7 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Actions;
@@ -52,13 +53,11 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class BulkEmailAction
 {
@@ -73,7 +72,7 @@ class BulkEmailAction
                 Step::make('Engagement Details')
                     ->description("Add the details that will be sent to the selected {$context}")
                     ->schema([
-                        TiptapEditor::make('subject')
+                        RichEditor::make('subject')
                             ->label('Subject')
                             ->mergeTags([
                                 'recipient first name',
@@ -82,14 +81,14 @@ class BulkEmailAction
                                 'recipient email',
                                 'recipient preferred name',
                             ])
-                            ->showMergeTagsInBlocksPanel(false)
-                            ->helperText('You may use “merge tags” to substitute information about a recipient into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags')
-                            ->profile('sms')
+                            ->toolbarButtons([])
+                            ->json()
+                            ->helperText('You may use "merge tags" to substitute information about a recipient into your subject line. Insert a "{{" in the subject line field to see a list of available merge tags')
                             ->required()
                             ->placeholder('Enter the email subject here...')
                             ->columnSpanFull(),
-                        TiptapEditor::make('body')
-                            ->disk('s3-public')
+                        RichEditor::make('body')
+                            ->fileAttachmentsDisk('s3-public')
                             ->label('Body')
                             ->mergeTags($mergeTags = [
                                 'recipient first name',
@@ -98,10 +97,12 @@ class BulkEmailAction
                                 'recipient email',
                                 'recipient preferred name',
                             ])
-                            ->showMergeTagsInBlocksPanel(false)
-                            ->profile('email')
+                            ->toolbarButtons([['bold', 'italic', 'small', 'link'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles'], ['mergeTags']])
+                            ->activePanel('mergeTags')
+                            ->resizableImages()
+                            ->json()
                             ->required()
-                            ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
+                            ->hintAction(fn (RichEditor $component) => Action::make('loadEmailTemplate')
                                 ->schema([
                                     Select::make('emailTemplate')
                                         ->searchable()
@@ -165,9 +166,7 @@ class BulkEmailAction
                                         return;
                                     }
 
-                                    $component->state(
-                                        $component->generateImageUrls($template->content),
-                                    );
+                                    $component->state($template->content);
                                 }))
                             ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
@@ -195,15 +194,8 @@ class BulkEmailAction
                     channel: NotificationChannel::Email,
                     subject: $data['subject'] ?? null,
                     body: $data['body'] ?? null,
-                    temporaryBodyImages: array_map(
-                        fn (TemporaryUploadedFile $file): array => [
-                            'extension' => $file->getClientOriginalExtension(),
-                            'path' => (fn () => $this->path)->call($file),
-                        ],
-                        /**@phpstan-ignore-next-line */
-                        $schema->getFlatFields()['body']->getTemporaryImages(),
-                    ),
                     scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['scheduled_at'] ?? null) : null,
+                    schema: $schema,
                 ));
             })
             ->modalSubmitActionLabel('Send')

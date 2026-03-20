@@ -39,13 +39,17 @@ namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages;
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\EmailTemplateResource;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\StockMedia\Enums\StockMediaProvider;
+use AdvisingApp\StockMedia\Settings\StockMediaSettings;
+use CanyonGBS\Common\Filament\Forms\RichContentPlugins\StockImageRichContentPlugin;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
+use Illuminate\Support\Facades\URL;
 
 class CreateEmailTemplate extends CreateRecord
 {
@@ -62,8 +66,8 @@ class CreateEmailTemplate extends CreateRecord
                     ->autocomplete(false),
                 Textarea::make('description')
                     ->string(),
-                TiptapEditor::make('content')
-                    ->disk('s3-public')
+                RichEditor::make('content')
+                    ->fileAttachmentsDisk('s3-public')
                     ->mergeTags($mergeTags = [
                         'recipient first name',
                         'recipient last name',
@@ -71,9 +75,15 @@ class CreateEmailTemplate extends CreateRecord
                         'recipient email',
                         'recipient preferred name',
                     ])
-                    ->tools(['bold', 'italic', 'small', 'link', 'color', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', 'media', 'stock-image', '|', 'clear-formatting'])
+                    ->toolbarButtons([['bold', 'italic', 'small', 'link', 'color'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles', 'stockImage'], ['mergeTags']])
+                    ->plugins(array_filter([
+                        $this->getStockImagePlugin(),
+                    ]))
+                    ->activePanel('mergeTags')
+                    ->resizableImages()
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+                    ->json()
                     ->required(),
                 Actions::make([
                     DraftTemplateWithAiAction::make()
@@ -81,6 +91,17 @@ class CreateEmailTemplate extends CreateRecord
                         ->mergeTags($mergeTags),
                 ]),
             ]);
+    }
+
+    protected function getStockImagePlugin(): ?StockImageRichContentPlugin
+    {
+        $settings = app(StockMediaSettings::class);
+
+        if (! $settings->is_active || $settings->provider !== StockMediaProvider::Pexels || blank($settings->pexels_api_key)) {
+            return null;
+        }
+
+        return StockImageRichContentPlugin::make(URL::temporarySignedRoute('api.stock-images', now()->addHour()));
     }
 
     protected function getRedirectUrl(): string

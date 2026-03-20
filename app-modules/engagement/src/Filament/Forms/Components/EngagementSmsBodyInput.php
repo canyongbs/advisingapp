@@ -42,12 +42,11 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 
@@ -57,7 +56,7 @@ class EngagementSmsBodyInput
     {
         // TODO Implement length validation (320 characters max)
         // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
-        return TiptapEditor::make("{$fieldPrefix}body")
+        return RichEditor::make("{$fieldPrefix}body")
             ->label('Body')
             ->mergeTags([
                 'recipient first name',
@@ -66,10 +65,10 @@ class EngagementSmsBodyInput
                 'recipient email',
                 'recipient preferred name',
             ])
-            ->showMergeTagsInBlocksPanel(is_null($form) ? false : ! ($form->getLivewire() instanceof RelationManager))
-            ->profile('sms')
+            ->toolbarButtons([['mergeTags']])
+            ->json()
             ->required()
-            ->when($withTemplateAction, fn (TiptapEditor $component) => $component->hintAction(fn (TiptapEditor $component) => Action::make('loadSmsTemplate')
+            ->when($withTemplateAction, fn (RichEditor $component) => $component->hintAction(fn (RichEditor $component) => Action::make('loadSmsTemplate')
                 ->label('Load SMS template')
                 ->schema([
                     Select::make('smsTemplate')

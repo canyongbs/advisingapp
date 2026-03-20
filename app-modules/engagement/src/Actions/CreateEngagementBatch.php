@@ -60,17 +60,12 @@ class CreateEngagementBatch
         $engagementBatch->successful_engagements = 0;
 
         DB::transaction(function () use ($engagementBatch, $data) {
+            $engagementBatch->body = $data->body;
             $engagementBatch->save();
 
-            [$engagementBatch->body] = tiptap_converter()->saveImages(
-                $data->body,
-                disk: 's3-public',
-                record: $engagementBatch,
-                recordAttribute: 'body',
-                newImages: $data->temporaryBodyImages,
-            );
-
-            $engagementBatch->save();
+            if ($data->schema) {
+                $data->schema->model($engagementBatch)->saveRelationships();
+            }
         });
 
         try {

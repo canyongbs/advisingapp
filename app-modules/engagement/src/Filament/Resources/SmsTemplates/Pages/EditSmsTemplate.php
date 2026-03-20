@@ -41,12 +41,12 @@ use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\SmsTemplateResource;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
 
 class EditSmsTemplate extends EditRecord
 {
@@ -65,7 +65,7 @@ class EditSmsTemplate extends EditRecord
                     ->autocomplete(false),
                 Textarea::make('description')
                     ->string(),
-                TiptapEditor::make('content')
+                RichEditor::make('content')
                     ->mergeTags($mergeTags = [
                         'recipient first name',
                         'recipient last name',
@@ -73,9 +73,10 @@ class EditSmsTemplate extends EditRecord
                         'recipient email',
                         'recipient preferred name',
                     ])
-                    ->profile('sms')
+                    ->toolbarButtons([['mergeTags']])
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+                    ->json()
                     ->required(),
                 Actions::make([
                     DraftTemplateWithAiAction::make()
