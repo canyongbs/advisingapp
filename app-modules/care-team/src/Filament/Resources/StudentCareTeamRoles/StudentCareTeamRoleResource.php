@@ -46,6 +46,7 @@ use App\Filament\Clusters\ConstituentManagement;
 use App\Models\User;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
 
 class StudentCareTeamRoleResource extends Resource
@@ -71,7 +72,7 @@ class StudentCareTeamRoleResource extends Resource
     }
 
     /**
-     * @return Builder<CareTeamRole>
+     * @return Builder<Model>
      */
     public static function getEloquentQuery(): Builder
     {
