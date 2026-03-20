@@ -64,6 +64,8 @@ class ProspectResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
+    protected static bool $isGloballySearchable = true;
+
     public static function getGlobalSearchEloquentQuery(): Builder
     {
         return parent::getGlobalSearchEloquentQuery()->with(['emailAddresses:id,address', 'phoneNumbers:id,number', 'primaryEmailAddress:id,address', 'primaryPhoneNumber:id,number']);
