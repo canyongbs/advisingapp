@@ -38,11 +38,14 @@ namespace AdvisingApp\Application\Database\Factories;
 
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
-use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use App\Features\ApplicationSubmissionStateFeature;
+use CanyonGBS\Common\Enums\Color;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Laravel\Pennant\Feature;
 
 /**
- * @extends Factory<Application>
+ * @extends Factory<ApplicationSubmissionState>
  */
 class ApplicationSubmissionStateFactory extends Factory
 {
@@ -54,7 +57,7 @@ class ApplicationSubmissionStateFactory extends Factory
         return [
             'classification' => $this->faker->randomElement(ApplicationSubmissionStateClassification::cases()),
             'name' => $this->faker->word,
-            'color' => $this->faker->randomElement(ApplicationSubmissionStateColorOptions::cases()),
+            'color' => Feature::active(ApplicationSubmissionStateFeature::class) ? $this->faker->randomElement(Color::cases())->value : $this->faker->randomElement(ApplicationSubmissionStateColorOptions::cases()),
             'description' => $this->faker->sentence,
         ];
     }

@@ -38,6 +38,7 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates
 
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use App\Features\ApplicationSubmissionStateFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -45,6 +46,8 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Colors\Color;
+use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -65,6 +68,9 @@ class ListApplicationSubmissionStates extends ListRecords
                     ->label('Classification')
                     ->searchable()
                     ->sortable(),
+                //TODO: ApplicationSubmissionStateFeature Cleanup - Remove TextColumn when you remove feature flag and just use ColorColumn
+                // ColorColumn::make('color')
+                // ->state(fn (ApplicationSubmissionState $applicationState): string => Color::convertToRgb(Color::all()[$applicationState->color->value][600])),
                 TextColumn::make('color')
                     ->label('Color')
                     ->badge()

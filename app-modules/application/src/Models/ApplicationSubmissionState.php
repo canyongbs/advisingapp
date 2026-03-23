@@ -36,10 +36,14 @@
 
 namespace AdvisingApp\Application\Models;
 
+use AdvisingApp\Application\Database\Factories\ApplicationSubmissionStateFactory;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use App\Features\ApplicationSubmissionStateFeature;
 use App\Models\BaseModel;
+use CanyonGBS\Common\Enums\Color;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -49,6 +53,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  */
 class ApplicationSubmissionState extends BaseModel implements Auditable
 {
+    /** @use  HasFactory<ApplicationSubmissionStateFactory> */
+    use HasFactory;
+
     use SoftDeletes;
     use AuditableTrait;
 
@@ -59,16 +66,23 @@ class ApplicationSubmissionState extends BaseModel implements Auditable
         'description',
     ];
 
-    protected $casts = [
-        'classification' => ApplicationSubmissionStateClassification::class,
-        'color' => ApplicationSubmissionStateColorOptions::class,
-    ];
-
     /**
      * @return HasMany<ApplicationSubmission, $this>
      */
     public function submissions(): HasMany
     {
         return $this->hasMany(ApplicationSubmission::class, 'state_id');
+    }
+
+    /**
+     * TODO: ApplicationSubmissionStateFeature Cleanup - After ApplicationSubmissionStateFeature is removed:
+     * - Additionally, Remove the ApplicationSubmissionStateColorOptions enum if it is no longer used elsewhere in the codebase.
+     */
+    protected function casts(): array
+    {
+        return [
+            'classification' => ApplicationSubmissionStateClassification::class,
+            'color' => ApplicationSubmissionStateFeature::active() ? Color::class : ApplicationSubmissionStateColorOptions::class,
+        ];
     }
 }
