@@ -79,7 +79,7 @@ class ApplicationSubmissionState extends BaseModel implements Auditable
     }
 
     /**
-     * TODO: ApplicationSubmissionStateFeature Cleanup - After ApplicationSubmissionStateFeature is removed:
+     * TODO: ApplicationSubmissionStateFeature Cleanup - After ApplicationSubmissionStateFeature is removed: please move color back to $cast property
      * - Additionally, Remove the ApplicationSubmissionStateColorOptions enum if it is no longer used elsewhere in the codebase.
      */
     protected function casts(): array
