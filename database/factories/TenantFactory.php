@@ -42,7 +42,6 @@ use App\Multitenancy\DataTransferObjects\TenantDatabaseConfig;
 use App\Multitenancy\DataTransferObjects\TenantMailConfig;
 use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Encryption\Encrypter;
 
 /**
  * @extends Factory<Tenant>
@@ -56,9 +55,6 @@ class TenantFactory extends Factory
         return [
             'name' => $this->faker->name,
             'domain' => $this->faker->unique()->domainName,
-            'key' => 'base64:' . base64_encode(
-                Encrypter::generateKey(config('app.cipher'))
-            ),
             'config' => $this::defaultConfig(),
         ];
     }

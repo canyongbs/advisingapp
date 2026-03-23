@@ -71,5 +71,11 @@ return [
             'connection' => null,
             'table' => 'features',
         ],
+
+        'landlord' => [
+            'driver' => 'database',
+            'connection' => 'landlord',
+            'table' => 'features',
+        ],
     ],
 ];

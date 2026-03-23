@@ -34,39 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Multitenancy\Tasks;
+namespace App\Features;
 
-use App\Actions\ChangeAppKey;
-use App\Models\Tenant;
-use Exception;
-use Spatie\Multitenancy\Contracts\IsTenant;
-use Spatie\Multitenancy\Tasks\SwitchTenantTask;
+use App\Support\LandlordAbstractFeatureFlag;
 
-class SwitchAppKey implements SwitchTenantTask
+class TenantConfigEncryptionFeature extends LandlordAbstractFeatureFlag
 {
-    public function __construct(
-        protected ?string $originalAppKey = null,
-    ) {
-        $this->originalAppKey ??= config('app.key');
-    }
-
-    public function makeCurrent(IsTenant $tenant): void
+    public function resolve(mixed $scope): mixed
     {
-        throw_if(
-            ! $tenant instanceof Tenant,
-            new Exception('Tenant is not an instance of Tenant')
-        );
-
-        $this->setAppKey($tenant->key);
-    }
-
-    public function forgetCurrent(): void
-    {
-        $this->setAppKey($this->originalAppKey);
-    }
-
-    protected function setAppKey(string $appKey): void
-    {
-        app(ChangeAppKey::class)($appKey);
+        return false;
     }
 }

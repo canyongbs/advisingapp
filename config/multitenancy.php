@@ -78,7 +78,6 @@ return [
      * A valid task is any class that implements Spatie\Multitenancy\Tasks\SwitchTenantTask
      */
     'switch_tenant_tasks' => [
-        // SwitchAppKey::class,
         PrefixCacheTask::class,
         SwitchTenantDatabasesTask::class,
         SwitchSessionDriver::class,

@@ -34,32 +34,22 @@
 </COPYRIGHT>
 */
 
-use App\Models\Tenant;
-use App\Multitenancy\Tasks\SwitchAppKey;
-use Illuminate\Support\Arr;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertNotEquals;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('tenants', function (Blueprint $table) {
+            $table->dropColumn('key');
+        });
+    }
 
-beforeEach(function () {
-    Tenant::forgetCurrent();
-});
-
-it('switches the app key', function () {
-    $before = config()->get('app.key');
-
-    Tenant::first()->makeCurrent();
-
-    $after = config()->get('app.key');
-
-    assertNotEquals($before, $after);
-
-    Tenant::forgetCurrent();
-
-    $after = config()->get('app.key');
-
-    assertEquals($before, $after);
-})->skip(
-    fn () => Arr::has(config('multitenancy.switch_tenant_tasks'), SwitchAppKey::class) === false,
-    'SwitchAppKey is not registered as a switch Tenant task'
-);
+    public function down(): void
+    {
+        Schema::table('tenants', function (Blueprint $table) {
+            $table->string('key')->nullable();
+        });
+    }
+};
