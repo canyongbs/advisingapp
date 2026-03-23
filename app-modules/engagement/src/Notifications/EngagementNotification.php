@@ -103,7 +103,7 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
     {
         return TwilioMessage::make($notifiable)
             ->to($this->engagement->recipient_route)
-            ->content(strip_tags($this->engagement->getBodyMarkdown()));
+            ->content(html_entity_decode(strip_tags($this->engagement->getBody()), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
     }
 
     public function failed(?Throwable $exception): void

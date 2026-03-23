@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
@@ -355,6 +356,25 @@ class SendEngagementAction extends Action
 
                                         $component->state($template->content);
                                     }))
+                                ->getFileAttachmentUrlFromAnotherRecordUsing(function (mixed $file): ?string {
+                                    return Media::query()
+                                        ->where('uuid', $file)
+                                        ->where('model_type', (new EmailTemplate())->getMorphClass())
+                                        ->first()
+                                        ?->getUrl();
+                                })
+                                ->saveFileAttachmentFromAnotherRecordUsing(function (mixed $file, ?Engagement $record): ?string {
+                                    if (! $record) {
+                                        return null;
+                                    }
+
+                                    return Media::query()
+                                        ->where('uuid', $file)
+                                        ->where('model_type', (new EmailTemplate())->getMorphClass())
+                                        ->first()
+                                        ?->copy($record, 'body', 's3-public')
+                                        ->uuid;
+                                })
                                 ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
                                 ->helperText('You can insert student or your information by typing {{ and choosing a merge value to insert.')
                                 ->columnSpanFull(),

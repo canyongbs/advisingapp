@@ -39,7 +39,9 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -168,6 +170,25 @@ class BulkEmailAction
 
                                     $component->state($template->content);
                                 }))
+                            ->getFileAttachmentUrlFromAnotherRecordUsing(function (mixed $file): ?string {
+                                return Media::query()
+                                    ->where('uuid', $file)
+                                    ->where('model_type', (new EmailTemplate())->getMorphClass())
+                                    ->first()
+                                    ?->getUrl();
+                            })
+                            ->saveFileAttachmentFromAnotherRecordUsing(function (mixed $file, ?EngagementBatch $record): ?string {
+                                if (! $record) {
+                                    return null;
+                                }
+
+                                return Media::query()
+                                    ->where('uuid', $file)
+                                    ->where('model_type', (new EmailTemplate())->getMorphClass())
+                                    ->first()
+                                    ?->copy($record, 'body', 's3-public')
+                                    ->uuid;
+                            })
                             ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
                         Actions::make([

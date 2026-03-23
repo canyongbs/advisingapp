@@ -59,6 +59,9 @@ use App\Models\BaseModel;
 use App\Models\User;
 use CanyonGBS\Common\Parser\Parser;
 use Exception;
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -80,12 +83,13 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @mixin IdeHelperEngagement
  */
 #[ObservedBy([EngagementObserver::class])]
-class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline, HasDeliveryMethod, HasMedia
+class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline, HasDeliveryMethod, HasMedia, HasRichContent
 {
     use AuditableTrait;
     use BelongsToEducatable;
-    use SoftDeletes;
     use InteractsWithMedia;
+    use InteractsWithRichContent;
+    use SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -306,6 +310,39 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function getDeliveryMethod(): NotificationChannel
     {
         return $this->channel;
+    }
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('subject')
+            ->mergeTags([
+                'recipient first name' => '{{ recipient first name }}',
+                'recipient last name' => '{{ recipient last name }}',
+                'recipient full name' => '{{ recipient full name }}',
+                'recipient email' => '{{ recipient email }}',
+                'recipient preferred name' => '{{ recipient preferred name }}',
+                'user first name' => '{{ user first name }}',
+                'user full name' => '{{ user full name }}',
+                'user job title' => '{{ user job title }}',
+                'user email' => '{{ user email }}',
+                'user phone number' => '{{ user phone number }}',
+            ]);
+
+        $this->registerRichContent('body')
+            ->fileAttachmentsDisk('s3-public')
+            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
+            ->mergeTags([
+                'recipient first name' => '{{ recipient first name }}',
+                'recipient last name' => '{{ recipient last name }}',
+                'recipient full name' => '{{ recipient full name }}',
+                'recipient email' => '{{ recipient email }}',
+                'recipient preferred name' => '{{ recipient preferred name }}',
+                'user first name' => '{{ user first name }}',
+                'user full name' => '{{ user full name }}',
+                'user job title' => '{{ user job title }}',
+                'user email' => '{{ user email }}',
+                'user phone number' => '{{ user phone number }}',
+            ]);
     }
 
     protected static function booted(): void

@@ -126,8 +126,8 @@ class Inbox extends Page implements HasTable
                     ->sortable(),
                 TextColumn::make('subject')
                     ->description(
-                        fn (EngagementResponse $record): ?string => filled($body = $record->getBodyMarkdown())
-                            ? Str::limit(strip_tags($body), 50)
+                        fn (EngagementResponse $record): ?string => filled($body = $record->getBody())
+                            ? Str::limit(html_entity_decode(strip_tags($body), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50)
                             : null
                     )
                     ->searchable(['subject', 'content']),

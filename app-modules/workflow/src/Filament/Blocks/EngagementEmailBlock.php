@@ -54,7 +54,9 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class EngagementEmailBlock extends WorkflowActionBlock
 {
@@ -171,6 +173,25 @@ class EngagementEmailBlock extends WorkflowActionBlock
 
                         $component->state($template->content);
                     }))
+                ->getFileAttachmentUrlFromAnotherRecordUsing(function (mixed $file): ?string {
+                    return Media::query()
+                        ->where('uuid', $file)
+                        ->where('model_type', (new EmailTemplate())->getMorphClass())
+                        ->first()
+                        ?->getUrl();
+                })
+                ->saveFileAttachmentFromAnotherRecordUsing(function (mixed $file, ?Model $record): ?string {
+                    if (! $record instanceof WorkflowEngagementEmailDetails) {
+                        return null;
+                    }
+
+                    return Media::query()
+                        ->where('uuid', $file)
+                        ->where('model_type', (new EmailTemplate())->getMorphClass())
+                        ->first()
+                        ?->copy($record, 'body', 's3-public')
+                        ->uuid;
+                })
                 ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                 ->columnSpanFull(),
             Actions::make([

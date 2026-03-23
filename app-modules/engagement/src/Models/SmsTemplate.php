@@ -39,6 +39,8 @@ namespace AdvisingApp\Engagement\Models;
 use AdvisingApp\Engagement\Observers\SmsTemplateObserver;
 use App\Models\BaseModel;
 use App\Models\User;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -47,8 +49,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @mixin IdeHelperSmsTemplate
  */
 #[ObservedBy([SmsTemplateObserver::class])]
-class SmsTemplate extends BaseModel
+class SmsTemplate extends BaseModel implements HasRichContent
 {
+    use InteractsWithRichContent;
     use SoftDeletes;
 
     protected $fillable = [
@@ -67,5 +70,17 @@ class SmsTemplate extends BaseModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('content')
+            ->mergeTags([
+                'recipient first name' => '{{ recipient first name }}',
+                'recipient last name' => '{{ recipient last name }}',
+                'recipient full name' => '{{ recipient full name }}',
+                'recipient email' => '{{ recipient email }}',
+                'recipient preferred name' => '{{ recipient preferred name }}',
+            ]);
     }
 }

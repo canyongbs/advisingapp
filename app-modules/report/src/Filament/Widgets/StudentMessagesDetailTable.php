@@ -189,15 +189,15 @@ class StudentMessagesDetailTable extends BaseWidget
                     }),
                 TextColumn::make('details')
                     ->state(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
-                        Engagement::class => Str::limit(match ($record->record->channel) {
-                            NotificationChannel::Email => $record->record->getSubjectMarkdown(),
-                            NotificationChannel::Sms => $record->record->getBodyMarkdown(),
+                        Engagement::class => Str::limit(html_entity_decode(strip_tags(match ($record->record->channel) {
+                            NotificationChannel::Email => $record->record->getSubject(),
+                            NotificationChannel::Sms => $record->record->getBody(),
                             default => 'N/A',
-                        }, 50),
-                        EngagementResponse::class => Str::limit(match ($record->record->type) {
+                        }), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50),
+                        EngagementResponse::class => Str::limit(html_entity_decode(strip_tags(match ($record->record->type) {
                             EngagementResponseType::Email => $record->record->subject,
-                            EngagementResponseType::Sms => $record->record->getBodyMarkdown(),
-                        }, 50),
+                            EngagementResponseType::Sms => $record->record->getBody(),
+                        }), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50),
                         default => throw new Exception('Invalid record type'),
                     } : null),
                 TextColumn::make('record_sortable_date')
