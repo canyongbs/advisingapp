@@ -40,6 +40,7 @@ use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\InteractionStatusResource;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
+use App\Features\InteractionStatusColorFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -53,6 +54,8 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Filament\Support\Colors\Color;
+use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -122,7 +125,7 @@ class ListInteractionStatuses extends ListRecords
                                                     ? 'You can now create, view, and manage statuses across interactions.'
                                                     : 'Statuses are hidden from all interactions (create, edit, view, and list).'
                                             )
-                                            ->{ $state ? 'success' : 'warning' }()
+                                            ->{$state ? 'success' : 'warning'}()
                                             ->send();
                                     }),
                                 Toggle::make('is_status_required')
@@ -137,10 +140,10 @@ class ListInteractionStatuses extends ListRecords
                                             ->title('Status requirement ' . ($state ? 'enabled' : 'disabled'))
                                             ->body(
                                                 $state
-                                                ? 'Statuses are now mandatory in all interactions (create, edit, view, and list).'
-                                                : 'Statuses are now optional in interactions.'
+                                                    ? 'Statuses are now mandatory in all interactions (create, edit, view, and list).'
+                                                    : 'Statuses are now optional in interactions.'
                                             )
-                                            ->{ $state ? 'success' : 'info' }()
+                                            ->{$state ? 'success' : 'info'}()
                                             ->send();
                                     }),
                             ]),
@@ -155,10 +158,16 @@ class ListInteractionStatuses extends ListRecords
             IdColumn::make(),
             TextColumn::make('name')
                 ->searchable(),
-            TextColumn::make('color')
-                ->label('Color')
-                ->badge()
-                ->color(fn (InteractionStatus $interactionStatus) => $interactionStatus->color->value),
+            //TODO: InteractionStatusColorFeature Cleanup - Remove TextColumn when you remove feature flag and just use ColorColumn
+            ...(
+                InteractionStatusColorFeature::active()
+                ? [ColorColumn::make('color')
+                    ->state(fn (InteractionStatus $interactionStatus): string => Color::convertToRgb(Color::all()[$interactionStatus->color->value][600]))]
+                : [TextColumn::make('color')
+                    ->label('Color')
+                    ->badge()
+                    ->color(fn (InteractionStatus $interactionStatus) => $interactionStatus->color->value)]
+            ),
             IconColumn::make('is_default')
                 ->label('Default')
                 ->boolean(),
