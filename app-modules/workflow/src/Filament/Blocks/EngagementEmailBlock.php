@@ -102,7 +102,7 @@ class EngagementEmailBlock extends WorkflowActionBlock
                     'recipient email',
                     'recipient preferred name',
                 ])
-                ->toolbarButtons([['bold', 'italic', 'small', 'link'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles'], ['mergeTags']])
+                ->toolbarButtons([['bold', 'italic', 'small', 'link', 'textColor'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles'], ['mergeTags']])
                 ->activePanel('mergeTags')
                 ->resizableImages()
                 ->json()

@@ -70,7 +70,7 @@ class EmailSignature extends ProfilePage
                             ->label('Enable Email Signature')
                             ->live(),
                         RichEditor::make('signature')
-                            ->toolbarButtons([['bold', 'italic', 'small', 'link'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList']])
+                            ->toolbarButtons([['bold', 'italic', 'strike', 'underline', 'small', 'textColor', 'link', 'attachFiles']])
                             ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                             ->json()
                             ->required(fn (Get $get) => $get('is_signature_enabled'))

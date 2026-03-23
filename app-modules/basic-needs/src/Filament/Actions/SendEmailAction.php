@@ -164,7 +164,7 @@ class SendEmailAction
                     RichEditor::make('body')
                         ->fileAttachmentsDisk('s3-public')
                         ->label('Body')
-                        ->toolbarButtons([['bold', 'italic', 'small', 'link'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles'], ['mergeTags']])
+                        ->toolbarButtons([['bold', 'italic', 'small', 'link', 'textColor'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles'], ['mergeTags']])
                         ->activePanel('mergeTags')
                         ->resizableImages()
                         ->json()
@@ -191,7 +191,7 @@ class SendEmailAction
                     ->helperText('You may configure your email signature in Profile Settings by selecting your avatar in the upper right portion of the screen.')
                     ->live(),
                 RichEditor::make('signature')
-                    ->toolbarButtons([['bold', 'italic', 'small', 'link'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList']])
+                    ->toolbarButtons([['bold', 'italic', 'strike', 'underline', 'small', 'textColor', 'link', 'attachFiles']])
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->json()
                     ->required(fn (Get $get) => $get('is_signature_enabled'))
