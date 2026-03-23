@@ -230,6 +230,10 @@ trait InteractsWithVectorStores
         $getVectorStoreResponse = $this->vectorStoresHttpClient()
             ->get("vector_stores/{$vectorStore->vector_store_id}");
 
+        if ($getVectorStoreResponse->notFound()) {
+            return null;
+        }
+
         if ((! $getVectorStoreResponse->successful()) || (! is_array($getVectorStoreResponse->json()))) {
             report(new Exception('Failed to get vector store state for vector store [' . $vectorStore->vector_store_id . '], as a [' . $getVectorStoreResponse->status() . '] response was returned: [' . $getVectorStoreResponse->body() . '].'));
 
