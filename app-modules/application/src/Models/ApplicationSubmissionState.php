@@ -66,6 +66,10 @@ class ApplicationSubmissionState extends BaseModel implements Auditable
         'description',
     ];
 
+    protected $casts = [
+        'classification' => ApplicationSubmissionStateClassification::class,
+    ];
+
     /**
      * @return HasMany<ApplicationSubmission, $this>
      */
@@ -81,7 +85,6 @@ class ApplicationSubmissionState extends BaseModel implements Auditable
     protected function casts(): array
     {
         return [
-            'classification' => ApplicationSubmissionStateClassification::class,
             'color' => ApplicationSubmissionStateFeature::active() ? Color::class : ApplicationSubmissionStateColorOptions::class,
         ];
     }
