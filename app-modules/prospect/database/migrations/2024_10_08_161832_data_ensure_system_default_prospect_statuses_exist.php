@@ -52,7 +52,7 @@ return new class () extends Migration {
                     'id' => (string) Str::orderedUuid(),
                     'classification' => 'new',
                     'name' => 'New',
-                    'color' => 'info',
+                    'color' => 'sky',
                     'created_at' => now(),
                     'sort' => DB::raw('(SELECT COALESCE(MAX(prospect_statuses.sort), 0) + 1 FROM prospect_statuses)'),
                 ]);
@@ -78,7 +78,7 @@ return new class () extends Migration {
                     'id' => (string) Str::orderedUuid(),
                     'classification' => 'converted',
                     'name' => 'Converted',
-                    'color' => 'success',
+                    'color' => 'green',
                     'created_at' => now(),
                     'sort' => DB::raw('(SELECT COALESCE(MAX(prospect_statuses.sort), 0) + 1 FROM prospect_statuses)'),
                 ]);
