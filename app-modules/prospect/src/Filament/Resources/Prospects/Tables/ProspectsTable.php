@@ -170,6 +170,15 @@ class ProspectsTable
                                         fn (Builder $query) => $query->whereKey(auth()->user()),
                                     )),
                             ]),
+                        Constraint::make('conversionStatus')
+                            ->label('Conversion Status')
+                            ->icon('heroicon-m-arrow-path')
+                            ->operators([
+                                Operator::make('conversionStatus')
+                                    ->label(fn (bool $isInverse): string => $isInverse ? 'Not Converted' : 'Converted')
+                                    ->summary(fn (bool $isInverse): string => $isInverse ? 'Not Converted' : 'Converted')
+                                    ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereNull' : 'whereNotNull'}('student_id')),
+                            ]),
                     ])
                     ->constraintPickerColumns([
                         'md' => 2,
