@@ -32,7 +32,7 @@ jobs:
 
             - name: Login to Amazon ECR
               id: login-ecr
-              uses: aws-actions/amazon-ecr-login@c962da2960ed15f492addc26fffa274485265950 #2.0.2
+              uses: aws-actions/amazon-ecr-login@261fc3d4806db1fa66a15cc11113c456db8870a7 #2.1.0
 
             - name: Build, tag, and push image to Amazon ECR
               id: build-image
@@ -71,7 +71,7 @@ jobs:
 
             - name: Fill in the new image ID in the Amazon ECS task definition
               id: task-def
-              uses: aws-actions/amazon-ecs-render-task-definition@6b89923a897d41e9ad789181d8865b532ecf973c #1.8.3
+              uses: aws-actions/amazon-ecs-render-task-definition@77954e213ba1f9f9cb016b86a1d4f6fcdea0d57e #1.8.4
               with:
                   task-definition: 'docker/devops/ecs/advisingapp/advisingapp-prod-task-definition.json'
                   container-name: 'app'
@@ -122,7 +122,7 @@ jobs:
 
             - name: Login to Amazon ECR
               id: login-ecr
-              uses: aws-actions/amazon-ecr-login@c962da2960ed15f492addc26fffa274485265950 #2.0.2
+              uses: aws-actions/amazon-ecr-login@261fc3d4806db1fa66a15cc11113c456db8870a7 #2.1.0
 
             - name: Build, tag, and push image to Amazon ECR
               id: build-image
@@ -161,7 +161,7 @@ jobs:
 
             - name: Fill in the new image ID in the Amazon ECS task definition
               id: task-def
-              uses: aws-actions/amazon-ecs-render-task-definition@6b89923a897d41e9ad789181d8865b532ecf973c #1.8.3
+              uses: aws-actions/amazon-ecs-render-task-definition@77954e213ba1f9f9cb016b86a1d4f6fcdea0d57e #1.8.4
               with:
                   task-definition: 'docker/devops/ecs/advisingapp/advisingapp-worker-prod-task-definition.json'
                   container-name: 'worker'
@@ -212,7 +212,7 @@ jobs:
 
             - name: Login to Amazon ECR
               id: login-ecr
-              uses: aws-actions/amazon-ecr-login@c962da2960ed15f492addc26fffa274485265950 #2.0.2
+              uses: aws-actions/amazon-ecr-login@261fc3d4806db1fa66a15cc11113c456db8870a7 #2.1.0
 
             - name: Build, tag, and push image to Amazon ECR
               id: build-image
@@ -251,7 +251,7 @@ jobs:
 
             - name: Fill in the new image ID in the Amazon ECS task definition
               id: task-def
-              uses: aws-actions/amazon-ecs-render-task-definition@6b89923a897d41e9ad789181d8865b532ecf973c #1.8.3
+              uses: aws-actions/amazon-ecs-render-task-definition@77954e213ba1f9f9cb016b86a1d4f6fcdea0d57e #1.8.4
               with:
                   task-definition: 'docker/devops/ecs/advisingapp/advisingapp-scheduler-prod-task-definition.json'
                   container-name: 'scheduler'
@@ -302,7 +302,7 @@ jobs:
 
             - name: Login to Amazon ECR
               id: login-ecr
-              uses: aws-actions/amazon-ecr-login@c962da2960ed15f492addc26fffa274485265950 #2.0.2
+              uses: aws-actions/amazon-ecr-login@261fc3d4806db1fa66a15cc11113c456db8870a7 #2.1.0
 
             - name: Build, tag, and push image to Amazon ECR
               id: build-image
@@ -341,7 +341,7 @@ jobs:
 
             - name: Fill in the new image ID in the Amazon ECS task definition
               id: task-def
-              uses: aws-actions/amazon-ecs-render-task-definition@6b89923a897d41e9ad789181d8865b532ecf973c #1.8.3
+              uses: aws-actions/amazon-ecs-render-task-definition@77954e213ba1f9f9cb016b86a1d4f6fcdea0d57e #1.8.4
               with:
                   task-definition: 'docker/devops/ecs/advisingapp/advisingapp-release-automation-prod-task-definition.json'
                   container-name: 'release-automation'
