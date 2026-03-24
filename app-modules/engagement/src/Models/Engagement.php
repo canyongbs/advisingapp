@@ -38,8 +38,6 @@ namespace AdvisingApp\Engagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
-use AdvisingApp\Engagement\Actions\GenerateEngagementSubjectContent;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -58,7 +56,6 @@ use AdvisingApp\Timeline\Timelines\EngagementTimeline;
 use App\Models\BaseModel;
 use App\Models\User;
 use CanyonGBS\Common\Parser\Parser;
-use Exception;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
@@ -72,6 +69,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 use League\HTMLToMarkdown\HtmlConverter;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
@@ -237,22 +235,31 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function getBody(): HtmlString
     {
-        return app(GenerateEngagementBodyContent::class)(
-            $this->body,
-            $this->getMergeData(),
-            $this->batch ?? $this->campaignAction ?? $this,
-            $this->campaignAction ? 'data.body' : 'body',
-        );
+        if ($this->batch) {
+            $attribute = $this->batch->getRichContentAttribute('body')?->mergeTags($this->getMergeData());
+        } elseif ($this->campaignAction) {
+            $attribute = $this->campaignAction->getRichContentAttribute('data.body')?->mergeTags($this->getMergeData());
+        } else {
+            $attribute = $this->getRichContentAttribute('body');
+        }
+
+        return new HtmlString($attribute?->toHtml() ?? '');
     }
 
     public function getSubject(): ?HtmlString
     {
-        return $this->subject ? app(GenerateEngagementSubjectContent::class)(
-            $this->subject,
-            $this->getMergeData(),
-            $this->batch ?? $this->campaignAction ?? $this,
-            $this->campaignAction ? 'data.subject' : 'subject',
-        ) : null;
+        if ($this->batch) {
+            $attribute = $this->batch->getRichContentAttribute('subject')?->mergeTags($this->getMergeData());
+        } elseif ($this->campaignAction) {
+            $attribute = $this->campaignAction->getRichContentAttribute('data.subject')?->mergeTags($this->getMergeData());
+        } else {
+            $attribute = $this->getRichContentAttribute('subject');
+        }
+
+        $subject = $attribute?->toText() ?? '';
+        $subject = trim(preg_replace('/\s+/u', ' ', $subject) ?? '');
+
+        return $subject ? new HtmlString(Str::limit($subject, 988, '')) : null;
     }
 
     public function getBodyMarkdown(): string
@@ -267,24 +274,17 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function getMergeData(): array
     {
-        throw_unless(($this->recipient instanceof Student) || ($this->recipient instanceof Prospect), new Exception('Recipient is not a student or prospect.'));
-
         return [
-            'recipient first name' => $this->recipient->getAttribute($this->recipient->displayFirstNameKey()),
-            'recipient last name' => $this->recipient->getAttribute($this->recipient->displayLastNameKey()),
-            'recipient full name' => $this->recipient->getAttribute($this->recipient->displayNameKey()),
-            'recipient email' => $this->recipient->primaryEmailAddress?->address,
-            'recipient preferred name' => $this->recipient->getAttribute($this->recipient->displayPreferredNameKey()),
-            'student first name' => $this->recipient->getAttribute($this->recipient->displayFirstNameKey()),
-            'student last name' => $this->recipient->getAttribute($this->recipient->displayLastNameKey()),
-            'student full name' => $this->recipient->getAttribute($this->recipient->displayNameKey()),
-            'student email' => $this->recipient->primaryEmailAddress?->address,
-            'student preferred name' => $this->recipient->getAttribute($this->recipient->displayPreferredNameKey()),
-            'user first name' => $this->user ? (new Parser())->parse($this->user->name)->getFirstname() : null,
-            'user full name' => $this->user?->name,
-            'user job title' => $this->user?->job_title,
-            'user email' => $this->user?->email,
-            'user phone number' => $this->user?->phone_number,
+            'recipient first name' => fn () => $this->recipient?->getAttribute($this->recipient->displayFirstNameKey()), /** @phpstan-ignore method.notFound */
+            'recipient last name' => fn () => $this->recipient?->getAttribute($this->recipient->displayLastNameKey()), /** @phpstan-ignore method.notFound */
+            'recipient full name' => fn () => $this->recipient?->getAttribute($this->recipient->displayNameKey()),
+            'recipient email' => fn () => $this->recipient?->primaryEmailAddress?->address,
+            'recipient preferred name' => fn () => $this->recipient?->getAttribute($this->recipient->displayPreferredNameKey()), /** @phpstan-ignore method.notFound */
+            'user first name' => fn () => $this->user ? (new Parser())->parse($this->user->name)->getFirstname() : null,
+            'user full name' => fn () => $this->user?->name,
+            'user job title' => fn () => $this->user?->job_title,
+            'user email' => fn () => $this->user?->email,
+            'user phone number' => fn () => $this->user?->phone_number,
         ];
     }
 
@@ -315,34 +315,12 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function setUpRichContent(): void
     {
         $this->registerRichContent('subject')
-            ->mergeTags([
-                'recipient first name' => '{{ recipient first name }}',
-                'recipient last name' => '{{ recipient last name }}',
-                'recipient full name' => '{{ recipient full name }}',
-                'recipient email' => '{{ recipient email }}',
-                'recipient preferred name' => '{{ recipient preferred name }}',
-                'user first name' => '{{ user first name }}',
-                'user full name' => '{{ user full name }}',
-                'user job title' => '{{ user job title }}',
-                'user email' => '{{ user email }}',
-                'user phone number' => '{{ user phone number }}',
-            ]);
+            ->mergeTags($this->getMergeData());
 
         $this->registerRichContent('body')
             ->fileAttachmentsDisk('s3-public')
             ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
-            ->mergeTags([
-                'recipient first name' => '{{ recipient first name }}',
-                'recipient last name' => '{{ recipient last name }}',
-                'recipient full name' => '{{ recipient full name }}',
-                'recipient email' => '{{ recipient email }}',
-                'recipient preferred name' => '{{ recipient preferred name }}',
-                'user first name' => '{{ user first name }}',
-                'user full name' => '{{ user full name }}',
-                'user job title' => '{{ user job title }}',
-                'user email' => '{{ user email }}',
-                'user phone number' => '{{ user phone number }}',
-            ]);
+            ->mergeTags($this->getMergeData());
     }
 
     protected static function booted(): void

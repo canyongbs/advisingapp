@@ -39,6 +39,9 @@ namespace AdvisingApp\Campaign\Models;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
 use App\Models\BaseModel;
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -50,10 +53,11 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 /**
  * @mixin IdeHelperCampaignAction
  */
-class CampaignAction extends BaseModel implements Auditable, HasMedia
+class CampaignAction extends BaseModel implements Auditable, HasMedia, HasRichContent
 {
     use AuditableTrait;
     use InteractsWithMedia;
+    use InteractsWithRichContent;
     use SoftDeletes;
 
     protected $fillable = [
@@ -99,5 +103,28 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia
     public function hasBeenExecuted(): bool
     {
         return ! is_null($this->execution_finished_at);
+    }
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('data.subject')
+            ->mergeTags([
+                'recipient first name' => '{{ recipient first name }}',
+                'recipient last name' => '{{ recipient last name }}',
+                'recipient full name' => '{{ recipient full name }}',
+                'recipient email' => '{{ recipient email }}',
+                'recipient preferred name' => '{{ recipient preferred name }}',
+            ]);
+
+        $this->registerRichContent('data.body')
+            ->fileAttachmentsDisk('s3-public')
+            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
+            ->mergeTags([
+                'recipient first name' => '{{ recipient first name }}',
+                'recipient last name' => '{{ recipient last name }}',
+                'recipient full name' => '{{ recipient full name }}',
+                'recipient email' => '{{ recipient email }}',
+                'recipient preferred name' => '{{ recipient preferred name }}',
+            ]);
     }
 }
