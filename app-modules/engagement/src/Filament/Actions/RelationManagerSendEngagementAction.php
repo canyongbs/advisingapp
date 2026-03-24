@@ -239,6 +239,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                             ->placeholder('Enter the email subject here...')
                             ->columnSpanFull(),
                         RichEditor::make('body')
+                            ->key('emailBody')
                             ->fileAttachmentsDisk('s3-public')
                             ->label('Body')
                             ->mergeTags($mergeTags = [
