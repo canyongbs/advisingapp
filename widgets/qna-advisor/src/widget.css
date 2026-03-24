@@ -32,7 +32,7 @@
 </COPYRIGHT>
 */
 
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :host,
 :host *,
@@ -40,7 +40,6 @@
 :host ::after {
     --tw-border-style: solid;
 }
-
 
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
