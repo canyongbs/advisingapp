@@ -38,6 +38,7 @@ namespace AdvisingApp\IntegrationTwilio\Jobs;
 
 use AdvisingApp\Engagement\Actions\CreateEngagementResponse;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
+use AdvisingApp\IntegrationTwilio\Exceptions\UnmatchedTelnyxAutoresponseType;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -79,7 +80,7 @@ class ProcessTelnyxMessageReceived implements ShouldQueue
             'STOP' => $this->handleStop($phoneNumber),
             'START' => $this->handleStart($phoneNumber),
             'HELP' => $this->handleHelp(),
-            default => null,
+            default => report(new UnmatchedTelnyxAutoresponseType($autoResponseType)),
         };
     }
 
