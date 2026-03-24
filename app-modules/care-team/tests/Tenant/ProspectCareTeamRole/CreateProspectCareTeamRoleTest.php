@@ -50,7 +50,19 @@ use function PHPUnit\Framework\assertFalse;
 use function Tests\asSuperAdmin;
 
 test('CreateProspectCareTeamRole is gated with proper access control', function () {
-    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+    $user = User::factory()->create();
+
+    actingAs($user)
+        ->get(
+            ProspectCareTeamRoleResource::getUrl('create')
+        )->assertForbidden();
+
+    livewire(CreateProspectCareTeamRole::class)
+        ->assertForbidden();
+
+    $user->grantLicense(Prospect::getLicenseType());
+
+    $user->refresh();
 
     actingAs($user)
         ->get(
