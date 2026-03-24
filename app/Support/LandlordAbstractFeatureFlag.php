@@ -34,35 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Casts;
+namespace App\Support;
 
-use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Encryption\Encrypter;
-use Illuminate\Support\Str;
+use Laravel\Pennant\Feature;
 
-class Encrypted implements CastsAttributes
+abstract class LandlordAbstractFeatureFlag
 {
-    public function get(Model $model, string $key, mixed $value, array $attributes): mixed
+    public static function active(): bool
     {
-        $encrypter = new Encrypter($this->parseKey(config('app.key')), config('app.cipher'));
-
-        return $encrypter->decrypt($value, false);
+        return Feature::store('landlord')->active(static::class);
     }
 
-    public function set(Model $model, string $key, mixed $value, array $attributes): mixed
+    public static function activate(): void
     {
-        $encrypter = new Encrypter($this->parseKey(config('app.key')), config('app.cipher'));
-
-        return $encrypter->encrypt($value, false);
+        Feature::store('landlord')->activate(static::class);
     }
 
-    protected function parseKey(string $configKey): false|string
+    public static function deactivate(): void
     {
-        if (Str::startsWith($key = $configKey, $prefix = 'base64:')) {
-            $key = base64_decode(Str::after($key, $prefix));
-        }
+        Feature::store('landlord')->deactivate(static::class);
+    }
 
-        return $key;
+    public static function purge(): void
+    {
+        Feature::store('landlord')->purge(static::class);
     }
 }

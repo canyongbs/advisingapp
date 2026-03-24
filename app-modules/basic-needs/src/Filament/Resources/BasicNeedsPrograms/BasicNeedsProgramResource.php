@@ -61,6 +61,8 @@ class BasicNeedsProgramResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static bool $isGloballySearchable = true;
+
     public static function getGloballySearchableAttributes(): array
     {
         return ['name', 'description'];

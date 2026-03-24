@@ -43,8 +43,6 @@ class GroupResourceForProcesses extends Resource
 {
     protected static ?string $model = Group::class;
 
-    protected static bool $isGloballySearchable = false;
-
     protected static bool $shouldRegisterNavigation = false;
 
     public static function canAccess(array $parameters = []): bool

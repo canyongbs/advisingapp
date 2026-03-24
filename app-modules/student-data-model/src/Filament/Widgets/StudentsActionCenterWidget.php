@@ -109,6 +109,7 @@ class StudentsActionCenterWidget extends TableWidget
                     ->sortable(),
                 TextColumn::make('cases_count')
                     ->label('Open Cases')
+                    ->visible(Gate::check(Feature::CaseManagement->getGateName()))
                     ->counts(['cases' => fn (Builder $query): Builder => $query->whereRelation('status', 'classification', '!=', SystemCaseClassification::Closed)])
                     ->sortable(),
             ])
@@ -124,6 +125,7 @@ class StudentsActionCenterWidget extends TableWidget
                     }),
                 SelectFilter::make('cases')
                     ->options(['open' => 'Open', 'closed' => 'Closed'])
+                    ->visible(Gate::check(Feature::CaseManagement->getGateName()))
                     ->query(function (Builder $query, array $data): Builder {
                         if (blank($data['value'] ?? null)) {
                             return $query;

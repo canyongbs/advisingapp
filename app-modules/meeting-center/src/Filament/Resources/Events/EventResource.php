@@ -65,6 +65,8 @@ class EventResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
 
+    protected static bool $isGloballySearchable = true;
+
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([

@@ -41,6 +41,7 @@ use AdvisingApp\Authorization\Http\Middleware\RedirectIfPasswordNotSet;
 use Filament\Actions\Action;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
 use Livewire\Mechanisms\ComponentRegistry;
 
@@ -71,8 +72,8 @@ class AuthorizationPlugin implements Plugin
             ->authMiddleware([
                 RedirectIfPasswordNotSet::class,
             ])
-            ->authenticatedRoutes(function () use ($panel) {
-                SetPassword::routes($panel);
+            ->authenticatedRoutes(function () {
+                Route::get('/set-password', SetPassword::class)->name('auth.set-password');
             });
 
         Livewire::component(app(ComponentRegistry::class)->getName(SetPassword::class), SetPassword::class);
