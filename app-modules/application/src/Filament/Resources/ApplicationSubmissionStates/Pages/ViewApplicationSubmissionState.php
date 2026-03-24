@@ -38,11 +38,14 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates
 
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use App\Features\ApplicationSubmissionStateFeature;
 use Filament\Actions\EditAction;
+use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Colors\Color;
 
 class ViewApplicationSubmissionState extends ViewRecord
 {
@@ -58,10 +61,16 @@ class ViewApplicationSubmissionState extends ViewRecord
                             ->label('Name'),
                         TextEntry::make('classification')
                             ->label('Classification'),
+                        //TODO: ApplicationSubmissionStateFeature Cleanup - Remove TextEntry when you remove feature flag and just use ColorEntry
                         TextEntry::make('color')
                             ->label('Color')
                             ->badge()
+                            ->visible(fn () => ! ApplicationSubmissionStateFeature::active())
                             ->color(fn (ApplicationSubmissionState $applicationState) => $applicationState->color->value),
+                        ColorEntry::make('color')
+                            ->label('Color')
+                            ->state(fn (ApplicationSubmissionState $applicationState): string => Color::convertToRgb(Color::all()[$applicationState->color->value][600]))
+                            ->visible(fn () => ApplicationSubmissionStateFeature::active()),
                         TextEntry::make('description')
                             ->label('Description'),
                     ])

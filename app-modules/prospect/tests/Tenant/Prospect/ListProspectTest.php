@@ -38,12 +38,16 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Concern\Models\ConcernStatus;
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ListProspects;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -206,6 +210,74 @@ it('can filter prospect by concerns', function () {
         ->assertCanNotSeeTableRecords($prospectsWithoutConcerns->merge([$prospectWithStatusInprogress]))
         ->removeTableFilter('concerns')
         ->assertCanSeeTableRecords($prospectsWithoutConcerns->merge([$prospectWithStatusActive, $prospectWithStatusInprogress]));
+});
+
+it('can filter prospects by conversion status via my population groups', function () {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+
+    $user->givePermissionTo('prospect.view-any');
+
+    actingAs($user);
+
+    $convertedProspects = Prospect::factory()
+        ->count(3)
+        ->for(Student::factory(), 'student')
+        ->create();
+
+    $notConvertedProspects = Prospect::factory()->count(3)->create();
+
+    $convertedGroup = Group::factory()->create([
+        'model' => GroupModel::Prospect,
+        'user_id' => $user->getKey(),
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'r1' => [
+                        'type' => 'conversionStatus',
+                        'data' => [
+                            'operator' => 'conversionStatus',
+                            'settings' => [],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $notConvertedGroup = Group::factory()->create([
+        'model' => GroupModel::Prospect,
+        'user_id' => $user->getKey(),
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'r1' => [
+                        'type' => 'conversionStatus',
+                        'data' => [
+                            'operator' => 'conversionStatus.inverse',
+                            'settings' => [],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $convertedProspectIds = app(TranslateGroupFilters::class)
+        ->execute($convertedGroup)
+        ->pluck('prospects.id')
+        ->values()
+        ->all();
+
+    $notConvertedProspectIds = app(TranslateGroupFilters::class)
+        ->execute($notConvertedGroup)
+        ->pluck('prospects.id')
+        ->values()
+        ->all();
+
+    expect($convertedProspectIds)
+        ->toEqualCanonicalizing($convertedProspects->pluck('id')->all())
+        ->and($notConvertedProspectIds)
+        ->toEqualCanonicalizing($notConvertedProspects->pluck('id')->all());
 });
 
 it('renders the bulk create concern action based on proper access', function () {

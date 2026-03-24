@@ -34,38 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Actions;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Encryption\Encrypter;
-use Illuminate\Support\Str;
-use Laravel\SerializableClosure\SerializableClosure;
-
-class ChangeAppKey
-{
-    public function __invoke(string $appKey): void
+return new class () extends Migration {
+    public function up(): void
     {
-        config()->set('app.key', $appKey);
-
-        app()->extend('encrypter', function ($service, $app) use ($appKey) {
-            $config = $app->make('config')->get('app');
-
-            return new Encrypter($this->parseKey($appKey), $config['cipher']);
+        Schema::table('tenants', function (Blueprint $table) {
+            $table->dropColumn('key');
         });
-
-        Model::$encrypter = app('encrypter');
-
-        if (class_exists(SerializableClosure::class)) {
-            SerializableClosure::setSecretKey($this->parseKey($appKey));
-        }
     }
 
-    protected function parseKey(string $key): false|string
+    public function down(): void
     {
-        if (Str::startsWith($key, $prefix = 'base64:')) {
-            $key = base64_decode(Str::after($key, $prefix));
-        }
-
-        return $key;
+        Schema::table('tenants', function (Blueprint $table) {
+            $table->string('key')->nullable();
+        });
     }
-}
+};
