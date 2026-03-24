@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\IntegrationTwilio\Jobs\ProcessTelnyxMessageReceived;
 use AdvisingApp\IntegrationTwilio\Exceptions\UnmatchedTelnyxAutoresponseType;
+use AdvisingApp\IntegrationTwilio\Jobs\ProcessTelnyxMessageReceived;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Facades\Exceptions;
