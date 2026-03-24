@@ -41,7 +41,6 @@ use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -60,6 +59,7 @@ use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class BulkEmailAction
 {

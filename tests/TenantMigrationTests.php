@@ -34,6 +34,11 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Engagement\Models\EmailTemplate;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+
 // Add tests for migration files here
 
 // Example migration test, leave commented out for future use as a template/example
@@ -54,3 +59,68 @@
 //        );
 //    });
 //});
+
+test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_email_templates', function () {
+    isolatedMigration(
+        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_email_templates',
+        function () {
+            $emailTemplate = EmailTemplate::factory()->createQuietly([
+                'content' => [
+                    'type' => 'doc',
+                    'content' => [
+                        [
+                            'type' => 'paragraph',
+                            'attrs' => ['textAlign' => 'start'],
+                            'content' => [
+                                [
+                                    'type' => 'image',
+                                    'attrs' => [
+                                        'id' => 'test-uuid',
+                                        'alt' => null,
+                                        'src' => null,
+                                        'title' => null,
+                                        'width' => 800,
+                                        'height' => 600,
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            'type' => 'paragraph',
+                            'attrs' => ['textAlign' => 'start'],
+                            'content' => [
+                                [
+                                    'type' => 'image',
+                                    'attrs' => [
+                                        'id' => 'small-uuid',
+                                        'alt' => null,
+                                        'src' => null,
+                                        'title' => null,
+                                        'width' => 300,
+                                        'height' => 200,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_email_templates.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('email_templates')->where('id', $emailTemplate->id)->value('content'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][0]['attrs']['width'])->toBeNull();
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][0]['attrs']['height'])->toBeNull();
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['content'][0]['attrs']['width'])->toBe(300);
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['content'][0]['attrs']['height'])->toBe(200);
+        }
+    );
+});
