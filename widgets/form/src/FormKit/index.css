@@ -31,6 +31,14 @@
 
 </COPYRIGHT>
 */
+:host,
+:host *,
+:host ::before,
+:host ::after {
+    --tw-border-style: solid;
+    --tw-space-y-reverse: 0;
+}
+
 .wizard {
     @apply bg-gray-100 flex flex-col mb-3 p-1 rounded-lg gap-1 md:overflow-x-auto md:flex-row md:items-center;
 }
@@ -115,4 +123,12 @@
 .asymetric-grid-left-fourths > .grid-col:first-child,
 .asymetric-grid-right-fourths > .grid-col:last-child {
     @apply md:col-span-3;
+}
+
+.formkit-inner:focus-within {
+    border-color: rgba(var(--primary-500), 1);
+}
+
+.space-y-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-block-start: calc(var(--spacing) * 6);
 }

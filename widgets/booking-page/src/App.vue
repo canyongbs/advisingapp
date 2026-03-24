@@ -361,7 +361,7 @@
                 v-if="userTimezone && visitorTimezone && userTimezone !== visitorTimezone"
                 class="relative flex items-start gap-4 mt-16"
             >
-                <div class="flex-shrink-0 bg-primary-100 p-2 rounded-lg">
+                <div class="shrink-0 bg-primary-100 p-2 rounded-lg">
                     <InformationCircleIcon class="w-5 h-5 text-primary-600" />
                 </div>
                 <div class="flex-1 min-w-0">

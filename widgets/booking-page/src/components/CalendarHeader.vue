@@ -69,7 +69,7 @@
         <button
             @click="emit('previous')"
             :disabled="!canGoPrevious"
-            class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 bg-gray-50 text-gray-600 hover:text-primary-600 hover:bg-primary-50 hover:border-primary-300 hover:scale-105 active:scale-95 cursor-pointer transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-50 disabled:hover:text-gray-600 disabled:hover:border-gray-200 disabled:hover:scale-100 shadow-sm"
+            class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 bg-gray-50 text-gray-600 hover:text-primary-600 hover:bg-primary-50 hover:border-primary-300 hover:scale-105 active:scale-95 cursor-pointer transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-50 disabled:hover:text-gray-600 disabled:hover:border-gray-200 disabled:hover:scale-100 shadow-xs"
         >
             <ChevronLeftIcon class="w-5 h-5" />
         </button>
@@ -79,7 +79,7 @@
         <button
             @click="emit('next')"
             :disabled="!canGoNext"
-            class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 bg-gray-50 text-gray-600 hover:text-primary-600 hover:bg-primary-50 hover:border-primary-300 hover:scale-105 active:scale-95 cursor-pointer transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-50 disabled:hover:text-gray-600 disabled:hover:border-gray-200 disabled:hover:scale-100 shadow-sm"
+            class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 bg-gray-50 text-gray-600 hover:text-primary-600 hover:bg-primary-50 hover:border-primary-300 hover:scale-105 active:scale-95 cursor-pointer transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-50 disabled:hover:text-gray-600 disabled:hover:border-gray-200 disabled:hover:scale-100 shadow-xs"
         >
             <ChevronRightIcon class="w-5 h-5" />
         </button>

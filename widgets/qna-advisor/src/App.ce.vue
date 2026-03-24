@@ -492,7 +492,7 @@
         >
             <div class="w-full max-w-4xl mx-auto p-8">
                 <div class="flex flex-col md:flex-row gap-8 items-center">
-                    <div class="flex-shrink-0">
+                    <div class="shrink-0">
                         <img
                             v-if="advisor.avatar_url"
                             class="h-32 w-32 md:h-48 md:w-48 object-cover rounded-full shadow-lg"
@@ -693,7 +693,7 @@
             <link rel="stylesheet" v-bind:href="cssUrl" />
             <div class="flex h-[calc(100dvh-16rem)] flex-col gap-y-3">
                 <div
-                    class="flex flex-1 flex-col-reverse overflow-y-auto rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
+                    class="flex flex-1 flex-col-reverse overflow-y-auto rounded-xl border border-gray-950/5 text-sm shadow-xs dark:border-white/10 dark:bg-gray-800"
                 >
                     <div class="divide-y divide-gray-200 dark:divide-gray-800" v-if="messages.length > 0">
                         <div
@@ -701,7 +701,7 @@
                             v-for="(message, index) in messages"
                             :key="index"
                         >
-                            <div class="relative flex flex-shrink-0 flex-col items-end">
+                            <div class="relative flex shrink-0 flex-col items-end">
                                 <img
                                     class="h-8 w-8 object-cover object-center"
                                     :class="{ 'dark:invert': message.from !== 'advisor' }"
@@ -723,7 +723,7 @@
                 </div>
                 <div
                     v-if="!isThreadFinished"
-                    class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700"
+                    class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-xs dark:border-white/10 dark:bg-gray-700"
                 >
                     <div
                         v-if="isLoading"

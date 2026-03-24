@@ -414,10 +414,9 @@
 
             <h1
                 :style="{
-                    '--title-font-weight': formTitleFontWeight,
+                    fontWeight: formTitleFontWeight,
                     color: `rgb(${formTitleColor[900]})`,
                 }"
-                class="font-[--title-font-weight]"
             >
                 {{ formName }}
             </h1>

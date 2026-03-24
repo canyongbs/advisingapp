@@ -32,6 +32,36 @@
 </COPYRIGHT>
 */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+
+@theme inline {
+    --color-primary-50: rgba(var(--primary-50));
+    --color-primary-100: rgba(var(--primary-100));
+    --color-primary-200: rgba(var(--primary-200));
+    --color-primary-300: rgba(var(--primary-300));
+    --color-primary-400: rgba(var(--primary-400));
+    --color-primary-500: rgba(var(--primary-500));
+    --color-primary-600: rgba(var(--primary-600));
+    --color-primary-700: rgba(var(--primary-700));
+    --color-primary-800: rgba(var(--primary-800));
+    --color-primary-900: rgba(var(--primary-900));
+    --color-primary-950: rgba(var(--primary-950));
+}
+
+@theme {
+    --animate-fade-in: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
