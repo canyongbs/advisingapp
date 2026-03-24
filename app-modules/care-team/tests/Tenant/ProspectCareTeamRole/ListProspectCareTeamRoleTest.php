@@ -46,7 +46,16 @@ use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('ListProspectCareTeamRole is gated with proper access control', function () {
-    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+    $user = User::factory()->create();
+
+    actingAs($user)
+        ->get(
+            ProspectCareTeamRoleResource::getUrl('index')
+        )->assertForbidden();
+
+    $user->grantLicense(Prospect::getLicenseType());
+
+    $user->refresh();
 
     actingAs($user)
         ->get(

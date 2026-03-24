@@ -44,9 +44,20 @@ use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
 test('ViewProspectCareTeamRole is gated with proper access control', function () {
-    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+    $user = User::factory()->create();
 
     $careTeamRole = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Prospect]);
+
+    actingAs($user)
+        ->get(
+            ProspectCareTeamRoleResource::getUrl('view', [
+                'record' => $careTeamRole,
+            ])
+        )->assertForbidden();
+
+    $user->grantLicense(Prospect::getLicenseType());
+
+    $user->refresh();
 
     actingAs($user)
         ->get(

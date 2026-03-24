@@ -49,9 +49,25 @@ use function PHPUnit\Framework\assertEquals;
 use function Tests\asSuperAdmin;
 
 test('EditProspectCareTeamRole is gated with proper access control', function () {
-    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+    $user = User::factory()->create();
 
     $careTeamRole = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Prospect]);
+
+    actingAs($user)
+        ->get(
+            ProspectCareTeamRoleResource::getUrl('edit', [
+                'record' => $careTeamRole,
+            ])
+        )->assertForbidden();
+
+    livewire(EditProspectCareTeamRole::class, [
+        'record' => $careTeamRole->getRouteKey(),
+    ])
+        ->assertForbidden();
+
+    $user->grantLicense(Prospect::getLicenseType());
+
+    $user->refresh();
 
     actingAs($user)
         ->get(
