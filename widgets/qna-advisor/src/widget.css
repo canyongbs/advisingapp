@@ -69,7 +69,7 @@
     --radius-lg: var(--rounding-lg);
     --radius-full: var(--rounding-sm);
 
-    --font-signature: "Satisfy", cursive;
+    --font-signature: 'Satisfy', cursive;
 }
 
 body {
