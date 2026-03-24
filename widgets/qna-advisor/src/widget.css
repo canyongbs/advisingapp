@@ -34,6 +34,13 @@
 
 @import "tailwindcss";
 
+:host,
+:host *,
+:host ::before,
+:host ::after {
+    --tw-border-style: solid;
+}
+
 
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";

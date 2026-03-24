@@ -36,6 +36,7 @@
 :host ::before,
 :host ::after {
     --tw-border-style: solid;
+    --tw-space-y-reverse: 0;
 }
 
 .wizard {
@@ -126,4 +127,8 @@
 
 .formkit-inner:focus-within {
     border-color: rgba(var(--primary-500), 1);
+}
+
+.space-y-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-block-start: calc(var(--spacing) * 6);
 }
