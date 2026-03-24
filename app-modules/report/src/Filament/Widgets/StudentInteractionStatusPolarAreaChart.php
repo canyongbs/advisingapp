@@ -39,7 +39,6 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\InteractionStatusColorFeature;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -145,7 +144,7 @@ class StudentInteractionStatusPolarAreaChart extends ChartReportWidget
                         });
                 },
             ])->get(['id', 'name'])->map(function (InteractionStatus $interactionStatus) {
-                $interactionStatus['bg_color'] = InteractionStatusColorFeature::active() ? $interactionStatus->color->getRgb() : $interactionStatus->color->getRgbString();
+                $interactionStatus['bg_color'] = $interactionStatus->color->getRgb();
 
                 return $interactionStatus;
             });

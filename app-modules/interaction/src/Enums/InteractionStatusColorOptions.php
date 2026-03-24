@@ -50,6 +50,11 @@ enum InteractionStatusColorOptions: string
 
     case Gray = 'gray';
 
+    public function getRgb(): string
+    {
+        return $this->getRgbString();
+    }
+
     public function getRgbString(): string
     {
         return match ($this) {
