@@ -41,7 +41,7 @@ use Exception;
 class UnmatchedTelnyxAutoresponseType extends Exception
 {
     public function __construct(
-        protected mixed $autoresponseType,
+        protected string $autoresponseType,
     ) {
         parent::__construct('Unmatched Telnyx autoresponse type received.');
     }
