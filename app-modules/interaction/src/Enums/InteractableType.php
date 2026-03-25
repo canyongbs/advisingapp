@@ -76,14 +76,14 @@ enum InteractableType: string implements HasLabel
      */
     public static function filterQueryByLicense(Builder $query, User $user): Builder
     {
-        return $query
-            ->when(
-                ! $user->hasLicense(Prospect::getLicenseType()),
-                fn (Builder $query) => $query->where('interactable_type', '!=', self::Prospect->value),
-            )
-            ->when(
-                ! $user->hasLicense(Student::getLicenseType()),
-                fn (Builder $query) => $query->where('interactable_type', '!=', self::Student->value),
-            );
+        if (! $user->hasLicense(Prospect::getLicenseType())) {
+            $query->where('interactable_type', '!=', self::Prospect->value);
+        }
+
+        if (! $user->hasLicense(Student::getLicenseType())) {
+            $query->where('interactable_type', '!=', self::Student->value);
+        }
+
+        return $query;
     }
 }
