@@ -94,7 +94,7 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
                 app(EngagementSettings::class)->are_dynamic_engagements_enabled && $this->engagement->user,
                 fn (MailMessage $message) => $message->from(name: $this->engagement->user->name),
             )
-            ->subject(strip_tags($this->engagement->getSubject()))
+            ->subject(html_entity_decode(strip_tags($this->engagement->getSubject()), ENT_QUOTES | ENT_HTML5, 'UTF-8'))
             ->greeting("Hello {$this->engagement->recipient->display_name}!")
             ->content($this->engagement->getBody());
     }

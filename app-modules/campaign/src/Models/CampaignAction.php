@@ -46,6 +46,7 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -78,6 +79,24 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia, HasRichCo
         'execution_dispatched_at' => 'datetime',
         'execution_finished_at' => 'datetime',
     ];
+
+    /**
+     * Resolve dot-notation attributes for Filament's RichContentAttribute.
+     *
+     * Filament's RichContentAttribute::toHtml() calls getAttribute($name) which
+     * does not support dot notation for JSON-cast columns. This override enables
+     * getAttribute('data.body') to resolve into the `data` JSON column.
+     *
+     * @param mixed $key
+     */
+    public function getAttribute($key): mixed
+    {
+        if (str_contains((string) $key, '.')) {
+            return data_get(parent::getAttribute(Str::before($key, '.')), Str::after($key, '.'));
+        }
+
+        return parent::getAttribute($key);
+    }
 
     /**
      * @return BelongsTo<Campaign, $this>

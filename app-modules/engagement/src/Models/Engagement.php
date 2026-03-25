@@ -59,8 +59,10 @@ use CanyonGBS\Common\Parser\Parser;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -237,13 +239,35 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     {
         if ($this->batch) {
             $attribute = $this->batch->getRichContentAttribute('body')?->mergeTags($this->getMergeData());
-        } elseif ($this->campaignAction) {
-            $attribute = $this->campaignAction->getRichContentAttribute('data.body')?->mergeTags($this->getMergeData());
-        } else {
-            $attribute = $this->getRichContentAttribute('body');
+
+            return new HtmlString($attribute?->toHtml() ?? '');
         }
 
-        return new HtmlString($attribute?->toHtml() ?? '');
+        $content = $this->campaignAction
+            ? $this->campaignAction->getAttribute('data.body')
+            : $this->body;
+
+        if (blank($content)) {
+            return new HtmlString('');
+        }
+
+        // Images saved via SpatieMediaLibrary have UUID IDs and null src.
+        // Images from campaign/workflow jobs have filename IDs and direct S3 URLs.
+        // If the engagement has media records, use the provider to resolve UUIDs.
+        // Otherwise, strip non-UUID IDs to preserve existing src URLs.
+        if ($this->getMedia('body')->isNotEmpty()) {
+            $attribute = $this->getRichContentAttribute('body')?->mergeTags($this->getMergeData());
+
+            return new HtmlString($attribute?->toHtml() ?? '');
+        }
+
+        $this->resolveImageUrls($content);
+
+        return new HtmlString(
+            RichContentRenderer::make($content)
+                ->mergeTags($this->getMergeData())
+                ->toHtml()
+        );
     }
 
     public function getSubject(): ?HtmlString
@@ -253,10 +277,11 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         } elseif ($this->campaignAction) {
             $attribute = $this->campaignAction->getRichContentAttribute('data.subject')?->mergeTags($this->getMergeData());
         } else {
-            $attribute = $this->getRichContentAttribute('subject');
+            $attribute = $this->getRichContentAttribute('subject')?->mergeTags($this->getMergeData());
         }
 
         $subject = $attribute?->toText() ?? '';
+        $subject = html_entity_decode($subject, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $subject = trim(preg_replace('/\s+/u', ' ', $subject) ?? '');
 
         return $subject ? new HtmlString(Str::limit($subject, 988, '')) : null;
@@ -321,6 +346,49 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
             ->fileAttachmentsDisk('s3-public')
             ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
             ->mergeTags($this->getMergeData());
+    }
+
+    /**
+     * Strip non-UUID image IDs from content nodes so the renderer
+     * doesn't overwrite valid src URLs with null during rendering.
+     *
+     * @param  array<mixed>  $node
+     */
+    /**
+     * Resolve image URLs in TipTap content for rendering.
+     *
+     * Images may have:
+     * - A filename ID with a valid S3 src URL (direct uploads) → strip ID to preserve src
+     * - A UUID ID with null src (SpatieMediaLibrary from templates) → resolve UUID to URL
+     */
+    protected function resolveImageUrls(array &$node): void
+    {
+        if (($node['type'] ?? null) === 'image' && filled($node['attrs']['id'] ?? null)) {
+            $id = $node['attrs']['id'];
+            $isUuid = preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $id);
+
+            if ($isUuid && blank($node['attrs']['src'] ?? null)) {
+                // UUID with no src — resolve from media library (e.g., loaded from email template)
+                $media = Media::query()
+                    ->where('uuid', $id)
+                    ->first();
+
+                if ($media) {
+                    $node['attrs']['src'] = $media->getUrl();
+                }
+            }
+
+            // Strip ID so processFileAttachments doesn't overwrite src
+            unset($node['attrs']['id']);
+        }
+
+        if (isset($node['content']) && is_array($node['content'])) {
+            foreach ($node['content'] as &$child) {
+                if (is_array($child)) {
+                    $this->resolveImageUrls($child);
+                }
+            }
+        }
     }
 
     protected static function booted(): void
