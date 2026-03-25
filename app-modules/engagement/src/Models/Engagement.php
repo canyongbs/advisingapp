@@ -349,19 +349,14 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     }
 
     /**
-     * Strip non-UUID image IDs from content nodes so the renderer
-     * doesn't overwrite valid src URLs with null during rendering.
-     *
-     * @param  array<mixed>  $node
-     */
-    /**
      * Resolve image URLs in TipTap content for rendering.
      *
      * Images may have:
      * - A filename ID with a valid S3 src URL (direct uploads) → strip ID to preserve src
      * - A UUID ID with null src (SpatieMediaLibrary from templates) → resolve UUID to URL
+     *
+     * @param  array<string, mixed>  $node
      */
-    /** @param array<string, mixed> $node */
     protected function resolveImageUrls(array &$node): void
     {
         if (($node['type'] ?? null) === 'image' && filled($node['attrs']['id'] ?? null)) {
