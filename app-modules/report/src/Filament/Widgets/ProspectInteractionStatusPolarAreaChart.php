@@ -97,8 +97,8 @@ class ProspectInteractionStatusPolarAreaChart extends ChartReportWidget
     }
 
     /**
-    * @return array<string, mixed>
-    */
+     * @return array<string, mixed>
+     */
     protected function getOptions(): array
     {
         return [
@@ -143,7 +143,7 @@ class ProspectInteractionStatusPolarAreaChart extends ChartReportWidget
                         });
                 },
             ])->get(['id', 'name'])->map(function (InteractionStatus $interactionStatus) {
-                $interactionStatus['bg_color'] = $interactionStatus->color->getRgbString();
+                $interactionStatus['bg_color'] = $interactionStatus->color->getRgb();
 
                 return $interactionStatus;
             });

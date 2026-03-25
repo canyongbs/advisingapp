@@ -34,28 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Database\Factories;
+namespace App\Features;
 
-use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
-use AdvisingApp\Interaction\Enums\InteractableType;
-use AdvisingApp\Interaction\Models\InteractionStatus;
-use App\Features\InteractionStatusColorFeature;
-use CanyonGBS\Common\Enums\Color;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Laravel\Pennant\Feature;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @extends Factory<InteractionStatus>
- */
-class InteractionStatusFactory extends Factory
+class InteractionStatusColorFeature extends AbstractFeatureFlag
 {
-    public function definition(): array
+    public function resolve(mixed $scope): mixed
     {
-        return [
-            'name' => $this->faker->unique()->sentence(),
-            'color' => Feature::active(InteractionStatusColorFeature::class) ? $this->faker->randomElement(Color::cases())->value : $this->faker->randomElement(ColumnColorOptions::cases())->value,
-            'is_default' => false,
-            'interactable_type' => $this->faker->randomElement(InteractableType::cases()),
-        ];
+        return false;
     }
 }

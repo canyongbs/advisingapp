@@ -41,7 +41,9 @@ use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
 use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
 use AdvisingApp\Interaction\Observers\InteractionStatusObserver;
+use App\Features\InteractionStatusColorFeature;
 use App\Models\BaseModel;
+use CanyonGBS\Common\Enums\Color;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -76,5 +78,13 @@ class InteractionStatus extends BaseModel implements Auditable
     public function interactions(): HasMany
     {
         return $this->hasMany(Interaction::class, 'interaction_status_id');
+    }
+
+    //TODO: ApplicationSubmissionStateFeature Cleanup - After ApplicationSubmissionStateFeature is removed: please move color back to $cast property, Additionally, remove InteractionStatusColorOptions Enum if it is no longer used elsewhere in the codebase.
+    public function casts()
+    {
+        return [
+            'color' => InteractionStatusColorFeature::active() ? Color::class : InteractionStatusColorOptions::class,
+        ];
     }
 }

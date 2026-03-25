@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Interaction\Enums;
 
+//TODO: InteractionStatusColorFeature Cleanup - Remove `InteractionStatusColorOptions` Enum if it is no longer used elsewhere in the codebase.
+
 enum InteractionStatusColorOptions: string
 {
     case Success = 'success';
@@ -49,6 +51,11 @@ enum InteractionStatusColorOptions: string
     case Primary = 'primary';
 
     case Gray = 'gray';
+
+    public function getRgb(): string
+    {
+        return $this->getRgbString();
+    }
 
     public function getRgbString(): string
     {
