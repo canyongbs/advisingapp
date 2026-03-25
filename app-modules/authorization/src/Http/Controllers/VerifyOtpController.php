@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,27 +34,49 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Http\Controllers\GenerateLoginMagicLinkController;
-use AdvisingApp\Authorization\Http\Controllers\GenerateLoginOtpController;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
-use App\Http\Controllers\UtilizationMetricsApiController;
-use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Facades\Route;
-use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
+namespace AdvisingApp\Authorization\Http\Controllers;
 
-Route::middleware([
-    CheckOlympusKey::class,
-])->group(function () {
-    Route::post('/azure-sso/update', UpdateAzureSsoSettingsController::class)
-        ->name('azure-sso.update');
+use AdvisingApp\Authorization\Models\OtpLoginCode;
+use Filament\Facades\Filament;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Throwable;
 
-    Route::get('/health', HealthCheckJsonResultsController::class)
-        ->name('health');
+class VerifyOtpController
+{
+    /**
+     * @throws Throwable
+     */
+    public function __invoke(Request $request, OtpLoginCode $otpCode): RedirectResponse
+    {
+        abort_if(
+            boolean: now()->greaterThanOrEqualTo($otpCode->created_at->addMinutes(20))
+                || $otpCode->used_at !== null,
+            code: 403,
+            message: 'This OTP link has expired or has already been used. Please request a new one.'
+        );
 
-    Route::get('/utilization-metrics', UtilizationMetricsApiController::class)
-        ->name('utilization-metrics');
+        $request->validate([
+            'code' => ['required', 'digits:6'],
+        ]);
 
-    Route::post('/magic-link', GenerateLoginMagicLinkController::class)->name('magic-link.generate');
+        if (! Hash::check($request->input('code'), $otpCode->code)) {
+            return back()->withErrors([
+                'code' => 'The OTP code you entered is incorrect. Please try again.',
+            ]);
+        }
 
-    Route::post('/otp-code', GenerateLoginOtpController::class)->name('otp-code.generate');
-});
+        $otpCode->used_at = now();
+        $otpCode->saveOrFail();
+
+        $user = $otpCode->user;
+
+        $panel = Filament::getPanel('admin');
+
+        Auth::guard($panel->getAuthGuard())->login($user);
+
+        return redirect()->to($panel->getHomeUrl());
+    }
+}

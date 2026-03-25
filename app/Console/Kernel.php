@@ -43,6 +43,7 @@ use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Audit\Models\Audit;
 use AdvisingApp\Authorization\Models\LoginMagicLink;
+use AdvisingApp\Authorization\Models\OtpLoginCode;
 use AdvisingApp\Campaign\Jobs\ExecuteCampaignActions;
 use AdvisingApp\Engagement\Jobs\DeliverEngagements as DeliverEngagementsJob;
 use AdvisingApp\Engagement\Jobs\GatherAndDispatchSesS3InboundEmails;
@@ -195,6 +196,7 @@ class Kernel extends ConsoleKernel
                         HealthCheckResultHistoryItem::class,
                         ProjectFile::class,
                         LoginMagicLink::class,
+                        OtpLoginCode::class,
                     ])
                         ->join(',');
 

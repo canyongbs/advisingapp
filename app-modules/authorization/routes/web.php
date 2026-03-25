@@ -36,7 +36,9 @@
 
 use AdvisingApp\Authorization\Http\Controllers\Auth\OneTimeLoginController;
 use AdvisingApp\Authorization\Http\Controllers\MagicLinkLoginController;
+use AdvisingApp\Authorization\Http\Controllers\OtpLoginController;
 use AdvisingApp\Authorization\Http\Controllers\SocialiteController;
+use AdvisingApp\Authorization\Http\Controllers\VerifyOtpController;
 
 Route::middleware('web')->group(function () {
     Route::prefix('auth')->name('socialite.')->group(function () {
@@ -54,4 +56,11 @@ Route::middleware('web')->group(function () {
     Route::get('/magic-link/{magicLink}', MagicLinkLoginController::class)
         ->name('magic-link.login')
         ->middleware('signed');
+
+    Route::get('/otp-code/{otpCode}', OtpLoginController::class)
+        ->name('otp-code.login')
+        ->middleware('signed');
+
+    Route::post('/otp-code/{otpCode}/verify', VerifyOtpController::class)
+        ->name('otp-code.verify');
 });

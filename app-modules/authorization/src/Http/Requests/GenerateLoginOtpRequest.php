@@ -34,27 +34,23 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Http\Controllers\GenerateLoginMagicLinkController;
-use AdvisingApp\Authorization\Http\Controllers\GenerateLoginOtpController;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
-use App\Http\Controllers\UtilizationMetricsApiController;
-use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Facades\Route;
-use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
+namespace AdvisingApp\Authorization\Http\Requests;
 
-Route::middleware([
-    CheckOlympusKey::class,
-])->group(function () {
-    Route::post('/azure-sso/update', UpdateAzureSsoSettingsController::class)
-        ->name('azure-sso.update');
+use App\Models\Authenticatable;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-    Route::get('/health', HealthCheckJsonResultsController::class)
-        ->name('health');
-
-    Route::get('/utilization-metrics', UtilizationMetricsApiController::class)
-        ->name('utilization-metrics');
-
-    Route::post('/magic-link', GenerateLoginMagicLinkController::class)->name('magic-link.generate');
-
-    Route::post('/otp-code', GenerateLoginOtpController::class)->name('otp-code.generate');
-});
+class GenerateLoginOtpRequest extends FormRequest
+{
+    /**
+     * @return array<string, array<int, string>>
+     */
+    public function rules(): array
+    {
+        return [
+            'email' => ['required', 'email'],
+            'name' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string', Rule::in([Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE, Authenticatable::AI_ADMIN_ROLE])],
+        ];
+    }
+}

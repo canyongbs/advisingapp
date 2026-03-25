@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,27 +34,23 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Http\Controllers\GenerateLoginMagicLinkController;
-use AdvisingApp\Authorization\Http\Controllers\GenerateLoginOtpController;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
-use App\Http\Controllers\UtilizationMetricsApiController;
-use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Facades\Route;
-use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
+namespace AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\RequestFactories;
 
-Route::middleware([
-    CheckOlympusKey::class,
-])->group(function () {
-    Route::post('/azure-sso/update', UpdateAzureSsoSettingsController::class)
-        ->name('azure-sso.update');
+use App\Models\Authenticatable;
+use Worksome\RequestFactories\RequestFactory;
 
-    Route::get('/health', HealthCheckJsonResultsController::class)
-        ->name('health');
-
-    Route::get('/utilization-metrics', UtilizationMetricsApiController::class)
-        ->name('utilization-metrics');
-
-    Route::post('/magic-link', GenerateLoginMagicLinkController::class)->name('magic-link.generate');
-
-    Route::post('/otp-code', GenerateLoginOtpController::class)->name('otp-code.generate');
-});
+class GenerateLoginOtpRequestFactory extends RequestFactory
+{
+    public function definition(): array
+    {
+        return [
+            'email' => $this->faker->safeEmail(),
+            'name' => $this->faker->name(),
+            'type' => $this->faker->randomElement([
+                Authenticatable::SUPER_ADMIN_ROLE,
+                Authenticatable::PARTNER_ADMIN_ROLE,
+                Authenticatable::AI_ADMIN_ROLE,
+            ]),
+        ];
+    }
+}

@@ -34,27 +34,29 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Http\Controllers\GenerateLoginMagicLinkController;
-use AdvisingApp\Authorization\Http\Controllers\GenerateLoginOtpController;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
-use App\Http\Controllers\UtilizationMetricsApiController;
-use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Facades\Route;
-use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
+namespace AdvisingApp\Authorization\Http\Controllers;
 
-Route::middleware([
-    CheckOlympusKey::class,
-])->group(function () {
-    Route::post('/azure-sso/update', UpdateAzureSsoSettingsController::class)
-        ->name('azure-sso.update');
+use AdvisingApp\Authorization\Models\OtpLoginCode;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 
-    Route::get('/health', HealthCheckJsonResultsController::class)
-        ->name('health');
+class OtpLoginController
+{
+    public function __invoke(Request $request, OtpLoginCode $otpCode): View
+    {
+        abort_if(
+            boolean: now()->greaterThanOrEqualTo($otpCode->created_at->addMinutes(20))
+                || $otpCode->used_at !== null,
+            code: 403,
+            message: 'This OTP link has expired or has already been used. Please request a new one.'
+        );
 
-    Route::get('/utilization-metrics', UtilizationMetricsApiController::class)
-        ->name('utilization-metrics');
+        $verifyUrl = route('otp-code.verify', [
+            'otpCode' => $otpCode->getKey(),
+        ]);
 
-    Route::post('/magic-link', GenerateLoginMagicLinkController::class)->name('magic-link.generate');
-
-    Route::post('/otp-code', GenerateLoginOtpController::class)->name('otp-code.generate');
-});
+        return view('authorization::otp-entry', [
+            'verifyUrl' => $verifyUrl,
+        ]);
+    }
+}
