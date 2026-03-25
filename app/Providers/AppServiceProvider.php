@@ -36,10 +36,13 @@
 
 namespace App\Providers;
 
+use AdvisingApp\Campaign\Jobs\EngagementCampaignActionJob;
 use AdvisingApp\Engagement\Jobs\CreateBatchedEngagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Pipeline\Models\PipelineStage;
+use AdvisingApp\Workflow\Jobs\EngagementEmailWorkflowActionJob;
+use AdvisingApp\Workflow\Jobs\EngagementSmsWorkflowActionJob;
 use App\Models\SystemUser;
 use App\Models\Tenant;
 use App\Notifications\ResetPasswordNotification;
@@ -186,6 +189,9 @@ class AppServiceProvider extends ServiceProvider
             $channels = match (true) {
                 $job instanceof CreateBatchedEngagement => [$job->engagementBatch->channel],
                 $job instanceof SendQueuedNotifications => $job->channels,
+                $job instanceof EngagementCampaignActionJob => [NotificationChannel::parse($job->actionEducatable->campaignAction->data['channel'])],
+                $job instanceof EngagementEmailWorkflowActionJob => [NotificationChannel::Email],
+                $job instanceof EngagementSmsWorkflowActionJob => [NotificationChannel::Sms],
                 default => throw new Exception('Invalid job type'),
             };
 
