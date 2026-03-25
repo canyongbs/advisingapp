@@ -374,10 +374,9 @@
 
             <h1
                 :style="{
-                    '--title-font-weight': applicationTitleFontWeight,
+                    fontWeight: applicationTitleFontWeight,
                     color: `rgb(${applicationTitleColor[900]})`,
                 }"
-                class="font-[--title-font-weight]"
             >
                 {{ applicationName }}
             </h1>

@@ -177,7 +177,7 @@
         </div>
 
         <div v-if="error" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
-            <XCircleIcon class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <XCircleIcon class="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
             <p class="text-sm text-red-800">{{ error }}</p>
         </div>
 

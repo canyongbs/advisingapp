@@ -102,7 +102,7 @@
     <input
         v-for="index in digits"
         maxlength="1"
-        class="ring-1 ring-gray-400 focus-within:ring-primary-500 rounded appearance-none p-2 w-8 mr-1 text-center bg-transparent focus:outline-none focus:shadow-none font-sans border-none text-gray-700 placeholder-gray-400"
+        class="border border-gray-400 focus:border-primary-500 rounded appearance-none p-2 w-8 mr-1 text-center bg-transparent focus:outline-none focus:shadow-none font-sans text-gray-700 placeholder-gray-400"
         :value="tmp[index - 1] || ''"
         @input="handleInput(index - 1, $event)"
         @focus="handleFocus"
