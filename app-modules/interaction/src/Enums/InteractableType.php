@@ -67,6 +67,13 @@ enum InteractableType: string implements HasLabel
             ->toArray();
     }
 
+    /**
+     * @template TModel of \Illuminate\Database\Eloquent\Model
+     *
+     * @param Builder<TModel> $query
+     *
+     * @return Builder<TModel>
+     */
     public static function filterQueryByLicense(Builder $query, User $user): Builder
     {
         return $query
