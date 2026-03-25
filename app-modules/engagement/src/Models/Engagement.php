@@ -361,6 +361,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
      * - A filename ID with a valid S3 src URL (direct uploads) → strip ID to preserve src
      * - A UUID ID with null src (SpatieMediaLibrary from templates) → resolve UUID to URL
      */
+    /** @param array<string, mixed> $node */
     protected function resolveImageUrls(array &$node): void
     {
         if (($node['type'] ?? null) === 'image' && filled($node['attrs']['id'] ?? null)) {
