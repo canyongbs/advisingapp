@@ -48,6 +48,12 @@ it('is gated with proper access control', function () {
 
     get(ProspectTaskManagement::getUrl())->assertForbidden();
 
+    $user->grantLicense(LicenseType::RetentionCrm);
+
+    $user->refresh();
+
+    get(ProspectTaskManagement::getUrl())->assertForbidden();
+
     $user->grantLicense(LicenseType::RecruitmentCrm);
 
     $user->refresh();

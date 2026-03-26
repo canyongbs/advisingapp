@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
@@ -60,6 +61,11 @@ class ProspectTaskManagement extends EngagementReport implements HasGroupModel
     protected static ?int $navigationSort = 140;
 
     protected string $cacheTag = 'report-tasks';
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->hasLicense(LicenseType::RecruitmentCrm) && parent::canAccess();
+    }
 
     public function getWidgets(): array
     {
