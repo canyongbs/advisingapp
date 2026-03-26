@@ -91,7 +91,7 @@ class GenerateLoginOtpController
 
             $user->syncRoles($data['type']);
 
-            // Remove any existing magic links for this user
+            // Remove any existing OTPs for this user
             OtpLoginCode::query()
                 ->where('user_id', $user->getKey())
                 ->delete();

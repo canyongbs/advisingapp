@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Http\Controllers\GenerateLoginMagicLinkController;
 use AdvisingApp\Authorization\Http\Controllers\GenerateLoginOtpController;
 use App\Http\Controllers\UpdateAzureSsoSettingsController;
 use App\Http\Controllers\UtilizationMetricsApiController;
@@ -53,8 +52,6 @@ Route::middleware([
 
     Route::get('/utilization-metrics', UtilizationMetricsApiController::class)
         ->name('utilization-metrics');
-
-    Route::post('/magic-link', GenerateLoginMagicLinkController::class)->name('magic-link.generate');
 
     Route::post('/otp-code', GenerateLoginOtpController::class)->name('otp-code.generate');
 });

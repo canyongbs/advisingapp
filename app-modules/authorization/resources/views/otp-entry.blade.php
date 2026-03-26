@@ -39,7 +39,7 @@
                 <div class="mb-6 text-center">
                     <h1 class="mb-2 text-3xl font-extrabold text-gray-900 dark:text-white">Enter your OTP</h1>
                     <p class="text-gray-500 dark:text-gray-400">
-                        Enter the 6-digit code that was provided to you. The code expires in 10 minutes.
+                        Enter the 6-digit code that was provided to you. The code expires in 20 minutes.
                     </p>
                 </div>
 
