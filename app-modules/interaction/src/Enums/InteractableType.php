@@ -40,7 +40,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Support\Contracts\HasLabel;
-use Illuminate\Database\Eloquent\Builder;
 
 enum InteractableType: string implements HasLabel
 {
@@ -65,25 +64,5 @@ enum InteractableType: string implements HasLabel
             })
             ->mapWithKeys(fn (self $type): array => [$type->value => $type->getLabel()])
             ->toArray();
-    }
-
-    /**
-     * @template TModel of \Illuminate\Database\Eloquent\Model
-     *
-     * @param Builder<TModel> $query
-     *
-     * @return Builder<TModel>
-     */
-    public static function filterQueryByLicense(Builder $query, User $user): Builder
-    {
-        if (! $user->hasLicense(Prospect::getLicenseType())) {
-            $query->where('interactable_type', '!=', self::Prospect->value);
-        }
-
-        if (! $user->hasLicense(Student::getLicenseType())) {
-            $query->where('interactable_type', '!=', self::Student->value);
-        }
-
-        return $query;
     }
 }
