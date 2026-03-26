@@ -41,6 +41,10 @@ return new class () extends Migration {
     public function up(): void
     {
         $this->processTable('email_templates', 'content');
+        $this->processTable('engagements', 'body');
+        $this->processTable('engagement_batches', 'body');
+        $this->processTable('workflow_engagement_email_details', 'body');
+        $this->processNestedJsonTable('campaign_actions', 'data', 'body');
     }
 
     public function down(): void {}
@@ -67,6 +71,31 @@ return new class () extends Migration {
                 DB::table($table)
                     ->where('id', $record->id)
                     ->update([$column => json_encode($body)]);
+            }, 100);
+    }
+
+    protected function processNestedJsonTable(string $table, string $column, string $nestedKey): void
+    {
+        DB::table($table)
+            ->whereNotNull($column)
+            ->eachById(function (object $record) use ($table, $column, $nestedKey) {
+                $data = json_decode($record->{$column}, associative: true);
+
+                if (! is_array($data) || ! isset($data[$nestedKey]) || ! is_array($data[$nestedKey])) {
+                    return;
+                }
+
+                $changed = false;
+
+                $this->processNodes($data[$nestedKey], $changed);
+
+                if (! $changed) {
+                    return;
+                }
+
+                DB::table($table)
+                    ->where('id', $record->id)
+                    ->update([$column => json_encode($data)]);
             }, 100);
     }
 
