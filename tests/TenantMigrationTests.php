@@ -64,6 +64,7 @@ use Illuminate\Support\Facades\DB;
 //    });
 //});
 
+/** @return array<string, mixed> */
 function imageContent(): array
 {
     return [
