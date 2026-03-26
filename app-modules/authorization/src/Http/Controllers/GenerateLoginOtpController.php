@@ -39,11 +39,13 @@ namespace AdvisingApp\Authorization\Http\Controllers;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Http\Requests\GenerateLoginOtpRequest;
 use AdvisingApp\Authorization\Models\OtpLoginCode;
+use App\Features\OtpCodeLoginFeature;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
+use RuntimeException;
 use Throwable;
 
 class GenerateLoginOtpController
@@ -55,6 +57,11 @@ class GenerateLoginOtpController
     {
         try {
             DB::beginTransaction();
+
+            throw_unless(
+                OtpCodeLoginFeature::active(),
+                new RuntimeException('OTP code login feature is not active.')
+            );
 
             $data = $request->validated();
 
