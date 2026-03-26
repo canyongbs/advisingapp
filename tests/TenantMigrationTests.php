@@ -34,7 +34,11 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -60,53 +64,58 @@ use Illuminate\Support\Facades\DB;
 //    });
 //});
 
-test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_email_templates', function () {
-    isolatedMigration(
-        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_email_templates',
-        function () {
-            $emailTemplate = EmailTemplate::factory()->createQuietly([
+function imageContent(): array
+{
+    return [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'attrs' => ['textAlign' => 'start'],
                 'content' => [
-                    'type' => 'doc',
-                    'content' => [
-                        [
-                            'type' => 'paragraph',
-                            'attrs' => ['textAlign' => 'start'],
-                            'content' => [
-                                [
-                                    'type' => 'image',
-                                    'attrs' => [
-                                        'id' => 'test-uuid',
-                                        'alt' => null,
-                                        'src' => null,
-                                        'title' => null,
-                                        'width' => 800,
-                                        'height' => 600,
-                                    ],
-                                ],
-                            ],
-                        ],
-                        [
-                            'type' => 'paragraph',
-                            'attrs' => ['textAlign' => 'start'],
-                            'content' => [
-                                [
-                                    'type' => 'image',
-                                    'attrs' => [
-                                        'id' => 'small-uuid',
-                                        'alt' => null,
-                                        'src' => null,
-                                        'title' => null,
-                                        'width' => 300,
-                                        'height' => 200,
-                                    ],
-                                ],
-                            ],
+                    [
+                        'type' => 'image',
+                        'attrs' => [
+                            'id' => 'test-uuid',
+                            'alt' => null,
+                            'src' => null,
+                            'title' => null,
+                            'width' => 800,
+                            'height' => 600,
                         ],
                     ],
                 ],
+            ],
+            [
+                'type' => 'paragraph',
+                'attrs' => ['textAlign' => 'start'],
+                'content' => [
+                    [
+                        'type' => 'image',
+                        'attrs' => [
+                            'id' => 'small-uuid',
+                            'alt' => null,
+                            'src' => null,
+                            'title' => null,
+                            'width' => 300,
+                            'height' => 200,
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ];
+}
+
+test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables email_templates', function () {
+    isolatedMigration(
+        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables',
+        function () {
+            $emailTemplate = EmailTemplate::factory()->createQuietly([
+                'content' => imageContent(),
             ]);
 
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_email_templates.php']);
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables.php']);
 
             expect($migrate)->toBe(Command::SUCCESS);
 
@@ -121,6 +130,118 @@ test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_email_templ
             expect($content['content'][1]['content'][0]['attrs']['width'])->toBe(300);
             /** @phpstan-ignore-next-line */
             expect($content['content'][1]['content'][0]['attrs']['height'])->toBe(200);
+        }
+    );
+});
+
+test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables engagements', function () {
+    isolatedMigration(
+        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables',
+        function () {
+            $engagement = Engagement::factory()->createQuietly([
+                'body' => imageContent(),
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $body = json_decode((string) DB::table('engagements')->where('id', $engagement->id)->value('body'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][0]['content'][0]['attrs']['width'])->toBeNull();
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][0]['content'][0]['attrs']['height'])->toBeNull();
+
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][1]['content'][0]['attrs']['width'])->toBe(300);
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][1]['content'][0]['attrs']['height'])->toBe(200);
+        }
+    );
+});
+
+test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables engagement_batches', function () {
+    isolatedMigration(
+        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables',
+        function () {
+            $batch = EngagementBatch::factory()->createQuietly([
+                'body' => imageContent(),
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $body = json_decode((string) DB::table('engagement_batches')->where('id', $batch->id)->value('body'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][0]['content'][0]['attrs']['width'])->toBeNull();
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][0]['content'][0]['attrs']['height'])->toBeNull();
+
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][1]['content'][0]['attrs']['width'])->toBe(300);
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][1]['content'][0]['attrs']['height'])->toBe(200);
+        }
+    );
+});
+
+test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables workflow_engagement_email_details', function () {
+    isolatedMigration(
+        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables',
+        function () {
+            $details = WorkflowEngagementEmailDetails::factory()->createQuietly([
+                'body' => imageContent(),
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $body = json_decode((string) DB::table('workflow_engagement_email_details')->where('id', $details->id)->value('body'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][0]['content'][0]['attrs']['width'])->toBeNull();
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][0]['content'][0]['attrs']['height'])->toBeNull();
+
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][1]['content'][0]['attrs']['width'])->toBe(300);
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][1]['content'][0]['attrs']['height'])->toBe(200);
+        }
+    );
+});
+
+test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables campaign_actions', function () {
+    isolatedMigration(
+        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables',
+        function () {
+            $action = CampaignAction::factory()->createQuietly([
+                'data' => [
+                    'channel' => 'email',
+                    'subject' => [],
+                    'body' => imageContent(),
+                ],
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $data = json_decode((string) DB::table('campaign_actions')->where('id', $action->id)->value('data'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($data['body']['content'][0]['content'][0]['attrs']['width'])->toBeNull();
+            /** @phpstan-ignore-next-line */
+            expect($data['body']['content'][0]['content'][0]['attrs']['height'])->toBeNull();
+
+            /** @phpstan-ignore-next-line */
+            expect($data['body']['content'][1]['content'][0]['attrs']['width'])->toBe(300);
+            /** @phpstan-ignore-next-line */
+            expect($data['body']['content'][1]['content'][0]['attrs']['height'])->toBe(200);
         }
     );
 });
