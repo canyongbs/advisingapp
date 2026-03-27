@@ -67,7 +67,7 @@ class InteractionInitiativeResource extends Resource
                 Select::make('interactable_type')
                     ->label('Type')
                     ->required()
-                    ->options(InteractableType::class)
+                    ->options(fn (): array => InteractableType::getLicensedOptions(auth()->user()))
                     ->enum(InteractableType::class),
                 TextInput::make('name')
                     ->autofocus()

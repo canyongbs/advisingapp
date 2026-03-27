@@ -36,6 +36,9 @@
 
 namespace AdvisingApp\Interaction\Enums;
 
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
 use Filament\Support\Contracts\HasLabel;
 
 enum InteractableType: string implements HasLabel
@@ -47,5 +50,19 @@ enum InteractableType: string implements HasLabel
     public function getLabel(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function getLicensedOptions(User $user): array
+    {
+        return collect(static::cases())
+            ->filter(fn (self $type): bool => match ($type) {
+                self::Prospect => $user->hasLicense(Prospect::getLicenseType()),
+                self::Student => $user->hasLicense(Student::getLicenseType()),
+            })
+            ->mapWithKeys(fn (self $type): array => [$type->value => $type->getLabel()])
+            ->toArray();
     }
 }

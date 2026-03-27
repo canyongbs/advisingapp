@@ -40,6 +40,7 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\InteractionSt
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\Pages\CreateInteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use App\Models\User;
+use Filament\Forms\Components\Select;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
@@ -158,4 +159,34 @@ test('it can successfully set a default per type', function () {
 
     assertDatabaseHas(InteractionStatus::class, $studentInteractionStatus->toArray());
     assertDatabaseHas(InteractionStatus::class, $prospectInteractionStatus->toArray());
+});
+
+test('it only shows licensed interactable types as options', function () {
+    $user = User::factory()->licensed([LicenseType::RecruitmentCrm])->create();
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.create');
+    actingAs($user);
+
+    livewire(CreateInteractionStatus::class)
+        ->assertFormFieldExists('interactable_type', function (Select $field) {
+            expect($field->getOptions())->toBe([
+                InteractableType::Prospect->value => InteractableType::Prospect->getLabel(),
+            ]);
+
+            return true;
+        });
+
+    $user = User::factory()->licensed([LicenseType::RetentionCrm])->create();
+    $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.create');
+    actingAs($user);
+
+    livewire(CreateInteractionStatus::class)
+        ->assertFormFieldExists('interactable_type', function (Select $field) {
+            expect($field->getOptions())->toBe([
+                InteractableType::Student->value => InteractableType::Student->getLabel(),
+            ]);
+
+            return true;
+        });
 });
