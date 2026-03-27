@@ -36,12 +36,10 @@
 
 namespace AdvisingApp\Interaction\Database\Factories;
 
-use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
 use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use CanyonGBS\Common\Enums\Color;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Laravel\Pennant\Feature;
 
 /**
  * @extends Factory<InteractionStatus>
