@@ -39,7 +39,6 @@ namespace AdvisingApp\Interaction\Database\Factories;
 use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
 use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\InteractionStatus;
-use App\Features\InteractionStatusColorFeature;
 use CanyonGBS\Common\Enums\Color;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Laravel\Pennant\Feature;
@@ -53,7 +52,7 @@ class InteractionStatusFactory extends Factory
     {
         return [
             'name' => $this->faker->unique()->sentence(),
-            'color' => Feature::active(InteractionStatusColorFeature::class) ? $this->faker->randomElement(Color::cases())->value : $this->faker->randomElement(ColumnColorOptions::cases())->value,
+            'color' => $this->faker->randomElement(Color::cases())->value,
             'is_default' => false,
             'interactable_type' => $this->faker->randomElement(InteractableType::cases()),
         ];

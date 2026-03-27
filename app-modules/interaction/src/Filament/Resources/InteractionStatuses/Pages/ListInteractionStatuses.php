@@ -40,7 +40,6 @@ use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\InteractionStatusResource;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
-use App\Features\InteractionStatusColorFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -158,16 +157,8 @@ class ListInteractionStatuses extends ListRecords
             IdColumn::make(),
             TextColumn::make('name')
                 ->searchable(),
-            //TODO: InteractionStatusColorFeature Cleanup - Remove TextColumn when you remove feature flag and just use ColorColumn
-            ...(
-                InteractionStatusColorFeature::active()
-                ? [ColorColumn::make('color')
-                    ->state(fn (InteractionStatus $interactionStatus): string => Color::convertToRgb(Color::all()[$interactionStatus->color->value][600]))]
-                : [TextColumn::make('color')
-                    ->label('Color')
-                    ->badge()
-                    ->color(fn (InteractionStatus $interactionStatus) => $interactionStatus->color->value)]
-            ),
+            ColorColumn::make('color')
+                ->state(fn (InteractionStatus $interactionStatus): string => Color::convertToRgb(Color::all()[$interactionStatus->color->value][600])),
             IconColumn::make('is_default')
                 ->label('Default')
                 ->boolean(),
