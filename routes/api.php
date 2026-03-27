@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Http\Controllers\GenerateLoginOtpController;
+use AdvisingApp\Authorization\Http\Controllers\GenerateOtpLoginCodeController;
 use App\Http\Controllers\UpdateAzureSsoSettingsController;
 use App\Http\Controllers\UtilizationMetricsApiController;
 use App\Http\Middleware\CheckOlympusKey;
@@ -53,5 +53,5 @@ Route::middleware([
     Route::get('/utilization-metrics', UtilizationMetricsApiController::class)
         ->name('utilization-metrics');
 
-    Route::post('/otp-code', GenerateLoginOtpController::class)->name('otp-code.generate');
+    Route::post('/otp-code', GenerateOtpLoginCodeController::class)->name('otp-code.generate');
 });

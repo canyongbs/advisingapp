@@ -34,49 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Http\Controllers;
+namespace AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\RequestFactories;
 
-use AdvisingApp\Authorization\Models\OtpLoginCode;
-use Filament\Facades\Filament;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Throwable;
+use App\Models\Authenticatable;
+use Worksome\RequestFactories\RequestFactory;
 
-class VerifyOtpController
+class GenerateOtpLoginCodeRequestFactory extends RequestFactory
 {
-    /**
-     * @throws Throwable
-     */
-    public function __invoke(Request $request, OtpLoginCode $otpCode): RedirectResponse
+    public function definition(): array
     {
-        abort_if(
-            boolean: now()->greaterThanOrEqualTo($otpCode->created_at->addMinutes(20))
-                || $otpCode->used_at !== null,
-            code: 403,
-            message: 'This OTP link has expired or has already been used. Please request a new one.'
-        );
-
-        $request->validate([
-            'code' => ['required', 'digits:6'],
-        ]);
-
-        if (! Hash::check($request->input('code'), $otpCode->code)) {
-            return back()->withErrors([
-                'code' => 'The OTP code you entered is incorrect. Please try again.',
-            ]);
-        }
-
-        $otpCode->used_at = now();
-        $otpCode->saveOrFail();
-
-        $user = $otpCode->user;
-
-        $panel = Filament::getPanel('admin');
-
-        Auth::guard($panel->getAuthGuard())->login($user);
-
-        return redirect()->to($panel->getHomeUrl());
+        return [
+            'email' => $this->faker->safeEmail(),
+            'name' => $this->faker->name(),
+            'type' => $this->faker->randomElement([
+                Authenticatable::SUPER_ADMIN_ROLE,
+                Authenticatable::PARTNER_ADMIN_ROLE,
+                Authenticatable::AI_ADMIN_ROLE,
+            ]),
+        ];
     }
 }

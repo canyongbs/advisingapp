@@ -34,23 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Http\Requests;
+namespace AdvisingApp\Authorization\Http\Controllers;
 
-use App\Models\Authenticatable;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use AdvisingApp\Authorization\Models\OtpLoginCode;
+use Filament\Facades\Filament;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Throwable;
 
-class GenerateLoginOtpRequest extends FormRequest
+class VerifyOtpLoginCodeController
 {
     /**
-     * @return array<string, array<int, string>>
+     * @throws Throwable
      */
-    public function rules(): array
+    public function __invoke(Request $request, OtpLoginCode $otpCode): RedirectResponse
     {
-        return [
-            'email' => ['required', 'email'],
-            'name' => ['required', 'string', 'max:255'],
-            'type' => ['required', 'string', Rule::in([Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE, Authenticatable::AI_ADMIN_ROLE])],
-        ];
+        abort_if(
+            boolean: now()->greaterThanOrEqualTo($otpCode->created_at->addMinutes(20))
+                || $otpCode->used_at !== null,
+            code: 403,
+            message: 'This OTP link has expired or has already been used. Please request a new one.'
+        );
+
+        $request->validate([
+            'code' => ['required', 'digits:6'],
+        ]);
+
+        if (! Hash::check($request->input('code'), $otpCode->code)) {
+            return back()->withErrors([
+                'code' => 'The OTP code you entered is incorrect. Please try again.',
+            ]);
+        }
+
+        $otpCode->used_at = now();
+        $otpCode->saveOrFail();
+
+        $user = $otpCode->user;
+
+        $panel = Filament::getPanel('admin');
+
+        Auth::guard($panel->getAuthGuard())->login($user);
+
+        return redirect()->to($panel->getHomeUrl());
     }
 }

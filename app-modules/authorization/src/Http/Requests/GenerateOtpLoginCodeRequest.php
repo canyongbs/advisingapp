@@ -34,29 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Http\Controllers;
+namespace AdvisingApp\Authorization\Http\Requests;
 
-use AdvisingApp\Authorization\Models\OtpLoginCode;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
+use App\Models\Authenticatable;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class OtpLoginController
+class GenerateOtpLoginCodeRequest extends FormRequest
 {
-    public function __invoke(Request $request, OtpLoginCode $otpCode): View
+    /**
+     * @return array<string, array<int, string>>
+     */
+    public function rules(): array
     {
-        abort_if(
-            boolean: now()->greaterThanOrEqualTo($otpCode->created_at->addMinutes(20))
-                || $otpCode->used_at !== null,
-            code: 403,
-            message: 'This OTP link has expired or has already been used. Please request a new one.'
-        );
-
-        $verifyUrl = route('otp-code.verify', [
-            'otpCode' => $otpCode->getKey(),
-        ]);
-
-        return view('authorization::otp-entry', [
-            'verifyUrl' => $verifyUrl,
-        ]);
+        return [
+            'email' => ['required', 'email'],
+            'name' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string', Rule::in([Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE, Authenticatable::AI_ADMIN_ROLE])],
+        ];
     }
 }

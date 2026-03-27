@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Models\OtpLoginCode;
-use AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\RequestFactories\GenerateLoginOtpRequestFactory;
+use AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\RequestFactories\GenerateOtpLoginCodeRequestFactory;
 use App\Http\Middleware\CheckOlympusKey;
 use App\Models\Authenticatable;
 use App\Models\User;
@@ -262,11 +262,11 @@ it('returns a 6-digit OTP code', function () {
         ->and($otp)->toBeLessThanOrEqual(999999);
 });
 
-it('requires valid data', function (GenerateLoginOtpRequestFactory $data, array $errors) {
+it('requires valid data', function (GenerateOtpLoginCodeRequestFactory $data, array $errors) {
     withoutMiddleware(CheckOlympusKey::class)
         ->post(
             route('otp-code.generate'),
-            GenerateLoginOtpRequestFactory::new($data)->create()
+            GenerateOtpLoginCodeRequestFactory::new($data)->create()
         )
         ->assertInvalid($errors);
 
@@ -275,31 +275,31 @@ it('requires valid data', function (GenerateLoginOtpRequestFactory $data, array 
     ->with(
         [
             'email required' => [
-                GenerateLoginOtpRequestFactory::new()->state(['email' => null]),
+                GenerateOtpLoginCodeRequestFactory::new()->state(['email' => null]),
                 ['email' => 'required'],
             ],
             'email must be valid email' => [
-                GenerateLoginOtpRequestFactory::new()->state(['email' => 'invalid-email']),
+                GenerateOtpLoginCodeRequestFactory::new()->state(['email' => 'invalid-email']),
                 ['email' => 'email'],
             ],
             'name required' => [
-                GenerateLoginOtpRequestFactory::new()->state(['name' => null]),
+                GenerateOtpLoginCodeRequestFactory::new()->state(['name' => null]),
                 ['name' => 'required'],
             ],
             'name string' => [
-                GenerateLoginOtpRequestFactory::new()->state(['name' => 1]),
+                GenerateOtpLoginCodeRequestFactory::new()->state(['name' => 1]),
                 ['name' => 'string'],
             ],
             'name max' => [
-                GenerateLoginOtpRequestFactory::new()->state(['name' => str()->random(256)]),
+                GenerateOtpLoginCodeRequestFactory::new()->state(['name' => str()->random(256)]),
                 ['name' => ['The name may not be greater than 255 characters.']],
             ],
             'type required' => [
-                GenerateLoginOtpRequestFactory::new()->state(['type' => null]),
+                GenerateOtpLoginCodeRequestFactory::new()->state(['type' => null]),
                 ['type' => 'required'],
             ],
             'type must be correct value' => [
-                GenerateLoginOtpRequestFactory::new()->state(['type' => 'invalid']),
+                GenerateOtpLoginCodeRequestFactory::new()->state(['type' => 'invalid']),
                 ['type' => 'in'],
             ],
         ],

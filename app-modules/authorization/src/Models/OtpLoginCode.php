@@ -73,7 +73,7 @@ class OtpLoginCode extends Model
      */
     public function prunable(): Builder
     {
-        return static::where('created_at', '<=', now()->subMinutes(15))
+        return static::where('created_at', '<=', now()->subMinutes(20))
             ->orWhereNotNull('used_at');
     }
 }
