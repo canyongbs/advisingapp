@@ -37,9 +37,7 @@
 namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages;
 
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
-use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
-use App\Features\ApplicationSubmissionStateFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Actions\DeleteAction;
@@ -70,19 +68,10 @@ class EditApplicationSubmissionState extends EditRecord
                     ->options(ApplicationSubmissionStateClassification::class)
                     ->required()
                     ->enum(ApplicationSubmissionStateClassification::class),
-                //TODO: ApplicationSubmissionStateFeature Cleanup - Remove Select when you remove feature flag and just use ColorSelect
-                Select::make('color')
-                    ->label('Color')
-                    ->searchable()
-                    ->options(ApplicationSubmissionStateColorOptions::class)
-                    ->required()
-                    ->visible(fn () => ! ApplicationSubmissionStateFeature::active())
-                    ->enum(ApplicationSubmissionStateColorOptions::class),
                 ColorSelect::make('color')
                     ->label('Color')
                     ->required()
-                    ->searchable()
-                    ->visible(fn () => ApplicationSubmissionStateFeature::active()),
+                    ->searchable(),
                 Textarea::make('description')
                     ->label('Description')
                     ->required()

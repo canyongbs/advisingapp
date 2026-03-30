@@ -38,7 +38,6 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates
 
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use App\Features\ApplicationSubmissionStateFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -68,19 +67,8 @@ class ListApplicationSubmissionStates extends ListRecords
                     ->label('Classification')
                     ->searchable()
                     ->sortable(),
-                ...(
-                    ApplicationSubmissionStateFeature::active()
-                    ? [
-                        ColorColumn::make('color')
+                ColorColumn::make('color')
                             ->state(fn (ApplicationSubmissionState $applicationState): string => Color::convertToRgb(Color::all()[$applicationState->color->value][600])),
-                    ]
-                    : [
-                        TextColumn::make('color')
-                            ->label('Color')
-                            ->badge()
-                            ->color(fn (ApplicationSubmissionState $applicationState) => $applicationState->color->value),
-                    ]
-                ),
                 TextColumn::make('applications_count')
                     ->label('# of Applications')
                     ->counts('submissions')
