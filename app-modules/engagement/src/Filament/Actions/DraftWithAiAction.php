@@ -48,6 +48,7 @@ use App\Settings\LicenseSettings;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -56,8 +57,6 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\Width;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Vite;
-use Filament\Forms\Components\RichEditor\RichContentRenderer;
-use Illuminate\Support\Str;
 
 class DraftWithAiAction extends Action
 {
