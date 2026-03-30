@@ -109,6 +109,7 @@
         "spatie/laravel-query-builder": "^6.3",
         "spatie/laravel-schedule-monitor": "^3.9",
         "spatie/laravel-settings": "^3.3",
+        "spiral/roadrunner": "^2025.1.12",
         "spiral/roadrunner-cli": "^2.6",
         "spiral/roadrunner-http": "^3.5",
         "sqids/sqids": "^0.5.0",
