@@ -70,6 +70,7 @@ class BulkEmailAction
             ->icon('heroicon-o-envelope')
             ->modalHeading('Send Bulk Email')
             ->modalDescription(fn (Collection $records) => "You have selected {$records->count()} {$context} to send email.")
+            ->model(EngagementBatch::class)
             ->steps([
                 Step::make('Engagement Details')
                     ->description("Add the details that will be sent to the selected {$context}")

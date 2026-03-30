@@ -52,6 +52,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Facades\Vite;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Support\Str;
 
 class DraftTemplateWithAiAction extends Action
@@ -124,7 +125,7 @@ class DraftTemplateWithAiAction extends Action
                         return;
                     }
 
-                    $set('content', Str::markdown($content));
+                    $set('content', RichContentRenderer::make((string) str($content)->markdown())->toArray());
 
                     return;
                 }
@@ -161,7 +162,7 @@ class DraftTemplateWithAiAction extends Action
                     return;
                 }
 
-                $set('content', (string) str($content)->after("\n")->markdown());
+                $set('content', RichContentRenderer::make((string) str($content)->after("\n")->markdown())->toArray());
             })
             ->visible(
                 auth()->user()->hasLicense(LicenseType::ConversationalAi)
