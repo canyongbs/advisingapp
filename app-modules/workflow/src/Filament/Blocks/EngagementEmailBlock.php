@@ -66,6 +66,8 @@ class EngagementEmailBlock extends WorkflowActionBlock
 
         $this->label('Email');
 
+        $this->model(WorkflowEngagementEmailDetails::class);
+
         $this->schema($this->createFields());
     }
 
@@ -241,4 +243,5 @@ class EngagementEmailBlock extends WorkflowActionBlock
 
         $schema->model($details)->saveRelationships();
     }
+
 }

@@ -43,6 +43,10 @@ use AdvisingApp\Workflow\Filament\Blocks\EngagementEmailBlock;
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Jobs\EngagementEmailWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -53,12 +57,13 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 /**
  * @mixin IdeHelperWorkflowEngagementEmailDetails
  */
-class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditable, HasMedia
+class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditable, HasMedia, HasRichContent
 {
     use SoftDeletes;
     use AuditableTrait;
     use HasUuids;
     use InteractsWithMedia;
+    use InteractsWithRichContent;
 
     /** @use HasFactory<WorkflowEngagementEmailDetailsFactory> */
     use HasFactory;
@@ -88,5 +93,34 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
     public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
     {
         return new EngagementEmailWorkflowActionJob($workflowRunStep);
+    }
+
+    public function getEditFields(): array
+    {
+        $fields = parent::getEditFields();
+
+        foreach ($fields as $field) {
+            if ($field instanceof RichEditor && $field->getName() === 'body') {
+                $field->model($this);
+
+                break;
+            }
+        }
+
+        return $fields;
+    }
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('body')
+            ->fileAttachmentsDisk('s3-public')
+            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
+            ->mergeTags([
+                'recipient first name' => '{{ recipient first name }}',
+                'recipient last name' => '{{ recipient last name }}',
+                'recipient full name' => '{{ recipient full name }}',
+                'recipient email' => '{{ recipient email }}',
+                'recipient preferred name' => '{{ recipient preferred name }}',
+            ]);
     }
 }

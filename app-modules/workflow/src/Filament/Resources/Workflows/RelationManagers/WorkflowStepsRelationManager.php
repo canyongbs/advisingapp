@@ -234,8 +234,8 @@ class WorkflowStepsRelationManager extends RelationManager
             ]),
             'workflow_engagement_email_details' => WorkflowEngagementEmailDetails::create([
                 'channel' => $transformedData['channel'],
-                'subject' => $transformedData['subject'],
-                'body' => $transformedData['body'],
+                'subject' => $transformedData['subject'] ?? ['type' => 'doc', 'content' => []],
+                'body' => $transformedData['body'] ?? ['type' => 'doc', 'content' => []],
             ]),
             'workflow_engagement_sms_details' => WorkflowEngagementSmsDetails::create([
                 'channel' => $transformedData['channel'],
