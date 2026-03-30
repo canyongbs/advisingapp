@@ -40,6 +40,7 @@ use AdvisingApp\InAppCommunication\Actions\CheckConversationMessageContentForMen
 use AdvisingApp\InAppCommunication\Actions\ConvertMessageJsonToText;
 use AdvisingApp\InAppCommunication\Enums\ConversationNotificationPreference;
 use AdvisingApp\InAppCommunication\Events\ConversationMessageSent;
+use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -63,7 +64,10 @@ class NotifyConversationParticipant implements ShouldQueue
         CheckConversationMessageContentForMention $checkConversationMessageContentForMention,
         ConvertMessageJsonToText $convertMessageJsonToText,
     ): void {
-        $participation = $this->event->conversation->participants()->find($this->participant)?->participant;
+      $participation = TwilioConversationUser::query()
+        ->where('conversation_sid', $this->event->conversation->sid)
+        ->where('user_id', $this->participant->getKey())
+        ->first();
 
         if (! $participation) {
             return;
@@ -73,15 +77,17 @@ class NotifyConversationParticipant implements ShouldQueue
             return;
         }
 
+        $hasMention = $checkConversationMessageContentForMention($this->event->messageContent, $this->participant);
+
         if (
-            ($participation->notification_preference === ConversationNotificationPreference::Mentions) &&
-            (! $checkConversationMessageContentForMention($this->event->messageContent, $this->participant))
+          ($participation->notification_preference === ConversationNotificationPreference::Mentions)
+          && (! $hasMention)
         ) {
             return;
         }
 
         $participation->first_unread_message_sid ??= $this->event->messageSid;
-        $participation->first_unread_message_at ??= $this->event->messageSentAt;
+        $participation->first_unread_message_at ??= $this->event->messageSentAt->toImmutable();
         $participation->last_unread_message_content = $convertMessageJsonToText($this->event->messageContent);
         $participation->increment('unread_messages_count');
         $participation->touch('updated_at');

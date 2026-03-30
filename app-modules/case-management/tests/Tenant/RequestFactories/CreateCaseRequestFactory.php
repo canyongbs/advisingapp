@@ -49,7 +49,7 @@ class CreateCaseRequestFactory extends RequestFactory
         $priority = CasePriority::factory()->create();
 
         return [
-            'division_id' => Division::inRandomOrder()->first()?->id ?? Division::factory()->create()->id,
+            'division_id' => Division::inRandomOrder()->first()->id ?? Division::factory()->create()->id,
             'status_id' => CaseStatus::factory()->create()->id,
             'type_id' => $priority->type_id,
             'priority_id' => $priority->id,

@@ -56,6 +56,7 @@ use App\Models\User;
 use App\Settings\LicenseSettings;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Mail\SentMessage;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Channels\MailChannel as BaseMailChannel;
 use Illuminate\Notifications\Notification;
@@ -65,7 +66,7 @@ use Throwable;
 
 class MailChannel extends BaseMailChannel
 {
-    public function send($notifiable, Notification $notification): void
+    public function send($notifiable, Notification $notification): SentMessage | null
     {
         [$recipientId, $recipientType] = match (true) {
             $notifiable instanceof Model => [$notifiable->getKey(), $notifiable->getMorphClass()],
@@ -78,6 +79,10 @@ class MailChannel extends BaseMailChannel
                 (new StoredAnonymousNotifiable())->getMorphClass(),
             ],
         };
+
+        if (! method_exists($notification, 'toMail')) {
+            return null;
+        }
 
         $message = $notification->toMail($notifiable);
 
@@ -112,7 +117,7 @@ class MailChannel extends BaseMailChannel
                 'occurred_at' => now(),
             ]);
 
-            return;
+            return null;
         }
 
         if ($recipientAddress && is_string($recipientAddress) && $this->isAddressBounced($recipientAddress)) {
@@ -135,7 +140,7 @@ class MailChannel extends BaseMailChannel
 
         try {
             if (
-                (! ($tenantMailConfig?->isDemoModeEnabled ?? false))
+                (! $tenantMailConfig->isDemoModeEnabled)
                 || ($isSystemNotification && $tenantMailConfig->isExcludingSystemNotificationsFromDemoMode)
             ) {
                 $message->withSymfonyMessage(function (Email $message) use ($tenant, $emailMessage) {
@@ -166,7 +171,7 @@ class MailChannel extends BaseMailChannel
                 );
 
                 try {
-                    $sentMessage = $this->mailer->mailer($message->mailer ?? null)->send(
+                    $sentMessage = $this->mailer->mailer($message->mailer)->send(
                         $this->buildView($message),
                         array_merge($message->data(), $this->additionalMessageData($notification)),
                         $this->messageBuilder($notifiable, $notification, $message)
@@ -193,8 +198,8 @@ class MailChannel extends BaseMailChannel
 
                     $emailMessage->events()->create([
                         'type' => (
-                            (! $tenantMailConfig?->isDemoModeEnabled ?? false)
-                            || ($isSystemNotification && $tenantMailConfig?->isExcludingSystemNotificationsFromDemoMode)
+                            (! $tenantMailConfig->isDemoModeEnabled)
+                            || ($isSystemNotification && $tenantMailConfig->isExcludingSystemNotificationsFromDemoMode)
                         )
                             ? EmailMessageEventType::Dispatched
                             : EmailMessageEventType::BlockedByDemoMode,
@@ -221,12 +226,16 @@ class MailChannel extends BaseMailChannel
             if ($sendingException ?? null) {
                 throw $sendingException;
             }
+
+            return $sentMessage ?? null;
         } catch (NotificationQuotaExceeded $exception) {
             $emailMessage->events()->create([
                 'type' => EmailMessageEventType::RateLimited,
                 'payload' => [],
                 'occurred_at' => now(),
             ]);
+
+            return null;
         } catch (Throwable $exception) {
             $emailMessage->events()->create([
                 'type' => EmailMessageEventType::FailedDispatch,

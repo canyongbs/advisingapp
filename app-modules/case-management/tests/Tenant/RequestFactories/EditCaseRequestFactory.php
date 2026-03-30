@@ -46,7 +46,7 @@ class EditCaseRequestFactory extends RequestFactory
     public function definition(): array
     {
         return [
-            'division_id' => Division::inRandomOrder()->first()?->id ?? Division::factory()->create()->id,
+            'division_id' => Division::inRandomOrder()->first()->id ?? Division::factory()->create()->id,
             'status_id' => CaseStatus::factory()->create()->id,
             'priority_id' => CasePriority::factory()->create()->id,
             'close_details' => $this->faker->sentence,

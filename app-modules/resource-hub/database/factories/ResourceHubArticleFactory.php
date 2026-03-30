@@ -67,7 +67,7 @@ class ResourceHubArticleFactory extends Factory
             // ...
         })->afterCreating(function (ResourceHubArticle $resourceHubArticle) {
             if ($resourceHubArticle->division->isEmpty()) {
-                $resourceHubArticle->division()->attach(Division::first()?->id ?? Division::factory()->create()->id);
+                $resourceHubArticle->division()->attach(Division::first()->id ?? Division::factory()->create()->id);
                 $resourceHubArticle->save();
             }
         });

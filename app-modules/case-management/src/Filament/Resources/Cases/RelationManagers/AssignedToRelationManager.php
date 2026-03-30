@@ -84,7 +84,7 @@ class AssignedToRelationManager extends RelationManager
                     ->color('gray')
                     ->action(fn (array $data) => $this->getOwnerRecord()->assignments()->create([
                         'user_id' => $data['userId'],
-                        'assigned_by_id' => auth()->user()?->id ?? null,
+                        'assigned_by_id' => auth()->user()->id ?? null,
                         'assigned_at' => now(),
                         'status' => CaseAssignmentStatus::Active,
                     ]))
