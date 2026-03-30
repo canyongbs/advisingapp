@@ -54,7 +54,6 @@ use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\BouncedPhoneNumberFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Exception;
@@ -138,7 +137,7 @@ class SmsChannel
             throw new SmsOptOutException($recipientNumber);
         }
 
-        if (BouncedPhoneNumberFeature::active() && ($recipientNumber && is_string($recipientNumber) && $this->isNumberBounced($recipientNumber))) {
+        if ($recipientNumber && is_string($recipientNumber) && $this->isNumberBounced($recipientNumber)) {
             $smsMessage->events()->create([
                 'type' => SmsMessageEventType::FailedDispatch,
                 'payload' => [
