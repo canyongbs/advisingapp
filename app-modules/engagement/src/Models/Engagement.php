@@ -349,7 +349,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     }
 
     /**
-     * Resolve image URLs in TipTap content for rendering.
+     * Resolve image URLs in RichEditor content for rendering.
      *
      * Images may have:
      * - A filename ID with a valid S3 src URL (direct uploads) → strip ID to preserve src
