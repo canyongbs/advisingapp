@@ -45,8 +45,8 @@ class CreateAiMessageLog
     public function handle(AiMessageCreated $event): void
     {
         $message = $event->aiMessage;
-      $thread = $message->thread()->withTrashed()->first();
-      $assistantName = $thread?->assistant()->withTrashed()->first()?->name;
+        $thread = $message->thread()->withTrashed()->first();
+        $assistantName = $thread?->assistant()->withTrashed()->first()?->name;
 
         if (! $message->user || ! $message->request) {
             return;
