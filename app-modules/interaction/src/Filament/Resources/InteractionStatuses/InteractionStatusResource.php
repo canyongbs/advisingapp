@@ -37,12 +37,10 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionStatuses;
 
 use AdvisingApp\Interaction\Enums\InteractableType;
-use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\Pages\CreateInteractionStatus;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\Pages\EditInteractionStatus;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\Pages\ListInteractionStatuses;
 use AdvisingApp\Interaction\Models\InteractionStatus;
-use App\Features\InteractionStatusColorFeature;
 use App\Filament\Clusters\InteractionManagement;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Select;
@@ -81,24 +79,10 @@ class InteractionStatusResource extends Resource
                         ignoreRecord: true,
                         modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('interactable_type', $get('interactable_type'))->whereNull('deleted_at')
                     ),
-                //TODO: InteractionStatusColorFeature Cleanup - Remove Select when you remove feature flag and just use ColorSelect
-                ...(
-                    InteractionStatusColorFeature::active()
-                    ? [
-                        ColorSelect::make('color')
-                            ->label('Color')
-                            ->required()
-                            ->searchable(),
-                    ]
-                    : [
-                        Select::make('color')
-                            ->label('Color')
-                            ->searchable()
-                            ->options(InteractionStatusColorOptions::class)
-                            ->required()
-                            ->enum(InteractionStatusColorOptions::class),
-                    ]
-                ),
+                ColorSelect::make('color')
+                    ->label('Color')
+                    ->required()
+                    ->searchable(),
                 Toggle::make('is_default')
                     ->label('Default')
                     ->live()
