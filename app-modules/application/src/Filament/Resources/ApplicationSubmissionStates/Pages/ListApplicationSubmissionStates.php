@@ -68,7 +68,7 @@ class ListApplicationSubmissionStates extends ListRecords
                     ->searchable()
                     ->sortable(),
                 ColorColumn::make('color')
-                            ->state(fn (ApplicationSubmissionState $applicationState): string => Color::convertToRgb(Color::all()[$applicationState->color->value][600])),
+                    ->state(fn (ApplicationSubmissionState $applicationState): string => Color::convertToRgb(Color::all()[$applicationState->color->value][600])),
                 TextColumn::make('applications_count')
                     ->label('# of Applications')
                     ->counts('submissions')
