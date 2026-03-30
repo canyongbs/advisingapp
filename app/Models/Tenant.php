@@ -36,8 +36,6 @@
 
 namespace App\Models;
 
-use App\Casts\LandlordEncrypted;
-use App\Features\TenantConfigEncryptionFeature;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -65,6 +63,7 @@ class Tenant extends SpatieTenant
 
     protected $casts = [
         'setup_complete' => 'boolean',
+        'config' => TenantConfig::class . ':encrypted',
     ];
 
     public function makeCurrent(): static
@@ -116,12 +115,5 @@ class Tenant extends SpatieTenant
                 ]);
             }
         });
-    }
-
-    protected function casts(): array
-    {
-        return [
-            'config' => TenantConfigEncryptionFeature::active() ? TenantConfig::class . ':encrypted' : LandlordEncrypted::class,
-        ];
     }
 }
