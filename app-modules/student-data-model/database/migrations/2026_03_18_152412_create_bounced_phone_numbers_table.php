@@ -34,35 +34,25 @@
 </COPYRIGHT>
 */
 
-use App\Features\BouncedPhoneNumberFeature;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::create('bounced_phone_numbers', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->string('number')->unique();
-                $table->string('external_error_code')->nullable();
-                $table->timestamps();
+        Schema::create('bounced_phone_numbers', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('number')->unique();
+            $table->string('external_error_code')->nullable();
+            $table->timestamps();
 
-                $table->index('number');
-            });
-
-            BouncedPhoneNumberFeature::activate();
+            $table->index('number');
         });
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            BouncedPhoneNumberFeature::deactivate();
-
-            Schema::dropIfExists('bounced_phone_numbers');
-        });
+        Schema::dropIfExists('bounced_phone_numbers');
     }
 };

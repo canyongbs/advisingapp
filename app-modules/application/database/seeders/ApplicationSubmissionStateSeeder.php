@@ -37,12 +37,9 @@
 namespace AdvisingApp\Application\Database\Seeders;
 
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
-use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use App\Features\ApplicationSubmissionStateFeature;
 use CanyonGBS\Common\Enums\Color;
 use Illuminate\Database\Seeder;
-use Laravel\Pennant\Feature;
 
 class ApplicationSubmissionStateSeeder extends Seeder
 {
@@ -54,37 +51,37 @@ class ApplicationSubmissionStateSeeder extends Seeder
                     [
                         'classification' => ApplicationSubmissionStateClassification::Received,
                         'name' => 'Application Received',
-                        'color' => Feature::active(ApplicationSubmissionStateFeature::class) ? Color::Sky->value : ApplicationSubmissionStateColorOptions::Info,
+                        'color' => Color::Sky->value,
                         'description' => 'The college has received your application for admission.',
                     ],
                     [
                         'classification' => ApplicationSubmissionStateClassification::Review,
                         'name' => 'Admission Review',
-                        'color' => Feature::active(ApplicationSubmissionStateFeature::class) ? Color::Yellow->value : ApplicationSubmissionStateColorOptions::Warning,
+                        'color' => Color::Yellow->value,
                         'description' => 'Your application is under review. Please submit any pending tasks to complete your application.',
                     ],
                     [
                         'classification' => ApplicationSubmissionStateClassification::Complete,
                         'name' => 'Application Complete',
-                        'color' => Feature::active(ApplicationSubmissionStateFeature::class) ? Color::Blue->value : ApplicationSubmissionStateColorOptions::Primary,
+                        'color' => Color::Blue->value,
                         'description' => 'Your application is complete and under final review for admission.',
                     ],
                     [
                         'classification' => ApplicationSubmissionStateClassification::DocumentsRequired,
                         'name' => 'Additional Documents Required',
-                        'color' => Feature::active(ApplicationSubmissionStateFeature::class) ? Color::Yellow->value : ApplicationSubmissionStateColorOptions::Warning,
+                        'color' => Color::Yellow->value,
                         'description' => 'After initial review, additional documents are needed to process your application. Please check your tasks for more information.',
                     ],
                     [
                         'classification' => ApplicationSubmissionStateClassification::Admit,
                         'name' => 'Admit',
-                        'color' => Feature::active(ApplicationSubmissionStateFeature::class) ? Color::Green->value : ApplicationSubmissionStateColorOptions::Success,
+                        'color' => Color::Green->value,
                         'description' => 'A final decision has been made on your application.',
                     ],
                     [
                         'classification' => ApplicationSubmissionStateClassification::Deny,
                         'name' => 'Deny',
-                        'color' => Feature::active(ApplicationSubmissionStateFeature::class) ? Color::Red->value : ApplicationSubmissionStateColorOptions::Danger,
+                        'color' => Color::Red->value,
                         'description' => 'A final decision has been made on your application.',
                     ],
                 ]
