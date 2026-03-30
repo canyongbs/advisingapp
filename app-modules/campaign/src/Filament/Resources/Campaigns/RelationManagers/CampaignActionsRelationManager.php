@@ -47,6 +47,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -71,7 +72,19 @@ class CampaignActionsRelationManager extends RelationManager
                     ->required()
                     ->maxLength(255)
                     ->disabled(),
-                Group::make(fn (CampaignAction $record) => $record->type->getEditFields()),
+                Group::make(function (CampaignAction $record) {
+                    $fields = $record->type->getEditFields();
+
+                    foreach ($fields as $field) {
+                        if ($field instanceof RichEditor && $field->getName() === 'body') {
+                            $field->model($record);
+
+                            break;
+                        }
+                    }
+
+                    return $fields;
+                }),
             ])
             ->columns(1);
     }

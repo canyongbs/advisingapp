@@ -42,6 +42,7 @@ use App\Models\BaseModel;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -99,6 +100,25 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia, HasRichCo
     }
 
     /**
+     * @param  mixed  $key
+     * @param  mixed  $value
+     */
+    public function setAttribute($key, $value): mixed
+    {
+        if (str_contains((string) $key, '.')) {
+            $topLevel = Str::before($key, '.');
+            $nested = Str::after($key, '.');
+
+            $data = $this->getAttribute($topLevel) ?? [];
+            data_set($data, $nested, $value);
+
+            return parent::setAttribute($topLevel, $data);
+        }
+
+        return parent::setAttribute($key, $value);
+    }
+
+    /**
      * @return BelongsTo<Campaign, $this>
      */
     public function campaign(): BelongsTo
@@ -124,26 +144,36 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia, HasRichCo
         return ! is_null($this->execution_finished_at);
     }
 
+    /**
+     * Override to map form field names (e.g., 'body') to JSON column paths (e.g., 'data.body').
+     *
+     * The RichEditor field name is 'body', but the content attribute is registered as 'data.body'
+     * because the data is stored in a JSON column. This fallback allows the RichEditor to find
+     * the provider via getRichContentAttribute('body') → getRichContentAttribute('data.body').
+     */
+    public function getRichContentAttribute(string $attribute): ?RichContentAttribute
+    {
+        return $this->getRichContentAttributes()[$attribute]
+            ?? $this->getRichContentAttributes()['data.' . $attribute]
+            ?? null;
+    }
+
     public function setUpRichContent(): void
     {
+        $mergeTags = [
+            'recipient first name' => '{{ recipient first name }}',
+            'recipient last name' => '{{ recipient last name }}',
+            'recipient full name' => '{{ recipient full name }}',
+            'recipient email' => '{{ recipient email }}',
+            'recipient preferred name' => '{{ recipient preferred name }}',
+        ];
+
         $this->registerRichContent('data.subject')
-            ->mergeTags([
-                'recipient first name' => '{{ recipient first name }}',
-                'recipient last name' => '{{ recipient last name }}',
-                'recipient full name' => '{{ recipient full name }}',
-                'recipient email' => '{{ recipient email }}',
-                'recipient preferred name' => '{{ recipient preferred name }}',
-            ]);
+            ->mergeTags($mergeTags);
 
         $this->registerRichContent('data.body')
             ->fileAttachmentsDisk('s3-public')
             ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
-            ->mergeTags([
-                'recipient first name' => '{{ recipient first name }}',
-                'recipient last name' => '{{ recipient last name }}',
-                'recipient full name' => '{{ recipient full name }}',
-                'recipient email' => '{{ recipient email }}',
-                'recipient preferred name' => '{{ recipient preferred name }}',
-            ]);
+            ->mergeTags($mergeTags);
     }
 }

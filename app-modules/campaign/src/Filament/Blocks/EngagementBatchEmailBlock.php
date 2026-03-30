@@ -63,6 +63,8 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
 
         $this->label('Email');
 
+        $this->model(CampaignAction::class);
+
         $this->schema($this->createFields());
     }
 

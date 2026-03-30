@@ -243,5 +243,4 @@ class EngagementEmailBlock extends WorkflowActionBlock
 
         $schema->model($details)->saveRelationships();
     }
-
 }
