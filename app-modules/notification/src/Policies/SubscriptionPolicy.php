@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Notification\Policies;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 

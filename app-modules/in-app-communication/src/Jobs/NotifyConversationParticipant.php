@@ -64,10 +64,10 @@ class NotifyConversationParticipant implements ShouldQueue
         CheckConversationMessageContentForMention $checkConversationMessageContentForMention,
         ConvertMessageJsonToText $convertMessageJsonToText,
     ): void {
-      $participation = TwilioConversationUser::query()
-        ->where('conversation_sid', $this->event->conversation->sid)
-        ->where('user_id', $this->participant->getKey())
-        ->first();
+        $participation = TwilioConversationUser::query()
+            ->where('conversation_sid', $this->event->conversation->sid)
+            ->where('user_id', $this->participant->getKey())
+            ->first();
 
         if (! $participation) {
             return;
@@ -80,8 +80,8 @@ class NotifyConversationParticipant implements ShouldQueue
         $hasMention = $checkConversationMessageContentForMention($this->event->messageContent, $this->participant);
 
         if (
-          ($participation->notification_preference === ConversationNotificationPreference::Mentions)
-          && (! $hasMention)
+            ($participation->notification_preference === ConversationNotificationPreference::Mentions)
+            && (! $hasMention)
         ) {
             return;
         }
