@@ -23,6 +23,12 @@ jobs:
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
 
+            - name: Login to Docker Hub
+              uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 #4.0.0
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 #6.0.0
               with:
@@ -112,6 +118,12 @@ jobs:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
+
+            - name: Login to Docker Hub
+              uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 #4.0.0
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 #6.0.0
@@ -203,6 +215,12 @@ jobs:
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
 
+            - name: Login to Docker Hub
+              uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 #4.0.0
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 #6.0.0
               with:
@@ -292,6 +310,12 @@ jobs:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
+
+            - name: Login to Docker Hub
+              uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 #4.0.0
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 #6.0.0
