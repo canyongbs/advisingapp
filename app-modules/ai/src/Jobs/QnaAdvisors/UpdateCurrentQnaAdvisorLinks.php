@@ -37,7 +37,6 @@
 namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
 
 use AdvisingApp\Ai\Models\QnaAdvisorLink;
-use App\Features\CurrentQnaAdvisorLinks;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
@@ -52,9 +51,6 @@ class UpdateCurrentQnaAdvisorLinks implements ShouldQueue, TenantAware
 
     public function handle(): void
     {
-        if (! CurrentQnaAdvisorLinks::active()) {
-            return;
-        }
         QnaAdvisorLink::query()
             ->where('is_keep_current_enabled', true)
             ->each(function (QnaAdvisorLink $link) {

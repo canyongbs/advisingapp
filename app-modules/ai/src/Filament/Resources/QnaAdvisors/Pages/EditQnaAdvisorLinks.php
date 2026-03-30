@@ -39,7 +39,6 @@ namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisorLink;
-use App\Features\CurrentQnaAdvisorLinks;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
@@ -97,7 +96,6 @@ class EditQnaAdvisorLinks extends EditRecord
                             ->disabled(fn (?QnaAdvisorLink $record): bool => $record !== null)
                             ->url(),
                         Toggle::make('is_keep_current_enabled')
-                            ->visible(CurrentQnaAdvisorLinks::active())
                             ->label('Keep Current')
                             ->helperText('Select this option if you would like this AI advisor to check for updates on a monthly basis.'),
                     ])
