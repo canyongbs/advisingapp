@@ -79,6 +79,7 @@ class IsInApplicationSubmissionStateOperator extends Operator
             Select::make('states')
                 ->label('State')
                 ->options(ApplicationSubmissionState::pluck('name', 'id'))
+                ->multiple()
                 ->preload()
                 ->required()
                 ->columnSpanFull(),
@@ -96,7 +97,7 @@ class IsInApplicationSubmissionStateOperator extends Operator
 
         return $query->{$this->isInverse() ? 'whereDoesntHave' : 'whereHas'}(
             'applicationSubmissions',
-            fn (Builder $query) => $query->where('state_id', $stateIds),
+            fn (Builder $query) => $query->whereIn('state_id', $stateIds),
         );
     }
 }
