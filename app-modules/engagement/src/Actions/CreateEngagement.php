@@ -71,8 +71,9 @@ class CreateEngagement
             $engagement->campaignAction()->associate($data->campaignAction);
         }
 
+        $engagement->body = $data->body;
+
         DB::transaction(function () use ($data, $engagement, $notifyNow) {
-            $engagement->body = $data->body;
             $engagement->save();
 
             if ($data->schema) {

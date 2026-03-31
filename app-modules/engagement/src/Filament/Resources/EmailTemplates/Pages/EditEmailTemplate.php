@@ -78,7 +78,7 @@ class EditEmailTemplate extends EditRecord
                         'recipient email',
                         'recipient preferred name',
                     ])
-                    ->toolbarButtons([['bold', 'italic', 'small', 'link', 'textColor'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles', 'stockImage'], ['mergeTags']])
+                    ->toolbarButtons(fn () => [['bold', 'italic', 'small', 'link', 'textColor'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles', ...($this->getStockImagePlugin() ? ['stockImage'] : [])], ['mergeTags']])
                     ->plugins(array_filter([
                         $this->getStockImagePlugin(),
                     ]))

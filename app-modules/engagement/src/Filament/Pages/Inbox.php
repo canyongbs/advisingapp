@@ -125,11 +125,24 @@ class Inbox extends Page implements HasTable
                     })
                     ->sortable(),
                 TextColumn::make('subject')
-                    ->description(
-                        fn (EngagementResponse $record): ?string => filled($body = $record->getBody())
+                    ->formatStateUsing(function (EngagementResponse $record): ?string {
+                        if ($record->type === EngagementResponseType::Email && filled($record->subject)) {
+                            return $record->subject;
+                        }
+
+                        return filled($body = $record->getBody())
                             ? Str::limit(html_entity_decode(strip_tags($body), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50)
-                            : null
-                    )
+                            : null;
+                    })
+                    ->description(function (EngagementResponse $record): ?string {
+                        if ($record->type === EngagementResponseType::Email && filled($record->subject)) {
+                            return filled($body = $record->getBody())
+                                ? Str::limit(html_entity_decode(strip_tags($body), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50)
+                                : null;
+                        }
+
+                        return null;
+                    })
                     ->searchable(['subject', 'content']),
                 TextColumn::make('sent_at')
                     ->label('Date')

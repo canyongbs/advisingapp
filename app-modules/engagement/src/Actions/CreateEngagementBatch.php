@@ -58,9 +58,9 @@ class CreateEngagementBatch
         $engagementBatch->total_engagements = $data->recipient->count();
         $engagementBatch->processed_engagements = 0;
         $engagementBatch->successful_engagements = 0;
+        $engagementBatch->body = $data->body;
 
         DB::transaction(function () use ($engagementBatch, $data) {
-            $engagementBatch->body = $data->body;
             $engagementBatch->save();
 
             if ($data->schema) {
