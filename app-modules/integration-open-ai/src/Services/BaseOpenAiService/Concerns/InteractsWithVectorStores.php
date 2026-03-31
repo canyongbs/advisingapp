@@ -166,6 +166,10 @@ trait InteractsWithVectorStores
         $listVectorStoreFilesResponse = $this->vectorStoresHttpClient()
             ->get("vector_stores/{$vectorStore->vector_store_id}/files");
 
+        if ($listVectorStoreFilesResponse->notFound()) {
+            return [];
+        }
+
         if ((! $listVectorStoreFilesResponse->successful()) || (! is_array($listVectorStoreFilesResponse->json('data')))) {
             report(new Exception('Failed to list files for vector store [' . $vectorStore->vector_store_id . '], as a [' . $listVectorStoreFilesResponse->status() . '] response was returned: [' . $listVectorStoreFilesResponse->body() . '].'));
 
