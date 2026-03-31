@@ -43,18 +43,14 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class DateFormFieldBlock extends FormFieldBlock
 {
-    public string $rendered = 'form::blocks.submissions.date';
-
-    public ?string $icon = 'heroicon-m-calendar';
-
     public static function type(): string
     {
         return 'date';
     }
 
-    public function fields(): array
+    protected static function renderedView(): string
     {
-        return [];
+        return 'form::blocks.submissions.date';
     }
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array

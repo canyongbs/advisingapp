@@ -43,18 +43,14 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class TextAreaFormFieldBlock extends FormFieldBlock
 {
-    public string $preview = 'form::blocks.previews.textarea';
-
-    public ?string $icon = 'heroicon-m-bars-3-center-left';
-
     public static function type(): string
     {
         return 'text_area';
     }
 
-    public function fields(): array
+    protected static function previewView(): string
     {
-        return [];
+        return 'form::blocks.previews.textarea';
     }
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array

@@ -42,30 +42,37 @@ use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput as FilamentTextInput;
 
 class EducatableNameFormFieldBlock extends FormFieldBlock
 {
-    public ?string $label = 'Name';
-
-    public string $preview = 'form::blocks.previews.educatable-name';
-
-    public string $rendered = 'form::blocks.submissions.educatable-name';
-
-    public ?string $icon = 'heroicon-m-user';
-
     public static function type(): string
     {
         return 'educatable_name';
     }
 
-    /**
-     * @return array<int, mixed>
-     */
-    public function getFormSchema(): array
+    public static function getLabel(): string
     {
-        return [
+        return 'Name';
+    }
+
+    protected static function previewView(): string
+    {
+        return 'form::blocks.previews.educatable-name';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.educatable-name';
+    }
+
+    public static function configureEditorAction(Action $action): Action
+    {
+        return $action->schema([
+            Hidden::make('fieldId'),
             FilamentTextInput::make('label')
                 ->required()
                 ->string()
@@ -106,7 +113,7 @@ class EducatableNameFormFieldBlock extends FormFieldBlock
             Checkbox::make('preferredNameRequired')
                 ->label('Preferred Name Required')
                 ->default(false),
-        ];
+        ]);
     }
 
     /**

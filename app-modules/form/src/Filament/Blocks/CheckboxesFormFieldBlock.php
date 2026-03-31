@@ -46,18 +46,12 @@ use Filament\Forms\Components\TextInput;
 
 class CheckboxesFormFieldBlock extends FormFieldBlock
 {
-    public string $width = '2xl';
-
-    public string $preview = 'form::blocks.previews.checkboxes';
-
-    public string $rendered = 'form::blocks.submissions.checkboxes';
-
     public static function type(): string
     {
         return 'checkboxes';
     }
 
-    public function fields(): array
+    public static function fields(): array
     {
         return [
             Repeater::make('options')
@@ -72,6 +66,16 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
                 ])
                 ->reorderable(),
         ];
+    }
+
+    protected static function previewView(): string
+    {
+        return 'form::blocks.previews.checkboxes';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.checkboxes';
     }
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array

@@ -43,20 +43,19 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class AgreementFormFieldBlock extends FormFieldBlock
 {
-    public string $preview = 'form::blocks.previews.agreement';
-
-    public string $rendered = 'form::blocks.submissions.agreement';
-
-    public ?string $icon = 'heroicon-m-check-circle';
-
     public static function type(): string
     {
         return 'agreement';
     }
 
-    public function fields(): array
+    protected static function previewView(): string
     {
-        return [];
+        return 'form::blocks.previews.agreement';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.agreement';
     }
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array

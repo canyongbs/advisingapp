@@ -46,20 +46,12 @@ use Filament\Forms\Components\TextInput;
 
 class RadioFormFieldBlock extends FormFieldBlock
 {
-    public string $width = '2xl';
-
-    public string $preview = 'form::blocks.previews.radio';
-
-    public string $rendered = 'form::blocks.submissions.radio';
-
-    public ?string $icon = 'heroicon-m-list-bullet';
-
     public static function type(): string
     {
         return 'radio';
     }
 
-    public function fields(): array
+    public static function fields(): array
     {
         return [
             Repeater::make('options')
@@ -74,6 +66,16 @@ class RadioFormFieldBlock extends FormFieldBlock
                 ])
                 ->reorderable(),
         ];
+    }
+
+    protected static function previewView(): string
+    {
+        return 'form::blocks.previews.radio';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.radio';
     }
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array

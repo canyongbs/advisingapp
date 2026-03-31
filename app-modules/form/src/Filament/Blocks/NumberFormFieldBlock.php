@@ -43,18 +43,14 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class NumberFormFieldBlock extends FormFieldBlock
 {
-    public string $rendered = 'form::blocks.submissions.number';
-
-    public ?string $icon = 'heroicon-m-variable';
-
     public static function type(): string
     {
         return 'number';
     }
 
-    public function fields(): array
+    protected static function renderedView(): string
     {
-        return [];
+        return 'form::blocks.submissions.number';
     }
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
