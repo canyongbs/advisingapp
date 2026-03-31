@@ -92,6 +92,7 @@ class EngagementEmailWorkflowActionJob extends ExecuteWorkflowActionJob
                         subject: $details->subject,
                         body: $details->body,
                         source: $details,
+                        emailType: $details->email_type,
                     ),
                     notifyNow: true,
                 );

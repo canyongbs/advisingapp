@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Notification\Models;
 
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Models\Contracts\Message;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
@@ -55,10 +56,12 @@ class EmailMessage extends BaseModel implements Message
         'recipient_id',
         'recipient_type',
         'recipient_address',
+        'email_type',
     ];
 
     protected $casts = [
         'content' => 'array',
+        'email_type' => EmailType::class,
     ];
 
     /**

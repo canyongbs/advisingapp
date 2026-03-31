@@ -97,6 +97,7 @@ class CreateBatchedEngagement implements ShouldQueue
         $engagement->subject = $this->engagementBatch->subject;
         $engagement->body = $this->engagementBatch->body;
         $engagement->scheduled_at = $this->engagementBatch->scheduled_at;
+        $engagement->email_type = $this->engagementBatch->email_type;
 
         if (! $engagement->scheduled_at) {
             $engagement->dispatched_at = now();

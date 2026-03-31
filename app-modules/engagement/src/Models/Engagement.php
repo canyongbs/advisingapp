@@ -40,6 +40,7 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Engagement\Models\Concerns\EngagementFileAttachmentProvider;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
@@ -73,6 +74,7 @@ use League\HTMLToMarkdown\HtmlConverter;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Symfony\Component\Mime\Email;
 
 /**
  * @property-read ?Educatable $recipient
@@ -102,6 +104,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'source_id',
         'source_type',
         'dispatch_failed_at',
+        'email_type',
     ];
 
     protected $casts = [
@@ -111,6 +114,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'channel' => NotificationChannel::class,
         'subject' => 'array',
         'dispatch_failed_at' => 'datetime',
+        'email_type' => EmailType::class,
     ];
 
     // TODO Consider changing this relationship if we ever needed to timeline something else where records might be shared across entities
