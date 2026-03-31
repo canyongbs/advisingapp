@@ -34,35 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\DataTransferObjects;
+namespace AdvisingApp\Notification\Enums;
 
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use App\Models\User;
-use Carbon\CarbonInterface;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\LaravelData\Data;
+use Filament\Support\Contracts\HasLabel;
 
-class EngagementCreationData extends Data
+enum EmailType: string implements HasLabel
 {
-    /**
-     * @param array<string, mixed>|null $subject
-     * @param array<string, mixed>|null $body
-     * @param array<array<string, mixed>> $temporaryBodyImages
-     */
-    public function __construct(
-        public User $user,
-        /** @var CanBeNotified | Collection<int, CanBeNotified&Model> $recipient */
-        public CanBeNotified | Collection $recipient,
-        public NotificationChannel $channel,
-        public ?array $subject = null,
-        public ?array $body = null,
-        public array $temporaryBodyImages = [],
-        public ?CarbonInterface $scheduledAt = null,
-        public ?string $recipientRoute = null,
-        public ?CampaignAction $campaignAction = null,
-        public string $emailType,
-    ) {}
+    case marketing = 'marketing';
+    case transactional = 'transactional';
+
+    public function getLabel(): string
+    {
+        return $this->name;
+    }
 }

@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,35 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\DataTransferObjects;
+namespace AdvisingApp\Notification\Notifications\Contracts;
 
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use App\Models\User;
-use Carbon\CarbonInterface;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\LaravelData\Data;
-
-class EngagementCreationData extends Data
+interface HasEmailType
 {
-    /**
-     * @param array<string, mixed>|null $subject
-     * @param array<string, mixed>|null $body
-     * @param array<array<string, mixed>> $temporaryBodyImages
-     */
-    public function __construct(
-        public User $user,
-        /** @var CanBeNotified | Collection<int, CanBeNotified&Model> $recipient */
-        public CanBeNotified | Collection $recipient,
-        public NotificationChannel $channel,
-        public ?array $subject = null,
-        public ?array $body = null,
-        public array $temporaryBodyImages = [],
-        public ?CarbonInterface $scheduledAt = null,
-        public ?string $recipientRoute = null,
-        public ?CampaignAction $campaignAction = null,
-        public string $emailType,
-    ) {}
+    public function getEmailType(): string;
 }

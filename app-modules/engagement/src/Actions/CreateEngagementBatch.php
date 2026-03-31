@@ -58,6 +58,7 @@ class CreateEngagementBatch
         $engagementBatch->total_engagements = $data->recipient->count();
         $engagementBatch->processed_engagements = 0;
         $engagementBatch->successful_engagements = 0;
+        $engagementBatch->email_type = $data->emailType;
 
         DB::transaction(function () use ($engagementBatch, $data) {
             $engagementBatch->save();

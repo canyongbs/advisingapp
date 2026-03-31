@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Models;
 
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\Engagement\Observers\EngagementBatchObserver;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Models\BaseModel;
 use App\Models\User;
@@ -66,6 +67,7 @@ class EngagementBatch extends BaseModel implements HasMedia
         'total_engagements',
         'processed_engagements',
         'successful_engagements',
+        'email_type',
     ];
 
     protected $casts = [
@@ -76,6 +78,7 @@ class EngagementBatch extends BaseModel implements HasMedia
         'processed_engagements' => 'integer',
         'successful_engagements' => 'integer',
         'subject' => 'array',
+        'email_type' => EmailType::class,
     ];
 
     /**

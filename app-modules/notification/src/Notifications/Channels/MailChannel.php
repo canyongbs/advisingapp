@@ -38,6 +38,7 @@ namespace AdvisingApp\Notification\Notifications\Channels;
 
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Exceptions\BouncedEmailException;
@@ -48,6 +49,7 @@ use AdvisingApp\Notification\Models\StoredAnonymousNotifiable;
 use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
+use AdvisingApp\Notification\Notifications\Contracts\HasEmailType;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
@@ -60,6 +62,7 @@ use Illuminate\Mail\SentMessage;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Channels\MailChannel as BaseMailChannel;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\URL;
 use ReflectionClass;
 use Symfony\Component\Mime\Email;
 use Throwable;
@@ -99,6 +102,19 @@ class MailChannel extends BaseMailChannel
             'recipient_type' => $recipientType,
             'recipient_address' => is_array($recipientAddress) ? null : $recipientAddress,
         ]);
+
+        $emailType = $notification instanceof HasEmailType
+            ? $notification->getEmailType()
+            : EmailType::transactional->value;
+
+        $emailMessage->email_type = $emailType;
+
+        if ($emailType === EmailType::marketing->value && is_string($recipientAddress)) {
+            $message->viewData = array_merge(
+                $message->viewData ?? [],
+                ['unsubscribeUrl' => URL::signedRoute('unsubscribe', ['email' => $recipientAddress])],
+            );
+        }
 
         if ($notification instanceof HasBeforeSendHook) {
             $notification->beforeSend(

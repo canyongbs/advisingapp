@@ -71,6 +71,9 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
         return [
             Hidden::make($fieldPrefix . 'channel')
                 ->default(NotificationChannel::Email->value),
+            Hidden::make($fieldPrefix . 'email_type')
+                ->default('transactional')
+                ->dehydrated(),
             TiptapEditor::make($fieldPrefix . 'subject')
                 ->recordAttribute('data.subject')
                 ->label('Subject')
