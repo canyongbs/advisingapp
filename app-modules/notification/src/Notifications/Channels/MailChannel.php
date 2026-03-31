@@ -137,11 +137,13 @@ class MailChannel extends BaseMailChannel
 
         $notificationReflection = new ReflectionClass($notification);
         $isSystemNotification = filled($notificationReflection->getAttributes(SystemNotification::class));
+        $isDemoModeEnabled = $tenantMailConfig?->isDemoModeEnabled ?? false;
+        $excludeSystemNotificationsFromDemoMode = $tenantMailConfig?->isExcludingSystemNotificationsFromDemoMode ?? false;
 
         try {
             if (
-                (! $tenantMailConfig->isDemoModeEnabled)
-                || ($isSystemNotification && $tenantMailConfig->isExcludingSystemNotificationsFromDemoMode)
+                (! $isDemoModeEnabled)
+                || ($isSystemNotification && $excludeSystemNotificationsFromDemoMode)
             ) {
                 $message->withSymfonyMessage(function (Email $message) use ($tenant, $emailMessage) {
                     $settings = app(SesSettings::class);
@@ -198,8 +200,8 @@ class MailChannel extends BaseMailChannel
 
                     $emailMessage->events()->create([
                         'type' => (
-                            (! $tenantMailConfig->isDemoModeEnabled)
-                            || ($isSystemNotification && $tenantMailConfig->isExcludingSystemNotificationsFromDemoMode)
+                            (! $isDemoModeEnabled)
+                            || ($isSystemNotification && $excludeSystemNotificationsFromDemoMode)
                         )
                             ? EmailMessageEventType::Dispatched
                             : EmailMessageEventType::BlockedByDemoMode,

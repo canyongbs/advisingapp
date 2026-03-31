@@ -106,7 +106,15 @@ class MostRecentTasksTable extends BaseWidget
                     } : 'Unrelated'),
                 TextColumn::make('concern.display_name')
                     ->label('Related To')
-                    ->state(fn (Task $record): string => $record->concern->{$record->concern::displayNameKey()} ?? 'N/A')
+                    ->state(function (Task $record): string {
+                        $concern = $record->concern;
+
+                        if ($concern === null) {
+                            return 'N/A';
+                        }
+
+                        return $concern->{$concern::displayNameKey()} ?? 'N/A';
+                    })
                     ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
