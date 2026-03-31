@@ -137,11 +137,13 @@ class MailChannel extends BaseMailChannel
 
         $notificationReflection = new ReflectionClass($notification);
         $isSystemNotification = filled($notificationReflection->getAttributes(SystemNotification::class));
+        $isDemoModeEnabled = $tenant ? $tenantMailConfig->isDemoModeEnabled : false;
+        $excludeSystemNotificationsFromDemoMode = $tenant ? $tenantMailConfig->isExcludingSystemNotificationsFromDemoMode : false;
 
         try {
             if (
-                (! ($tenantMailConfig?->isDemoModeEnabled ?? false))
-                || ($isSystemNotification && $tenantMailConfig->isExcludingSystemNotificationsFromDemoMode)
+                (! $isDemoModeEnabled)
+                || ($isSystemNotification && $excludeSystemNotificationsFromDemoMode)
             ) {
                 $message->withSymfonyMessage(function (Email $message) use ($tenant, $emailMessage) {
                     $settings = app(SesSettings::class);
@@ -171,7 +173,7 @@ class MailChannel extends BaseMailChannel
                 );
 
                 try {
-                    $sentMessage = $this->mailer->mailer($message->mailer ?? null)->send(
+                    $sentMessage = $this->mailer->mailer($message->mailer)->send(
                         $this->buildView($message),
                         array_merge($message->data(), $this->additionalMessageData($notification)),
                         $this->messageBuilder($notifiable, $notification, $message)
@@ -198,8 +200,8 @@ class MailChannel extends BaseMailChannel
 
                     $emailMessage->events()->create([
                         'type' => (
-                            (! ($tenantMailConfig?->isDemoModeEnabled ?? false))
-                            || ($isSystemNotification && $tenantMailConfig->isExcludingSystemNotificationsFromDemoMode)
+                            (! $isDemoModeEnabled)
+                            || ($isSystemNotification && $excludeSystemNotificationsFromDemoMode)
                         )
                             ? EmailMessageEventType::Dispatched
                             : EmailMessageEventType::BlockedByDemoMode,
