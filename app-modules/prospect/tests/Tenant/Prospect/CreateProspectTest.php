@@ -40,6 +40,8 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectAddress;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Tests\Tenant\Prospect\RequestFactories\CreateProspectRequestFactory;
 use App\DataTransferObjects\AutocompletedAddress;
 use App\Filament\Forms\Components\AddressInput;
@@ -171,6 +173,8 @@ it('can create a prospect with an address', function () {
 
     livewire(CreateProspect::class)
         ->fillForm([
+            'status_id' => ProspectStatus::factory()->create()->id,
+            'source_id' => ProspectSource::factory()->create()->id,
             'first_name' => 'Jane',
             'last_name' => 'Smith',
             'full_name' => 'Jane Smith',
