@@ -48,31 +48,6 @@ class AwsGeoPlacesService
     ) {}
 
     /**
-     * @return array<int, string>
-     */
-    public function autocomplete(string $query): array
-    {
-        try {
-            $result = $this->client->autocomplete([
-                'QueryText' => $query,
-                'MaxResults' => 10,
-            ]);
-        } catch (Throwable $exception) {
-            report(new Exception('AWS GeoPlaces autocomplete failed', previous: $exception));
-
-            return [];
-        }
-
-        /** @var array<int, array{Address?: array{Label?: string}, Title: string}> $items */
-        $items = $result['ResultItems'] ?? [];
-
-        return collect($items)
-            ->map(fn (array $item): string => $item['Address']['Label'] ?? $item['Title'])
-            ->values()
-            ->all();
-    }
-
-    /**
      * @return array<int, AutocompletedAddress>
      */
     public function autocompleteComponents(string $query): array
@@ -93,15 +68,41 @@ class AwsGeoPlacesService
         $items = $result['ResultItems'] ?? [];
 
         return collect($items)
-            ->map(fn (array $item): AutocompletedAddress => new AutocompletedAddress(
-                line1: trim(($item['Address']['AddressNumber'] ?? '') . ' ' . ($item['Address']['Street'] ?? '')),
-                city: $item['Address']['Locality'] ?? '',
-                state: $item['Address']['Region']['Name'] ?? '',
-                postalCode: $item['Address']['PostalCode'] ?? '',
-                country: $item['Address']['Country']['Name'] ?? '',
-                label: $item['Address']['Label'] ?? $item['Title'],
-            ))
+            ->map(function (array $item): AutocompletedAddress {
+                $address = $item['Address'] ?? [];
+                $countryCode = $address['Country']['Code2'] ?? $address['Country']['Code3'] ?? '';
+
+                return new AutocompletedAddress(
+                    line1: trim(($address['AddressNumber'] ?? '') . ' ' . ($address['Street'] ?? '')),
+                    city: $this->resolveCity($address, $countryCode),
+                    state: $this->resolveState($address),
+                    postalCode: $address['PostalCode'] ?? '',
+                    country: $countryCode,
+                    label: $address['Label'] ?? $item['Title'],
+                );
+            })
             ->values()
             ->all();
+    }
+
+    /**
+     * @param array<string, mixed> $address
+     */
+    private function resolveCity(array $address, string $countryCode): string
+    {
+        return match ($countryCode) {
+            'MX' => $address['Locality'] ?? $address['SubRegion']['Name'] ?? $address['District'] ?? '',
+            'CA' => $address['Locality'] ?? $address['District'] ?? '',
+            'GB' => $address['Locality'] ?? $address['District'] ?? $address['SubDistrict'] ?? '',
+            default => $address['Locality'] ?? $address['District'] ?? $address['SubDistrict'] ?? '',
+        };
+    }
+
+    /**
+     * @param array<string, mixed> $address
+     */
+    private function resolveState(array $address): string
+    {
+        return $address['Region']['Code'] ?? $address['Region']['Name'] ?? '';
     }
 }
