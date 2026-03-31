@@ -48,19 +48,20 @@ use Illuminate\Support\Facades\Storage;
 
 class UploadFormFieldBlock extends FormFieldBlock
 {
-    public ?string $icon = 'heroicon-m-document-arrow-up';
-
-    public string $rendered = 'form::blocks.submissions.upload';
-
     public static function type(): string
     {
         return 'upload';
     }
 
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.upload';
+    }
+
     /**
      * @return array<Component>
      */
-    public function fields(): array
+    public static function fields(): array
     {
         return [
             Checkbox::make('multiple')

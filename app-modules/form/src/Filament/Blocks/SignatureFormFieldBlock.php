@@ -43,20 +43,19 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class SignatureFormFieldBlock extends FormFieldBlock
 {
-    public string $preview = 'form::blocks.previews.signature';
-
-    public string $rendered = 'form::blocks.submissions.signature';
-
-    public ?string $icon = 'heroicon-m-pencil';
-
     public static function type(): string
     {
         return 'signature';
     }
 
-    public function fields(): array
+    protected static function previewView(): string
     {
-        return [];
+        return 'form::blocks.previews.signature';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.signature';
     }
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array

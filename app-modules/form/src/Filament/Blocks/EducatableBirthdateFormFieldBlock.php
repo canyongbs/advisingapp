@@ -42,28 +42,32 @@ use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput as FilamentTextInput;
 
 class EducatableBirthdateFormFieldBlock extends FormFieldBlock
 {
-    public ?string $label = 'Birthdate';
-
-    public string $rendered = 'form::blocks.submissions.date';
-
-    public ?string $icon = 'heroicon-m-calendar';
-
     public static function type(): string
     {
         return 'educatable_birthdate';
     }
 
-    /**
-     * @return array<int, mixed>
-     */
-    public function getFormSchema(): array
+    public static function getLabel(): string
     {
-        return [
+        return 'Birthdate';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.date';
+    }
+
+    public static function configureEditorAction(Action $action): Action
+    {
+        return $action->schema([
+            Hidden::make('fieldId'),
             FilamentTextInput::make('label')
                 ->required()
                 ->string()
@@ -76,7 +80,7 @@ class EducatableBirthdateFormFieldBlock extends FormFieldBlock
             Checkbox::make('isRequired')
                 ->label('Required')
                 ->default(false),
-        ];
+        ]);
     }
 
     /**

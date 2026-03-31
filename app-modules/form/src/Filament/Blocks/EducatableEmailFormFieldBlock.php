@@ -43,25 +43,32 @@ use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput as FilamentTextInput;
 
 class EducatableEmailFormFieldBlock extends FormFieldBlock
 {
-    public ?string $label = 'Primary Email Address';
-
-    public string $rendered = 'form::blocks.submissions.educatable-email';
-
-    public ?string $icon = 'heroicon-m-user';
-
     public static function type(): string
     {
         return 'educatable_email';
     }
 
-    public function getFormSchema(): array
+    public static function getLabel(): string
     {
-        return [
+        return 'Primary Email Address';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.educatable-email';
+    }
+
+    public static function configureEditorAction(Action $action): Action
+    {
+        return $action->schema([
+            Hidden::make('fieldId'),
             FilamentTextInput::make('label')
                 ->required()
                 ->string()
@@ -74,7 +81,7 @@ class EducatableEmailFormFieldBlock extends FormFieldBlock
             Checkbox::make('isRequired')
                 ->label('Required')
                 ->default(true),
-        ];
+        ]);
     }
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array

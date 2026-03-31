@@ -44,22 +44,23 @@ use Filament\Forms\Components\KeyValue;
 
 class SelectFormFieldBlock extends FormFieldBlock
 {
-    public string $rendered = 'form::blocks.submissions.select';
-
-    public ?string $icon = 'heroicon-m-queue-list';
-
     public static function type(): string
     {
         return 'select';
     }
 
-    public function fields(): array
+    public static function fields(): array
     {
         return [
             KeyValue::make('options')
                 ->keyLabel('Value')
                 ->valueLabel('Label'),
         ];
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.select';
     }
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array

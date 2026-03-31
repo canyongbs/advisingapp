@@ -43,18 +43,14 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class TimeFormFieldBlock extends FormFieldBlock
 {
-    public string $rendered = 'form::blocks.submissions.time';
-
-    public ?string $icon = 'heroicon-m-clock';
-
     public static function type(): string
     {
         return 'time';
     }
 
-    public function fields(): array
+    protected static function renderedView(): string
     {
-        return [];
+        return 'form::blocks.submissions.time';
     }
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
