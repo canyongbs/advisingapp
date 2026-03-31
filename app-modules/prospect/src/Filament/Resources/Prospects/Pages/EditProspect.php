@@ -44,8 +44,10 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Filament\Forms\Components\AddressInput;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
+use DefStudio\SearchableInput\DTO\SearchResult;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -58,6 +60,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
@@ -207,6 +210,17 @@ class EditProspect extends EditRecord
                         Repeater::make('addresses')
                             ->relationship()
                             ->schema([
+                                AddressInput::make()
+                                    ->columnSpanFull()
+                                    ->onItemSelected(function (Set $set, SearchResult $item) {/** @phpstan-ignore argument.type */
+                                        $data = $item->get('data');
+                                        $set('line_1', $data['line1'] ?? null);
+                                        $set('city', $data['city'] ?? null);
+                                        $set('state', $data['state'] ?? null);
+                                        $set('postal', $data['postalCode'] ?? null);
+                                        $set('country', $data['country'] ?? null);
+                                    })
+                                    ->saved(false),
                                 TextInput::make('line_1')
                                     ->label('Line 1')
                                     ->maxLength(255),

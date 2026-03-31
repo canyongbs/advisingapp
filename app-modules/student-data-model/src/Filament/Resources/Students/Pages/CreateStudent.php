@@ -39,6 +39,8 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Forms\Components\AddressInput;
+use DefStudio\SearchableInput\DTO\SearchResult;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
@@ -238,6 +240,17 @@ class CreateStudent extends CreateRecord
                         Repeater::make('addresses')
                             ->relationship()
                             ->schema([
+                                AddressInput::make()
+                                    ->columnSpanFull()
+                                    ->onItemSelected(function (Set $set, SearchResult $item) {/** @phpstan-ignore argument.type */
+                                        $data = $item->get('data');
+                                        $set('line_1', $data['line1'] ?? null);
+                                        $set('city', $data['city'] ?? null);
+                                        $set('state', $data['state'] ?? null);
+                                        $set('postal', $data['postalCode'] ?? null);
+                                        $set('country', $data['country'] ?? null);
+                                    })
+                                    ->saved(false),
                                 TextInput::make('line_1')
                                     ->label('Line 1')
                                     ->maxLength(255),

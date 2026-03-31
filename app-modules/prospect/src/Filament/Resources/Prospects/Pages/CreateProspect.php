@@ -40,6 +40,8 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Filament\Forms\Components\AddressInput;
+use DefStudio\SearchableInput\DTO\SearchResult;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
@@ -212,6 +214,17 @@ class CreateProspect extends CreateRecord
                         Repeater::make('addresses')
                             ->relationship()
                             ->schema([
+                                AddressInput::make()
+                                    ->columnSpanFull()
+                                    ->onItemSelected(function (Set $set, SearchResult $item) {/** @phpstan-ignore argument.type */
+                                        $data = $item->get('data');
+                                        $set('line_1', $data['line1'] ?? null);
+                                        $set('city', $data['city'] ?? null);
+                                        $set('state', $data['state'] ?? null);
+                                        $set('postal', $data['postalCode'] ?? null);
+                                        $set('country', $data['country'] ?? null);
+                                    })
+                                    ->saved(false),
                                 TextInput::make('line_1')
                                     ->label('Line 1')
                                     ->maxLength(255),
