@@ -58,7 +58,7 @@ class AzureCredentialsExpiringCheck extends Check
         );
         // call graph api
         $data = Http::withToken($response->object()->access_token)
-            ->get("https://graph.microsoft.com/v1.0/applications(appId='$azureSsoSettings->client_id')" . '?$select=passwordCredentials');
+            ->get("https://graph.microsoft.com/v1.0/applications(appId='{$azureSsoSettings->client_id}')" . '?$select=passwordCredentials');
 
         logger()->info('test');
         logger()->info($data);
