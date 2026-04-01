@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5ee8cedd75e4cd34a60fa2a7d99ca420",
+    "content-hash": "5db633792700d32067ac5633b0723297",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -3569,6 +3569,96 @@
                 "source": "https://github.com/DefectiveCode/laravel-sqs-extended/tree/1.1.0"
             },
             "time": "2025-05-01T12:01:38+00:00"
+        },
+        {
+            "name": "defstudio/filament-searchable-input",
+            "version": "v4.0.11",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/defstudio/filament-searchable-input.git",
+                "reference": "68129a6e6f5fca2da63ad1a933de23f387888600"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/defstudio/filament-searchable-input/zipball/68129a6e6f5fca2da63ad1a933de23f387888600",
+                "reference": "68129a6e6f5fca2da63ad1a933de23f387888600",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^4.0",
+                "filament/forms": "^4.0",
+                "php": "^8.2",
+                "spatie/laravel-package-tools": "^1.15"
+            },
+            "require-dev": {
+                "larastan/larastan": "^3.0",
+                "laravel/pint": "^1.0",
+                "nunomaduro/collision": "^8.0",
+                "orchestra/testbench": "^9.0|^10.0",
+                "pestphp/pest": "^3.0",
+                "pestphp/pest-plugin-arch": "^3.0",
+                "pestphp/pest-plugin-laravel": "^3.0",
+                "pestphp/pest-plugin-livewire": "^3.0",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan-deprecation-rules": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "rector/rector": "^2.0",
+                "spatie/laravel-ray": "^1.26"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "DefStudio\\SearchableInput\\SearchableInputServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "DefStudio\\SearchableInput\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabio Ivona",
+                    "email": "fabio.ivona@defstudio.it",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A searchable autocomplete input for Filament forms",
+            "homepage": "https://github.com/defstudio/filament-searchable-input",
+            "keywords": [
+                "Forms",
+                "defstudio",
+                "filament",
+                "filamentphp",
+                "input",
+                "laravel",
+                "searchable"
+            ],
+            "support": {
+                "issues": "https://github.com/defstudio/filament-searchable-input/issues",
+                "source": "https://github.com/defstudio/filament-searchable-input"
+            },
+            "funding": [
+                {
+                    "url": "https://paypal.me/defstudiosrl",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/defstudio",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/fabio-ivona",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-10-20T22:10:22+00:00"
         },
         {
             "name": "dflydev/dot-access-data",

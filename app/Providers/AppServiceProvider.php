@@ -53,6 +53,7 @@ use App\Overrides\Filament\Actions\Exports\Jobs\PrepareCsvExportOverride;
 use App\Overrides\Filament\Actions\Imports\Jobs\ImportCsvOverride;
 use App\Overrides\Laravel\PermissionMigrationCreator;
 use App\Overrides\Laravel\StartSession as OverrideStartSession;
+use Aws\GeoPlaces\GeoPlacesClient;
 use Exception;
 use Filament\Actions\Exports\Jobs\CreateXlsxFile;
 use Filament\Actions\Exports\Jobs\ExportCompletion;
@@ -122,6 +123,15 @@ class AppServiceProvider extends ServiceProvider
                     ->withMaxInputLength(500000),
             ),
         );
+
+        $this->app->scoped(GeoPlacesClient::class, fn (): GeoPlacesClient => new GeoPlacesClient([
+            'version' => '2020-11-19',
+            'region' => config('services.aws_geo_places.region'),
+            'credentials' => [
+                'key' => config('services.aws_geo_places.key'),
+                'secret' => config('services.aws_geo_places.secret'),
+            ],
+        ]));
 
         $this->loadMigrationsFrom(database_path('migrations/Legacy'));
     }

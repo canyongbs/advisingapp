@@ -40,6 +40,9 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\DataTransferObjects\AutocompletedAddress;
+use App\Filament\Forms\Components\AddressInput;
+use DefStudio\SearchableInput\DTO\SearchResult;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
@@ -47,6 +50,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -57,6 +61,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Throwable;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class CreateProspect extends CreateRecord
@@ -212,6 +217,37 @@ class CreateProspect extends CreateRecord
                         Repeater::make('addresses')
                             ->relationship()
                             ->schema([
+                                AddressInput::make()
+                                    ->columnSpanFull()
+                                    /** @phpstan-ignore argument.type */
+                                    ->onItemSelected(function (Set $set, SearchResult $item) {
+                                        try {
+                                            $data = $item->get('data');
+
+                                            if (! $data instanceof AutocompletedAddress) {
+                                                $data = AutocompletedAddress::from($data);
+                                            }
+
+                                            $set('line_1', $data->line1);
+                                            $set('city', $data->city);
+                                            $set('state', $data->state);
+                                            $set('postal', $data->postalCode);
+                                            $set('country', $data->country);
+                                        } catch (Throwable $exception) {
+                                            if (! session()->has('has_aws_geo_places_error_notification_sent')) {
+                                                Notification::make()
+                                                    ->title('Failed to fetch address suggestions')
+                                                    ->body('An error occurred while fetching address suggestions. Please try again later.')
+                                                    ->danger()
+                                                    ->send();
+
+                                                session()->put('has_aws_geo_places_error_notification_sent', true);
+                                            }
+
+                                            report($exception);
+                                        }
+                                    })
+                                    ->saved(false),
                                 TextInput::make('line_1')
                                     ->label('Line 1')
                                     ->maxLength(255),
