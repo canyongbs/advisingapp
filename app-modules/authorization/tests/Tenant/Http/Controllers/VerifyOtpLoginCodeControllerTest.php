@@ -36,7 +36,6 @@
 
 use AdvisingApp\Authorization\Models\OtpLoginCode;
 use Filament\Facades\Filament;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 
 use function Pest\Laravel\assertAuthenticatedAs;
