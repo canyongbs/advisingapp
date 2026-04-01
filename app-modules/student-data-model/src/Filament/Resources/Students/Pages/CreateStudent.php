@@ -39,8 +39,10 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\DataTransferObjects\AutocompletedAddress;
 use App\Filament\Forms\Components\AddressInput;
 use DefStudio\SearchableInput\DTO\SearchResult;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
@@ -48,6 +50,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -57,6 +60,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
 use Illuminate\Support\Arr;
+use Throwable;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class CreateStudent extends CreateRecord
@@ -242,13 +246,33 @@ class CreateStudent extends CreateRecord
                             ->schema([
                                 AddressInput::make()
                                     ->columnSpanFull()
-                                    ->onItemSelected(function (Set $set, SearchResult $item) {/** @phpstan-ignore argument.type */
-                                        $data = $item->get('data');
-                                        $set('line_1', $data['line1'] ?? null);
-                                        $set('city', $data['city'] ?? null);
-                                        $set('state', $data['state'] ?? null);
-                                        $set('postal', $data['postalCode'] ?? null);
-                                        $set('country', $data['country'] ?? null);
+                                    /** @phpstan-ignore argument.type */
+                                    ->onItemSelected(function (Set $set, SearchResult $item) {
+                                        try {
+                                            $data = $item->get('data');
+
+                                            if (! is_array($data) && ! $data instanceof AutocompletedAddress) {
+                                                throw new Exception('Expected data to be an instance of AutocompletedAddress');
+                                            }
+
+                                            $set('line_1', is_array($data) ? ($data['line1'] ?? null) : ($data->line1 ?? null));
+                                            $set('city', is_array($data) ? ($data['city'] ?? null) : ($data->city ?? null));
+                                            $set('state', is_array($data) ? ($data['state'] ?? null) : ($data->state ?? null));
+                                            $set('postal', is_array($data) ? ($data['postalCode'] ?? null) : ($data->postalCode ?? null));
+                                            $set('country', is_array($data) ? ($data['country'] ?? null) : ($data->country ?? null));
+                                        } catch (Throwable $exception) {
+                                            if (! session()->has('has_aws_geo_places_error_notification_sent')) {
+                                                Notification::make()
+                                                    ->title('Failed to fetch address suggestions')
+                                                    ->body('An error occurred while fetching address suggestions. Please try again later.')
+                                                    ->danger()
+                                                    ->send();
+
+                                                session()->put('has_aws_geo_places_error_notification_sent', true);
+                                            }
+
+                                            report($exception);
+                                        }
                                     })
                                     ->saved(false),
                                 TextInput::make('line_1')

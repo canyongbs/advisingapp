@@ -44,10 +44,12 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\DataTransferObjects\AutocompletedAddress;
 use App\Filament\Forms\Components\AddressInput;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use DefStudio\SearchableInput\DTO\SearchResult;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -57,6 +59,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -66,6 +69,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Throwable;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class EditProspect extends EditRecord
@@ -212,13 +216,33 @@ class EditProspect extends EditRecord
                             ->schema([
                                 AddressInput::make()
                                     ->columnSpanFull()
-                                    ->onItemSelected(function (Set $set, SearchResult $item) {/** @phpstan-ignore argument.type */
-                                        $data = $item->get('data');
-                                        $set('line_1', $data['line1'] ?? null);
-                                        $set('city', $data['city'] ?? null);
-                                        $set('state', $data['state'] ?? null);
-                                        $set('postal', $data['postalCode'] ?? null);
-                                        $set('country', $data['country'] ?? null);
+                                    /** @phpstan-ignore argument.type */
+                                    ->onItemSelected(function (Set $set, SearchResult $item) {
+                                        try {
+                                            $data = $item->get('data');
+
+                                            if (! is_array($data) && ! $data instanceof AutocompletedAddress) {
+                                                throw new Exception('Expected data to be an instance of AutocompletedAddress');
+                                            }
+
+                                            $set('line_1', is_array($data) ? ($data['line1'] ?? null) : ($data->line1 ?? null));
+                                            $set('city', is_array($data) ? ($data['city'] ?? null) : ($data->city ?? null));
+                                            $set('state', is_array($data) ? ($data['state'] ?? null) : ($data->state ?? null));
+                                            $set('postal', is_array($data) ? ($data['postalCode'] ?? null) : ($data->postalCode ?? null));
+                                            $set('country', is_array($data) ? ($data['country'] ?? null) : ($data->country ?? null));
+                                        } catch (Throwable $exception) {
+                                            if (! session()->has('has_aws_geo_places_error_notification_sent')) {
+                                                Notification::make()
+                                                    ->title('Failed to fetch address suggestions')
+                                                    ->body('An error occurred while fetching address suggestions. Please try again later.')
+                                                    ->danger()
+                                                    ->send();
+
+                                                session()->put('has_aws_geo_places_error_notification_sent', true);
+                                            }
+
+                                            report($exception);
+                                        }
                                     })
                                     ->saved(false),
                                 TextInput::make('line_1')

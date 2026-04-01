@@ -37,14 +37,8 @@
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\CreateStudent;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use App\DataTransferObjects\AutocompletedAddress;
-use App\Filament\Forms\Components\AddressInput;
 use App\Models\User;
-use App\Services\AwsGeoPlacesService;
-use DefStudio\SearchableInput\Forms\Components\SearchableInput;
 use Filament\Forms\Components\Repeater;
-use Filament\Schemas\Schema;
-use Mockery\MockInterface;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -68,51 +62,45 @@ it('requires proper access', function () {
         ->assertOk();
 });
 
-it('can fetch autocomplete addresses from the AddressInput component', function () {
-    /** @phpstan-ignore method.notFound */
-    $this->mock(AwsGeoPlacesService::class, function (MockInterface $mock) {
-        /** @phpstan-ignore method.notFound */
-        $mock->shouldReceive('autocompleteComponents')
-            ->once()
-            ->with('123 Main')
-            ->andReturn([
-                new AutocompletedAddress(
-                    line1: '123 Main St',
-                    city: 'City',
-                    state: 'ST',
-                    postalCode: '12345',
-                    country: 'US',
-                    label: '123 Main St, City, ST, 12345, US',
-                ),
-            ]);
-    });
+it('selecting an address in the AddressInput sets the address fields', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
 
-    $input = AddressInput::make();
-    $form = Schema::make()->components([$input]);
-    /** @var SearchableInput $component */
-    $component = $form->getComponent('address');
+    $studentSettings = app(ManageStudentConfigurationSettings::class);
+    $studentSettings->is_enabled = true;
+    $studentSettings->save();
 
-    $resultsShort = $component->getSearchResultsForJs('12');
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.create');
+    actingAs($user);
 
-    $results = $component->getSearchResultsForJs('123 Main');
-    /** @phpstan-ignore argument.templateType */
-    expect($results)->toHaveCount(1);
-    /** @phpstan-ignore argument.templateType */
-    expect($resultsShort)->toBeEmpty();
+    $component = livewire(CreateStudent::class);
 
-    $firstResult = $results[0];
+    $addresses = $component->get('data.addresses');
+    $itemUuid = array_key_first($addresses);
 
-    expect($firstResult)->toBeArray();
-    expect($firstResult)->toHaveKeys(['label', 'data']);
-
-    expect($firstResult['label'])->toBe('123 Main St, City, ST, 12345, US');
-
-    $data = $firstResult['data']['data'] ?? [];
-    expect($data['line1'] ?? null)->toBe('123 Main St');
-    expect($data['city'] ?? null)->toBe('City');
-    expect($data['state'] ?? null)->toBe('ST');
-    expect($data['postalCode'] ?? null)->toBe('12345');
-    expect($data['country'] ?? null)->toBe('US');
+    $component
+        ->call('callSchemaComponentMethod', "form.addresses.{$itemUuid}.address", 'reactOnItemSelectedFromJs', [
+            'item' => [
+                'value' => '123 Main St, City, ST, 12345, US',
+                'label' => '123 Main St, City, ST, 12345, US',
+                'data' => [
+                    'data' => [
+                        'line1' => '123 Main St',
+                        'city' => 'City',
+                        'state' => 'ST',
+                        'postalCode' => '12345',
+                        'country' => 'US',
+                    ],
+                ],
+            ],
+        ])
+        ->assertFormSet([
+            "addresses.{$itemUuid}.line_1" => '123 Main St',
+            "addresses.{$itemUuid}.city" => 'City',
+            "addresses.{$itemUuid}.state" => 'ST',
+            "addresses.{$itemUuid}.postal" => '12345',
+            "addresses.{$itemUuid}.country" => 'US',
+        ]);
 });
 
 it('can create a student with an address', function () {

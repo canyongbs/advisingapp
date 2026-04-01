@@ -43,15 +43,9 @@ use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Tests\Tenant\Prospect\RequestFactories\CreateProspectRequestFactory;
-use App\DataTransferObjects\AutocompletedAddress;
-use App\Filament\Forms\Components\AddressInput;
 use App\Models\User;
-use App\Services\AwsGeoPlacesService;
-use DefStudio\SearchableInput\Forms\Components\SearchableInput;
 use Filament\Forms\Components\Repeater;
-use Filament\Schemas\Schema;
 use Illuminate\Support\Arr;
-use Mockery\MockInterface;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -114,51 +108,41 @@ test('CreateProspect is gated with proper access control', function () {
     assertDatabaseHas(ProspectAddress::class, Arr::first($addresses));
 });
 
-it('can fetch autocomplete addresses from the AddressInput component for prospect', function () {
-    /** @phpstan-ignore method.notFound */
-    $this->mock(AwsGeoPlacesService::class, function (MockInterface $mock) {
-        /** @phpstan-ignore method.notFound */
-        $mock->shouldReceive('autocompleteComponents')
-            ->once()
-            ->with('456 Oak')
-            ->andReturn([
-                new AutocompletedAddress(
-                    line1: '456 Oak Ave',
-                    city: 'Springfield',
-                    state: 'IL',
-                    postalCode: '62701',
-                    country: 'US',
-                    label: '456 Oak Ave, Springfield, IL, 62701, US',
-                ),
-            ]);
-    });
+it('selecting an address in the AddressInput sets the address fields', function () {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
-    $input = AddressInput::make();
-    $form = Schema::make()->components([$input]);
-    /** @var SearchableInput $component */
-    $component = $form->getComponent('address');
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('prospect.create');
+    actingAs($user);
 
-    $resultsShort = $component->getSearchResultsForJs('45');
+    $component = livewire(CreateProspect::class);
 
-    $results = $component->getSearchResultsForJs('456 Oak');
-    /** @phpstan-ignore argument.templateType */
-    expect($results)->toHaveCount(1);
-    /** @phpstan-ignore argument.templateType */
-    expect($resultsShort)->toBeEmpty();
+    $addresses = $component->get('data.addresses');
+    $itemUuid = array_key_first($addresses);
 
-    $firstResult = $results[0];
-
-    expect($firstResult)->toBeArray();
-    expect($firstResult)->toHaveKeys(['label', 'data']);
-
-    expect($firstResult['label'])->toBe('456 Oak Ave, Springfield, IL, 62701, US');
-
-    $data = $firstResult['data']['data'] ?? [];
-    expect($data['line1'] ?? null)->toBe('456 Oak Ave');
-    expect($data['city'] ?? null)->toBe('Springfield');
-    expect($data['state'] ?? null)->toBe('IL');
-    expect($data['postalCode'] ?? null)->toBe('62701');
-    expect($data['country'] ?? null)->toBe('US');
+    $component
+        ->call('callSchemaComponentMethod', "form.addresses.{$itemUuid}.address", 'reactOnItemSelectedFromJs', [
+            'item' => [
+                'value' => '456 Oak Ave, Springfield, IL, 62701, US',
+                'label' => '456 Oak Ave, Springfield, IL, 62701, US',
+                'data' => [
+                    'data' => [
+                        'line1' => '456 Oak Ave',
+                        'city' => 'Springfield',
+                        'state' => 'IL',
+                        'postalCode' => '62701',
+                        'country' => 'US',
+                    ],
+                ],
+            ],
+        ])
+        ->assertFormSet([
+            "addresses.{$itemUuid}.line_1" => '456 Oak Ave',
+            "addresses.{$itemUuid}.city" => 'Springfield',
+            "addresses.{$itemUuid}.state" => 'IL',
+            "addresses.{$itemUuid}.postal" => '62701',
+            "addresses.{$itemUuid}.country" => 'US',
+        ]);
 });
 
 it('can create a prospect with an address', function () {
