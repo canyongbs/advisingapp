@@ -77,6 +77,7 @@ class ListApplicationSubmissionStates extends ListRecords
             ])
             ->modifyQueryUsing(function (Builder $query) {
                 if (ApplicationSubmissionStateArchivingFeature::active()) {
+                    // @phpstan-ignore method.notFound
                     $query = $query->withoutArchived();
                 }
 

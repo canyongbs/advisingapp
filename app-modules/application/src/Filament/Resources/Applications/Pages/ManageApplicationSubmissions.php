@@ -79,7 +79,10 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
         $firstState = ApplicationSubmissionState::query()
             ->when(
                 ApplicationSubmissionStateArchivingFeature::active(),
-                fn (Builder $query) => $query->withoutArchivedAndUnused(),
+                function (Builder $query) {
+                    // @phpstan-ignore method.notFound
+                    return $query->withoutArchivedAndUnused();
+                },
             )
             ->oldest('id')
             ->first();
@@ -114,6 +117,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
         }
 
         $statesByClassification = ApplicationSubmissionState::query()
+            // @phpstan-ignore method.notFound
             ->withoutArchivedAndUnused()
             ->oldest('id')
             ->get()
@@ -139,6 +143,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                 ->modifyQueryUsing(fn (Builder $query) => $query->whereHas(
                     'state',
                     fn (Builder $query) => $query
+                        // @phpstan-ignore method.notFound
                         ->withoutArchivedAndUnused()
                         ->tap(new ClassifiedAs($classification)),
                 ));

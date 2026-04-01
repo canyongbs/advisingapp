@@ -51,7 +51,10 @@ class ApplicationSubmissionObserver
         $defaultState = ApplicationSubmissionState::query()
             ->when(
                 ApplicationSubmissionStateArchivingFeature::active(),
-                fn ($query) => $query->withoutArchived(),
+            function ($query) {
+              // @phpstan-ignore method.notFound
+              return $query->withoutArchived();
+            },
             )
             ->where('classification', ApplicationSubmissionStateClassification::Received)
             ->oldest('id')
@@ -61,7 +64,10 @@ class ApplicationSubmissionObserver
             $defaultState = ApplicationSubmissionState::query()
                 ->when(
                     ApplicationSubmissionStateArchivingFeature::active(),
-                    fn ($query) => $query->withoutArchived(),
+                function ($query) {
+                  // @phpstan-ignore method.notFound
+                  return $query->withoutArchived();
+                },
                 )
                 ->oldest('id')
                 ->firstOrFail();

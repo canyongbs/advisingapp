@@ -194,9 +194,11 @@ test('state dropdown includes all non-archived states and excludes archived stat
     ]);
 
     $reviewState = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Review)->first();
+    // @phpstan-ignore method.notFound
     $reviewState->archive();
 
     $dropdownStateIds = ApplicationSubmissionState::query()
+        // @phpstan-ignore method.notFound
         ->withoutArchived()
         ->oldest('id')
         ->pluck('id')
@@ -259,6 +261,7 @@ test('state dropdown disables option when selected state classification is not a
         ->all();
 
     $disallowedState = ApplicationSubmissionState::query()
+        // @phpstan-ignore method.notFound
         ->withoutArchived()
         ->get()
         ->first(function (ApplicationSubmissionState $state) use ($allowedTransitions, $submission): bool {

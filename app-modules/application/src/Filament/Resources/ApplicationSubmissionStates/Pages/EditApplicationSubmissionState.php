@@ -94,6 +94,7 @@ class EditApplicationSubmissionState extends EditRecord
                 ->icon('heroicon-o-archive-box')
                 ->action(function () {
                     $state = $this->getRecord();
+                    // @phpstan-ignore method.notFound
                     $state->archive();
 
                     Notification::make()
@@ -103,11 +104,17 @@ class EditApplicationSubmissionState extends EditRecord
 
                     $this->redirect($this->getResource()::getUrl('index'));
                 })
-                ->hidden(fn (): bool => (bool) $this->getRecord()->archived_at);
+                ->hidden(function (): bool {
+                    // @phpstan-ignore property.notFound
+                    return (bool) $this->getRecord()->archived_at;
+                });
         }
 
         $actions[] = DeleteAction::make()
-            ->visible(fn () => ! $this->getRecord()->submissions()->exists());
+            ->visible(function (): bool {
+                // @phpstan-ignore method.notFound
+                return ! $this->getRecord()->submissions()->exists();
+            });
 
         return $actions;
     }

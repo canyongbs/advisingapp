@@ -94,6 +94,7 @@ test('tab label includes Archived when the state for that classification is arch
         'state_id' => $receivedState->id,
     ]);
 
+    // @phpstan-ignore method.notFound
     $receivedState->archive();
 
     $tabs = livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
@@ -138,6 +139,7 @@ test('default tab falls back to first non-received classification when Received 
     $receivedState = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)
         ->first();
 
+    // @phpstan-ignore method.notFound
     $receivedState->archive();
 
     $application = Application::factory()->create();
@@ -156,6 +158,7 @@ test('archived state with no submissions does not appear as a tab key', function
     $receivedState = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)
         ->first();
 
+    // @phpstan-ignore method.notFound
     $receivedState->archive();
 
     $application = Application::factory()->create();
@@ -179,6 +182,7 @@ test('archived state that has submissions still appears as a tab', function () {
         'state_id' => $receivedState->id,
     ]);
 
+    // @phpstan-ignore method.notFound
     $receivedState->archive();
 
     $tabs = livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
