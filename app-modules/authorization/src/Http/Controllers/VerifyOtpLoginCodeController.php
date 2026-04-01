@@ -52,10 +52,9 @@ class VerifyOtpLoginCodeController
     public function __invoke(Request $request, OtpLoginCode $otpCode): RedirectResponse
     {
         abort_if(
-            boolean: now()->greaterThanOrEqualTo($otpCode->created_at->addMinutes(20))
-                || $otpCode->used_at !== null,
+            boolean: $otpCode->used_at !== null,
             code: 403,
-            message: 'This OTP link has expired or has already been used. Please request a new one.'
+            message: 'This OTP code has already been used. Please request a new one.'
         );
 
         $request->validate([

@@ -39,6 +39,7 @@ namespace AdvisingApp\Authorization\Http\Controllers;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Http\Requests\GenerateOtpLoginCodeRequest;
 use AdvisingApp\Authorization\Models\OtpLoginCode;
+use AdvisingApp\Authorization\Notifications\OtpCodeNotification;
 use App\Features\OtpCodeLoginFeature;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -112,6 +113,8 @@ class GenerateOtpLoginCodeController
 
             DB::commit();
 
+            $user->notify(new OtpCodeNotification($code));
+
             return response()->json([
                 'link' => URL::temporarySignedRoute(
                     name: 'otp-code.login',
@@ -120,7 +123,6 @@ class GenerateOtpLoginCodeController
                         'otpCode' => $otpCode->getKey(),
                     ]
                 ),
-                'otp' => $code,
             ]);
         } catch (Throwable $exception) {
             DB::rollBack();

@@ -41,6 +41,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
+use InvalidArgumentException;
 
 /**
  * @extends Factory<OtpLoginCode>
@@ -61,11 +62,14 @@ class OtpLoginCodeFactory extends Factory
     /**
      * @return Factory<OtpLoginCode>
      */
-    public function withCode(string $code): Factory
+    public function withCode(int $code): Factory
     {
+      if ($code < 100000 || $code > 999999) {
+            throw new InvalidArgumentException('OTP code must be a 6-digit integer between 100000 and 999999.');
+        }
         return $this->state(function (array $attributes) use ($code) {
             return [
-                'code' => Hash::make($code),
+                'code' => Hash::make((string) $code),
             ];
         });
     }

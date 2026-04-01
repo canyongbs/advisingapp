@@ -34,34 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Http\Controllers;
+namespace AdvisingApp\Authorization\Notifications;
 
-use AdvisingApp\Authorization\Models\OtpLoginCode;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
-use Illuminate\View\View;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
 
-class OtpLoginCodeController
+class OtpCodeNotification extends Notification
 {
-    public function __invoke(Request $request, OtpLoginCode $otpCode): View
+    use Queueable;
+
+    public function __construct(
+        protected int $code,
+    ) {}
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(User $notifiable): array
     {
-        abort_if(
-            boolean: now()->greaterThanOrEqualTo($otpCode->created_at->addMinutes(20))
-                || $otpCode->used_at !== null,
-            code: 403,
-            message: 'This OTP link has expired or has already been used. Please request a new one.'
-        );
+        return ['mail'];
+    }
 
-        $verifyUrl = URL::temporarySignedRoute(
-            name: 'otp-code.verify',
-            expiration: $otpCode->created_at->addMinutes(20)->toImmutable(),
-            parameters: [
-                'otpCode' => $otpCode->getKey(),
-            ],
-        );
-
-        return view('authorization::otp-entry', [
-            'verifyUrl' => $verifyUrl,
-        ]);
+    public function toMail(User $notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->subject('Your Login Verification Code')
+            ->greeting('Hello ' . $notifiable->name . ',')
+            ->line('Your one-time login verification code is:')
+            ->line("**{$this->code}**")
+            ->line('This code will expire in 20 minutes.')
+            ->line('If you did not request this code, please ignore this email.');
     }
 }

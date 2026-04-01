@@ -35,10 +35,12 @@
 */
 
 use AdvisingApp\Authorization\Models\OtpLoginCode;
+use AdvisingApp\Authorization\Notifications\OtpCodeNotification;
 use AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\RequestFactories\GenerateOtpLoginCodeRequestFactory;
 use App\Http\Middleware\CheckOlympusKey;
 use App\Models\Authenticatable;
 use App\Models\User;
+use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\post;
@@ -70,7 +72,7 @@ it('can generate a login OTP for a non-existing user', function () {
             ]
         )
         ->assertOk()
-        ->assertJsonStructure(['link', 'otp']);
+        ->assertJsonStructure(['link']);
 
     // Verify that the user was created
     $user = User::where('email', $email)->first();
@@ -102,7 +104,7 @@ it('can generate a login OTP for an existing user', function () {
             ]
         )
         ->assertOk()
-        ->assertJsonStructure(['link', 'otp']);
+        ->assertJsonStructure(['link']);
 
     assertDatabaseCount(User::class, 1);
 
@@ -140,7 +142,7 @@ it('can generate a login OTP for an existing user that is deleted', function () 
             ]
         )
         ->assertOk()
-        ->assertJsonStructure(['link', 'otp']);
+        ->assertJsonStructure(['link']);
 
     assertDatabaseCount(User::class, 1);
 
@@ -182,7 +184,7 @@ it('updates details of an existing user', function () {
             ]
         )
         ->assertOk()
-        ->assertJsonStructure(['link', 'otp']);
+        ->assertJsonStructure(['link']);
 
     assertDatabaseCount(User::class, 1);
 
@@ -219,7 +221,7 @@ it('deletes existing OTP codes for a user', function () {
             ]
         )
         ->assertOk()
-        ->assertJsonStructure(['link', 'otp']);
+        ->assertJsonStructure(['link']);
 
     assertDatabaseCount(User::class, 1);
 
@@ -239,27 +241,28 @@ it('deletes existing OTP codes for a user', function () {
     expect($otpCode->user_id)->toEqual($user->id);
 });
 
-it('returns a 6-digit OTP code', function () {
-    $email = fake()->safeEmail();
-    $name = fake()->name();
+it('sends OTP code notification to the provided email', function () {
+    Notification::fake();
 
-    $response = withoutMiddleware(CheckOlympusKey::class)
+    $email = fake()->safeEmail();
+
+    withoutMiddleware(CheckOlympusKey::class)
         ->post(
             route('otp-code.generate'),
             [
                 'email' => $email,
-                'name' => $name,
+                'name' => fake()->name(),
                 'type' => Authenticatable::SUPER_ADMIN_ROLE,
             ]
         )
         ->assertOk()
-        ->assertJsonStructure(['link', 'otp']);
+        ->assertJsonStructure(['link'])
+        ->assertJsonMissing(['otp']);
 
-    $otp = $response->json('otp');
-
-    expect($otp)->toBeInt()
-        ->and($otp)->toBeGreaterThanOrEqual(100000)
-        ->and($otp)->toBeLessThanOrEqual(999999);
+    Notification::assertSentTo(
+        User::where('email', $email)->first(),
+        OtpCodeNotification::class,
+    );
 });
 
 it('requires valid data', function (GenerateOtpLoginCodeRequestFactory $data, array $errors) {
