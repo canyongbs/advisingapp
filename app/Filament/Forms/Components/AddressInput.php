@@ -78,6 +78,6 @@ class AddressInput
                     return [];
                 }
             })
-            ->extraInputAttributes(['data-1p-ignore' => true, 'data-lpignore' => 'true', 'data-form-type' => 'other', 'data-bwignore' => true]);
+            ->extraInputAttributes(['data-1p-ignore' => 'true', 'data-lpignore' => 'true', 'data-form-type' => 'other', 'data-bwignore' => true]);
     }
 }
