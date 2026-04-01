@@ -38,9 +38,7 @@ namespace AdvisingApp\Application\Models;
 
 use AdvisingApp\Application\Database\Factories\ApplicationSubmissionStateFactory;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
-use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use App\Features\ApplicationSubmissionStateFeature;
 use App\Models\BaseModel;
 use CanyonGBS\Common\Enums\Color;
 use CanyonGBS\Common\Models\Concerns\CanBeArchived;
@@ -71,6 +69,7 @@ class ApplicationSubmissionState extends BaseModel implements Auditable
 
     protected $casts = [
         'classification' => ApplicationSubmissionStateClassification::class,
+        'color' => Color::class,
     ];
 
     /**
@@ -88,16 +87,5 @@ class ApplicationSubmissionState extends BaseModel implements Auditable
     public static function used(Builder $query): void
     {
         $query->whereHas('submissions');
-    }
-
-    /**
-     * TODO: ApplicationSubmissionStateFeature Cleanup - After ApplicationSubmissionStateFeature is removed: please move color back to $cast property
-     * - Additionally, Remove the ApplicationSubmissionStateColorOptions enum if it is no longer used elsewhere in the codebase.
-     */
-    protected function casts(): array
-    {
-        return [
-            'color' => ApplicationSubmissionStateFeature::active() ? Color::class : ApplicationSubmissionStateColorOptions::class,
-        ];
     }
 }
