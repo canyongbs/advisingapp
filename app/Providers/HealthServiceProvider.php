@@ -86,8 +86,9 @@ class HealthServiceProvider extends ServiceProvider
                 ->failAfterMinutes(3),
             RedisCheck::new(),
             AzureCredentialsExpiringCheck::new()
-                ->if(function() {
+                ->if(function () {
                     $azureSsoSettings = app(AzureSsoSettings::class);
+
                     return $azureSsoSettings->is_enabled &&
                     ! is_null($azureSsoSettings->client_id) &&
                     ! is_null($azureSsoSettings->client_secret) &&

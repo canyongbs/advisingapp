@@ -58,10 +58,11 @@ class AzureCredentialsExpiringCheck extends Check
         );
         // call graph api
         $data = Http::withToken($response->object()->access_token)
-          ->get('https://graph.microsoft.com/v1.0/applications/{' . $azureSsoSettings->client_id . '}');
+            ->get('https://graph.microsoft.com/v1.0/applications/{' . $azureSsoSettings->client_id . '}');
 
         logger()->info('test');
         logger()->info($data);
+
         // get and compare exp date
         return Result::make()->ok();
     }
