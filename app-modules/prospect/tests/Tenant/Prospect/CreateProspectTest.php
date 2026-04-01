@@ -43,6 +43,7 @@ use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Tests\Tenant\Prospect\RequestFactories\CreateProspectRequestFactory;
+use App\DataTransferObjects\AutocompletedAddress;
 use App\Models\User;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Arr;
@@ -126,13 +127,14 @@ it('selecting an address in the AddressInput sets the address fields', function 
                 'value' => '456 Oak Ave, Springfield, IL, 62701, US',
                 'label' => '456 Oak Ave, Springfield, IL, 62701, US',
                 'data' => [
-                    'data' => [
-                        'line1' => '456 Oak Ave',
-                        'city' => 'Springfield',
-                        'state' => 'IL',
-                        'postalCode' => '62701',
-                        'country' => 'US',
-                    ],
+                    'data' => new AutocompletedAddress(
+                        line1: '456 Oak Ave',
+                        city: 'Springfield',
+                        state: 'IL',
+                        postalCode: '62701',
+                        country: 'US',
+                        label: '456 Oak Ave, Springfield, IL, 62701, US',
+                    ),
                 ],
             ],
         ])

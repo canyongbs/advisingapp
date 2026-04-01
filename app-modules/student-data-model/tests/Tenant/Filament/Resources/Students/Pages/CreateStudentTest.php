@@ -37,6 +37,7 @@
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\CreateStudent;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use App\DataTransferObjects\AutocompletedAddress;
 use App\Models\User;
 use Filament\Forms\Components\Repeater;
 
@@ -84,13 +85,14 @@ it('selecting an address in the AddressInput sets the address fields', function 
                 'value' => '123 Main St, City, ST, 12345, US',
                 'label' => '123 Main St, City, ST, 12345, US',
                 'data' => [
-                    'data' => [
-                        'line1' => '123 Main St',
-                        'city' => 'City',
-                        'state' => 'ST',
-                        'postalCode' => '12345',
-                        'country' => 'US',
-                    ],
+                    'data' => new AutocompletedAddress(
+                        line1: '123 Main St',
+                        city: 'City',
+                        state: 'ST',
+                        postalCode: '12345',
+                        country: 'US',
+                        label: '123 Main St, City, ST, 12345, US',
+                    ),
                 ],
             ],
         ])

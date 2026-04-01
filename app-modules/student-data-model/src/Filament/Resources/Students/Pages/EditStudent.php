@@ -44,7 +44,6 @@ use App\DataTransferObjects\AutocompletedAddress;
 use App\Filament\Forms\Components\AddressInput;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use DefStudio\SearchableInput\DTO\SearchResult;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -264,15 +263,15 @@ class EditStudent extends EditRecord
                                         try {
                                             $data = $item->get('data');
 
-                                            if (! is_array($data) && ! $data instanceof AutocompletedAddress) {
-                                                throw new Exception('Expected data to be an instance of AutocompletedAddress');
+                                            if (! $data instanceof AutocompletedAddress) {
+                                                $data = AutocompletedAddress::from($data);
                                             }
 
-                                            $set('line_1', is_array($data) ? ($data['line1'] ?? null) : ($data->line1 ?? null));
-                                            $set('city', is_array($data) ? ($data['city'] ?? null) : ($data->city ?? null));
-                                            $set('state', is_array($data) ? ($data['state'] ?? null) : ($data->state ?? null));
-                                            $set('postal', is_array($data) ? ($data['postalCode'] ?? null) : ($data->postalCode ?? null));
-                                            $set('country', is_array($data) ? ($data['country'] ?? null) : ($data->country ?? null));
+                                            $set('line_1', $data->line1);
+                                            $set('city', $data->city);
+                                            $set('state', $data->state);
+                                            $set('postal', $data->postalCode);
+                                            $set('country', $data->country);
                                         } catch (Throwable $exception) {
                                             if (! session()->has('has_aws_geo_places_error_notification_sent')) {
                                                 Notification::make()
