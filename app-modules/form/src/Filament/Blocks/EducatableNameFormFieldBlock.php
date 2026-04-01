@@ -59,14 +59,56 @@ class EducatableNameFormFieldBlock extends FormFieldBlock
         return 'Name';
     }
 
-    protected static function previewView(): string
+    /**
+     * TODO: Remove this method once Meeting Center and Case Forms are migrated to RichEditor.
+     * See FormFieldBlock for full list of backward-compatibility methods to clean up.
+     *
+     * @return array<int, mixed>
+     */
+    public function getFormSchema(): array
     {
-        return 'form::blocks.previews.educatable-name';
-    }
-
-    protected static function renderedView(): string
-    {
-        return 'form::blocks.submissions.educatable-name';
+        return [
+            FilamentTextInput::make('label')
+                ->required()
+                ->string()
+                ->maxLength(255)
+                ->default('Name'),
+            FilamentTextInput::make('description')
+                ->label('Field Description')
+                ->string()
+                ->maxLength(255),
+            FilamentTextInput::make('firstNameLabel')
+                ->label('First Name Label')
+                ->required()
+                ->string()
+                ->maxLength(255)
+                ->default('First Name'),
+            Checkbox::make('firstNameRequired')
+                ->label('First Name Required')
+                ->default(true)
+                ->disabled()
+                ->dehydrated(),
+            FilamentTextInput::make('lastNameLabel')
+                ->label('Last Name Label')
+                ->required()
+                ->string()
+                ->maxLength(255)
+                ->default('Last Name'),
+            Checkbox::make('lastNameRequired')
+                ->label('Last Name Required')
+                ->default(true)
+                ->disabled()
+                ->dehydrated(),
+            FilamentTextInput::make('preferredNameLabel')
+                ->label('Preferred Name Label')
+                ->required()
+                ->string()
+                ->maxLength(255)
+                ->default('Preferred Name'),
+            Checkbox::make('preferredNameRequired')
+                ->label('Preferred Name Required')
+                ->default(false),
+        ];
     }
 
     public static function configureEditorAction(Action $action): Action
@@ -194,5 +236,15 @@ class EducatableNameFormFieldBlock extends FormFieldBlock
             'last_name' => ['required', 'string', 'max:255'],
             'preferred' => $preferredNameRequired ? ['required', 'string', 'max:255'] : ['nullable', 'string', 'max:255'],
         ];
+    }
+
+    protected static function previewView(): string
+    {
+        return 'form::blocks.previews.educatable-name';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.educatable-name';
     }
 }

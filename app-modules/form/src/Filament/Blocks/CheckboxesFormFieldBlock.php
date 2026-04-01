@@ -68,16 +68,6 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
         ];
     }
 
-    protected static function previewView(): string
-    {
-        return 'form::blocks.previews.checkboxes';
-    }
-
-    protected static function renderedView(): string
-    {
-        return 'form::blocks.submissions.checkboxes';
-    }
-
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
         return [
@@ -122,5 +112,15 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
                 ->mapWithKeys(fn ($label, $key) => [$label => in_array($key, $response)])
                 ->toArray(),
         ];
+    }
+
+    protected static function previewView(): string
+    {
+        return 'form::blocks.previews.checkboxes';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.checkboxes';
     }
 }

@@ -53,11 +53,6 @@ class UrlFormFieldBlock extends FormFieldBlock
         return 'URL';
     }
 
-    protected static function renderedView(): string
-    {
-        return 'form::blocks.submissions.url';
-    }
-
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
         return [
@@ -72,5 +67,10 @@ class UrlFormFieldBlock extends FormFieldBlock
     public static function getValidationRules(SubmissibleField $field): array
     {
         return ['url', 'max:255'];
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.url';
     }
 }

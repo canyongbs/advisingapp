@@ -60,9 +60,28 @@ class EducatableEmailFormFieldBlock extends FormFieldBlock
         return 'Primary Email Address';
     }
 
-    protected static function renderedView(): string
+    /**
+     * TODO: Remove this method once Meeting Center and Case Forms are migrated to RichEditor.
+     * See FormFieldBlock for full list of backward-compatibility methods to clean up.
+     *
+     * @return array<int, mixed>
+     */
+    public function getFormSchema(): array
     {
-        return 'form::blocks.submissions.educatable-email';
+        return [
+            FilamentTextInput::make('label')
+                ->required()
+                ->string()
+                ->maxLength(255)
+                ->default('Your email address'),
+            FilamentTextInput::make('description')
+                ->label('Field Description')
+                ->string()
+                ->maxLength(255),
+            Checkbox::make('isRequired')
+                ->label('Required')
+                ->default(true),
+        ];
     }
 
     public static function configureEditorAction(Action $action): Action
@@ -122,5 +141,10 @@ class EducatableEmailFormFieldBlock extends FormFieldBlock
             'authorKey' => $author ? $author->getKey() : null,
             'authorType' => $author ? $author::class : null,
         ];
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.educatable-email';
     }
 }

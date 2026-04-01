@@ -48,11 +48,6 @@ class TextAreaFormFieldBlock extends FormFieldBlock
         return 'text_area';
     }
 
-    protected static function previewView(): string
-    {
-        return 'form::blocks.previews.textarea';
-    }
-
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
         return [
@@ -67,5 +62,10 @@ class TextAreaFormFieldBlock extends FormFieldBlock
     public static function getValidationRules(SubmissibleField $field): array
     {
         return ['string', 'max:65535'];
+    }
+
+    protected static function previewView(): string
+    {
+        return 'form::blocks.previews.textarea';
     }
 }

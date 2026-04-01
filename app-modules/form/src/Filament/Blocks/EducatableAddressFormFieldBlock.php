@@ -59,14 +59,28 @@ class EducatableAddressFormFieldBlock extends FormFieldBlock
         return 'Primary Address';
     }
 
-    protected static function previewView(): string
+    /**
+     * TODO: Remove this method once Meeting Center and Case Forms are migrated to RichEditor.
+     * See FormFieldBlock for full list of backward-compatibility methods to clean up.
+     *
+     * @return array<int, mixed>
+     */
+    public function getFormSchema(): array
     {
-        return 'form::blocks.previews.educatable-address';
-    }
-
-    protected static function renderedView(): string
-    {
-        return 'form::blocks.submissions.educatable-address';
+        return [
+            FilamentTextInput::make('label')
+                ->required()
+                ->string()
+                ->maxLength(255)
+                ->default('Address'),
+            FilamentTextInput::make('description')
+                ->label('Field Description')
+                ->string()
+                ->maxLength(255),
+            Checkbox::make('isRequired')
+                ->label('Required')
+                ->default(false),
+        ];
     }
 
     public static function configureEditorAction(Action $action): Action
@@ -200,5 +214,15 @@ class EducatableAddressFormFieldBlock extends FormFieldBlock
         $nestedRules['country'] = ['nullable', 'string', 'max:255'];
 
         return $nestedRules;
+    }
+
+    protected static function previewView(): string
+    {
+        return 'form::blocks.previews.educatable-address';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.educatable-address';
     }
 }

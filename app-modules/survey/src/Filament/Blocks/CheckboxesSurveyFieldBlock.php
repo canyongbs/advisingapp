@@ -40,7 +40,7 @@ use AdvisingApp\Form\Filament\Blocks\CheckboxesFormFieldBlock;
 
 class CheckboxesSurveyFieldBlock extends CheckboxesFormFieldBlock
 {
-    public function getLabel(): string
+    public static function getLabel(): string
     {
         return 'Multiple Choice';
     }

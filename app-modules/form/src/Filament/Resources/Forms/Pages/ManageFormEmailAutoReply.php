@@ -43,6 +43,7 @@ use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
@@ -50,9 +51,9 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ManageFormEmailAutoReply extends EditRecord
 {
@@ -88,7 +89,7 @@ class ManageFormEmailAutoReply extends EditRecord
                         Toggle::make('is_enabled')
                             ->label('Enabled')
                             ->live(),
-                        TiptapEditor::make('subject')
+                        RichEditor::make('subject')
                             ->mergeTags([
                                 'recipient first name',
                                 'recipient last name',
@@ -96,14 +97,14 @@ class ManageFormEmailAutoReply extends EditRecord
                                 'recipient email',
                                 'recipient preferred name',
                             ])
-                            ->profile('sms')
+                            ->toolbarButtons([])
+                            ->json()
                             ->required(fn (Get $get) => $get('is_enabled'))
                             ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull()
-                            ->placeholder('Enter the email subject here...')
-                            ->showMergeTagsInBlocksPanel(false),
-                        TiptapEditor::make('body')
-                            ->disk('s3-public')
+                            ->placeholder('Enter the email subject here...'),
+                        RichEditor::make('body')
+                            ->fileAttachmentsDisk('s3-public')
                             ->mergeTags([
                                 'recipient first name',
                                 'recipient last name',
@@ -111,9 +112,10 @@ class ManageFormEmailAutoReply extends EditRecord
                                 'recipient email',
                                 'recipient preferred name',
                             ])
-                            ->profile('email')
+                            ->toolbarButtons([['bold', 'italic', 'small', 'link', 'textColor'], ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles'], ['mergeTags']])
+                            ->json()
                             ->required(fn (Get $get) => $get('is_enabled'))
-                            ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
+                            ->hintAction(fn (RichEditor $component) => Action::make('loadEmailTemplate')
                                 ->schema([
                                     Select::make('emailTemplate')
                                         ->searchable()
@@ -186,10 +188,15 @@ class ManageFormEmailAutoReply extends EditRecord
                                         return;
                                     }
 
-                                    $component->state(
-                                        $component->generateImageUrls($template->content),
-                                    );
+                                    $component->state($template->content);
                                 }))
+                            ->getFileAttachmentUrlFromAnotherRecordUsing(function (mixed $file): ?string {
+                                return Media::query()
+                                    ->where('uuid', $file)
+                                    ->where('model_type', (new EmailTemplate())->getMorphClass())
+                                    ->first()
+                                    ?->getUrl();
+                            })
                             ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull()
                             ->live(),

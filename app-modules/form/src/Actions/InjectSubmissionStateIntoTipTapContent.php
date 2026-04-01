@@ -55,32 +55,33 @@ class InjectSubmissionStateIntoTipTapContent
                 continue;
             }
 
-            if (($component['type'] ?? null) !== 'tiptapBlock') {
+            if (($component['type'] ?? null) !== 'customBlock') {
                 continue;
             }
 
             $componentAttributes = $component['attrs'] ?? [];
+            $config = $componentAttributes['config'] ?? [];
 
-            if (blank($componentAttributes['id'] ?? null)) {
+            if (blank($config['fieldId'] ?? null)) {
                 continue;
             }
 
             /** @var FormFieldBlock $block */
-            $block = $blocks[$componentAttributes['type']] ?? null;
+            $block = $blocks[$componentAttributes['id']] ?? null;
 
             if (blank($block)) {
                 continue;
             }
 
             $field = $submission->fields
-                ->first(fn (SubmissibleField $field): bool => $field->getKey() === $componentAttributes['id']);
+                ->first(fn (SubmissibleField $field): bool => $field->getKey() === $config['fieldId']);
 
             if (! $field) {
                 continue;
             }
 
-            $content[$componentKey]['attrs']['data'] = [
-                ...$component['attrs']['data'],
+            $content[$componentKey]['attrs']['config'] = [
+                ...$config,
                 ...$block::getSubmissionState($field, $field->pivot->response),
             ];
         }
