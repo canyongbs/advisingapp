@@ -48,16 +48,6 @@ class AgreementFormFieldBlock extends FormFieldBlock
         return 'agreement';
     }
 
-    protected static function previewView(): string
-    {
-        return 'form::blocks.previews.agreement';
-    }
-
-    protected static function renderedView(): string
-    {
-        return 'form::blocks.submissions.agreement';
-    }
-
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
         return [
@@ -72,5 +62,15 @@ class AgreementFormFieldBlock extends FormFieldBlock
     public static function getValidationRules(SubmissibleField $field): array
     {
         return ['boolean'];
+    }
+
+    protected static function previewView(): string
+    {
+        return 'form::blocks.previews.agreement';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.agreement';
     }
 }

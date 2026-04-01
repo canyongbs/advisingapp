@@ -40,7 +40,7 @@ use AdvisingApp\Form\Filament\Blocks\TextAreaFormFieldBlock;
 
 class TextAreaSurveyFieldBlock extends TextAreaFormFieldBlock
 {
-    public function getLabel(): string
+    public static function getLabel(): string
     {
         return 'Question (Multi-Line)';
     }

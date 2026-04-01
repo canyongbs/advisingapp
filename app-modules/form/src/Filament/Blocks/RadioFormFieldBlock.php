@@ -68,16 +68,6 @@ class RadioFormFieldBlock extends FormFieldBlock
         ];
     }
 
-    protected static function previewView(): string
-    {
-        return 'form::blocks.previews.radio';
-    }
-
-    protected static function renderedView(): string
-    {
-        return 'form::blocks.submissions.radio';
-    }
-
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
         return [
@@ -106,5 +96,15 @@ class RadioFormFieldBlock extends FormFieldBlock
             'string',
             'in:' . $values->join(','),
         ];
+    }
+
+    protected static function previewView(): string
+    {
+        return 'form::blocks.previews.radio';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.radio';
     }
 }

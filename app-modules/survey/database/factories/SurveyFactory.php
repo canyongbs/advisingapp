@@ -66,16 +66,16 @@ class SurveyFactory extends Factory
 
                 $survey->content = [
                     'type' => 'doc',
-                    'content' => $survey->fields->map(fn (SurveyField $field): array => [
-                        'type' => 'tiptapBlock',
+                    'content' => $survey->fields->map(fn (SurveyField $field): array => [ // @phpstan-ignore argument.type
+                        'type' => 'customBlock',
                         'attrs' => [
-                            'id' => $field->id,
-                            'type' => $field->type,
-                            'data' => [
+                            'config' => [
+                                'fieldId' => $field->id,
                                 'label' => $field->label,
                                 'isRequired' => $field->is_required,
                                 ...$field->config,
                             ],
+                            'id' => $field->type,
                         ],
                     ])->all(),
                 ];

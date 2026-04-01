@@ -180,10 +180,12 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                             }),
                         Section::make('Authenticated Submitter')
                             ->schema([
-                                TextEntry::make('author.' . $record->author::displayNameKey())
-                                    ->label('Name'),
+                                TextEntry::make($record->author ? 'author.' . $record->author::displayNameKey() : 'author')
+                                    ->label('Name')
+                                    ->default('N/A'),
                                 TextEntry::make('author.primaryEmailAddress.address')
-                                    ->label('Email address'),
+                                    ->label('Email address')
+                                    ->default('N/A'),
                             ])
                             ->columns(2),
                         ViewEntry::make('checklistItems')

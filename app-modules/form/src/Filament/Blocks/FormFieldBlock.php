@@ -45,6 +45,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Component;
 
 abstract class FormFieldBlock extends RichContentCustomBlock
 {
@@ -55,6 +56,81 @@ abstract class FormFieldBlock extends RichContentCustomBlock
     public static function getId(): string
     {
         return static::type();
+    }
+
+    /**
+     * TODO: Remove the following backward-compatibility methods once all modules
+     * using shared blocks are migrated from TiptapEditor to RichEditor:
+     *
+     * Modules still using TiptapEditor with these blocks:
+     * - Meeting Center: HasSharedEventFormConfiguration.php, EditEventRegistration.php
+     * - Case Management: CaseForms/HasSharedFormConfiguration.php
+     *
+     * Methods to remove from this class:
+     * - getIdentifier()
+     * - getFormSchema()
+     * - getPreview()
+     * - getRendered()
+     * - getIcon()
+     * - getModalWidth()
+     *
+     * Also remove getFormSchema() overrides from:
+     * - EducatableNameFormFieldBlock
+     * - EducatableEmailFormFieldBlock
+     * - EducatableBirthdateFormFieldBlock
+     * - EducatableAddressFormFieldBlock
+     * - EducatablePhoneNumberFormFieldBlock
+     */
+    public function getIdentifier(): string
+    {
+        return static::type();
+    }
+
+    /**
+     * @return array<int, mixed>
+     */
+    public function getFormSchema(): array
+    {
+        return [
+            Hidden::make('fieldId'),
+            TextInput::make('label')
+                ->required()
+                ->string()
+                ->maxLength(255),
+            TextInput::make('description')
+                ->label('Field Description')
+                ->string()
+                ->maxLength(255),
+            Checkbox::make('isRequired')
+                ->label('Required'),
+            ...static::fields(),
+        ];
+    }
+
+    /**
+     * @param  ?array<string, mixed>  $data
+     */
+    public function getPreview(?array $data = null, ?Component $component = null): string
+    {
+        return view(static::previewView(), $data ?? [])->render();
+    }
+
+    /**
+     * @param  ?array<string, mixed>  $data
+     */
+    public function getRendered(?array $data = null): string
+    {
+        return view(static::renderedView(), $data ?? [])->render();
+    }
+
+    public function getIcon(): ?string
+    {
+        return null;
+    }
+
+    public function getModalWidth(): string
+    {
+        return 'sm';
     }
 
     public static function getLabel(): string
@@ -99,16 +175,6 @@ abstract class FormFieldBlock extends RichContentCustomBlock
         return view(static::renderedView(), $config)->render();
     }
 
-    protected static function previewView(): string
-    {
-        return 'form::blocks.previews.default';
-    }
-
-    protected static function renderedView(): string
-    {
-        return 'form::blocks.submissions.default';
-    }
-
     public static function fields(): array
     {
         return [];
@@ -137,6 +203,16 @@ abstract class FormFieldBlock extends RichContentCustomBlock
             'field' => $field,
             'response' => $response,
         ];
+    }
+
+    protected static function previewView(): string
+    {
+        return 'form::blocks.previews.default';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.default';
     }
 
     /**

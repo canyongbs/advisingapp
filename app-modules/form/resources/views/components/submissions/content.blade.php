@@ -40,6 +40,7 @@
 @php
     use AdvisingApp\Form\Actions\ResolveBlockRegistry;
     use AdvisingApp\Form\Actions\InjectSubmissionStateIntoTipTapContent;
+    use Filament\Forms\Components\RichEditor\RichContentRenderer;
 
     $blocks = app(ResolveBlockRegistry::class)($submission->submissible);
 
@@ -48,7 +49,7 @@
 
 <div class="prose max-w-none dark:prose-invert">
     @if (! empty($content['content']))
-        {!! tiptap_converter()->blocks($blocks)->asHTML($content) !!}
+        {!! RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toUnsafeHtml() !!}
     @else
         This submission has no content.
     @endif

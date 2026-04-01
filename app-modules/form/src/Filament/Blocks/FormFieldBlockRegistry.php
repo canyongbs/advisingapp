@@ -39,7 +39,7 @@ namespace AdvisingApp\Form\Filament\Blocks;
 class FormFieldBlockRegistry
 {
     /**
-     * @return array<class-string<FormFieldBlock> | array<class-string<FormFieldBlock>>>
+     * @return array<class-string<FormFieldBlock>>
      */
     public static function get(bool $isAuthenticated = true): array
     {
@@ -48,8 +48,8 @@ class FormFieldBlockRegistry
         }
 
         return [
-            'Mapped Blocks' => static::getMappedBlocks(),
-            'Unmapped Blocks' => static::getUnmappedBlocks(),
+            ...static::getMappedBlocks(),
+            ...static::getUnmappedBlocks(),
         ];
     }
 
@@ -107,13 +107,13 @@ class FormFieldBlockRegistry
     }
 
     /**
-     * @return array<class-string<FormFieldBlock> | array<class-string<FormFieldBlock>>>
+     * @return array<class-string<FormFieldBlock>>
      */
     public static function getForEvents(): array
     {
         return [
-            'Mapped Blocks' => static::getMappedBlocks(),
-            'Unmapped Blocks' => static::getUnmappedBlocksForEvents(),
+            ...static::getMappedBlocks(),
+            ...static::getUnmappedBlocksForEvents(),
         ];
     }
 
@@ -123,7 +123,6 @@ class FormFieldBlockRegistry
     public static function keyByTypeForEvents(): array
     {
         return collect(static::getForEvents())
-            ->flatten()
             ->mapWithKeys(fn (string $block): array => [$block::type() => $block])
             ->all();
     }
@@ -134,7 +133,6 @@ class FormFieldBlockRegistry
     public static function keyByType(): array
     {
         return collect(static::get())
-            ->flatten()
             ->mapWithKeys(fn (string $block): array => [$block::type() => $block])
             ->all();
     }

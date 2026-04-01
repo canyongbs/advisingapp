@@ -58,11 +58,6 @@ class EducatableUploadFormFieldBlock extends FormFieldBlock
         return 'Upload';
     }
 
-    protected static function renderedView(): string
-    {
-        return 'form::blocks.submissions.upload';
-    }
-
     /**
      * @return array<Component>
      */
@@ -166,5 +161,10 @@ class EducatableUploadFormFieldBlock extends FormFieldBlock
             ...parent::getSubmissionState($field, $response),
             'media' => $media,
         ];
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.upload';
     }
 }

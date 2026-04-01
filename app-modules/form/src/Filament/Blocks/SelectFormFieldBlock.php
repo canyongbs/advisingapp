@@ -58,11 +58,6 @@ class SelectFormFieldBlock extends FormFieldBlock
         ];
     }
 
-    protected static function renderedView(): string
-    {
-        return 'form::blocks.submissions.select';
-    }
-
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
         return [
@@ -81,5 +76,10 @@ class SelectFormFieldBlock extends FormFieldBlock
             'string',
             'in:' . collect($field->config['options'])->keys()->join(','),
         ];
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.select';
     }
 }
