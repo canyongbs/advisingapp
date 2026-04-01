@@ -79,6 +79,7 @@ class ListApplicationSubmissionStates extends ListRecords
                 if (ApplicationSubmissionStateArchivingFeature::active()) {
                     $query = $query->withoutArchived();
                 }
+
                 return $query;
             })
             ->recordActions([

@@ -122,6 +122,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
             ->values();
 
         $tabs = [];
+
         foreach ($statesByClassification as $state) {
             $classification = $state->classification;
             $label = $classification->getLabel();

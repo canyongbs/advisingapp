@@ -49,27 +49,27 @@ class ApplicationSubmissionObserver
     public function creating(ApplicationSubmission $submission): void
     {
         $defaultState = ApplicationSubmissionState::query()
-          ->when(
-            ApplicationSubmissionStateArchivingFeature::active(),
-            fn ($query) => $query->withoutArchived(),
-          )
-              ->where('classification', ApplicationSubmissionStateClassification::Received)
-              ->oldest('id')
-              ->first();
-
-          if (! $defaultState) {
-              $defaultState = ApplicationSubmissionState::query()
             ->when(
-              ApplicationSubmissionStateArchivingFeature::active(),
-              fn ($query) => $query->withoutArchived(),
+                ApplicationSubmissionStateArchivingFeature::active(),
+                fn ($query) => $query->withoutArchived(),
             )
-                  ->oldest('id')
-                  ->firstOrFail();
-          }
+            ->where('classification', ApplicationSubmissionStateClassification::Received)
+            ->oldest('id')
+            ->first();
 
-          $submission->state()->associate(
-              $defaultState
-          );
+        if (! $defaultState) {
+            $defaultState = ApplicationSubmissionState::query()
+                ->when(
+                    ApplicationSubmissionStateArchivingFeature::active(),
+                    fn ($query) => $query->withoutArchived(),
+                )
+                ->oldest('id')
+                ->firstOrFail();
+        }
+
+        $submission->state()->associate(
+            $defaultState
+        );
     }
 
     public function created(ApplicationSubmission $submission): void

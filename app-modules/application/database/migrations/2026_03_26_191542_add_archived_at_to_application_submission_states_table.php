@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor's trademarks is subject
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -43,11 +43,10 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-       DB::transaction(function () {
-        
-          Schema::table('application_submission_states', function (Blueprint $table) {
-              $table->timestamp('archived_at')->nullable()->after('updated_at');
-          });
+        DB::transaction(function () {
+            Schema::table('application_submission_states', function (Blueprint $table) {
+                $table->timestamp('archived_at')->nullable()->after('updated_at');
+            });
         });
 
         ApplicationSubmissionStateArchivingFeature::activate();
@@ -55,13 +54,12 @@ return new class () extends Migration {
 
     public function down(): void
     {
-      DB::transaction(function () {
+        DB::transaction(function () {
+            ApplicationSubmissionStateArchivingFeature::deactivate();
 
-        ApplicationSubmissionStateArchivingFeature::deactivate();
-
-        Schema::table('application_submission_states', function (Blueprint $table) {
-            $table->dropColumn('archived_at');
+            Schema::table('application_submission_states', function (Blueprint $table) {
+                $table->dropColumn('archived_at');
+            });
         });
-      });
     }
 };

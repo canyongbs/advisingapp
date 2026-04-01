@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor's trademarks is subject
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -40,8 +40,8 @@ use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use App\Models\User;
+use Filament\Actions\DeleteAction;
 
-use function Pest\Laravel\actingAs;
 use function Pest\Laravel\seed;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
@@ -100,7 +100,7 @@ test('delete action is visible when state has no associated submissions', functi
     ]);
 
     livewire(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
-        ->assertActionVisible(\Filament\Actions\DeleteAction::class);
+        ->assertActionVisible(DeleteAction::class);
 });
 
 test('delete action is hidden when state has associated submissions', function () {
@@ -112,7 +112,7 @@ test('delete action is hidden when state has associated submissions', function (
     ApplicationSubmission::factory()->create(['state_id' => $state->id]);
 
     livewire(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
-        ->assertActionHidden(\Filament\Actions\DeleteAction::class);
+        ->assertActionHidden(DeleteAction::class);
 });
 
 test('archive policy requires settings delete permission', function () {

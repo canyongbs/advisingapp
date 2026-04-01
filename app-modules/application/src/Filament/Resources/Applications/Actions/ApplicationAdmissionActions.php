@@ -54,7 +54,6 @@ class ApplicationAdmissionActions
     public static function get(): array
     {
         if (! ApplicationSubmissionStateArchivingFeature::active()) {
-            
             return [
                 Action::make('mark_as_reviewed')
                     ->label('Mark as Reviewed')
@@ -97,64 +96,64 @@ class ApplicationAdmissionActions
                     ->cancelParentActions()
                     ->visible(fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')->getStateTransitions()->contains(ApplicationSubmissionStateClassification::Admit->value)),
             ];
-        } else {
-            return [
-                Action::make('update_submission_state')
-                    ->label('Update State')
-                    ->form(fn (ApplicationSubmission $record): array => [
-                        Select::make('state_id')
-                            ->label('Submission State')
-                            ->relationship(
-                                name: 'state',
-                                titleAttribute: 'name',
-                                modifyQueryUsing: fn (Builder $query, ?Model $record, Select $component): Builder => app(HideDeletedAndArchivedExceptSelectedFromSelectOptions::class)($query, $record, $component)
-                                    ->oldest('id'),
-                            )
-                            ->disableOptionWhen(function (string $value) use ($record): bool {
-                                if ((string) $record->state_id === $value) {
-                                    return false;
-                                }
-
-                                $allowedTransitions = $record
-                                    ->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-                                    ->getStateTransitions()
-                                    ->map(fn ($state) => (string) $state)
-                                    ->all();
-
-                                $selectedState = ApplicationSubmissionState::find($value);
-
-                                if (! $selectedState) {
-                                    return true;
-                                }
-
-                                return ! in_array($selectedState->classification->value, $allowedTransitions, true);
-                            })
-                            ->required()
-                            ->getOptionLabelUsing(fn ($value) => ApplicationSubmissionState::find($value)?->name)
-                            ->default(fn (ApplicationSubmission $record) => $record->state_id),
-                    ])
-                    ->action(function (ApplicationSubmission $record, array $data) {
-                        $record->state_id = (string) $record->getOriginal('state_id');
-                        $record->unsetRelation('state');
-
-                        $newState = ApplicationSubmissionState::findOrFail($data['state_id']);
-
-                        $allowedTransitions = $record
-                            ->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-                            ->getStateTransitions()
-                            ->map(fn ($state) => (string) $state)
-                            ->all();
-
-                        if (! in_array($newState->classification->value, $allowedTransitions, true)) {
-                            return;
-                        }
-
-                        $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-                            ->transitionTo($newState, $newState->classification);
-                    })
-                    ->cancelParentActions()
-                    ->visible(fn (ApplicationSubmission $record) => (bool) $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')->getStateTransitions()->count()),
-            ];
         }
+
+        return [
+            Action::make('update_submission_state')
+                ->label('Update State')
+                ->form(fn (ApplicationSubmission $record): array => [
+                    Select::make('state_id')
+                        ->label('Submission State')
+                        ->relationship(
+                            name: 'state',
+                            titleAttribute: 'name',
+                            modifyQueryUsing: fn (Builder $query, ?Model $record, Select $component): Builder => app(HideDeletedAndArchivedExceptSelectedFromSelectOptions::class)($query, $record, $component)
+                                ->oldest('id'),
+                        )
+                        ->disableOptionWhen(function (string $value) use ($record): bool {
+                            if ((string) $record->state_id === $value) {
+                                return false;
+                            }
+
+                            $allowedTransitions = $record
+                                ->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
+                                ->getStateTransitions()
+                                ->map(fn ($state) => (string) $state)
+                                ->all();
+
+                            $selectedState = ApplicationSubmissionState::find($value);
+
+                            if (! $selectedState) {
+                                return true;
+                            }
+
+                            return ! in_array($selectedState->classification->value, $allowedTransitions, true);
+                        })
+                        ->required()
+                        ->getOptionLabelUsing(fn ($value) => ApplicationSubmissionState::find($value)?->name)
+                        ->default(fn (ApplicationSubmission $record) => $record->state_id),
+                ])
+                ->action(function (ApplicationSubmission $record, array $data) {
+                    $record->state_id = (string) $record->getOriginal('state_id');
+                    $record->unsetRelation('state');
+
+                    $newState = ApplicationSubmissionState::findOrFail($data['state_id']);
+
+                    $allowedTransitions = $record
+                        ->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
+                        ->getStateTransitions()
+                        ->map(fn ($state) => (string) $state)
+                        ->all();
+
+                    if (! in_array($newState->classification->value, $allowedTransitions, true)) {
+                        return;
+                    }
+
+                    $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
+                        ->transitionTo($newState, $newState->classification);
+                })
+                ->cancelParentActions()
+                ->visible(fn (ApplicationSubmission $record) => (bool) $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')->getStateTransitions()->count()),
+        ];
     }
 }
