@@ -43,6 +43,8 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Features\ApplicationSubmissionStateFeature;
 use App\Models\BaseModel;
 use CanyonGBS\Common\Enums\Color;
+use CanyonGBS\Common\Models\Concerns\CanBeArchived;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -58,6 +60,7 @@ class ApplicationSubmissionState extends BaseModel implements Auditable
 
     use SoftDeletes;
     use AuditableTrait;
+    use CanBeArchived;
 
     protected $fillable = [
         'classification',
@@ -76,6 +79,15 @@ class ApplicationSubmissionState extends BaseModel implements Auditable
     public function submissions(): HasMany
     {
         return $this->hasMany(ApplicationSubmission::class, 'state_id');
+    }
+
+    /**
+     * Scope to find submission states that are actively used by submissions.
+     * Used by the withoutArchivedAndUnused scope to keep archived states visible if they have submissions.
+     */
+    public static function used(Builder $query): void
+    {
+        $query->whereHas('submissions');
     }
 
     /**

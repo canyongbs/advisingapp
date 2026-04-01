@@ -40,6 +40,7 @@ use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use App\Features\ApplicationSubmissionStateArchivingFeature;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 
@@ -47,9 +48,28 @@ class ApplicationSubmissionObserver
 {
     public function creating(ApplicationSubmission $submission): void
     {
-        $submission->state()->associate(
-            ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)->firstOrFail()
-        );
+        $defaultState = ApplicationSubmissionState::query()
+          ->when(
+            ApplicationSubmissionStateArchivingFeature::active(),
+            fn ($query) => $query->withoutArchived(),
+          )
+              ->where('classification', ApplicationSubmissionStateClassification::Received)
+              ->oldest('id')
+              ->first();
+
+          if (! $defaultState) {
+              $defaultState = ApplicationSubmissionState::query()
+            ->when(
+              ApplicationSubmissionStateArchivingFeature::active(),
+              fn ($query) => $query->withoutArchived(),
+            )
+                  ->oldest('id')
+                  ->firstOrFail();
+          }
+
+          $submission->state()->associate(
+              $defaultState
+          );
     }
 
     public function created(ApplicationSubmission $submission): void

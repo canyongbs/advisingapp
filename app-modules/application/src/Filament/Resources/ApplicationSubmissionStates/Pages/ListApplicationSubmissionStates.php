@@ -38,11 +38,11 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates
 
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use App\Features\ApplicationSubmissionStateArchivingFeature;
 use App\Features\ApplicationSubmissionStateFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
@@ -50,6 +50,7 @@ use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListApplicationSubmissionStates extends ListRecords
 {
@@ -81,19 +82,23 @@ class ListApplicationSubmissionStates extends ListRecords
                             ->color(fn (ApplicationSubmissionState $applicationState) => $applicationState->color->value),
                     ]
                 ),
-                TextColumn::make('applications_count')
+                TextColumn::make('submissions_count')
                     ->label('# of Applications')
                     ->counts('submissions')
                     ->sortable(),
             ])
+            ->modifyQueryUsing(function (Builder $query) {
+                if (ApplicationSubmissionStateArchivingFeature::active()) {
+                    $query = $query->withoutArchived();
+                }
+                return $query;
+            })
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([]),
             ]);
     }
 
