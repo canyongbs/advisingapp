@@ -234,7 +234,7 @@ test('state dropdown current state is pre-selected by default', function () {
 
     $schema->record($submission);
 
-     $schemaComponents = $schema->getComponents();
+    $schemaComponents = $schema->getComponents();
 
     $stateField = null;
 
@@ -295,7 +295,7 @@ test('state dropdown disables option when selected state classification is not a
 
     $schema->record($submission);
 
-   $stateField = null;
+    $stateField = null;
 
     foreach ($schema->getComponents() as $component) {
         if ($component instanceof Select && $component->getName() === 'state_id') {
