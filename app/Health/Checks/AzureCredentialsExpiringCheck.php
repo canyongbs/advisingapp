@@ -37,6 +37,7 @@
 namespace App\Health\Checks;
 
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Spatie\Health\Checks\Check;
 use Spatie\Health\Checks\Result;
@@ -45,8 +46,9 @@ class AzureCredentialsExpiringCheck extends Check
 {
     public function run(): Result
     {
+        //TODO: add error handling
         $azureSsoSettings = app(AzureSsoSettings::class);
-        // get access token
+        
         $response = Http::asForm()->post(
             'https://login.microsoftonline.com/' . $azureSsoSettings->tenant_id . '/oauth2/v2.0/token',
             [
@@ -56,14 +58,26 @@ class AzureCredentialsExpiringCheck extends Check
                 'scope' => 'https://graph.microsoft.com/.default',
             ]
         );
-        // call graph api
+        
         $data = Http::withToken($response->object()->access_token)
             ->get("https://graph.microsoft.com/v1.0/applications(appId='{$azureSsoSettings->client_id}')" . '?$select=passwordCredentials');
 
-        logger()->info('test');
-        logger()->info($data);
 
-        // get and compare exp date
+        //TODO: match against client secret / hint
+        if(count($data->object()->passwordCredentials) > 1) {
+          $endDateTime = Carbon::parse($data->object()->passwordCredentials->collect()->sortBy(fn(array $item) => Carbon::parse($item['endDateTime']))->first()['endDateTime']);
+        } else {
+          $endDateTime = Carbon::parse($data->object()->passwordCredentials[0]['endDateTime']);
+        }
+
+        if($endDateTime->isPast()) {
+          return Result::make()->failed();
+        }
+
+        if($endDateTime->lte(now()->addDays(45))) {
+          return Result::make()->warning();
+        }
+
         return Result::make()->ok();
     }
 }
