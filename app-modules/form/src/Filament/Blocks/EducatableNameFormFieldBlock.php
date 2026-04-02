@@ -59,58 +59,6 @@ class EducatableNameFormFieldBlock extends FormFieldBlock
         return 'Name';
     }
 
-    /**
-     * TODO: Remove this method once Meeting Center and Case Forms are migrated to RichEditor.
-     * See FormFieldBlock for full list of backward-compatibility methods to clean up.
-     *
-     * @return array<int, mixed>
-     */
-    public function getFormSchema(): array
-    {
-        return [
-            FilamentTextInput::make('label')
-                ->required()
-                ->string()
-                ->maxLength(255)
-                ->default('Name'),
-            FilamentTextInput::make('description')
-                ->label('Field Description')
-                ->string()
-                ->maxLength(255),
-            FilamentTextInput::make('firstNameLabel')
-                ->label('First Name Label')
-                ->required()
-                ->string()
-                ->maxLength(255)
-                ->default('First Name'),
-            Checkbox::make('firstNameRequired')
-                ->label('First Name Required')
-                ->default(true)
-                ->disabled()
-                ->dehydrated(),
-            FilamentTextInput::make('lastNameLabel')
-                ->label('Last Name Label')
-                ->required()
-                ->string()
-                ->maxLength(255)
-                ->default('Last Name'),
-            Checkbox::make('lastNameRequired')
-                ->label('Last Name Required')
-                ->default(true)
-                ->disabled()
-                ->dehydrated(),
-            FilamentTextInput::make('preferredNameLabel')
-                ->label('Preferred Name Label')
-                ->required()
-                ->string()
-                ->maxLength(255)
-                ->default('Preferred Name'),
-            Checkbox::make('preferredNameRequired')
-                ->label('Preferred Name Required')
-                ->default(false),
-        ];
-    }
-
     public static function configureEditorAction(Action $action): Action
     {
         return $action->schema([
