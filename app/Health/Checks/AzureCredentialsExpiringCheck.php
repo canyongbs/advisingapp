@@ -48,7 +48,7 @@ class AzureCredentialsExpiringCheck extends Check
     {
         //TODO: add error handling
         $azureSsoSettings = app(AzureSsoSettings::class);
-        
+
         $response = Http::asForm()->post(
             'https://login.microsoftonline.com/' . $azureSsoSettings->tenant_id . '/oauth2/v2.0/token',
             [
@@ -58,24 +58,23 @@ class AzureCredentialsExpiringCheck extends Check
                 'scope' => 'https://graph.microsoft.com/.default',
             ]
         );
-        
+
         $data = Http::withToken($response->object()->access_token)
             ->get("https://graph.microsoft.com/v1.0/applications(appId='{$azureSsoSettings->client_id}')" . '?$select=passwordCredentials');
 
-
         //TODO: match against client secret / hint
-        if(count($data->object()->passwordCredentials) > 1) {
-          $endDateTime = Carbon::parse($data->object()->passwordCredentials->collect()->sortBy(fn(array $item) => Carbon::parse($item['endDateTime']))->first()['endDateTime']);
+        if (count($data->object()->passwordCredentials) > 1) {
+            $endDateTime = Carbon::parse($data->object()->passwordCredentials->collect()->sortBy(fn (array $item) => Carbon::parse($item['endDateTime']))->first()['endDateTime']);
         } else {
-          $endDateTime = Carbon::parse($data->object()->passwordCredentials[0]['endDateTime']);
+            $endDateTime = Carbon::parse($data->object()->passwordCredentials[0]['endDateTime']);
         }
 
-        if($endDateTime->isPast()) {
-          return Result::make()->failed();
+        if ($endDateTime->isPast()) {
+            return Result::make()->failed();
         }
 
-        if($endDateTime->lte(now()->addDays(45))) {
-          return Result::make()->warning();
+        if ($endDateTime->lte(now()->addDays(45))) {
+            return Result::make()->warning();
         }
 
         return Result::make()->ok();
