@@ -55,7 +55,7 @@ class EducatableUploadFormFieldBlock extends FormFieldBlock
 
     public static function getLabel(): string
     {
-        return 'Upload';
+        return 'Mapped Upload';
     }
 
     /**
