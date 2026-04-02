@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\URL;
 use function Pest\Laravel\assertAuthenticatedAs;
 use function Pest\Laravel\assertGuest;
 use function Pest\Laravel\post;
+use function Pest\Laravel\travelTo;
 
 it('requires a valid signed URL', function () {
     $code = 123456;
@@ -56,19 +57,23 @@ it('requires a valid signed URL', function () {
 it('rejects an expired signed URL', function () {
     $code = 123456;
 
-    $otpCode = OtpLoginCode::factory()->withCode($code)->create([
-        'created_at' => now()->subMinutes(21),
-    ]);
+    $otpCode = OtpLoginCode::factory()->withCode($code)->create();
 
     $panel = Filament::getPanel('admin');
 
-    post(URL::temporarySignedRoute(
+    // Generate a valid signed URL while it's still within the 20-minute window
+    $signedUrl = URL::temporarySignedRoute(
         name: 'otp-code.verify',
         expiration: $otpCode->created_at->addMinutes(20)->toImmutable(),
         parameters: [
             'otpCode' => $otpCode->getKey(),
         ],
-    ), [
+    );
+
+    // Travel past the 20-minute expiration
+    travelTo($otpCode->created_at->addMinutes(21));
+
+    post($signedUrl, [
         'code' => (string) $code,
     ])
         ->assertForbidden();

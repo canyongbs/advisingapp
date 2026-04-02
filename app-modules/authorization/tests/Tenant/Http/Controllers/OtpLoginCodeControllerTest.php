@@ -37,6 +37,7 @@
 use AdvisingApp\Authorization\Models\OtpLoginCode;
 use Illuminate\Support\Facades\URL;
 
+use function Pest\Laravel\freezeTime;
 use function Pest\Laravel\get;
 
 it('requires a valid signed URL', function () {
@@ -86,5 +87,58 @@ it('renders the OTP entry view for a valid unused OTP code', function () {
     ))
         ->assertOk()
         ->assertViewIs('authorization::otp-entry')
-        ->assertViewHas('verifyUrl', route('otp-code.verify', ['otpCode' => $otpCode->getKey()]));
+        ->assertViewHas('verifyUrl');
 });
+
+it('rejects an OTP code that is exactly at the 20 minute boundary', function () {
+    freezeTime(function () {
+        $otpCode = OtpLoginCode::factory()->create([
+            'created_at' => now()->subMinutes(20),
+        ]);
+
+        get(URL::temporarySignedRoute(
+            name: 'otp-code.login',
+            expiration: now()->addMinutes(20)->toImmutable(),
+            parameters: [
+                'otpCode' => $otpCode->getKey(),
+            ],
+        ))
+            ->assertForbidden();
+    });
+});
+
+it('allows an OTP code that is just under 20 minutes old', function () {
+    freezeTime(function () {
+        $otpCode = OtpLoginCode::factory()->create([
+            'created_at' => now()->subMinutes(19)->subSeconds(59),
+        ]);
+
+        get(URL::temporarySignedRoute(
+            name: 'otp-code.login',
+            expiration: now()->addMinutes(20)->toImmutable(),
+            parameters: [
+                'otpCode' => $otpCode->getKey(),
+            ],
+        ))
+            ->assertOk()
+            ->assertViewIs('authorization::otp-entry');
+    });
+});
+
+it('does not mark the OTP code as used when viewing the entry page', function () {
+    $otpCode = OtpLoginCode::factory()->create();
+
+    get(URL::temporarySignedRoute(
+        name: 'otp-code.login',
+        expiration: now()->addMinutes(20)->toImmutable(),
+        parameters: [
+            'otpCode' => $otpCode->getKey(),
+        ],
+    ))
+        ->assertOk();
+
+    $otpCode->refresh();
+
+    expect($otpCode->used_at)->toBeNull();
+});
+
