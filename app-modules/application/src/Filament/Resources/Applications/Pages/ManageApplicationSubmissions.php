@@ -79,8 +79,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
         $firstStateQuery = ApplicationSubmissionState::query();
 
         if (ApplicationSubmissionStateArchivingFeature::active()) {
-            // @phpstan-ignore-next-line method.notFound
-            $firstStateQuery->withoutArchivedAndUnused();
+            $firstStateQuery->withoutArchivedAndUnused(); // @phpstan-ignore method.notFound
         }
 
         $firstState = $firstStateQuery
@@ -116,8 +115,8 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
             ];
         }
 
+        // @phpstan-ignore method.notFound
         $statesByClassification = ApplicationSubmissionState::query()
-            // @phpstan-ignore-next-line method.notFound
             ->withoutArchivedAndUnused()
             ->oldest('id')
             ->get()
@@ -142,8 +141,8 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
             $tabs[strtolower($classification->value)] = Tab::make($label)
                 ->modifyQueryUsing(fn (Builder $query) => $query->whereHas(
                     'state',
+                    // @phpstan-ignore method.notFound
                     fn (Builder $query) => $query
-                        // @phpstan-ignore-next-line method.notFound
                         ->withoutArchivedAndUnused()
                         ->tap(new ClassifiedAs($classification)),
                 ));
