@@ -83,7 +83,7 @@ abstract class FormFieldBlock extends RichContentCustomBlock
      */
     public function getIdentifier(): string
     {
-        return static::type();
+        return static::getId();
     }
 
     /**

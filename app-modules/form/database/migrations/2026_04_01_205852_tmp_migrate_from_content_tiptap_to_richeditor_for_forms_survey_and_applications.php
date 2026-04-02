@@ -80,71 +80,83 @@ return new class () extends Migration {
      */
     protected function transformNode(array &$node, bool &$changed): void
     {
-        // 1. Transform tiptapBlock -> customBlock
-        if (($node['type'] ?? null) === 'tiptapBlock') {
-            $oldAttrs = $node['attrs'] ?? [];
+        $nodeType = $node['type'] ?? null;
 
-            $node['type'] = 'customBlock';
-            $node['attrs'] = [
-                'config' => [
-                    'fieldId' => $oldAttrs['id'] ?? null,
-                    ...($oldAttrs['data'] ?? []),
-                ],
-                'id' => $oldAttrs['type'] ?? null,
-            ];
+        match ($nodeType) {
+            'tiptapBlock' => $this->transformCustomBlock($node, $changed),
+            'grid' => $this->transformGrid($node, $changed),
+            'image' => $this->transformImage($node, $changed),
+            default => null,
+        };
 
-            $changed = true;
-        }
-
-        // 2. Transform grid attrs
-        if (($node['type'] ?? null) === 'grid') {
-            $oldType = $node['attrs']['type'] ?? 'responsive';
-            $oldCols = $node['attrs']['cols'] ?? '2';
-
-            [$dataCols, $fromBreakpoint, $colSpans] = $this->mapGridType($oldType, $oldCols);
-
-            $node['attrs'] = [
-                'data-cols' => (string) $dataCols,
-                'data-from-breakpoint' => $fromBreakpoint,
-            ];
-
-            $changed = true;
-
-            // Transform child gridColumns with correct spans
-            if (isset($node['content']) && is_array($node['content'])) {
-                foreach ($node['content'] as $index => &$child) {
-                    if (is_array($child) && ($child['type'] ?? null) === 'gridColumn') {
-                        $child['attrs'] = $child['attrs'] ?? [];
-                        $child['attrs']['data-col-span'] = (string) ($colSpans[$index] ?? 1);
-                    }
-
-                    if (is_array($child)) {
-                        $this->transformNode($child, $changed);
-                    }
-                }
-
-                return;
-            }
-        }
-
-        // 3. Fix oversized images
-        if (($node['type'] ?? null) === 'image') {
-            $width = $node['attrs']['width'] ?? null;
-
-            if (is_numeric($width) && $width > 500) {
-                $node['attrs']['width'] = null;
-                $node['attrs']['height'] = null;
-                $changed = true;
-            }
-        }
-
-        // 4. Recurse into content
         if (isset($node['content']) && is_array($node['content'])) {
             foreach ($node['content'] as &$child) {
                 if (is_array($child)) {
                     $this->transformNode($child, $changed);
                 }
             }
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $node
+     */
+    protected function transformCustomBlock(array &$node, bool &$changed): void
+    {
+        $oldAttrs = $node['attrs'] ?? [];
+
+        $node['type'] = 'customBlock';
+        $node['attrs'] = [
+            'config' => [
+                'fieldId' => $oldAttrs['id'] ?? null,
+                ...($oldAttrs['data'] ?? []),
+            ],
+            'id' => $oldAttrs['type'] ?? null,
+        ];
+
+        $changed = true;
+    }
+
+    /**
+     * @param  array<string, mixed>  $node
+     */
+    protected function transformGrid(array &$node, bool &$changed): void
+    {
+        $oldType = $node['attrs']['type'] ?? 'responsive';
+        $oldCols = $node['attrs']['cols'] ?? '2';
+
+        [$dataCols, $fromBreakpoint, $colSpans] = $this->mapGridType($oldType, $oldCols);
+
+        $node['attrs'] = [
+            'data-cols' => (string) $dataCols,
+            'data-from-breakpoint' => $fromBreakpoint,
+        ];
+
+        $changed = true;
+
+        if (! isset($node['content']) || ! is_array($node['content'])) {
+            return;
+        }
+
+        foreach ($node['content'] as $index => &$child) {
+            if (is_array($child) && ($child['type'] ?? null) === 'gridColumn') {
+                $child['attrs'] = $child['attrs'] ?? [];
+                $child['attrs']['data-col-span'] = (string) ($colSpans[$index] ?? 1);
+            }
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $node
+     */
+    protected function transformImage(array &$node, bool &$changed): void
+    {
+        $width = $node['attrs']['width'] ?? null;
+
+        if (is_numeric($width) && $width > 500) {
+            $node['attrs']['width'] = null;
+            $node['attrs']['height'] = null;
+            $changed = true;
         }
     }
 
