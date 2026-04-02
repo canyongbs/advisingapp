@@ -98,4 +98,10 @@ return [
     'telnyx' => [
         'public_key' => env('TELNYX_PUBLIC_KEY'),
     ],
+
+    'aws_geo_places' => [
+        'key' => env('AWS_GEO_PLACES_ACCESS_KEY_ID'),
+        'secret' => env('AWS_GEO_PLACES_SECRET_ACCESS_KEY'),
+        'region' => env('AWS_GEO_PLACES_REGION', 'us-west-2'),
+    ],
 ];
