@@ -40,15 +40,23 @@ use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Enums\Width;
 
 class RadioFormFieldBlock extends FormFieldBlock
 {
     public static function type(): string
     {
         return 'radio';
+    }
+
+    public static function configureEditorAction(Action $action): Action
+    {
+        return parent::configureEditorAction($action)
+            ->modalWidth(Width::TwoExtraLarge);
     }
 
     public static function fields(): array

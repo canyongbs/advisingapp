@@ -49,7 +49,7 @@
 
 <div class="prose max-w-none dark:prose-invert">
     @if (! empty($content['content']))
-        {!! RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toUnsafeHtml() !!}
+        {!! RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toHtml() !!}
     @else
         This submission has no content.
     @endif

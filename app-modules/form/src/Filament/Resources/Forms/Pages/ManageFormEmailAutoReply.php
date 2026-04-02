@@ -113,6 +113,7 @@ class ManageFormEmailAutoReply extends EditRecord
                                 'recipient preferred name',
                             ])
                             ->toolbarButtons([['bold', 'italic', 'small', 'link', 'textColor'], ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles'], ['mergeTags']])
+                            ->activePanel('mergeTags')
                             ->json()
                             ->required(fn (Get $get) => $get('is_enabled'))
                             ->hintAction(fn (RichEditor $component) => Action::make('loadEmailTemplate')
