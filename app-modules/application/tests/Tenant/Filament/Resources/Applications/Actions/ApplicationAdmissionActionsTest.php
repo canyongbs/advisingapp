@@ -93,7 +93,7 @@ test('update_submission_state action is visible when transitions exist for the s
         ->getStateTransitions();
 
     $actions = ApplicationAdmissionActions::get();
-    $action = collect($actions)->firstWhere(fn (Action $action) => $action->getName() === 'update_submission_state');
+    collect($actions)->firstWhere(fn (Action $action) => $action->getName() === 'update_submission_state');
 
     $isVisible = (bool) $transitions->count();
 
