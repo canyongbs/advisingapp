@@ -141,4 +141,3 @@ it('does not mark the OTP code as used when viewing the entry page', function ()
 
     expect($otpCode->used_at)->toBeNull();
 });
-
