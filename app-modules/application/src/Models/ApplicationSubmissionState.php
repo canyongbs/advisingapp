@@ -83,6 +83,8 @@ class ApplicationSubmissionState extends BaseModel implements Auditable
     /**
      * Scope to find submission states that are actively used by submissions.
      * Used by the withoutArchivedAndUnused scope to keep archived states visible if they have submissions.
+     *
+     * @param Builder<self> $query
      */
     public static function used(Builder $query): void
     {

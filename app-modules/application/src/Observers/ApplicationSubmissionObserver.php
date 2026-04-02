@@ -48,27 +48,27 @@ class ApplicationSubmissionObserver
 {
     public function creating(ApplicationSubmission $submission): void
     {
-        $defaultState = ApplicationSubmissionState::query()
-            ->when(
-                ApplicationSubmissionStateArchivingFeature::active(),
-                function ($query) {
-                    // @phpstan-ignore method.notFound
-                    return $query->withoutArchived();
-                },
-            )
+        $defaultStateQuery = ApplicationSubmissionState::query();
+
+        if (ApplicationSubmissionStateArchivingFeature::active()) {
+            // @phpstan-ignore method.notFound
+            $defaultStateQuery->withoutArchived();
+        }
+
+        $defaultState = $defaultStateQuery
             ->where('classification', ApplicationSubmissionStateClassification::Received)
             ->oldest('id')
             ->first();
 
         if (! $defaultState) {
-            $defaultState = ApplicationSubmissionState::query()
-                ->when(
-                    ApplicationSubmissionStateArchivingFeature::active(),
-                    function ($query) {
-                        // @phpstan-ignore method.notFound
-                        return $query->withoutArchived();
-                    },
-                )
+            $fallbackStateQuery = ApplicationSubmissionState::query();
+
+            if (ApplicationSubmissionStateArchivingFeature::active()) {
+                // @phpstan-ignore method.notFound
+                $fallbackStateQuery->withoutArchived();
+            }
+
+            $defaultState = $fallbackStateQuery
                 ->oldest('id')
                 ->firstOrFail();
         }

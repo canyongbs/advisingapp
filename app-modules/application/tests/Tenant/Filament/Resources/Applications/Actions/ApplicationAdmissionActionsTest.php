@@ -139,8 +139,6 @@ test('calling transitionTo on a submission changes its state', function () {
 
     if ($transitions->isEmpty()) {
         $this->markTestSkipped('No transitions defined from Received; skipping transition test.');
-
-        return;
     }
 
     $nextClassificationValue = (string) $transitions->first();
@@ -148,8 +146,9 @@ test('calling transitionTo on a submission changes its state', function () {
 
     expect($nextState)->not->toBeNull();
 
-    $stateMachine->transitionTo($nextState, $nextState->classification);
+    $stateMachine->transitionTo($nextState, ApplicationSubmissionStateClassification::from($nextClassificationValue));
 
+    // @phpstan-ignore property.notFound
     expect($submission->fresh()->state_id)->toBe($nextState->id);
 });
 
@@ -164,7 +163,7 @@ test('same state no-op guard: transitioning to same state does not invoke transi
     ]);
 
     $originalStateId = $submission->getOriginal('state_id') ?? $receivedState->id;
-    $submission->state_id = $originalStateId;
+    $submission->setAttribute('state_id', $originalStateId);
     $submission->unsetRelation('state');
 
     $newState = ApplicationSubmissionState::find($originalStateId);
@@ -174,9 +173,11 @@ test('same state no-op guard: transitioning to same state does not invoke transi
         ->map(fn ($state) => (string) $state)
         ->all();
 
+    // @phpstan-ignore property.notFound
     $sameState = ! in_array($newState->classification->value, $allowedTransitions, true);
 
     if ($sameState) {
+        // @phpstan-ignore property.notFound
         expect($submission->fresh()->state_id)->toBe($receivedState->id);
     } else {
         expect($allowedTransitions)->not->toBeEmpty();
@@ -233,14 +234,20 @@ test('state dropdown current state is pre-selected by default', function () {
 
     $schema->record($submission);
 
-    $schemaComponents = $schema->getComponents();
+     $schemaComponents = $schema->getComponents();
 
-    /** @var Select $stateField */
-    $stateField = collect($schemaComponents)
-        ->first(fn ($component) => $component instanceof Select && $component->getName() === 'state_id');
+    $stateField = null;
 
-    expect($stateField)->not->toBeNull();
+    foreach ($schemaComponents as $component) {
+        if ($component instanceof Select && $component->getName() === 'state_id') {
+            $stateField = $component;
 
+            break;
+        }
+    }
+
+    expect($stateField)->toBeInstanceOf(Select::class);
+    // @phpstan-ignore property.notFound
     expect($stateField->getDefaultState())->toBe($submission->state_id);
 });
 
@@ -265,17 +272,17 @@ test('state dropdown disables option when selected state classification is not a
         ->withoutArchived()
         ->get()
         ->first(function (ApplicationSubmissionState $state) use ($allowedTransitions, $submission): bool {
+            // @phpstan-ignore property.notFound
             if ($state->id === $submission->state_id) {
                 return false;
             }
 
+            // @phpstan-ignore property.notFound
             return ! in_array($state->classification->value, $allowedTransitions, true);
         });
 
     if (! $disallowedState) {
         $this->markTestSkipped('No disallowed submission state found for the current transition graph.');
-
-        return;
     }
 
     $actions = ApplicationAdmissionActions::get();
@@ -288,10 +295,16 @@ test('state dropdown disables option when selected state classification is not a
 
     $schema->record($submission);
 
-    /** @var Select $stateField */
-    $stateField = collect($schema->getComponents())
-        ->first(fn ($component) => $component instanceof Select && $component->getName() === 'state_id');
+   $stateField = null;
 
-    expect($stateField)->not->toBeNull();
+    foreach ($schema->getComponents() as $component) {
+        if ($component instanceof Select && $component->getName() === 'state_id') {
+            $stateField = $component;
+
+            break;
+        }
+    }
+
+    expect($stateField)->toBeInstanceOf(Select::class);
     expect($stateField->isOptionDisabled((string) $disallowedState->id, $disallowedState->name))->toBeTrue();
 });
