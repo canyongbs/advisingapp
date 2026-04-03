@@ -147,8 +147,8 @@ trait ImportColumns
                     'max:255',
                 ]),
             ImportColumn::make('change_dt')
-                ->label('Last Action Date')
-                ->exampleHeader('Last Action Date')
+                ->label('Change Date')
+                ->exampleHeader('Change Date')
                 ->example('1986-06-13 08:11:35')
                 ->rules([
                     'nullable',
