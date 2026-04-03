@@ -52,6 +52,7 @@ use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasEmailType;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Support\UnsubscribeUrl;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
 use App\Models\Tenant;
 use App\Models\User;
@@ -62,7 +63,6 @@ use Illuminate\Mail\SentMessage;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Channels\MailChannel as BaseMailChannel;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\URL;
 use ReflectionClass;
 use Symfony\Component\Mime\Email;
 use Throwable;
@@ -105,14 +105,14 @@ class MailChannel extends BaseMailChannel
 
         $emailType = $notification instanceof HasEmailType
             ? $notification->getEmailType()
-            : EmailType::transactional->value;
+            : EmailType::Transactional->value;
 
         $emailMessage->email_type = $emailType;
 
-        if ($emailType === EmailType::marketing->value && is_string($recipientAddress)) {
+        if ($emailType === EmailType::Marketing->value && is_string($recipientAddress)) {
             $message->viewData = array_merge(
                 $message->viewData ?? [],
-                ['unsubscribeUrl' => URL::signedRoute('unsubscribe', ['email' => $recipientAddress])],
+                ['unsubscribeUrl' => UnsubscribeUrl::generate($recipientAddress)],
             );
         }
 

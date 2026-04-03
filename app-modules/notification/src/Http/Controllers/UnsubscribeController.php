@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,17 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Enums;
+namespace AdvisingApp\Notification\Http\Controllers;
 
-use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
+use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 
-enum EmailType: string implements HasLabel
+class UnsubscribeController extends Controller
 {
-    case Marketing = 'marketing';
-    case Transactional = 'transactional';
-
-    public function getLabel(): string
+    public function show(Request $request)
     {
-        return $this->name;
+        $email = $request->query('email');
+
+        $confirmUrl = URL::signedRoute('unsubscribe.store', ['email' => $email]);
+
+        return view('notification::unsubscribe', [
+            'confirmUrl' => $confirmUrl,
+            'optedOut' => false,
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        if ($request->isMethod('HEAD')) {
+            return response()->noContent();
+        }
+
+        $email = $request->query('email');
+
+        EmailAddressOptInOptOut::firstOrCreate(
+            ['address' => $email],
+            ['status' => EmailAddressOptInOptOutStatus::OptedOut],
+        )->update(['status' => EmailAddressOptInOptOutStatus::OptedOut]);
+
+        return view('notification::unsubscribe', [
+            'confirmUrl' => null,
+            'optedOut' => true,
+        ]);
     }
 }

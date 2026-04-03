@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,17 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Enums;
+namespace AdvisingApp\Notification\Support;
 
-use Filament\Support\Contracts\HasLabel;
+use Illuminate\Support\Facades\URL;
 
-enum EmailType: string implements HasLabel
+class UnsubscribeUrl
 {
-    case Marketing = 'marketing';
-    case Transactional = 'transactional';
-
-    public function getLabel(): string
+    /**
+     * Generate a tamper-proof unsubscribe URL for the given email address.
+     *
+     * Uses Laravel signed URLs to ensure the email parameter cannot be modified
+     * without invalidating the signature. No database table needed.
+     *
+     * @param  string  $email  The recipient email address
+     * @param  int  $expirationMinutes  How long the link remains valid (default: 30 days)
+     * @return string The signed unsubscribe URL
+     */
+    public static function generate(string $email, int $expirationMinutes = 43200): string
     {
-        return $this->name;
+        return URL::signedRoute(
+            'unsubscribe',
+            ['email' => $email],
+            now()->addMinutes($expirationMinutes)->toImmutable(),
+        );
     }
 }
