@@ -38,8 +38,8 @@ namespace AdvisingApp\Notification\Notifications\Channels;
 
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
-use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Exceptions\BouncedEmailException;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
