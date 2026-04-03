@@ -55,7 +55,7 @@ class GetAvailableGroupAppointmentSlots
      */
     public function __invoke(BookingGroup $bookingGroup, int $year, int $month): array
     {
-        $members = $bookingGroup->allMembers();
+        $members = $bookingGroup->allMembers()->load('personalBookingPage');
 
         if ($members->isEmpty()) {
             return [];
