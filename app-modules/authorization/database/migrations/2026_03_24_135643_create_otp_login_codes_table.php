@@ -34,24 +34,24 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Http\Controllers\GenerateOtpLoginCodeController;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
-use App\Http\Controllers\UtilizationMetricsApiController;
-use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Facades\Route;
-use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-Route::middleware([
-    CheckOlympusKey::class,
-])->group(function () {
-    Route::post('/azure-sso/update', UpdateAzureSsoSettingsController::class)
-        ->name('azure-sso.update');
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('otp_login_codes', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->text('code');
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->timestamp('used_at')->nullable();
+            $table->timestamps();
+        });
+    }
 
-    Route::get('/health', HealthCheckJsonResultsController::class)
-        ->name('health');
-
-    Route::get('/utilization-metrics', UtilizationMetricsApiController::class)
-        ->name('utilization-metrics');
-
-    Route::post('/otp-code', GenerateOtpLoginCodeController::class)->name('otp-code.generate');
-});
+    public function down(): void
+    {
+        Schema::dropIfExists('otp_login_codes');
+    }
+};

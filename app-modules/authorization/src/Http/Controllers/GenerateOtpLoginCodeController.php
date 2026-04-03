@@ -37,26 +37,32 @@
 namespace AdvisingApp\Authorization\Http\Controllers;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Authorization\Http\Requests\GenerateLoginMagicLinkRequest;
-use AdvisingApp\Authorization\Models\LoginMagicLink;
+use AdvisingApp\Authorization\Http\Requests\GenerateOtpLoginCodeRequest;
+use AdvisingApp\Authorization\Models\OtpLoginCode;
+use AdvisingApp\Authorization\Notifications\OtpCodeNotification;
+use App\Features\OtpCodeLoginFeature;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
 use Throwable;
 
-class GenerateLoginMagicLinkController
+class GenerateOtpLoginCodeController
 {
     /**
      * @throws Throwable
      */
-    public function __invoke(GenerateLoginMagicLinkRequest $request): JsonResponse
+    public function __invoke(GenerateOtpLoginCodeRequest $request): JsonResponse
     {
         try {
             DB::beginTransaction();
+
+            if (! OtpCodeLoginFeature::active()) {
+                return response()->json([
+                    'link' => null,
+                ]);
+            }
 
             $data = $request->validated();
 
@@ -93,35 +99,29 @@ class GenerateLoginMagicLinkController
 
             $user->syncRoles($data['type']);
 
-            // Remove any existing magic links for this user
-            LoginMagicLink::query()
+            // Remove any existing OTPs for this user
+            OtpLoginCode::query()
                 ->where('user_id', $user->getKey())
                 ->delete();
 
-            $code = Str::random();
+            $code = random_int(100000, 999999);
 
-            $magicLink = new LoginMagicLink();
-            $magicLink->user()->associate($user);
-            $magicLink->code = Hash::make($code);
-            $magicLink->saveOrFail();
+            $otpCode = new OtpLoginCode();
+            $otpCode->user()->associate($user);
+            $otpCode->code = Hash::make((string) $code);
+            $otpCode->saveOrFail();
 
             DB::commit();
 
+            $user->notify(new OtpCodeNotification($code));
+
             return response()->json([
                 'link' => URL::temporarySignedRoute(
-                    name: 'magic-link.login',
-                    expiration: now()->addMinutes(10)->toImmutable(),
+                    name: 'otp-code.login',
+                    expiration: now()->addMinutes(20)->toImmutable(),
                     parameters: [
-                        'magicLink' => $magicLink->getKey(),
-                        'payload' => urlencode(
-                            Crypt::encrypt(
-                                [
-                                    'code' => $code,
-                                    'user_id' => $user->getKey(),
-                                ]
-                            )
-                        ),
-                    ],
+                        'otpCode' => $otpCode->getKey(),
+                    ]
                 ),
             ]);
         } catch (Throwable $exception) {
@@ -130,7 +130,7 @@ class GenerateLoginMagicLinkController
             report($exception);
 
             return response()->json([
-                'error' => 'Failed to generate magic link.',
+                'error' => 'Failed to generate OTP code.',
             ], 500);
         }
     }

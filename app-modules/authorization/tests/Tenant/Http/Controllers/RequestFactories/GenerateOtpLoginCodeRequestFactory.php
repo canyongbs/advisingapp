@@ -34,23 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Http\Requests;
+namespace AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\RequestFactories;
 
 use App\Models\Authenticatable;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use Worksome\RequestFactories\RequestFactory;
 
-class GenerateLoginMagicLinkRequest extends FormRequest
+class GenerateOtpLoginCodeRequestFactory extends RequestFactory
 {
-    /**
-     * @return array<string, array<int, string>>
-     */
-    public function rules(): array
+    public function definition(): array
     {
         return [
-            'email' => ['required', 'email'],
-            'name' => ['required', 'string', 'max:255'],
-            'type' => ['required', 'string', Rule::in([Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE, Authenticatable::AI_ADMIN_ROLE])],
+            'email' => $this->faker->safeEmail(),
+            'name' => $this->faker->name(),
+            'type' => $this->faker->randomElement([
+                Authenticatable::SUPER_ADMIN_ROLE,
+                Authenticatable::PARTNER_ADMIN_ROLE,
+                Authenticatable::AI_ADMIN_ROLE,
+            ]),
         ];
     }
 }

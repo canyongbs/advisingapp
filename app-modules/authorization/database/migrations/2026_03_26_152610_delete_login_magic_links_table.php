@@ -34,52 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Database\Factories;
+use App\Features\OtpCodeLoginFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Authorization\Models\LoginMagicLink;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-
-/**
- * @extends Factory<LoginMagicLink>
- */
-class LoginMagicLinkFactory extends Factory
-{
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'code' => Hash::make(Str::random()),
-            'user_id' => User::factory(),
-        ];
-    }
+        DB::transaction(function () {
+            Schema::dropIfExists('login_magic_links');
 
-    /**
-     * @return Factory<LoginMagicLink>
-     */
-    public function withCode(string $code): Factory
-    {
-        return $this->state(function (array $attributes) use ($code) {
-            return [
-                'code' => Hash::make($code),
-            ];
+            OtpCodeLoginFeature::activate();
         });
     }
 
-    /**
-     * @return Factory<LoginMagicLink>
-     */
-    public function used(?Carbon $when = null): Factory
+    public function down(): void
     {
-        return $this->state(function (array $attributes) use ($when) {
-            return [
-                'used_at' => $when ?? now(),
-            ];
+        DB::transaction(function () {
+            OtpCodeLoginFeature::deactivate();
+
+            Schema::create('login_magic_links', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->text('code');
+                $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+                $table->timestamp('used_at')->nullable();
+                $table->timestamps();
+            });
         });
     }
-}
+};

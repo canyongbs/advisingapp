@@ -34,11 +34,13 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Models\LoginMagicLink;
-use AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\RequestFactories\GenerateLoginMagicLinkRequestFactory;
+use AdvisingApp\Authorization\Models\OtpLoginCode;
+use AdvisingApp\Authorization\Notifications\OtpCodeNotification;
+use AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\RequestFactories\GenerateOtpLoginCodeRequestFactory;
 use App\Http\Middleware\CheckOlympusKey;
 use App\Models\Authenticatable;
 use App\Models\User;
+use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\post;
@@ -46,7 +48,7 @@ use function Pest\Laravel\withoutMiddleware;
 
 it('requires Olympus Key authentication', function () {
     post(
-        route('magic-link.generate'),
+        route('otp-code.generate'),
         [
             'email' => fake()->safeEmail(),
             'name' => fake()->name(),
@@ -56,13 +58,13 @@ it('requires Olympus Key authentication', function () {
         ->assertForbidden();
 });
 
-it('can generate a login magic link for a non-existing user', function () {
+it('can generate a login OTP for a non-existing user', function () {
     $email = fake()->safeEmail();
     $name = fake()->name();
 
     withoutMiddleware(CheckOlympusKey::class)
         ->post(
-            route('magic-link.generate'),
+            route('otp-code.generate'),
             [
                 'email' => $email,
                 'name' => $name,
@@ -79,16 +81,14 @@ it('can generate a login magic link for a non-existing user', function () {
         ->and($user->is_external)->toBeTrue()
         ->and($user->hasExactRoles([Authenticatable::SUPER_ADMIN_ROLE]))->toBeTrue();
 
-    assertDatabaseCount(LoginMagicLink::class, 1);
+    assertDatabaseCount(OtpLoginCode::class, 1);
 
-    $magicLink = LoginMagicLink::first();
+    $otpCode = OtpLoginCode::first();
 
-    expect($magicLink->user_id)->toEqual($user->id);
-
-    // TODO: Test that the link parameter decrypts to what we expect
+    expect($otpCode->user_id)->toEqual($user->id);
 });
 
-it('can generate a login magic link for an existing user', function () {
+it('can generate a login OTP for an existing user', function () {
     $user = User::factory()->create();
 
     $email = $user->email;
@@ -96,7 +96,7 @@ it('can generate a login magic link for an existing user', function () {
 
     withoutMiddleware(CheckOlympusKey::class)
         ->post(
-            route('magic-link.generate'),
+            route('otp-code.generate'),
             [
                 'email' => $email,
                 'name' => $name,
@@ -115,16 +115,14 @@ it('can generate a login magic link for an existing user', function () {
         ->and($user->is_external)->toBeTrue()
         ->and($user->hasExactRoles([Authenticatable::SUPER_ADMIN_ROLE]))->toBeTrue();
 
-    assertDatabaseCount(LoginMagicLink::class, 1);
+    assertDatabaseCount(OtpLoginCode::class, 1);
 
-    $magicLink = LoginMagicLink::first();
+    $otpCode = OtpLoginCode::first();
 
-    expect($magicLink->user_id)->toEqual($user->id);
-
-    // TODO: Test that the link parameter decrypts to what we expect
+    expect($otpCode->user_id)->toEqual($user->id);
 });
 
-it('can generate a login magic link for an existing user that is deleted', function () {
+it('can generate a login OTP for an existing user that is deleted', function () {
     $user = User::factory()->create();
 
     $email = $user->email;
@@ -136,7 +134,7 @@ it('can generate a login magic link for an existing user that is deleted', funct
 
     withoutMiddleware(CheckOlympusKey::class)
         ->post(
-            route('magic-link.generate'),
+            route('otp-code.generate'),
             [
                 'email' => $email,
                 'name' => $name,
@@ -156,13 +154,11 @@ it('can generate a login magic link for an existing user that is deleted', funct
         ->and($user->is_external)->toBeTrue()
         ->and($user->hasExactRoles([Authenticatable::SUPER_ADMIN_ROLE]))->toBeTrue();
 
-    assertDatabaseCount(LoginMagicLink::class, 1);
+    assertDatabaseCount(OtpLoginCode::class, 1);
 
-    $magicLink = LoginMagicLink::first();
+    $otpCode = OtpLoginCode::first();
 
-    expect($magicLink->user_id)->toEqual($user->id);
-
-    // TODO: Test that the link parameter decrypts to what we expect
+    expect($otpCode->user_id)->toEqual($user->id);
 });
 
 it('updates details of an existing user', function () {
@@ -180,7 +176,7 @@ it('updates details of an existing user', function () {
 
     withoutMiddleware(CheckOlympusKey::class)
         ->post(
-            route('magic-link.generate'),
+            route('otp-code.generate'),
             [
                 'email' => $email,
                 'name' => $name,
@@ -200,26 +196,24 @@ it('updates details of an existing user', function () {
         ->and($user->email_verified_at)->not->toBeNull()
         ->and($user->hasExactRoles([Authenticatable::SUPER_ADMIN_ROLE]))->toBeTrue();
 
-    assertDatabaseCount(LoginMagicLink::class, 1);
+    assertDatabaseCount(OtpLoginCode::class, 1);
 
-    $magicLink = LoginMagicLink::first();
+    $otpCode = OtpLoginCode::first();
 
-    expect($magicLink->user_id)->toEqual($user->id);
-
-    // TODO: Test that the link parameter decrypts to what we expect
+    expect($otpCode->user_id)->toEqual($user->id);
 });
 
-it('deletes existing magic links for a user', function () {
+it('deletes existing OTP codes for a user', function () {
     $user = User::factory()->create();
 
     $email = $user->email;
     $name = $user->name;
 
-    $existingMagicLink = LoginMagicLink::factory()->create(['user_id' => $user->id]);
+    $existingOtpCode = OtpLoginCode::factory()->create(['user_id' => $user->id]);
 
     withoutMiddleware(CheckOlympusKey::class)
         ->post(
-            route('magic-link.generate'),
+            route('otp-code.generate'),
             [
                 'email' => $email,
                 'name' => $name,
@@ -238,55 +232,77 @@ it('deletes existing magic links for a user', function () {
         ->and($user->is_external)->toBeTrue()
         ->and($user->hasExactRoles([Authenticatable::SUPER_ADMIN_ROLE]))->toBeTrue();
 
-    assertDatabaseCount(LoginMagicLink::class, 1);
+    assertDatabaseCount(OtpLoginCode::class, 1);
 
-    expect($existingMagicLink->fresh())->toBeNull();
+    expect($existingOtpCode->fresh())->toBeNull();
 
-    $magicLink = LoginMagicLink::first();
+    $otpCode = OtpLoginCode::first();
 
-    expect($magicLink->user_id)->toEqual($user->id);
-
-    // TODO: Test that the link parameter decrypts to what we expect
+    expect($otpCode->user_id)->toEqual($user->id);
 });
 
-it('requires valid data', function (GenerateLoginMagicLinkRequestFactory $data, array $errors) {
+it('sends OTP code notification to the provided email', function () {
+    Notification::fake();
+
+    $email = fake()->safeEmail();
+
     withoutMiddleware(CheckOlympusKey::class)
         ->post(
-            route('magic-link.generate'),
-            GenerateLoginMagicLinkRequestFactory::new($data)->create()
+            route('otp-code.generate'),
+            [
+                'email' => $email,
+                'name' => fake()->name(),
+                'type' => Authenticatable::SUPER_ADMIN_ROLE,
+            ]
+        )
+        ->assertOk()
+        ->assertJsonStructure(['link'])
+        ->assertJsonMissing(['otp']);
+
+    Notification::assertSentTo(
+        User::where('email', $email)->first(),
+        OtpCodeNotification::class,
+    );
+});
+
+it('requires valid data', function (GenerateOtpLoginCodeRequestFactory $data, array $errors) {
+    withoutMiddleware(CheckOlympusKey::class)
+        ->post(
+            route('otp-code.generate'),
+            GenerateOtpLoginCodeRequestFactory::new($data)->create()
         )
         ->assertInvalid($errors);
 
-    assertDatabaseCount(LoginMagicLink::class, 0);
+    assertDatabaseCount(OtpLoginCode::class, 0);
 })
     ->with(
         [
             'email required' => [
-                GenerateLoginMagicLinkRequestFactory::new()->state(['email' => null]),
+                GenerateOtpLoginCodeRequestFactory::new()->state(['email' => null]),
                 ['email' => 'required'],
             ],
             'email must be valid email' => [
-                GenerateLoginMagicLinkRequestFactory::new()->state(['email' => 'invalid-email']),
+                GenerateOtpLoginCodeRequestFactory::new()->state(['email' => 'invalid-email']),
                 ['email' => 'email'],
             ],
             'name required' => [
-                GenerateLoginMagicLinkRequestFactory::new()->state(['name' => null]),
+                GenerateOtpLoginCodeRequestFactory::new()->state(['name' => null]),
                 ['name' => 'required'],
             ],
             'name string' => [
-                GenerateLoginMagicLinkRequestFactory::new()->state(['name' => 1]),
+                GenerateOtpLoginCodeRequestFactory::new()->state(['name' => 1]),
                 ['name' => 'string'],
             ],
             'name max' => [
-                GenerateLoginMagicLinkRequestFactory::new()->state(['name' => str()->random(256)]),
+                GenerateOtpLoginCodeRequestFactory::new()->state(['name' => str()->random(256)]),
                 ['name' => ['The name may not be greater than 255 characters.']],
             ],
             'type required' => [
-                GenerateLoginMagicLinkRequestFactory::new()->state(['type' => null]),
+                GenerateOtpLoginCodeRequestFactory::new()->state(['type' => null]),
                 ['type' => 'required'],
             ],
             'type must be correct value' => [
-                GenerateLoginMagicLinkRequestFactory::new()->state(['type' => 'invalid']),
+                GenerateOtpLoginCodeRequestFactory::new()->state(['type' => 'invalid']),
                 ['type' => 'in'],
             ],
         ],

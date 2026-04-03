@@ -34,24 +34,39 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Http\Controllers\GenerateOtpLoginCodeController;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
-use App\Http\Controllers\UtilizationMetricsApiController;
-use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Facades\Route;
-use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
+namespace AdvisingApp\Authorization\Notifications;
 
-Route::middleware([
-    CheckOlympusKey::class,
-])->group(function () {
-    Route::post('/azure-sso/update', UpdateAzureSsoSettingsController::class)
-        ->name('azure-sso.update');
+use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
 
-    Route::get('/health', HealthCheckJsonResultsController::class)
-        ->name('health');
+#[SystemNotification]
+class OtpCodeNotification extends Notification
+{
+    use Queueable;
 
-    Route::get('/utilization-metrics', UtilizationMetricsApiController::class)
-        ->name('utilization-metrics');
+    public function __construct(
+        protected int $code,
+    ) {}
 
-    Route::post('/otp-code', GenerateOtpLoginCodeController::class)->name('otp-code.generate');
-});
+    /**
+     * @return array<int, string>
+     */
+    public function via(User $notifiable): array
+    {
+        return ['mail'];
+    }
+
+    public function toMail(User $notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->subject('Your Login Verification Code')
+            ->greeting('Hello ' . $notifiable->name . ',')
+            ->line('Your one-time login verification code is:')
+            ->line("**{$this->code}**")
+            ->line('This code will expire in 20 minutes.')
+            ->line('If you did not request this code, please ignore this email.');
+    }
+}

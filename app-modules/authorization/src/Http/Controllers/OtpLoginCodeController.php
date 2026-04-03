@@ -34,23 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\RequestFactories;
+namespace AdvisingApp\Authorization\Http\Controllers;
 
-use App\Models\Authenticatable;
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\Authorization\Models\OtpLoginCode;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
+use Illuminate\View\View;
 
-class GenerateLoginMagicLinkRequestFactory extends RequestFactory
+class OtpLoginCodeController
 {
-    public function definition(): array
+    public function __invoke(Request $request, OtpLoginCode $otpCode): View
     {
-        return [
-            'email' => $this->faker->safeEmail(),
-            'name' => $this->faker->name(),
-            'type' => $this->faker->randomElement([
-                Authenticatable::SUPER_ADMIN_ROLE,
-                Authenticatable::PARTNER_ADMIN_ROLE,
-                Authenticatable::AI_ADMIN_ROLE,
-            ]),
-        ];
+        abort_if(
+            boolean: now()->greaterThanOrEqualTo($otpCode->created_at->addMinutes(20))
+                || $otpCode->used_at !== null,
+            code: 403,
+            message: 'This OTP link has expired or has already been used. Please request a new one.'
+        );
+
+        $verifyUrl = URL::temporarySignedRoute(
+            name: 'otp-code.verify',
+            expiration: $otpCode->created_at->addMinutes(20)->toImmutable(),
+            parameters: [
+                'otpCode' => $otpCode->getKey(),
+            ],
+        );
+
+        return view('authorization::otp-entry', [
+            'verifyUrl' => $verifyUrl,
+        ]);
     }
 }

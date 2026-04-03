@@ -34,24 +34,56 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Http\Controllers\GenerateOtpLoginCodeController;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
-use App\Http\Controllers\UtilizationMetricsApiController;
-use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Facades\Route;
-use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
+namespace AdvisingApp\Authorization\Database\Factories;
 
-Route::middleware([
-    CheckOlympusKey::class,
-])->group(function () {
-    Route::post('/azure-sso/update', UpdateAzureSsoSettingsController::class)
-        ->name('azure-sso.update');
+use AdvisingApp\Authorization\Models\OtpLoginCode;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
+use InvalidArgumentException;
 
-    Route::get('/health', HealthCheckJsonResultsController::class)
-        ->name('health');
+/**
+ * @extends Factory<OtpLoginCode>
+ */
+class OtpLoginCodeFactory extends Factory
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'code' => Hash::make((string) random_int(100000, 999999)),
+            'user_id' => User::factory(),
+        ];
+    }
 
-    Route::get('/utilization-metrics', UtilizationMetricsApiController::class)
-        ->name('utilization-metrics');
+    /**
+     * @return Factory<OtpLoginCode>
+     */
+    public function withCode(int $code): Factory
+    {
+        if ($code < 100000 || $code > 999999) {
+            throw new InvalidArgumentException('OTP code must be a 6-digit integer between 100000 and 999999.');
+        }
 
-    Route::post('/otp-code', GenerateOtpLoginCodeController::class)->name('otp-code.generate');
-});
+        return $this->state(function (array $attributes) use ($code) {
+            return [
+                'code' => Hash::make((string) $code),
+            ];
+        });
+    }
+
+    /**
+     * @return Factory<OtpLoginCode>
+     */
+    public function used(?Carbon $when = null): Factory
+    {
+        return $this->state(function (array $attributes) use ($when) {
+            return [
+                'used_at' => $when ?? now(),
+            ];
+        });
+    }
+}
