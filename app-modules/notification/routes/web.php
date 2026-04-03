@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,17 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Enums;
+use AdvisingApp\Notification\Http\Controllers\UnsubscribeController;
+use Illuminate\Support\Facades\Route;
 
-use Filament\Support\Contracts\HasLabel;
+Route::middleware('web')->group(function () {
+    Route::get('/unsubscribe', [UnsubscribeController::class, 'show'])
+        ->name('unsubscribe')
+        ->middleware('signed');
 
-enum EmailType: string implements HasLabel
-{
-    case Marketing = 'marketing';
-    case Transactional = 'transactional';
-
-    public function getLabel(): string
-    {
-        return $this->name;
-    }
-}
+    Route::post('/unsubscribe', [UnsubscribeController::class, 'store'])
+        ->name('unsubscribe.store')
+        ->middleware('signed');
+});

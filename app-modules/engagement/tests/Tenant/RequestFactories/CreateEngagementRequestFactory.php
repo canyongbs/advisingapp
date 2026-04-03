@@ -37,6 +37,7 @@
 namespace AdvisingApp\Engagement\Tests\Tenant\RequestFactories;
 
 use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -57,6 +58,7 @@ class CreateEngagementRequestFactory extends RequestFactory
             'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]],
             'scheduledAt' => fake()->dateTimeBetween('-1 year', '-1 day'),
             'channel' => fake()->randomElement([NotificationChannel::Email, NotificationChannel::Sms]),
+            'emailType' => fake()->randomElement([EmailType::Transactional, EmailType::Marketing]),
         ];
     }
 
