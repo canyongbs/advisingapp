@@ -42,6 +42,7 @@ use AdvisingApp\MeetingCenter\Http\Requests\BookGroupCalendarSlotRequest;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use App\Features\MinimumLeadTimeFeature;
 use App\Http\Controllers\Controller;
 use App\Settings\CollegeBrandingSettings;
@@ -149,8 +150,9 @@ class GroupBookingPageWidgetController extends Controller
         $effectiveLeadTime = 0;
 
         if (MinimumLeadTimeFeature::active()) {
-            $members->load('personalBookingPage');
-            $memberMaxLeadTime = $members->max(fn ($user) => $user->personalBookingPage?->minimum_booking_lead_time_hours ?? 0);
+            $memberMaxLeadTime = PersonalBookingPage::query()
+                ->whereIn('user_id', $members->pluck('id'))
+                ->max('minimum_booking_lead_time_hours') ?? 0;
             $effectiveLeadTime = max($bookingGroup->minimum_booking_lead_time_hours ?? 0, $memberMaxLeadTime);
         }
 

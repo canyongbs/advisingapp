@@ -204,7 +204,6 @@ class EditBookingGroup extends EditRecord
                         ->visible(fn (Get $get): bool => $get('is_default_appointment_buffer_enabled')),
                     TextInput::make('minimum_booking_lead_time_hours')
                         ->label('Minimum Lead Time')
-                        ->helperText('How far in advance someone must book. If any group member has a longer lead time set on their personal booking page, the longest value will be used.')
                         ->suffix('hours')
                         ->default(0)
                         ->minValue(0)
@@ -263,6 +262,8 @@ class EditBookingGroup extends EditRecord
         }
 
         $data['available_appointment_hours'] = DailyHoursRepeater::mutateDataBeforeSave($data['available_appointment_hours']);
+
+        $data['minimum_booking_lead_time_hours'] = $data['minimum_booking_lead_time_hours'] ?? 0;
 
         return $data;
     }

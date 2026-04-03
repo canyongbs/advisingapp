@@ -40,6 +40,7 @@ use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use App\Features\MinimumLeadTimeFeature;
 use App\Models\User;
 use Carbon\CarbonPeriod;
@@ -54,7 +55,7 @@ class GetAvailableGroupAppointmentSlots
      */
     public function __invoke(BookingGroup $bookingGroup, int $year, int $month): array
     {
-        $members = $bookingGroup->allMembers()->load('personalBookingPage');
+        $members = $bookingGroup->allMembers();
 
         if ($members->isEmpty()) {
             return [];
@@ -77,7 +78,9 @@ class GetAvailableGroupAppointmentSlots
         $effectiveLeadTime = 0;
 
         if (MinimumLeadTimeFeature::active()) {
-            $memberMaxLeadTime = $members->max(fn (User $user) => $user->personalBookingPage?->minimum_booking_lead_time_hours ?? 0);
+            $memberMaxLeadTime = PersonalBookingPage::query()
+                ->whereIn('user_id', $members->pluck('id'))
+                ->max('minimum_booking_lead_time_hours') ?? 0;
             $effectiveLeadTime = max($bookingGroup->minimum_booking_lead_time_hours ?? 0, $memberMaxLeadTime);
         }
 

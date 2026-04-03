@@ -127,7 +127,6 @@ class ManagePersonalBookingPage extends ProfilePage
                             ->visible(fn (Get $get) => $get('is_enabled')),
                         TextInput::make('minimum_booking_lead_time_hours')
                             ->label('Minimum Lead Time')
-                            ->helperText('How far in advance someone must book an appointment with you')
                             ->suffix('hours')
                             ->default(0)
                             ->minValue(0)
