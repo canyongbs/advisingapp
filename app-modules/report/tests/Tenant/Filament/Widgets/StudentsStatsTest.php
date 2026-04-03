@@ -41,6 +41,7 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentsStats;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
+use App\Settings\LicenseSettings;
 
 it('returns correct total student stats of students, concerns, groups and tasks within the given date range', function () {
     $startDate = now()->subDays(10);
@@ -189,4 +190,31 @@ it('returns correct total student stats of students, concerns, cases and tasks b
         ->and($stats[1]->getValue())->toEqual($count)
         ->and($stats[2]->getValue())->toEqual($count)
         ->and($stats[3]->getValue())->toEqual($count);
+});
+
+it('only returns cases information if that feature is active', function () {
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->caseManagement = false;
+    $settings->save();
+
+    $widget = new StudentsStats();
+    $widget->cacheTag = 'report-student';
+
+    $stats = $widget->getStats();
+
+    expect($stats[0]->getLabel())->toEqual('Total Students')
+        ->and($stats[1]->getLabel())->toEqual('Total Concerns')
+        ->and($stats[2]->getLabel())->toEqual('Total Tasks');
+
+    $settings->data->addons->caseManagement = true;
+    $settings->save();
+
+    // @phpstan-ignore method.resultUnused
+    $widget->refreshWidget();
+    $stats = $widget->getStats();
+
+    expect($stats[0]->getLabel())->toEqual('Total Students')
+        ->and($stats[1]->getLabel())->toEqual('Total Concerns')
+        ->and($stats[2]->getLabel())->toEqual('Total Cases')
+        ->and($stats[3]->getLabel())->toEqual('Total Tasks');
 });
