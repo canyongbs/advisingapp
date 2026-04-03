@@ -74,7 +74,6 @@ use League\HTMLToMarkdown\HtmlConverter;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Symfony\Component\Mime\Email;
 
 /**
  * @property-read ?Educatable $recipient
