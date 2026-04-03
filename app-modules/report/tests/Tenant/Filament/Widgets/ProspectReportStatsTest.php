@@ -200,44 +200,8 @@ it('only returns cases information if that feature is active', function () {
     $settings->data->addons->caseManagement = false;
     $settings->save();
 
-    $count = random_int(1, 5);
-
-    $group = Group::factory()->create([
-        'model' => GroupModel::Prospect,
-        'filters' => [
-            'queryBuilder' => [
-                'rules' => [
-                    'C0Cy' => [
-                        'type' => 'last_name',
-                        'data' => [
-                            'operator' => 'contains',
-                            'settings' => [
-                                'text' => 'John',
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ]);
-
-    Prospect::factory()
-        ->count($count)
-        ->state([
-            'last_name' => 'John',
-        ])->create();
-
-    Prospect::factory()
-        ->count($count)
-        ->state([
-            'last_name' => 'Doe',
-        ])->create();
-
     $widget = new ProspectReportStats();
-    $widget->cacheTag = 'report-student';
-    $widget->pageFilters = [
-        'populationGroup' => $group->getKey(),
-    ];
+    $widget->cacheTag = 'prospect-report-cache';
 
     $stats = $widget->getStats();
 
