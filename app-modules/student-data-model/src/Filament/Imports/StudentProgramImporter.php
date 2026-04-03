@@ -53,6 +53,7 @@ class StudentProgramImporter extends Importer
         return [
             ImportColumn::make('sisid')
                 ->label('Student ID')
+                ->exampleHeader('Student ID')
                 ->requiredMapping()
                 ->example('########')
                 ->rules([
