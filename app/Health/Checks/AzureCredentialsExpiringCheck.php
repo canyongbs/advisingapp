@@ -44,6 +44,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Spatie\Health\Checks\Check;
 use Spatie\Health\Checks\Result;
+use stdClass;
 
 class AzureCredentialsExpiringCheck extends Check
 {
@@ -65,17 +66,17 @@ class AzureCredentialsExpiringCheck extends Check
             $data = Http::withToken($response->object()->access_token)
                 ->get("https://graph.microsoft.com/v1.0/applications(appId='{$azureSsoSettings->client_id}')" . '?$select=passwordCredentials');
 
-            /** @var Collection<int, array<string, ?string>> $passwordCredentials */
+            /** @var Collection<int, stdClass> $passwordCredentials */
             $passwordCredentials = $data->object()->passwordCredentials;
 
-            $credentials = collect($passwordCredentials)->filter(function (array $item) use ($azureSsoSettings) {
-                return is_null($item['hint']) || Str::startsWith($azureSsoSettings->client_secret, $item['hint']);
+            $credentials = collect($passwordCredentials)->filter(function (stdClass $item) use ($azureSsoSettings) {
+                return is_null($item->hint) || Str::startsWith($azureSsoSettings->client_secret, $item->hint);
             });
 
             if (count($credentials) > 1) {
-                $endDateTime = Carbon::parse($credentials->sortBy(fn (array $item) => Carbon::parse($item['endDateTime']))->first()['endDateTime']);
+                $endDateTime = Carbon::parse($credentials->sortBy(fn (stdClass $item) => Carbon::parse($item->endDateTime))->first()->endDateTime);
             } else {
-                $endDateTime = Carbon::parse($credentials->first()['endDateTime']);
+                $endDateTime = Carbon::parse($credentials->first()->endDateTime);
             }
 
             if ($endDateTime->isPast()) {
