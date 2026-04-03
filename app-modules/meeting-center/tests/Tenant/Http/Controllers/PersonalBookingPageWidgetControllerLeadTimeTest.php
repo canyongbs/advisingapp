@@ -57,9 +57,9 @@ $workingHours = [
 
 beforeEach(function () {
     $mockDriver = Mockery::mock(CalendarInterface::class);
-    $mockDriver->shouldReceive('createEvent')->andReturnNull();
-    $mockDriver->shouldReceive('updateEvent')->andReturnNull();
-    $mockDriver->shouldReceive('deleteEvent')->andReturnNull();
+    $mockDriver->shouldReceive('createEvent')->andReturn(null);
+    $mockDriver->shouldReceive('updateEvent')->andReturn(null);
+    $mockDriver->shouldReceive('deleteEvent')->andReturn(null);
 
     $mockManager = Mockery::mock(CalendarManager::class, function (MockInterface $mock) use ($mockDriver) {
         $mock->shouldReceive('driver')->andReturn($mockDriver);
