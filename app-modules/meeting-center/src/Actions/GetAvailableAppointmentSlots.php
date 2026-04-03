@@ -38,6 +38,7 @@ namespace AdvisingApp\MeetingCenter\Actions;
 
 use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use App\Features\MinimumLeadTimeFeature;
 use App\Models\User;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Builder;
@@ -49,7 +50,7 @@ class GetAvailableAppointmentSlots
     /**
      * @return array<int, array{start: string, end: string}>
      */
-    public function __invoke(User $user, int $year, int $month): array
+    public function __invoke(User $user, int $year, int $month, int $leadTimeHours = 0): array
     {
         $period = CarbonPeriod::create(
             Carbon::create($year, $month, 1)->startOfDay(),
@@ -61,7 +62,7 @@ class GetAvailableAppointmentSlots
 
         $busyPeriods = $this->getBusyPeriodsFor($user, $period->start, $period->end);
 
-        return $this->buildAvailableBlocksFor($user, $period, $busyPeriods);
+        return $this->buildAvailableBlocksFor($user, $period, $busyPeriods, $leadTimeHours);
     }
 
     /**
@@ -114,14 +115,14 @@ class GetAvailableAppointmentSlots
      *
      * @return array<int, array{start: string, end: string}>
      */
-    protected function buildAvailableBlocksFor(User $user, CarbonPeriod $period, Collection $busyPeriods): array
+    protected function buildAvailableBlocksFor(User $user, CarbonPeriod $period, Collection $busyPeriods, int $leadTimeHours = 0): array
     {
         /** @var Collection<int, Carbon> $periodCollection */
         $periodCollection = new Collection($period);
 
         return $periodCollection
             ->reject(fn (Carbon $date) => $this->isOutOfOffice($user, $date))
-            ->flatMap(fn (Carbon $date) => $this->getAvailableBlocksForDay($user, $date, $busyPeriods))
+            ->flatMap(fn (Carbon $date) => $this->getAvailableBlocksForDay($user, $date, $busyPeriods, $leadTimeHours))
             ->all();
     }
 
@@ -143,7 +144,7 @@ class GetAvailableAppointmentSlots
      *
      * @return array<int, array{start: string, end: string}>
      */
-    protected function getAvailableBlocksForDay(User $user, Carbon $date, Collection $busyPeriods): array
+    protected function getAvailableBlocksForDay(User $user, Carbon $date, Collection $busyPeriods, int $leadTimeHours = 0): array
     {
         $dayOfWeek = strtolower($date->format('l'));
         $hours = $this->getHoursForDay($user, $dayOfWeek);
@@ -152,7 +153,8 @@ class GetAvailableAppointmentSlots
             return [];
         }
 
-        $now = now();
+        $effectiveLeadTimeHours = MinimumLeadTimeFeature::active() ? $leadTimeHours : 0;
+        $now = now()->addHours($effectiveLeadTimeHours);
 
         return $hours
             ->filter(fn (array $period) => ($period['enabled'] ?? $period['is_enabled'] ?? false))

@@ -42,6 +42,7 @@ use AdvisingApp\MeetingCenter\Http\Requests\BookGroupCalendarSlotRequest;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use App\Features\MinimumLeadTimeFeature;
 use App\Http\Controllers\Controller;
 use App\Settings\CollegeBrandingSettings;
 use Carbon\Carbon;
@@ -144,10 +145,23 @@ class GroupBookingPageWidgetController extends Controller
         $startsAt = Carbon::parse($request->validated('starts_at'));
         $endsAt = Carbon::parse($request->validated('ends_at'));
 
-        if ($startsAt->isPast()) {
+        // Calculate effective lead time: max of group's lead time and all members' lead times
+        $effectiveLeadTime = 0;
+
+        if (MinimumLeadTimeFeature::active()) {
+            $members->load('personalBookingPage');
+            $memberMaxLeadTime = $members->max(fn ($user) => $user->personalBookingPage?->minimum_booking_lead_time_hours ?? 0);
+            $effectiveLeadTime = max($bookingGroup->minimum_booking_lead_time_hours ?? 0, $memberMaxLeadTime);
+        }
+
+        $earliestAllowed = now()->addHours($effectiveLeadTime);
+
+        if ($startsAt->isBefore($earliestAllowed)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cannot book appointments that have already started. Please select a future time slot.',
+                'message' => $effectiveLeadTime > 0
+                    ? "Bookings require at least {$effectiveLeadTime} hours advance notice. Please select a later time slot."
+                    : 'Cannot book appointments that have already started. Please select a future time slot.',
             ], 422);
         }
 

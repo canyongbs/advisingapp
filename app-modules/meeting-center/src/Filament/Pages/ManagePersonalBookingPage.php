@@ -39,6 +39,7 @@ namespace AdvisingApp\MeetingCenter\Filament\Pages;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
+use App\Features\MinimumLeadTimeFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Pages\ProfilePage;
 use App\Models\User;
@@ -124,6 +125,14 @@ class ManagePersonalBookingPage extends ProfilePage
                                 60 => '1 hour',
                             ])
                             ->visible(fn (Get $get) => $get('is_enabled')),
+                        TextInput::make('minimum_booking_lead_time_hours')
+                            ->label('Minimum Lead Time')
+                            ->helperText('How far in advance someone must book an appointment with you')
+                            ->suffix('hours')
+                            ->default(0)
+                            ->minValue(0)
+                            ->integer()
+                            ->visible(fn (Get $get) => MinimumLeadTimeFeature::active() && $get('is_enabled')),
                         Section::make('Working Hours')
                             ->visible($hasCrmLicense)
                             ->schema([
@@ -262,6 +271,7 @@ class ManagePersonalBookingPage extends ProfilePage
                 'is_enabled' => $hasCalendar ? $bookingPage->is_enabled : false,
                 'slug' => $bookingPage->slug,
                 'default_appointment_duration' => $bookingPage->default_appointment_duration,
+                'minimum_booking_lead_time_hours' => $bookingPage->minimum_booking_lead_time_hours ?? 0,
                 'working_hours_are_enabled' => $user->working_hours_are_enabled,
                 'are_working_hours_visible_on_profile' => $user->are_working_hours_visible_on_profile,
                 'working_hours' => $user->working_hours,
@@ -278,6 +288,7 @@ class ManagePersonalBookingPage extends ProfilePage
             'is_enabled' => false,
             'slug' => Str::slug($user->name),
             'default_appointment_duration' => 30,
+            'minimum_booking_lead_time_hours' => 0,
             'working_hours_are_enabled' => $user->working_hours_are_enabled,
             'are_working_hours_visible_on_profile' => $user->are_working_hours_visible_on_profile,
             'working_hours' => $user->working_hours,
@@ -299,6 +310,7 @@ class ManagePersonalBookingPage extends ProfilePage
         $bookingPage->is_enabled = $data['is_enabled'] ?? false;
         $bookingPage->slug = $data['slug'] ?? Str::slug($user->name);
         $bookingPage->default_appointment_duration = $data['default_appointment_duration'] ?? 30;
+        $bookingPage->minimum_booking_lead_time_hours = $data['minimum_booking_lead_time_hours'] ?? 0;
         $bookingPage->save();
 
         $user->update([
