@@ -57,6 +57,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 
 class EditBookingGroup extends EditRecord
@@ -174,6 +175,16 @@ class EditBookingGroup extends EditRecord
                         ->prefix(config('app.url') . '/group-booking/')
                         ->maxLength(255)
                         ->default(fn (Get $get) => Str::slug($get('name') ?? ''))
+                        ->live(onBlur: true)
+                        ->suffixAction(
+                            Action::make('copyUrl')
+                                ->icon('heroicon-o-clipboard')
+                                ->tooltip('Copy URL')
+                                ->alpineClickHandler(
+                                    'const slug = $wire.get(\'data.slug\'); if (slug) { window.navigator.clipboard.writeText(' . Js::from(config('app.url') . '/group-booking/') . ' + slug); new FilamentNotification().title(\'URL copied to clipboard!\').success().send(); }'
+                                )
+                                ->visible(fn (Get $get): bool => filled($get('slug')))
+                        )
                         ->columnSpanFull(),
                     DurationInput::make('default_appointment_duration', isRequired: true, hasDays: true)
                         ->label('Meeting Duration')
