@@ -57,7 +57,7 @@
         }
     "
     shift
-    teleport
+    :teleport="! filled($afterItem)"
     :width="$width"
     :attributes="
         \Filament\Support\prepare_inherited_attributes(
