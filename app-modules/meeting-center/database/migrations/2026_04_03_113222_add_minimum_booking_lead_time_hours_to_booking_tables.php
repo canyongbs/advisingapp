@@ -60,7 +60,7 @@ return new class () extends Migration {
     {
         DB::transaction(function () {
             MinimumLeadTimeFeature::deactivate();
-            
+
             Schema::table('personal_booking_pages', function (Blueprint $table) {
                 $table->dropColumn('minimum_booking_lead_time_hours');
             });
