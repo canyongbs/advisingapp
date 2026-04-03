@@ -48,7 +48,8 @@ trait ImportColumns
     {
         return [
             ImportColumn::make('acad_career')
-                ->label('ACAD career')
+                ->label('Academic Career')
+                ->exampleHeader('Academic Career')
                 ->example('CRED')
                 ->rules([
                     'nullable',
@@ -56,7 +57,8 @@ trait ImportColumns
                     'max:255',
                 ]),
             ImportColumn::make('division')
-                ->example('ABC01')
+                ->label('College')
+                ->exampleHeader('College')
                 ->example('ABC01')
                 ->rules([
                     'nullable',
@@ -64,8 +66,9 @@ trait ImportColumns
                     'max:255',
                 ]),
             ImportColumn::make('acad_plan_majors')
-                ->label('ACAD plan majors')
-                ->example('1076N|1077N')
+                ->label('ACAD Plan Majors')
+                ->exampleHeader('ACAD Plan Majors')
+                ->example('Computer Science|Mathematics')
                 ->array('|')
                 ->rules(['array'])
                 ->nestedRecursiveRules(['string', 'max:255'])
@@ -76,13 +79,14 @@ trait ImportColumns
                         $acadPlan = [];
                     }
 
-                    $acadPlan['majors'] = $state;
+                    $acadPlan['major'] = $state;
 
                     $record->acad_plan = $acadPlan;
                 }),
             ImportColumn::make('acad_plan_minors')
-                ->label('ACAD plan minors')
-                ->example('2076N|2077N')
+                ->label('ACAD Plan Minors')
+                ->exampleHeader('ACAD Plan Minors')
+                ->example('Philosophy|Psychology')
                 ->array('|')
                 ->rules(['array'])
                 ->nestedRecursiveRules(['string', 'max:255'])
@@ -93,12 +97,13 @@ trait ImportColumns
                         $acadPlan = [];
                     }
 
-                    $acadPlan['minors'] = $state;
+                    $acadPlan['minor'] = $state;
 
                     $record->acad_plan = $acadPlan;
                 }),
             ImportColumn::make('prog_status')
-                ->label('PROG status')
+                ->label('Program Status')
+                ->exampleHeader('Program Status')
                 ->example('AC')
                 ->rules([
                     'nullable',
@@ -106,7 +111,8 @@ trait ImportColumns
                     'max:255',
                 ]),
             ImportColumn::make('cum_gpa')
-                ->label('Cum GPA')
+                ->label('Cumulative GPA')
+                ->exampleHeader('Cumulative GPA')
                 ->numeric()
                 ->example('3.284')
                 ->rules([
@@ -114,6 +120,8 @@ trait ImportColumns
                     'numeric',
                 ]),
             ImportColumn::make('semester')
+                ->label('Semester')
+                ->exampleHeader('Semester')
                 ->example('1234')
                 ->rules([
                     'nullable',
@@ -122,33 +130,54 @@ trait ImportColumns
                 ]),
             ImportColumn::make('descr')
                 ->label('Name')
-                ->example('Loream ipsum')
+                ->exampleHeader('Name')
+                ->example('Bachelor of Science')
                 ->rules([
                     'nullable',
                     'string',
                     'max:255',
                 ]),
             ImportColumn::make('foi')
-                ->label('Field of interest')
-                ->example('Loream ipsum')
+                ->label('Field of Interest')
+                ->exampleHeader('Field of Interest')
+                ->example('Computer Science')
                 ->rules([
                     'nullable',
                     'string',
                     'max:255',
                 ]),
             ImportColumn::make('change_dt')
-                ->label('Change date')
+                ->label('Last Action Date')
+                ->exampleHeader('Last Action Date')
                 ->example('1986-06-13 08:11:35')
                 ->rules([
                     'nullable',
                     'date',
                 ]),
             ImportColumn::make('declare_dt')
-                ->label('Declare date')
+                ->label('Start Date')
+                ->exampleHeader('Start Date')
                 ->example('1986-06-13 08:11:35')
                 ->rules([
                     'nullable',
                     'date',
+                ]),
+            ImportColumn::make('graduation_dt')
+                ->label('Graduation Date')
+                ->exampleHeader('Graduation Date')
+                ->example('1986-06-13 08:11:35')
+                ->rules([
+                    'nullable',
+                    'date',
+                ]),
+            ImportColumn::make('catalog_year')
+                ->label('Catalog Year')
+                ->exampleHeader('Catalog Year')
+                ->example('2024')
+                ->rules([
+                    'nullable',
+                    'string',
+                    'max:255',
                 ]),
         ];
     }
