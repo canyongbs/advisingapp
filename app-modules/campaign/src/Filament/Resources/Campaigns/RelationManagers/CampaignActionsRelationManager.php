@@ -52,7 +52,6 @@ use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
@@ -100,7 +99,6 @@ class CampaignActionsRelationManager extends RelationManager
                 Action::make('create')
                     ->label('New')
                     ->modalHeading('Create Journey Steps')
-                    ->modalWidth(Width::FiveExtraLarge)
                     ->schema([
                         Builder::make('data')
                             ->hiddenLabel()
