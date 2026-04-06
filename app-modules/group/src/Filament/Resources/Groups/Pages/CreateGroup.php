@@ -304,29 +304,6 @@ class CreateGroup extends CreateRecord implements HasTable
             ->send();
     }
 
-    private function makeExampleDownloadAction(string $importerClass, string $filename): Action
-    {
-        return Action::make('downloadExample')
-            ->label(__('filament-actions::import.modal.actions.download_example.label'))
-            ->link()
-            ->action(function () use ($importerClass, $filename): StreamedResponse {
-                $columns = $importerClass::getColumns();
-
-                $csv = Writer::createFromFileObject(new SplTempFileObject());
-                $csv->setOutputBOM(ByteSequence::BOM_UTF8);
-
-                foreach ($columns as $column) {
-                    foreach ($column->getExamples() as $example) {
-                        $csv->insertOne([$example]);
-                    }
-                }
-
-                return response()->streamDownload(function () use ($csv) {
-                    echo $csv->toString();
-                }, $filename, ['Content-Type' => 'text/csv']);
-            });
-    }
-
     protected function getGroupModel(): GroupModel
     {
         $canAccessStudents = auth()->user()->hasLicense(Student::getLicenseType());
@@ -351,5 +328,28 @@ class CreateGroup extends CreateRecord implements HasTable
         }
 
         return $data;
+    }
+
+    private function makeExampleDownloadAction(string $importerClass, string $filename): Action
+    {
+        return Action::make('downloadExample')
+            ->label(__('filament-actions::import.modal.actions.download_example.label'))
+            ->link()
+            ->action(function () use ($importerClass, $filename): StreamedResponse {
+                $columns = $importerClass::getColumns();
+
+                $csv = Writer::createFromFileObject(new SplTempFileObject());
+                $csv->setOutputBOM(ByteSequence::BOM_UTF8);
+
+                foreach ($columns as $column) {
+                    foreach ($column->getExamples() as $example) {
+                        $csv->insertOne([$example]);
+                    }
+                }
+
+                return response()->streamDownload(function () use ($csv) {
+                    echo $csv->toString();
+                }, $filename, ['Content-Type' => 'text/csv']);
+            });
     }
 }
