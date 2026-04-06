@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Notification\Database\Factories;
 
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Models\EmailMessage;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Symfony\Component\Mime\Email;
 use TestEmailNotification;
 
 /**
@@ -51,6 +53,7 @@ class EmailMessageFactory extends Factory
             'content' => 'test',
             'notification_class' => TestEmailNotification::class,
             'quota_usage' => 0,
+            'email_type' => EmailType::Transactional,
         ];
     }
 }
