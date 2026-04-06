@@ -66,7 +66,7 @@ use Throwable;
 
 class MailChannel extends BaseMailChannel
 {
-    public function send($notifiable, Notification $notification): SentMessage | null
+    public function send($notifiable, Notification $notification): ?SentMessage
     {
         [$recipientId, $recipientType] = match (true) {
             $notifiable instanceof Model => [$notifiable->getKey(), $notifiable->getMorphClass()],
