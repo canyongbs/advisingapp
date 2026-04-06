@@ -32,17 +32,11 @@
     </COPYRIGHT>
 --}}
 @if (isset($content))
-<x-mail::layout :settings="$settings ?? null">
+<x-mail::layout :settings="$settings ?? null" :unsubscribeUrl="$unsubscribeUrl ?? null">
 {{ str($content)->sanitizeHtml()->toHtmlString() }}
-
-@if (! empty($unsubscribeUrl))
-<p style="text-align: center; margin-top: 20px; font-size: 12px; color: #999999;">
-    <a href="{{ $unsubscribeUrl }}" style="color: #999999; text-decoration: underline;">Unsubscribe</a>
-</p>
-@endif
 </x-mail::layout>
 @else
-<x-mail::message :settings="$settings ?? null">
+<x-mail::message :settings="$settings ?? null" :unsubscribeUrl="$unsubscribeUrl ?? null">
 {{-- Greeting --}}
 @if (! empty($greeting))
 # {{ $greeting }}
@@ -91,12 +85,5 @@
 ) <span class="break-all">[{{ $displayableActionUrl }}]({{ $actionUrl }})</span>
 </x-slot:subcopy>
 @endisset
-
-{{-- Unsubscribe Link --}}
-@if (! empty($unsubscribeUrl))
-<p style="text-align: center; margin-top: 20px; font-size: 12px; color: #999999;">
-    <a href="{{ $unsubscribeUrl }}" style="color: #999999; text-decoration: underline;">Unsubscribe</a>
-</p>
-@endif
 </x-mail::message>
 @endif
