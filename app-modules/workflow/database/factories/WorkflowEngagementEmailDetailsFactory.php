@@ -52,7 +52,7 @@ class WorkflowEngagementEmailDetailsFactory extends Factory
             'channel' => NotificationChannel::Email,
             'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->sentence]]]]],
             'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraphs(3, true)]]]]],
-            'email_type' => fake()->randomElement([EmailType::Transactional, EmailType::Marketing]),
+            'email_type' => EmailType::Transactional,
         ];
     }
 }
