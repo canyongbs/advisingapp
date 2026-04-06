@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,46 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Http\Controllers;
+namespace AdvisingApp\Notification\Tests\Fixtures;
 
-use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
-use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
-use App\Http\Controllers\Controller;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\URL;
+use AdvisingApp\Notification\Enums\EmailType;
+use AdvisingApp\Notification\Notifications\Contracts\HasEmailType;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
-class UnsubscribeController extends Controller
+class TestTransactionalNotification extends Notification implements ShouldQueue, HasEmailType
 {
-    public function show(Request $request): View
+    use Queueable;
+
+    public function getEmailType(): string
     {
-        $email = $request->query('email');
-
-        $confirmUrl = URL::signedRoute('unsubscribe.store', ['email' => $email]);
-
-        return view('notification::unsubscribe', [
-            'confirmUrl' => $confirmUrl,
-            'optedOut' => false,
-        ]);
+        return EmailType::Transactional->value;
     }
 
-    public function store(Request $request): Response|View
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
     {
-        if ($request->isMethod('HEAD')) {
-            return response()->noContent();
-        }
+        return ['mail'];
+    }
 
-        $email = $request->query('email');
-
-        EmailAddressOptInOptOut::firstOrCreate(
-            ['address' => $email],
-            ['status' => EmailAddressOptInOptOutStatus::OptedOut],
-        )->update(['status' => EmailAddressOptInOptOutStatus::OptedOut]);
-
-        return view('notification::unsubscribe', [
-            'confirmUrl' => null,
-            'optedOut' => true,
-        ]);
+    public function toMail(object $notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->subject('Password Reset')
+            ->greeting('Hello!')
+            ->content('This is a transactional email.');
     }
 }

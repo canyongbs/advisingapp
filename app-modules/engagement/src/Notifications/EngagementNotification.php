@@ -70,7 +70,7 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
 
     public function getEmailType(): string
     {
-        return $this->engagement->email_type?->value ?? 'transactional';
+        return $this->engagement->email_type->value;
     }
 
     /**
