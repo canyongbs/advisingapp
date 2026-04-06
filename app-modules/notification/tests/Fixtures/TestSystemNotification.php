@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -34,46 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Http\Controllers;
+namespace AdvisingApp\Notification\Tests\Fixtures;
 
-use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
-use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
-use App\Http\Controllers\Controller;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\URL;
+use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
-class UnsubscribeController extends Controller
+#[SystemNotification]
+class TestSystemNotification extends Notification implements ShouldQueue
 {
-    public function show(Request $request): View
+    use Queueable;
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
     {
-        $email = $request->query('email');
-
-        $confirmUrl = URL::signedRoute('unsubscribe.store', ['email' => $email]);
-
-        return view('notification::unsubscribe', [
-            'confirmUrl' => $confirmUrl,
-            'optedOut' => false,
-        ]);
+        return ['mail'];
     }
 
-    public function store(Request $request): Response|View
+    public function toMail(object $notifiable): MailMessage
     {
-        if ($request->isMethod('HEAD')) {
-            return response()->noContent();
-        }
-
-        $email = $request->query('email');
-
-        EmailAddressOptInOptOut::firstOrCreate(
-            ['address' => $email],
-            ['status' => EmailAddressOptInOptOutStatus::OptedOut],
-        )->update(['status' => EmailAddressOptInOptOutStatus::OptedOut]);
-
-        return view('notification::unsubscribe', [
-            'confirmUrl' => null,
-            'optedOut' => true,
-        ]);
+        return MailMessage::make()
+            ->subject('Test Subject')
+            ->greeting('Test Greeting')
+            ->content('This is a test email');
     }
 }

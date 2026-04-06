@@ -41,6 +41,7 @@ use AdvisingApp\Engagement\Jobs\CreateBatchedEngagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Notifications\EngagementBatchFinishedNotification;
 use AdvisingApp\Engagement\Notifications\EngagementBatchStartedNotification;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
@@ -58,7 +59,7 @@ class CreateEngagementBatch
         $engagementBatch->total_engagements = $data->recipient->count();
         $engagementBatch->processed_engagements = 0;
         $engagementBatch->successful_engagements = 0;
-        $engagementBatch->email_type = $data->emailType;
+        $engagementBatch->email_type = EmailType::from($data->emailType);
 
         DB::transaction(function () use ($engagementBatch, $data) {
             $engagementBatch->save();

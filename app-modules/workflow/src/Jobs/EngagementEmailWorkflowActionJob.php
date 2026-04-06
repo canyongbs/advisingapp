@@ -91,7 +91,7 @@ class EngagementEmailWorkflowActionJob extends ExecuteWorkflowActionJob
                         channel: NotificationChannel::Email,
                         subject: $details->subject,
                         body: $details->body,
-                        emailType: $details->email_type,
+                        emailType: $details->email_type->value,
                     ),
                     notifyNow: true,
                 );

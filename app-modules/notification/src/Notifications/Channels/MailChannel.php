@@ -107,11 +107,11 @@ class MailChannel extends BaseMailChannel
             ? $notification->getEmailType()
             : EmailType::Transactional->value;
 
-        $emailMessage->email_type = $emailType;
+        $emailMessage->email_type = EmailType::from($emailType);
 
         if ($emailType === EmailType::Marketing->value && is_string($recipientAddress)) {
             $message->viewData = array_merge(
-                $message->viewData ?? [],
+                $message->viewData,
                 ['unsubscribeUrl' => UnsubscribeUrl::generate($recipientAddress)],
             );
         }

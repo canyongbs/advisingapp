@@ -37,17 +37,14 @@
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Models\EmailMessage;
-use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
-use AdvisingApp\Notification\Notifications\Contracts\HasEmailType;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Tests\Fixtures\TestEmailNotification;
+use AdvisingApp\Notification\Tests\Fixtures\TestMarketingNotification;
+use AdvisingApp\Notification\Tests\Fixtures\TestSystemNotification;
+use AdvisingApp\Notification\Tests\Fixtures\TestTransactionalNotification;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Models\Tenant;
 use App\Models\User;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Events\MessageSent;
-use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Event;
 
 it('will create an EmailMessage for the notification', function () {
@@ -138,7 +135,7 @@ it('sets email_type to marketing when notification implements HasEmailType retur
     $emailMessage = EmailMessage::first();
 
     expect($emailMessage)->not->toBeNull()
-        ->and($emailMessage->email_type)->toBe(EmailType::Marketing->value);
+        ->and($emailMessage->email_type)->toBe(EmailType::Marketing);
 });
 
 it('sets email_type to transactional when notification implements HasEmailType returning Transactional', function () {
@@ -151,7 +148,7 @@ it('sets email_type to transactional when notification implements HasEmailType r
     $emailMessage = EmailMessage::first();
 
     expect($emailMessage)->not->toBeNull()
-        ->and($emailMessage->email_type)->toBe(EmailType::Transactional->value);
+        ->and($emailMessage->email_type)->toBe(EmailType::Transactional);
 });
 
 it('defaults email_type to transactional when notification does not implement HasEmailType', function () {
@@ -164,7 +161,7 @@ it('defaults email_type to transactional when notification does not implement Ha
     $emailMessage = EmailMessage::first();
 
     expect($emailMessage)->not->toBeNull()
-        ->and($emailMessage->email_type)->toBe(EmailType::Transactional->value);
+        ->and($emailMessage->email_type)->toBe(EmailType::Transactional);
 });
 
 it('includes unsubscribeUrl in viewData for marketing email', function () {
@@ -199,68 +196,3 @@ it('does not include unsubscribeUrl in viewData for transactional email', functi
         return ! str_contains($htmlBody, '/unsubscribe');
     });
 });
-
-#[SystemNotification]
-class TestSystemNotification extends Notification implements ShouldQueue
-{
-    use Queueable;
-
-    public function via(object $notifiable): array
-    {
-        return ['mail'];
-    }
-
-    public function toMail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject('Test Subject')
-            ->greeting('Test Greeting')
-            ->content('This is a test email');
-    }
-}
-
-class TestMarketingNotification extends Notification implements ShouldQueue, HasEmailType
-{
-    use Queueable;
-
-    public function getEmailType(): string
-    {
-        return EmailType::Marketing->value;
-    }
-
-    public function via(object $notifiable): array
-    {
-        return ['mail'];
-    }
-
-    public function toMail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject('Marketing Campaign')
-            ->greeting('Hello!')
-            ->content('This is a marketing email.');
-    }
-}
-
-class TestTransactionalNotification extends Notification implements ShouldQueue, HasEmailType
-{
-    use Queueable;
-
-    public function getEmailType(): string
-    {
-        return EmailType::Transactional->value;
-    }
-
-    public function via(object $notifiable): array
-    {
-        return ['mail'];
-    }
-
-    public function toMail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject('Password Reset')
-            ->greeting('Hello!')
-            ->content('This is a transactional email.');
-    }
-}
