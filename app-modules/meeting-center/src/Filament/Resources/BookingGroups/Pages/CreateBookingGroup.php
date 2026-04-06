@@ -38,6 +38,7 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
 use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
+use App\Features\MaximumLeadTimeFeature;
 use App\Features\MinimumLeadTimeFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
@@ -224,6 +225,7 @@ class CreateBookingGroup extends CreateRecord
         $data['available_appointment_hours'] = DailyHoursRepeater::mutateDataBeforeSave($data['available_appointment_hours']);
 
         $data['minimum_booking_lead_time_hours'] = $data['minimum_booking_lead_time_hours'] ?? 0;
+        $data['maximum_booking_lead_time_days'] = $data['maximum_booking_lead_time_days'] ?? 0;
 
         return $data;
     }

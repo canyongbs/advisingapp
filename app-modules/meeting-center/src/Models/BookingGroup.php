@@ -73,6 +73,7 @@ class BookingGroup extends BaseModel implements Auditable
         'default_appointment_buffer_after_duration',
         'available_appointment_hours',
         'minimum_booking_lead_time_hours',
+        'maximum_booking_lead_time_days',
     ];
 
     protected $casts = [
@@ -83,6 +84,7 @@ class BookingGroup extends BaseModel implements Auditable
         'default_appointment_buffer_after_duration' => 'integer',
         'available_appointment_hours' => 'array',
         'minimum_booking_lead_time_hours' => 'integer',
+        'maximum_booking_lead_time_days' => 'integer',
     ];
 
     /**

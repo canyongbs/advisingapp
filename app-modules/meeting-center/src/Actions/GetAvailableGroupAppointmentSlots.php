@@ -41,6 +41,7 @@ use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
+use App\Features\MaximumLeadTimeFeature;
 use App\Features\MinimumLeadTimeFeature;
 use App\Models\User;
 use Carbon\CarbonPeriod;
@@ -89,6 +90,17 @@ class GetAvailableGroupAppointmentSlots
 
         $effectiveLeadTime = $resolveEffectiveLeadTime($bookingGroup, $members);
 
+        $effectiveMaxLeadTimeDays = 0;
+
+        if (MaximumLeadTimeFeature::active()) {
+            $memberMaxLeadTimeDays = PersonalBookingPage::query()
+                ->whereIn('user_id', $members->pluck('id'))
+                ->max('maximum_booking_lead_time_days') ?? 0;
+            $effectiveMaxLeadTimeDays = max($bookingGroup->maximum_booking_lead_time_days ?? 0, $memberMaxLeadTimeDays);
+        }
+
+        $latestAllowed = ($effectiveMaxLeadTimeDays > 0) ? now()->addDays($effectiveMaxLeadTimeDays) : null;
+
         $monthStart = Carbon::create($year, $month, 1)->startOfDay();
         $monthEnd = Carbon::create($year, $month, 1)->endOfMonth()->endOfDay();
 
@@ -112,6 +124,7 @@ class GetAvailableGroupAppointmentSlots
                 $bufferBefore,
                 $bufferAfter,
                 $now,
+                $latestAllowed,
             );
 
             $blocks = array_merge($blocks, $dayBlocks);
@@ -135,6 +148,7 @@ class GetAvailableGroupAppointmentSlots
         int $bufferBefore,
         int $bufferAfter,
         Carbon $now,
+        ?Carbon $latestAllowed = null,
     ): array {
         $dayOfWeek = strtolower($date->format('l'));
 
@@ -211,15 +225,23 @@ class GetAvailableGroupAppointmentSlots
             }
         }
 
-        // Filter out past blocks and adjust start times
+        // Filter out past blocks and blocks beyond max lead time, adjust start/end times
         return collect($availableBlocks)
             ->filter(fn (array $block) => $block['end']->isAfter($now))
-            ->map(function (array $block) use ($now) {
+            ->when(
+                $latestAllowed !== null,
+                fn (Collection $collection) => $collection
+                    ->filter(fn (array $block) => $block['start']->isBefore($latestAllowed))
+            )
+            ->map(function (array $block) use ($now, $latestAllowed) {
                 $start = $block['start']->isBefore($now) ? $now->copy() : $block['start'];
+                $end = ($latestAllowed !== null && $block['end']->isAfter($latestAllowed))
+                    ? $latestAllowed->copy()
+                    : $block['end'];
 
                 return [
                     'start' => $start->toIso8601String(),
-                    'end' => $block['end']->toIso8601String(),
+                    'end' => $end->toIso8601String(),
                 ];
             })
             ->values()

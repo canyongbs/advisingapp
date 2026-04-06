@@ -34,42 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Database\Factories;
+use App\Features\MaximumLeadTimeFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
-use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends Factory<BookingGroup>
- */
-class BookingGroupFactory extends Factory
-{
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'name' => $this->faker->word(),
-            'description' => $this->faker->optional()->sentence(),
-            'slug' => $this->faker->unique()->slug(),
-            'book_with' => BookingGroupBookWith::All,
-            'meeting_owner_id' => null,
-            'default_appointment_duration' => 60,
-            'minimum_booking_lead_time_hours' => 0,
-            'maximum_booking_lead_time_days' => 0,
-            'available_appointment_hours' => [
-                'monday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-                'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-            ],
-        ];
+        DB::transaction(function () {
+            Schema::table('personal_booking_pages', function (Blueprint $table) {
+                $table->unsignedInteger('maximum_booking_lead_time_days')->default(0);
+            });
+
+            Schema::table('booking_groups', function (Blueprint $table) {
+                $table->unsignedInteger('maximum_booking_lead_time_days')->default(0);
+            });
+
+            MaximumLeadTimeFeature::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            MaximumLeadTimeFeature::deactivate();
+
+            Schema::table('personal_booking_pages', function (Blueprint $table) {
+                $table->dropColumn('maximum_booking_lead_time_days');
+            });
+
+            Schema::table('booking_groups', function (Blueprint $table) {
+                $table->dropColumn('maximum_booking_lead_time_days');
+            });
+        });
+    }
+};

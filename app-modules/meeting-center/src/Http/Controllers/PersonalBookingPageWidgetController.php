@@ -41,6 +41,7 @@ use AdvisingApp\MeetingCenter\Http\Requests\BookPersonalCalendarSlotRequest;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use App\Features\MaximumLeadTimeFeature;
 use App\Features\MinimumLeadTimeFeature;
 use App\Http\Controllers\Controller;
 use App\Settings\CollegeBrandingSettings;
@@ -147,6 +148,7 @@ class PersonalBookingPageWidgetController extends Controller
             $year,
             $month,
             $bookingPage->minimum_booking_lead_time_hours ?? 0,
+            $bookingPage->maximum_booking_lead_time_days ?? 0,
         );
 
         return response()->json([
@@ -199,6 +201,20 @@ class PersonalBookingPageWidgetController extends Controller
                     ? "Bookings require at least {$leadTimeHours} hours advance notice. Please select a later time slot."
                     : 'Cannot book appointments that have already started. Please select a future time slot.',
             ], 422);
+        }
+
+        // Check if the appointment exceeds the maximum lead time
+        $maxLeadTimeDays = MaximumLeadTimeFeature::active() ? ($bookingPage->maximum_booking_lead_time_days ?? 0) : 0;
+
+        if ($maxLeadTimeDays > 0) {
+            $latestAllowed = now()->addDays($maxLeadTimeDays);
+
+            if ($startsAt->isAfter($latestAllowed)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Bookings cannot be made more than {$maxLeadTimeDays} days in advance. Please select an earlier time slot.",
+                ], 422);
+            }
         }
 
         // Check if slot is still available using a database lock
