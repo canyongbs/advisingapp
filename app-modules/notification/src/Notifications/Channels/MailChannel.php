@@ -104,8 +104,8 @@ class MailChannel extends BaseMailChannel
         ]);
 
         $emailType = $notification instanceof HasEmailType
-            ? $notification->getEmailType()
-            : EmailType::Transactional->value;
+        ? $notification->getEmailType()
+        : EmailType::Transactional->value;
 
         $emailMessage->email_type = EmailType::from($emailType);
 

@@ -43,6 +43,7 @@ use AdvisingApp\Engagement\Notifications\EngagementBatchFinishedNotification;
 use AdvisingApp\Engagement\Notifications\EngagementBatchStartedNotification;
 use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use App\Features\EmailTypeFeature;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Throwable;
