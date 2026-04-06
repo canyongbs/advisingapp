@@ -81,7 +81,7 @@ class MailChannel extends BaseMailChannel
         };
 
         if (! method_exists($notification, 'toMail')) {
-            return null;
+            throw new Exception('The notification must define a toMail method.');
         }
 
         $message = $notification->toMail($notifiable);
