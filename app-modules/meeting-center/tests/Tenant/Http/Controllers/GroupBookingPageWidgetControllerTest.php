@@ -36,11 +36,14 @@
 
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
+use App\Features\MaximumLeadTimeFeature;
 use App\Features\MinimumLeadTimeFeature;
 use App\Models\User;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Exceptions;
 use Mockery\MockInterface;
 
 use function Pest\Laravel\postJson;
@@ -56,6 +59,8 @@ $workingHours = [
 ];
 
 beforeEach(function () {
+    Exceptions::fake();
+
     $mockDriver = Mockery::mock(CalendarInterface::class);
     $mockDriver->shouldReceive('createEvent')->andReturn(null);
     $mockDriver->shouldReceive('updateEvent')->andReturn(null);
@@ -68,34 +73,46 @@ beforeEach(function () {
     app()->instance(CalendarManager::class, $mockManager);
 });
 
-it('rejects booking within lead time window', function () use ($workingHours) {
+it('rejects group booking within effective lead time window', function () use ($workingHours) {
     MinimumLeadTimeFeature::activate();
 
-    Carbon::setTestNow(Carbon::parse('2026-04-03 10:00:00', 'UTC'));
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
-    $user = User::factory()
-        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+    $meetingOwner = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'owner-calendar']))
         ->create([
             'working_hours_are_enabled' => true,
             'working_hours' => $workingHours,
         ]);
 
+    $member = User::factory()->create([
+        'working_hours_are_enabled' => true,
+        'working_hours' => $workingHours,
+    ]);
+
+    // Member has 24h personal lead time
     PersonalBookingPage::factory()
-        ->for($user)
-        ->enabled()
+        ->for($member)
+        ->create(['minimum_booking_lead_time_hours' => 24]);
+
+    BookingGroup::factory()
+        ->hasAttached($meetingOwner, [], 'users')
+        ->hasAttached($member, [], 'users')
         ->create([
-            'slug' => 'test-lead-time',
-            'minimum_booking_lead_time_hours' => 24,
+            'slug' => 'test-group-lead',
+            'minimum_booking_lead_time_hours' => 6,
+            'meeting_owner_id' => $meetingOwner->id,
+            'available_appointment_hours' => $workingHours,
         ]);
 
-    // Try to book 12 hours from now (within the 24h lead time)
+    // Try to book 12 hours from now (within effective 24h lead time)
     $response = postJson(
-        route('widgets.booking-page.personal.api.book', ['slug' => 'test-lead-time']),
+        route('widgets.booking-page.group.api.book', ['slug' => 'test-group-lead']),
         [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Test Visitor',
+            'email' => 'visitor@example.com',
             'starts_at' => now()->addHours(12)->toIso8601String(),
-            'ends_at' => now()->addHours(12)->addMinutes(30)->toIso8601String(),
+            'ends_at' => now()->addHours(13)->toIso8601String(),
         ]
     );
 
@@ -104,34 +121,35 @@ it('rejects booking within lead time window', function () use ($workingHours) {
     expect($response->json('message'))->toContain('24 hours advance notice');
 });
 
-it('allows booking outside lead time window', function () use ($workingHours) {
+it('allows group booking outside effective lead time window', function () use ($workingHours) {
     MinimumLeadTimeFeature::activate();
 
-    Carbon::setTestNow(Carbon::parse('2026-04-03 10:00:00', 'UTC'));
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
-    $user = User::factory()
-        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+    $meetingOwner = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'owner-calendar-ok']))
         ->create([
             'working_hours_are_enabled' => true,
             'working_hours' => $workingHours,
         ]);
 
-    PersonalBookingPage::factory()
-        ->for($user)
-        ->enabled()
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($meetingOwner, [], 'users')
         ->create([
-            'slug' => 'test-lead-time-ok',
+            'slug' => 'test-group-lead-ok',
             'minimum_booking_lead_time_hours' => 6,
+            'meeting_owner_id' => $meetingOwner->id,
+            'available_appointment_hours' => $workingHours,
         ]);
 
-    // Book 8 hours from now (outside the 6h lead time)
+    // Book 8 hours from now (outside 6h lead time)
     $response = postJson(
-        route('widgets.booking-page.personal.api.book', ['slug' => 'test-lead-time-ok']),
+        route('widgets.booking-page.group.api.book', ['slug' => 'test-group-lead-ok']),
         [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Test Visitor',
+            'email' => 'visitor@example.com',
             'starts_at' => now()->addHours(8)->toIso8601String(),
-            'ends_at' => now()->addHours(8)->addMinutes(30)->toIso8601String(),
+            'ends_at' => now()->addHours(9)->toIso8601String(),
         ]
     );
 
@@ -140,34 +158,35 @@ it('allows booking outside lead time window', function () use ($workingHours) {
 });
 
 // TODO: FeatureFlag Cleanup - This test can be removed when MinimumLeadTimeFeature is removed
-it('allows booking within lead time window when feature is inactive', function () use ($workingHours) {
+it('ignores lead time for group booking when feature is inactive', function () use ($workingHours) {
     MinimumLeadTimeFeature::deactivate();
 
-    Carbon::setTestNow(Carbon::parse('2026-04-03 10:00:00', 'UTC'));
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
-    $user = User::factory()
-        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+    $meetingOwner = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'owner-no-flag']))
         ->create([
             'working_hours_are_enabled' => true,
             'working_hours' => $workingHours,
         ]);
 
-    PersonalBookingPage::factory()
-        ->for($user)
-        ->enabled()
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($meetingOwner, [], 'users')
         ->create([
-            'slug' => 'test-no-flag',
+            'slug' => 'test-group-no-flag',
             'minimum_booking_lead_time_hours' => 24,
+            'meeting_owner_id' => $meetingOwner->id,
+            'available_appointment_hours' => $workingHours,
         ]);
 
-    // Book 2 hours from now - within the 24h lead time, but flag is off
+    // Book 2 hours from now - within 24h lead time, but flag is off
     $response = postJson(
-        route('widgets.booking-page.personal.api.book', ['slug' => 'test-no-flag']),
+        route('widgets.booking-page.group.api.book', ['slug' => 'test-group-no-flag']),
         [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Test Visitor',
+            'email' => 'visitor@example.com',
             'starts_at' => now()->addHours(2)->toIso8601String(),
-            'ends_at' => now()->addHours(2)->addMinutes(30)->toIso8601String(),
+            'ends_at' => now()->addHours(3)->toIso8601String(),
         ]
     );
 

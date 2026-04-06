@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
       same in return. Canyon GBS™ and Advising App™ are registered trademarks of
@@ -36,12 +36,13 @@
 
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
-use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
+use App\Features\MaximumLeadTimeFeature;
 use App\Features\MinimumLeadTimeFeature;
 use App\Models\User;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Exceptions;
 use Mockery\MockInterface;
 
 use function Pest\Laravel\postJson;
@@ -57,6 +58,8 @@ $workingHours = [
 ];
 
 beforeEach(function () {
+    Exceptions::fake();
+
     $mockDriver = Mockery::mock(CalendarInterface::class);
     $mockDriver->shouldReceive('createEvent')->andReturn(null);
     $mockDriver->shouldReceive('updateEvent')->andReturn(null);
@@ -69,46 +72,36 @@ beforeEach(function () {
     app()->instance(CalendarManager::class, $mockManager);
 });
 
-it('rejects group booking within effective lead time window', function () use ($workingHours) {
+// Minimum Lead Time Tests
+
+it('rejects booking within minimum lead time window', function () use ($workingHours) {
     MinimumLeadTimeFeature::activate();
 
-    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
+    Carbon::setTestNow(Carbon::parse('2026-04-03 10:00:00', 'UTC'));
 
-    $meetingOwner = User::factory()
-        ->has(Calendar::factory()->state(['provider_id' => 'owner-calendar']))
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
         ->create([
             'working_hours_are_enabled' => true,
             'working_hours' => $workingHours,
         ]);
 
-    $member = User::factory()->create([
-        'working_hours_are_enabled' => true,
-        'working_hours' => $workingHours,
-    ]);
-
-    // Member has 24h personal lead time
     PersonalBookingPage::factory()
-        ->for($member)
-        ->create(['minimum_booking_lead_time_hours' => 24]);
-
-    $bookingGroup = BookingGroup::factory()
-        ->hasAttached($meetingOwner, [], 'users')
-        ->hasAttached($member, [], 'users')
+        ->for($user)
+        ->enabled()
         ->create([
-            'slug' => 'test-group-lead',
-            'minimum_booking_lead_time_hours' => 6,
-            'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
+            'slug' => 'test-lead-time',
+            'minimum_booking_lead_time_hours' => 24,
         ]);
 
-    // Try to book 12 hours from now (within effective 24h lead time)
+    // Try to book 12 hours from now (within the 24h lead time)
     $response = postJson(
-        route('widgets.booking-page.group.api.book', ['slug' => 'test-group-lead']),
+        route('widgets.booking-page.personal.api.book', ['slug' => 'test-lead-time']),
         [
-            'name' => 'Test Visitor',
-            'email' => 'visitor@example.com',
+            'name' => 'Test User',
+            'email' => 'test@example.com',
             'starts_at' => now()->addHours(12)->toIso8601String(),
-            'ends_at' => now()->addHours(13)->toIso8601String(),
+            'ends_at' => now()->addHours(12)->addMinutes(30)->toIso8601String(),
         ]
     );
 
@@ -117,35 +110,34 @@ it('rejects group booking within effective lead time window', function () use ($
     expect($response->json('message'))->toContain('24 hours advance notice');
 });
 
-it('allows group booking outside effective lead time window', function () use ($workingHours) {
+it('allows booking outside minimum lead time window', function () use ($workingHours) {
     MinimumLeadTimeFeature::activate();
 
-    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
+    Carbon::setTestNow(Carbon::parse('2026-04-03 10:00:00', 'UTC'));
 
-    $meetingOwner = User::factory()
-        ->has(Calendar::factory()->state(['provider_id' => 'owner-calendar-ok']))
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
         ->create([
             'working_hours_are_enabled' => true,
             'working_hours' => $workingHours,
         ]);
 
-    $bookingGroup = BookingGroup::factory()
-        ->hasAttached($meetingOwner, [], 'users')
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
         ->create([
-            'slug' => 'test-group-lead-ok',
+            'slug' => 'test-lead-time-ok',
             'minimum_booking_lead_time_hours' => 6,
-            'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
         ]);
 
-    // Book 8 hours from now (outside 6h lead time)
+    // Book 8 hours from now (outside the 6h lead time)
     $response = postJson(
-        route('widgets.booking-page.group.api.book', ['slug' => 'test-group-lead-ok']),
+        route('widgets.booking-page.personal.api.book', ['slug' => 'test-lead-time-ok']),
         [
-            'name' => 'Test Visitor',
-            'email' => 'visitor@example.com',
+            'name' => 'Test User',
+            'email' => 'test@example.com',
             'starts_at' => now()->addHours(8)->toIso8601String(),
-            'ends_at' => now()->addHours(9)->toIso8601String(),
+            'ends_at' => now()->addHours(8)->addMinutes(30)->toIso8601String(),
         ]
     );
 
@@ -154,35 +146,34 @@ it('allows group booking outside effective lead time window', function () use ($
 });
 
 // TODO: FeatureFlag Cleanup - This test can be removed when MinimumLeadTimeFeature is removed
-it('ignores lead time for group booking when feature is inactive', function () use ($workingHours) {
+it('allows booking within minimum lead time window when feature is inactive', function () use ($workingHours) {
     MinimumLeadTimeFeature::deactivate();
 
-    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
+    Carbon::setTestNow(Carbon::parse('2026-04-03 10:00:00', 'UTC'));
 
-    $meetingOwner = User::factory()
-        ->has(Calendar::factory()->state(['provider_id' => 'owner-no-flag']))
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
         ->create([
             'working_hours_are_enabled' => true,
             'working_hours' => $workingHours,
         ]);
 
-    $bookingGroup = BookingGroup::factory()
-        ->hasAttached($meetingOwner, [], 'users')
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
         ->create([
-            'slug' => 'test-group-no-flag',
+            'slug' => 'test-no-flag',
             'minimum_booking_lead_time_hours' => 24,
-            'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
         ]);
 
-    // Book 2 hours from now - within 24h lead time, but flag is off
+    // Book 2 hours from now - within the 24h lead time, but flag is off
     $response = postJson(
-        route('widgets.booking-page.group.api.book', ['slug' => 'test-group-no-flag']),
+        route('widgets.booking-page.personal.api.book', ['slug' => 'test-no-flag']),
         [
-            'name' => 'Test Visitor',
-            'email' => 'visitor@example.com',
+            'name' => 'Test User',
+            'email' => 'test@example.com',
             'starts_at' => now()->addHours(2)->toIso8601String(),
-            'ends_at' => now()->addHours(3)->toIso8601String(),
+            'ends_at' => now()->addHours(2)->addMinutes(30)->toIso8601String(),
         ]
     );
 
