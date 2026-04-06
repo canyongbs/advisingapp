@@ -156,7 +156,7 @@ class CaseObserver
     public function saving(CaseModel $case): void
     {
         if ($case->wasChanged('status_id')) {
-            $case->status_updated_at = now();
+            $case->status_updated_at = now()->toImmutable();
         }
 
         $case->division_id = $case->division_id
@@ -184,9 +184,9 @@ class CaseObserver
 
         if (
             Gate::check(Feature::CaseManagement->getGateName()) &&
-            $case?->priority?->type?->has_enabled_feedback_collection &&
-            $case?->status?->classification == SystemCaseClassification::Closed &&
-            ! $case?->feedback()->count()
+            $case->priority?->type?->has_enabled_feedback_collection &&
+            $case->status?->classification == SystemCaseClassification::Closed &&
+            ! $case->feedback()->count()
         ) {
             if ($case->priority->type->is_customers_survey_response_email_enabled) {
                 $customerEmailTemplateForSurveyResponse = $this->fetchTemplate(

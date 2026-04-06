@@ -62,7 +62,7 @@ class DraftResourceHubArticleWithAiAction extends Action
             ->link()
             ->icon('heroicon-m-pencil')
             ->modalContent(fn (Page $livewire) => view('resource-hub::filament.actions.draft-with-ai-modal-content-resource-hub', [
-                'recordTitle' => $livewire?->data['title'],
+                'recordTitle' => (string) data_get($livewire, 'data.title', ''),
                 'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
                     ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
             ]))
@@ -81,7 +81,7 @@ class DraftResourceHubArticleWithAiAction extends Action
                 $userName = auth()->user()->name;
                 $userJobTitle = auth()->user()->job_title ?? 'staff member';
                 $clientName = app(LicenseSettings::class)->data->subscription->clientName;
-                $articleTitle = $livewire?->data['title'];
+                $articleTitle = (string) data_get($livewire, 'data.title', '');
 
                 try {
                     $content = app(CompletePrompt::class)->execute(

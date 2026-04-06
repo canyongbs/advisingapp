@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Notification\Policies;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -52,7 +54,9 @@ class SubscriptionPolicy
 
     public function view(Authenticatable $authenticatable, Subscription $subscription): Response
     {
-        if (! $authenticatable->hasLicense($subscription->subscribable?->getLicenseType())) {
+        $licenseType = $this->getSubscribableLicenseType($subscription);
+
+        if (($licenseType === null) || (! $authenticatable->hasLicense($licenseType))) {
             return Response::deny('You do not have permission to view this subscription.');
         }
 
@@ -72,7 +76,9 @@ class SubscriptionPolicy
 
     public function update(Authenticatable $authenticatable, Subscription $subscription): Response
     {
-        if (! $authenticatable->hasLicense($subscription->subscribable?->getLicenseType())) {
+        $licenseType = $this->getSubscribableLicenseType($subscription);
+
+        if (($licenseType === null) || (! $authenticatable->hasLicense($licenseType))) {
             return Response::deny('You do not have permission to update this subscription.');
         }
 
@@ -84,7 +90,9 @@ class SubscriptionPolicy
 
     public function delete(Authenticatable $authenticatable, Subscription $subscription): Response
     {
-        if (! $authenticatable->hasLicense($subscription->subscribable?->getLicenseType())) {
+        $licenseType = $this->getSubscribableLicenseType($subscription);
+
+        if (($licenseType === null) || (! $authenticatable->hasLicense($licenseType))) {
             return Response::deny('You do not have permission to delete this subscription.');
         }
 
@@ -96,7 +104,9 @@ class SubscriptionPolicy
 
     public function restore(Authenticatable $authenticatable, Subscription $subscription): Response
     {
-        if (! $authenticatable->hasLicense($subscription->subscribable?->getLicenseType())) {
+        $licenseType = $this->getSubscribableLicenseType($subscription);
+
+        if (($licenseType === null) || (! $authenticatable->hasLicense($licenseType))) {
             return Response::deny('You do not have permission to restore this subscription.');
         }
 
@@ -108,7 +118,9 @@ class SubscriptionPolicy
 
     public function forceDelete(Authenticatable $authenticatable, Subscription $subscription): Response
     {
-        if (! $authenticatable->hasLicense($subscription->subscribable?->getLicenseType())) {
+        $licenseType = $this->getSubscribableLicenseType($subscription);
+
+        if (($licenseType === null) || (! $authenticatable->hasLicense($licenseType))) {
             return Response::deny('You do not have permission to permanently delete this subscription.');
         }
 
@@ -116,5 +128,16 @@ class SubscriptionPolicy
             abilities: ["subscription.{$subscription->getKey()}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this subscription.'
         );
+    }
+
+    private function getSubscribableLicenseType(Subscription $subscription): ?LicenseType
+    {
+        $subscribableType = $subscription->subscribable_type;
+
+        if (! is_subclass_of($subscribableType, Educatable::class)) {
+            return null;
+        }
+
+        return $subscribableType::getLicenseType();
     }
 }

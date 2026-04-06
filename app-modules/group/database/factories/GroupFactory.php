@@ -56,7 +56,7 @@ class GroupFactory extends Factory
             'name' => $this->faker->words(asText: true),
             'model' => $this->faker->randomElement(GroupModel::cases()),
             'type' => GroupType::Dynamic, //TODO: add static later
-            'user_id' => User::inRandomOrder()->first()?->getKey() ?? User::factory()->create()?->getKey(),
+            'user_id' => User::inRandomOrder()->first()?->getKey() ?? User::factory()->create()->getKey(),
         ];
     }
 }

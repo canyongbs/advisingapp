@@ -54,7 +54,7 @@ class ReportFactory extends Factory
         return [
             'name' => $this->faker->words(asText: true),
             'model' => $this->faker->randomElement(ReportModel::cases()),
-            'user_id' => User::inRandomOrder()->first()?->getKey() ?? User::factory()->create()?->getKey(),
+            'user_id' => User::inRandomOrder()->first()?->getKey() ?? User::factory()->create()->getKey(),
         ];
     }
 }
