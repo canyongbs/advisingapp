@@ -78,8 +78,10 @@ it('will create an engagement batch', function () {
 });
 
 it('will create a marketing engagement batch and each child engagement inherits marketing email type', function () {
-    Bus::fake();
-    $data = CreateEngagementBatchRequestFactory::new()->create();
+    assertDatabaseCount(EngagementBatch::class, 0);
+    $data = CreateEngagementBatchRequestFactory::new()->create([
+        'emailType' => EmailType::Marketing,
+    ]);
 
     app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
         user: $data['user'],
