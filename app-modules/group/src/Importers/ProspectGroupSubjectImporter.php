@@ -54,6 +54,7 @@ class ProspectGroupSubjectImporter extends Importer
             ImportColumn::make('subject')
                 ->label('Email address')
                 ->rules(['required', 'email'])
+                ->examples(['student@example.edu', 'alumni@example.edu', 'inquiry@example.com'])
                 ->relationship(
                     resolveUsing: fn (mixed $state) => Prospect::query()
                         ->whereRelation('emailAddresses', 'address', $state)

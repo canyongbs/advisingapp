@@ -54,6 +54,7 @@ class StudentGroupSubjectImporter extends Importer
             ImportColumn::make('subject')
                 ->label('Student ID / Other ID')
                 ->rules(['required'])
+                ->examples(['12345678', '87654321', '11223344'])
                 ->relationship(
                     resolveUsing: fn (mixed $state) => Student::query()
                         ->where('sisid', $state)

@@ -66,7 +66,11 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Iterator;
+use League\Csv\ByteSequence;
+use League\Csv\Writer;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use SplTempFileObject;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CreateGroup extends CreateRecord implements HasTable
 {
@@ -123,6 +127,13 @@ class CreateGroup extends CreateRecord implements HasTable
                         ->visibility('private')
                         ->required()
                         ->hiddenLabel()
+                        ->hintAction(fn (): Action => $this->makeExampleDownloadAction(
+                            importerClass: $this->getGroupModel()->getSubjectImporter(),
+                            filename: match ($this->getGroupModel()) {
+                                GroupModel::Student => 'student-group-import-example.csv',
+                                GroupModel::Prospect => 'prospect-group-import-example.csv',
+                            },
+                        ))
                         ->visible(fn (Get $get): bool => $get('type') === GroupType::Static)
                         ->helperText(fn (): string => match ($this->getGroupModel()) {
                             GroupModel::Student => 'Upload a file of Student IDs or Other IDs, with each on a new line.',
@@ -291,6 +302,29 @@ class CreateGroup extends CreateRecord implements HasTable
             ->body("Your import has begun and {$import->total_rows} rows will be processed in the background.")
             ->success()
             ->send();
+    }
+
+    private function makeExampleDownloadAction(string $importerClass, string $filename): Action
+    {
+        return Action::make('downloadExample')
+            ->label(__('filament-actions::import.modal.actions.download_example.label'))
+            ->link()
+            ->action(function () use ($importerClass, $filename): StreamedResponse {
+                $columns = $importerClass::getColumns();
+
+                $csv = Writer::createFromFileObject(new SplTempFileObject());
+                $csv->setOutputBOM(ByteSequence::BOM_UTF8);
+
+                foreach ($columns as $column) {
+                    foreach ($column->getExamples() as $example) {
+                        $csv->insertOne([$example]);
+                    }
+                }
+
+                return response()->streamDownload(function () use ($csv) {
+                    echo $csv->toString();
+                }, $filename, ['Content-Type' => 'text/csv']);
+            });
     }
 
     protected function getGroupModel(): GroupModel
