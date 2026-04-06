@@ -64,6 +64,6 @@ class EngagementCreationData extends Data
         public ?CarbonInterface $scheduledAt = null,
         public ?string $recipientRoute = null,
         public ?CampaignAction $campaignAction = null,
-        public ?string $emailType = EmailType::Marketing->value,
+        public ?string $emailType = EmailType::Transactional->value,
     ) {}
 }
