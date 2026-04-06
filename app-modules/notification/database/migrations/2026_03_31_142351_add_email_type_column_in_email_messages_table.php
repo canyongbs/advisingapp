@@ -33,23 +33,31 @@
 
 </COPYRIGHT>
 */
-
+use App\Features\EmailTypeFeature;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('email_messages', function (Blueprint $table) {
-            $table->string('email_type')->initial('transactional');
+        DB::transaction(function () {
+            Schema::table('email_messages', function (Blueprint $table) {
+                $table->string('email_type')->initial('transactional');
+            });
+
+            EmailTypeFeature::activate();
         });
     }
 
     public function down(): void
     {
-        Schema::table('email_messages', function (Blueprint $table) {
-            $table->dropColumn('email_type');
+        DB::transaction(function () {
+            EmailTypeFeature::deactivate();
+            Schema::table('email_messages', function (Blueprint $table) {
+                $table->dropColumn('email_type');
+            });
         });
     }
 };
