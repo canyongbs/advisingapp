@@ -87,13 +87,12 @@
     <body>
         <div class="container">
             @if ($optedOut)
-                <h1>You have been successfully unsubscribed.</h1>
+                <h1>You have opted out of marketing messages.</h1>
             @else
-                <h1>Unsubscribe</h1>
-                <p>Are you sure you want to unsubscribe ?</p>
+                <p>Would you like to opt out of future similar messages?</p>
                 <form method="POST" action="{{ $confirmUrl }}">
                     @csrf
-                    <button type="submit" class="btn">Unsubscribe</button>
+                    <button type="submit" class="btn">Yes, Opt Out</button>
                 </form>
             @endif
         </div>

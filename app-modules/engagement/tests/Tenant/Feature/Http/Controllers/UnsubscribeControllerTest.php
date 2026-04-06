@@ -50,8 +50,7 @@ it('GET with a valid signed URL returns 200 and shows the unsubscribe confirmati
 
     get($url)
         ->assertStatus(200)
-        ->assertSee('Are you sure you want to unsubscribe')
-        ->assertSee('Unsubscribe');
+        ->assertSee('Would you like to opt out of future similar messages');
 });
 
 it('GET with a missing or invalid signature returns 403', function () {
@@ -66,7 +65,7 @@ it('POST with a valid signed URL creates an EmailAddressOptInOptOut record with 
 
     post($url)
         ->assertStatus(200)
-        ->assertSee('You have been successfully unsubscribed.');
+        ->assertSee('You have opted out of marketing messages.');
 
     $record = EmailAddressOptInOptOut::where('address', $email)->first();
 
