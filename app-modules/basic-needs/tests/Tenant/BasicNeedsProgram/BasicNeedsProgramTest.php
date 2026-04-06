@@ -382,3 +382,49 @@ it('is gated with proper access control', function () {
 
     get(BasicNeedsProgramResource::getUrl('index'))->assertSuccessful();
 });
+
+it('can filter support programs by contact person', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+    $basicNeedsPrograms = BasicNeedsProgram::factory()->count(10)->create();
+    $contactPerson = $basicNeedsPrograms->first()->contact_person;
+
+    actingAs($user)
+        ->get(
+            BasicNeedsProgramResource::getUrl('index')
+        )->assertForbidden();
+
+    $user->givePermissionTo('support_program.view-any');
+
+    livewire(ListBasicNeedsPrograms::class)
+        ->set('tableRecordsPerPage', 10)
+        ->assertCanSeeTableRecords($basicNeedsPrograms)
+        ->filterTable('contact_person', $contactPerson)
+        ->assertCanSeeTableRecords($basicNeedsPrograms->where('contact_person', $contactPerson))
+        ->assertCanNotSeeTableRecords($basicNeedsPrograms->where('contact_person', '!=', $contactPerson));
+});
+
+it('shows only distinct contact person options in the filter', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    $sharedContactPerson = 'Shared Contact';
+
+    BasicNeedsProgram::factory()->count(3)->create(['contact_person' => $sharedContactPerson]);
+    BasicNeedsProgram::factory()->count(2)->create(['contact_person' => 'Other Contact']);
+
+    $user->givePermissionTo('support_program.view-any');
+
+    actingAs($user);
+
+    $options = BasicNeedsProgram::query()
+        ->whereNotNull('contact_person')
+        ->distinct()
+        ->orderBy('contact_person')
+        ->limit(40)
+        ->pluck('contact_person', 'contact_person')
+        ->all();
+
+    expect(array_count_values(array_keys($options)))->each->toBe(1)
+        ->and($options)->toHaveKey($sharedContactPerson)
+        ->and($options)->toHaveKey('Other Contact')
+        ->and(count($options))->toBeLessThanOrEqual(40);
+});

@@ -37,6 +37,7 @@
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages;
 
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\BasicNeedsProgramResource;
+use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -110,6 +111,17 @@ class ListBasicNeedsPrograms extends ListRecords
                     ->relationship('basicNeedsCategories', 'name')
                     ->searchable()
                     ->preload(),
+                SelectFilter::make('contact_person')
+                    ->label('Contact Person')
+                    ->options(fn (): array => BasicNeedsProgram::query()
+                        ->whereNotNull('contact_person')
+                        ->distinct()
+                        ->orderBy('contact_person')
+                        ->limit(40)
+                        ->pluck('contact_person', 'contact_person')
+                        ->all())
+                    ->searchable()
+                    ->optionsLimit(40),
             ], layout: FiltersLayout::BeforeContent)
             ->recordActions([
                 ViewAction::make(),
