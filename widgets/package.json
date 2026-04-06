@@ -33,7 +33,7 @@
         "resolve-url-loader": "^5.0.0",
         "tailwindcss": "^4.0.0",
         "tippy.js": "^6.3.7",
-        "vite": "^7.3.0",
+        "vite": "^7.3.2",
         "vue-filepond": "^7.0.4"
     },
     "devDependencies": {
