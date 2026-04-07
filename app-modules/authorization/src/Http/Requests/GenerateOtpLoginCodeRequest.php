@@ -34,23 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories;
+namespace AdvisingApp\Authorization\Http\Requests;
 
-use AdvisingApp\CaseManagement\Models\CasePriority;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
-use AdvisingApp\Division\Models\Division;
-use Worksome\RequestFactories\RequestFactory;
+use App\Models\Authenticatable;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class EditCaseRequestFactory extends RequestFactory
+class GenerateOtpLoginCodeRequest extends FormRequest
 {
-    public function definition(): array
+    /**
+     * @return array<string, array<int, string>>
+     */
+    public function rules(): array
     {
         return [
-            'division_id' => Division::inRandomOrder()->first()->id ?? Division::factory()->create()->id,
-            'status_id' => CaseStatus::factory()->create()->id,
-            'priority_id' => CasePriority::factory()->create()->id,
-            'close_details' => $this->faker->sentence,
-            'res_details' => $this->faker->sentence,
+            'email' => ['required', 'email'],
+            'name' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string', Rule::in([Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE, Authenticatable::AI_ADMIN_ROLE])],
         ];
     }
 }

@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Authorization\Models;
 
-use AdvisingApp\Authorization\Database\Factories\LoginMagicLinkFactory;
+use AdvisingApp\Authorization\Database\Factories\OtpLoginCodeFactory;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
@@ -47,11 +47,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
- * @mixin IdeHelperLoginMagicLink
+ * @mixin IdeHelperOtpLoginCode
  */
-class LoginMagicLink extends Model
+class OtpLoginCode extends Model
 {
-    /** @use HasFactory<LoginMagicLinkFactory> */
+    /** @use HasFactory<OtpLoginCodeFactory> */
     use HasFactory;
 
     use HasUuids;
@@ -69,11 +69,11 @@ class LoginMagicLink extends Model
     }
 
     /**
-     * @return Builder<LoginMagicLink>
+     * @return Builder<OtpLoginCode>
      */
     public function prunable(): Builder
     {
-        return static::where('created_at', '<=', now()->subMinutes(15))
+        return static::where('created_at', '<=', now()->subMinutes(20))
             ->orWhereNotNull('used_at');
     }
 }

@@ -34,23 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories;
+namespace AdvisingApp\Authorization\Notifications;
 
-use AdvisingApp\CaseManagement\Models\CasePriority;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
-use AdvisingApp\Division\Models\Division;
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
 
-class EditCaseRequestFactory extends RequestFactory
+#[SystemNotification]
+class OtpCodeNotification extends Notification
 {
-    public function definition(): array
+    use Queueable;
+
+    public function __construct(
+        protected int $code,
+    ) {}
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(User $notifiable): array
     {
-        return [
-            'division_id' => Division::inRandomOrder()->first()->id ?? Division::factory()->create()->id,
-            'status_id' => CaseStatus::factory()->create()->id,
-            'priority_id' => CasePriority::factory()->create()->id,
-            'close_details' => $this->faker->sentence,
-            'res_details' => $this->faker->sentence,
-        ];
+        return ['mail'];
+    }
+
+    public function toMail(User $notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->subject('Your Login Verification Code')
+            ->greeting('Hello ' . $notifiable->name . ',')
+            ->line('Your one-time login verification code is:')
+            ->line("**{$this->code}**")
+            ->line('This code will expire in 20 minutes.')
+            ->line('If you did not request this code, please ignore this email.');
     }
 }

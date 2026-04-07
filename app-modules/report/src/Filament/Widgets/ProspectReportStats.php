@@ -40,9 +40,11 @@ use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Task\Models\Task;
+use App\Enums\Feature;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Number;
 
 class ProspectReportStats extends StatsOverviewReportWidget
@@ -143,7 +145,7 @@ class ProspectReportStats extends StatsOverviewReportWidget
                 : Number::format($prospectsCount, maxPrecision: 2)),
 
             Stat::make('Total Concerns', Number::abbreviate($concernsCount, maxPrecision: 2)),
-            Stat::make('Total Cases', Number::abbreviate($casesCount, maxPrecision: 2)),
+            ...Gate::check(Feature::CaseManagement->getGateName()) ? [Stat::make('Total Cases', Number::abbreviate($casesCount, maxPrecision: 2))] : [],
             Stat::make('Total Tasks', Number::abbreviate($tasksCount, maxPrecision: 2)),
         ];
     }

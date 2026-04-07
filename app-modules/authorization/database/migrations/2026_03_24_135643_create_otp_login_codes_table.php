@@ -34,23 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\CaseManagement\Models\CasePriority;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
-use AdvisingApp\Division\Models\Division;
-use Worksome\RequestFactories\RequestFactory;
-
-class EditCaseRequestFactory extends RequestFactory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'division_id' => Division::inRandomOrder()->first()->id ?? Division::factory()->create()->id,
-            'status_id' => CaseStatus::factory()->create()->id,
-            'priority_id' => CasePriority::factory()->create()->id,
-            'close_details' => $this->faker->sentence,
-            'res_details' => $this->faker->sentence,
-        ];
+        Schema::create('otp_login_codes', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->text('code');
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->timestamp('used_at')->nullable();
+            $table->timestamps();
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::dropIfExists('otp_login_codes');
+    }
+};

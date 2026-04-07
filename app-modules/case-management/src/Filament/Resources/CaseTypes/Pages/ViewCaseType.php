@@ -64,7 +64,7 @@ class ViewCaseType extends ViewRecord
                         TextEntry::make('form.name')
                             ->label('Form')
                             ->hidden(fn (CaseType $record) => ! $record->form)
-                            ->url(fn (CaseType $record) => $record->form ? CaseFormResource::getUrl('edit', ['record' => $record?->form]) : null)
+                            ->url(fn (CaseType $record) => $record->form ? CaseFormResource::getUrl('edit', ['record' => $record->form]) : null)
                             ->color('primary'),
                         Group::make()
                             ->schema([

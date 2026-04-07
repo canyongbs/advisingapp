@@ -101,7 +101,7 @@ class ProgramsRelationManager extends RelationManager
                     ->placeholder('-')
                     ->visible($sisSystem?->hasProgramsDeclareDt() ?? true),
                 TextEntry::make('change_dt')
-                    ->label('Last Action Date')
+                    ->label('Change Date')
                     ->dateTime()
                     ->placeholder('-')
                     ->visible($sisSystem?->hasProgramsChangeDt() ?? true),
@@ -268,7 +268,7 @@ class ProgramsRelationManager extends RelationManager
                 TextInput::make('division')
                     ->string()
                     ->maxLength(255)
-                    ->label('Division'),
+                    ->label('College'),
                 TextInput::make('acad_plan_major')
                     ->label('Major(s)')
                     ->helperText('Comma-separated, e.g. Computer Science, Mathematics')

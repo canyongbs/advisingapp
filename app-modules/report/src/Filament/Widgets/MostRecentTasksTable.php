@@ -66,7 +66,7 @@ class MostRecentTasksTable extends BaseWidget
         'lg' => 4,
     ];
 
-    public function mount(string $cacheTag, string $educatableType)
+    public function mount(string $cacheTag, string $educatableType): void
     {
         $this->cacheTag = $cacheTag;
 
@@ -74,7 +74,7 @@ class MostRecentTasksTable extends BaseWidget
     }
 
     #[On('refresh-widgets')]
-    public function refreshWidget() {}
+    public function refreshWidget(): void {}
 
     public function table(Table $table): Table
     {
@@ -99,13 +99,22 @@ class MostRecentTasksTable extends BaseWidget
                 TextColumn::make('status'),
                 TextColumn::make('association')
                     ->label('Association')
-                    ->state(fn (Task $record): ?string => ! is_null($record->concern) ? match ($record->concern::class) {
+                    ->state(fn (Task $record): string => ! is_null($record->concern) ? match ($record->concern::class) {
                         Student::class => 'Student',
                         Prospect::class => 'Prospect',
+                        default => 'Unrelated',
                     } : 'Unrelated'),
                 TextColumn::make('concern.display_name')
                     ->label('Related To')
-                    ->state(fn (Task $record): ?string => $record->concern?->{$record->concern::displayNameKey()} ?? 'N/A')
+                    ->state(function (Task $record): string {
+                        $concern = $record->concern;
+
+                        if ($concern === null) {
+                            return 'N/A';
+                        }
+
+                        return $concern->{$concern::displayNameKey()} ?? 'N/A';
+                    })
                     ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),

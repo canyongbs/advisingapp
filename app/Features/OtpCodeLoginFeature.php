@@ -34,23 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories;
+namespace App\Features;
 
-use AdvisingApp\CaseManagement\Models\CasePriority;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
-use AdvisingApp\Division\Models\Division;
-use Worksome\RequestFactories\RequestFactory;
+use App\Support\AbstractFeatureFlag;
 
-class EditCaseRequestFactory extends RequestFactory
+class OtpCodeLoginFeature extends AbstractFeatureFlag
 {
-    public function definition(): array
+    public function resolve(mixed $scope): mixed
     {
-        return [
-            'division_id' => Division::inRandomOrder()->first()->id ?? Division::factory()->create()->id,
-            'status_id' => CaseStatus::factory()->create()->id,
-            'priority_id' => CasePriority::factory()->create()->id,
-            'close_details' => $this->faker->sentence,
-            'res_details' => $this->faker->sentence,
-        ];
+        return false;
     }
 }

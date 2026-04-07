@@ -34,23 +34,56 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories;
+namespace AdvisingApp\Authorization\Database\Factories;
 
-use AdvisingApp\CaseManagement\Models\CasePriority;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
-use AdvisingApp\Division\Models\Division;
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\Authorization\Models\OtpLoginCode;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
+use InvalidArgumentException;
 
-class EditCaseRequestFactory extends RequestFactory
+/**
+ * @extends Factory<OtpLoginCode>
+ */
+class OtpLoginCodeFactory extends Factory
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function definition(): array
     {
         return [
-            'division_id' => Division::inRandomOrder()->first()->id ?? Division::factory()->create()->id,
-            'status_id' => CaseStatus::factory()->create()->id,
-            'priority_id' => CasePriority::factory()->create()->id,
-            'close_details' => $this->faker->sentence,
-            'res_details' => $this->faker->sentence,
+            'code' => Hash::make((string) random_int(100000, 999999)),
+            'user_id' => User::factory(),
         ];
+    }
+
+    /**
+     * @return Factory<OtpLoginCode>
+     */
+    public function withCode(int $code): Factory
+    {
+        if ($code < 100000 || $code > 999999) {
+            throw new InvalidArgumentException('OTP code must be a 6-digit integer between 100000 and 999999.');
+        }
+
+        return $this->state(function (array $attributes) use ($code) {
+            return [
+                'code' => Hash::make((string) $code),
+            ];
+        });
+    }
+
+    /**
+     * @return Factory<OtpLoginCode>
+     */
+    public function used(?Carbon $when = null): Factory
+    {
+        return $this->state(function (array $attributes) use ($when) {
+            return [
+                'used_at' => $when ?? now(),
+            ];
+        });
     }
 }

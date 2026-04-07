@@ -59,7 +59,11 @@ class ViewProspectStatus extends ViewRecord
             PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER,
             fn (): View => view('components.page-header-action-lock-icon', [
                 'condition' => function () {
-                    return $this->getRecord()?->is_system_protected;
+                    $record = $this->getRecord();
+
+                    assert($record instanceof ProspectStatus);
+
+                    return $record->is_system_protected;
                 },
                 'identifier' => 'prospect_status_system_protected',
                 'tooltip' => 'This record is protected as it is a system status.',
