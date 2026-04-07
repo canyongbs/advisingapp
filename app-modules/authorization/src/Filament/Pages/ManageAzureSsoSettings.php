@@ -38,12 +38,14 @@ namespace AdvisingApp\Authorization\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\AzureMatchingProperty;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
+use App\Features\AzureExpirationNoticeFeature;
 use App\Filament\Clusters\Authentication;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -79,6 +81,10 @@ class ManageAzureSsoSettings extends SettingsPage
                 Toggle::make('is_enabled')
                     ->label('Enabled')
                     ->live(),
+                Toggle::make('is_expiration_notice_enabled')
+                    ->visible(fn (Get $get) => $get('is_enabled') && AzureExpirationNoticeFeature::active())
+                    ->label('Enable Expiration Notice')
+                    ->hint('Get notified when these credentials are 45 days from expiring. The Application type Application.Read.All permission is required for this feature.'),
                 Section::make()
                     ->schema([
                         TextInput::make('client_id')

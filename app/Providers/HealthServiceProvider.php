@@ -90,9 +90,10 @@ class HealthServiceProvider extends ServiceProvider
                     $azureSsoSettings = app(AzureSsoSettings::class);
 
                     return $azureSsoSettings->is_enabled &&
-                    ! is_null($azureSsoSettings->client_id) &&
-                    ! is_null($azureSsoSettings->client_secret) &&
-                    ! is_null($azureSsoSettings->tenant_id);
+                    $azureSsoSettings->is_expiration_notice_enabled &&
+                    filled($azureSsoSettings->client_id) &&
+                    filled($azureSsoSettings->client_secret) &&
+                    filled($azureSsoSettings->tenant_id);
                 })
                 ->daily(),
             // ScheduleCheck::new()

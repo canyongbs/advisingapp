@@ -49,6 +49,8 @@ class AzureSsoSettings extends Settings
 
     public ?string $tenant_id = null;
 
+    public bool $is_expiration_notice_enabled = false;
+
     public AzureMatchingProperty $matching_property = AzureMatchingProperty::UserPrincipalName;
 
     public static function group(): string

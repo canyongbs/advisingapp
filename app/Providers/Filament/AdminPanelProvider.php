@@ -74,6 +74,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
@@ -250,15 +251,19 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::TOPBAR_AFTER,
                 function (): ?Htmlable {
-                    $credentialsCheck = HealthCheckResultHistoryItem::where('check_name', app(AzureCredentialsExpiringCheck::class)->getName())
-                        ->latest()
-                        ->first();
+                    $showBanner = Cache::remember('azure_credentials_expiring', now()->addDay(), function () {
+                        $credentialsCheck = HealthCheckResultHistoryItem::where('check_name', app(AzureCredentialsExpiringCheck::class)->getName())
+                            ->latest()
+                            ->first();
 
-                    if ($credentialsCheck?->status !== Status::warning()->value) {
-                        return null;
-                    }
+                        if ($credentialsCheck?->status !== Status::warning()->value) {
+                            return false;
+                        }
 
-                    return new HtmlString(Blade::render('<livewire:sso-credentials-expiring-alert />'));
+                        return true;
+                    });
+
+                    return $showBanner ? new HtmlString(Blade::render('<livewire:sso-credentials-expiring-alert />')) : null;
                 },
             )
             ->globalSearchResourceOptIn();
