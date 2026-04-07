@@ -121,7 +121,17 @@ class ListBasicNeedsPrograms extends ListRecords
                         ->pluck('contact_person', 'contact_person')
                         ->all())
                     ->searchable()
-                    ->optionsLimit(40),
+                    ->getSearchResultsUsing(fn (string $search): array => BasicNeedsProgram::query()
+                        ->whereNotNull('contact_person')
+                        ->whereRaw('LOWER(contact_person) LIKE ?', ['%' . mb_strtolower($search) . '%'])
+                        ->distinct()
+                        ->orderBy('contact_person')
+                        ->limit(40)
+                        ->pluck('contact_person', 'contact_person')
+                        ->all())
+                    ->getOptionLabelUsing(fn (string | int | null $value): ?string => filled($value)
+                        ? BasicNeedsProgram::query()->where('contact_person', $value)->value('contact_person')
+                        : null),
             ], layout: FiltersLayout::BeforeContent)
             ->recordActions([
                 ViewAction::make(),

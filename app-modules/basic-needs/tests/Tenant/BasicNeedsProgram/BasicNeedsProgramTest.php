@@ -403,19 +403,26 @@ it('can filter support programs by contact person', function () {
         ->assertCanNotSeeTableRecords($basicNeedsPrograms->where('contact_person', '!=', $contactPerson));
 });
 
-it('shows only distinct contact person options in the filter', function () {
+it('returns contact person search results outside the initial 40 options', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
-    $sharedContactPerson = 'Shared Contact';
+    $searchableContactPerson = 'ZZZ Searchable Contact';
 
-    BasicNeedsProgram::factory()->count(3)->create(['contact_person' => $sharedContactPerson]);
-    BasicNeedsProgram::factory()->count(2)->create(['contact_person' => 'Other Contact']);
+    foreach (range(1, 50) as $index) {
+        BasicNeedsProgram::factory()->create([
+            'contact_person' => sprintf('Contact %03d', $index),
+        ]);
+    }
+
+    BasicNeedsProgram::factory()->create([
+        'contact_person' => $searchableContactPerson,
+    ]);
 
     $user->givePermissionTo('support_program.view-any');
 
     actingAs($user);
 
-    $options = BasicNeedsProgram::query()
+    $initialOptions = BasicNeedsProgram::query()
         ->whereNotNull('contact_person')
         ->distinct()
         ->orderBy('contact_person')
@@ -423,8 +430,18 @@ it('shows only distinct contact person options in the filter', function () {
         ->pluck('contact_person', 'contact_person')
         ->all();
 
-    expect(array_count_values(array_keys($options)))->each->toBe(1)
-        ->and($options)->toHaveKey($sharedContactPerson)
-        ->and($options)->toHaveKey('Other Contact')
-        ->and(count($options))->toBeLessThanOrEqual(40);
+    $searchResults = BasicNeedsProgram::query()
+        ->whereNotNull('contact_person')
+        ->whereRaw('LOWER(contact_person) LIKE ?', ['%' . mb_strtolower('searchable') . '%'])
+        ->distinct()
+        ->orderBy('contact_person')
+        ->limit(40)
+        ->pluck('contact_person', 'contact_person')
+        ->all();
+
+    expect($initialOptions)
+        ->toHaveCount(40)
+        ->not->toHaveKey($searchableContactPerson)
+        ->and($searchResults)
+        ->toHaveKey($searchableContactPerson);
 });
