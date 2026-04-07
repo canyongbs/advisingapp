@@ -59,10 +59,10 @@ test('CreateGroup is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-  test('group importers expose user-friendly CSV header labels', function () {
+test('group importers expose user-friendly CSV header labels', function () {
     $studentSubjectColumn = StudentGroupSubjectImporter::getColumns()[0];
     $prospectSubjectColumn = ProspectGroupSubjectImporter::getColumns()[0];
 
     expect($studentSubjectColumn->getLabel())->toBe('Student ID / Other ID');
     expect($prospectSubjectColumn->getLabel())->toBe('Email address');
-  });
+});
