@@ -403,6 +403,35 @@ it('can filter support programs by contact person', function () {
         ->assertCanNotSeeTableRecords($basicNeedsPrograms->where('contact_person', '!=', $contactPerson));
 });
 
+it('shows only distinct contact person options in the initial filter load', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    $sharedContactPerson = 'Shared Contact';
+
+    BasicNeedsProgram::factory()->count(3)->create(['contact_person' => $sharedContactPerson]);
+    BasicNeedsProgram::factory()->count(2)->create(['contact_person' => 'Other Contact']);
+
+    $user->givePermissionTo('support_program.view-any');
+
+    actingAs($user);
+
+    $initialOptions = BasicNeedsProgram::query()
+        ->whereNotNull('contact_person')
+        ->distinct()
+        ->orderBy('contact_person')
+        ->limit(40)
+        ->pluck('contact_person', 'contact_person')
+        ->all();
+
+    expect($initialOptions)
+        ->toHaveKey($sharedContactPerson)
+        ->toHaveKey('Other Contact')
+        ->and(count($initialOptions))
+        ->toBeLessThanOrEqual(40)
+        ->and(array_count_values(array_keys($initialOptions)))
+        ->each->toBe(1);
+});
+
 it('returns contact person search results outside the initial 40 options', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
