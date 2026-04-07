@@ -46,6 +46,7 @@ use App\Models\User;
 use App\Support\ChunkIterator;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -195,8 +196,12 @@ class CreateGroup extends CreateRecord implements HasTable
 
         $totalRows = 0;
 
-        while (! feof($fileStream)) {
-            fgets($fileStream);
+        fgets($fileStream); // skip header row
+
+        while (($line = fgets($fileStream)) !== false) {
+            if (blank(trim($line))) {
+                continue;
+            }
 
             $totalRows++;
         }
@@ -232,8 +237,16 @@ class CreateGroup extends CreateRecord implements HasTable
                 return;
             }
 
-            while (! feof($fileStream)) {
-                yield ['subject' => fgets($fileStream)];
+            fgets($fileStream); // skip header row
+
+            while (($line = fgets($fileStream)) !== false) {
+                $subject = trim($line);
+
+                if (blank($subject)) {
+                    continue;
+                }
+
+                yield ['subject' => $subject];
             }
 
             fclose($fileStream);
@@ -340,6 +353,11 @@ class CreateGroup extends CreateRecord implements HasTable
 
                 $csv = Writer::createFromFileObject(new SplTempFileObject());
                 $csv->setOutputBOM(ByteSequence::BOM_UTF8);
+
+                $csv->insertOne(array_map(
+                    fn (ImportColumn $column): string => $column->getLabel() ?? $column->getExampleHeader(),
+                    $columns,
+                ));
 
                 foreach ($columns as $column) {
                     foreach ($column->getExamples() as $example) {
