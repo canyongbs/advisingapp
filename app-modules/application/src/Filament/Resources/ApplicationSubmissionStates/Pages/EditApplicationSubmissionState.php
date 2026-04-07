@@ -42,13 +42,11 @@ use App\Features\ApplicationSubmissionStateArchivingFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
-use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 
@@ -85,41 +83,11 @@ class EditApplicationSubmissionState extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        $actions = [
+        return [
             ViewAction::make(),
             ArchiveAction::make()
                 ->visible(fn (): bool => ApplicationSubmissionStateArchivingFeature::active()),
             DeleteAction::make(),
         ];
-
-        if (ApplicationSubmissionStateArchivingFeature::active()) {
-            $actions[] = Action::make('archive')
-                ->color('danger')
-                ->icon('heroicon-o-archive-box')
-                ->action(function () {
-                    $state = $this->getRecord();
-                    // @phpstan-ignore method.notFound
-                    $state->archive();
-
-                    Notification::make()
-                        ->title('Submission state archived')
-                        ->success()
-                        ->send();
-
-                    $this->redirect($this->getResource()::getUrl('index'));
-                })
-                ->hidden(function (): bool {
-                    // @phpstan-ignore property.notFound
-                    return (bool) $this->getRecord()->archived_at;
-                });
-        }
-
-        $actions[] = DeleteAction::make()
-            ->visible(function (): bool {
-                // @phpstan-ignore method.notFound
-                return ! $this->getRecord()->submissions()->exists();
-            });
-
-        return $actions;
     }
 }
