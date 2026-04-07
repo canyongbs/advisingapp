@@ -76,10 +76,10 @@ class ListApplicationSubmissionStates extends ListRecords
                     ->counts('submissions')
                     ->sortable(),
             ])
+            // @phpstan-ignore argument.templateType
             ->modifyQueryUsing(fn (Builder $query) => $query->when(
                 ApplicationSubmissionStateArchivingFeature::active(),
-                // @phpstan-ignore method.notFound
-                fn (Builder $query) => $query->withoutArchivedAndUnused(),
+                fn (Builder $query) => $query->withoutArchivedAndUnused(), // @phpstan-ignore method.notFound
             ))
             ->recordActions([
                 ViewAction::make(),
