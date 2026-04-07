@@ -49,7 +49,7 @@ return new class () extends Migration {
             });
 
             ApplicationSubmissionStateArchivingFeature::activate();
-        });    
+        });
     }
 
     public function down(): void
