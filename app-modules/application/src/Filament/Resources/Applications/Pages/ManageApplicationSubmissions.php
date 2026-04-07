@@ -86,10 +86,6 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
             ->oldest('id')
             ->first();
 
-        if ($firstState && $firstState->classification === ApplicationSubmissionStateClassification::Received) {
-            return strtolower(ApplicationSubmissionStateClassification::Received->value);
-        }
-
         return $firstState
             ? strtolower($firstState->classification->value)
             : 'all';
@@ -115,36 +111,28 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
             ];
         }
 
-        // @phpstan-ignore method.notFound
-        $statesByClassification = ApplicationSubmissionState::query()
-            ->withoutArchivedAndUnused()
+        $states = ApplicationSubmissionState::query()
+            ->withCount('submissions')
             ->oldest('id')
-            ->get()
-            ->groupBy('classification')
-            ->map(fn ($states) => $states->first())
-            ->values();
+            ->get();
 
         $tabs = [];
 
-        foreach ($statesByClassification as $state) {
-            $classification = $state->classification;
-            $label = $classification->getLabel();
+        foreach ($states as $state) {
+            if (filled($state->archived_at) && $state->submissions_count === 0) {
+                continue;
+            }
 
-            $hasArchivedState = ApplicationSubmissionState::where('classification', $classification)
-                ->whereNotNull('archived_at')
-                ->exists();
+            $label = $state->name;
 
-            if ($hasArchivedState) {
+            if (filled($state->archived_at)) {
                 $label .= ' (Archived)';
             }
 
-            $tabs[strtolower($classification->value)] = Tab::make($label)
+            $tabs[strtolower($state->classification->value)] = Tab::make($label)
                 ->modifyQueryUsing(fn (Builder $query) => $query->whereHas(
                     'state',
-                    // @phpstan-ignore method.notFound
-                    fn (Builder $query) => $query
-                        ->withoutArchivedAndUnused()
-                        ->tap(new ClassifiedAs($classification)),
+                    fn (Builder $query) => $query->where('id', $state->id),
                 ));
         }
 

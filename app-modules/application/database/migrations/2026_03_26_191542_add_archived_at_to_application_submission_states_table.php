@@ -45,11 +45,11 @@ return new class () extends Migration {
     {
         DB::transaction(function () {
             Schema::table('application_submission_states', function (Blueprint $table) {
-                $table->timestamp('archived_at')->nullable()->after('updated_at');
+                $table->timestamp('archived_at')->nullable();
             });
-        });
 
-        ApplicationSubmissionStateArchivingFeature::activate();
+            ApplicationSubmissionStateArchivingFeature::activate();
+        });    
     }
 
     public function down(): void

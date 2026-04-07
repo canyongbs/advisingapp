@@ -44,8 +44,10 @@ use App\Features\ApplicationSubmissionStateArchivingFeature;
 use CanyonGBS\Common\Filament\Support\HideDeletedAndArchivedExceptSelectedFromSelectOptions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Throwable;
 
 // TODO We either need to introduce support for choosing the state that abides by the allowed classification transitions
 // Or we need to restrict creation of these states so that our `first()` logic to grab the desired state is always correct
@@ -111,49 +113,39 @@ class ApplicationAdmissionActions
                                 ->oldest('id'),
                         )
                         ->disableOptionWhen(function (string $value) use ($record): bool {
-                            if ((string) $record->state_id === $value) {
-                                return false;
-                            }
+                            $state = ApplicationSubmissionState::find($value);
 
-                            $allowedTransitions = $record
-                                ->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-                                ->getStateTransitions()
-                                ->map(fn ($state) => (string) $state)
-                                ->all();
-
-                            $selectedState = ApplicationSubmissionState::find($value);
-
-                            if (! $selectedState) {
+                            if (! $state) {
                                 return true;
                             }
 
-                            return ! in_array($selectedState->classification->value, $allowedTransitions, true);
+                            return ! $record
+                                ->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
+                                ->getStateTransitions()
+                                ->contains($state->classification->value);
                         })
                         ->required()
-                        ->getOptionLabelUsing(fn ($value) => ApplicationSubmissionState::find($value)?->name)
                         ->default(fn (ApplicationSubmission $record) => $record->state_id),
                 ])
                 ->action(function (ApplicationSubmission $record, array $data) {
-                    $record->state_id = (string) $record->getOriginal('state_id');
-                    $record->unsetRelation('state');
+                    try {
+                        $record->state_id = (string) $record->getOriginal('state_id');
+                        $record->unsetRelation('state');
+                        $newState = ApplicationSubmissionState::findOrFail($data['state_id']);
 
-                    $newState = ApplicationSubmissionState::findOrFail($data['state_id']);
+                        $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
+                            ->transitionTo($newState, $newState->classification);
+                    } catch (Throwable $exception) {
+                        report($exception);
 
-                    $allowedTransitions = $record
-                        ->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-                        ->getStateTransitions()
-                        ->map(fn ($state) => (string) $state)
-                        ->all();
-
-                    if (! in_array($newState->classification->value, $allowedTransitions, true)) {
-                        return;
+                        Notification::make()
+                            ->title('Failed to update submission state')
+                            ->danger()
+                            ->send();
                     }
-
-                    $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-                        ->transitionTo($newState, $newState->classification);
                 })
                 ->cancelParentActions()
-                ->visible(fn (ApplicationSubmission $record) => (bool) $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')->getStateTransitions()->count()),
+                ->visible(fn (ApplicationSubmission $record): bool => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')->getStateTransitions()->isNotEmpty()),
         ];
     }
 }

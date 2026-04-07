@@ -62,6 +62,7 @@ class ListApplicationSubmissionStates extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('name')
                     ->label('Name')
+                    ->formatStateUsing(fn (ApplicationSubmissionState $record): string => $record->name . (ApplicationSubmissionStateArchivingFeature::active() && filled($record->archived_at) ? ' (Archived)' : ''))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('classification')
@@ -71,18 +72,15 @@ class ListApplicationSubmissionStates extends ListRecords
                 ColorColumn::make('color')
                     ->state(fn (ApplicationSubmissionState $applicationState): string => Color::convertToRgb(Color::all()[$applicationState->color->value][600])),
                 TextColumn::make('submissions_count')
-                    ->label('# of Applications')
+                    ->label('# of Applications Submissions')
                     ->counts('submissions')
                     ->sortable(),
             ])
-            ->modifyQueryUsing(function (Builder $query) {
-                if (ApplicationSubmissionStateArchivingFeature::active()) {
-                    // @phpstan-ignore method.notFound
-                    $query = $query->withoutArchived();
-                }
-
-                return $query;
-            })
+            ->modifyQueryUsing(fn (Builder $query) => $query->when(
+                ApplicationSubmissionStateArchivingFeature::active(),
+                // @phpstan-ignore method.notFound
+                fn (Builder $query) => $query->withoutArchivedAndUnused(),
+            ))
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
