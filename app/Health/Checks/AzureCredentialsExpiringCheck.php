@@ -55,16 +55,16 @@ class AzureCredentialsExpiringCheck extends Check
             $azureSsoSettings = app(AzureSsoSettings::class);
 
             $response = Http::asForm()
-            ->post(
-                'https://login.microsoftonline.com/' . $azureSsoSettings->tenant_id . '/oauth2/v2.0/token',
-                [
-                    'client_id' => $azureSsoSettings->client_id,
-                    'client_secret' => $azureSsoSettings->client_secret,
-                    'grant_type' => 'client_credentials',
-                    'scope' => 'https://graph.microsoft.com/.default',
-                ]
-            )
-            ->throw();
+                ->post(
+                    'https://login.microsoftonline.com/' . $azureSsoSettings->tenant_id . '/oauth2/v2.0/token',
+                    [
+                        'client_id' => $azureSsoSettings->client_id,
+                        'client_secret' => $azureSsoSettings->client_secret,
+                        'grant_type' => 'client_credentials',
+                        'scope' => 'https://graph.microsoft.com/.default',
+                    ]
+                )
+                ->throw();
 
             $data = Http::withToken($response->object()->access_token)
                 ->get("https://graph.microsoft.com/v1.0/applications(appId='{$azureSsoSettings->client_id}')" . '?$select=passwordCredentials')
@@ -77,7 +77,7 @@ class AzureCredentialsExpiringCheck extends Check
                 return Str::startsWith($azureSsoSettings->client_secret, $item->hint);
             });
 
-            if($credentials->isEmpty()) {
+            if ($credentials->isEmpty()) {
                 throw new NoMatchingCredentialsException();
             }
 
