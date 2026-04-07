@@ -78,7 +78,19 @@ class IsInApplicationSubmissionStateOperator extends Operator
         return [
             Select::make('states')
                 ->label('State')
-                ->options(ApplicationSubmissionState::pluck('name', 'id'))
+                ->options(function (?array $state) {
+                    $selectedIds = $state ?? [];
+
+                    return ApplicationSubmissionState::query()
+                        ->where(function (Builder $query) use ($selectedIds) {
+                            $query->withoutArchived();  // @phpstan-ignore method.notFound
+
+                            if (! empty($selectedIds)) {
+                                $query->orWhereIn('id', $selectedIds);
+                            }
+                        })
+                        ->pluck('name', 'id');
+                })
                 ->multiple()
                 ->preload()
                 ->required()
