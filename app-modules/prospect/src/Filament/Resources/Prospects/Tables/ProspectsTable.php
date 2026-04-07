@@ -181,7 +181,7 @@ class ProspectsTable
                                     ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereNull' : 'whereNotNull'}('student_id')),
                             ]),
                         Constraint::make('applicationSubmissionState')
-                            ->label('Admissions State')
+                            ->label('Admission States')
                             ->icon('heroicon-m-document-text')
                             ->operators([
                                 IsInApplicationSubmissionStateOperator::make(),
