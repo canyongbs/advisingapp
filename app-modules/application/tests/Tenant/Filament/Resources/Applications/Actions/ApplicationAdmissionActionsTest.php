@@ -116,7 +116,6 @@ test('calling the update_submission_state action transitions the submission to t
         ->mountAction(TestAction::make('view')->table($submission))
         ->callAction('update_submission_state', data: ['state_id' => $reviewState->id]);
 
-    // @phpstan-ignore property.notFound
     expect($submission->fresh()->state_id)->toBe($reviewState->id);
 });
 
@@ -198,6 +197,5 @@ test('calling the update_submission_state action with a disallowed transition st
         ->callAction('update_submission_state', data: ['state_id' => $admitState->id]);
 
     // The state machine rejects the disallowed transition, so the state must remain unchanged
-    // @phpstan-ignore property.notFound
     expect($submission->fresh()->state_id)->toBe($receivedState->id);
 });
