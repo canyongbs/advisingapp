@@ -37,6 +37,7 @@
 namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Tables;
 
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\Tables\Operators\IsInApplicationSubmissionStateOperator;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -178,6 +179,12 @@ class ProspectsTable
                                     ->label(fn (bool $isInverse): string => $isInverse ? 'Not Converted' : 'Converted')
                                     ->summary(fn (bool $isInverse): string => $isInverse ? 'Not Converted' : 'Converted')
                                     ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereNull' : 'whereNotNull'}('student_id')),
+                            ]),
+                        Constraint::make('applicationSubmissionState')
+                            ->label('Admission States')
+                            ->icon('heroicon-m-document-text')
+                            ->operators([
+                                IsInApplicationSubmissionStateOperator::make(),
                             ]),
                     ])
                     ->constraintPickerColumns([
