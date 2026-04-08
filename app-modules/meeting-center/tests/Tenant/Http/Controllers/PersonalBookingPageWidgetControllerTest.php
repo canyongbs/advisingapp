@@ -59,6 +59,7 @@ $workingHours = [
 
 beforeEach(function () {
     $mockDriver = Mockery::mock(CalendarInterface::class);
+    /** @phpstan-ignore method.notFound */
     $mockDriver->shouldReceive('createEvent')->andReturnUsing(function (CalendarEvent $event) {
         $event->updateQuietly([
             'provider_id' => 'mock-provider-id',
