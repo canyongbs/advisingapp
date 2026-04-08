@@ -39,6 +39,7 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use App\Features\MaximumLeadTimeFeature;
 use App\Features\MinimumLeadTimeFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
@@ -211,6 +212,14 @@ class EditBookingGroup extends EditRecord
                         ->integer()
                         ->columnSpanFull()
                         ->visible(fn (): bool => MinimumLeadTimeFeature::active()),
+                    TextInput::make('maximum_booking_lead_time_days')
+                        ->label('Maximum Lead Time')
+                        ->suffix('days')
+                        ->default(0)
+                        ->minValue(0)
+                        ->integer()
+                        ->columnSpanFull()
+                        ->visible(fn (): bool => MaximumLeadTimeFeature::active()),
                     DailyHoursRepeater::make('available_appointment_hours')
                         ->label('Days and Hours')
                         ->columnSpanFull(),
@@ -265,6 +274,7 @@ class EditBookingGroup extends EditRecord
         $data['available_appointment_hours'] = DailyHoursRepeater::mutateDataBeforeSave($data['available_appointment_hours']);
 
         $data['minimum_booking_lead_time_hours'] = $data['minimum_booking_lead_time_hours'] ?? 0;
+        $data['maximum_booking_lead_time_days'] = $data['maximum_booking_lead_time_days'] ?? 0;
 
         return $data;
     }

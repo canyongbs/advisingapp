@@ -60,6 +60,7 @@ class PersonalBookingPageFactory extends Factory
             'slug' => $this->faker->unique()->slug(),
             'default_appointment_duration' => $this->faker->randomElement([15, 30, 60]),
             'minimum_booking_lead_time_hours' => 0,
+            'maximum_booking_lead_time_days' => 0,
         ];
     }
 

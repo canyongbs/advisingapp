@@ -34,23 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory;
+namespace App\Features;
 
-use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
-use Worksome\RequestFactories\RequestFactory;
+use App\Support\AbstractFeatureFlag;
 
-class EditBookingGroupRequestFactory extends RequestFactory
+class MaximumLeadTimeFeature extends AbstractFeatureFlag
 {
-    public function definition(): array
+    public function resolve(mixed $scope): mixed
     {
-        return [
-            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
-            'slug' => str($this->faker->unique()->words(3, true))->slug()->toString(),
-            'description' => $this->faker->paragraph(),
-            'book_with' => BookingGroupBookWith::All->value,
-            'meeting_owner_id' => null,
-            'minimum_booking_lead_time_hours' => 0,
-            'maximum_booking_lead_time_days' => 0,
-        ];
+        return false;
     }
 }

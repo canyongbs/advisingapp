@@ -34,23 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory;
+use App\Features\MaximumLeadTimeFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
-use Worksome\RequestFactories\RequestFactory;
-
-class EditBookingGroupRequestFactory extends RequestFactory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'name' => str($this->faker->unique()->words(3, true))->title()->toString(),
-            'slug' => str($this->faker->unique()->words(3, true))->slug()->toString(),
-            'description' => $this->faker->paragraph(),
-            'book_with' => BookingGroupBookWith::All->value,
-            'meeting_owner_id' => null,
-            'minimum_booking_lead_time_hours' => 0,
-            'maximum_booking_lead_time_days' => 0,
-        ];
+        DB::transaction(function () {
+            Schema::table('personal_booking_pages', function (Blueprint $table) {
+                $table->unsignedInteger('maximum_booking_lead_time_days')->default(0);
+            });
+
+            Schema::table('booking_groups', function (Blueprint $table) {
+                $table->unsignedInteger('maximum_booking_lead_time_days')->default(0);
+            });
+
+            MaximumLeadTimeFeature::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            MaximumLeadTimeFeature::deactivate();
+
+            Schema::table('personal_booking_pages', function (Blueprint $table) {
+                $table->dropColumn('maximum_booking_lead_time_days');
+            });
+
+            Schema::table('booking_groups', function (Blueprint $table) {
+                $table->dropColumn('maximum_booking_lead_time_days');
+            });
+        });
+    }
+};

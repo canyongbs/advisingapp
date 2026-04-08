@@ -59,12 +59,14 @@ class PersonalBookingPage extends BaseModel implements Auditable
         'default_appointment_duration',
         'slug',
         'minimum_booking_lead_time_hours',
+        'maximum_booking_lead_time_days',
     ];
 
     protected $casts = [
         'is_enabled' => 'boolean',
         'default_appointment_duration' => 'integer',
         'minimum_booking_lead_time_hours' => 'integer',
+        'maximum_booking_lead_time_days' => 'integer',
     ];
 
     /**
