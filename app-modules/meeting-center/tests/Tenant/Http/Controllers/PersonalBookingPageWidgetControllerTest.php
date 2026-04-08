@@ -44,6 +44,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Exceptions;
 use Mockery\MockInterface;
 
+use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
 
 $workingHours = [
@@ -71,7 +72,82 @@ beforeEach(function () {
     app()->instance(CalendarManager::class, $mockManager);
 });
 
-// Minimum Lead Time Tests
+// Minimum Lead Time - Available Slots Tests
+
+it('filters available slots within lead time window', function () use ($workingHours) {
+    MinimumLeadTimeFeature::activate();
+
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'working_hours_are_enabled' => true,
+            'working_hours' => $workingHours,
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create([
+            'slug' => 'test-slots-lead',
+            'minimum_booking_lead_time_hours' => 24,
+        ]);
+
+    $response = getJson(
+        route('widgets.booking-page.personal.api.available-slots', ['slug' => 'test-slots-lead']) . '?year=2026&month=4'
+    );
+
+    $response->assertOk();
+
+    $blocks = collect($response->json('blocks'));
+
+    // With 24h lead time from Monday 08:00, earliest slot should be Tuesday 08:00+
+    $blocksBeforeLeadTime = $blocks->filter(function (array $block) {
+        return Carbon::parse($block['start'])->isBefore(Carbon::parse('2026-04-07 08:00:00', 'UTC'));
+    });
+
+    expect($blocksBeforeLeadTime)->toBeEmpty();
+});
+
+// TODO: FeatureFlag Cleanup - This test can be removed when MinimumLeadTimeFeature is removed
+it('returns available slots within lead time window when feature is inactive', function () use ($workingHours) {
+    MinimumLeadTimeFeature::deactivate();
+
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'working_hours_are_enabled' => true,
+            'working_hours' => $workingHours,
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create([
+            'slug' => 'test-slots-no-flag',
+            'minimum_booking_lead_time_hours' => 24,
+        ]);
+
+    $response = getJson(
+        route('widgets.booking-page.personal.api.available-slots', ['slug' => 'test-slots-no-flag']) . '?year=2026&month=4'
+    );
+
+    $response->assertOk();
+
+    $blocks = collect($response->json('blocks'));
+
+    // Feature is off, so Monday slots should still be available
+    $mondayBlocks = $blocks->filter(function (array $block) {
+        return Carbon::parse($block['start'])->day === 6;
+    });
+
+    expect($mondayBlocks)->not->toBeEmpty();
+});
+
+// Minimum Lead Time - Booking Validation Tests
 
 it('rejects booking within minimum lead time window', function () use ($workingHours) {
     MinimumLeadTimeFeature::activate();

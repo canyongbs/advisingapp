@@ -130,6 +130,7 @@ class ManagePersonalBookingPage extends ProfilePage
                             ->suffix('hours')
                             ->default(0)
                             ->minValue(0)
+                            ->maxValue(720)
                             ->integer()
                             ->visible(fn (Get $get) => MinimumLeadTimeFeature::active() && $get('is_enabled')),
                         Section::make('Working Hours')

@@ -193,9 +193,10 @@ class CreateBookingGroup extends CreateRecord
                         ->suffix('hours')
                         ->default(0)
                         ->minValue(0)
+                        ->maxValue(720)
                         ->integer()
                         ->columnSpanFull()
-                        ->visible(MinimumLeadTimeFeature::active()),
+                        ->visible(fn (): bool => MinimumLeadTimeFeature::active()),
                     DailyHoursRepeater::make('available_appointment_hours')
                         ->label('Days and Hours')
                         ->columnSpanFull(),

@@ -75,14 +75,19 @@ class GetAvailableGroupAppointmentSlots
             ? $bookingGroup->default_appointment_buffer_after_duration
             : 0;
 
-        $effectiveLeadTime = 0;
+        $resolveEffectiveLeadTime = function (BookingGroup $bookingGroup, $members): int {
+            if (! MinimumLeadTimeFeature::active()) {
+                return 0;
+            }
 
-        if (MinimumLeadTimeFeature::active()) {
             $memberMaxLeadTime = PersonalBookingPage::query()
                 ->whereIn('user_id', $members->pluck('id'))
                 ->max('minimum_booking_lead_time_hours') ?? 0;
-            $effectiveLeadTime = max($bookingGroup->minimum_booking_lead_time_hours ?? 0, $memberMaxLeadTime);
-        }
+
+            return max($bookingGroup->minimum_booking_lead_time_hours ?? 0, $memberMaxLeadTime);
+        };
+
+        $effectiveLeadTime = $resolveEffectiveLeadTime($bookingGroup, $members);
 
         $monthStart = Carbon::create($year, $month, 1)->startOfDay();
         $monthEnd = Carbon::create($year, $month, 1)->endOfMonth()->endOfDay();

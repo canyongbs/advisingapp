@@ -147,15 +147,19 @@ class GroupBookingPageWidgetController extends Controller
         $endsAt = Carbon::parse($request->validated('ends_at'));
 
         // Calculate effective lead time: max of group's lead time and all members' lead times
-        $effectiveLeadTime = 0;
+        $resolveEffectiveLeadTime = function (BookingGroup $bookingGroup, $members): int {
+            if (! MinimumLeadTimeFeature::active()) {
+                return 0;
+            }
 
-        if (MinimumLeadTimeFeature::active()) {
             $memberMaxLeadTime = PersonalBookingPage::query()
                 ->whereIn('user_id', $members->pluck('id'))
                 ->max('minimum_booking_lead_time_hours') ?? 0;
-            $effectiveLeadTime = max($bookingGroup->minimum_booking_lead_time_hours ?? 0, $memberMaxLeadTime);
-        }
 
+            return max($bookingGroup->minimum_booking_lead_time_hours ?? 0, $memberMaxLeadTime);
+        };
+
+        $effectiveLeadTime = $resolveEffectiveLeadTime($bookingGroup, $members);
         $earliestAllowed = now()->addHours($effectiveLeadTime);
 
         if ($startsAt->isBefore($earliestAllowed)) {
