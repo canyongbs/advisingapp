@@ -38,7 +38,9 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates
 
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
+use App\Features\ApplicationSubmissionStateArchivingFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -83,6 +85,8 @@ class EditApplicationSubmissionState extends EditRecord
     {
         return [
             ViewAction::make(),
+            ArchiveAction::make()
+                ->visible(fn (): bool => ApplicationSubmissionStateArchivingFeature::active()),
             DeleteAction::make(),
         ];
     }

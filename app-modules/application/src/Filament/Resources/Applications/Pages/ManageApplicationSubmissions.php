@@ -41,7 +41,9 @@ use AdvisingApp\Application\Exports\ApplicationSubmissionExport;
 use AdvisingApp\Application\Filament\Resources\Applications\Actions\ApplicationAdmissionActions;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Application\Models\Scopes\ClassifiedAs;
+use App\Features\ApplicationSubmissionStateArchivingFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -74,26 +76,69 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
 
     public function getDefaultActiveTab(): string | int | null
     {
-        return 'received';
+        $firstStateQuery = ApplicationSubmissionState::query();
+
+        if (ApplicationSubmissionStateArchivingFeature::active()) {
+            $firstStateQuery->withoutArchivedAndUnused(); // @phpstan-ignore method.notFound
+        }
+
+        $firstState = $firstStateQuery
+            ->oldest('id')
+            ->first();
+
+        return $firstState
+            ? $firstState->id
+            : 'all';
     }
 
     public function getTabs(): array
     {
-        return [
-            'received' => Tab::make('Received')
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Received)))),
-            'review' => Tab::make('Review')
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Review)))),
-            'documents_required' => Tab::make('Documents Required')
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::DocumentsRequired)))),
-            'complete' => Tab::make('Complete')
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Complete)))),
-            'admit' => Tab::make('Admit')
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Admit)))),
-            'deny' => Tab::make('Deny')
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Deny)))),
-            'all' => Tab::make('All'),
-        ];
+        if (! ApplicationSubmissionStateArchivingFeature::active()) {
+            return [
+                'received' => Tab::make('Received')
+                    ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Received)))),
+                'review' => Tab::make('Review')
+                    ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Review)))),
+                'documents_required' => Tab::make('Documents Required')
+                    ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::DocumentsRequired)))),
+                'complete' => Tab::make('Complete')
+                    ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Complete)))),
+                'admit' => Tab::make('Admit')
+                    ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Admit)))),
+                'deny' => Tab::make('Deny')
+                    ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Deny)))),
+                'all' => Tab::make('All'),
+            ];
+        }
+
+        $states = ApplicationSubmissionState::query()
+            ->withCount('submissions')
+            ->oldest('id')
+            ->get();
+
+        $tabs = [];
+
+        foreach ($states as $state) {
+            if (filled($state->archived_at) && $state->submissions_count === 0) {
+                continue;
+            }
+
+            $label = $state->name;
+
+            if (filled($state->archived_at)) {
+                $label .= ' (Archived)';
+            }
+
+            $tabs[$state->id] = Tab::make($label)
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas(
+                    'state',
+                    fn (Builder $query) => $query->where('id', $state->id),
+                ));
+        }
+
+        $tabs['all'] = Tab::make('All');
+
+        return $tabs;
     }
 
     public function table(Table $table): Table

@@ -40,7 +40,14 @@ use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Application\Models\Scopes\ClassifiedAs;
+use App\Features\ApplicationSubmissionStateArchivingFeature;
+use CanyonGBS\Common\Filament\Support\HideDeletedAndArchivedExceptSelectedFromSelectOptions;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Throwable;
 
 // TODO We either need to introduce support for choosing the state that abides by the allowed classification transitions
 // Or we need to restrict creation of these states so that our `first()` logic to grab the desired state is always correct
@@ -48,47 +55,96 @@ class ApplicationAdmissionActions
 {
     public static function get(): array
     {
+        if (! ApplicationSubmissionStateArchivingFeature::active()) {
+            return [
+                Action::make('mark_as_reviewed')
+                    ->label('Mark as Reviewed')
+                    ->action(
+                        fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
+                            ->transitionTo(ApplicationSubmissionState::tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Review))->first(), ApplicationSubmissionStateClassification::Review)
+                    )
+                    ->cancelParentActions()
+                    ->visible(fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')->getStateTransitions()->contains(ApplicationSubmissionStateClassification::Review->value)),
+                Action::make('mark_as_complete')
+                    ->label('Mark as Complete')
+                    ->action(
+                        fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
+                            ->transitionTo(ApplicationSubmissionState::tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Complete))->first(), ApplicationSubmissionStateClassification::Complete)
+                    )
+                    ->cancelParentActions()
+                    ->visible(fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')->getStateTransitions()->contains(ApplicationSubmissionStateClassification::Complete->value)),
+                Action::make('mark_as_documents_required')
+                    ->label('Mark as Documents Required')
+                    ->action(
+                        fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
+                            ->transitionTo(ApplicationSubmissionState::tap(new ClassifiedAs(ApplicationSubmissionStateClassification::DocumentsRequired))->first(), ApplicationSubmissionStateClassification::DocumentsRequired)
+                    )
+                    ->cancelParentActions()
+                    ->visible(fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')->getStateTransitions()->contains(ApplicationSubmissionStateClassification::DocumentsRequired->value)),
+                Action::make('mark_as_deny')
+                    ->label('Mark as Deny')
+                    ->action(
+                        fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
+                            ->transitionTo(ApplicationSubmissionState::tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Deny))->first(), ApplicationSubmissionStateClassification::Deny)
+                    )
+                    ->cancelParentActions()
+                    ->visible(fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')->getStateTransitions()->contains(ApplicationSubmissionStateClassification::Deny->value)),
+                Action::make('mark_as_admit')
+                    ->label('Mark as Admit')
+                    ->action(
+                        fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
+                            ->transitionTo(ApplicationSubmissionState::tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Admit))->first(), ApplicationSubmissionStateClassification::Admit)
+                    )
+                    ->cancelParentActions()
+                    ->visible(fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')->getStateTransitions()->contains(ApplicationSubmissionStateClassification::Admit->value)),
+            ];
+        }
+
         return [
-            Action::make('mark_as_reviewed')
-                ->label('Mark as Reviewed')
-                ->action(
-                    fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-                        ->transitionTo(ApplicationSubmissionState::tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Review))->first(), ApplicationSubmissionStateClassification::Review)
-                )
+            Action::make('update_submission_state')
+                ->label('Update State')
+                ->form(fn (ApplicationSubmission $record): array => [
+                    Select::make('state_id')
+                        ->label('Submission State')
+                        ->relationship(
+                            name: 'state',
+                            titleAttribute: 'name',
+                            modifyQueryUsing: fn (Builder $query, ?Model $record, Select $component): Builder => app(HideDeletedAndArchivedExceptSelectedFromSelectOptions::class)($query, $record, $component)
+                                ->oldest('id'),
+                        )
+                        ->disableOptionWhen(function (string $value) use ($record): bool {
+                            $state = ApplicationSubmissionState::find($value);
+
+                            if (! $state) {
+                                return true;
+                            }
+
+                            return ! $record
+                                ->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
+                                ->getStateTransitions()
+                                ->contains($state->classification->value);
+                        })
+                        ->required()
+                        ->default(fn (ApplicationSubmission $record) => $record->state_id),
+                ])
+                ->action(function (ApplicationSubmission $record, array $data) {
+                    try {
+                        $record->refresh();
+                        $newState = ApplicationSubmissionState::findOrFail($data['state_id']);
+
+                        $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
+                            ->transitionTo($newState, $newState->classification);
+                    } catch (Throwable $exception) {
+                        report($exception);
+
+                        Notification::make()
+                            ->title('Failed to update submission state')
+                            ->danger()
+                            ->send();
+                    }
+                })
                 ->cancelParentActions()
-                ->visible(fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')->getStateTransitions()->contains(ApplicationSubmissionStateClassification::Review->value)),
-            Action::make('mark_as_complete')
-                ->label('Mark as Complete')
-                ->action(
-                    fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-                        ->transitionTo(ApplicationSubmissionState::tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Complete))->first(), ApplicationSubmissionStateClassification::Complete)
-                )
-                ->cancelParentActions()
-                ->visible(fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')->getStateTransitions()->contains(ApplicationSubmissionStateClassification::Complete->value)),
-            Action::make('mark_as_documents_required')
-                ->label('Mark as Documents Required')
-                ->action(
-                    fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-                        ->transitionTo(ApplicationSubmissionState::tap(new ClassifiedAs(ApplicationSubmissionStateClassification::DocumentsRequired))->first(), ApplicationSubmissionStateClassification::DocumentsRequired)
-                )
-                ->cancelParentActions()
-                ->visible(fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')->getStateTransitions()->contains(ApplicationSubmissionStateClassification::DocumentsRequired->value)),
-            Action::make('mark_as_deny')
-                ->label('Mark as Deny')
-                ->action(
-                    fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-                        ->transitionTo(ApplicationSubmissionState::tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Deny))->first(), ApplicationSubmissionStateClassification::Deny)
-                )
-                ->cancelParentActions()
-                ->visible(fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')->getStateTransitions()->contains(ApplicationSubmissionStateClassification::Deny->value)),
-            Action::make('mark_as_admit')
-                ->label('Mark as Admit')
-                ->action(
-                    fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-                        ->transitionTo(ApplicationSubmissionState::tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Admit))->first(), ApplicationSubmissionStateClassification::Admit)
-                )
-                ->cancelParentActions()
-                ->visible(fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')->getStateTransitions()->contains(ApplicationSubmissionStateClassification::Admit->value)),
+                ->visible(fn (ApplicationSubmission $record): bool => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')->getStateTransitions()->isNotEmpty()),
         ];
     }
 }

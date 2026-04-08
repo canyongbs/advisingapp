@@ -94,9 +94,21 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
 
     public function delete(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
     {
+        if ($model->submissions()->exists()) {
+            return Response::deny('Cannot delete a submission state that has associated submissions.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'settings.*.delete',
             denyResponse: 'You do not have permission to delete this state.'
+        );
+    }
+
+    public function archive(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.delete',
+            denyResponse: 'You do not have permission to archive this state.'
         );
     }
 
@@ -110,6 +122,10 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
 
     public function forceDelete(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
     {
+        if ($model->submissions()->exists()) {
+            return Response::deny('Cannot delete a submission state that has associated submissions.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this state.'
