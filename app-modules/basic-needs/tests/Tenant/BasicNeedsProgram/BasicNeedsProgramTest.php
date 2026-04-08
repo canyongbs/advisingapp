@@ -443,4 +443,3 @@ it('returns server-side search results for contact persons beyond the initial 40
                 && array_key_exists($searchTarget, $searchResults);
         });
 });
-
