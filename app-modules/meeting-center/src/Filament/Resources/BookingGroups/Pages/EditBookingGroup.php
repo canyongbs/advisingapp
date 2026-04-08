@@ -212,6 +212,14 @@ class EditBookingGroup extends EditRecord
                         ->integer()
                         ->columnSpanFull()
                         ->visible(fn (): bool => MinimumLeadTimeFeature::active()),
+                    TextInput::make('maximum_booking_lead_time_days')
+                        ->label('Maximum Lead Time')
+                        ->suffix('days')
+                        ->default(0)
+                        ->minValue(0)
+                        ->integer()
+                        ->columnSpanFull()
+                        ->visible(fn (): bool => MaximumLeadTimeFeature::active()),
                     DailyHoursRepeater::make('available_appointment_hours')
                         ->label('Days and Hours')
                         ->columnSpanFull(),

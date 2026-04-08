@@ -231,7 +231,7 @@ class GetAvailableGroupAppointmentSlots
             ->when(
                 $latestAllowed !== null,
                 fn (Collection $collection) => $collection
-                    ->filter(fn (array $block) => $block['start']->isBefore($latestAllowed))
+                    ->filter(fn (array $block) => $block['start']->lte($latestAllowed))
             )
             ->map(function (array $block) use ($now, $latestAllowed) {
                 $start = $block['start']->isBefore($now) ? $now->copy() : $block['start'];
