@@ -291,6 +291,10 @@ class OutlookCalendarManager implements CalendarInterface
 
     public function refreshToken(Calendar $calendar): Calendar
     {
+        if (blank($calendar->oauth_refresh_token)) {
+            throw new CouldNotRefreshToken(message: 'No refresh token available for calendar.');
+        }
+
         $azureCalendarSettings = app(AzureCalendarSettings::class);
 
         $response = Http::asForm()->post(
