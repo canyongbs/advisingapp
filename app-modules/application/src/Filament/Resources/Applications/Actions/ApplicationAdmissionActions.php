@@ -129,8 +129,7 @@ class ApplicationAdmissionActions
                 ])
                 ->action(function (ApplicationSubmission $record, array $data) {
                     try {
-                        $record->state_id = (string) $record->getOriginal('state_id');
-                        $record->unsetRelation('state');
+                        $record->refresh();
                         $newState = ApplicationSubmissionState::findOrFail($data['state_id']);
 
                         $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
