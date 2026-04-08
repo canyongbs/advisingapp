@@ -42,8 +42,6 @@ use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\Http;
 use Spatie\Health\Enums\Status;
 
-use function Pest\Laravel\withoutExceptionHandling;
-
 beforeEach(function () {
     $azureSsoSettings = app(AzureSsoSettings::class);
     $azureSsoSettings->tenant_id = 'test_tenant';
