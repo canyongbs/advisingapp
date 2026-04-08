@@ -40,6 +40,8 @@ use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
+use App\Features\MinimumLeadTimeFeature;
 use App\Models\User;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Builder;
@@ -73,6 +75,20 @@ class GetAvailableGroupAppointmentSlots
             ? $bookingGroup->default_appointment_buffer_after_duration
             : 0;
 
+        $resolveEffectiveLeadTime = function (BookingGroup $bookingGroup, Collection $members): int {
+            if (! MinimumLeadTimeFeature::active()) {
+                return 0;
+            }
+
+            $memberMaxLeadTime = PersonalBookingPage::query()
+                ->whereIn('user_id', $members->pluck('id'))
+                ->max('minimum_booking_lead_time_hours') ?? 0;
+
+            return max($bookingGroup->minimum_booking_lead_time_hours ?? 0, $memberMaxLeadTime);
+        };
+
+        $effectiveLeadTime = $resolveEffectiveLeadTime($bookingGroup, $members);
+
         $monthStart = Carbon::create($year, $month, 1)->startOfDay();
         $monthEnd = Carbon::create($year, $month, 1)->endOfMonth()->endOfDay();
 
@@ -81,7 +97,7 @@ class GetAvailableGroupAppointmentSlots
             $this->getGroupAppointmentBusyPeriods($bookingGroup, $monthStart, $monthEnd),
         );
 
-        $now = now();
+        $now = now()->addHours($effectiveLeadTime);
         $blocks = [];
 
         /** @var iterable<Carbon> $period */

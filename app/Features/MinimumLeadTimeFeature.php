@@ -34,44 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+namespace App\Features;
 
-use AdvisingApp\MeetingCenter\Database\Factories\PersonalBookingPageFactory;
-use App\Models\BaseModel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use OwenIt\Auditing\Auditable as AuditableTrait;
-use OwenIt\Auditing\Contracts\Auditable;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @mixin IdeHelperPersonalBookingPage
- */
-class PersonalBookingPage extends BaseModel implements Auditable
+class MinimumLeadTimeFeature extends AbstractFeatureFlag
 {
-    use AuditableTrait;
-
-    /** @use HasFactory<PersonalBookingPageFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'is_enabled',
-        'default_appointment_duration',
-        'slug',
-        'minimum_booking_lead_time_hours',
-    ];
-
-    protected $casts = [
-        'is_enabled' => 'boolean',
-        'default_appointment_duration' => 'integer',
-        'minimum_booking_lead_time_hours' => 'integer',
-    ];
-
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
+    public function resolve(mixed $scope): mixed
     {
-        return $this->belongsTo(User::class);
+        return false;
     }
 }

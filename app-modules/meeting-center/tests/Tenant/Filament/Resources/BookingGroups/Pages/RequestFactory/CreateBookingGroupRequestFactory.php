@@ -54,6 +54,7 @@ class CreateBookingGroupRequestFactory extends RequestFactory
                 'hours' => $this->faker->numberBetween(0, 23),
                 'minutes' => $this->faker->numberBetween(0, 59),
             ],
+            'minimum_booking_lead_time_hours' => 0,
             'available_appointment_hours' => [
                 'monday' => ['day' => 'monday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
                 'tuesday' => ['day' => 'tuesday', 'is_enabled' => false, 'starts_at' => null, 'ends_at' => null],

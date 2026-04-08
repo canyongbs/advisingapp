@@ -42,6 +42,8 @@ use AdvisingApp\MeetingCenter\Http\Requests\BookGroupCalendarSlotRequest;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
+use App\Features\MinimumLeadTimeFeature;
 use App\Http\Controllers\Controller;
 use App\Settings\CollegeBrandingSettings;
 use Carbon\Carbon;
@@ -49,6 +51,7 @@ use Exception;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
@@ -144,10 +147,28 @@ class GroupBookingPageWidgetController extends Controller
         $startsAt = Carbon::parse($request->validated('starts_at'));
         $endsAt = Carbon::parse($request->validated('ends_at'));
 
-        if ($startsAt->isPast()) {
+        // Calculate effective lead time: max of group's lead time and all members' lead times
+        $resolveEffectiveLeadTime = function (BookingGroup $bookingGroup, Collection $members): int {
+            if (! MinimumLeadTimeFeature::active()) {
+                return 0;
+            }
+
+            $memberMaxLeadTime = PersonalBookingPage::query()
+                ->whereIn('user_id', $members->pluck('id'))
+                ->max('minimum_booking_lead_time_hours') ?? 0;
+
+            return max($bookingGroup->minimum_booking_lead_time_hours ?? 0, $memberMaxLeadTime);
+        };
+
+        $effectiveLeadTime = $resolveEffectiveLeadTime($bookingGroup, $members);
+        $earliestAllowed = now()->addHours($effectiveLeadTime);
+
+        if ($startsAt->isBefore($earliestAllowed)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cannot book appointments that have already started. Please select a future time slot.',
+                'message' => $effectiveLeadTime > 0
+                    ? "Bookings require at least {$effectiveLeadTime} hours advance notice. Please select a later time slot."
+                    : 'Cannot book appointments that have already started. Please select a future time slot.',
             ], 422);
         }
 

@@ -34,44 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+use App\Features\MinimumLeadTimeFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\MeetingCenter\Database\Factories\PersonalBookingPageFactory;
-use App\Models\BaseModel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use OwenIt\Auditing\Auditable as AuditableTrait;
-use OwenIt\Auditing\Contracts\Auditable;
-
-/**
- * @mixin IdeHelperPersonalBookingPage
- */
-class PersonalBookingPage extends BaseModel implements Auditable
-{
-    use AuditableTrait;
-
-    /** @use HasFactory<PersonalBookingPageFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'is_enabled',
-        'default_appointment_duration',
-        'slug',
-        'minimum_booking_lead_time_hours',
-    ];
-
-    protected $casts = [
-        'is_enabled' => 'boolean',
-        'default_appointment_duration' => 'integer',
-        'minimum_booking_lead_time_hours' => 'integer',
-    ];
-
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(User::class);
+        DB::transaction(function () {
+            Schema::table('personal_booking_pages', function (Blueprint $table) {
+                $table->unsignedInteger('minimum_booking_lead_time_hours')->default(0);
+            });
+
+            Schema::table('booking_groups', function (Blueprint $table) {
+                $table->unsignedInteger('minimum_booking_lead_time_hours')->default(0);
+            });
+
+            MinimumLeadTimeFeature::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            MinimumLeadTimeFeature::deactivate();
+
+            Schema::table('personal_booking_pages', function (Blueprint $table) {
+                $table->dropColumn('minimum_booking_lead_time_hours');
+            });
+
+            Schema::table('booking_groups', function (Blueprint $table) {
+                $table->dropColumn('minimum_booking_lead_time_hours');
+            });
+        });
+    }
+};

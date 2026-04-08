@@ -38,6 +38,7 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
 use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
+use App\Features\MinimumLeadTimeFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
 use App\Models\User;
@@ -187,6 +188,15 @@ class CreateBookingGroup extends CreateRecord
                         ->label('After')
                         ->columnSpanFull()
                         ->visible(fn (Get $get): bool => $get('is_default_appointment_buffer_enabled')),
+                    TextInput::make('minimum_booking_lead_time_hours')
+                        ->label('Minimum Lead Time')
+                        ->suffix('hours')
+                        ->default(0)
+                        ->minValue(0)
+                        ->maxValue(720)
+                        ->integer()
+                        ->columnSpanFull()
+                        ->visible(fn (): bool => MinimumLeadTimeFeature::active()),
                     DailyHoursRepeater::make('available_appointment_hours')
                         ->label('Days and Hours')
                         ->columnSpanFull(),
@@ -212,6 +222,8 @@ class CreateBookingGroup extends CreateRecord
         }
 
         $data['available_appointment_hours'] = DailyHoursRepeater::mutateDataBeforeSave($data['available_appointment_hours']);
+
+        $data['minimum_booking_lead_time_hours'] = $data['minimum_booking_lead_time_hours'] ?? 0;
 
         return $data;
     }

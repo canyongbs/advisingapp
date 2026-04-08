@@ -59,6 +59,7 @@ class BookingGroupFactory extends Factory
             'book_with' => BookingGroupBookWith::All,
             'meeting_owner_id' => null,
             'default_appointment_duration' => 60,
+            'minimum_booking_lead_time_hours' => 0,
             'available_appointment_hours' => [
                 'monday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
                 'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],

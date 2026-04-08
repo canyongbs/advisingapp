@@ -49,6 +49,7 @@ class EditBookingGroupRequestFactory extends RequestFactory
             'description' => $this->faker->paragraph(),
             'book_with' => BookingGroupBookWith::All->value,
             'meeting_owner_id' => null,
+            'minimum_booking_lead_time_hours' => 0,
         ];
     }
 }
