@@ -66,7 +66,7 @@ class OutlookCalendarManager implements CalendarInterface
 {
     public function getCalendars(Calendar $calendar): array
     {
-        $client = (new Graph())->setAccessToken($calendar->oauth_token);
+        $client = $this->makeClient($calendar);
 
         $calendars = $client->createRequest('GET', '/me/calendars')
             ->setReturnType(MicrosoftGraphCalendar::class)
@@ -284,6 +284,7 @@ class OutlookCalendarManager implements CalendarInterface
     {
         $calendar->oauth_token = null;
         $calendar->oauth_refresh_token = null;
+        $calendar->oauth_token_expires_at = null;
         $calendar->save();
 
         return true;
@@ -291,6 +292,10 @@ class OutlookCalendarManager implements CalendarInterface
 
     public function refreshToken(Calendar $calendar): Calendar
     {
+        if (blank($calendar->oauth_refresh_token)) {
+            throw new CouldNotRefreshToken(message: 'No refresh token available for calendar.');
+        }
+
         $azureCalendarSettings = app(AzureCalendarSettings::class);
 
         $response = Http::asForm()->post(
@@ -305,33 +310,18 @@ class OutlookCalendarManager implements CalendarInterface
         );
 
         if ($response->clientError() || $response->serverError()) {
-            if ($response->status() === Response::HTTP_UNAUTHORIZED) {
-                $calendar->oauth_token = null;
-                $calendar->oauth_refresh_token = null;
-                $calendar->oauth_token_expires_at = null;
+            $shouldDisconnect = $response->status() === Response::HTTP_UNAUTHORIZED
+                || (
+                    ($response->status() === Response::HTTP_BAD_REQUEST)
+                    && ($response->json('error') === 'invalid_grant')
+                    && (
+                        is_string($errorDescription = $response->json('error_description'))
+                        && (str_contains($errorDescription, 'AADSTS50173') || str_contains($errorDescription, 'AADSTS50057'))
+                    )
+                );
 
-                $calendar->save();
-
-                $calendar->user->notify(new CalendarRequiresReconnectNotification($calendar));
-
-                throw new CouldNotRefreshToken(previous: $response->toException());
-            }
-
-            if (
-                ($response->status() === Response::HTTP_BAD_REQUEST)
-                && ($response->json('error') === 'invalid_grant')
-                && (
-                    is_string($errorDescription = $response->json('error_description'))
-                    && (str_contains($errorDescription, 'AADSTS50173') || str_contains($errorDescription, 'AADSTS50057'))
-                )
-            ) {
-                $calendar->oauth_token = null;
-                $calendar->oauth_refresh_token = null;
-                $calendar->oauth_token_expires_at = null;
-
-                $calendar->save();
-
-                $calendar->user->notify(new CalendarRequiresReconnectNotification($calendar));
+            if ($shouldDisconnect) {
+                $this->disconnectAndNotify($calendar);
 
                 throw new CouldNotRefreshToken(previous: $response->toException());
             }
@@ -399,6 +389,22 @@ class OutlookCalendarManager implements CalendarInterface
         }
 
         return $microsoftEvent;
+    }
+
+    private function disconnectAndNotify(Calendar $calendar): void
+    {
+        $calendar->refresh();
+
+        $shouldNotify = filled($calendar->oauth_refresh_token);
+
+        $calendar->oauth_token = null;
+        $calendar->oauth_refresh_token = null;
+        $calendar->oauth_token_expires_at = null;
+        $calendar->save();
+
+        if ($shouldNotify) {
+            $calendar->user->notify(new CalendarRequiresReconnectNotification($calendar));
+        }
     }
 
     private function executeWithRetry(object $request): mixed
