@@ -37,7 +37,7 @@
 namespace AdvisingApp\Engagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Engagement\Models\Concerns\EngagementFileAttachmentProvider;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -56,10 +56,8 @@ use AdvisingApp\Timeline\Timelines\EngagementTimeline;
 use App\Models\BaseModel;
 use App\Models\User;
 use CanyonGBS\Common\Parser\Parser;
-use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
-use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -75,7 +73,6 @@ use League\HTMLToMarkdown\HtmlConverter;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * @property-read ?Educatable $recipient
@@ -102,7 +99,8 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'scheduled_at',
         'dispatched_at',
         'channel',
-        'campaign_action_id',
+        'source_id',
+        'source_type',
         'dispatch_failed_at',
     ];
 
@@ -195,11 +193,11 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     }
 
     /**
-     * @return BelongsTo<CampaignAction, $this>
+     * @return MorphTo<Model, $this>
      */
-    public function campaignAction(): BelongsTo
+    public function source(): MorphTo
     {
-        return $this->belongsTo(CampaignAction::class);
+        return $this->morphTo();
     }
 
     /**
@@ -243,39 +241,15 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
             return new HtmlString($attribute?->toHtml() ?? '');
         }
 
-        $content = $this->campaignAction
-            ? $this->campaignAction->getAttribute('data.body')
-            : $this->body;
+        $attribute = $this->getRichContentAttribute('body')?->mergeTags($this->getMergeData());
 
-        if (blank($content)) {
-            return new HtmlString('');
-        }
-
-        // Images saved via SpatieMediaLibrary have UUID IDs and null src.
-        // Images from campaign/workflow jobs have filename IDs and direct S3 URLs.
-        // If the engagement has media records, use the provider to resolve UUIDs.
-        // Otherwise, strip non-UUID IDs to preserve existing src URLs.
-        if ($this->getMedia('body')->isNotEmpty()) {
-            $attribute = $this->getRichContentAttribute('body')?->mergeTags($this->getMergeData());
-
-            return new HtmlString($attribute?->toHtml() ?? '');
-        }
-
-        $this->resolveImageUrls($content);
-
-        return new HtmlString(
-            RichContentRenderer::make($content)
-                ->mergeTags($this->getMergeData())
-                ->toHtml()
-        );
+        return new HtmlString($attribute?->toHtml() ?? '');
     }
 
     public function getSubject(): ?HtmlString
     {
         if ($this->batch) {
             $attribute = $this->batch->getRichContentAttribute('subject')?->mergeTags($this->getMergeData());
-        } elseif ($this->campaignAction) {
-            $attribute = $this->campaignAction->getRichContentAttribute('data.subject')?->mergeTags($this->getMergeData());
         } else {
             $attribute = $this->getRichContentAttribute('subject')?->mergeTags($this->getMergeData());
         }
@@ -344,47 +318,8 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
         $this->registerRichContent('body')
             ->fileAttachmentsDisk('s3-public')
-            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
+            ->fileAttachmentProvider(EngagementFileAttachmentProvider::make())
             ->mergeTags($this->getMergeData());
-    }
-
-    /**
-     * Resolve image URLs in RichEditor content for rendering.
-     *
-     * Images may have:
-     * - A filename ID with a valid S3 src URL (direct uploads) → strip ID to preserve src
-     * - A UUID ID with null src (SpatieMediaLibrary from templates) → resolve UUID to URL
-     *
-     * @param  array<string, mixed>  $node
-     */
-    protected function resolveImageUrls(array &$node): void
-    {
-        if (($node['type'] ?? null) === 'image' && filled($node['attrs']['id'] ?? null)) {
-            $id = $node['attrs']['id'];
-            $isUuid = preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $id);
-
-            if ($isUuid && blank($node['attrs']['src'] ?? null)) {
-                // UUID with no src — resolve from media library (e.g., loaded from email template)
-                $media = Media::query()
-                    ->where('uuid', $id)
-                    ->first();
-
-                if ($media) {
-                    $node['attrs']['src'] = $media->getUrl();
-                }
-            }
-
-            // Strip ID so processFileAttachments doesn't overwrite src
-            unset($node['attrs']['id']);
-        }
-
-        if (isset($node['content']) && is_array($node['content'])) {
-            foreach ($node['content'] as &$child) {
-                if (is_array($child)) {
-                    $this->resolveImageUrls($child);
-                }
-            }
-        }
     }
 
     protected static function booted(): void

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Exports;
 
+use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -137,7 +138,9 @@ class StudentMessagesExporter extends Exporter
                         return 'N/A';
                     }
 
-                    return $record->record->campaignAction?->campaign->name ?? 'N/A';
+                    return $record->record->source instanceof CampaignAction
+                        ? $record->record->source->campaign->name ?? 'N/A'
+                        : 'N/A';
                 }),
         ];
     }

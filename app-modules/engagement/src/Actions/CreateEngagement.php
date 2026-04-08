@@ -67,8 +67,8 @@ class CreateEngagement
             $engagement->dispatched_at = now();
         }
 
-        if ($data->campaignAction) {
-            $engagement->campaignAction()->associate($data->campaignAction);
+        if ($data->source) {
+            $engagement->source()->associate($data->source);
         }
 
         $engagement->body = $data->body;

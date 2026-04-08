@@ -37,6 +37,7 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -215,9 +216,10 @@ class StudentMessagesDetailTable extends BaseWidget
                                     FROM campaigns c
                                     INNER JOIN campaign_actions ca ON ca.campaign_id = c.id
                                     WHERE ca.id = (
-                                        SELECT campaign_action_id
+                                        SELECT source_id
                                         FROM engagements
                                         WHERE id = record_id
+                                        AND source_type = 'campaign_action'
                                     )
                                 )
                                 ELSE NULL
@@ -225,17 +227,13 @@ class StudentMessagesDetailTable extends BaseWidget
                         ", [$engagementModel->getMorphClass()]);
                     })
                     ->state(
-                        fn (HolisticEngagement $record) => $record->record instanceof Engagement
-                            ? $record->record->campaignAction?->campaign->name ?? 'N/A'
+                        fn (HolisticEngagement $record) => $record->record instanceof Engagement && $record->record->source instanceof CampaignAction
+                            ? $record->record->source->campaign->name ?? 'N/A'
                             : 'N/A'
                     )
                     ->url(
-                        fn (HolisticEngagement $record) => $record->record instanceof Engagement
-                            ? (
-                                $record->record->campaignAction?->campaign
-                                ? CampaignResource::getUrl('view', ['record' => $record->record->campaignAction->campaign->getKey()])
-                                : null
-                            )
+                        fn (HolisticEngagement $record) => $record->record instanceof Engagement && $record->record->source instanceof CampaignAction
+                            ? CampaignResource::getUrl('view', ['record' => $record->record->source->campaign->getKey()])
                             : null
                     )
                     ->openUrlInNewTab(),

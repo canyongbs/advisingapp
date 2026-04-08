@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Engagement\DataTransferObjects;
 
-use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use App\Models\User;
@@ -61,7 +60,7 @@ class EngagementCreationData extends Data
         public ?array $body = null,
         public ?CarbonInterface $scheduledAt = null,
         public ?string $recipientRoute = null,
-        public ?CampaignAction $campaignAction = null,
+        public ?Model $source = null,
         public ?Schema $schema = null,
     ) {}
 }

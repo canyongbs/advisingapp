@@ -364,7 +364,8 @@ it('ensures campaign is properly rendered in the table', function () {
     $engagementWithCampaign = Engagement::factory()->create([
         'recipient_id' => $prospect->id,
         'recipient_type' => (new Prospect())->getMorphClass(),
-        'campaign_action_id' => $campaignAction->id,
+        'source_id' => $campaignAction->id,
+        'source_type' => $campaignAction->getMorphClass(),
     ]);
 
     $engagementWithoutCampaign = Engagement::factory()->create([
