@@ -36,7 +36,7 @@
 
 namespace App\Health\Checks;
 
-use AdvisingApp\Authorization\Exceptions\NoMatchingCredentialsException;
+use AdvisingApp\Authorization\Exceptions\NoMatchingAzureCredentialsException;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use Carbon\Carbon;
 use Exception;
@@ -78,14 +78,10 @@ class AzureCredentialsExpiringCheck extends Check
             });
 
             if ($credentials->isEmpty()) {
-                throw new NoMatchingCredentialsException();
+                throw new NoMatchingAzureCredentialsException();
             }
 
-            if (count($credentials) > 1) {
-                $endDateTime = Carbon::parse($credentials->sortBy(fn (stdClass $item) => Carbon::parse($item->endDateTime))->first()->endDateTime);
-            } else {
-                $endDateTime = Carbon::parse($credentials->first()->endDateTime);
-            }
+            $endDateTime = Carbon::parse($credentials->sortBy(fn (stdClass $item) => Carbon::parse($item->endDateTime))->first()->endDateTime);
 
             if ($endDateTime->isPast()) {
                 return Result::make()->failed();

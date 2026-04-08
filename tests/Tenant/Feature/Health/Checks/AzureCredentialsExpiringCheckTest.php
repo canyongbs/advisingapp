@@ -34,15 +34,17 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Exceptions\NoMatchingAzureCredentialsException;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use App\Health\Checks\AzureCredentialsExpiringCheck;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\Http;
 use Spatie\Health\Enums\Status;
 
-beforeEach(function () {
-    Cache::tags(['azure_credentials_expiring'])->flush();
+use function Pest\Laravel\withoutExceptionHandling;
 
+beforeEach(function () {
     $azureSsoSettings = app(AzureSsoSettings::class);
     $azureSsoSettings->tenant_id = 'test_tenant';
     $azureSsoSettings->client_id = 'test_client';
@@ -68,7 +70,8 @@ it('returns with ok status if credentials exist and do not expire soon', functio
     expect((new AzureCredentialsExpiringCheck())->run()->status)->toBe(Status::ok());
 });
 
-it('returns with ok status if there is an exception', function () {
+it('returns with ok status if there is an exception in the API request', function () {
+    Exceptions::fake();
     $azureSsoSettings = app(AzureSsoSettings::class);
 
     Http::fake([
@@ -76,6 +79,12 @@ it('returns with ok status if there is an exception', function () {
     ]);
 
     expect((new AzureCredentialsExpiringCheck())->run()->status)->toBe(Status::ok());
+    Exceptions::assertReported(RequestException::class);
+});
+
+it('returns with ok status if there is an exception when retrieveing the password credentials', function () {
+    Exceptions::fake();
+    $azureSsoSettings = app(AzureSsoSettings::class);
 
     Http::fake([
         'https://login.microsoftonline.com/' . $azureSsoSettings->tenant_id . '/oauth2/v2.0/token' => Http::response(['access_token' => 'token'], 200),
@@ -90,15 +99,22 @@ it('returns with ok status if there is an exception', function () {
     ]);
 
     expect((new AzureCredentialsExpiringCheck())->run()->status)->toBe(Status::ok());
+    Exceptions::assertReported(RequestException::class);
+});
+
+it('returns with ok status if there are no matching password credentials', function () {
+    Exceptions::fake();
+    $azureSsoSettings = app(AzureSsoSettings::class);
 
     Http::fake([
         'https://login.microsoftonline.com/' . $azureSsoSettings->tenant_id . '/oauth2/v2.0/token' => Http::response(['access_token' => 'token'], 200),
         "https://graph.microsoft.com/v1.0/applications(appId='{$azureSsoSettings->client_id}')" . '?$select=passwordCredentials' => Http::response([
-            'passwordCredentials' => [(object) []],
-        ], 500),
+            'passwordCredentials' => [],
+        ], 200),
     ]);
 
     expect((new AzureCredentialsExpiringCheck())->run()->status)->toBe(Status::ok());
+    Exceptions::assertReported(NoMatchingAzureCredentialsException::class);
 });
 
 it('uses the soonest ending credential if it receives multiple', function () {
