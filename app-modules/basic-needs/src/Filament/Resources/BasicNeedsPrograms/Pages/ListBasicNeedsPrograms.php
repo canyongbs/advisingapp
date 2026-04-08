@@ -129,9 +129,7 @@ class ListBasicNeedsPrograms extends ListRecords
                         ->limit(40)
                         ->pluck('contact_person', 'contact_person')
                         ->all())
-                    ->getOptionLabelUsing(fn (string | int | null $value): ?string => filled($value)
-                        ? BasicNeedsProgram::query()->where('contact_person', $value)->value('contact_person')
-                        : null),
+                    ->getOptionLabelUsing(fn (string | int | null $value): ?string => $value),
             ], layout: FiltersLayout::BeforeContent)
             ->recordActions([
                 ViewAction::make(),
