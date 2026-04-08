@@ -48,6 +48,7 @@ use Carbon\Carbon;
 use DateTime;
 use DateTimeInterface;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 use Illuminate\Support\Facades\Http;
 use Microsoft\Graph\Core\GraphConstants;
 use Microsoft\Graph\Graph;
@@ -111,6 +112,10 @@ class OutlookCalendarManager implements CalendarInterface
                 } else {
                     throw $exception;
                 }
+            } catch (ServerException $exception) {
+                $retryAfter = $exception->getResponse()->getHeaderLine('Retry-After');
+
+                throw new MicrosoftGraphRateLimited(previous: $exception, retryAfterSeconds: (int) ($retryAfter ?: 30));
             }
 
             $responseEvents = $response->getResponseAsObject(Event::class);
@@ -153,6 +158,10 @@ class OutlookCalendarManager implements CalendarInterface
             } else {
                 throw $exception;
             }
+        } catch (ServerException $exception) {
+            $retryAfter = $exception->getResponse()->getHeaderLine('Retry-After');
+
+            throw new MicrosoftGraphRateLimited(previous: $exception, retryAfterSeconds: (int) ($retryAfter ?: 30));
         }
 
         $providerEvent = $response->getResponseAsObject(Event::class);
@@ -186,6 +195,10 @@ class OutlookCalendarManager implements CalendarInterface
             } else {
                 throw $exception;
             }
+        } catch (ServerException $exception) {
+            $retryAfter = $exception->getResponse()->getHeaderLine('Retry-After');
+
+            throw new MicrosoftGraphRateLimited(previous: $exception, retryAfterSeconds: (int) ($retryAfter ?: 30));
         }
 
         $providerEvent = $response->getResponseAsObject(Event::class);
@@ -218,6 +231,10 @@ class OutlookCalendarManager implements CalendarInterface
             } else {
                 throw $exception;
             }
+        } catch (ServerException $exception) {
+            $retryAfter = $exception->getResponse()->getHeaderLine('Retry-After');
+
+            throw new MicrosoftGraphRateLimited(previous: $exception, retryAfterSeconds: (int) ($retryAfter ?: 30));
         }
     }
 
@@ -305,7 +322,7 @@ class OutlookCalendarManager implements CalendarInterface
                 && ($response->json('error') === 'invalid_grant')
                 && (
                     is_string($errorDescription = $response->json('error_description'))
-                    && str_contains($errorDescription, 'AADSTS50173')
+                    && (str_contains($errorDescription, 'AADSTS50173') || str_contains($errorDescription, 'AADSTS50057'))
                 )
             ) {
                 $calendar->oauth_token = null;
@@ -335,7 +352,7 @@ class OutlookCalendarManager implements CalendarInterface
 
     public function makeClient(Calendar $calendar): Graph
     {
-        if ($calendar->oauth_token_expires_at->isPast()) {
+        if ($calendar->oauth_token_expires_at?->isPast() ?? true) {
             $calendar = $this->refreshToken($calendar);
         }
 
