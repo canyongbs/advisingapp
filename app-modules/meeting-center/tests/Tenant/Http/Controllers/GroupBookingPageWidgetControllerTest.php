@@ -38,11 +38,11 @@ use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\Calendar;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use App\Features\MinimumLeadTimeFeature;
 use App\Models\User;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Exceptions;
 use Mockery\MockInterface;
 
 use function Pest\Laravel\getJson;
@@ -59,10 +59,13 @@ $workingHours = [
 ];
 
 beforeEach(function () {
-    Exceptions::fake();
-
     $mockDriver = Mockery::mock(CalendarInterface::class);
-    $mockDriver->shouldReceive('createEvent')->andReturn(null);
+    $mockDriver->shouldReceive('createEvent')->andReturnUsing(function (CalendarEvent $event) {
+        $event->updateQuietly([
+            'provider_id' => 'mock-provider-id',
+            'provider_uid' => 'mock-provider-uid',
+        ]);
+    });
     $mockDriver->shouldReceive('updateEvent')->andReturn(null);
     $mockDriver->shouldReceive('deleteEvent')->andReturn(null);
 
