@@ -75,7 +75,7 @@ class GetAvailableGroupAppointmentSlots
             ? $bookingGroup->default_appointment_buffer_after_duration
             : 0;
 
-        $resolveEffectiveLeadTime = function (BookingGroup $bookingGroup, $members): int {
+        $resolveEffectiveLeadTime = function (BookingGroup $bookingGroup, Collection $members): int {
             if (! MinimumLeadTimeFeature::active()) {
                 return 0;
             }

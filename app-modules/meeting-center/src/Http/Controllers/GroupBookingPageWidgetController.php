@@ -51,6 +51,7 @@ use Exception;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
@@ -147,7 +148,7 @@ class GroupBookingPageWidgetController extends Controller
         $endsAt = Carbon::parse($request->validated('ends_at'));
 
         // Calculate effective lead time: max of group's lead time and all members' lead times
-        $resolveEffectiveLeadTime = function (BookingGroup $bookingGroup, $members): int {
+        $resolveEffectiveLeadTime = function (BookingGroup $bookingGroup, Collection $members): int {
             if (! MinimumLeadTimeFeature::active()) {
                 return 0;
             }

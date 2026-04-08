@@ -102,7 +102,9 @@ it('filters group available slots within lead time window', function () use ($wo
 
     $response->assertOk();
 
-    $blocks = collect($response->json('blocks'));
+    /** @var array<int, array{start: string, end: string}> $blocksData */
+    $blocksData = $response->json('blocks');
+    $blocks = collect($blocksData);
 
     // With 24h lead time from Monday 08:00, earliest slot should be Tuesday 08:00+
     $blocksBeforeLeadTime = $blocks->filter(function (array $block) {
@@ -140,7 +142,9 @@ it('returns group available slots within lead time window when feature is inacti
 
     $response->assertOk();
 
-    $blocks = collect($response->json('blocks'));
+    /** @var array<int, array{start: string, end: string}> $blocksData */
+    $blocksData = $response->json('blocks');
+    $blocks = collect($blocksData);
 
     // Feature is off, so Monday slots should still be available
     $mondayBlocks = $blocks->filter(function (array $block) {
