@@ -171,8 +171,7 @@ test('state dropdown pre-selects the current submission state by default', funct
     livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
         ->mountAction(TestAction::make('view')->table($submission))
         ->mountAction('update_submission_state')
-        // @phpstan-ignore property.notFound
-        ->assertActionDataSet(['state_id' => $submission->state_id]);
+        ->assertSchemaStateSet(['state_id' => $submission->state_id]);
 });
 
 test('calling the update_submission_state action with a disallowed transition state does not change the submission state', function () {
