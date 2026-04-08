@@ -43,14 +43,14 @@ use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-test('tabs are generated for each unique classification', function () {
+test('tabs are generated for each state', function () {
     asSuperAdmin();
 
-    ApplicationSubmissionState::factory()->create([
+    $receivedState = ApplicationSubmissionState::factory()->create([
         'classification' => ApplicationSubmissionStateClassification::Received,
     ]);
 
-    ApplicationSubmissionState::factory()->create([
+    $reviewState = ApplicationSubmissionState::factory()->create([
         'classification' => ApplicationSubmissionStateClassification::Review,
     ]);
 
@@ -61,8 +61,8 @@ test('tabs are generated for each unique classification', function () {
         ->getTabs();
 
     expect($tabs)->toHaveKey('all');
-    expect($tabs)->toHaveKey(strtolower(ApplicationSubmissionStateClassification::Received->value));
-    expect($tabs)->toHaveKey(strtolower(ApplicationSubmissionStateClassification::Review->value));
+    expect($tabs)->toHaveKey($receivedState->id);
+    expect($tabs)->toHaveKey($reviewState->id);
 });
 
 test('tab label includes Archived when the state for that classification is archived but still has submissions', function () {
@@ -86,7 +86,7 @@ test('tab label includes Archived when the state for that classification is arch
         ->instance()
         ->getTabs();
 
-    $receivedKey = strtolower(ApplicationSubmissionStateClassification::Received->value);
+    $receivedKey = $receivedState->id;
 
     expect($tabs)->toHaveKey($receivedKey);
     expect($tabs[$receivedKey]->getLabel())->toContain('(Archived)');
@@ -95,7 +95,7 @@ test('tab label includes Archived when the state for that classification is arch
 test('default active tab is the first non-archived state', function () {
     asSuperAdmin();
 
-    ApplicationSubmissionState::factory()->create([
+    $receivedState = ApplicationSubmissionState::factory()->create([
         'classification' => ApplicationSubmissionStateClassification::Received,
     ]);
 
@@ -105,7 +105,7 @@ test('default active tab is the first non-archived state', function () {
         ->instance()
         ->getDefaultActiveTab();
 
-    expect($defaultTab)->toBe(strtolower(ApplicationSubmissionStateClassification::Received->value));
+    expect($defaultTab)->toBe($receivedState->id);
 });
 
 test('default tab falls back to first non-archived state when first created state is archived and unused', function () {
@@ -115,7 +115,7 @@ test('default tab falls back to first non-archived state when first created stat
         'classification' => ApplicationSubmissionStateClassification::Received,
     ]);
 
-    ApplicationSubmissionState::factory()->create([
+    $reviewState = ApplicationSubmissionState::factory()->create([
         'classification' => ApplicationSubmissionStateClassification::Review,
     ]);
 
@@ -128,7 +128,7 @@ test('default tab falls back to first non-archived state when first created stat
         ->instance()
         ->getDefaultActiveTab();
 
-    expect($defaultTab)->toBe(strtolower(ApplicationSubmissionStateClassification::Review->value));
+    expect($defaultTab)->toBe($reviewState->id);
 });
 
 test('archived state that has submissions still appears as a tab', function () {
@@ -151,5 +151,92 @@ test('archived state that has submissions still appears as a tab', function () {
         ->instance()
         ->getTabs();
 
-    expect($tabs)->toHaveKey(strtolower(ApplicationSubmissionStateClassification::Received->value));
+    expect($tabs)->toHaveKey($receivedState->id);
+});
+
+test('multiple states with the same classification each get their own tab', function () {
+    asSuperAdmin();
+
+    $firstReceivedState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    $secondReceivedState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    $application = Application::factory()->create();
+
+    $tabs = livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->instance()
+        ->getTabs();
+
+    expect($tabs)->toHaveKey($firstReceivedState->id);
+    expect($tabs)->toHaveKey($secondReceivedState->id);
+});
+
+test('switching tabs filters the table to only show submissions for that state', function () {
+    asSuperAdmin();
+
+    $receivedState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    $reviewState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Review,
+    ]);
+
+    $application = Application::factory()->create();
+
+    // Delete auto-created submissions from the Application factory
+    $application->submissions()->forceDelete();
+
+    $receivedSubmission = ApplicationSubmission::factory()->create([
+        'application_id' => $application->id,
+    ]);
+    // Observer auto-assigns received state; explicitly set review for the second
+    $reviewSubmission = ApplicationSubmission::factory()->create([
+        'application_id' => $application->id,
+    ]);
+    $reviewSubmission->state()->associate($reviewState);
+    $reviewSubmission->saveQuietly();
+
+    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->set('activeTab', $receivedState->id)
+        ->assertCanSeeTableRecords([$receivedSubmission])
+        ->assertCanNotSeeTableRecords([$reviewSubmission])
+        ->set('activeTab', $reviewState->id)
+        ->assertCanSeeTableRecords([$reviewSubmission])
+        ->assertCanNotSeeTableRecords([$receivedSubmission]);
+});
+
+test('all tab shows submissions from all states', function () {
+    asSuperAdmin();
+
+    $receivedState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    $reviewState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Review,
+    ]);
+
+    $application = Application::factory()->create();
+
+    // Delete auto-created submissions from the Application factory
+    $application->submissions()->forceDelete();
+
+    $receivedSubmission = ApplicationSubmission::factory()->create([
+        'application_id' => $application->id,
+    ]);
+
+    $reviewSubmission = ApplicationSubmission::factory()->create([
+        'application_id' => $application->id,
+    ]);
+    $reviewSubmission->state()->associate($reviewState);
+    $reviewSubmission->saveQuietly();
+
+    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->set('activeTab', 'all')
+        ->assertCanSeeTableRecords([$receivedSubmission, $reviewSubmission]);
 });

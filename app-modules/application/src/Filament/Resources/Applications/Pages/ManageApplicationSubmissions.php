@@ -87,7 +87,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
             ->first();
 
         return $firstState
-            ? strtolower($firstState->classification->value)
+            ? $firstState->id
             : 'all';
     }
 
@@ -129,7 +129,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                 $label .= ' (Archived)';
             }
 
-            $tabs[strtolower($state->classification->value)] = Tab::make($label)
+            $tabs[$state->id] = Tab::make($label)
                 ->modifyQueryUsing(fn (Builder $query) => $query->whereHas(
                     'state',
                     fn (Builder $query) => $query->where('id', $state->id),
