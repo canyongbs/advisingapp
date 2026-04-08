@@ -42,6 +42,7 @@ use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use Filament\Actions\Action;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\Select;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
@@ -143,16 +144,14 @@ test('state dropdown excludes archived states that are not the currently selecte
     livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
         ->mountAction(TestAction::make('view')->table($submission))
         ->mountAction('update_submission_state')
-        ->assertFormFieldExists('state_id');
+        ->assertFormFieldExists('state_id', checkFieldUsing: function (Select $field) use ($receivedState, $reviewState) {
+            $optionKeys = array_keys($field->getOptions());
 
-    // @phpstan-ignore method.notFound
-    $visibleStateIds = ApplicationSubmissionState::query()
-        ->withoutArchived()
-        ->pluck('id')
-        ->all();
+            expect($optionKeys)->toContain($receivedState->id)
+                ->and($optionKeys)->not->toContain($reviewState->id);
 
-    expect($visibleStateIds)->toContain($receivedState->id);
-    expect($visibleStateIds)->not->toContain($reviewState->id);
+            return true;
+        });
 });
 
 test('state dropdown pre-selects the current submission state by default', function () {
