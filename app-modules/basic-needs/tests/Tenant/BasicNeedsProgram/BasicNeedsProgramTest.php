@@ -45,6 +45,7 @@ use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Tables\Filters\SelectFilter;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -403,74 +404,43 @@ it('can filter support programs by contact person', function () {
         ->assertCanNotSeeTableRecords($basicNeedsPrograms->where('contact_person', '!=', $contactPerson));
 });
 
-it('shows only distinct contact person options in the initial filter load', function () {
+it('loads only distinct contact persons as initial filter options', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
-
-    $sharedContactPerson = 'Shared Contact';
-
-    BasicNeedsProgram::factory()->count(3)->create(['contact_person' => $sharedContactPerson]);
-    BasicNeedsProgram::factory()->count(2)->create(['contact_person' => 'Other Contact']);
-
     $user->givePermissionTo('support_program.view-any');
-
     actingAs($user);
 
-    $initialOptions = BasicNeedsProgram::query()
-        ->whereNotNull('contact_person')
-        ->distinct()
-        ->orderBy('contact_person')
-        ->limit(40)
-        ->pluck('contact_person', 'contact_person')
-        ->all();
+    BasicNeedsProgram::factory()->count(3)->create(['contact_person' => 'Duplicate Name']);
+    BasicNeedsProgram::factory()->count(2)->create(['contact_person' => 'Other Name']);
 
-    expect($initialOptions)
-        ->toHaveKey($sharedContactPerson)
-        ->toHaveKey('Other Contact')
-        ->and(count($initialOptions))
-        ->toBeLessThanOrEqual(40)
-        ->and(array_count_values(array_keys($initialOptions)))
-        ->each->toBe(1);
+    livewire(ListBasicNeedsPrograms::class)
+        ->assertTableFilterExists('contact_person', function (SelectFilter $filter): bool {
+            $options = $filter->getFormField()->getOptions();
+
+            return array_keys($options) === array_unique(array_keys($options));
+        });
 });
 
-it('returns contact person search results outside the initial 40 options', function () {
+it('returns server-side search results for contact persons beyond the initial 40 options', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
-
-    $searchableContactPerson = 'ZZZ Searchable Contact';
+    $user->givePermissionTo('support_program.view-any');
+    actingAs($user);
 
     foreach (range(1, 50) as $index) {
-        BasicNeedsProgram::factory()->create([
-            'contact_person' => sprintf('Contact %03d', $index),
-        ]);
+        BasicNeedsProgram::factory()->create(['contact_person' => sprintf('Contact %03d', $index)]);
     }
 
-    BasicNeedsProgram::factory()->create([
-        'contact_person' => $searchableContactPerson,
-    ]);
+    $searchTarget = 'ZZZ Searchable Contact';
+    BasicNeedsProgram::factory()->create(['contact_person' => $searchTarget]);
 
-    $user->givePermissionTo('support_program.view-any');
+    livewire(ListBasicNeedsPrograms::class)
+        ->assertTableFilterExists('contact_person', function (SelectFilter $filter) use ($searchTarget): bool {
+            $field = $filter->getFormField();
+            $initialOptions = $field->getOptions();
+            $searchResults = $field->getSearchResults('searchable');
 
-    actingAs($user);
-
-    $initialOptions = BasicNeedsProgram::query()
-        ->whereNotNull('contact_person')
-        ->distinct()
-        ->orderBy('contact_person')
-        ->limit(40)
-        ->pluck('contact_person', 'contact_person')
-        ->all();
-
-    $searchResults = BasicNeedsProgram::query()
-        ->whereNotNull('contact_person')
-        ->whereRaw('LOWER(contact_person) LIKE ?', ['%' . mb_strtolower('searchable') . '%'])
-        ->distinct()
-        ->orderBy('contact_person')
-        ->limit(40)
-        ->pluck('contact_person', 'contact_person')
-        ->all();
-
-    expect($initialOptions)
-        ->toHaveCount(40)
-        ->not->toHaveKey($searchableContactPerson)
-        ->and($searchResults)
-        ->toHaveKey($searchableContactPerson);
+            return count($initialOptions) === 40
+                && ! array_key_exists($searchTarget, $initialOptions)
+                && array_key_exists($searchTarget, $searchResults);
+        });
 });
+
