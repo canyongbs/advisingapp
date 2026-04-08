@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Jobs;
 
+use AdvisingApp\MeetingCenter\Exceptions\CouldNotRefreshToken;
 use AdvisingApp\MeetingCenter\Exceptions\MicrosoftGraphRateLimited;
 use AdvisingApp\MeetingCenter\Jobs\Middleware\CalendarRequestsConcurrencyLimit;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
@@ -97,6 +98,10 @@ class SyncCalendarPeriod implements ShouldQueue, ShouldBeUnique
                     new DateTime($this->start->toDateTimeString()),
                     new DateTime($this->end->toDateTimeString())
                 );
+        } catch (CouldNotRefreshToken $exception) {
+            $this->fail($exception);
+
+            return;
         } catch (MicrosoftGraphRateLimited $exception) {
             if (filled($exception->retryAfterSeconds)) {
                 $this->release($exception->retryAfterSeconds);
