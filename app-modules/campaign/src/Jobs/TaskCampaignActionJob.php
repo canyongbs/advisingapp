@@ -120,8 +120,6 @@ class TaskCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             new Exception("Relationship [{$relationship}] does not exist on " . Task::class . '.')
         );
 
-        if (! empty($ids)) {
-            $task->{$relationship}()->sync($ids);
-        }
+        $task->{$relationship}()->sync($ids);
     }
 }
