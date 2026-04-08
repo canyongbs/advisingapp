@@ -34,22 +34,16 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Filament\Resources\Applications\Actions\ApplicationAdmissionActions;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationSubmissions;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Select;
-use Filament\Schemas\Schema;
 
-use function Pest\Laravel\seed;
+use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
-
-beforeEach(function () {
-    seed(ApplicationSubmissionStateSeeder::class);
-});
 
 test('update_submission_state action is labeled Update State', function () {
     $actions = ApplicationAdmissionActions::get();
@@ -60,251 +54,151 @@ test('update_submission_state action is labeled Update State', function () {
     expect($action->getLabel())->toBe('Update State');
 });
 
-test('state machine returns allowed transitions for a Received submission', function () {
+test('update_submission_state action is visible when submission state has allowed transitions', function () {
     asSuperAdmin();
 
+    $receivedState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
     $application = Application::factory()->create();
-    $receivedState = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)->first();
+
     $submission = ApplicationSubmission::factory()->create([
         'application_id' => $application->id,
         'state_id' => $receivedState->id,
     ]);
 
-    $transitions = $submission
-        ->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-        ->getStateTransitions();
-
-    expect($transitions)->not->toBeNull();
-    expect($transitions->count())->toBeGreaterThan(0);
+    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->mountTableAction('view', $submission)
+        ->assertActionVisible('update_submission_state');
 });
 
-test('update_submission_state action is visible when transitions exist for the submission', function () {
+test('update_submission_state action is not visible when submission state has no allowed transitions', function () {
     asSuperAdmin();
 
-    $application = Application::factory()->create();
-    $receivedState = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)->first();
-    $submission = ApplicationSubmission::factory()->create([
-        'application_id' => $application->id,
-        'state_id' => $receivedState->id,
+    $admitState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Admit,
     ]);
 
-    $transitions = $submission
-        ->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-        ->getStateTransitions();
-
-    $actions = ApplicationAdmissionActions::get();
-    collect($actions)->firstWhere(fn (Action $action) => $action->getName() === 'update_submission_state');
-
-    $isVisible = (bool) $transitions->count();
-
-    expect($isVisible)->toBeTrue();
-});
-
-test('update_submission_state action is not visible when no transitions exist', function () {
-    asSuperAdmin();
-
     $application = Application::factory()->create();
 
-    $admitState = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Admit)->first();
     $submission = ApplicationSubmission::factory()->create([
         'application_id' => $application->id,
         'state_id' => $admitState->id,
     ]);
 
-    $transitions = $submission
-        ->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-        ->getStateTransitions();
-
-    $isVisible = (bool) $transitions->count();
-
-    if ($transitions->count() === 0) {
-        expect($isVisible)->toBeFalse();
-    } else {
-        expect($isVisible)->toBeTrue();
-    }
+    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->mountTableAction('view', $submission)
+        ->assertActionHidden('update_submission_state');
 });
 
-test('calling transitionTo on a submission changes its state', function () {
+test('calling the update_submission_state action transitions the submission to the selected state', function () {
     asSuperAdmin();
 
+    $receivedState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    $reviewState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Review,
+    ]);
+
     $application = Application::factory()->create();
-    $receivedState = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)->first();
+
     $submission = ApplicationSubmission::factory()->create([
         'application_id' => $application->id,
         'state_id' => $receivedState->id,
     ]);
 
-    $stateMachine = $submission->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification');
-    $transitions = $stateMachine->getStateTransitions();
-
-    if ($transitions->isEmpty()) {
-        $this->markTestSkipped('No transitions defined from Received; skipping transition test.');
-    }
-
-    $nextClassificationValue = (string) $transitions->first();
-    $nextState = ApplicationSubmissionState::where('classification', $nextClassificationValue)->first();
-
-    expect($nextState)->not->toBeNull();
-
-    $stateMachine->transitionTo($nextState, ApplicationSubmissionStateClassification::from($nextClassificationValue));
+    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->mountTableAction('view', $submission)
+        ->callAction('update_submission_state', data: ['state_id' => $reviewState->id]);
 
     // @phpstan-ignore property.notFound
-    expect($submission->fresh()->state_id)->toBe($nextState->id);
+    expect($submission->fresh()->state_id)->toBe($reviewState->id);
 });
 
-test('same state no-op guard: transitioning to same state does not invoke transitionTo', function () {
+test('state dropdown excludes archived states that are not the currently selected state', function () {
     asSuperAdmin();
 
+    $receivedState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    $reviewState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Review,
+    ]);
+
     $application = Application::factory()->create();
-    $receivedState = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)->first();
+
     $submission = ApplicationSubmission::factory()->create([
         'application_id' => $application->id,
         'state_id' => $receivedState->id,
     ]);
 
-    $originalStateId = $submission->getOriginal('state_id') ?? $receivedState->id;
-    $submission->setAttribute('state_id', $originalStateId);
-    $submission->unsetRelation('state');
-
-    $newState = ApplicationSubmissionState::find($originalStateId);
-    $allowedTransitions = $submission
-        ->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-        ->getStateTransitions()
-        ->map(fn ($state) => (string) $state)
-        ->all();
-
-    // @phpstan-ignore property.notFound
-    $sameState = ! in_array($newState->classification->value, $allowedTransitions, true);
-
-    if ($sameState) {
-        // @phpstan-ignore property.notFound
-        expect($submission->fresh()->state_id)->toBe($receivedState->id);
-    } else {
-        expect($allowedTransitions)->not->toBeEmpty();
-    }
-});
-
-test('state dropdown includes all non-archived states and excludes archived states', function () {
-    asSuperAdmin();
-
-    $application = Application::factory()->create();
-    $receivedState = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)->first();
-    ApplicationSubmission::factory()->create([
-        'application_id' => $application->id,
-        'state_id' => $receivedState->id,
-    ]);
-
-    $reviewState = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Review)->first();
     // @phpstan-ignore method.notFound
     $reviewState->archive();
 
+    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->mountTableAction('view', $submission)
+        ->mountAction('update_submission_state')
+        ->assertFormFieldExists('state_id');
+
     // @phpstan-ignore method.notFound
-    $dropdownStateIds = ApplicationSubmissionState::query()
+    $visibleStateIds = ApplicationSubmissionState::query()
         ->withoutArchived()
-        ->oldest('id')
         ->pluck('id')
         ->all();
 
-    $nonArchivedStateIds = ApplicationSubmissionState::query()
-        ->whereNull('archived_at')
-        ->pluck('id')
-        ->all();
-
-    expect($dropdownStateIds)->toEqualCanonicalizing($nonArchivedStateIds);
-    expect($dropdownStateIds)->not->toContain($reviewState->id);
+    expect($visibleStateIds)->toContain($receivedState->id);
+    expect($visibleStateIds)->not->toContain($reviewState->id);
 });
 
-test('state dropdown current state is pre-selected by default', function () {
+test('state dropdown pre-selects the current submission state by default', function () {
     asSuperAdmin();
 
+    $receivedState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
     $application = Application::factory()->create();
-    $receivedState = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)->first();
+
     $submission = ApplicationSubmission::factory()->create([
         'application_id' => $application->id,
         'state_id' => $receivedState->id,
     ]);
 
-    $actions = ApplicationAdmissionActions::get();
-    $action = collect($actions)->firstWhere(fn (Action $action) => $action->getName() === 'update_submission_state');
+    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->mountTableAction('view', $submission)
+        ->mountAction('update_submission_state')
+        // @phpstan-ignore property.notFound
+        ->assertActionDataSet(['state_id' => $submission->state_id]);
+});
 
-    $action->record($submission);
-    $schema = $action->getSchema(Schema::make());
+test('calling the update_submission_state action with a disallowed transition state does not change the submission state', function () {
+    asSuperAdmin();
 
-    expect($schema)->not->toBeNull();
+    $receivedState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
 
-    $schema->record($submission);
+    // Admit is not a valid transition target from Received (only Review is allowed)
+    $admitState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Admit,
+    ]);
 
-    $schemaComponents = $schema->getComponents();
+    $application = Application::factory()->create();
 
-    $stateField = null;
+    $submission = ApplicationSubmission::factory()->create([
+        'application_id' => $application->id,
+        'state_id' => $receivedState->id,
+    ]);
 
-    foreach ($schemaComponents as $component) {
-        if ($component instanceof Select && $component->getName() === 'state_id') {
-            $stateField = $component;
+    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->mountTableAction('view', $submission)
+        ->callAction('update_submission_state', data: ['state_id' => $admitState->id]);
 
-            break;
-        }
-    }
-
-    expect($stateField)->toBeInstanceOf(Select::class);
+    // The state machine rejects the disallowed transition, so the state must remain unchanged
     // @phpstan-ignore property.notFound
-    expect($stateField->getDefaultState())->toBe($submission->state_id);
-});
-
-test('state dropdown disables option when selected state classification is not an allowed transition', function () {
-    asSuperAdmin();
-
-    $application = Application::factory()->create();
-    $receivedState = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)->first();
-    $submission = ApplicationSubmission::factory()->create([
-        'application_id' => $application->id,
-        'state_id' => $receivedState->id,
-    ]);
-
-    $allowedTransitions = $submission
-        ->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-        ->getStateTransitions()
-        ->map(fn ($state) => (string) $state)
-        ->all();
-
-    // @phpstan-ignore method.notFound
-    $disallowedState = ApplicationSubmissionState::query()
-        ->withoutArchived()
-        ->get()
-        ->first(function (ApplicationSubmissionState $state) use ($allowedTransitions, $submission): bool {
-            // @phpstan-ignore property.notFound
-            if ($state->id === $submission->state_id) {
-                return false;
-            }
-
-            // @phpstan-ignore property.notFound
-            return ! in_array($state->classification->value, $allowedTransitions, true);
-        });
-
-    if (! $disallowedState) {
-        $this->markTestSkipped('No disallowed submission state found for the current transition graph.');
-    }
-
-    $actions = ApplicationAdmissionActions::get();
-    $action = collect($actions)->firstWhere(fn (Action $action) => $action->getName() === 'update_submission_state');
-
-    $action->record($submission);
-    $schema = $action->getSchema(Schema::make());
-
-    expect($schema)->not->toBeNull();
-
-    $schema->record($submission);
-
-    $stateField = null;
-
-    foreach ($schema->getComponents() as $component) {
-        if ($component instanceof Select && $component->getName() === 'state_id') {
-            $stateField = $component;
-
-            break;
-        }
-    }
-
-    expect($stateField)->toBeInstanceOf(Select::class);
-    expect($stateField->isOptionDisabled((string) $disallowedState->id, $disallowedState->name))->toBeTrue();
+    expect($submission->fresh()->state_id)->toBe($receivedState->id);
 });

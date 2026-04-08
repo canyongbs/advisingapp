@@ -122,6 +122,10 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
 
     public function forceDelete(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
     {
+        if ($model->submissions()->exists()) {
+            return Response::deny('Cannot delete a submission state that has associated submissions.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this state.'

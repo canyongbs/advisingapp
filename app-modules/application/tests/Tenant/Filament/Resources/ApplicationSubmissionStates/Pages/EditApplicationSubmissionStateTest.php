@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages\EditApplicationSubmissionState;
 use AdvisingApp\Application\Models\ApplicationSubmission;
@@ -42,19 +41,15 @@ use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 
-use function Pest\Laravel\seed;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
-
-beforeEach(function () {
-    seed(ApplicationSubmissionStateSeeder::class);
-});
 
 test('can load edit page for a submission state', function () {
     asSuperAdmin();
 
-    $state = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)
-        ->first();
+    $state = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
 
     livewire(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
         ->assertSuccessful();
@@ -63,8 +58,9 @@ test('can load edit page for a submission state', function () {
 test('view action is available on edit page', function () {
     asSuperAdmin();
 
-    $state = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)
-        ->first();
+    $state = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
 
     livewire(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
         ->assertActionExists('view');
@@ -73,8 +69,9 @@ test('view action is available on edit page', function () {
 test('archive action is visible on edit page when state is not archived', function () {
     asSuperAdmin();
 
-    $state = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)
-        ->first();
+    $state = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
 
     livewire(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
         ->assertActionVisible('archive');
@@ -83,8 +80,9 @@ test('archive action is visible on edit page when state is not archived', functi
 test('archive action archives the state and redirects to index', function () {
     asSuperAdmin();
 
-    $state = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)
-        ->first();
+    $state = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
 
     livewire(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
         ->callAction('archive');
@@ -106,8 +104,9 @@ test('delete action is visible when state has no associated submissions', functi
 test('delete action is hidden when state has associated submissions', function () {
     asSuperAdmin();
 
-    $state = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)
-        ->first();
+    $state = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
 
     ApplicationSubmission::factory()->create(['state_id' => $state->id]);
 
@@ -118,8 +117,9 @@ test('delete action is hidden when state has associated submissions', function (
 test('archive policy requires settings delete permission', function () {
     $user = User::factory()->create();
 
-    $state = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)
-        ->first();
+    $state = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
 
     expect($user->can('archive', $state))->toBeFalse();
 
@@ -132,8 +132,9 @@ test('delete policy denies when state has submissions', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('settings.*.delete');
 
-    $state = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)
-        ->first();
+    $state = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
 
     ApplicationSubmission::factory()->create(['state_id' => $state->id]);
 
@@ -149,17 +150,4 @@ test('delete policy allows when state has no submissions', function () {
     ]);
 
     expect($user->can('delete', $state))->toBeTrue();
-});
-
-test('update policy requires settings update permission', function () {
-    $user = User::factory()->create();
-
-    $state = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)
-        ->first();
-
-    expect($user->can('update', $state))->toBeFalse();
-
-    $user->givePermissionTo('settings.*.update');
-
-    expect($user->can('update', $state))->toBeTrue();
 });

@@ -34,18 +34,13 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages\ListApplicationSubmissionStates;
+use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 
-use function Pest\Laravel\seed;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
-
-beforeEach(function () {
-    seed(ApplicationSubmissionStateSeeder::class);
-});
 
 test('can view list of application submission states', function () {
     asSuperAdmin();
@@ -75,22 +70,25 @@ test('view action is available on each state record', function () {
         ->assertTableActionExists('view');
 });
 
-test('can see all seeded states in the list by default', function () {
+test('can see all created states in the list', function () {
     asSuperAdmin();
 
-    $states = ApplicationSubmissionState::all();
+    $states = ApplicationSubmissionState::factory()->count(3)->create();
 
     livewire(ListApplicationSubmissionStates::class)
         ->assertCanSeeTableRecords($states);
 });
 
-test('non-archived states are visible by default', function () {
+test('archived state with no submissions is not visible in the list', function () {
     asSuperAdmin();
 
-    $visibleState = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)
-        ->whereNull('archived_at')
-        ->first();
+    $state = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    // @phpstan-ignore method.notFound
+    $state->archive();
 
     livewire(ListApplicationSubmissionStates::class)
-        ->assertCanSeeTableRecords([$visibleState]);
+        ->assertCanNotSeeTableRecords([$state]);
 });

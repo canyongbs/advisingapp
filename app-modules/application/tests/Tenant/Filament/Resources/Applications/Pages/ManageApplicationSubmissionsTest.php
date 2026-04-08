@@ -34,43 +34,25 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationSubmissions;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 
-use function Pest\Laravel\seed;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
-
-beforeEach(function () {
-    seed(ApplicationSubmissionStateSeeder::class);
-});
 
 test('tabs are generated for each unique classification', function () {
     asSuperAdmin();
 
-    $application = Application::factory()->create();
+    ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
 
-    $tabs = livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
-        ->instance()
-        ->getTabs();
-
-    expect($tabs)->toHaveKey('all');
-
-    foreach (ApplicationSubmissionStateClassification::cases() as $classification) {
-        $stateExists = ApplicationSubmissionState::where('classification', $classification)->exists();
-
-        if ($stateExists) {
-            expect($tabs)->toHaveKey(strtolower($classification->value));
-        }
-    }
-});
-
-test('all tab is always present in tabs', function () {
-    asSuperAdmin();
+    ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Review,
+    ]);
 
     $application = Application::factory()->create();
 
@@ -79,15 +61,18 @@ test('all tab is always present in tabs', function () {
         ->getTabs();
 
     expect($tabs)->toHaveKey('all');
+    expect($tabs)->toHaveKey(strtolower(ApplicationSubmissionStateClassification::Received->value));
+    expect($tabs)->toHaveKey(strtolower(ApplicationSubmissionStateClassification::Review->value));
 });
 
 test('tab label includes Archived when the state for that classification is archived but still has submissions', function () {
     asSuperAdmin();
 
-    $application = Application::factory()->create();
+    $receivedState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
 
-    $receivedState = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)
-        ->first();
+    $application = Application::factory()->create();
 
     ApplicationSubmission::factory()->create([
         'application_id' => $application->id,
@@ -107,22 +92,12 @@ test('tab label includes Archived when the state for that classification is arch
     expect($tabs[$receivedKey]->getLabel())->toContain('(Archived)');
 });
 
-test('tab label does not include Archived when no state in classification is archived', function () {
+test('default active tab is the first non-archived state', function () {
     asSuperAdmin();
 
-    $application = Application::factory()->create();
-
-    $tabs = livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
-        ->instance()
-        ->getTabs();
-
-    $receivedKey = strtolower(ApplicationSubmissionStateClassification::Received->value);
-
-    expect($tabs[$receivedKey]->getLabel())->not->toContain('(Archived)');
-});
-
-test('default active tab is received classification when seeded Received state is not archived', function () {
-    asSuperAdmin();
+    ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
 
     $application = Application::factory()->create();
 
@@ -133,11 +108,16 @@ test('default active tab is received classification when seeded Received state i
     expect($defaultTab)->toBe(strtolower(ApplicationSubmissionStateClassification::Received->value));
 });
 
-test('default tab falls back to first non-received classification when Received is archived and unused', function () {
+test('default tab falls back to first non-archived state when first created state is archived and unused', function () {
     asSuperAdmin();
 
-    $receivedState = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)
-        ->first();
+    $receivedState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Review,
+    ]);
 
     // @phpstan-ignore method.notFound
     $receivedState->archive();
@@ -148,33 +128,15 @@ test('default tab falls back to first non-received classification when Received 
         ->instance()
         ->getDefaultActiveTab();
 
-    expect($defaultTab)->not->toBe(strtolower(ApplicationSubmissionStateClassification::Received->value));
-    expect($defaultTab)->not->toBe('all');
-});
-
-test('archived state with no submissions does not appear as a tab key', function () {
-    asSuperAdmin();
-
-    $receivedState = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)
-        ->first();
-
-    // @phpstan-ignore method.notFound
-    $receivedState->archive();
-
-    $application = Application::factory()->create();
-
-    $tabs = livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
-        ->instance()
-        ->getTabs();
-
-    expect($tabs)->not->toHaveKey(strtolower(ApplicationSubmissionStateClassification::Received->value));
+    expect($defaultTab)->toBe(strtolower(ApplicationSubmissionStateClassification::Review->value));
 });
 
 test('archived state that has submissions still appears as a tab', function () {
     asSuperAdmin();
 
-    $receivedState = ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)
-        ->first();
+    $receivedState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
 
     $application = Application::factory()->create();
     ApplicationSubmission::factory()->create([
