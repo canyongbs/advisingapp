@@ -37,7 +37,11 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
+use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Team\Models\Team;
+use App\Models\User;
+use Closure;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -45,10 +49,18 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class TaskBlock extends CampaignActionBlock
 {
+    /**
+     * @var Model | array<string, mixed> | class-string<Model> | Closure | null
+     */
+    protected Model | array | string | Closure | null $model = Task::class;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -63,32 +75,38 @@ class TaskBlock extends CampaignActionBlock
         return [
             Fieldset::make('Details')
                 ->schema([
-                    Fieldset::make($fieldPrefix . 'Confidentiality')
+                    Fieldset::make('Confidentiality')
                         ->schema([
-                            Checkbox::make('is_confidential')
+                            Checkbox::make($fieldPrefix . 'is_confidential')
                                 ->label('Confidential')
                                 ->live(),
-                            Select::make('confidential_task_projects')
-                                ->relationship('confidentialAccessProjects', 'name')
-                                ->preload()
+                            Select::make($fieldPrefix . 'confidential_task_projects')
+                                ->options(fn () => self::modelOptions(Project::class))
+                                ->searchable()
+                                ->getSearchResultsUsing(fn (string $search) => self::modelOptions(Project::class, $search))
                                 ->label('Projects')
                                 ->multiple()
+                                ->dehydrated(true)
                                 ->exists('projects', 'id')
-                                ->visible(fn (Get $get) => $get('is_confidential')),
-                            Select::make('confidential_task_users')
-                                ->relationship('confidentialAccessUsers', 'name')
-                                ->preload()
+                                ->visible(fn (Get $get) => $get($fieldPrefix . 'is_confidential')),
+                            Select::make($fieldPrefix . 'confidential_task_users')
+                                ->options(fn () => self::modelOptions(User::class))
+                                ->searchable()
+                                ->getSearchResultsUsing(fn (string $search) => self::modelOptions(User::class, $search))
                                 ->label('Users')
                                 ->multiple()
+                                ->dehydrated(true)
                                 ->exists('users', 'id')
-                                ->visible(fn (Get $get) => $get('is_confidential')),
-                            Select::make('confidential_task_teams')
-                                ->relationship('confidentialAccessTeams', 'name')
-                                ->preload()
+                                ->visible(fn (Get $get) => $get($fieldPrefix . 'is_confidential')),
+                            Select::make($fieldPrefix . 'confidential_task_teams')
+                                ->options(fn () => self::modelOptions(Team::class))
+                                ->searchable()
+                                ->getSearchResultsUsing(fn (string $search) => self::modelOptions(Team::class, $search))
                                 ->label('Teams')
                                 ->multiple()
+                                ->dehydrated(true)
                                 ->exists('teams', 'id')
-                                ->visible(fn (Get $get) => $get('is_confidential')),
+                                ->visible(fn (Get $get) => $get($fieldPrefix . 'is_confidential')),
                         ]),
                     TextInput::make($fieldPrefix . 'title')
                         ->required()
@@ -114,5 +132,19 @@ class TaskBlock extends CampaignActionBlock
     public static function type(): string
     {
         return 'task';
+    }
+
+    /**
+     * @return Collection<int, string>
+     */
+    private static function modelOptions(string $modelClass, ?string $search = null): Collection
+    {
+        $query = $modelClass::query()->limit(50);
+
+        if ($search) {
+            $query->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%');
+        }
+
+        return $query->pluck('name', 'id');
     }
 }

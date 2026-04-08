@@ -76,7 +76,17 @@ class TaskCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             }
 
             $task->concern()->associate($educatable);
+
+            $isConfidential = ! empty($action->data['is_confidential']);
+            $task->is_confidential = $isConfidential;
+
             $task->save();
+
+            if ($isConfidential) {
+                $this->syncConfidentialAccess($task, 'confidentialAccessProjects', $action->data['confidential_task_projects'] ?? []);
+                $this->syncConfidentialAccess($task, 'confidentialAccessUsers', $action->data['confidential_task_users'] ?? []);
+                $this->syncConfidentialAccess($task, 'confidentialAccessTeams', $action->data['confidential_task_teams'] ?? []);
+            }
 
             $this->actionEducatable->succeeded_at = now();
             $this->actionEducatable
@@ -95,6 +105,23 @@ class TaskCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             $this->actionEducatable->markFailed();
 
             throw $e;
+        }
+    }
+
+    /**
+     * @param array<int, string> $ids
+     *
+     * @return void
+     */
+    private function syncConfidentialAccess(Task $task, string $relationship, array $ids): void
+    {
+        throw_unless(
+            method_exists($task, $relationship),
+            new Exception("Relationship [{$relationship}] does not exist on " . Task::class . '.')
+        );
+
+        if (! empty($ids)) {
+            $task->{$relationship}()->sync($ids);
         }
     }
 }
