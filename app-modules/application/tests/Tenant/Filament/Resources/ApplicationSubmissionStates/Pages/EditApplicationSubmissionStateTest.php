@@ -77,6 +77,20 @@ test('archive action is visible on edit page when state is not archived', functi
         ->assertActionVisible('archive');
 });
 
+test('archive action is hidden on edit page when state is already archived', function () {
+    asSuperAdmin();
+
+    $state = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    // @phpstan-ignore method.notFound
+    $state->archive();
+
+    livewire(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
+        ->assertActionHidden('archive');
+});
+
 test('archive action archives the state and redirects to index', function () {
     asSuperAdmin();
 
