@@ -41,6 +41,7 @@ use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use Filament\Actions\Action;
+use Filament\Actions\Testing\TestAction;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
@@ -69,7 +70,7 @@ test('update_submission_state action is visible when submission state has allowe
     ]);
 
     livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
-        ->mountTableAction('view', $submission)
+        ->mountAction(TestAction::make('view')->table($submission))
         ->assertActionVisible('update_submission_state');
 });
 
@@ -88,7 +89,7 @@ test('update_submission_state action is not visible when submission state has no
     ]);
 
     livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
-        ->mountTableAction('view', $submission)
+        ->mountAction(TestAction::make('view')->table($submission))
         ->assertActionHidden('update_submission_state');
 });
 
@@ -111,7 +112,7 @@ test('calling the update_submission_state action transitions the submission to t
     ]);
 
     livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
-        ->mountTableAction('view', $submission)
+        ->mountAction(TestAction::make('view')->table($submission))
         ->callAction('update_submission_state', data: ['state_id' => $reviewState->id]);
 
     // @phpstan-ignore property.notFound
@@ -140,7 +141,7 @@ test('state dropdown excludes archived states that are not the currently selecte
     $reviewState->archive();
 
     livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
-        ->mountTableAction('view', $submission)
+        ->mountAction(TestAction::make('view')->table($submission))
         ->mountAction('update_submission_state')
         ->assertFormFieldExists('state_id');
 
@@ -169,7 +170,7 @@ test('state dropdown pre-selects the current submission state by default', funct
     ]);
 
     livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
-        ->mountTableAction('view', $submission)
+        ->mountAction(TestAction::make('view')->table($submission))
         ->mountAction('update_submission_state')
         // @phpstan-ignore property.notFound
         ->assertActionDataSet(['state_id' => $submission->state_id]);
@@ -195,7 +196,7 @@ test('calling the update_submission_state action with a disallowed transition st
     ]);
 
     livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
-        ->mountTableAction('view', $submission)
+        ->mountAction(TestAction::make('view')->table($submission))
         ->callAction('update_submission_state', data: ['state_id' => $admitState->id]);
 
     // The state machine rejects the disallowed transition, so the state must remain unchanged
