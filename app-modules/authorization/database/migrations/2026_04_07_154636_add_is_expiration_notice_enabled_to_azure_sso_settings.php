@@ -53,9 +53,9 @@ return new class () extends SettingsMigration {
 
     public function down(): void
     {
-        AzureExpirationNoticeFeature::activate();
-
         DB::transaction(function () {
+            AzureExpirationNoticeFeature::deactivate();
+
             $this->migrator->inGroup('azure_sso', function (SettingsBlueprint $blueprint): void {
                 $blueprint->delete('is_expiration_notice_enabled');
             });
