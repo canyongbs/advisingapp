@@ -34,36 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Settings;
+namespace App\Livewire;
 
-use AdvisingApp\Authorization\Enums\AzureMatchingProperty;
-use Spatie\LaravelSettings\Settings;
+use CanyonGBS\Common\Enums\Color;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
 
-class AzureSsoSettings extends Settings
+class SsoCredentialsExpiringAlert extends Component
 {
-    public bool $is_enabled = false;
+    public ?Color $color = Color::Yellow;
 
-    public ?string $client_id = null;
-
-    public ?string $client_secret = null;
-
-    public ?string $tenant_id = null;
-
-    public bool $is_expiration_notice_enabled = false;
-
-    public AzureMatchingProperty $matching_property = AzureMatchingProperty::UserPrincipalName;
-
-    public static function group(): string
+    public function render(): View
     {
-        return 'azure_sso';
-    }
-
-    public static function encrypted(): array
-    {
-        return [
-            'client_id',
-            'client_secret',
-            'tenant_id',
-        ];
+        return view('filament.components.sso-credentials-expiring-alert');
     }
 }

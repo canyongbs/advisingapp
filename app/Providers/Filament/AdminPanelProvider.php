@@ -41,6 +41,8 @@ use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Filament\Clusters\ProfileSettings;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\ProductHealth;
+use App\Health\Checks\AzureCredentialsExpiringCheck;
+use App\Models\HealthCheckResultHistoryItem;
 use App\Models\Tenant;
 use App\Multitenancy\Http\Middleware\NeedsTenant;
 use App\Settings\CollegeBrandingSettings;
@@ -72,11 +74,13 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 use ShuvroRoy\FilamentSpatieLaravelHealth\FilamentSpatieLaravelHealthPlugin;
+use Spatie\Health\Enums\Status;
 use Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -242,6 +246,24 @@ class AdminPanelProvider extends PanelProvider
                     }
 
                     return new HtmlString(Blade::render('<livewire:branding-bar />'));
+                },
+            )
+            ->renderHook(
+                PanelsRenderHook::TOPBAR_AFTER,
+                function (): ?Htmlable {
+                    $showBanner = Cache::remember('azure_credentials_expiring', now()->addDay(), function () {
+                        $credentialsCheck = HealthCheckResultHistoryItem::where('check_name', app(AzureCredentialsExpiringCheck::class)->getName())
+                            ->latest()
+                            ->first();
+
+                        if ($credentialsCheck?->status !== Status::warning()->value) {
+                            return false;
+                        }
+
+                        return true;
+                    });
+
+                    return $showBanner ? new HtmlString(Blade::render('<livewire:sso-credentials-expiring-alert />')) : null;
                 },
             )
             ->globalSearchResourceOptIn();

@@ -34,36 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Settings;
+use App\Features\AzureExpirationNoticeFeature;
+use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsBlueprint;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\Authorization\Enums\AzureMatchingProperty;
-use Spatie\LaravelSettings\Settings;
-
-class AzureSsoSettings extends Settings
-{
-    public bool $is_enabled = false;
-
-    public ?string $client_id = null;
-
-    public ?string $client_secret = null;
-
-    public ?string $tenant_id = null;
-
-    public bool $is_expiration_notice_enabled = false;
-
-    public AzureMatchingProperty $matching_property = AzureMatchingProperty::UserPrincipalName;
-
-    public static function group(): string
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return 'azure_sso';
+        DB::transaction(function () {
+            $this->migrator->inGroup('azure_sso', function (SettingsBlueprint $blueprint): void {
+                try {
+                    $blueprint->add('is_expiration_notice_enabled', false);
+                } catch (SettingAlreadyExists $exception) {
+                    // do nothing
+                }
+            });
+
+            AzureExpirationNoticeFeature::activate();
+        });
     }
 
-    public static function encrypted(): array
+    public function down(): void
     {
-        return [
-            'client_id',
-            'client_secret',
-            'tenant_id',
-        ];
+        DB::transaction(function () {
+            AzureExpirationNoticeFeature::deactivate();
+
+            $this->migrator->inGroup('azure_sso', function (SettingsBlueprint $blueprint): void {
+                $blueprint->delete('is_expiration_notice_enabled');
+            });
+        });
     }
-}
+};
