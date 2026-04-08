@@ -36,6 +36,8 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
+use AdvisingApp\Group\Importers\ProspectGroupSubjectImporter;
+use AdvisingApp\Group\Importers\StudentGroupSubjectImporter;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -55,4 +57,12 @@ test('CreateGroup is gated with proper access control', function () {
         ->get(
             GroupResource::getUrl('create')
         )->assertSuccessful();
+});
+
+test('group importers expose user-friendly CSV header labels', function () {
+    $studentSubjectColumn = StudentGroupSubjectImporter::getColumns()[0];
+    $prospectSubjectColumn = ProspectGroupSubjectImporter::getColumns()[0];
+
+    expect($studentSubjectColumn->getLabel())->toBe('Student ID / Other ID');
+    expect($prospectSubjectColumn->getLabel())->toBe('Email address');
 });
