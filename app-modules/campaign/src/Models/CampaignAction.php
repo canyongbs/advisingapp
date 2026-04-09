@@ -42,12 +42,10 @@ use App\Models\BaseModel;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
-use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -82,43 +80,6 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia, HasRichCo
     ];
 
     /**
-     * Resolve dot-notation attributes for Filament's RichContentAttribute.
-     *
-     * Filament's RichContentAttribute::toHtml() calls getAttribute($name) which
-     * does not support dot notation for JSON-cast columns. This override enables
-     * getAttribute('data.body') to resolve into the `data` JSON column.
-     *
-     * @param mixed $key
-     */
-    public function getAttribute($key): mixed
-    {
-        if (str_contains((string) $key, '.')) {
-            return data_get(parent::getAttribute(Str::before($key, '.')), Str::after($key, '.'));
-        }
-
-        return parent::getAttribute($key);
-    }
-
-    /**
-     * @param  mixed  $key
-     * @param  mixed  $value
-     */
-    public function setAttribute($key, $value): mixed
-    {
-        if (str_contains((string) $key, '.')) {
-            $topLevel = Str::before($key, '.');
-            $nested = Str::after($key, '.');
-
-            $data = $this->getAttribute($topLevel) ?? [];
-            data_set($data, $nested, $value);
-
-            return parent::setAttribute($topLevel, $data);
-        }
-
-        return parent::setAttribute($key, $value);
-    }
-
-    /**
      * @return BelongsTo<Campaign, $this>
      */
     public function campaign(): BelongsTo
@@ -144,20 +105,6 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia, HasRichCo
         return ! is_null($this->execution_finished_at);
     }
 
-    /**
-     * Override to map form field names (e.g., 'body') to JSON column paths (e.g., 'data.body').
-     *
-     * The RichEditor field name is 'body', but the content attribute is registered as 'data.body'
-     * because the data is stored in a JSON column. This fallback allows the RichEditor to find
-     * the provider via getRichContentAttribute('body') → getRichContentAttribute('data.body').
-     */
-    public function getRichContentAttribute(string $attribute): ?RichContentAttribute
-    {
-        return $this->getRichContentAttributes()[$attribute]
-            ?? $this->getRichContentAttributes()['data.' . $attribute]
-            ?? null;
-    }
-
     public function setUpRichContent(): void
     {
         $mergeTags = [
@@ -168,10 +115,10 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia, HasRichCo
             'recipient preferred name' => '{{ recipient preferred name }}',
         ];
 
-        $this->registerRichContent('data.subject')
+        $this->registerRichContent('subject')
             ->mergeTags($mergeTags);
 
-        $this->registerRichContent('data.body')
+        $this->registerRichContent('body')
             ->fileAttachmentsDisk('s3-public')
             ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
             ->mergeTags($mergeTags);

@@ -34,49 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Blocks;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
-use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftEngagementBlockWithAi;
-use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
-use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use Filament\Forms\Components\Hidden;
-use Filament\Schemas\Components\Actions;
-
-class EngagementBatchSmsBlock extends CampaignActionBlock
-{
-    protected function setUp(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        parent::setUp();
-
-        $this->label('Text Message');
-
-        $this->schema($this->createFields());
+        DB::transaction(function () {
+            DB::table('media')
+                ->where('model_type', 'campaign_action')
+                ->where('collection_name', 'data.body')
+                ->chunkById(100, function (Collection $records) {
+                    DB::table('media')
+                        ->whereIn('id', $records->pluck('id'))
+                        ->update(['collection_name' => 'body']);
+                });
+        });
     }
 
-    public function generateFields(): array
+    public function down(): void
     {
-        return [
-            Hidden::make('channel')
-                ->default(NotificationChannel::Sms->value),
-            EngagementSmsBodyInput::make(context: 'create'),
-            Actions::make([
-                DraftEngagementBlockWithAi::make()
-                    ->channel(NotificationChannel::Sms)
-                    ->mergeTags([
-                        'recipient first name',
-                        'recipient last name',
-                        'recipient full name',
-                        'recipient email',
-                        'recipient preferred name',
-                    ]),
-            ]),
-            CampaignDateTimeInput::make(),
-        ];
+        DB::transaction(function () {
+            DB::table('media')
+                ->where('model_type', 'campaign_action')
+                ->where('collection_name', 'body')
+                ->chunkById(100, function (Collection $records) {
+                    DB::table('media')
+                        ->whereIn('id', $records->pluck('id'))
+                        ->update(['collection_name' => 'data.body']);
+                });
+        });
     }
-
-    public static function type(): string
-    {
-        return 'bulk_engagement_sms';
-    }
-}
+};

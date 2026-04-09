@@ -61,10 +61,10 @@ abstract class CampaignActionBlock extends Block
 
     public function editFields(): array
     {
-        return $this->generateFields('data.');
+        return $this->generateFields();
     }
 
-    abstract public function generateFields(string $fieldPrefix = ''): array;
+    abstract public function generateFields(): array;
 
     abstract public static function type(): string;
 

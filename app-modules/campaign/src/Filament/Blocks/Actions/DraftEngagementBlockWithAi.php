@@ -61,8 +61,6 @@ class DraftEngagementBlockWithAi extends Action
 
     protected NotificationChannel | Closure $channel;
 
-    protected string | Closure $fieldPrefix = '';
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -127,7 +125,7 @@ class DraftEngagementBlockWithAi extends Action
                         return;
                     }
 
-                    $set("{$this->getFieldPrefix()}body", RichContentRenderer::make((string) str($content)->markdown())->toArray());
+                    $set('body', RichContentRenderer::make((string) str($content)->markdown())->toArray());
 
                     return;
                 }
@@ -167,9 +165,9 @@ class DraftEngagementBlockWithAi extends Action
                     return;
                 }
 
-                $set("{$this->getFieldPrefix()}subject", RichContentRenderer::make((string) str($content)->before("\n")->trim())->toArray());
+                $set('subject', RichContentRenderer::make((string) str($content)->before("\n")->trim())->toArray());
 
-                $set("{$this->getFieldPrefix()}body", RichContentRenderer::make((string) str($content)->after("\n")->markdown())->toArray());
+                $set('body', RichContentRenderer::make((string) str($content)->after("\n")->markdown())->toArray());
             })
             ->visible(
                 auth()->user()->hasLicense(LicenseType::ConversationalAi)
@@ -209,17 +207,5 @@ class DraftEngagementBlockWithAi extends Action
     public function getDeliveryMethod(): NotificationChannel
     {
         return $this->evaluate($this->channel ?? throw new Exception('The [channel()] must be set when using [' . static::class . '].'));
-    }
-
-    public function fieldPrefix(string | Closure $prefix): static
-    {
-        $this->fieldPrefix = $prefix;
-
-        return $this;
-    }
-
-    public function getFieldPrefix(): string
-    {
-        return $this->evaluate($this->fieldPrefix);
     }
 }

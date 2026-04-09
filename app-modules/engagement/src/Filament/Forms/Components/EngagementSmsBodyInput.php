@@ -52,11 +52,11 @@ use Illuminate\Database\Query\Expression;
 
 class EngagementSmsBodyInput
 {
-    public static function make(string $context, ?Schema $form = null, string $fieldPrefix = '', bool $withTemplateAction = true)
+    public static function make(string $context, ?Schema $form = null, bool $withTemplateAction = true)
     {
         // TODO Implement length validation (320 characters max)
         // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
-        return RichEditor::make("{$fieldPrefix}body")
+        return RichEditor::make('body')
             ->label('Body')
             ->mergeTags([
                 'recipient first name',

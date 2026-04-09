@@ -55,21 +55,21 @@ class ProactiveConcernBlock extends WorkflowActionBlock
         $this->schema($this->createFields());
     }
 
-    public function generateFields(string $fieldPrefix = ''): array
+    public function generateFields(): array
     {
         return [
-            Textarea::make($fieldPrefix . 'description')
+            Textarea::make('description')
                 ->required()
                 ->string(),
-            Select::make($fieldPrefix . 'severity')
+            Select::make('severity')
                 ->options(ConcernSeverity::class)
                 ->default(ConcernSeverity::default())
                 ->required()
                 ->enum(ConcernSeverity::class),
-            Textarea::make($fieldPrefix . 'suggested_intervention')
+            Textarea::make('suggested_intervention')
                 ->required()
                 ->string(),
-            Select::make($fieldPrefix . 'status_id')
+            Select::make('status_id')
                 ->label('Status')
                 ->options(ConcernStatus::orderBy('order')->pluck('name', 'id'))
                 ->default(fn () => SystemConcernStatusClassification::default()?->getKey())

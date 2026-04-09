@@ -68,12 +68,12 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
         $this->schema($this->createFields());
     }
 
-    public function generateFields(string $fieldPrefix = ''): array
+    public function generateFields(): array
     {
         return [
-            Hidden::make($fieldPrefix . 'channel')
+            Hidden::make('channel')
                 ->default(NotificationChannel::Email->value),
-            RichEditor::make($fieldPrefix . 'subject')
+            RichEditor::make('subject')
                 ->label('Subject')
                 ->mergeTags($mergeTags = [
                     'recipient first name',
@@ -88,7 +88,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                 ->required()
                 ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                 ->columnSpanFull(),
-            RichEditor::make($fieldPrefix . 'body')
+            RichEditor::make('body')
                 ->fileAttachmentsDisk('s3-public')
                 ->label('Body')
                 ->mergeTags($mergeTags = [
@@ -189,11 +189,85 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                         ->uuid;
                 })
                 ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
-                ->columnSpanFull(),
+                ->columnSpanFull()
+                // Override the default saveRelationshipsUsing because CampaignAction stores
+                // body inside a JSON `data` column. The default implementation calls
+                // $record->setAttribute('body', ...) which fails since `body` is not a column.
+                // This custom version saves to $record->data['body'] instead.
+                ->saveRelationshipsUsing(function (RichEditor $component, ?array $rawState, CampaignAction $record): void {
+                    $fileAttachmentProvider = $component->getFileAttachmentProvider();
+
+                    if (! $fileAttachmentProvider) {
+                        return;
+                    }
+
+                    if (! $fileAttachmentProvider->isExistingRecordRequiredToSaveNewFileAttachments()) {
+                        return;
+                    }
+
+                    if (! $record->wasRecentlyCreated) {
+                        return;
+                    }
+
+                    $fileAttachmentIds = [];
+
+                    $component->rawState(
+                        $component->getTipTapEditor()
+                            ->setContent($rawState ?? [
+                                'type' => 'doc',
+                                'content' => [],
+                            ])
+                            ->descendants(function (object &$node) use ($component, &$fileAttachmentIds): void {
+                                if ($node->type !== 'image') {
+                                    return;
+                                }
+
+                                if (blank($node->attrs->id ?? null)) {
+                                    return;
+                                }
+
+                                $attachment = $component->getUploadedFileAttachment($node->attrs->id);
+
+                                if ($attachment) {
+                                    $node->attrs->id = $component->saveUploadedFileAttachment($attachment);
+                                    $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->id);
+
+                                    $fileAttachmentIds[] = $node->attrs->id;
+
+                                    return;
+                                }
+
+                                if (filled($component->getFileAttachmentUrl($node->attrs->id))) {
+                                    $fileAttachmentIds[] = $node->attrs->id;
+
+                                    return;
+                                }
+
+                                $fileAttachmentIdFromAnotherRecord = $component->saveFileAttachmentFromAnotherRecord($node->attrs->id);
+
+                                if (blank($fileAttachmentIdFromAnotherRecord)) {
+                                    $fileAttachmentIds[] = $node->attrs->id;
+
+                                    return;
+                                }
+
+                                $node->attrs->id = $fileAttachmentIdFromAnotherRecord;
+                                $node->attrs->src = $component->getFileAttachmentUrl($fileAttachmentIdFromAnotherRecord) ?? $node->attrs->src ?? null;
+                            })
+                            ->getDocument(),
+                    );
+
+                    // Save body into the JSON `data` column instead of a direct `body` column
+                    $data = $record->data ?? [];
+                    $data['body'] = $component->getState();
+                    $record->data = $data;
+                    $record->save();
+
+                    $fileAttachmentProvider->cleanUpFileAttachments(exceptIds: $fileAttachmentIds);
+                }),
             Actions::make([
                 DraftEngagementBlockWithAi::make()
                     ->channel(NotificationChannel::Email)
-                    ->fieldPrefix($fieldPrefix)
                     ->mergeTags($mergeTags),
             ]),
             CampaignDateTimeInput::make(),

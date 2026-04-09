@@ -96,11 +96,7 @@ class EngagementFileAttachmentProvider extends SpatieMediaLibraryFileAttachmentP
     protected function getSourceMediaCollection(HasMedia $source): ?string
     {
         if ($source instanceof HasRichContent) {
-            if ($source instanceof CampaignAction) {
-                return 'data.body';
-            }
-
-            if ($source instanceof WorkflowEngagementEmailDetails) {
+            if ($source instanceof CampaignAction || $source instanceof WorkflowEngagementEmailDetails) {
                 return 'body';
             }
         }

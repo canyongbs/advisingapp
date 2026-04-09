@@ -43,7 +43,6 @@ use AdvisingApp\Workflow\Filament\Blocks\EngagementEmailBlock;
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Jobs\EngagementEmailWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
@@ -93,21 +92,6 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
     public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
     {
         return new EngagementEmailWorkflowActionJob($workflowRunStep);
-    }
-
-    public function getEditFields(): array
-    {
-        $fields = parent::getEditFields();
-
-        foreach ($fields as $field) {
-            if ($field instanceof RichEditor && $field->getName() === 'body') {
-                $field->model($this);
-
-                break;
-            }
-        }
-
-        return $fields;
     }
 
     public function setUpRichContent(): void

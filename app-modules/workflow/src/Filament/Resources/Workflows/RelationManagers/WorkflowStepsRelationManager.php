@@ -75,7 +75,10 @@ class WorkflowStepsRelationManager extends RelationManager
                 Group::make(function (WorkflowStep $record) {
                     assert($record->currentDetails instanceof WorkflowDetails);
 
-                    return $record->currentDetails->getEditFields();
+                    return [
+                        Group::make($record->currentDetails->getEditFields())
+                            ->model($record->currentDetails),
+                    ];
                 }),
             ])
             ->columns(1);

@@ -53,10 +53,10 @@ class EventBlock extends CampaignActionBlock
         $this->schema($this->createFields());
     }
 
-    public function generateFields(string $fieldPrefix = ''): array
+    public function generateFields(): array
     {
         return [
-            Select::make($fieldPrefix . 'event')
+            Select::make('event')
                 ->label('Select Event')
                 ->options(Event::where('ends_at', '>=', now())->pluck('title', 'id')->toArray())
                 ->nullable()

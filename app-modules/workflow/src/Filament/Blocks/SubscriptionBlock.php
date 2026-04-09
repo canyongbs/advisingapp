@@ -53,10 +53,10 @@ class SubscriptionBlock extends WorkflowActionBlock
         $this->schema($this->createFields());
     }
 
-    public function generateFields(string $fieldPrefix = ''): array
+    public function generateFields(): array
     {
         return [
-            Select::make($fieldPrefix . 'user_ids')
+            Select::make('user_ids')
                 ->label('Who should be subscribed?')
                 ->options(User::all()->pluck('name', 'id'))
                 ->multiple()
@@ -64,7 +64,7 @@ class SubscriptionBlock extends WorkflowActionBlock
                 ->default([auth()->id()])
                 ->required()
                 ->exists('users', 'id'),
-            Toggle::make($fieldPrefix . 'remove_prior')
+            Toggle::make('remove_prior')
                 ->label('Remove all prior subscriptions?')
                 ->default(false)
                 ->hintIconTooltip('If checked, all prior care subscriptions will be removed.'),
