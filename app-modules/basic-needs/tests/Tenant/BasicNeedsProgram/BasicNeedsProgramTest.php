@@ -45,6 +45,7 @@ use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Tables\Filters\SelectFilter;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -381,4 +382,64 @@ it('is gated with proper access control', function () {
     $user->givePermissionTo('support_program.view-any');
 
     get(BasicNeedsProgramResource::getUrl('index'))->assertSuccessful();
+});
+
+it('can filter support programs by contact person', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+    $basicNeedsPrograms = BasicNeedsProgram::factory()->count(10)->create();
+    $contactPerson = $basicNeedsPrograms->first()->contact_person;
+
+    actingAs($user)
+        ->get(
+            BasicNeedsProgramResource::getUrl('index')
+        )->assertForbidden();
+
+    $user->givePermissionTo('support_program.view-any');
+
+    livewire(ListBasicNeedsPrograms::class)
+        ->set('tableRecordsPerPage', 10)
+        ->assertCanSeeTableRecords($basicNeedsPrograms)
+        ->filterTable('contact_person', $contactPerson)
+        ->assertCanSeeTableRecords($basicNeedsPrograms->where('contact_person', $contactPerson))
+        ->assertCanNotSeeTableRecords($basicNeedsPrograms->where('contact_person', '!=', $contactPerson));
+});
+
+it('loads only distinct contact persons as initial filter options', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+    $user->givePermissionTo('support_program.view-any');
+    actingAs($user);
+
+    BasicNeedsProgram::factory()->count(3)->create(['contact_person' => 'Duplicate Name']);
+    BasicNeedsProgram::factory()->count(2)->create(['contact_person' => 'Other Name']);
+
+    livewire(ListBasicNeedsPrograms::class)
+        ->assertTableFilterExists('contact_person', function (SelectFilter $filter): bool {
+            $options = $filter->getFormField()->getOptions();
+
+            return array_keys($options) === array_unique(array_keys($options));
+        });
+});
+
+it('returns server-side search results for contact persons beyond the initial 40 options', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+    $user->givePermissionTo('support_program.view-any');
+    actingAs($user);
+
+    foreach (range(1, 50) as $index) {
+        BasicNeedsProgram::factory()->create(['contact_person' => sprintf('Contact %03d', $index)]);
+    }
+
+    $searchTarget = 'ZZZ Searchable Contact';
+    BasicNeedsProgram::factory()->create(['contact_person' => $searchTarget]);
+
+    livewire(ListBasicNeedsPrograms::class)
+        ->assertTableFilterExists('contact_person', function (SelectFilter $filter) use ($searchTarget): bool {
+            $field = $filter->getFormField();
+            $initialOptions = $field->getOptions();
+            $searchResults = $field->getSearchResults('searchable');
+
+            return count($initialOptions) === 40
+                && ! array_key_exists($searchTarget, $initialOptions)
+                && array_key_exists($searchTarget, $searchResults);
+        });
 });
