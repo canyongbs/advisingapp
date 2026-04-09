@@ -75,7 +75,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
     {
         // @phpstan-ignore method.notFound
         $firstState = ApplicationSubmissionState::query()
-            ->withoutArchivedAndUnused() 
+            ->withoutArchivedAndUnused()
             ->oldest('id')
             ->first();
 
