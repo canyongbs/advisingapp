@@ -51,7 +51,6 @@ use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class TaskBlock extends CampaignActionBlock
@@ -81,27 +80,70 @@ class TaskBlock extends CampaignActionBlock
                                 ->label('Confidential')
                                 ->live(),
                             Select::make($fieldPrefix . 'confidential_task_projects')
-                                ->options(fn () => self::modelOptions(Project::class))
+                                ->options(fn () => Project::query()
+                                    ->orderBy('name')
+                                    ->limit(50)
+                                    ->pluck('name', 'id')
+                                    ->all())
                                 ->searchable()
-                                ->getSearchResultsUsing(fn (string $search) => self::modelOptions(Project::class, $search))
+                                ->getSearchResultsUsing(fn (string $search): array => Project::query()
+                                    ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
+                                    ->limit(50)
+                                    ->pluck('name', 'id')
+                                    ->all())
+                                ->getOptionLabelsUsing(
+                                    fn (array $values): array => Project::query()
+                                        ->whereKey($values)
+                                        ->pluck('name', 'id')
+                                        ->all(),
+                                )
                                 ->label('Projects')
                                 ->multiple()
                                 ->dehydrated(true)
                                 ->exists('projects', 'id')
                                 ->visible(fn (Get $get) => $get($fieldPrefix . 'is_confidential')),
                             Select::make($fieldPrefix . 'confidential_task_users')
-                                ->options(fn () => self::modelOptions(User::class))
+                                ->options(fn () => User::query()
+                                    ->orderBy('name')
+                                    ->limit(50)
+                                    ->pluck('name', 'id')
+                                    ->all())
                                 ->searchable()
-                                ->getSearchResultsUsing(fn (string $search) => self::modelOptions(User::class, $search))
+                                ->getSearchResultsUsing(fn (string $search): array => User::query()
+                                    ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
+                                    ->limit(50)
+                                    ->pluck('name', 'id')
+                                    ->all())
+                                ->getOptionLabelUsing(
+                                    fn (array $values): array => User::query()
+                                        ->whereKey($values)
+                                        ->pluck('name', 'id')
+                                        ->all(),
+                                )
+
                                 ->label('Users')
                                 ->multiple()
                                 ->dehydrated(true)
                                 ->exists('users', 'id')
                                 ->visible(fn (Get $get) => $get($fieldPrefix . 'is_confidential')),
                             Select::make($fieldPrefix . 'confidential_task_teams')
-                                ->options(fn () => self::modelOptions(Team::class))
+                                ->options(fn () => Team::query()
+                                    ->orderBy('name')
+                                    ->limit(50)
+                                    ->pluck('name', 'id')
+                                    ->all())
                                 ->searchable()
-                                ->getSearchResultsUsing(fn (string $search) => self::modelOptions(Team::class, $search))
+                                ->getSearchResultsUsing(fn (string $search): array => Team::query()
+                                    ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
+                                    ->limit(50)
+                                    ->pluck('name', 'id')
+                                    ->all())
+                                ->getOptionLabelUsing(
+                                    fn (array $values): array => Team::query()
+                                        ->whereKey($values)
+                                        ->pluck('name', 'id')
+                                        ->all(),
+                                )
                                 ->label('Teams')
                                 ->multiple()
                                 ->dehydrated(true)
@@ -132,19 +174,5 @@ class TaskBlock extends CampaignActionBlock
     public static function type(): string
     {
         return 'task';
-    }
-
-    /**
-     * @return Collection<int, string>
-     */
-    private static function modelOptions(string $modelClass, ?string $search = null): Collection
-    {
-        $query = $modelClass::query()->limit(50);
-
-        if ($search) {
-            $query->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%');
-        }
-
-        return $query->pluck('name', 'id');
     }
 }
