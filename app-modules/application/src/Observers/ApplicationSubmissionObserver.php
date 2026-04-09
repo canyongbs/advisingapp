@@ -47,16 +47,16 @@ class ApplicationSubmissionObserver
 {
     public function creating(ApplicationSubmission $submission): void
     {
+        // @phpstan-ignore method.notFound
         $defaultState = ApplicationSubmissionState::query()
-            // @phpstan-ignore method.notFound
             ->withoutArchived()
             ->where('classification', ApplicationSubmissionStateClassification::Received)
             ->oldest('id')
             ->first();
 
         if (! $defaultState) {
+            // @phpstan-ignore method.notFound
             $defaultState = ApplicationSubmissionState::query()
-                // @phpstan-ignore method.notFound
                 ->withoutArchived()
                 ->oldest('id')
                 ->firstOrFail();
