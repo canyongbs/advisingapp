@@ -38,7 +38,6 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates
 
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use App\Features\ApplicationSubmissionStateArchivingFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -62,7 +61,7 @@ class ListApplicationSubmissionStates extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('name')
                     ->label('Name')
-                    ->formatStateUsing(fn (ApplicationSubmissionState $record): string => $record->name . (ApplicationSubmissionStateArchivingFeature::active() && filled($record->archived_at) ? ' (Archived)' : ''))
+                    ->formatStateUsing(fn (ApplicationSubmissionState $record): string => $record->name . (filled($record->archived_at) ? ' (Archived)' : ''))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('classification')
@@ -77,10 +76,7 @@ class ListApplicationSubmissionStates extends ListRecords
                     ->sortable(),
             ])
             // @phpstan-ignore argument.templateType
-            ->modifyQueryUsing(fn (Builder $query) => $query->when(
-                ApplicationSubmissionStateArchivingFeature::active(),
-                fn (Builder $query) => $query->withoutArchivedAndUnused(), // @phpstan-ignore method.notFound
-            ))
+            ->modifyQueryUsing(fn (Builder $query) => $query->withoutArchivedAndUnused()) // @phpstan-ignore method.notFound
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
