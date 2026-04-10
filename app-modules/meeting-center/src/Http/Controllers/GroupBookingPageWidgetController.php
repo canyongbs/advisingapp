@@ -44,7 +44,6 @@ use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use App\Features\MaximumLeadTimeFeature;
-use App\Features\MinimumLeadTimeFeature;
 use App\Http\Controllers\Controller;
 use App\Settings\CollegeBrandingSettings;
 use Carbon\Carbon;
@@ -150,10 +149,6 @@ class GroupBookingPageWidgetController extends Controller
 
         // Calculate effective lead time: max of group's lead time and all members' lead times
         $resolveEffectiveLeadTime = function (BookingGroup $bookingGroup, Collection $members): int {
-            if (! MinimumLeadTimeFeature::active()) {
-                return 0;
-            }
-
             $memberMaxLeadTime = PersonalBookingPage::query()
                 ->whereIn('user_id', $members->pluck('id'))
                 ->max('minimum_booking_lead_time_hours') ?? 0;

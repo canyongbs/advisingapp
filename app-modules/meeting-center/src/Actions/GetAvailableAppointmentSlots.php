@@ -39,7 +39,6 @@ namespace AdvisingApp\MeetingCenter\Actions;
 use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use App\Features\MaximumLeadTimeFeature;
-use App\Features\MinimumLeadTimeFeature;
 use App\Models\User;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Builder;
@@ -154,8 +153,7 @@ class GetAvailableAppointmentSlots
             return [];
         }
 
-        $effectiveLeadTimeHours = MinimumLeadTimeFeature::active() ? $leadTimeHours : 0;
-        $now = now()->addHours($effectiveLeadTimeHours);
+        $now = now()->addHours($leadTimeHours);
 
         $effectiveMaxLeadTimeDays = MaximumLeadTimeFeature::active() ? $maxLeadTimeDays : 0;
         $latestAllowed = ($effectiveMaxLeadTimeDays > 0) ? now()->addDays($effectiveMaxLeadTimeDays) : null;

@@ -41,7 +41,6 @@ use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use App\Features\MaximumLeadTimeFeature;
-use App\Features\MinimumLeadTimeFeature;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Mockery\MockInterface;
@@ -81,8 +80,6 @@ beforeEach(function () {
 // Minimum Lead Time - Available Slots Tests
 
 it('filters group available slots within lead time window', function () use ($workingHours) {
-    MinimumLeadTimeFeature::activate();
-
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
@@ -119,51 +116,9 @@ it('filters group available slots within lead time window', function () use ($wo
     expect($blocksBeforeLeadTime)->toBeEmpty();
 });
 
-// TODO: FeatureFlag Cleanup - This test can be removed when MinimumLeadTimeFeature is removed
-it('returns group available slots within lead time window when feature is inactive', function () use ($workingHours) {
-    MinimumLeadTimeFeature::deactivate();
-
-    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
-
-    $meetingOwner = User::factory()
-        ->has(Calendar::factory()->state(['provider_id' => 'owner-slots-no-flag']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
-
-    BookingGroup::factory()
-        ->hasAttached($meetingOwner, [], 'users')
-        ->create([
-            'slug' => 'test-group-slots-no-flag',
-            'minimum_booking_lead_time_hours' => 24,
-            'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
-        ]);
-
-    $response = getJson(
-        route('widgets.booking-page.group.api.available-slots', ['slug' => 'test-group-slots-no-flag']) . '?year=2026&month=4'
-    );
-
-    $response->assertOk();
-
-    /** @var array<int, array{start: string, end: string}> $blocksData */
-    $blocksData = $response->json('blocks');
-    $blocks = collect($blocksData);
-
-    // Feature is off, so Monday slots should still be available
-    $mondayBlocks = $blocks->filter(function (array $block) {
-        return Carbon::parse($block['start'])->day === 6;
-    });
-
-    expect($mondayBlocks)->not->toBeEmpty();
-});
-
 // Minimum Lead Time - Booking Validation Tests
 
 it('rejects group booking within effective lead time window', function () use ($workingHours) {
-    MinimumLeadTimeFeature::activate();
-
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
@@ -210,8 +165,6 @@ it('rejects group booking within effective lead time window', function () use ($
 });
 
 it('allows group booking outside effective lead time window', function () use ($workingHours) {
-    MinimumLeadTimeFeature::activate();
-
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
@@ -238,43 +191,6 @@ it('allows group booking outside effective lead time window', function () use ($
             'email' => 'visitor@example.com',
             'starts_at' => now()->addHours(8)->toIso8601String(),
             'ends_at' => now()->addHours(9)->toIso8601String(),
-        ]
-    );
-
-    $response->assertStatus(201);
-    $response->assertJsonFragment(['success' => true]);
-});
-
-// TODO: FeatureFlag Cleanup - This test can be removed when MinimumLeadTimeFeature is removed
-it('ignores lead time for group booking when feature is inactive', function () use ($workingHours) {
-    MinimumLeadTimeFeature::deactivate();
-
-    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
-
-    $meetingOwner = User::factory()
-        ->has(Calendar::factory()->state(['provider_id' => 'owner-no-flag']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
-
-    $bookingGroup = BookingGroup::factory()
-        ->hasAttached($meetingOwner, [], 'users')
-        ->create([
-            'slug' => 'test-group-no-flag',
-            'minimum_booking_lead_time_hours' => 24,
-            'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
-        ]);
-
-    // Book 2 hours from now - within 24h lead time, but flag is off
-    $response = postJson(
-        route('widgets.booking-page.group.api.book', ['slug' => 'test-group-no-flag']),
-        [
-            'name' => 'Test Visitor',
-            'email' => 'visitor@example.com',
-            'starts_at' => now()->addHours(2)->toIso8601String(),
-            'ends_at' => now()->addHours(3)->toIso8601String(),
         ]
     );
 
