@@ -38,7 +38,9 @@ namespace AdvisingApp\Workflow\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftEngagementBlockWithAi;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
@@ -52,6 +54,8 @@ class EngagementSmsBlock extends WorkflowActionBlock
         parent::setUp();
 
         $this->label('Text Message');
+
+        $this->model(WorkflowEngagementSmsDetails::class);
 
         $this->schema($this->generateFields());
     }
@@ -68,13 +72,7 @@ class EngagementSmsBlock extends WorkflowActionBlock
             Actions::make([
                 DraftEngagementBlockWithAi::make()
                     ->channel(NotificationChannel::Sms)
-                    ->mergeTags([
-                        'recipient first name',
-                        'recipient last name',
-                        'recipient full name',
-                        'recipient email',
-                        'recipient preferred name',
-                    ]),
+                    ->mergeTags(Engagement::getMergeTags(withUserTags: false)),
             ]),
             Section::make('How long after the previous step should this occur?')
                 ->schema([

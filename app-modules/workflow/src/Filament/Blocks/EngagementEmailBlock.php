@@ -38,6 +38,7 @@ namespace AdvisingApp\Workflow\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftEngagementBlockWithAi;
 use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
@@ -81,13 +82,6 @@ class EngagementEmailBlock extends WorkflowActionBlock
                 ->default(NotificationChannel::Email->value),
             RichEditor::make('subject')
                 ->label('Subject')
-                ->mergeTags($mergeTags = [
-                    'recipient first name',
-                    'recipient last name',
-                    'recipient full name',
-                    'recipient email',
-                    'recipient preferred name',
-                ])
                 ->toolbarButtons([])
                 ->json()
                 ->placeholder('Enter the email subject here...')
@@ -97,13 +91,6 @@ class EngagementEmailBlock extends WorkflowActionBlock
             RichEditor::make('body')
                 ->fileAttachmentsDisk('s3-public')
                 ->label('Body')
-                ->mergeTags($mergeTags = [
-                    'recipient first name',
-                    'recipient last name',
-                    'recipient full name',
-                    'recipient email',
-                    'recipient preferred name',
-                ])
                 ->toolbarButtons([['bold', 'italic', 'small', 'link', 'textColor'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles'], ['mergeTags']])
                 ->activePanel('mergeTags')
                 ->resizableImages()
@@ -199,7 +186,7 @@ class EngagementEmailBlock extends WorkflowActionBlock
             Actions::make([
                 DraftEngagementBlockWithAi::make()
                     ->channel(NotificationChannel::Email)
-                    ->mergeTags($mergeTags),
+                    ->mergeTags(Engagement::getMergeTags(withUserTags: false)),
             ]),
             Section::make('How long after the previous step should this occur?')
                 ->schema([

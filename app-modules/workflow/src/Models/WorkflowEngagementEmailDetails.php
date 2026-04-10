@@ -96,16 +96,21 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
 
     public function setUpRichContent(): void
     {
+        $mergeTags = [
+            'recipient first name' => '{{ recipient first name }}',
+            'recipient last name' => '{{ recipient last name }}',
+            'recipient full name' => '{{ recipient full name }}',
+            'recipient email' => '{{ recipient email }}',
+            'recipient preferred name' => '{{ recipient preferred name }}',
+        ];
+
+        $this->registerRichContent('subject')
+            ->mergeTags($mergeTags);
+
         $this->registerRichContent('body')
             ->fileAttachmentsDisk('s3-public')
             ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
             ->fileAttachmentsVisibility('public')
-            ->mergeTags([
-                'recipient first name' => '{{ recipient first name }}',
-                'recipient last name' => '{{ recipient last name }}',
-                'recipient full name' => '{{ recipient full name }}',
-                'recipient email' => '{{ recipient email }}',
-                'recipient preferred name' => '{{ recipient preferred name }}',
-            ]);
+            ->mergeTags($mergeTags);
     }
 }

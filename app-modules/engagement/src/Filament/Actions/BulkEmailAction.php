@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
@@ -77,13 +78,6 @@ class BulkEmailAction
                     ->schema([
                         RichEditor::make('subject')
                             ->label('Subject')
-                            ->mergeTags([
-                                'recipient first name',
-                                'recipient last name',
-                                'recipient full name',
-                                'recipient email',
-                                'recipient preferred name',
-                            ])
                             ->toolbarButtons([])
                             ->json()
                             ->helperText('You may use "merge tags" to substitute information about a recipient into your subject line. Insert a "{{" in the subject line field to see a list of available merge tags')
@@ -93,13 +87,6 @@ class BulkEmailAction
                         RichEditor::make('body')
                             ->fileAttachmentsDisk('s3-public')
                             ->label('Body')
-                            ->mergeTags($mergeTags = [
-                                'recipient first name',
-                                'recipient last name',
-                                'recipient full name',
-                                'recipient email',
-                                'recipient preferred name',
-                            ])
                             ->toolbarButtons([['bold', 'italic', 'small', 'link', 'textColor'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles'], ['mergeTags']])
                             ->activePanel('mergeTags')
                             ->resizableImages()
@@ -194,7 +181,7 @@ class BulkEmailAction
                             ->columnSpanFull(),
                         Actions::make([
                             BulkDraftWithAiAction::make()
-                                ->mergeTags($mergeTags),
+                                ->mergeTags(Engagement::getMergeTags()),
                         ]),
                     ]),
                 Step::make('Schedule')

@@ -40,6 +40,7 @@ use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftEngagementBlockWithAi;
 use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -75,13 +76,6 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                 ->default(NotificationChannel::Email->value),
             RichEditor::make('subject')
                 ->label('Subject')
-                ->mergeTags($mergeTags = [
-                    'recipient first name',
-                    'recipient last name',
-                    'recipient full name',
-                    'recipient email',
-                    'recipient preferred name',
-                ])
                 ->toolbarButtons([])
                 ->json()
                 ->placeholder('Enter the email subject here...')
@@ -91,13 +85,6 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
             RichEditor::make('body')
                 ->fileAttachmentsDisk('s3-public')
                 ->label('Body')
-                ->mergeTags($mergeTags = [
-                    'recipient first name',
-                    'recipient last name',
-                    'recipient full name',
-                    'recipient email',
-                    'recipient preferred name',
-                ])
                 ->toolbarButtons([['bold', 'italic', 'small', 'link', 'textColor'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles'], ['mergeTags']])
                 ->activePanel('mergeTags')
                 ->resizableImages()
@@ -268,7 +255,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
             Actions::make([
                 DraftEngagementBlockWithAi::make()
                     ->channel(NotificationChannel::Email)
-                    ->mergeTags($mergeTags),
+                    ->mergeTags(Engagement::getMergeTags(withUserTags: false)),
             ]),
             CampaignDateTimeInput::make(),
         ];

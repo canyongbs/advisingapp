@@ -57,13 +57,6 @@ class EngagementSmsBodyInput
         // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
         return RichEditor::make('body')
             ->label('Body')
-            ->mergeTags([
-                'recipient first name',
-                'recipient last name',
-                'recipient full name',
-                'recipient email',
-                'recipient preferred name',
-            ])
             ->activePanel('mergeTags')
             ->toolbarButtons([])
             ->json()

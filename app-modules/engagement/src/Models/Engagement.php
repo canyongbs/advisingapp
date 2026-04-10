@@ -300,9 +300,15 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         ];
     }
 
-    public static function getMergeTags(): array
+    public static function getMergeTags(bool $withUserTags = true): array
     {
-        return array_keys((new self())->getMergeData());
+        $tags = array_keys((new self())->getMergeData());
+
+        if (! $withUserTags) {
+            $tags = array_values(array_filter($tags, fn (string $tag) => ! str_starts_with($tag, 'user ')));
+        }
+
+        return $tags;
     }
 
     public function getDeliveryMethod(): NotificationChannel
