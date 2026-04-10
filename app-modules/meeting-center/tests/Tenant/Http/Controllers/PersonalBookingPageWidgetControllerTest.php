@@ -39,7 +39,6 @@ use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use App\Features\MaximumLeadTimeFeature;
 use App\Features\MinimumLeadTimeFeature;
 use App\Models\User;
 use Illuminate\Support\Carbon;
@@ -268,8 +267,6 @@ it('allows booking within minimum lead time window when feature is inactive', fu
 // Maximum Lead Time Tests
 
 it('rejects booking beyond maximum lead time window', function () use ($workingHours) {
-    MaximumLeadTimeFeature::activate();
-
     Carbon::setTestNow(Carbon::parse('2026-04-06 10:00:00', 'UTC'));
 
     $user = User::factory()
@@ -304,8 +301,6 @@ it('rejects booking beyond maximum lead time window', function () use ($workingH
 });
 
 it('allows booking within maximum lead time window', function () use ($workingHours) {
-    MaximumLeadTimeFeature::activate();
-
     Carbon::setTestNow(Carbon::parse('2026-04-06 10:00:00', 'UTC'));
 
     $user = User::factory()
@@ -344,44 +339,3 @@ it('allows booking within maximum lead time window', function () use ($workingHo
     $response->assertJsonFragment(['success' => true]);
 });
 
-// TODO: FeatureFlag Cleanup - This test can be removed when MaximumLeadTimeFeature is removed
-it('allows booking beyond maximum lead time when feature is inactive', function () use ($workingHours) {
-    MaximumLeadTimeFeature::deactivate();
-
-    Carbon::setTestNow(Carbon::parse('2026-04-06 10:00:00', 'UTC'));
-
-    $user = User::factory()
-        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
-
-    PersonalBookingPage::factory()
-        ->for($user)
-        ->enabled()
-        ->create([
-            'slug' => 'test-max-no-flag',
-            'maximum_booking_lead_time_days' => 7,
-        ]);
-
-    // Book 15 days from now - beyond 7-day max, but flag is off - pick a weekday
-    $bookingDate = now()->addDays(15);
-
-    while ($bookingDate->isWeekend()) {
-        $bookingDate->addDay();
-    }
-
-    $response = postJson(
-        route('widgets.booking-page.personal.api.book', ['slug' => 'test-max-no-flag']),
-        [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'starts_at' => $bookingDate->copy()->setHour(10)->toIso8601String(),
-            'ends_at' => $bookingDate->copy()->setHour(10)->addMinutes(30)->toIso8601String(),
-        ]
-    );
-
-    $response->assertStatus(201);
-    $response->assertJsonFragment(['success' => true]);
-});
