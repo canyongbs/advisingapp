@@ -35,35 +35,22 @@
 */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            DB::table('media')
-                ->where('model_type', 'campaign_action')
-                ->where('collection_name', 'data.body')
-                ->chunkById(100, function (Collection $records) {
-                    DB::table('media')
-                        ->whereIn('id', $records->pluck('id'))
-                        ->update(['collection_name' => 'body']);
-                });
-        });
+        DB::table('media')
+            ->where('model_type', 'campaign_action')
+            ->where('collection_name', 'data.body')
+            ->update(['collection_name' => 'body']);
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            DB::table('media')
-                ->where('model_type', 'campaign_action')
-                ->where('collection_name', 'body')
-                ->chunkById(100, function (Collection $records) {
-                    DB::table('media')
-                        ->whereIn('id', $records->pluck('id'))
-                        ->update(['collection_name' => 'data.body']);
-                });
-        });
+        DB::table('media')
+            ->where('model_type', 'campaign_action')
+            ->where('collection_name', 'body')
+            ->update(['collection_name' => 'data.body']);
     }
 };
