@@ -39,21 +39,33 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Support\HtmlString;
 
+/**
+ * @param  array<int, array<string, mixed>>  $content
+ *
+ * @return array<string, mixed>
+ */
 function tiptapDoc(array $content): array
 {
     return ['type' => 'doc', 'content' => $content];
 }
 
+/**
+ * @param  array<int, array<string, mixed>>  $content
+ *
+ * @return array<string, mixed>
+ */
 function tiptapParagraph(array $content): array
 {
     return ['type' => 'paragraph', 'content' => $content];
 }
 
+/** @return array<string, string> */
 function tiptapText(string $text): array
 {
     return ['type' => 'text', 'text' => $text];
 }
 
+/** @return array<string, mixed> */
 function tiptapMergeTag(string $id): array
 {
     return ['type' => 'mergeTag', 'attrs' => ['id' => $id]];

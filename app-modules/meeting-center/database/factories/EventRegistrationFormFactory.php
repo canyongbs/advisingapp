@@ -104,6 +104,7 @@ class EventRegistrationFormFactory extends Factory
         });
     }
 
+    /** @return array<int, mixed> */
     private function generateFields(EventRegistrationForm $eventRegistrationForm, int $count = 3): array
     {
         return EventRegistrationFormField::factory()

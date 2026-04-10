@@ -160,7 +160,7 @@ enum CampaignActionType: string implements HasLabel
         };
     }
 
-    public function getgenerateFields(): array
+    public function getGenerateFields(): array
     {
         return $this->getBlock()->generateFields();
     }

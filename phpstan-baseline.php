@@ -1230,7 +1230,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Enums/CampaignActionType.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Enums\\\\CampaignActionType\\:\\:getEditFields\\(\\) return type has no value type specified in iterable type array\\.$#',
+    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Enums\\\\CampaignActionType\\:\\:getGenerateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/campaign/src/Enums/CampaignActionType.php',
