@@ -34,29 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Actions;
+namespace AdvisingApp\Form\Filament\Blocks\Legacy;
 
-use AdvisingApp\Application\Models\Application;
-use AdvisingApp\CaseManagement\Models\CaseForm;
-use AdvisingApp\Form\Filament\Blocks\DefaultFieldBlockRegistry;
-use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
-use AdvisingApp\Form\Filament\Blocks\Legacy\DefaultFieldBlockRegistry as LegacyDefaultFieldBlockRegistry;
-use AdvisingApp\Form\Filament\Blocks\Legacy\FormFieldBlockRegistry as LegacyFormFieldBlockRegistry;
-use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\Submissible;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
-use AdvisingApp\Survey\Filament\Blocks\SurveyFieldBlockRegistry;
-use AdvisingApp\Survey\Models\Survey;
+use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-class ResolveBlockRegistry
+class UrlFormFieldBlock extends FormFieldBlock
 {
-    public function __invoke(Submissible $submissible): array
+    public string $rendered = 'form::blocks.submissions.url';
+
+    public ?string $label = 'URL';
+
+    public ?string $icon = 'heroicon-m-link';
+
+    public static function type(): string
     {
-        return match ($submissible::class) {
-            Form::class, Application::class => FormFieldBlockRegistry::keyByType(),
-            Survey::class => SurveyFieldBlockRegistry::keyByType(),
-            EventRegistrationForm::class => LegacyFormFieldBlockRegistry::keyByTypeForEvents(),
-            CaseForm::class => LegacyDefaultFieldBlockRegistry::keyByType(),
-        };
+        return 'url';
+    }
+
+    public function fields(): array
+    {
+        return [];
+    }
+
+    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
+    {
+        return [
+            '$formkit' => 'url',
+            'label' => $field->label,
+            'name' => $field->getKey(),
+            ...($field->is_required ? ['validation' => 'required'] : []),
+            ...self::getDescriptionSectionsSchema($field),
+        ];
+    }
+
+    public static function getValidationRules(SubmissibleField $field): array
+    {
+        return ['url', 'max:255'];
     }
 }

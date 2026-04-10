@@ -45,11 +45,23 @@
     $blocks = app(ResolveBlockRegistry::class)($submission->submissible);
 
     $content['content'] = app(InjectSubmissionStateIntoTipTapContent::class)($submission, $content['content'], $blocks);
+
+    // Detect format: customBlock (RichEditor) or tiptapBlock (legacy TipTap)
+    $usesRichEditor = collect($content['content'] ?? [])
+        ->contains(fn ($node) => is_array($node) && ($node['type'] ?? null) === 'customBlock');
+    $usesLegacyTipTap = collect($content['content'] ?? [])
+        ->contains(fn ($node) => is_array($node) && ($node['type'] ?? null) === 'tiptapBlock');
 @endphp
 
 <div class="prose max-w-none dark:prose-invert">
     @if (! empty($content['content']))
-        {!! RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toHtml() !!}
+        @if ($usesRichEditor)
+            {!! RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toHtml() !!}
+        @elseif ($usesLegacyTipTap)
+            {!! tiptap_converter()->blocks($blocks)->asHTML($content) !!}
+        @else
+            {!! RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toHtml() !!}
+        @endif
     @else
         This submission has no content.
     @endif

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Blocks;
+namespace AdvisingApp\Form\Filament\Blocks\Legacy;
 
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
@@ -46,22 +46,21 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\Facades\Storage;
 
-class EducatableUploadFormFieldBlock extends FormFieldBlock
+class UploadFormFieldBlock extends FormFieldBlock
 {
+    public ?string $icon = 'heroicon-m-document-arrow-up';
+
+    public string $rendered = 'form::blocks.submissions.upload';
+
     public static function type(): string
     {
-        return 'educatable_upload';
-    }
-
-    public static function getLabel(): string
-    {
-        return 'Upload';
+        return 'upload';
     }
 
     /**
      * @return array<Component>
      */
-    public static function fields(): array
+    public function fields(): array
     {
         return [
             Checkbox::make('multiple')
@@ -87,7 +86,7 @@ class EducatableUploadFormFieldBlock extends FormFieldBlock
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
             'multiple' => $field->config['multiple'] ?? false,
-            'accept' => UploadFormFieldBlock::getExtensionsFull(),
+            'accept' => static::getExtensionsFull(),
             'limit' => $field->config['limit'] ?? 1,
             'size' => $field->config['size'] ?? null,
             'uploadUrl' => route('widgets.forms.form-upload-url'),
@@ -148,7 +147,6 @@ class EducatableUploadFormFieldBlock extends FormFieldBlock
         $media = (isset($field->pivot) && $field->pivot->hasMedia('files')) ? $field->pivot->getMedia('files')->map(fn ($media) => [
             'id' => $media->id,
             'name' => $media->file_name,
-            // @phpstan-ignore-next-line
             'temporary_url' => Storage::disk($media->disk)->temporaryUrl(
                 $media->getPathRelativeToRoot(),
                 now()->addDay(),
@@ -161,10 +159,5 @@ class EducatableUploadFormFieldBlock extends FormFieldBlock
             ...parent::getSubmissionState($field, $response),
             'media' => $media,
         ];
-    }
-
-    protected static function renderedView(): string
-    {
-        return 'form::blocks.submissions.upload';
     }
 }

@@ -34,29 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Actions;
+namespace AdvisingApp\Form\Filament\Blocks\Legacy;
 
-use AdvisingApp\Application\Models\Application;
-use AdvisingApp\CaseManagement\Models\CaseForm;
-use AdvisingApp\Form\Filament\Blocks\DefaultFieldBlockRegistry;
-use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
-use AdvisingApp\Form\Filament\Blocks\Legacy\DefaultFieldBlockRegistry as LegacyDefaultFieldBlockRegistry;
-use AdvisingApp\Form\Filament\Blocks\Legacy\FormFieldBlockRegistry as LegacyFormFieldBlockRegistry;
-use AdvisingApp\Form\Models\Form;
-use AdvisingApp\Form\Models\Submissible;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
-use AdvisingApp\Survey\Filament\Blocks\SurveyFieldBlockRegistry;
-use AdvisingApp\Survey\Models\Survey;
-
-class ResolveBlockRegistry
+class DefaultFieldBlockRegistry
 {
-    public function __invoke(Submissible $submissible): array
+    /**
+     * @return array<class-string<FormFieldBlock>>
+     */
+    public static function get(): array
     {
-        return match ($submissible::class) {
-            Form::class, Application::class => FormFieldBlockRegistry::keyByType(),
-            Survey::class => SurveyFieldBlockRegistry::keyByType(),
-            EventRegistrationForm::class => LegacyFormFieldBlockRegistry::keyByTypeForEvents(),
-            CaseForm::class => LegacyDefaultFieldBlockRegistry::keyByType(),
-        };
+        return [
+            EducatableEmailFormFieldBlock::class,
+            TextInputFormFieldBlock::class,
+            TextAreaFormFieldBlock::class,
+            SelectFormFieldBlock::class,
+            RadioFormFieldBlock::class,
+            DateFormFieldBlock::class,
+            TimeFormFieldBlock::class,
+            AgreementFormFieldBlock::class,
+            SignatureFormFieldBlock::class,
+            CheckboxesFormFieldBlock::class,
+            EmailFormFieldBlock::class,
+            NumberFormFieldBlock::class,
+            PhoneFormFieldBlock::class,
+            UrlFormFieldBlock::class,
+            UploadFormFieldBlock::class,
+        ];
+    }
+
+    /**
+     * @return array<string, class-string<FormFieldBlock>>
+     */
+    public static function keyByType(): array
+    {
+        return collect(static::get())
+            ->mapWithKeys(function (string $block): array {
+                /** @var class-string<FormFieldBlock> $block */
+
+                return [$block::type() => $block];
+            })
+            ->all();
     }
 }

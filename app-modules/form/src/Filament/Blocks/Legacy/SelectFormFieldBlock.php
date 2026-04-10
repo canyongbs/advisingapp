@@ -34,29 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Actions;
+namespace AdvisingApp\Form\Filament\Blocks\Legacy;
 
-use AdvisingApp\Application\Models\Application;
-use AdvisingApp\CaseManagement\Models\CaseForm;
-use AdvisingApp\Form\Filament\Blocks\DefaultFieldBlockRegistry;
-use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
-use AdvisingApp\Form\Filament\Blocks\Legacy\DefaultFieldBlockRegistry as LegacyDefaultFieldBlockRegistry;
-use AdvisingApp\Form\Filament\Blocks\Legacy\FormFieldBlockRegistry as LegacyFormFieldBlockRegistry;
-use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\Submissible;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
-use AdvisingApp\Survey\Filament\Blocks\SurveyFieldBlockRegistry;
-use AdvisingApp\Survey\Models\Survey;
+use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Forms\Components\KeyValue;
 
-class ResolveBlockRegistry
+class SelectFormFieldBlock extends FormFieldBlock
 {
-    public function __invoke(Submissible $submissible): array
+    public string $rendered = 'form::blocks.submissions.select';
+
+    public ?string $icon = 'heroicon-m-queue-list';
+
+    public static function type(): string
     {
-        return match ($submissible::class) {
-            Form::class, Application::class => FormFieldBlockRegistry::keyByType(),
-            Survey::class => SurveyFieldBlockRegistry::keyByType(),
-            EventRegistrationForm::class => LegacyFormFieldBlockRegistry::keyByTypeForEvents(),
-            CaseForm::class => LegacyDefaultFieldBlockRegistry::keyByType(),
-        };
+        return 'select';
+    }
+
+    public function fields(): array
+    {
+        return [
+            KeyValue::make('options')
+                ->keyLabel('Value')
+                ->valueLabel('Label'),
+        ];
+    }
+
+    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
+    {
+        return [
+            '$formkit' => 'select',
+            'label' => $field->label,
+            'name' => $field->getKey(),
+            ...($field->is_required ? ['validation' => 'required'] : []),
+            'options' => $field->config['options'],
+            ...self::getDescriptionSectionsSchema($field),
+        ];
+    }
+
+    public static function getValidationRules(SubmissibleField $field): array
+    {
+        return [
+            'string',
+            'in:' . collect($field->config['options'])->keys()->join(','),
+        ];
     }
 }
