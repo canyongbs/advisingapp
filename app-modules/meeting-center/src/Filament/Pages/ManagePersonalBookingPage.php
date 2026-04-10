@@ -39,7 +39,6 @@ namespace AdvisingApp\MeetingCenter\Filament\Pages;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use App\Features\MaximumLeadTimeFeature;
 use App\Features\MinimumLeadTimeFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Pages\ProfilePage;
@@ -140,7 +139,7 @@ class ManagePersonalBookingPage extends ProfilePage
                             ->default(0)
                             ->minValue(0)
                             ->integer()
-                            ->visible(fn (Get $get) => MaximumLeadTimeFeature::active() && $get('is_enabled')),
+                            ->visible(fn (Get $get) => $get('is_enabled')),
                         Section::make('Working Hours')
                             ->visible($hasCrmLicense)
                             ->schema([

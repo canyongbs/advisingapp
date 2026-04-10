@@ -41,7 +41,6 @@ use AdvisingApp\MeetingCenter\Http\Requests\BookPersonalCalendarSlotRequest;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
-use App\Features\MaximumLeadTimeFeature;
 use App\Features\MinimumLeadTimeFeature;
 use App\Http\Controllers\Controller;
 use App\Settings\CollegeBrandingSettings;
@@ -204,7 +203,7 @@ class PersonalBookingPageWidgetController extends Controller
         }
 
         // Check if the appointment exceeds the maximum lead time
-        $maxLeadTimeDays = MaximumLeadTimeFeature::active() ? ($bookingPage->maximum_booking_lead_time_days ?? 0) : 0;
+        $maxLeadTimeDays = $bookingPage->maximum_booking_lead_time_days ?? 0;
 
         if ($maxLeadTimeDays > 0) {
             $latestAllowed = now()->addDays($maxLeadTimeDays);
