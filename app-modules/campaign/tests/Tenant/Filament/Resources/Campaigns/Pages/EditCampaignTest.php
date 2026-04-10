@@ -64,7 +64,7 @@ test('archive action shows archive label for disabled campaigns', function () {
     asSuperAdmin();
 
     $campaign = Campaign::factory()->disabled()->create();
- 
+
     livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertActionHasLabel('archive', 'Archive');
 });
@@ -131,4 +131,3 @@ test('archive action exists on edit page', function () {
     livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertActionExists('archive');
 });
-
