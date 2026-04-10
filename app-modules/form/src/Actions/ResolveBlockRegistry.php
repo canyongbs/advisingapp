@@ -38,7 +38,6 @@ namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\CaseManagement\Models\CaseForm;
-use AdvisingApp\Form\Filament\Blocks\DefaultFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Blocks\Legacy\DefaultFieldBlockRegistry as LegacyDefaultFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Blocks\Legacy\FormFieldBlockRegistry as LegacyFormFieldBlockRegistry;
