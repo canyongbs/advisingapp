@@ -302,7 +302,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public static function getMergeTags(): array
     {
-        return array_keys((new static)->getMergeData());
+        return array_keys((new static())->getMergeData());
     }
 
     public function getDeliveryMethod(): NotificationChannel

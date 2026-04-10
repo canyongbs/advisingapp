@@ -269,7 +269,6 @@ test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements
 
             expect($withSource->source_id)->toBe($action->id); /** @phpstan-ignore-line */
             expect($withSource->source_type)->toBe('campaign_action'); /** @phpstan-ignore-line */
-
             $withoutSource = DB::table('engagements')->where('id', $engagementWithoutSource->id)->first();
 
             expect($withoutSource->source_id)->toBeNull(); /** @phpstan-ignore-line */
