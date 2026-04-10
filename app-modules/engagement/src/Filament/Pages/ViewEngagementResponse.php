@@ -195,18 +195,6 @@ class ViewEngagementResponse extends Page
                     ->required(),
                 RichEditor::make('subject')
                     ->label('Subject')
-                    ->mergeTags([
-                        'recipient first name',
-                        'recipient last name',
-                        'recipient full name',
-                        'recipient email',
-                        'recipient preferred name',
-                        'user first name',
-                        'user full name',
-                        'user job title',
-                        'user email',
-                        'user phone number',
-                    ])
                     ->toolbarButtons([])
                     ->json()
                     ->hidden($this->record->type === EngagementResponseType::Sms)
@@ -216,18 +204,6 @@ class ViewEngagementResponse extends Page
                 RichEditor::make('body')
                     ->fileAttachmentsDisk('s3-public')
                     ->label('Body')
-                    ->mergeTags($mergeTags = [
-                        'recipient first name',
-                        'recipient last name',
-                        'recipient full name',
-                        'recipient email',
-                        'recipient preferred name',
-                        'user first name',
-                        'user full name',
-                        'user job title',
-                        'user email',
-                        'user phone number',
-                    ])
                     ->toolbarButtons([['bold', 'italic', 'small', 'link', 'textColor'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles'], ['mergeTags']])
                     ->activePanel('mergeTags')
                     ->resizableImages()
@@ -240,7 +216,7 @@ class ViewEngagementResponse extends Page
                     ->hidden($this->record->type === EngagementResponseType::Email),
                 Actions::make([
                     DraftWithAiAction::make()
-                        ->mergeTags($mergeTags)
+                        ->mergeTags(Engagement::getMergeTags())
                         ->educatable($this->record->sender)
                         ->suffixContent(($this->record->type === EngagementResponseType::Email) ? $this->generateEmailReplyBody('') : null)
                         ->channel(fn (): NotificationChannel => match ($this->record->type) {

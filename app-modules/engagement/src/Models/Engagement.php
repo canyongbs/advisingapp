@@ -254,7 +254,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
             $text = $this->getRichContentAttribute('body')?->mergeTags($this->getMergeData())?->toText() ?? '';
         }
 
-        return html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return trim(preg_replace('/\s+/u', ' ', $text) ?? '');
     }
 
     public function getSubject(): ?HtmlString
@@ -298,23 +300,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         ];
     }
 
-    /**
-     * @param class-string $type
-     */
-    public static function getMergeTags(string $type): array
+    public static function getMergeTags(): array
     {
-        return [
-            'recipient first name',
-            'recipient last name',
-            'recipient full name',
-            'recipient email',
-            'recipient preferred name',
-            'user first name',
-            'user full name',
-            'user job title',
-            'user email',
-            'user phone number',
-        ];
+        return array_keys((new static)->getMergeData());
     }
 
     public function getDeliveryMethod(): NotificationChannel

@@ -41,10 +41,14 @@ return new class () extends Migration {
     public function up(): void
     {
         $this->processTable('email_templates', 'content');
+        $this->processTable('engagements', 'subject');
         $this->processTable('engagements', 'body');
+        $this->processTable('engagement_batches', 'subject');
         $this->processTable('engagement_batches', 'body');
         $this->processTable('workflow_engagement_email_details', 'body');
+        $this->processTable('sms_templates', 'content');
         $this->processNestedJsonTable('campaign_actions', 'data', 'body');
+        $this->processNestedJsonTable('campaign_actions', 'data', 'subject');
     }
 
     public function down(): void {}
@@ -112,6 +116,11 @@ return new class () extends Migration {
                 $node['attrs']['height'] = null;
                 $changed = true;
             }
+        }
+
+        if (($node['type'] ?? null) === 'mergeTag' && isset($node['attrs']['id']) && str_starts_with($node['attrs']['id'], 'student ')) {
+            $node['attrs']['id'] = 'recipient ' . substr($node['attrs']['id'], 8);
+            $changed = true;
         }
 
         if (isset($node['marks']) && is_array($node['marks'])) {

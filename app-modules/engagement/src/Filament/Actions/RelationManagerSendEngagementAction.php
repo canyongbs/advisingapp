@@ -219,18 +219,6 @@ class RelationManagerSendEngagementAction extends CreateAction
                     ->schema([
                         RichEditor::make('subject')
                             ->label('Subject')
-                            ->mergeTags([
-                                'recipient first name',
-                                'recipient last name',
-                                'recipient full name',
-                                'recipient email',
-                                'recipient preferred name',
-                                'user first name',
-                                'user full name',
-                                'user job title',
-                                'user email',
-                                'user phone number',
-                            ])
                             ->toolbarButtons([])
                             ->json()
                             ->helperText('You may use "merge tags" to substitute information about a recipient into your subject line. Insert a "{{" in the subject line field to see a list of available merge tags')
@@ -242,18 +230,6 @@ class RelationManagerSendEngagementAction extends CreateAction
                             ->key('emailBody')
                             ->fileAttachmentsDisk('s3-public')
                             ->label('Body')
-                            ->mergeTags($mergeTags = [
-                                'recipient first name',
-                                'recipient last name',
-                                'recipient full name',
-                                'recipient email',
-                                'recipient preferred name',
-                                'user first name',
-                                'user full name',
-                                'user job title',
-                                'user email',
-                                'user phone number',
-                            ])
                             ->toolbarButtons([['bold', 'italic', 'small', 'link', 'textColor'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles'], ['mergeTags']])
                             ->activePanel('mergeTags')
                             ->resizableImages()
@@ -350,7 +326,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                         EngagementSmsBodyInput::make(context: 'create'),
                         Actions::make([
                             RelationManagerDraftWithAiAction::make()
-                                ->mergeTags($mergeTags),
+                                ->mergeTags(Engagement::getMergeTags()),
                         ]),
                     ]),
                 Step::make('Email Signature')

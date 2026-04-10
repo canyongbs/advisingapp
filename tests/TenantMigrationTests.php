@@ -108,15 +108,15 @@ function imageContent(): array
     ];
 }
 
-test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables email_templates', function () {
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables email_templates', function () {
     isolatedMigration(
-        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables',
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
             $emailTemplate = EmailTemplate::factory()->createQuietly([
                 'content' => imageContent(),
             ]);
 
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables.php']);
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 
             expect($migrate)->toBe(Command::SUCCESS);
 
@@ -135,15 +135,15 @@ test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_
     );
 });
 
-test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables engagements', function () {
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables engagements', function () {
     isolatedMigration(
-        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables',
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
             $engagement = Engagement::factory()->createQuietly([
                 'body' => imageContent(),
             ]);
 
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables.php']);
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 
             expect($migrate)->toBe(Command::SUCCESS);
 
@@ -162,15 +162,15 @@ test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_
     );
 });
 
-test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables engagement_batches', function () {
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables engagement_batches', function () {
     isolatedMigration(
-        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables',
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
             $batch = EngagementBatch::factory()->createQuietly([
                 'body' => imageContent(),
             ]);
 
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables.php']);
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 
             expect($migrate)->toBe(Command::SUCCESS);
 
@@ -189,15 +189,15 @@ test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_
     );
 });
 
-test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables workflow_engagement_email_details', function () {
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables workflow_engagement_email_details', function () {
     isolatedMigration(
-        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables',
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
             $details = WorkflowEngagementEmailDetails::factory()->createQuietly([
                 'body' => imageContent(),
             ]);
 
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables.php']);
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 
             expect($migrate)->toBe(Command::SUCCESS);
 
@@ -216,9 +216,9 @@ test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_
     );
 });
 
-test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables campaign_actions', function () {
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables campaign_actions', function () {
     isolatedMigration(
-        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables',
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
             $action = CampaignAction::factory()->createQuietly([
                 'data' => [
@@ -228,7 +228,7 @@ test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_
                 ],
             ]);
 
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables.php']);
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 
             expect($migrate)->toBe(Command::SUCCESS);
 
@@ -321,15 +321,15 @@ function textColorContent(): array
     ];
 }
 
-test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables transforms textStyle marks to textColor', function () {
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables transforms textStyle marks to textColor', function () {
     isolatedMigration(
-        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables',
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
             $emailTemplate = EmailTemplate::factory()->createQuietly([
                 'content' => textColorContent(),
             ]);
 
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables.php']);
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 
             expect($migrate)->toBe(Command::SUCCESS);
 
@@ -348,15 +348,15 @@ test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_
     );
 });
 
-test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables transforms textStyle marks in engagements', function () {
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables transforms textStyle marks in engagements', function () {
     isolatedMigration(
-        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables',
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
             $engagement = Engagement::factory()->createQuietly([
                 'body' => textColorContent(),
             ]);
 
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables.php']);
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 
             expect($migrate)->toBe(Command::SUCCESS);
 
@@ -370,9 +370,9 @@ test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_
     );
 });
 
-test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables transforms textStyle marks in campaign_actions', function () {
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables transforms textStyle marks in campaign_actions', function () {
     isolatedMigration(
-        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables',
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
             $action = CampaignAction::factory()->createQuietly([
                 'data' => [
@@ -382,7 +382,7 @@ test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_
                 ],
             ]);
 
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables.php']);
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 
             expect($migrate)->toBe(Command::SUCCESS);
 
@@ -392,6 +392,62 @@ test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_
             expect($data['body']['content'][0]['content'][0]['marks'][0]['type'])->toBe('textColor');
             /** @phpstan-ignore-next-line */
             expect($data['body']['content'][0]['content'][0]['marks'][0]['attrs']['data-color'])->toBe('#ff0000');
+        }
+    );
+});
+
+/** @return array<string, mixed> */
+function studentMergeTagContent(): array
+{
+    return [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    ['type' => 'text', 'text' => 'Hello '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'student first name']],
+                    ['type' => 'text', 'text' => ' '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'student last name']],
+                ],
+            ],
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'student email']],
+                    ['type' => 'text', 'text' => ' - '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'recipient first name']],
+                ],
+            ],
+        ],
+    ];
+}
+
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables renames student merge tags to recipient', function () {
+    isolatedMigration(
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
+        function () {
+            $engagement = Engagement::factory()->createQuietly([
+                'body' => studentMergeTagContent(),
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $body = json_decode((string) DB::table('engagements')->where('id', $engagement->id)->value('body'), associative: true); /** @phpstan-ignore-line */
+
+            // student merge tags should be renamed to recipient
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][0]['content'][1]['attrs']['id'])->toBe('recipient first name');
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][0]['content'][3]['attrs']['id'])->toBe('recipient last name');
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][1]['content'][0]['attrs']['id'])->toBe('recipient email');
+
+            // existing recipient merge tags should be unchanged
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][1]['content'][2]['attrs']['id'])->toBe('recipient first name');
         }
     );
 });
