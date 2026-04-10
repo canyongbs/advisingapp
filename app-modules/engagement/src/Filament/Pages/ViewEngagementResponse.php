@@ -236,7 +236,7 @@ class ViewEngagementResponse extends Page
                     ->hidden($this->record->type === EngagementResponseType::Sms)
                     ->helperText('You can insert recipient or your information by typing {{ and choosing a merge value to insert.')
                     ->columnSpanFull(),
-                EngagementSmsBodyInput::make(context: 'create', form: $schema, withTemplateAction: false)
+                EngagementSmsBodyInput::make(context: 'create', withTemplateAction: false)
                     ->hidden($this->record->type === EngagementResponseType::Email),
                 Actions::make([
                     DraftWithAiAction::make()
