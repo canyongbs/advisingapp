@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
+use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use Filament\Actions\BulkAction;
@@ -59,6 +60,7 @@ class BulkTextAction
             ->label('Send Text')
             ->icon('heroicon-o-chat-bubble-bottom-center-text')
             ->modalHeading('Send Bulk Text')
+            ->model(EngagementBatch::class)
             ->modalDescription(fn (Collection $records) => "You have selected {$records->count()} {$context} to text.")
             ->steps([
                 Step::make('Engagement Details')
