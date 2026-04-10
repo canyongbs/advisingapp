@@ -92,6 +92,7 @@ class GenerateFormKitSchema
                 'text' => $this->text($component),
                 'image' => $this->getImageSrc($component, $submissible),
                 'customBlock' => ($field = ($fields[$component['attrs']['config']['fieldId'] ?? ''] ?? null)) ? (isset($blocks[$component['attrs']['id']]) ? $blocks[$component['attrs']['id']]::getFormKitSchema($field, $actualSubmissible, $this->author) : []) : [],
+                'tiptapBlock' => ($field = ($fields[$component['attrs']['id'] ?? ''] ?? null)) ? (isset($blocks[$component['attrs']['type']]) ? $blocks[$component['attrs']['type']]::getFormKitSchema($field, $actualSubmissible, $this->author) : []) : [],
                 default => [],
             },
             $content,
@@ -100,28 +101,42 @@ class GenerateFormKitSchema
 
     public function grid(array $blocks, array $component, ?Collection $fields, Submissible|SubmissibleStep $submissible): array
     {
-        $dataCols = $component['attrs']['data-cols'] ?? '2';
-        $fromBreakpoint = $component['attrs']['data-from-breakpoint'] ?? 'lg';
         $children = $component['content'] ?? [];
 
-        $colSpans = array_map(
-            fn ($child) => (int) ($child['attrs']['data-col-span'] ?? 1),
-            $children,
-        );
-        $isAsymmetric = count(array_unique($colSpans)) > 1;
-
-        if ($isAsymmetric && $dataCols === '3') {
-            $cssClass = $colSpans[0] < $colSpans[1]
-                ? 'asymetric-grid-left-thirds'
-                : 'asymetric-grid-right-thirds';
-        } elseif ($isAsymmetric && $dataCols === '4') {
-            $cssClass = $colSpans[0] < $colSpans[1]
-                ? 'asymetric-grid-left-fourths'
-                : 'asymetric-grid-right-fourths';
-        } elseif ($fromBreakpoint === 'default') {
-            $cssClass = 'fixed-grid-' . $dataCols;
+        // Support both old TipTap format (type/cols) and new RichEditor format (data-cols/data-from-breakpoint)
+        if (isset($component['attrs']['type'])) {
+            $cssClass = match ($component['attrs']['type']) {
+                'asymetric-left-thirds' => 'asymetric-grid-left-thirds',
+                'asymetric-right-thirds' => 'asymetric-grid-right-thirds',
+                'asymetric-left-fourths' => 'asymetric-grid-left-fourths',
+                'asymetric-right-fourths' => 'asymetric-grid-right-fourths',
+                'fixed' => 'fixed-grid-' . $component['attrs']['cols'],
+                'responsive' => 'responsive-grid-' . $component['attrs']['cols'],
+                default => 'responsive-grid-' . ($component['attrs']['cols'] ?? '2'),
+            };
         } else {
-            $cssClass = 'responsive-grid-' . $dataCols;
+            $dataCols = $component['attrs']['data-cols'] ?? '2';
+            $fromBreakpoint = $component['attrs']['data-from-breakpoint'] ?? 'lg';
+
+            $colSpans = array_map(
+                fn ($child) => (int) ($child['attrs']['data-col-span'] ?? 1),
+                $children,
+            );
+            $isAsymmetric = count(array_unique($colSpans)) > 1;
+
+            if ($isAsymmetric && $dataCols === '3') {
+                $cssClass = $colSpans[0] < $colSpans[1]
+                    ? 'asymetric-grid-left-thirds'
+                    : 'asymetric-grid-right-thirds';
+            } elseif ($isAsymmetric && $dataCols === '4') {
+                $cssClass = $colSpans[0] < $colSpans[1]
+                    ? 'asymetric-grid-left-fourths'
+                    : 'asymetric-grid-right-fourths';
+            } elseif ($fromBreakpoint === 'default') {
+                $cssClass = 'fixed-grid-' . $dataCols;
+            } else {
+                $cssClass = 'responsive-grid-' . $dataCols;
+            }
         }
 
         return [
