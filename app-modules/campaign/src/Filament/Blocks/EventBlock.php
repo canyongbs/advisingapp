@@ -50,7 +50,7 @@ class EventBlock extends CampaignActionBlock
 
         $this->model(Event::class);
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
     public function generateFields(): array

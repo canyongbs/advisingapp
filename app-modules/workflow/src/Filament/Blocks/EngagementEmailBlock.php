@@ -68,7 +68,7 @@ class EngagementEmailBlock extends WorkflowActionBlock
 
         $this->model(WorkflowEngagementEmailDetails::class);
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
     /**

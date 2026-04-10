@@ -53,7 +53,7 @@ class TagsBlock extends CampaignActionBlock
 
         $this->label('Tags');
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
     /**

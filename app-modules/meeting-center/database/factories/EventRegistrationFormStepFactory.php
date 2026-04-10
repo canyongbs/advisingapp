@@ -58,7 +58,7 @@ class EventRegistrationFormStepFactory extends Factory
     public function configure(): EventRegistrationFormStepFactory|Factory
     {
         return $this->afterCreating(function (EventRegistrationFormStep $eventRegistrationFormStep) {
-            $fields = $this->createFields($eventRegistrationFormStep, rand(1, 3));
+            $fields = $this->generateFields($eventRegistrationFormStep, rand(1, 3));
 
             $eventRegistrationFormStep->content = [
                 'type' => 'doc',
@@ -69,7 +69,7 @@ class EventRegistrationFormStepFactory extends Factory
         });
     }
 
-    private function createFields(EventRegistrationFormStep $eventRegistrationFormStep, int $count = 3): array
+    private function generateFields(EventRegistrationFormStep $eventRegistrationFormStep, int $count = 3): array
     {
         return EventRegistrationFormField::factory()
             ->count($count)

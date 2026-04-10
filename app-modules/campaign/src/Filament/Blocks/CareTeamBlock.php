@@ -61,7 +61,7 @@ class CareTeamBlock extends CampaignActionBlock
 
         $this->label('Care Team');
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
     public function generateFields(): array

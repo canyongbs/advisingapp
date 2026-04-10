@@ -91,9 +91,9 @@ abstract class WorkflowDetails extends BaseModel
     /**
      * @return array<int, covariant Field>
      */
-    public function getEditFields(): array
+    public function getgenerateFields(): array
     {
-        return $this->getBlock()->editFields();
+        return $this->getBlock()->generateFields();
     }
 
     /**

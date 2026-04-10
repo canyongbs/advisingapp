@@ -54,16 +54,6 @@ abstract class CampaignActionBlock extends Block
         return parent::make($name ?? static::type());
     }
 
-    public function createFields(): array
-    {
-        return $this->generateFields();
-    }
-
-    public function editFields(): array
-    {
-        return $this->generateFields();
-    }
-
     abstract public function generateFields(): array;
 
     abstract public static function type(): string;

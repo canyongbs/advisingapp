@@ -47,7 +47,7 @@ class SubscriptionBlock extends CampaignActionBlock
     {
         parent::setUp();
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
     public function generateFields(): array

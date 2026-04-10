@@ -54,7 +54,7 @@ class TaskBlock extends WorkflowActionBlock
 
         $this->label('Task');
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
     /**

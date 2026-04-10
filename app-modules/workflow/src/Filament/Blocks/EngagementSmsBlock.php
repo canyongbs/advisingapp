@@ -53,7 +53,7 @@ class EngagementSmsBlock extends WorkflowActionBlock
 
         $this->label('Text Message');
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
     /**

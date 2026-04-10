@@ -77,7 +77,7 @@ class EventRegistrationFormFactory extends Factory
                     'form_id' => $eventRegistrationForm->getKey(),
                 ]);
             } else {
-                $fields = $this->createFields($eventRegistrationForm, rand(1, 3));
+                $fields = $this->generateFields($eventRegistrationForm, rand(1, 3));
 
                 $eventRegistrationForm->content = [
                     'type' => 'doc',
@@ -104,7 +104,7 @@ class EventRegistrationFormFactory extends Factory
         });
     }
 
-    private function createFields(EventRegistrationForm $eventRegistrationForm, int $count = 3): array
+    private function generateFields(EventRegistrationForm $eventRegistrationForm, int $count = 3): array
     {
         return EventRegistrationFormField::factory()
             ->count($count)

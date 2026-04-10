@@ -65,7 +65,7 @@ class CaseBlock extends CampaignActionBlock
 
         $this->label('Case');
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
     public function generateFields(): array

@@ -68,7 +68,7 @@ class InteractionBlock extends CampaignActionBlock
 
         $this->label('Interaction');
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
     public function generateFields(): array

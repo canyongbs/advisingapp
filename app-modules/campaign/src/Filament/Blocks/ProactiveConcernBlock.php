@@ -52,7 +52,7 @@ class ProactiveConcernBlock extends CampaignActionBlock
 
         $this->label('Proactive Concern');
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
     /**

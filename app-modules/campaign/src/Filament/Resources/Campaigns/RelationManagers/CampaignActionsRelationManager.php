@@ -71,7 +71,7 @@ class CampaignActionsRelationManager extends RelationManager
                     ->required()
                     ->maxLength(255)
                     ->disabled(),
-                Group::make(fn (CampaignAction $record) => $record->type->getEditFields())
+                Group::make(fn (CampaignAction $record) => $record->type->getgenerateFields())
                     ->statePath('data'),
             ])
             ->columns(1);

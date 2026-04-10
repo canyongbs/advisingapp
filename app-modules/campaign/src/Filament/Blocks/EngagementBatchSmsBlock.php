@@ -51,7 +51,7 @@ class EngagementBatchSmsBlock extends CampaignActionBlock
 
         $this->label('Text Message');
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
     public function generateFields(): array

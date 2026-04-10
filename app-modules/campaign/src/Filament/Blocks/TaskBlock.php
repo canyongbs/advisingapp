@@ -55,7 +55,7 @@ class TaskBlock extends CampaignActionBlock
 
         $this->model(Task::class);
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
     public function generateFields(): array

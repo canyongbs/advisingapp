@@ -50,7 +50,7 @@ class SubscriptionBlock extends WorkflowActionBlock
 
         $this->label('Subscription');
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
     public function generateFields(): array

@@ -52,7 +52,7 @@ class ProactiveConcernBlock extends WorkflowActionBlock
 
         $this->label('Concern');
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
     public function generateFields(): array
