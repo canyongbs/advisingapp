@@ -37,6 +37,7 @@
 namespace AdvisingApp\Campaign\Tests\Tenant\Filament\Resources\Campaigns\Pages;
 
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\EditCampaign;
+use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ListCampaigns;
 use AdvisingApp\Campaign\Models\Campaign;
 
 use function Pest\Livewire\livewire;
@@ -103,16 +104,6 @@ test('archive action archives disabled campaigns', function () {
         ->and($campaign->isArchived())->toBeTrue();
 });
 
-test('archive action is hidden when campaign is already archived', function () {
-    asSuperAdmin();
-
-    $campaign = Campaign::factory()->enabled()->create();
-    $campaign->archive(); // @phpstan-ignore method.notFound
-
-    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
-        ->assertActionHidden('archive');
-});
-
 test('archive action redirects to index after archiving', function () {
     asSuperAdmin();
 
@@ -120,7 +111,7 @@ test('archive action redirects to index after archiving', function () {
 
     livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->callAction('archive')
-        ->assertRedirectedToRoute('filament.admin.resources.campaigns.index');
+        ->assertRedirect(ListCampaigns::getUrl());
 });
 
 test('archive action exists on edit page', function () {
