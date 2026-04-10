@@ -37,8 +37,11 @@
 namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
+use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Group\Models\Group;
+use App\Features\CampaignArchivingFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -76,6 +79,17 @@ class EditCampaign extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            ArchiveAction::make()
+                ->label(fn (Campaign $record): string => (bool) $record->getAttribute('enabled') ? 'Disable and Archive' : 'Archive')
+                ->modalHeading(fn (Campaign $record): string => (bool) $record->getAttribute('enabled') ? 'Disable and Archive Campaign' : 'Archive Campaign')
+                ->modalSubmitActionLabel(fn (Campaign $record): string => (bool) $record->getAttribute('enabled') ? 'Disable and Archive' : 'Archive')
+                ->hidden(fn (): bool => ! CampaignArchivingFeature::active())
+                ->action(function (Campaign $record): void {
+                    if ($record->enabled) {
+                        $record->forceFill(['enabled' => false])->save();
+                    }
+                    $record->archive();
+                }),
             DeleteAction::make(),
         ];
     }
