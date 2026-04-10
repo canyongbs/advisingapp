@@ -123,11 +123,11 @@ class SentItems extends Page implements HasTable
                     ->icon(fn (Engagement $record): string => $record->channel->getIcon()),
                 TextColumn::make('subject')
                     ->description(
-                        fn (Engagement $record): ?string => filled($body = $record->getBody())
-                            ? Str::limit(html_entity_decode(strip_tags($body), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50)
+                        fn (Engagement $record): ?string => filled($body = $record->getBodyText())
+                            ? Str::limit($body, 50)
                             : null
                     )
-                    ->state(fn (Engagement $record): string => html_entity_decode(strip_tags($record->getSubject()), ENT_QUOTES | ENT_HTML5, 'UTF-8'))
+                    ->state(fn (Engagement $record): string => (string) $record->getSubject())
                     ->searchable(['subject', 'body']),
                 TextColumn::make('dispatched_at')
                     ->label('Date')

@@ -353,8 +353,8 @@ it('ensures details are properly rendered in the table', function () {
         'cacheTag' => 'report-student-messages',
         'filters' => [],
     ])
-        ->assertTableColumnStateSet('details', Str::limit(html_entity_decode(strip_tags($engagementEmail->getSubject()), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50), $holisticEngagementEmail)
-        ->assertTableColumnStateSet('details', Str::limit(html_entity_decode(strip_tags($engagementSms->getBody()), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50), $holisticEngagementSms)
+        ->assertTableColumnStateSet('details', Str::limit((string) $engagementEmail->getSubject(), 50), $holisticEngagementEmail)
+        ->assertTableColumnStateSet('details', Str::limit($engagementSms->getBodyText(), 50), $holisticEngagementSms)
         ->assertTableColumnStateSet('details', Str::limit(html_entity_decode(strip_tags($responseEmail->subject), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50), $holisticResponseEmail)
         ->assertTableColumnStateSet('details', Str::limit(html_entity_decode(strip_tags($responseSms->getBody()), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50), $holisticResponseSms);
 });

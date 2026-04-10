@@ -103,7 +103,7 @@ class ViewEngagement extends Page
 
     public function getTitle(): string
     {
-        return html_entity_decode(strip_tags($this->record->getSubject()), ENT_QUOTES | ENT_HTML5, 'UTF-8') ?: 'Sent Items';
+        return ((string) $this->record->getSubject()) ?: 'Sent Items';
     }
 
     public function infolist(Schema $schema): Schema
@@ -121,7 +121,7 @@ class ViewEngagement extends Page
                                     ->schema([
                                         TextEntry::make('subject')
                                             ->state(function (Engagement $record): string {
-                                                return html_entity_decode(strip_tags($record->getSubject()), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                                                return (string) $record->getSubject();
                                             })
                                             ->visible(fn (Engagement $record): bool => $record->channel === NotificationChannel::Email)
                                             ->columnSpanFull(),

@@ -246,6 +246,17 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return new HtmlString($attribute?->toHtml() ?? '');
     }
 
+    public function getBodyText(): string
+    {
+        if ($this->batch) {
+            $text = $this->batch->getRichContentAttribute('body')?->mergeTags($this->getMergeData())?->toText() ?? '';
+        } else {
+            $text = $this->getRichContentAttribute('body')?->mergeTags($this->getMergeData())?->toText() ?? '';
+        }
+
+        return html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+
     public function getSubject(): ?HtmlString
     {
         if ($this->batch) {

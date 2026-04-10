@@ -114,11 +114,31 @@ return new class () extends Migration {
             }
         }
 
+        if (isset($node['marks']) && is_array($node['marks'])) {
+            $this->processMarks($node['marks'], $changed);
+        }
+
         if (isset($node['content']) && is_array($node['content'])) {
             foreach ($node['content'] as &$child) {
                 if (is_array($child)) {
                     $this->processNodes($child, $changed);
                 }
+            }
+        }
+    }
+
+    /**
+     * @param array<int, array<mixed>> $marks
+     */
+    protected function processMarks(array &$marks, bool &$changed): void
+    {
+        foreach ($marks as &$mark) {
+            if (($mark['type'] ?? null) === 'textStyle') {
+                $mark['type'] = 'textColor';
+                $mark['attrs'] = [
+                    'data-color' => $mark['attrs']['color'] ?? null,
+                ];
+                $changed = true;
             }
         }
     }

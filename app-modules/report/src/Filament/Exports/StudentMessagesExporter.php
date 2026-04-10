@@ -117,11 +117,11 @@ class StudentMessagesExporter extends Exporter
                     }
 
                     return match ($record->record::class) {
-                        Engagement::class => html_entity_decode(strip_tags(match ($record->record->channel) {
-                            NotificationChannel::Email => $record->record->getSubject(),
-                            NotificationChannel::Sms => $record->record->getBody(),
+                        Engagement::class => match ($record->record->channel) {
+                            NotificationChannel::Email => (string) $record->record->getSubject(),
+                            NotificationChannel::Sms => $record->record->getBodyText(),
                             default => 'N/A',
-                        }), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                        },
                         EngagementResponse::class => html_entity_decode(strip_tags(match ($record->record->type) {
                             EngagementResponseType::Email => $record->record->subject,
                             EngagementResponseType::Sms => $record->record->getBody(),

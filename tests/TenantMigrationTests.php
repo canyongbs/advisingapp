@@ -246,3 +246,152 @@ test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_
         }
     );
 });
+
+test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements_table renames column and backfills source_type', function () {
+    isolatedMigration(
+        '2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements_table',
+        function () {
+            $action = CampaignAction::factory()->createQuietly();
+
+            $engagementWithSource = Engagement::factory()->createQuietly([
+                'campaign_action_id' => $action->id,
+            ]);
+
+            $engagementWithoutSource = Engagement::factory()->createQuietly([
+                'campaign_action_id' => null,
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements_table.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $withSource = DB::table('engagements')->where('id', $engagementWithSource->id)->first();
+
+            expect($withSource->source_id)->toBe($action->id); /** @phpstan-ignore-line */
+            expect($withSource->source_type)->toBe('campaign_action'); /** @phpstan-ignore-line */
+
+            $withoutSource = DB::table('engagements')->where('id', $engagementWithoutSource->id)->first();
+
+            expect($withoutSource->source_id)->toBeNull(); /** @phpstan-ignore-line */
+            expect($withoutSource->source_type)->toBeNull(); /** @phpstan-ignore-line */
+        }
+    );
+});
+
+/** @return array<string, mixed> */
+function textColorContent(): array
+{
+    return [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'attrs' => ['textAlign' => 'start'],
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'text' => 'Hello world',
+                        'marks' => [
+                            [
+                                'type' => 'textStyle',
+                                'attrs' => [
+                                    'color' => '#ff0000',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'type' => 'paragraph',
+                'attrs' => ['textAlign' => 'start'],
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'text' => 'No color',
+                        'marks' => [
+                            [
+                                'type' => 'bold',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ];
+}
+
+test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables transforms textStyle marks to textColor', function () {
+    isolatedMigration(
+        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables',
+        function () {
+            $emailTemplate = EmailTemplate::factory()->createQuietly([
+                'content' => textColorContent(),
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('email_templates')->where('id', $emailTemplate->id)->value('content'), associative: true); /** @phpstan-ignore-line */
+
+            // textStyle mark should be transformed to textColor with data-color attr
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][0]['marks'][0]['type'])->toBe('textColor');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][0]['marks'][0]['attrs']['data-color'])->toBe('#ff0000');
+
+            // bold mark should be unchanged
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['content'][0]['marks'][0]['type'])->toBe('bold');
+        }
+    );
+});
+
+test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables transforms textStyle marks in engagements', function () {
+    isolatedMigration(
+        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables',
+        function () {
+            $engagement = Engagement::factory()->createQuietly([
+                'body' => textColorContent(),
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $body = json_decode((string) DB::table('engagements')->where('id', $engagement->id)->value('body'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][0]['content'][0]['marks'][0]['type'])->toBe('textColor');
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][0]['content'][0]['marks'][0]['attrs']['data-color'])->toBe('#ff0000');
+        }
+    );
+});
+
+test('2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables transforms textStyle marks in campaign_actions', function () {
+    isolatedMigration(
+        '2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables',
+        function () {
+            $action = CampaignAction::factory()->createQuietly([
+                'data' => [
+                    'channel' => 'email',
+                    'subject' => [],
+                    'body' => textColorContent(),
+                ],
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_reset_oversized_image_dimensions_in_engagement_tables.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $data = json_decode((string) DB::table('campaign_actions')->where('id', $action->id)->value('data'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($data['body']['content'][0]['content'][0]['marks'][0]['type'])->toBe('textColor');
+            /** @phpstan-ignore-next-line */
+            expect($data['body']['content'][0]['content'][0]['marks'][0]['attrs']['data-color'])->toBe('#ff0000');
+        }
+    );
+});

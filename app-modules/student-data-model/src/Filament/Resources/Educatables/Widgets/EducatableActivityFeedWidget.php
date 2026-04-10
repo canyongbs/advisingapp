@@ -156,8 +156,8 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
     {
         /** @var Engagement $record */
         return match ($record->getDeliveryMethod()) {
-            NotificationChannel::Sms => 'Preview: ' . html_entity_decode(strip_tags($record->getBody()), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
-            default => 'Subject: ' . html_entity_decode(strip_tags($record->getSubject()), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+            NotificationChannel::Sms => 'Preview: ' . $record->getBodyText(),
+            default => 'Subject: ' . $record->getSubject(),
         };
     }
 }

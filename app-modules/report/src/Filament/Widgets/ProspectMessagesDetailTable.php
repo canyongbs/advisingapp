@@ -187,11 +187,11 @@ class ProspectMessagesDetailTable extends BaseWidget
                     }),
                 TextColumn::make('details')
                     ->state(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
-                        Engagement::class => Str::limit(html_entity_decode(strip_tags(match ($record->record->channel) {
-                            NotificationChannel::Email => $record->record->getSubject(),
-                            NotificationChannel::Sms => $record->record->getBody(),
+                        Engagement::class => Str::limit(match ($record->record->channel) {
+                            NotificationChannel::Email => (string) $record->record->getSubject(),
+                            NotificationChannel::Sms => $record->record->getBodyText(),
                             default => 'N/A',
-                        }), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50),
+                        }, 50),
                         EngagementResponse::class => Str::limit(html_entity_decode(strip_tags(match ($record->record->type) {
                             EngagementResponseType::Email => $record->record->subject,
                             EngagementResponseType::Sms => $record->record->getBody(),
