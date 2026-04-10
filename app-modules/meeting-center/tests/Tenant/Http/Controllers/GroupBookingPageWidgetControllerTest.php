@@ -368,4 +368,3 @@ it('allows group booking within effective maximum lead time', function () use ($
     $response->assertStatus(201);
     $response->assertJsonFragment(['success' => true]);
 });
-

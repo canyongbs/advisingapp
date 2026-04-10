@@ -338,4 +338,3 @@ it('allows booking within maximum lead time window', function () use ($workingHo
     $response->assertStatus(201);
     $response->assertJsonFragment(['success' => true]);
 });
-
