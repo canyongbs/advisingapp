@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages;
 
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\EmailTemplateResource;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StockMedia\Enums\StockMediaProvider;
 use AdvisingApp\StockMedia\Settings\StockMediaSettings;
@@ -71,13 +72,6 @@ class EditEmailTemplate extends EditRecord
                     ->string(),
                 RichEditor::make('content')
                     ->fileAttachmentsDisk('s3-public')
-                    ->mergeTags($mergeTags = [
-                        'recipient first name',
-                        'recipient last name',
-                        'recipient full name',
-                        'recipient email',
-                        'recipient preferred name',
-                    ])
                     ->toolbarButtons(fn () => [['bold', 'italic', 'small', 'link', 'textColor'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles', ...($this->getStockImagePlugin() ? ['stockImage'] : [])], ['mergeTags']])
                     ->plugins(array_filter([
                         $this->getStockImagePlugin(),
@@ -91,7 +85,7 @@ class EditEmailTemplate extends EditRecord
                 Actions::make([
                     DraftTemplateWithAiAction::make()
                         ->channel(NotificationChannel::Email)
-                        ->mergeTags($mergeTags),
+                        ->mergeTags(Engagement::getMergeTags()),
                 ]),
             ]);
     }

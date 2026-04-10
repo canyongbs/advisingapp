@@ -318,6 +318,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         $this->registerRichContent('body')
             ->fileAttachmentsDisk('s3-public')
             ->fileAttachmentProvider(EngagementFileAttachmentProvider::make())
+            ->fileAttachmentsVisibility('public')
             ->mergeTags($this->getMergeData());
     }
 

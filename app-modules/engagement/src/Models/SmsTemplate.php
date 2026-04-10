@@ -81,6 +81,11 @@ class SmsTemplate extends BaseModel implements HasRichContent
                 'recipient full name' => '{{ recipient full name }}',
                 'recipient email' => '{{ recipient email }}',
                 'recipient preferred name' => '{{ recipient preferred name }}',
+                'user first name' => '{{ user first name }}',
+                'user full name' => '{{ user full name }}',
+                'user job title' => '{{ user job title }}',
+                'user email' => '{{ user email }}',
+                'user phone number' => '{{ user phone number }}',
             ]);
     }
 }

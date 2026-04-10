@@ -64,7 +64,8 @@ class EngagementSmsBodyInput
                 'recipient email',
                 'recipient preferred name',
             ])
-            ->toolbarButtons([['mergeTags']])
+            ->activePanel('mergeTags')
+            ->toolbarButtons([])
             ->json()
             ->required()
             ->when($withTemplateAction, fn (RichEditor $component) => $component->hintAction(fn (RichEditor $component) => Action::make('loadSmsTemplate')

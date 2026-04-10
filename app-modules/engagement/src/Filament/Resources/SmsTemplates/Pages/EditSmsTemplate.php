@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages;
 
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\SmsTemplateResource;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
@@ -66,14 +67,8 @@ class EditSmsTemplate extends EditRecord
                 Textarea::make('description')
                     ->string(),
                 RichEditor::make('content')
-                    ->mergeTags($mergeTags = [
-                        'recipient first name',
-                        'recipient last name',
-                        'recipient full name',
-                        'recipient email',
-                        'recipient preferred name',
-                    ])
-                    ->toolbarButtons([['mergeTags']])
+                    ->activePanel('mergeTags')
+                    ->toolbarButtons([])
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->json()
@@ -81,7 +76,7 @@ class EditSmsTemplate extends EditRecord
                 Actions::make([
                     DraftTemplateWithAiAction::make()
                         ->channel(NotificationChannel::Sms)
-                        ->mergeTags($mergeTags),
+                        ->mergeTags(Engagement::getMergeTags()),
                 ]),
             ]);
     }

@@ -121,6 +121,7 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia, HasRichCo
         $this->registerRichContent('body')
             ->fileAttachmentsDisk('s3-public')
             ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
+            ->fileAttachmentsVisibility('public')
             ->mergeTags($mergeTags);
     }
 }

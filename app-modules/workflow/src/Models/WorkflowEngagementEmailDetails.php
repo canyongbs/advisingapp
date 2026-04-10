@@ -99,6 +99,7 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
         $this->registerRichContent('body')
             ->fileAttachmentsDisk('s3-public')
             ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
+            ->fileAttachmentsVisibility('public')
             ->mergeTags([
                 'recipient first name' => '{{ recipient first name }}',
                 'recipient last name' => '{{ recipient last name }}',
