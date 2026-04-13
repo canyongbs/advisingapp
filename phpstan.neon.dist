@@ -4,6 +4,7 @@ includes:
     - ./phpstan-baseline.php
     - ./vendor/pestphp/pest/extension.neon
     - ./vendor/orrison/meliorstan/config/extension.neon
+    - ./vendor/canyongbs/common/phpstan-extension.neon
 
 rules:
     - Orrison\MeliorStan\Rules\BooleanGetMethodName\BooleanGetMethodNameRule

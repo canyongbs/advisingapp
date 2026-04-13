@@ -85,10 +85,14 @@ class ListCampaigns extends ListRecords
                     ->sortable(),
             ])
             // @phpstan-ignore argument.templateType
-            ->modifyQueryUsing(fn (Builder $query) => $query->when(
-                CampaignArchivingFeature::active(),
-                fn (Builder $query) => $query->withoutArchived(), // @phpstan-ignore method.notFound
-            ))
+            ->modifyQueryUsing(function (Builder $query) {
+                /** @var Builder<Campaign> $query */
+                if (CampaignArchivingFeature::active()) {
+                    $query->withoutArchived();
+                }
+
+                return $query;
+            })
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make()

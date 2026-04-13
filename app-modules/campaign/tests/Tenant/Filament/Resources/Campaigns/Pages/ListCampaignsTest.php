@@ -187,7 +187,7 @@ it('excludes archived campaigns from the list', function () {
     $activeCampaign = Campaign::factory()->create();
     $archivedCampaign = Campaign::factory()->create();
 
-    $archivedCampaign->archive(); // @phpstan-ignore method.notFound
+    $archivedCampaign->archive();
 
     livewire(ListCampaigns::class)
         ->assertCanSeeTableRecords([$activeCampaign])
