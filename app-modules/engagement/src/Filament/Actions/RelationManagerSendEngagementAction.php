@@ -55,6 +55,7 @@ use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
@@ -230,7 +231,14 @@ class RelationManagerSendEngagementAction extends CreateAction
                             ->key('emailBody')
                             ->fileAttachmentsDisk('s3-public')
                             ->label('Body')
-                            ->toolbarButtons([['bold', 'italic', 'small', 'link', 'textColor'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles'], ['mergeTags']])
+                            ->toolbarButtons([
+                                ['bold', 'italic', 'link'],
+                                [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                                ['textColor', 'small'],
+                                ['attachFiles', 'mergeTags'],
+                                ['clearFormatting'],
+                                ['undo', 'redo'],
+                            ])
                             ->activePanel('mergeTags')
                             ->resizableImages()
                             ->json()

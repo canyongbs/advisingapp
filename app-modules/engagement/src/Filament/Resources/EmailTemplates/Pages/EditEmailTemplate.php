@@ -46,6 +46,7 @@ use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use CanyonGBS\Common\Filament\Forms\RichContentPlugins\StockImageRichContentPlugin;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
@@ -72,7 +73,14 @@ class EditEmailTemplate extends EditRecord
                     ->string(),
                 RichEditor::make('content')
                     ->fileAttachmentsDisk('s3-public')
-                    ->toolbarButtons(fn () => [['bold', 'italic', 'small', 'link', 'textColor'], ['h1', 'h2', 'h3', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles', ...($this->getStockImagePlugin() ? ['stockImage'] : [])], ['mergeTags']])
+                    ->toolbarButtons([
+                        ['bold', 'italic', 'link'],
+                        [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                        ['textColor', 'small'],
+                        ['attachFiles', ...($this->getStockImagePlugin() ? ['stockImage'] : []), 'mergeTags'],
+                        ['clearFormatting'],
+                        ['undo', 'redo'],
+                    ])
                     ->plugins(array_filter([
                         $this->getStockImagePlugin(),
                     ]))
