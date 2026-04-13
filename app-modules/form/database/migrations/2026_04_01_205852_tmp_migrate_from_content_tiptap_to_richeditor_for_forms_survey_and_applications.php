@@ -48,7 +48,10 @@ return new class () extends Migration {
         $this->processTable('application_steps', 'content');
     }
 
-    public function down(): void {}
+    public function down(): void
+    {
+        // This is a data migration and cannot be reversed
+    }
 
     protected function processTable(string $table, string $column): void
     {

@@ -44,6 +44,7 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\IconEntry;
@@ -93,7 +94,15 @@ class ViewApplication extends ViewRecord
                         RichEditor::make('content')
                             ->json()
                             ->customBlocks(FormFieldBlockRegistry::get())
-                            ->toolbarButtons([['bold', 'italic', 'small'], ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'bulletList', 'orderedList', 'horizontalRule'], ['link', 'grid', 'attachFiles', 'customBlocks']])
+                            ->toolbarButtons([
+                                ['bold', 'italic', 'link'],
+                                [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                                ['small'],
+                                ['attachFiles'],
+                                ['grid', 'customBlocks'],
+                            ])
+                            ->resizableImages()
+                            ->fileAttachmentsDisk('s3-public')
                             ->placeholder('Drag blocks here to build your form')
                             ->hiddenLabel()
                             ->dehydrated(false)
@@ -114,7 +123,12 @@ class ViewApplication extends ViewRecord
                         RichEditor::make('content')
                             ->json()
                             ->customBlocks(FormFieldBlockRegistry::get())
-                            ->toolbarButtons([['bold', 'italic', 'small'], ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'bulletList', 'orderedList', 'horizontalRule'], ['link', 'grid', 'customBlocks']])
+                            ->toolbarButtons([
+                                ['bold', 'italic', 'link'],
+                                [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                                ['small'],
+                                ['grid', 'customBlocks'],
+                            ])
                             ->placeholder('Drag blocks here to build your form')
                             ->hiddenLabel()
                             ->dehydrated(false)

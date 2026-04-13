@@ -47,6 +47,7 @@ use App\Enums\FontWeight;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -150,12 +151,19 @@ trait HasSharedFormConfiguration
         return RichEditor::make('content')
             ->json()
             ->customBlocks(FormFieldBlockRegistry::get())
-            ->toolbarButtons([['bold', 'italic', 'small'], ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'bulletList', 'orderedList', 'horizontalRule'], ['link', 'grid', 'attachFiles', 'customBlocks']])
+            ->toolbarButtons([
+                ['bold', 'italic', 'link'],
+                [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                ['small'],
+                ['attachFiles'],
+                ['grid', 'customBlocks'],
+            ])
+            ->resizableImages()
             ->fileAttachmentsDisk('s3-public')
             ->activePanel('customBlocks')
             ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()
-            ->saveRelationshipsUsing(function (RichEditor $component, Application | ApplicationStep $record) {
+            ->saveRelationshipsBeforeChildrenUsing(function (RichEditor $component, Application | ApplicationStep $record) {
                 if ($component->isDisabled()) {
                     return;
                 }

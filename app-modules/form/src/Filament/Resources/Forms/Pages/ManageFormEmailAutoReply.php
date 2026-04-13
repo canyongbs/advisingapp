@@ -44,6 +44,7 @@ use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
@@ -90,13 +91,6 @@ class ManageFormEmailAutoReply extends EditRecord
                             ->label('Enabled')
                             ->live(),
                         RichEditor::make('subject')
-                            ->mergeTags([
-                                'recipient first name',
-                                'recipient last name',
-                                'recipient full name',
-                                'recipient email',
-                                'recipient preferred name',
-                            ])
                             ->toolbarButtons([])
                             ->json()
                             ->required(fn (Get $get) => $get('is_enabled'))
@@ -105,14 +99,15 @@ class ManageFormEmailAutoReply extends EditRecord
                             ->placeholder('Enter the email subject here...'),
                         RichEditor::make('body')
                             ->fileAttachmentsDisk('s3-public')
-                            ->mergeTags([
-                                'recipient first name',
-                                'recipient last name',
-                                'recipient full name',
-                                'recipient email',
-                                'recipient preferred name',
+                            ->toolbarButtons([
+                                ['bold', 'italic', 'link'],
+                                [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                                ['small', 'textColor'],
+                                ['attachFiles'],
+                                ['clearFormatting'],
+                                ['mergeTags'],
                             ])
-                            ->toolbarButtons([['bold', 'italic', 'small', 'link', 'textColor'], ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'bulletList', 'orderedList', 'horizontalRule', 'attachFiles'], ['mergeTags']])
+                            ->resizableImages()
                             ->activePanel('mergeTags')
                             ->json()
                             ->required(fn (Get $get) => $get('is_enabled'))

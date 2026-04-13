@@ -55,53 +55,57 @@ class InjectSubmissionStateIntoTipTapContent
                 continue;
             }
 
-            $componentType = $component['type'] ?? null;
-            $componentAttributes = $component['attrs'] ?? [];
-
-            // Support both new RichEditor (customBlock) and legacy TipTap (tiptapBlock) formats
-            if ($componentType === 'customBlock') {
-                $config = $componentAttributes['config'] ?? [];
-                $fieldId = $config['fieldId'] ?? null;
-                $blockType = $componentAttributes['id'] ?? null;
-            } elseif ($componentType === 'tiptapBlock') {
-                $config = $componentAttributes['data'] ?? [];
-                $fieldId = $componentAttributes['id'] ?? null;
-                $blockType = $componentAttributes['type'] ?? null;
-            } else {
-                continue;
-            }
-
-            if (blank($fieldId)) {
-                continue;
-            }
-
-            /** @var FormFieldBlock $block */
-            $block = $blocks[$blockType] ?? null;
-
-            if (blank($block)) {
-                continue;
-            }
-
-            $field = $submission->fields
-                ->first(fn (SubmissibleField $field): bool => $field->getKey() === $fieldId);
-
-            if (! $field) {
-                continue;
-            }
-
-            if ($componentType === 'customBlock') {
-                $content[$componentKey]['attrs']['config'] = [
-                    ...$config,
-                    ...$block::getSubmissionState($field, $field->pivot->response),
-                ];
-            } else {
-                $content[$componentKey]['attrs']['data'] = [
-                    ...$config,
-                    ...$block::getSubmissionState($field, $field->pivot->response),
-                ];
-            }
+            $content[$componentKey] = $this->processBlock($submission, $component, $blocks);
         }
 
         return $content;
+    }
+
+    /**
+     * @param  array<string, mixed>  $component
+     * @param  array<string, mixed>  $blocks
+     *
+     * @return array<string, mixed>
+     */
+    protected function processBlock(Submission $submission, array $component, array $blocks): array
+    {
+        $componentType = $component['type'] ?? null;
+        $componentAttributes = $component['attrs'] ?? [];
+
+        // Support both new RichEditor (customBlock) and legacy TipTap (tiptapBlock) formats
+        if ($componentType === 'customBlock') {
+            $config = $componentAttributes['config'] ?? [];
+            $fieldId = $config['fieldId'] ?? null;
+            $blockType = $componentAttributes['id'] ?? null;
+            $stateKey = 'config';
+        } elseif ($componentType === 'tiptapBlock') {
+            $config = $componentAttributes['data'] ?? [];
+            $fieldId = $componentAttributes['id'] ?? null;
+            $blockType = $componentAttributes['type'] ?? null;
+            $stateKey = 'data';
+        } else {
+            return $component;
+        }
+
+        if (blank($fieldId) || blank($blocks[$blockType] ?? null)) {
+            return $component;
+        }
+
+        /** @var FormFieldBlock $block */
+        $block = $blocks[$blockType];
+
+        $field = $submission->fields
+            ->first(fn (SubmissibleField $field): bool => $field->getKey() === $fieldId);
+
+        if (! $field) {
+            return $component;
+        }
+
+        $component['attrs'][$stateKey] = [
+            ...$config,
+            ...$block::getSubmissionState($field, $field->pivot->response),
+        ];
+
+        return $component;
     }
 }

@@ -46,6 +46,7 @@ use AdvisingApp\Survey\Models\SurveyStep;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -150,7 +151,12 @@ trait HasSharedFormConfiguration
         return RichEditor::make('content')
             ->json()
             ->customBlocks(SurveyFieldBlockRegistry::get())
-            ->toolbarButtons([['bold', 'italic', 'small'], ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'bulletList', 'orderedList', 'horizontalRule'], ['link', 'grid', 'customBlocks']])
+            ->toolbarButtons([
+                ['bold', 'italic', 'link'],
+                [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                ['small'],
+                ['grid', 'customBlocks'],
+            ])
             ->activePanel('customBlocks')
             ->placeholder('Drag blocks here to build your survey')
             ->hiddenLabel()

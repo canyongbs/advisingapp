@@ -40,6 +40,7 @@ use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Enums\FontWeight;
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Model;
@@ -87,7 +88,8 @@ class Application extends Submissible implements HasMedia, HasRichContent
     public function setUpRichContent(): void
     {
         $this->registerRichContent('content')
-            ->fileAttachmentsDisk('s3-public');
+            ->fileAttachmentsDisk('s3-public')
+            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make());
     }
 
     /**

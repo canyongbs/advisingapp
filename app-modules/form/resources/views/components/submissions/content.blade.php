@@ -56,8 +56,10 @@
 <div class="prose max-w-none dark:prose-invert">
     @if (! empty($content['content']))
         @if ($usesRichEditor)
+            {{-- RichEditor format (Forms, Surveys, Applications) --}}
             {!! RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toHtml() !!}
         @elseif ($usesLegacyTipTap)
+            {{-- Legacy TipTap format (Events, Case Forms — until migrated to RichEditor) --}}
             {!! tiptap_converter()->blocks($blocks)->asHTML($content) !!}
         @else
             {!! RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toHtml() !!}

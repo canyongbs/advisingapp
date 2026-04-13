@@ -112,10 +112,20 @@ class FormEmailAutoReply extends BaseModel implements HasMedia, HasRichContent
 
     public function setUpRichContent(): void
     {
-        $this->registerRichContent('subject');
+        $mergeTags = [
+            'recipient first name' => '{{ recipient first name }}',
+            'recipient last name' => '{{ recipient last name }}',
+            'recipient full name' => '{{ recipient full name }}',
+            'recipient email' => '{{ recipient email }}',
+            'recipient preferred name' => '{{ recipient preferred name }}',
+        ];
+
+        $this->registerRichContent('subject')
+            ->mergeTags($mergeTags);
 
         $this->registerRichContent('body')
             ->fileAttachmentsDisk('s3-public')
-            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make());
+            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
+            ->mergeTags($mergeTags);
     }
 }
