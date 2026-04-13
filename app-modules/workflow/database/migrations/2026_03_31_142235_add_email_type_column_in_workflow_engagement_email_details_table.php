@@ -34,66 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Models;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Notification\Enums\EmailType;
-use AdvisingApp\Notification\Models\Contracts\Message;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-
-/**
- * @mixin IdeHelperEmailMessage
- */
-class EmailMessage extends BaseModel implements Message
-{
-    protected $fillable = [
-        'notification_class',
-        'external_reference_id',
-        'content',
-        'quota_usage',
-        'recipient_id',
-        'recipient_type',
-        'recipient_address',
-        'email_type',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-        'email_type' => EmailType::class,
-    ];
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function related(): MorphTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->morphTo(
-            name: 'related',
-            type: 'related_type',
-            id: 'related_id',
-            ownerKey: 'id',
-        );
+        Schema::table('workflow_engagement_email_details', function (Blueprint $table) {
+            $table->string('email_type')->initial('transactional');
+        });
     }
 
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function recipient(): MorphTo
+    public function down(): void
     {
-        return $this->morphTo(
-            name: 'recipient',
-            type: 'recipient_type',
-            id: 'recipient_id',
-        );
+        Schema::table('workflow_engagement_email_details', function (Blueprint $table) {
+            $table->dropColumn('email_type');
+        });
     }
-
-    /**
-     * @return HasMany<EmailMessageEvent, $this>
-     */
-    public function events(): HasMany
-    {
-        return $this->hasMany(EmailMessageEvent::class);
-    }
-}
+};

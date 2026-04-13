@@ -31,7 +31,7 @@
     
     </COPYRIGHT>
 --}}
-@props(['settings' => null])
+@props(['settings' => null, 'unsubscribeUrl' => null])
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -98,6 +98,12 @@
 
                 {{ $footer ?? '' }}
             </table>
+            {{-- Unsubscribe Link --}}
+            @if (! empty($unsubscribeUrl))
+            <p style="text-align: center; margin-top: 20px; font-size: 12px; color: #999999;">
+                <a href="{{ $unsubscribeUrl }}" style="color: #999999; text-decoration: underline;">Unsubscribe</a>
+            </p>
+            @endif
         </td>
     </tr>
 </table>

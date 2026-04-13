@@ -34,66 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Models;
+use AdvisingApp\Notification\Http\Controllers\UnsubscribeController;
+use Illuminate\Support\Facades\Route;
 
-use AdvisingApp\Notification\Enums\EmailType;
-use AdvisingApp\Notification\Models\Contracts\Message;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+Route::middleware('web')->group(function () {
+    Route::get('/unsubscribe', [UnsubscribeController::class, 'show'])
+        ->name('unsubscribe')
+        ->middleware('signed');
 
-/**
- * @mixin IdeHelperEmailMessage
- */
-class EmailMessage extends BaseModel implements Message
-{
-    protected $fillable = [
-        'notification_class',
-        'external_reference_id',
-        'content',
-        'quota_usage',
-        'recipient_id',
-        'recipient_type',
-        'recipient_address',
-        'email_type',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-        'email_type' => EmailType::class,
-    ];
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function related(): MorphTo
-    {
-        return $this->morphTo(
-            name: 'related',
-            type: 'related_type',
-            id: 'related_id',
-            ownerKey: 'id',
-        );
-    }
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function recipient(): MorphTo
-    {
-        return $this->morphTo(
-            name: 'recipient',
-            type: 'recipient_type',
-            id: 'recipient_id',
-        );
-    }
-
-    /**
-     * @return HasMany<EmailMessageEvent, $this>
-     */
-    public function events(): HasMany
-    {
-        return $this->hasMany(EmailMessageEvent::class);
-    }
-}
+    Route::post('/unsubscribe', [UnsubscribeController::class, 'store'])
+        ->name('unsubscribe.store')
+        ->middleware('signed');
+});

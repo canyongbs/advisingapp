@@ -44,13 +44,16 @@ use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Settings\EngagementSettings;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Message;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
+use AdvisingApp\Notification\Notifications\Contracts\HasEmailType;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use App\Features\EmailTypeFeature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
@@ -59,13 +62,18 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class EngagementNotification extends Notification implements ShouldQueue, HasBeforeSendHook, HasAfterSendHook
+class EngagementNotification extends Notification implements ShouldQueue, HasBeforeSendHook, HasAfterSendHook, HasEmailType
 {
     use Queueable;
 
     public function __construct(
         public Engagement $engagement
     ) {}
+
+    public function getEmailType(): string
+    {
+        return EmailTypeFeature::active() ? $this->engagement->email_type->value : EmailType::Transactional->value;
+    }
 
     /**
      * @return array<int, int>

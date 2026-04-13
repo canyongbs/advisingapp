@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Database\Factories;
 
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -74,6 +75,7 @@ class EngagementFactory extends Factory
             'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraph]]]]],
             'scheduled_at' => $this->faker->dateTimeBetween('-1 year', '-1 day'),
             'channel' => $this->faker->randomElement([NotificationChannel::Email, NotificationChannel::Sms]),
+            'email_type' => $this->faker->randomElement([EmailType::Transactional, EmailType::Marketing]),
         ];
     }
 

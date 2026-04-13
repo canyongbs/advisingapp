@@ -34,66 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Models;
+namespace AdvisingApp\Notification\Http\Controllers;
 
-use AdvisingApp\Notification\Enums\EmailType;
-use AdvisingApp\Notification\Models\Contracts\Message;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
+use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
+use App\Http\Controllers\Controller;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\URL;
 
-/**
- * @mixin IdeHelperEmailMessage
- */
-class EmailMessage extends BaseModel implements Message
+class UnsubscribeController extends Controller
 {
-    protected $fillable = [
-        'notification_class',
-        'external_reference_id',
-        'content',
-        'quota_usage',
-        'recipient_id',
-        'recipient_type',
-        'recipient_address',
-        'email_type',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-        'email_type' => EmailType::class,
-    ];
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function related(): MorphTo
+    public function show(Request $request): View
     {
-        return $this->morphTo(
-            name: 'related',
-            type: 'related_type',
-            id: 'related_id',
-            ownerKey: 'id',
-        );
+        $email = $request->query('email');
+
+        $confirmUrl = URL::signedRoute('unsubscribe.store', ['email' => $email]);
+
+        return view('notification::unsubscribe', [
+            'confirmUrl' => $confirmUrl,
+            'optedOut' => false,
+        ]);
     }
 
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function recipient(): MorphTo
+    public function store(Request $request): Response|View
     {
-        return $this->morphTo(
-            name: 'recipient',
-            type: 'recipient_type',
-            id: 'recipient_id',
-        );
-    }
+        if ($request->isMethod('HEAD')) {
+            return response()->noContent();
+        }
 
-    /**
-     * @return HasMany<EmailMessageEvent, $this>
-     */
-    public function events(): HasMany
-    {
-        return $this->hasMany(EmailMessageEvent::class);
+        $email = $request->query('email');
+
+        EmailAddressOptInOptOut::firstOrCreate(
+            ['address' => $email],
+            ['status' => EmailAddressOptInOptOutStatus::OptedOut],
+        )->update(['status' => EmailAddressOptInOptOutStatus::OptedOut]);
+
+        return view('notification::unsubscribe', [
+            'confirmUrl' => null,
+            'optedOut' => true,
+        ]);
     }
 }

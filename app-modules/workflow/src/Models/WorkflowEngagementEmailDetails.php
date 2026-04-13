@@ -37,6 +37,7 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Workflow\Database\Factories\WorkflowEngagementEmailDetailsFactory;
 use AdvisingApp\Workflow\Filament\Blocks\EngagementEmailBlock;
@@ -67,12 +68,14 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
         'channel',
         'subject',
         'body',
+        'email_type',
     ];
 
     protected $casts = [
         'channel' => NotificationChannel::class,
         'subject' => 'array',
         'body' => 'array',
+        'email_type' => EmailType::class,
     ];
 
     public function getLabel(): string

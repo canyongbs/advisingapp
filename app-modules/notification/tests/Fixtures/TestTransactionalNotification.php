@@ -34,66 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Models;
+namespace AdvisingApp\Notification\Tests\Fixtures;
 
 use AdvisingApp\Notification\Enums\EmailType;
-use AdvisingApp\Notification\Models\Contracts\Message;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use AdvisingApp\Notification\Notifications\Contracts\HasEmailType;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
-/**
- * @mixin IdeHelperEmailMessage
- */
-class EmailMessage extends BaseModel implements Message
+class TestTransactionalNotification extends Notification implements ShouldQueue, HasEmailType
 {
-    protected $fillable = [
-        'notification_class',
-        'external_reference_id',
-        'content',
-        'quota_usage',
-        'recipient_id',
-        'recipient_type',
-        'recipient_address',
-        'email_type',
-    ];
+    use Queueable;
 
-    protected $casts = [
-        'content' => 'array',
-        'email_type' => EmailType::class,
-    ];
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function related(): MorphTo
+    public function getEmailType(): string
     {
-        return $this->morphTo(
-            name: 'related',
-            type: 'related_type',
-            id: 'related_id',
-            ownerKey: 'id',
-        );
+        return EmailType::Transactional->value;
     }
 
     /**
-     * @return MorphTo<Model, $this>
+     * @return array<int, string>
      */
-    public function recipient(): MorphTo
+    public function via(object $notifiable): array
     {
-        return $this->morphTo(
-            name: 'recipient',
-            type: 'recipient_type',
-            id: 'recipient_id',
-        );
+        return ['mail'];
     }
 
-    /**
-     * @return HasMany<EmailMessageEvent, $this>
-     */
-    public function events(): HasMany
+    public function toMail(object $notifiable): MailMessage
     {
-        return $this->hasMany(EmailMessageEvent::class);
+        return MailMessage::make()
+            ->subject('Password Reset')
+            ->greeting('Hello!')
+            ->content('This is a transactional email.');
     }
 }

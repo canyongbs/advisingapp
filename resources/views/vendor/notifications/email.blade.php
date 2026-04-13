@@ -32,11 +32,11 @@
     </COPYRIGHT>
 --}}
 @if (isset($content))
-<x-mail::layout :settings="$settings ?? null">
+<x-mail::layout :settings="$settings ?? null" :unsubscribeUrl="$unsubscribeUrl ?? null">
 {{ str($content)->sanitizeHtml()->toHtmlString() }}
 </x-mail::layout>
 @else
-<x-mail::message :settings="$settings ?? null">
+<x-mail::message :settings="$settings ?? null" :unsubscribeUrl="$unsubscribeUrl ?? null">
 {{-- Greeting --}}
 @if (! empty($greeting))
 # {{ $greeting }}

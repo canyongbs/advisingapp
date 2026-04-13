@@ -46,6 +46,7 @@ use AdvisingApp\Engagement\Notifications\EngagementNotification;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -247,3 +248,98 @@ it('will throw an exception if a canRecieve check fails', function (Educatable $
         Exception::class,
         'The educatable cannot receive notifications on this channel.'
     );
+
+it('creates an engagement with the correct email_type when email_type is present in action data', function () {
+    Notification::fake();
+
+    $prospect = Prospect::factory()->create();
+
+    /** @var Group $group */
+    $group = Group::factory()->create([
+        'type' => GroupType::Static,
+        'model' => GroupModel::Prospect,
+    ]);
+
+    $campaign = Campaign::factory()
+        ->for($group, 'group')
+        ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
+        ->create();
+
+    $subject = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->sentence]]]]];
+    $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]];
+
+    /** @var CampaignAction $action */
+    $action = CampaignAction::factory()
+        ->for($campaign, 'campaign')
+        ->create([
+            'type' => CampaignActionType::BulkEngagementEmail,
+            'data' => [
+                'channel' => NotificationChannel::Email->value,
+                'subject' => $subject,
+                'body' => $body,
+                'email_type' => EmailType::Marketing->value,
+            ],
+        ]);
+
+    $campaignActionEducatable = CampaignActionEducatable::factory()
+        ->for($action, 'campaignAction')
+        ->for($prospect, 'educatable')
+        ->create();
+
+    [$job] = (new EngagementCampaignActionJob($campaignActionEducatable))->withFakeBatch();
+
+    $job->handle();
+
+    /** @var Engagement $engagement */
+    $engagement = Engagement::query()->first();
+
+    expect($engagement)->not->toBeNull()
+        ->and($engagement->email_type)->toBe(EmailType::Marketing);
+});
+
+it('defaults engagement email_type to transactional when email_type is absent from action data', function () {
+    Notification::fake();
+
+    $prospect = Prospect::factory()->create();
+
+    /** @var Group $group */
+    $group = Group::factory()->create([
+        'type' => GroupType::Static,
+        'model' => GroupModel::Prospect,
+    ]);
+
+    $campaign = Campaign::factory()
+        ->for($group, 'group')
+        ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
+        ->create();
+
+    $subject = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->sentence]]]]];
+    $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]];
+
+    /** @var CampaignAction $action */
+    $action = CampaignAction::factory()
+        ->for($campaign, 'campaign')
+        ->create([
+            'type' => CampaignActionType::BulkEngagementEmail,
+            'data' => [
+                'channel' => NotificationChannel::Email->value,
+                'subject' => $subject,
+                'body' => $body,
+            ],
+        ]);
+
+    $campaignActionEducatable = CampaignActionEducatable::factory()
+        ->for($action, 'campaignAction')
+        ->for($prospect, 'educatable')
+        ->create();
+
+    [$job] = (new EngagementCampaignActionJob($campaignActionEducatable))->withFakeBatch();
+
+    $job->handle();
+
+    /** @var Engagement $engagement */
+    $engagement = Engagement::query()->first();
+
+    expect($engagement)->not->toBeNull()
+        ->and($engagement->email_type)->toBe(EmailType::Transactional);
+});

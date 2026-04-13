@@ -34,66 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Models;
+namespace AdvisingApp\Notification\Support;
 
-use AdvisingApp\Notification\Enums\EmailType;
-use AdvisingApp\Notification\Models\Contracts\Message;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\URL;
 
-/**
- * @mixin IdeHelperEmailMessage
- */
-class EmailMessage extends BaseModel implements Message
+class UnsubscribeUrl
 {
-    protected $fillable = [
-        'notification_class',
-        'external_reference_id',
-        'content',
-        'quota_usage',
-        'recipient_id',
-        'recipient_type',
-        'recipient_address',
-        'email_type',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-        'email_type' => EmailType::class,
-    ];
-
     /**
-     * @return MorphTo<Model, $this>
+     * Generate a tamper-proof unsubscribe URL for the given email address.
+     *
+     * Uses Laravel signed URLs to ensure the email parameter cannot be modified
+     * without invalidating the signature. No database table needed.
+     *
+     * @param  string  $email  The recipient email address
+     * @param  int  $expirationMinutes  How long the link remains valid (default: 30 days)
+     *
+     * @return string The signed unsubscribe URL
      */
-    public function related(): MorphTo
+    public static function generate(string $email, int $expirationMinutes = 43200): string
     {
-        return $this->morphTo(
-            name: 'related',
-            type: 'related_type',
-            id: 'related_id',
-            ownerKey: 'id',
+        return URL::signedRoute(
+            'unsubscribe',
+            ['email' => $email],
+            now()->addMinutes($expirationMinutes)->toImmutable(),
         );
-    }
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function recipient(): MorphTo
-    {
-        return $this->morphTo(
-            name: 'recipient',
-            type: 'recipient_type',
-            id: 'recipient_id',
-        );
-    }
-
-    /**
-     * @return HasMany<EmailMessageEvent, $this>
-     */
-    public function events(): HasMany
-    {
-        return $this->hasMany(EmailMessageEvent::class);
     }
 }
