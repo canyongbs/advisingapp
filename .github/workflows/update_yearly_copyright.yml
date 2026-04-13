@@ -18,14 +18,14 @@ jobs:
                   token: ${{ secrets.PAT }}
 
             - name: Set up Ruby
-              uses: ruby/setup-ruby@3ff19f5e2baf30647122352b96108b1fbe250c64 #1.299.0
+              uses: ruby/setup-ruby@4c56a21280b36d862b5fc31348f463d60bdc55d5 #1.301.0
 
             - name: Run copyright script
               run: ruby ./copyright.rb
 
             - name: Create Pull Request
               # SHA of release v6.1.0
-              uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0 #8.1.0
+              uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 #8.1.1
               with:
                   token: ${{ secrets.PAT }}
                   commit-message: >
