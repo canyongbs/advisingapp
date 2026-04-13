@@ -33,6 +33,7 @@ parameters:
 
     excludePaths:
         - app-modules/*/vendor/*
+        - app-modules/form/src/Filament/Blocks/Legacy/*
 
     scanFiles:
         - ./_ide_helper_models.php

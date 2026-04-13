@@ -55,34 +55,51 @@ class InjectSubmissionStateIntoTipTapContent
                 continue;
             }
 
-            if (($component['type'] ?? null) !== 'tiptapBlock') {
+            $componentType = $component['type'] ?? null;
+            $componentAttributes = $component['attrs'] ?? [];
+
+            // Support both new RichEditor (customBlock) and legacy TipTap (tiptapBlock) formats
+            if ($componentType === 'customBlock') {
+                $config = $componentAttributes['config'] ?? [];
+                $fieldId = $config['fieldId'] ?? null;
+                $blockType = $componentAttributes['id'] ?? null;
+            } elseif ($componentType === 'tiptapBlock') {
+                $config = $componentAttributes['data'] ?? [];
+                $fieldId = $componentAttributes['id'] ?? null;
+                $blockType = $componentAttributes['type'] ?? null;
+            } else {
                 continue;
             }
 
-            $componentAttributes = $component['attrs'] ?? [];
-
-            if (blank($componentAttributes['id'] ?? null)) {
+            if (blank($fieldId)) {
                 continue;
             }
 
             /** @var FormFieldBlock $block */
-            $block = $blocks[$componentAttributes['type']] ?? null;
+            $block = $blocks[$blockType] ?? null;
 
             if (blank($block)) {
                 continue;
             }
 
             $field = $submission->fields
-                ->first(fn (SubmissibleField $field): bool => $field->getKey() === $componentAttributes['id']);
+                ->first(fn (SubmissibleField $field): bool => $field->getKey() === $fieldId);
 
             if (! $field) {
                 continue;
             }
 
-            $content[$componentKey]['attrs']['data'] = [
-                ...$component['attrs']['data'],
-                ...$block::getSubmissionState($field, $field->pivot->response),
-            ];
+            if ($componentType === 'customBlock') {
+                $content[$componentKey]['attrs']['config'] = [
+                    ...$config,
+                    ...$block::getSubmissionState($field, $field->pivot->response),
+                ];
+            } else {
+                $content[$componentKey]['attrs']['data'] = [
+                    ...$config,
+                    ...$block::getSubmissionState($field, $field->pivot->response),
+                ];
+            }
         }
 
         return $content;

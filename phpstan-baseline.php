@@ -2882,7 +2882,7 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Form\\\\Models\\\\SubmissibleField\\:\\:\\$pivot\\.$#',
     'identifier' => 'property.notFound',
-    'count' => 1,
+    'count' => 2,
     'path' => __DIR__ . '/app-modules/form/src/Actions/InjectSubmissionStateIntoTipTapContent.php',
 ];
 $ignoreErrors[] = [

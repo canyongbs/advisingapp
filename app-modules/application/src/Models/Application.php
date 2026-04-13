@@ -40,6 +40,8 @@ use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Enums\FontWeight;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -51,10 +53,11 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 /**
  * @mixin IdeHelperApplication
  */
-class Application extends Submissible implements HasMedia
+class Application extends Submissible implements HasMedia, HasRichContent
 {
     use HasRelationships;
     use InteractsWithMedia;
+    use InteractsWithRichContent;
 
     protected $fillable = [
         'name',
@@ -80,6 +83,12 @@ class Application extends Submissible implements HasMedia
         'should_generate_prospects' => 'boolean',
         'title_font_weight' => FontWeight::class,
     ];
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('content')
+            ->fileAttachmentsDisk('s3-public');
+    }
 
     /**
      * @return HasMany<ApplicationField, $this>

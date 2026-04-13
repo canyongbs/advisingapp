@@ -40,25 +40,36 @@ use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\TextInput;
-use FilamentTiptapEditor\TiptapBlock;
 
-abstract class FormFieldBlock extends TiptapBlock
+abstract class FormFieldBlock extends RichContentCustomBlock
 {
     public const MAPPED_STUDENT_FIELD_HELP_TEXT = 'This data is synchronized from your college\'s student information system. To update this data, please update your information in the source system and wait 24 hours for it to be reflected here.';
 
     public const MAPPED_PROSPECT_FIELD_HELP_TEXT = 'This field has been pre-populated with the information we have on file. Please feel free to update it and we will update our records accordingly.';
 
-    public string $preview = 'form::blocks.previews.default';
-
-    public string $rendered = 'form::blocks.submissions.default';
-
-    public ?string $icon = 'heroicon-m-cube';
-
-    public function getFormSchema(): array
+    public static function getId(): string
     {
-        return [
+        return static::type();
+    }
+
+    public static function getLabel(): string
+    {
+        return (string) str(static::type())
+            ->afterLast('.')
+            ->kebab()
+            ->replace(['-', '_'], ' ')
+            ->ucfirst();
+    }
+
+    public static function configureEditorAction(Action $action): Action
+    {
+        return $action->schema([
+            Hidden::make('fieldId'),
             TextInput::make('label')
                 ->required()
                 ->string()
@@ -69,25 +80,26 @@ abstract class FormFieldBlock extends TiptapBlock
                 ->maxLength(255),
             Checkbox::make('isRequired')
                 ->label('Required'),
-            ...$this->fields(),
-        ];
+            ...static::fields(),
+        ]);
     }
 
-    public function getLabel(): string
+    public static function getPreviewLabel(array $config): string
     {
-        return $this->label ?? (string) str(static::type())
-            ->afterLast('.')
-            ->kebab()
-            ->replace(['-', '_'], ' ')
-            ->ucfirst();
+        return $config['label'] ?? static::getLabel();
     }
 
-    public function getIdentifier(): string
+    public static function toPreviewHtml(array $config): ?string
     {
-        return static::type();
+        return view(static::previewView(), $config)->render();
     }
 
-    public function fields(): array
+    public static function toHtml(array $config, array $data): ?string
+    {
+        return view(static::renderedView(), $config)->render();
+    }
+
+    public static function fields(): array
     {
         return [];
     }
@@ -115,6 +127,16 @@ abstract class FormFieldBlock extends TiptapBlock
             'field' => $field,
             'response' => $response,
         ];
+    }
+
+    protected static function previewView(): string
+    {
+        return 'form::blocks.previews.default';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.default';
     }
 
     /**
