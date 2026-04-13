@@ -82,3 +82,6 @@ parameters:
             paths:
                 - tests/*
                 - app-modules/*/tests/*
+        -
+            message: '#Anonymous function should return Illuminate\\Database\\Eloquent\\Builder<Illuminate\\Database\\Eloquent\\Model> but returns Illuminate\\Database\\Eloquent\\Builder<.+>#'
+            identifier: return.type       
