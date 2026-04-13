@@ -117,6 +117,18 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function archive(Authenticatable $authenticatable, Campaign $campaign): Response
+    {
+        if ($authenticatable->cannot('view', $campaign->group)) {
+            return Response::deny('You do not have permission to archive this campaign.');
+        }
+
+        return $authenticatable->canOrElse(
+            abilities: ["campaign.{$campaign->getKey()}.delete"],
+            denyResponse: 'You do not have permission to archive this campaign.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Campaign $campaign): Response
     {
         if ($authenticatable->cannot('view', $campaign->group)) {

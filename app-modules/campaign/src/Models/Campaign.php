@@ -40,6 +40,7 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Campaign\Observers\CampaignObserver;
 use AdvisingApp\Group\Models\Group;
 use App\Models\BaseModel;
+use CanyonGBS\Common\Models\Concerns\CanBeArchived;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -57,6 +58,7 @@ class Campaign extends BaseModel implements Auditable
 {
     use AuditableTrait;
     use SoftDeletes;
+    use CanBeArchived;
 
     protected $fillable = [
         'name',
