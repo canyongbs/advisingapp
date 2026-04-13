@@ -19,7 +19,7 @@
 
 👋 Welcome!\
 \
-This repository includes the software solution known as **Advising App™** created by Canyon GBS™. \
+This repository includes the software solution known as **Advising App®** created by Canyon GBS®. \
 \
 The software in this repository is offerred as a fully managed and supported, SOC 2 compliant and ISO 27001:2022 certified, SaaS offerring to colleges and universities through Canyon GBS LLC. Additionally, the software is released as open-source under the Elastic License 2.0 (see the [license file](./LICENSE) for more details.)\
 \

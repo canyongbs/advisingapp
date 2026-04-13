@@ -43,6 +43,6 @@ class TenantMailConfig extends Data
     public function __construct(
         public bool $isDemoModeEnabled = false,
         public bool $isExcludingSystemNotificationsFromDemoMode = true,
-        public string $fromName = 'Advising App™',
+        public string $fromName = 'Advising App®',
     ) {}
 }
