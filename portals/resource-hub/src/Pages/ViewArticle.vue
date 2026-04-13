@@ -124,7 +124,31 @@
                                     </div>
                                 </div>
                                 <div class="border-t border-gray-200"></div>
-                                <div v-html="DOMPurify.sanitize(article.content)"></div>
+                                <div
+                                    v-html="
+                                        DOMPurify.sanitize(article.content, {
+                                            ADD_TAGS: ['iframe', 'video', 'source'],
+                                            ADD_ATTR: [
+                                                'allow',
+                                                'allowfullscreen',
+                                                'frameborder',
+                                                'controls',
+                                                'target',
+                                                'rel',
+                                                'data-video-embed',
+                                                'data-video-type',
+                                                'data-video-src',
+                                                'data-video-width',
+                                                'data-video-height',
+                                                'data-cols',
+                                                'data-col-span',
+                                                'data-from-breakpoint',
+                                                'data-color',
+                                                'data-id',
+                                            ],
+                                        })
+                                    "
+                                ></div>
                             </div>
                         </div>
                     </main>
