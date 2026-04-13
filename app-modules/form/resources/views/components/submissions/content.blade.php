@@ -47,10 +47,8 @@
     $content['content'] = app(InjectSubmissionStateIntoTipTapContent::class)($submission, $content['content'], $blocks);
 
     // Detect format: customBlock (RichEditor) or tiptapBlock (legacy TipTap)
-    $usesRichEditor = collect($content['content'] ?? [])
-        ->contains(fn ($node) => is_array($node) && ($node['type'] ?? null) === 'customBlock');
-    $usesLegacyTipTap = collect($content['content'] ?? [])
-        ->contains(fn ($node) => is_array($node) && ($node['type'] ?? null) === 'tiptapBlock');
+    $usesRichEditor = collect($content['content'] ?? [])->contains(fn ($node) => is_array($node) && ($node['type'] ?? null) === 'customBlock');
+    $usesLegacyTipTap = collect($content['content'] ?? [])->contains(fn ($node) => is_array($node) && ($node['type'] ?? null) === 'tiptapBlock');
 @endphp
 
 <div class="prose max-w-none dark:prose-invert">
