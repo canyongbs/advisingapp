@@ -34,56 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Blocks;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
-use AdvisingApp\Concern\Enums\ConcernSeverity;
-use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
-use AdvisingApp\Concern\Models\ConcernStatus;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Schemas\Components\Component;
-
-class ProactiveConcernBlock extends CampaignActionBlock
-{
-    protected function setUp(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        parent::setUp();
+        Schema::table('email_templates', function (Blueprint $table) {
+            $table->json('content')->nullable()->change();
+        });
 
-        $this->label('Proactive Concern');
-
-        $this->schema($this->generateFields());
+        Schema::table('sms_templates', function (Blueprint $table) {
+            $table->json('content')->nullable()->change();
+        });
     }
 
-    /**
-     * @return array<Component>
-     */
-    public function generateFields(): array
+    public function down(): void
     {
-        return [
-            Textarea::make('description')
-                ->required()
-                ->string(),
-            Select::make('severity')
-                ->options(ConcernSeverity::class)
-                ->default(ConcernSeverity::default())
-                ->required()
-                ->enum(ConcernSeverity::class),
-            Textarea::make('suggested_intervention')
-                ->required()
-                ->string(),
-            Select::make('status_id')
-                ->label('Status')
-                ->options(ConcernStatus::orderBy('order')->pluck('name', 'id'))
-                ->default(fn () => SystemConcernStatusClassification::default()?->getKey())
-                ->exists('alert_statuses', 'id')
-                ->required(),
-            CampaignDateTimeInput::make(),
-        ];
-    }
+        Schema::table('email_templates', function (Blueprint $table) {
+            $table->json('content')->nullable(false)->change();
+        });
 
-    public static function type(): string
-    {
-        return 'proactive_concern';
+        Schema::table('sms_templates', function (Blueprint $table) {
+            $table->json('content')->nullable(false)->change();
+        });
     }
-}
+};

@@ -94,7 +94,7 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
                 app(EngagementSettings::class)->are_dynamic_engagements_enabled && $this->engagement->user,
                 fn (MailMessage $message) => $message->from(name: $this->engagement->user->name),
             )
-            ->subject(strip_tags($this->engagement->getSubject()))
+            ->subject((string) $this->engagement->getSubject())
             ->greeting("Hello {$this->engagement->recipient->display_name}!")
             ->content($this->engagement->getBody());
     }
@@ -103,7 +103,7 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
     {
         return TwilioMessage::make($notifiable)
             ->to($this->engagement->recipient_route)
-            ->content(strip_tags($this->engagement->getBodyMarkdown()));
+            ->content($this->engagement->getBodyText());
     }
 
     public function failed(?Throwable $exception): void

@@ -156,8 +156,8 @@ class EducatableActivityFeedWidget extends Widget implements HasActions, HasForm
     {
         /** @var Engagement $record */
         return match ($record->getDeliveryMethod()) {
-            NotificationChannel::Sms => "Preview: {$record->getBodyMarkdown()}",
-            default => "Subject: {$record->getSubjectMarkdown()}",
+            NotificationChannel::Sms => 'Preview: ' . $record->getBodyText(),
+            default => 'Subject: ' . $record->getSubject(),
         };
     }
 }

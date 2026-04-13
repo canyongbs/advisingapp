@@ -102,7 +102,7 @@ class EngagementCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                         channel: $channel,
                         subject: $action->data['subject'] ?? null,
                         body: $action->data['body'] ?? null,
-                        campaignAction: $action,
+                        source: $action,
                     ),
                     notifyNow: true,
                 );

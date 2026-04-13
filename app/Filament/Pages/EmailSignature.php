@@ -38,12 +38,11 @@ namespace App\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\Enums\TiptapOutput;
-use FilamentTiptapEditor\TiptapEditor;
 
 /**
  * @property Schema $form
@@ -70,12 +69,12 @@ class EmailSignature extends ProfilePage
                         Toggle::make('is_signature_enabled')
                             ->label('Enable Email Signature')
                             ->live(),
-                        TiptapEditor::make('signature')
-                            ->profile('signature')
+                        RichEditor::make('signature')
+                            ->toolbarButtons([['bold', 'italic', 'strike', 'underline', 'small', 'textColor', 'link', 'attachFiles']])
                             ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                            ->output(TiptapOutput::Json)
+                            ->json()
                             ->required(fn (Get $get) => $get('is_signature_enabled'))
-                            ->disk('s3-public')
+                            ->fileAttachmentsDisk('s3-public')
                             ->visible(fn (Get $get) => $get('is_signature_enabled')),
                     ]),
             ]);

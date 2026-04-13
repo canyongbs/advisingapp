@@ -53,6 +53,8 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
@@ -64,13 +66,11 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\Enums\TiptapOutput;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class SendEngagementAction extends Action
 {
@@ -250,45 +250,32 @@ class SendEngagementAction extends Action
                         };
 
                         return [
-                            TiptapEditor::make('subject')
+                            RichEditor::make('subject')
                                 ->label('Subject')
-                                ->mergeTags([
-                                    'recipient first name',
-                                    'recipient last name',
-                                    'recipient full name',
-                                    'recipient email',
-                                    'recipient preferred name',
-                                    'user first name',
-                                    'user full name',
-                                    'user job title',
-                                    'user email',
-                                    'user phone number',
-                                ])
-                                ->showMergeTagsInBlocksPanel(false)
-                                ->helperText('You may use “merge tags” to substitute information about a student into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags')
+                                ->toolbarButtons([])
+                                ->json()
+                                ->helperText('You may use "merge tags" to substitute information about a student into your subject line. Insert a "{{" in the subject line field to see a list of available merge tags')
                                 ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
-                                ->profile('sms')
                                 ->required()
                                 ->placeholder('Enter the email subject here...')
                                 ->columnSpanFull(),
-                            TiptapEditor::make('body')
-                                ->disk('s3-public')
+                            RichEditor::make('body')
+                                ->key('emailBody')
+                                ->fileAttachmentsDisk('s3-public')
                                 ->label('Body')
-                                ->mergeTags($mergeTags = [
-                                    'recipient first name',
-                                    'recipient last name',
-                                    'recipient full name',
-                                    'recipient email',
-                                    'recipient preferred name',
-                                    'user first name',
-                                    'user full name',
-                                    'user job title',
-                                    'user email',
-                                    'user phone number',
+                                ->toolbarButtons([
+                                    ['bold', 'italic', 'link'],
+                                    [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                                    ['textColor', 'small'],
+                                    ['attachFiles', 'mergeTags'],
+                                    ['clearFormatting'],
+                                    ['undo', 'redo'],
                                 ])
-                                ->profile('email')
+                                ->activePanel('mergeTags')
+                                ->resizableImages()
+                                ->json()
                                 ->required()
-                                ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
+                                ->hintAction(fn (RichEditor $component) => Action::make('loadEmailTemplate')
                                     ->schema([
                                         Select::make('emailTemplate')
                                             ->searchable()
@@ -352,17 +339,34 @@ class SendEngagementAction extends Action
                                             return;
                                         }
 
-                                        $component->state(
-                                            $component->generateImageUrls($template->content),
-                                        );
+                                        $component->state($template->content);
                                     }))
+                                ->getFileAttachmentUrlFromAnotherRecordUsing(function (mixed $file): ?string {
+                                    return Media::query()
+                                        ->where('uuid', $file)
+                                        ->where('model_type', (new EmailTemplate())->getMorphClass())
+                                        ->first()
+                                        ?->getUrl();
+                                })
+                                ->saveFileAttachmentFromAnotherRecordUsing(function (mixed $file, ?Engagement $record): ?string {
+                                    if (! $record) {
+                                        return null;
+                                    }
+
+                                    return Media::query()
+                                        ->where('uuid', $file)
+                                        ->where('model_type', (new EmailTemplate())->getMorphClass())
+                                        ->first()
+                                        ?->copy($record, 'body', 's3-public')
+                                        ->uuid;
+                                })
                                 ->hidden(fn (Get $get): bool => $get('channel') === NotificationChannel::Sms->value)
                                 ->helperText('You can insert student or your information by typing {{ and choosing a merge value to insert.')
                                 ->columnSpanFull(),
                             EngagementSmsBodyInput::make(context: 'create'),
                             ...$educatable ? [Actions::make([
                                 DraftWithAiAction::make()
-                                    ->mergeTags($mergeTags)
+                                    ->mergeTags(Engagement::getMergeTags())
                                     ->educatable($educatable),
                             ])] : [],
                         ];
@@ -373,15 +377,14 @@ class SendEngagementAction extends Action
                             ->label('Include Signature')
                             ->helperText('You may configure your email signature in Profile Settings by selecting your avatar in the upper right portion of the screen.')
                             ->live(),
-                        TiptapEditor::make('signature')
-                            ->profile('signature')
+                        RichEditor::make('signature')
+                            ->toolbarButtons([['bold', 'italic', 'strike', 'underline', 'small', 'textColor', 'link', 'attachFiles']])
                             ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                            ->output(TiptapOutput::Json)
+                            ->json()
                             ->required(fn (Get $get) => $get('is_signature_enabled'))
-                            ->disk('s3-public')
+                            ->fileAttachmentsDisk('s3-public')
                             ->visible(fn (Get $get) => $get('is_signature_enabled'))
                             ->default(auth()->user()->signature)
-                            // By default, the TipTap editor will attempt to save relationships to media items, but these will instead be saved as part of the main body content.
                             ->saveRelationshipsUsing(null),
                     ])
                     ->visible(auth()->user()->is_signature_enabled)
@@ -413,14 +416,6 @@ class SendEngagementAction extends Action
                     ...($data['signature']['content'] ?? []),
                 ];
 
-                $formFields = $schema->getFlatFields();
-
-                /** @var TiptapEditor $bodyField */
-                $bodyField = $formFields['body'] ?? null;
-
-                /** @var ?TiptapEditor $signatureField */
-                $signatureField = $formFields['signature'] ?? null;
-
                 $channel = NotificationChannel::parse($data['channel']);
 
                 $recipientRoute = match ($channel) {
@@ -435,27 +430,10 @@ class SendEngagementAction extends Action
                     channel: $channel,
                     subject: $data['subject'] ?? null,
                     body: $data['body'] ?? null,
-                    temporaryBodyImages: [
-                        ...array_map(
-                            fn (TemporaryUploadedFile $file): array => [
-                                'extension' => $file->getClientOriginalExtension(),
-                                'path' => (fn () => $this->path)->call($file),
-                            ],
-                            $bodyField->getTemporaryImages(),
-                        ),
-                        ...($signatureField ? array_map(
-                            fn (TemporaryUploadedFile $file): array => [
-                                'extension' => $file->getClientOriginalExtension(),
-                                'path' => (fn () => $this->path)->call($file),
-                            ],
-                            $signatureField->getTemporaryImages(),
-                        ) : []),
-                    ],
                     scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['scheduled_at'] ?? null) : null,
                     recipientRoute: $recipientRoute,
+                    schema: $schema,
                 ));
-
-                $schema->model($engagement)->saveRelationships();
 
                 $livewire->dispatch('engagement-sent');
             })

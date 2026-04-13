@@ -40,20 +40,22 @@ use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftEngagementBlockWithAi;
 use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class EngagementBatchEmailBlock extends CampaignActionBlock
 {
@@ -63,44 +65,40 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
 
         $this->label('Email');
 
-        $this->schema($this->createFields());
+        $this->model(CampaignAction::class);
+
+        $this->schema($this->generateFields());
     }
 
-    public function generateFields(string $fieldPrefix = ''): array
+    public function generateFields(): array
     {
         return [
-            Hidden::make($fieldPrefix . 'channel')
+            Hidden::make('channel')
                 ->default(NotificationChannel::Email->value),
-            TiptapEditor::make($fieldPrefix . 'subject')
-                ->recordAttribute('data.subject')
+            RichEditor::make('subject')
                 ->label('Subject')
-                ->mergeTags($mergeTags = [
-                    'recipient first name',
-                    'recipient last name',
-                    'recipient full name',
-                    'recipient email',
-                    'recipient preferred name',
-                ])
-                ->profile('sms')
+                ->toolbarButtons([])
+                ->json()
                 ->placeholder('Enter the email subject here...')
-                ->showMergeTagsInBlocksPanel(false)
                 ->required()
                 ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                 ->columnSpanFull(),
-            TiptapEditor::make($fieldPrefix . 'body')
-                ->recordAttribute('data.body')
-                ->disk('s3-public')
+            RichEditor::make('body')
+                ->fileAttachmentsDisk('s3-public')
                 ->label('Body')
-                ->mergeTags($mergeTags = [
-                    'recipient first name',
-                    'recipient last name',
-                    'recipient full name',
-                    'recipient email',
-                    'recipient preferred name',
+                ->toolbarButtons([
+                    ['bold', 'italic', 'link'],
+                    [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                    ['textColor', 'small'],
+                    ['attachFiles', 'mergeTags'],
+                    ['clearFormatting'],
+                    ['undo', 'redo'],
                 ])
-                ->profile('email')
+                ->activePanel('mergeTags')
+                ->resizableImages()
+                ->json()
                 ->required()
-                ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
+                ->hintAction(fn (RichEditor $component) => Action::make('loadEmailTemplate')
                     ->schema([
                         Select::make('emailTemplate')
                             ->searchable()
@@ -164,17 +162,108 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                             return;
                         }
 
-                        $component->state(
-                            $component->generateImageUrls($template->content),
-                        );
+                        $component->state($template->content);
                     }))
+                ->getFileAttachmentUrlFromAnotherRecordUsing(function (mixed $file): ?string {
+                    return Media::query()
+                        ->where('uuid', $file)
+                        ->where('model_type', (new EmailTemplate())->getMorphClass())
+                        ->first()
+                        ?->getUrl();
+                })
+                ->saveFileAttachmentFromAnotherRecordUsing(function (mixed $file, ?Model $record): ?string {
+                    if (! $record instanceof CampaignAction) {
+                        return null;
+                    }
+
+                    return Media::query()
+                        ->where('uuid', $file)
+                        ->where('model_type', (new EmailTemplate())->getMorphClass())
+                        ->first()
+                        ?->copy($record, 'body', 's3-public')
+                        ->uuid;
+                })
                 ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
-                ->columnSpanFull(),
+                ->columnSpanFull()
+                // Override the default saveRelationshipsUsing because CampaignAction stores
+                // body inside a JSON `data` column. The default implementation calls
+                // $record->setAttribute('body', ...) which fails since `body` is not a column.
+                // This custom version saves to $record->data['body'] instead.
+                ->saveRelationshipsUsing(function (RichEditor $component, ?array $rawState, CampaignAction $record): void {
+                    $fileAttachmentProvider = $component->getFileAttachmentProvider();
+
+                    if (! $fileAttachmentProvider) {
+                        return;
+                    }
+
+                    if (! $fileAttachmentProvider->isExistingRecordRequiredToSaveNewFileAttachments()) {
+                        return;
+                    }
+
+                    if (! $record->wasRecentlyCreated) {
+                        return;
+                    }
+
+                    $fileAttachmentIds = [];
+
+                    $component->rawState(
+                        $component->getTipTapEditor()
+                            ->setContent($rawState ?? [
+                                'type' => 'doc',
+                                'content' => [],
+                            ])
+                            ->descendants(function (object &$node) use ($component, &$fileAttachmentIds): void {
+                                if ($node->type !== 'image') {
+                                    return;
+                                }
+
+                                if (blank($node->attrs->id ?? null)) {
+                                    return;
+                                }
+
+                                $attachment = $component->getUploadedFileAttachment($node->attrs->id);
+
+                                if ($attachment) {
+                                    $node->attrs->id = $component->saveUploadedFileAttachment($attachment);
+                                    $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->id);
+
+                                    $fileAttachmentIds[] = $node->attrs->id;
+
+                                    return;
+                                }
+
+                                if (filled($component->getFileAttachmentUrl($node->attrs->id))) {
+                                    $fileAttachmentIds[] = $node->attrs->id;
+
+                                    return;
+                                }
+
+                                $fileAttachmentIdFromAnotherRecord = $component->saveFileAttachmentFromAnotherRecord($node->attrs->id);
+
+                                if (blank($fileAttachmentIdFromAnotherRecord)) {
+                                    $fileAttachmentIds[] = $node->attrs->id;
+
+                                    return;
+                                }
+
+                                $node->attrs->id = $fileAttachmentIdFromAnotherRecord;
+                                $node->attrs->src = $component->getFileAttachmentUrl($fileAttachmentIdFromAnotherRecord) ?? $node->attrs->src ?? null;
+                            })
+                            ->getDocument(),
+                    );
+
+                    // Save body into the JSON `data` column instead of a direct `body` column
+                    $data = $record->data ?? [];
+                    $data['body'] = $component->getState();
+                    $record->data = $data;
+                    $record->save();
+
+                    $fileAttachmentProvider->cleanUpFileAttachments(exceptIds: $fileAttachmentIds);
+                }),
             Actions::make([
                 DraftEngagementBlockWithAi::make()
                     ->channel(NotificationChannel::Email)
-                    ->fieldPrefix($fieldPrefix)
-                    ->mergeTags($mergeTags),
+                    ->mergeTags(Engagement::getMergeTags(withUserTags: false)),
             ]),
             CampaignDateTimeInput::make(),
         ];
@@ -187,30 +276,6 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
 
     public function afterCreated(CampaignAction $action, Schema $schema): void
     {
-        $bodyField = $schema->getComponent(fn (Component $component): bool => ($component instanceof TiptapEditor) && str($component->getName())->endsWith('body'));
-
-        if (! ($bodyField instanceof TiptapEditor)) {
-            return;
-        }
-
-        [$newBody] = tiptap_converter()->saveImages(
-            $action['data']['body'],
-            disk: 's3-public',
-            record: $action,
-            recordAttribute: 'data.body',
-            newImages: array_map(
-                fn (TemporaryUploadedFile $file): array => [
-                    'extension' => $file->getClientOriginalExtension(),
-                    'path' => (fn () => $this->path)->call($file),
-                ],
-                $bodyField->getTemporaryImages(),
-            ),
-        );
-
-        $actionData = $action->data;
-        $actionData['body'] = $newBody;
-
-        $action->data = $actionData;
-        $action->save();
+        $schema->model($action)->saveRelationships();
     }
 }

@@ -57,22 +57,6 @@ abstract class WorkflowActionBlock extends Block
     /**
      * @return array<int, covariant Field|Section>
      */
-    public function createFields(): array
-    {
-        return $this->generateFields();
-    }
-
-    /**
-     * @return array<int, covariant Field|Section>
-     */
-    public function editFields(): array
-    {
-        return $this->generateFields();
-    }
-
-    /**
-     * @return array<int, covariant Field|Section>
-     */
     abstract public function generateFields(): array;
 
     abstract public static function type(): string;
