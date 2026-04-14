@@ -38,6 +38,9 @@ namespace AdvisingApp\Application\Models;
 
 use AdvisingApp\Form\Models\SubmissibleStep;
 use App\Models\Attributes\NoPermissions;
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -48,10 +51,11 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 /**
  * @mixin IdeHelperApplicationStep
  */
-class ApplicationStep extends SubmissibleStep implements HasMedia
+class ApplicationStep extends SubmissibleStep implements HasMedia, HasRichContent
 {
     use SoftDeletes;
     use InteractsWithMedia;
+    use InteractsWithRichContent;
 
     protected $fillable = [
         'label',
@@ -63,6 +67,13 @@ class ApplicationStep extends SubmissibleStep implements HasMedia
         'content' => 'array',
         'sort' => 'integer',
     ];
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('content')
+            ->fileAttachmentsDisk('s3-public')
+            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make());
+    }
 
     /**
      * @return BelongsTo<Application, $this>

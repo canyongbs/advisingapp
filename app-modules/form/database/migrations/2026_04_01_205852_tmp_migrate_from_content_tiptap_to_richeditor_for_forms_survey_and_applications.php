@@ -46,6 +46,9 @@ return new class () extends Migration {
         $this->processTable('survey_steps', 'content');
         $this->processTable('applications', 'content');
         $this->processTable('application_steps', 'content');
+
+        $this->processTable('form_email_auto_replies', 'subject');
+        $this->processTable('form_email_auto_replies', 'body');
     }
 
     public function down(): void
@@ -89,6 +92,7 @@ return new class () extends Migration {
             'tiptapBlock' => $this->transformCustomBlock($node, $changed),
             'grid' => $this->transformGrid($node, $changed),
             'image' => $this->transformImage($node, $changed),
+            'mergeTag' => $this->transformMergeTag($node, $changed),
             default => null,
         };
 
@@ -111,8 +115,8 @@ return new class () extends Migration {
         $node['type'] = 'customBlock';
         $node['attrs'] = [
             'config' => [
-                'fieldId' => $oldAttrs['id'] ?? null,
                 ...($oldAttrs['data'] ?? []),
+                'fieldId' => $oldAttrs['id'] ?? null,
             ],
             'id' => $oldAttrs['type'] ?? null,
         ];
@@ -177,5 +181,16 @@ return new class () extends Migration {
             'responsive' => [(int) $oldCols, 'lg', array_fill(0, (int) $oldCols, 1)],
             default => [(int) $oldCols, 'lg', array_fill(0, (int) $oldCols, 1)],
         };
+    }
+
+    /**
+     * @param  array<string, mixed>  $node
+     */
+    protected function transformMergeTag(array &$node, bool &$changed): void
+    {
+        if (isset($node['attrs']['id']) && str_starts_with($node['attrs']['id'], 'student ')) {
+            $node['attrs']['id'] = 'recipient ' . substr($node['attrs']['id'], 8);
+            $changed = true;
+        }
     }
 };

@@ -163,7 +163,7 @@ trait HasSharedFormConfiguration
             ->activePanel('customBlocks')
             ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()
-            ->saveRelationshipsBeforeChildrenUsing(function (RichEditor $component, Application | ApplicationStep $record) {
+            ->saveRelationshipsUsing(function (RichEditor $component, ?array $rawState, Application | ApplicationStep $record) {
                 if ($component->isDisabled()) {
                     return;
                 }
@@ -194,6 +194,73 @@ trait HasSharedFormConfiguration
 
                 $record->content = $content;
                 $record->save();
+
+                $fileAttachmentProvider = $component->getFileAttachmentProvider();
+
+                if (! $fileAttachmentProvider) {
+                    return;
+                }
+
+                if (! $fileAttachmentProvider->isExistingRecordRequiredToSaveNewFileAttachments()) {
+                    return;
+                }
+
+                if (! $record->wasRecentlyCreated) {
+                    return;
+                }
+
+                $fileAttachmentIds = [];
+
+                $component->rawState(
+                    $component->getTipTapEditor()
+                        ->setContent($rawState ?? [
+                            'type' => 'doc',
+                            'content' => [],
+                        ])
+                        ->descendants(function (object &$node) use ($component, &$fileAttachmentIds): void {
+                            if ($node->type !== 'image') {
+                                return;
+                            }
+
+                            if (blank($node->attrs->id ?? null)) {
+                                return;
+                            }
+
+                            $attachment = $component->getUploadedFileAttachment($node->attrs->id);
+
+                            if ($attachment) {
+                                $node->attrs->id = $component->saveUploadedFileAttachment($attachment);
+                                $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->id);
+
+                                $fileAttachmentIds[] = $node->attrs->id;
+
+                                return;
+                            }
+
+                            if (filled($component->getFileAttachmentUrl($node->attrs->id))) {
+                                $fileAttachmentIds[] = $node->attrs->id;
+
+                                return;
+                            }
+
+                            $fileAttachmentIdFromAnotherRecord = $component->saveFileAttachmentFromAnotherRecord($node->attrs->id);
+
+                            if (blank($fileAttachmentIdFromAnotherRecord)) {
+                                $fileAttachmentIds[] = $node->attrs->id;
+
+                                return;
+                            }
+
+                            $node->attrs->id = $fileAttachmentIdFromAnotherRecord;
+                            $node->attrs->src = $component->getFileAttachmentUrl($fileAttachmentIdFromAnotherRecord) ?? $node->attrs->src ?? null;
+                        })
+                        ->getDocument(),
+                );
+
+                $record->setAttribute($component->getContentAttribute()->getName(), $component->getState());
+                $record->save();
+
+                $fileAttachmentProvider->cleanUpFileAttachments(exceptIds: $fileAttachmentIds);
             })
             ->dehydrated(false)
             ->columnSpanFull()
