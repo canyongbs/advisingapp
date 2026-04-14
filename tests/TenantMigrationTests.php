@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
