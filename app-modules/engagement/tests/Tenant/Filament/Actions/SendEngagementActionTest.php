@@ -34,11 +34,12 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Engagement\Filament\Support\EducatableContactabilityHelper;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
-use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
+use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use Illuminate\Support\Facades\Queue;
@@ -131,7 +132,7 @@ it('shows no-contact-info message when student has no valid email or sms', funct
     $student->refresh();
 
     // Verify that helper correctly identifies no valid route
-    $this->assertFalse(\AdvisingApp\Engagement\Filament\Support\EducatableContactabilityHelper::hasAnyValidRoute($student));
+    $this->assertFalse(EducatableContactabilityHelper::hasAnyValidRoute($student));
 });
 
 it('disables channel options when student has bounced email', function () {
@@ -159,7 +160,7 @@ it('disables channel options when student has bounced email', function () {
     $student->refresh();
 
     // Verify no valid channels
-    $this->assertFalse(\AdvisingApp\Engagement\Filament\Support\EducatableContactabilityHelper::hasAnyValidRoute($student));
+    $this->assertFalse(EducatableContactabilityHelper::hasAnyValidRoute($student));
 });
 
 it('excludes bounced phones from sms channel options', function () {
@@ -183,7 +184,7 @@ it('excludes bounced phones from sms channel options', function () {
         ->for($student, 'student')
         ->create(['can_receive_sms' => true]);
 
-    \AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber::factory()->create([
+    BouncedPhoneNumber::factory()->create([
         'number' => $phoneNumber->number,
     ]);
 
@@ -192,7 +193,7 @@ it('excludes bounced phones from sms channel options', function () {
     $student->refresh();
 
     // Verify bounced phone is detected by model
-    $this->assertFalse($student->canReceiveSms(),  'Model should detect bounced phone via canReceiveSms() method');
+    $this->assertFalse($student->canReceiveSms(), 'Model should detect bounced phone via canReceiveSms() method');
 });
 
 it('shows only sms channel when student has no valid email but valid sms', function () {
@@ -214,6 +215,6 @@ it('shows only sms channel when student has no valid email but valid sms', funct
     $student->refresh();
 
     // Verify SMS-only scenario
-    $this->assertFalse(\AdvisingApp\Engagement\Filament\Support\EducatableContactabilityHelper::hasValidEmail($student));
-    $this->assertTrue(\AdvisingApp\Engagement\Filament\Support\EducatableContactabilityHelper::hasValidSms($student));
+    $this->assertFalse(EducatableContactabilityHelper::hasValidEmail($student));
+    $this->assertTrue(EducatableContactabilityHelper::hasValidSms($student));
 });

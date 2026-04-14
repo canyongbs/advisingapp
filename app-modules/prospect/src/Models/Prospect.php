@@ -447,7 +447,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
 
     public function canReceiveSms(): bool
     {
-        return $this->primaryPhoneNumber?->can_receive_sms 
+        return $this->primaryPhoneNumber?->can_receive_sms
             && (! $this->primaryPhoneNumber->smsOptOut()->exists())
             && (! $this->primaryPhoneNumber->bounced()->exists());
     }

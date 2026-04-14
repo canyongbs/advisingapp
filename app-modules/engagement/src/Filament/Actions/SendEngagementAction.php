@@ -54,6 +54,7 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
@@ -138,6 +139,7 @@ class SendEngagementAction extends Action
                                     return $select->disableOptionWhen(function (string $value): bool {
                                         static $noContactCache = [];
                                         $cacheKey = $value;
+
                                         if (! array_key_exists($cacheKey, $noContactCache)) {
                                             $educatable = Student::find($value) ?? Prospect::find($value);
                                             $noContactCache[$cacheKey] = $educatable
@@ -285,7 +287,7 @@ class SendEngagementAction extends Action
                                             return $educatable !== null && EducatableContactabilityHelper::hasAnyValidRoute($educatable);
                                         })
                                         ->columnSpanFull(),
-                                    \Filament\Forms\Components\Placeholder::make('no_contact_info')
+                                    Placeholder::make('no_contact_info')
                                         ->label('')
                                         ->content('This recipient does not have valid contact information. Please select a different recipient.')
                                         ->visible(function (Get $get) use ($action): bool {
