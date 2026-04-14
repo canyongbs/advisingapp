@@ -45,6 +45,8 @@ use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action as BaseAction;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -56,7 +58,6 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Model;
 
 class EditResourceHubArticle extends EditRecord
@@ -74,12 +75,23 @@ class EditResourceHubArticle extends EditRecord
                         Tab::make('Content')
                             ->label('Resource')
                             ->schema([
-                                TiptapEditor::make('article_details')
+                                RichEditor::make('article_details')
                                     ->hiddenLabel()
+                                    ->json()
+                                    ->toolbarButtons([
+                                        ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
+                                        [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'blockquote', 'code', 'codeBlock', 'bulletList', 'orderedList', 'horizontalRule'],
+                                        ['alignStart', 'alignCenter', 'alignEnd'],
+                                        ['textColor', 'highlight', 'lead', 'small'],
+                                        ['attachFiles', 'video'],
+                                        ['grid', 'table', 'details'],
+                                        ['clearFormatting'],
+                                        ['undo', 'redo'],
+                                    ])
+                                    ->resizableImages()
                                     ->columnSpanFull()
                                     ->extraInputAttributes([
                                         'style' => 'min-height: 32rem;',
-                                        'class' => 'text-gray-900 dark:bg-gray-800 dark:text-gray-100 border-2 dark:border-0 border-gray-200 rounded-none mx-4 my-2 px-8 py-4',
                                     ]),
                                 Actions::make([
                                     DraftResourceHubArticleWithAiAction::make(),

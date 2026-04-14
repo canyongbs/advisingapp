@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\MaximumLeadTimeFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -51,16 +50,12 @@ return new class () extends Migration {
             Schema::table('booking_groups', function (Blueprint $table) {
                 $table->unsignedInteger('maximum_booking_lead_time_days')->default(0);
             });
-
-            MaximumLeadTimeFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            MaximumLeadTimeFeature::deactivate();
-
             Schema::table('personal_booking_pages', function (Blueprint $table) {
                 $table->dropColumn('maximum_booking_lead_time_days');
             });

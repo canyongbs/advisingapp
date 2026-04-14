@@ -39,7 +39,6 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use App\Features\MaximumLeadTimeFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -216,8 +215,7 @@ class EditBookingGroup extends EditRecord
                         ->default(0)
                         ->minValue(0)
                         ->integer()
-                        ->columnSpanFull()
-                        ->visible(fn (): bool => MaximumLeadTimeFeature::active()),
+                        ->columnSpanFull(),
                     DailyHoursRepeater::make('available_appointment_hours')
                         ->label('Days and Hours')
                         ->columnSpanFull(),

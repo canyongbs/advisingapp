@@ -38,6 +38,7 @@ namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
 use AdvisingApp\Portal\DataTransferObjects\ResourceHubArticleData;
 use AdvisingApp\Portal\DataTransferObjects\ResourceHubCategoryData;
+use AdvisingApp\ResourceHub\Actions\GenerateTableOfContents;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use App\Http\Controllers\Controller;
@@ -50,10 +51,10 @@ class ResourceHubPortalArticleController extends Controller
     {
         $article->increment('portal_view_count');
 
-        $content = tiptap_converter()->record($article, attribute: 'article_details')->asHTML($article->article_details, toc: true, maxDepth: 3);
+        $content = $article->article_details ? $article->renderRichContent('article_details') : '';
 
         if ($article->has_table_of_contents) {
-            $tableOfContents = tiptap_converter()->asTOC($article->article_details);
+            $tableOfContents = GenerateTableOfContents::execute($article->article_details);
 
             if (filled($tableOfContents)) {
                 $content = '<h2>Table of Contents</h2><div class="prose-toc">' . $tableOfContents . '</div>' . $content;

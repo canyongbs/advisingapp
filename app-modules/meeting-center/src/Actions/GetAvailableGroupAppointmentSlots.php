@@ -41,7 +41,6 @@ use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use App\Features\MaximumLeadTimeFeature;
 use App\Models\User;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Builder;
@@ -85,14 +84,10 @@ class GetAvailableGroupAppointmentSlots
 
         $effectiveLeadTime = $resolveEffectiveLeadTime($bookingGroup, $members);
 
-        $effectiveMaxLeadTimeDays = 0;
-
-        if (MaximumLeadTimeFeature::active()) {
-            $memberMaxLeadTimeDays = PersonalBookingPage::query()
-                ->whereIn('user_id', $members->pluck('id'))
-                ->max('maximum_booking_lead_time_days') ?? 0;
-            $effectiveMaxLeadTimeDays = max($bookingGroup->maximum_booking_lead_time_days ?? 0, $memberMaxLeadTimeDays);
-        }
+        $memberMaxLeadTimeDays = PersonalBookingPage::query()
+            ->whereIn('user_id', $members->pluck('id'))
+            ->max('maximum_booking_lead_time_days') ?? 0;
+        $effectiveMaxLeadTimeDays = max($bookingGroup->maximum_booking_lead_time_days ?? 0, $memberMaxLeadTimeDays);
 
         $latestAllowed = ($effectiveMaxLeadTimeDays > 0) ? now()->addDays($effectiveMaxLeadTimeDays) : null;
 

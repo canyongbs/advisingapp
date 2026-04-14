@@ -31,6 +31,7 @@
     
     </COPYRIGHT>
 --}}
+@use('AdvisingApp\ResourceHub\Actions\GenerateTableOfContents')
 <div class="mt-2 rounded p-4">
     <div class="prose mt-2 max-w-full dark:prose-invert">
         @if ($state = $getState())
@@ -40,9 +41,7 @@
 
             @if ($record->has_table_of_contents)
                 @php
-                    $tableOfContents = tiptap_converter()
-                        ->record($record, attribute: $getName())
-                        ->asTOC($state);
+                    $tableOfContents = GenerateTableOfContents::execute($record->article_details);
                 @endphp
 
                 @if (filled($tableOfContents))
@@ -54,7 +53,7 @@
                 @endif
             @endif
 
-            {!! tiptap_converter()->record($record, attribute: $getName())->asHTML($state, toc: true, maxDepth: 3) !!}
+            {!! $record->renderRichContent($getName()) !!}
         @endif
     </div>
 </div>
