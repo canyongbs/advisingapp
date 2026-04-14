@@ -34,6 +34,11 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Form\Models\FormField;
+use AdvisingApp\Survey\Models\Survey;
+use AdvisingApp\Survey\Models\SurveyField;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -107,6 +112,343 @@ function imageContent(): array
         ],
     ];
 }
+
+
+
+/** @return array<string, mixed> */
+function oldTiptapFormContent(): array
+{
+    return [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'tiptapBlock',
+                'attrs' => [
+                    'id' => 'field-uuid-1',
+                    'type' => 'text_input',
+                    'data' => [
+                        'label' => 'Full Name',
+                        'isRequired' => true,
+                        'description' => 'Enter your name',
+                    ],
+                ],
+            ],
+            [
+                'type' => 'tiptapBlock',
+                'attrs' => [
+                    'id' => 'field-uuid-2',
+                    'type' => 'select',
+                    'data' => [
+                        'label' => 'Color',
+                        'isRequired' => false,
+                        'options' => ['red' => 'Red', 'blue' => 'Blue'],
+                    ],
+                ],
+            ],
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    ['type' => 'text', 'text' => 'Some text'],
+                ],
+            ],
+        ],
+    ];
+}
+
+/** @return array<string, mixed> */
+function oldTiptapGridContent(): array
+{
+    return [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'grid',
+                'attrs' => ['type' => 'responsive', 'cols' => '2'],
+                'content' => [
+                    [
+                        'type' => 'gridColumn',
+                        'content' => [
+                            [
+                                'type' => 'tiptapBlock',
+                                'attrs' => [
+                                    'id' => 'grid-field-1',
+                                    'type' => 'text_input',
+                                    'data' => ['label' => 'Left Field', 'isRequired' => false],
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'type' => 'gridColumn',
+                        'content' => [
+                            [
+                                'type' => 'tiptapBlock',
+                                'attrs' => [
+                                    'id' => 'grid-field-2',
+                                    'type' => 'text_input',
+                                    'data' => ['label' => 'Right Field', 'isRequired' => true],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ];
+}
+
+/** @return array<string, mixed> */
+function oldTiptapAsymmetricGridContent(): array
+{
+    return [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'grid',
+                'attrs' => ['type' => 'asymetric-left-thirds', 'cols' => '3'],
+                'content' => [
+                    [
+                        'type' => 'gridColumn',
+                        'content' => [
+                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Narrow']]],
+                        ],
+                    ],
+                    [
+                        'type' => 'gridColumn',
+                        'content' => [
+                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Wide']]],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ];
+}
+
+/** @return array<string, mixed> */
+function oldTiptapImageContent(): array
+{
+    return [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'image',
+                'attrs' => [
+                    'id' => 'img-uuid',
+                    'src' => null,
+                    'width' => 800,
+                    'height' => 600,
+                ],
+            ],
+            [
+                'type' => 'image',
+                'attrs' => [
+                    'id' => 'small-img-uuid',
+                    'src' => null,
+                    'width' => 300,
+                    'height' => 200,
+                ],
+            ],
+        ],
+    ];
+}
+
+$migrationPath = 'app-modules/form/database/migrations/2026_04_01_205852_tmp_migrate_from_content_tiptap_to_richeditor_for_forms_survey_and_applications.php';
+
+test('migration converts tiptapBlock to customBlock in forms', function () use ($migrationPath) {
+    isolatedMigration(
+        '2026_04_01_205852_tmp_migrate_from_content_tiptap_to_richeditor_for_forms_survey_and_applications',
+        function () use ($migrationPath) {
+            $form = Form::factory()->createQuietly();
+
+            // Create a dummy field so factory afterCreating doesn't overwrite content
+            FormField::factory()->createQuietly(['form_id' => $form->id]);
+
+            // Set old tiptap content directly via DB
+            DB::table('forms')->where('id', $form->id)->update(['content' => json_encode(oldTiptapFormContent())]);
+
+            $migrate = Artisan::call('migrate', ['--path' => $migrationPath]);
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('forms')->where('id', $form->id)->value('content'), associative: true); /** @phpstan-ignore-line */
+
+            // First block: text_input
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['type'])->toBe('customBlock');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['id'])->toBe('text_input');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['config']['fieldId'])->toBe('field-uuid-1');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['config']['label'])->toBe('Full Name');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['config']['isRequired'])->toBeTrue();
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['config']['description'])->toBe('Enter your name');
+
+            // Second block: select
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['type'])->toBe('customBlock');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['attrs']['id'])->toBe('select');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['attrs']['config']['fieldId'])->toBe('field-uuid-2');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['attrs']['config']['options'])->toBe(['red' => 'Red', 'blue' => 'Blue']);
+
+            // Third: paragraph unchanged
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][2]['type'])->toBe('paragraph');
+        }
+    );
+});
+
+test('migration converts responsive grid in forms', function () use ($migrationPath) {
+    isolatedMigration(
+        '2026_04_01_205852_tmp_migrate_from_content_tiptap_to_richeditor_for_forms_survey_and_applications',
+        function () use ($migrationPath) {
+            $form = Form::factory()->createQuietly();
+            FormField::factory()->createQuietly(['form_id' => $form->id]);
+            DB::table('forms')->where('id', $form->id)->update(['content' => json_encode(oldTiptapGridContent())]);
+
+            $migrate = Artisan::call('migrate', ['--path' => $migrationPath]);
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('forms')->where('id', $form->id)->value('content'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            $grid = $content['content'][0];
+            expect($grid['type'])->toBe('grid');
+            expect($grid['attrs']['data-cols'])->toBe('2');
+            expect($grid['attrs']['data-from-breakpoint'])->toBe('lg');
+
+            // Grid columns have data-col-span
+            expect($grid['content'][0]['attrs']['data-col-span'])->toBe('1');
+            expect($grid['content'][1]['attrs']['data-col-span'])->toBe('1');
+
+            // Blocks inside grid are converted
+            expect($grid['content'][0]['content'][0]['type'])->toBe('customBlock');
+            expect($grid['content'][0]['content'][0]['attrs']['id'])->toBe('text_input');
+            expect($grid['content'][0]['content'][0]['attrs']['config']['fieldId'])->toBe('grid-field-1');
+        }
+    );
+});
+
+test('migration converts asymmetric grid in forms', function () use ($migrationPath) {
+    isolatedMigration(
+        '2026_04_01_205852_tmp_migrate_from_content_tiptap_to_richeditor_for_forms_survey_and_applications',
+        function () use ($migrationPath) {
+            $form = Form::factory()->createQuietly();
+            FormField::factory()->createQuietly(['form_id' => $form->id]);
+            DB::table('forms')->where('id', $form->id)->update(['content' => json_encode(oldTiptapAsymmetricGridContent())]);
+
+            $migrate = Artisan::call('migrate', ['--path' => $migrationPath]);
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('forms')->where('id', $form->id)->value('content'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            $grid = $content['content'][0];
+            expect($grid['attrs']['data-cols'])->toBe('3');
+            expect($grid['attrs']['data-from-breakpoint'])->toBe('lg');
+
+            // Asymmetric left thirds: first col span 1, second col span 2
+            expect($grid['content'][0]['attrs']['data-col-span'])->toBe('1');
+            expect($grid['content'][1]['attrs']['data-col-span'])->toBe('2');
+        }
+    );
+});
+
+test('migration fixes oversized images in forms', function () use ($migrationPath) {
+    isolatedMigration(
+        '2026_04_01_205852_tmp_migrate_from_content_tiptap_to_richeditor_for_forms_survey_and_applications',
+        function () use ($migrationPath) {
+            $form = Form::factory()->createQuietly();
+            FormField::factory()->createQuietly(['form_id' => $form->id]);
+            DB::table('forms')->where('id', $form->id)->update(['content' => json_encode(oldTiptapImageContent())]);
+
+            $migrate = Artisan::call('migrate', ['--path' => $migrationPath]);
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('forms')->where('id', $form->id)->value('content'), associative: true); /** @phpstan-ignore-line */
+
+            // Oversized image: dimensions cleared
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['width'])->toBeNull();
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['height'])->toBeNull();
+
+            // Small image: dimensions preserved
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['attrs']['width'])->toBe(300);
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['attrs']['height'])->toBe(200);
+        }
+    );
+});
+
+test('migration converts tiptapBlock to customBlock in surveys', function () use ($migrationPath) {
+    isolatedMigration(
+        '2026_04_01_205852_tmp_migrate_from_content_tiptap_to_richeditor_for_forms_survey_and_applications',
+        function () use ($migrationPath) {
+            $survey = Survey::factory()->createQuietly();
+            SurveyField::factory()->createQuietly(['survey_id' => $survey->id]);
+            DB::table('surveys')->where('id', $survey->id)->update(['content' => json_encode(oldTiptapFormContent())]);
+
+            $migrate = Artisan::call('migrate', ['--path' => $migrationPath]);
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('surveys')->where('id', $survey->id)->value('content'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['type'])->toBe('customBlock');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['id'])->toBe('text_input');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['config']['fieldId'])->toBe('field-uuid-1');
+        }
+    );
+});
+
+test('migration converts tiptapBlock to customBlock in applications', function () use ($migrationPath) {
+    isolatedMigration(
+        '2026_04_01_205852_tmp_migrate_from_content_tiptap_to_richeditor_for_forms_survey_and_applications',
+        function () use ($migrationPath) {
+            $application = Application::factory()->makeOne();
+            $application->saveQuietly();
+            DB::table('applications')->where('id', $application->id)->update(['content' => json_encode(oldTiptapFormContent())]);
+
+            $migrate = Artisan::call('migrate', ['--path' => $migrationPath]);
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('applications')->where('id', $application->id)->value('content'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['type'])->toBe('customBlock');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['id'])->toBe('text_input');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['config']['fieldId'])->toBe('field-uuid-1');
+        }
+    );
+});
+
+test('migration skips null content', function () use ($migrationPath) {
+    isolatedMigration(
+        '2026_04_01_205852_tmp_migrate_from_content_tiptap_to_richeditor_for_forms_survey_and_applications',
+        function () use ($migrationPath) {
+            $form = Form::factory()->createQuietly();
+            FormField::factory()->createQuietly(['form_id' => $form->id]);
+            DB::table('forms')->where('id', $form->id)->update(['content' => null]);
+
+            $migrate = Artisan::call('migrate', ['--path' => $migrationPath]);
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = DB::table('forms')->where('id', $form->id)->value('content');
+            expect($content)->toBeNull();
+        }
+    );
+});
 
 test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables email_templates', function () {
     isolatedMigration(
