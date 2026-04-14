@@ -196,9 +196,25 @@ class ListResourceHubArticles extends ListRecords
                             $replica->division()->attach($divison->id);
                         }
 
-                        $replica->article_details = tiptap_converter()
-                            ->record($record, 'article_details')
-                            ->copyImagesToNewRecord($replica->article_details, $replica, disk: 's3-public');
+                        $media = $record->getMedia('article_details');
+                        $uuidMap = [];
+
+                        foreach ($media as $mediaItem) {
+                            $newMedia = $mediaItem->copy($replica, 'article_details', 's3-public');
+                            $uuidMap[$mediaItem->uuid] = $newMedia->uuid;
+                        }
+
+                        if (! empty($uuidMap) && is_array($replica->article_details)) {
+                            $details = $replica->article_details;
+                            $json = json_encode($details);
+
+                            foreach ($uuidMap as $oldUuid => $newUuid) {
+                                $json = str_replace($oldUuid, $newUuid, $json);
+                            }
+
+                            $replica->article_details = json_decode($json, associative: true);
+                        }
+
                         $replica->save();
                     })
                     ->excludeAttributes(['views_count', 'upvotes_count', 'my_upvotes_count'])

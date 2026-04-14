@@ -111,6 +111,15 @@ class AppServiceProvider extends ServiceProvider
         $this->app->extend(
             HtmlSanitizerConfig::class,
             fn (HtmlSanitizerConfig $config): HtmlSanitizerConfig => $config
+                ->allowElement('iframe', ['src', 'width', 'height', 'frameborder', 'allowfullscreen', 'allow'])
+                ->allowAttribute('data-video-embed', allowedElements: '*')
+                ->allowAttribute('data-video-type', allowedElements: '*')
+                ->allowAttribute('data-video-src', allowedElements: '*')
+                ->allowAttribute('data-video-width', allowedElements: '*')
+                ->allowAttribute('data-video-height', allowedElements: '*')
+                ->allowAttribute('controls', allowedElements: 'video')
+                ->allowAttribute('src', allowedElements: ['img', 'video', 'source', 'iframe'])
+                ->allowAttribute('type', allowedElements: 'source')
                 ->allowAttribute('wire:ignore.self', allowedElements: '*'),
         );
 
