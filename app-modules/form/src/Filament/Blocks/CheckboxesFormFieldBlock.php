@@ -40,24 +40,26 @@ use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Enums\Width;
 
 class CheckboxesFormFieldBlock extends FormFieldBlock
 {
-    public string $width = '2xl';
-
-    public string $preview = 'form::blocks.previews.checkboxes';
-
-    public string $rendered = 'form::blocks.submissions.checkboxes';
-
     public static function type(): string
     {
         return 'checkboxes';
     }
 
-    public function fields(): array
+    public static function configureEditorAction(Action $action): Action
+    {
+        return parent::configureEditorAction($action)
+            ->modalWidth(Width::TwoExtraLarge);
+    }
+
+    public static function fields(): array
     {
         return [
             Repeater::make('options')
@@ -118,5 +120,15 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
                 ->mapWithKeys(fn ($label, $key) => [$label => in_array($key, $response)])
                 ->toArray(),
         ];
+    }
+
+    protected static function previewView(): string
+    {
+        return 'form::blocks.previews.checkboxes';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.checkboxes';
     }
 }

@@ -38,5 +38,8 @@ namespace AdvisingApp\Form\Filament\Blocks;
 
 class EventSignatureFormFieldBlock extends SignatureFormFieldBlock
 {
-    public ?string $label = 'eSignature';
+    public static function getLabel(): string
+    {
+        return 'eSignature';
+    }
 }

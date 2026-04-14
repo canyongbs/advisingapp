@@ -42,7 +42,7 @@ use AdvisingApp\CaseManagement\Models\CaseFormAuthentication;
 use AdvisingApp\CaseManagement\Models\CaseFormSubmission;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
-use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\Legacy\EducatableEmailFormFieldBlock;
 use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use App\Http\Controllers\Controller;

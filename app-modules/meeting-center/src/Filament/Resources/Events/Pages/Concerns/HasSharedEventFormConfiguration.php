@@ -37,7 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\Concerns;
 
 use AdvisingApp\Form\Enums\Rounding;
-use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\Form\Filament\Blocks\Legacy\FormFieldBlockRegistry;
 use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;

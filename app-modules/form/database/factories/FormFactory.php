@@ -67,16 +67,16 @@ class FormFactory extends Factory
 
                 $form->content = [
                     'type' => 'doc',
-                    'content' => $form->fields->map(fn (FormField $field): array => [
-                        'type' => 'tiptapBlock',
+                    'content' => $form->fields->map(fn (FormField $field): array => [ // @phpstan-ignore argument.type
+                        'type' => 'customBlock',
                         'attrs' => [
-                            'id' => $field->id,
-                            'type' => $field->type,
-                            'data' => [
+                            'config' => [
+                                'fieldId' => $field->id,
                                 'label' => $field->label,
                                 'isRequired' => $field->is_required,
                                 ...$field->config,
                             ],
+                            'id' => $field->type,
                         ],
                     ])->all(),
                 ];

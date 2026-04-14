@@ -44,17 +44,14 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class LikertScaleSurveyBlock extends FormFieldBlock
 {
-    public ?string $label = 'Likert Scale';
-
-    public string $preview = 'survey::blocks.previews.likert';
-
-    public string $rendered = 'survey::blocks.submissions.likert';
-
-    public ?string $icon = 'heroicon-m-list-bullet';
-
     public static function type(): string
     {
         return 'likert';
+    }
+
+    public static function getLabel(): string
+    {
+        return 'Likert Scale';
     }
 
     /**
@@ -94,5 +91,15 @@ class LikertScaleSurveyBlock extends FormFieldBlock
             'disagree' => 'Disagree',
             'strongly-disagree' => 'Strongly disagree',
         ];
+    }
+
+    protected static function previewView(): string
+    {
+        return 'survey::blocks.previews.likert';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'survey::blocks.submissions.likert';
     }
 }

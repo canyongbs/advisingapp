@@ -44,32 +44,29 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Settings\ImportSettings;
 use Closure;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput as FilamentTextInput;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 
 class EducatablePhoneNumberFormFieldBlock extends FormFieldBlock
 {
-    public ?string $label = 'Primary Phone Number';
-
-    public string $preview = 'form::blocks.previews.default';
-
-    public string $rendered = 'form::blocks.submissions.default';
-
-    public ?string $icon = 'heroicon-m-phone';
-
     public static function type(): string
     {
         return 'educatable_phone_number';
     }
 
-    /**
-     * @return array<int, mixed>
-     */
-    public function getFormSchema(): array
+    public static function getLabel(): string
     {
-        return [
+        return 'Primary Phone Number';
+    }
+
+    public static function configureEditorAction(Action $action): Action
+    {
+        return $action->schema([
+            Hidden::make('fieldId'),
             FilamentTextInput::make('label')
                 ->required()
                 ->string()
@@ -82,7 +79,7 @@ class EducatablePhoneNumberFormFieldBlock extends FormFieldBlock
             Checkbox::make('isRequired')
                 ->label('Required')
                 ->default(false),
-        ];
+        ]);
     }
 
     /**

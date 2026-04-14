@@ -44,15 +44,14 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class RatingScaleSurveyFieldBlock extends FormFieldBlock
 {
-    public ?string $label = 'Rating Scale';
-
-    public string $preview = 'survey::blocks.previews.rating';
-
-    public ?string $icon = 'heroicon-m-scale';
-
     public static function type(): string
     {
         return 'rating';
+    }
+
+    public static function getLabel(): string
+    {
+        return 'Rating Scale';
     }
 
     /**
@@ -78,5 +77,10 @@ class RatingScaleSurveyFieldBlock extends FormFieldBlock
             'min:0',
             'max:10',
         ];
+    }
+
+    protected static function previewView(): string
+    {
+        return 'survey::blocks.previews.rating';
     }
 }

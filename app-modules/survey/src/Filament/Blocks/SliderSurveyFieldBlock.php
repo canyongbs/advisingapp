@@ -44,8 +44,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class SliderSurveyFieldBlock extends FormFieldBlock
 {
-    public string $preview = 'survey::blocks.previews.slider';
-
     public static function type(): string
     {
         return 'slider';
@@ -74,5 +72,10 @@ class SliderSurveyFieldBlock extends FormFieldBlock
             'min:1',
             'max:5',
         ];
+    }
+
+    protected static function previewView(): string
+    {
+        return 'survey::blocks.previews.slider';
     }
 }

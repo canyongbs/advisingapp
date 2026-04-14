@@ -43,18 +43,9 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class TimeFormFieldBlock extends FormFieldBlock
 {
-    public string $rendered = 'form::blocks.submissions.time';
-
-    public ?string $icon = 'heroicon-m-clock';
-
     public static function type(): string
     {
         return 'time';
-    }
-
-    public function fields(): array
-    {
-        return [];
     }
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
@@ -66,5 +57,10 @@ class TimeFormFieldBlock extends FormFieldBlock
             ...($field->is_required ? ['validation' => 'required'] : []),
             ...self::getDescriptionSectionsSchema($field),
         ];
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.time';
     }
 }

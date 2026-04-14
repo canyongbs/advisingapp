@@ -45,6 +45,8 @@ use AdvisingApp\Survey\Models\SurveyField;
 use AdvisingApp\Survey\Models\SurveyStep;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -54,7 +56,6 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 trait HasSharedFormConfiguration
@@ -145,19 +146,24 @@ trait HasSharedFormConfiguration
         ];
     }
 
-    public function fieldBuilder(): TiptapEditor
+    public function fieldBuilder(): RichEditor
     {
-        return TiptapEditor::make('content')
-            ->blocks(SurveyFieldBlockRegistry::get())
-            ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
+        return RichEditor::make('content')
+            ->json()
+            ->customBlocks(SurveyFieldBlockRegistry::get())
+            ->toolbarButtons([
+                ['bold', 'italic', 'link'],
+                [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                ['small'],
+                ['grid', 'customBlocks'],
+            ])
+            ->activePanel('customBlocks')
             ->placeholder('Drag blocks here to build your survey')
             ->hiddenLabel()
-            ->saveRelationshipsUsing(function (TiptapEditor $component, Survey | SurveyStep $record) {
+            ->saveRelationshipsUsing(function (RichEditor $component, Survey | SurveyStep $record) {
                 if ($component->isDisabled()) {
                     return;
                 }
-
-                $record->wasRecentlyCreated && $component->processImages();
 
                 $survey = $record instanceof Survey ? $record : $record->submissible;
                 $surveyStep = $record instanceof SurveyStep ? $record : null;
@@ -169,10 +175,14 @@ trait HasSharedFormConfiguration
                     ->when($surveyStep, fn (EloquentBuilder $query) => $query->whereBelongsTo($surveyStep, 'step'))
                     ->delete();
 
-                $content = [];
+                $content = $component->getState();
 
-                if (filled($component->getState())) {
-                    $content = $component->decodeBlocks($component->getJSON(decoded: true));
+                if (is_string($content)) {
+                    $content = json_decode($content, true);
+                }
+
+                if (! is_array($content)) {
+                    $content = [];
                 }
 
                 $content['content'] = $this->saveFieldsFromComponents(
@@ -183,6 +193,8 @@ trait HasSharedFormConfiguration
 
                 $record->content = $content;
                 $record->save();
+
+                $component->state($content);
             })
             ->dehydrated(false)
             ->columnSpanFull()
@@ -198,37 +210,32 @@ trait HasSharedFormConfiguration
                 continue;
             }
 
-            if ($component['type'] !== 'tiptapBlock') {
+            if (($component['type'] ?? null) !== 'customBlock') {
                 continue;
             }
 
             $componentAttributes = $component['attrs'] ?? [];
+            $config = $componentAttributes['config'] ?? [];
 
-            if (array_key_exists('id', $componentAttributes)) {
-                $id = $componentAttributes['id'] ?? null;
-                unset($componentAttributes['id']);
-            }
+            $id = $config['fieldId'] ?? null;
+            unset($config['fieldId']);
 
-            if (array_key_exists('label', $componentAttributes['data'])) {
-                $label = $componentAttributes['data']['label'] ?? null;
-                unset($componentAttributes['data']['label']);
-            }
+            $label = $config['label'] ?? null;
+            unset($config['label']);
 
-            if (array_key_exists('isRequired', $componentAttributes['data'])) {
-                $isRequired = $componentAttributes['data']['isRequired'] ?? null;
-                unset($componentAttributes['data']['isRequired']);
-            }
+            $isRequired = $config['isRequired'] ?? null;
+            unset($config['isRequired']);
 
             /** @var SurveyField $field */
-            $field = $survey->fields()->findOrNew($id ?? null);
+            $field = $survey->fields()->findOrNew($id);
             $field->step()->associate($surveyStep);
-            $field->label = $label ?? $componentAttributes['type'];
+            $field->label = $label ?? $componentAttributes['id'];
             $field->is_required = $isRequired ?? false;
-            $field->type = $componentAttributes['type'];
-            $field->config = $componentAttributes['data'];
+            $field->type = $componentAttributes['id'];
+            $field->config = $config;
             $field->save();
 
-            $components[$componentKey]['attrs']['id'] = $field->id;
+            $components[$componentKey]['attrs']['config']['fieldId'] = $field->id;
         }
 
         return $components;
