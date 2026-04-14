@@ -480,7 +480,7 @@ test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables engag
     isolatedMigration(
         '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
-            $engagement = Engagement::factory()->makeQuietly([
+            $engagement = Engagement::factory()->make([
                 'body' => imageContent(),
             ]);
 
@@ -513,7 +513,7 @@ test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables engag
     isolatedMigration(
         '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
-            $batch = EngagementBatch::factory()->makeQuietly([
+            $batch = EngagementBatch::factory()->make([
                 'body' => imageContent(),
             ]);
 
@@ -546,7 +546,7 @@ test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables workf
     isolatedMigration(
         '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
-            $details = WorkflowEngagementEmailDetails::factory()->makeQuietly([
+            $details = WorkflowEngagementEmailDetails::factory()->make([
                 'body' => imageContent(),
             ]);
 
@@ -710,7 +710,7 @@ test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables trans
     isolatedMigration(
         '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
-            $engagement = Engagement::factory()->makeQuietly([
+            $engagement = Engagement::factory()->make([
                 'body' => textColorContent(),
             ]);
 
@@ -791,7 +791,7 @@ test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables renam
     isolatedMigration(
         '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
-            $engagement = Engagement::factory()->makeQuietly([
+            $engagement = Engagement::factory()->make([
                 'body' => studentMergeTagContent(),
             ]);
 
