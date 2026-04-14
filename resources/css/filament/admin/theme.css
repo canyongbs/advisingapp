@@ -417,3 +417,7 @@
 .def-fo-searchable-input-dropdown-list-item {
     @apply dark:hover:bg-white/10 dark:active:bg-white/20;
 }
+
+span[data-type='mergeTag'] {
+    @apply my-0 inline-block whitespace-nowrap bg-transparent dark:bg-transparent px-0 py-0 mx-0 rounded-none;
+}

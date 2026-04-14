@@ -34,56 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Blocks;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
-use AdvisingApp\Concern\Enums\ConcernSeverity;
-use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
-use AdvisingApp\Concern\Models\ConcernStatus;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Schemas\Components\Component;
-
-class ProactiveConcernBlock extends CampaignActionBlock
-{
-    protected function setUp(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        parent::setUp();
-
-        $this->label('Proactive Concern');
-
-        $this->schema($this->generateFields());
+        DB::table('media')
+            ->where('model_type', 'campaign_action')
+            ->where('collection_name', 'data.body')
+            ->update(['collection_name' => 'body']);
     }
 
-    /**
-     * @return array<Component>
-     */
-    public function generateFields(): array
+    public function down(): void
     {
-        return [
-            Textarea::make('description')
-                ->required()
-                ->string(),
-            Select::make('severity')
-                ->options(ConcernSeverity::class)
-                ->default(ConcernSeverity::default())
-                ->required()
-                ->enum(ConcernSeverity::class),
-            Textarea::make('suggested_intervention')
-                ->required()
-                ->string(),
-            Select::make('status_id')
-                ->label('Status')
-                ->options(ConcernStatus::orderBy('order')->pluck('name', 'id'))
-                ->default(fn () => SystemConcernStatusClassification::default()?->getKey())
-                ->exists('alert_statuses', 'id')
-                ->required(),
-            CampaignDateTimeInput::make(),
-        ];
+        DB::table('media')
+            ->where('model_type', 'campaign_action')
+            ->where('collection_name', 'body')
+            ->update(['collection_name' => 'data.body']);
     }
-
-    public static function type(): string
-    {
-        return 'proactive_concern';
-    }
-}
+};

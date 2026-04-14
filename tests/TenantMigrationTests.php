@@ -34,7 +34,11 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -60,196 +64,63 @@ use Illuminate\Support\Facades\DB;
 //    });
 //});
 
-test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format transforms grids', function () {
-    isolatedMigration(
-        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
-        function () {
-            $item = ResourceHubArticle::factory()->createQuietly([
-                'article_details' => [
-                    'type' => 'doc',
-                    'content' => [
-                        [
-                            'type' => 'grid',
-                            'attrs' => ['type' => 'fixed', 'cols' => '3'],
-                            'content' => [
-                                ['type' => 'gridColumn', 'attrs' => [], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Col 1']]]]],
-                                ['type' => 'gridColumn', 'attrs' => [], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Col 2']]]]],
-                                ['type' => 'gridColumn', 'attrs' => [], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Col 3']]]]],
-                            ],
+/** @return array<string, mixed> */
+function imageContent(): array
+{
+    return [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'attrs' => ['textAlign' => 'start'],
+                'content' => [
+                    [
+                        'type' => 'image',
+                        'attrs' => [
+                            'id' => 'test-uuid',
+                            'alt' => null,
+                            'src' => null,
+                            'title' => null,
+                            'width' => 800,
+                            'height' => 600,
                         ],
                     ],
                 ],
-            ]);
-
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
-
-            expect($migrate)->toBe(Command::SUCCESS);
-
-            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
-
-            /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['attrs']['data-cols'])->toBe('3');
-            /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['attrs']['data-from-breakpoint'])->toBe('sm');
-            /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['content'][0]['attrs']['data-col-span'])->toBe('1');
-        }
-    );
-});
-
-test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format transforms youtube', function () {
-    isolatedMigration(
-        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
-        function () {
-            $item = ResourceHubArticle::factory()->createQuietly([
-                'article_details' => [
-                    'type' => 'doc',
-                    'content' => [
-                        [
-                            'type' => 'youtube',
-                            'attrs' => ['src' => 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'width' => 640, 'height' => 480],
+            ],
+            [
+                'type' => 'paragraph',
+                'attrs' => ['textAlign' => 'start'],
+                'content' => [
+                    [
+                        'type' => 'image',
+                        'attrs' => [
+                            'id' => 'small-uuid',
+                            'alt' => null,
+                            'src' => null,
+                            'title' => null,
+                            'width' => 300,
+                            'height' => 200,
                         ],
                     ],
                 ],
-            ]);
+            ],
+        ],
+    ];
+}
 
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
-
-            expect($migrate)->toBe(Command::SUCCESS);
-
-            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
-
-            /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['type'])->toBe('videoEmbed');
-            /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['attrs']['src'])->toBe('https://www.youtube.com/embed/dQw4w9WgXcQ');
-            /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['attrs']['type'])->toBe('youtube');
-            /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['attrs']['width'])->toBeNull();
-            /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['attrs']['height'])->toBeNull();
-        }
-    );
-});
-
-test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format transforms vimeo', function () {
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables email_templates', function () {
     isolatedMigration(
-        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
-            $item = ResourceHubArticle::factory()->createQuietly([
-                'article_details' => [
-                    'type' => 'doc',
-                    'content' => [
-                        [
-                            'type' => 'vimeo',
-                            'attrs' => ['src' => 'https://player.vimeo.com/video/123456789', 'width' => 640, 'height' => 480],
-                        ],
-                    ],
-                ],
+            $emailTemplate = EmailTemplate::factory()->createQuietly([
+                'content' => imageContent(),
             ]);
 
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 
             expect($migrate)->toBe(Command::SUCCESS);
 
-            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
-
-            /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['type'])->toBe('videoEmbed');
-            /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['attrs']['type'])->toBe('vimeo');
-        }
-    );
-});
-
-test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format removes hurdles and preserves children', function () {
-    isolatedMigration(
-        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
-        function () {
-            $item = ResourceHubArticle::factory()->createQuietly([
-                'article_details' => [
-                    'type' => 'doc',
-                    'content' => [
-                        [
-                            'type' => 'hurdle',
-                            'attrs' => ['color' => 'gray_light'],
-                            'content' => [
-                                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Inside hurdle']]],
-                            ],
-                        ],
-                        [
-                            'type' => 'paragraph',
-                            'content' => [['type' => 'text', 'text' => 'After hurdle']],
-                        ],
-                    ],
-                ],
-            ]);
-
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
-
-            expect($migrate)->toBe(Command::SUCCESS);
-
-            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
-
-            // Hurdle should be removed but its child paragraph preserved
-            /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['type'])->toBe('paragraph');
-            /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['content'][0]['text'])->toBe('Inside hurdle');
-            /** @phpstan-ignore-next-line */
-            expect($content['content'][1]['type'])->toBe('paragraph');
-            /** @phpstan-ignore-next-line */
-            expect($content['content'][1]['content'][0]['text'])->toBe('After hurdle');
-        }
-    );
-});
-
-test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format transforms oversized images', function () {
-    isolatedMigration(
-        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
-        function () {
-            $item = ResourceHubArticle::factory()->createQuietly([
-                'article_details' => [
-                    'type' => 'doc',
-                    'content' => [
-                        [
-                            'type' => 'paragraph',
-                            'content' => [
-                                [
-                                    'type' => 'image',
-                                    'attrs' => [
-                                        'id' => 'test-uuid',
-                                        'src' => null,
-                                        'width' => 800,
-                                        'height' => 600,
-                                    ],
-                                ],
-                            ],
-                        ],
-                        [
-                            'type' => 'paragraph',
-                            'content' => [
-                                [
-                                    'type' => 'image',
-                                    'attrs' => [
-                                        'id' => 'small-uuid',
-                                        'src' => null,
-                                        'width' => 300,
-                                        'height' => 200,
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ]);
-
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
-
-            expect($migrate)->toBe(Command::SUCCESS);
-
-            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
+            $content = json_decode((string) DB::table('email_templates')->where('id', $emailTemplate->id)->value('content'), associative: true); /** @phpstan-ignore-line */
 
             /** @phpstan-ignore-next-line */
             expect($content['content'][0]['content'][0]['attrs']['width'])->toBeNull();
@@ -264,195 +135,318 @@ test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_fo
     );
 });
 
-test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format transforms gridBuilder', function () {
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables engagements', function () {
     isolatedMigration(
-        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
-            $item = ResourceHubArticle::factory()->createQuietly([
-                'article_details' => [
-                    'type' => 'doc',
-                    'content' => [
-                        [
-                            'type' => 'gridBuilder',
-                            'attrs' => ['data-type' => 'responsive', 'data-cols' => 5, 'data-stack-at' => 'sm'],
-                            'content' => [
-                                ['type' => 'gridBuilderColumn', 'attrs' => ['data-col-span' => null], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => '1']]]]],
-                                ['type' => 'gridBuilderColumn', 'attrs' => ['data-col-span' => null], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => '2']]]]],
-                                ['type' => 'gridBuilderColumn', 'attrs' => ['data-col-span' => null], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => '3']]]]],
-                                ['type' => 'gridBuilderColumn', 'attrs' => ['data-col-span' => null], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => '4']]]]],
-                                ['type' => 'gridBuilderColumn', 'attrs' => ['data-col-span' => null], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => '5']]]]],
-                            ],
-                        ],
-                    ],
-                ],
+            $engagement = Engagement::factory()->createQuietly([
+                'body' => imageContent(),
             ]);
 
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 
             expect($migrate)->toBe(Command::SUCCESS);
 
-            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
+            $body = json_decode((string) DB::table('engagements')->where('id', $engagement->id)->value('body'), associative: true); /** @phpstan-ignore-line */
 
             /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['type'])->toBe('grid');
+            expect($body['content'][0]['content'][0]['attrs']['width'])->toBeNull();
             /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['attrs']['data-cols'])->toBe('5');
+            expect($body['content'][0]['content'][0]['attrs']['height'])->toBeNull();
+
             /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['attrs']['data-from-breakpoint'])->toBe('sm');
+            expect($body['content'][1]['content'][0]['attrs']['width'])->toBe(300);
             /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['content'][0]['type'])->toBe('gridColumn');
-            /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['content'][0]['attrs']['data-col-span'])->toBe('1');
-            /** @phpstan-ignore-next-line */
-            expect(count($content['content'][0]['content']))->toBe(5);
+            expect($body['content'][1]['content'][0]['attrs']['height'])->toBe(200);
         }
     );
 });
 
-test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format transforms asymmetric grid', function () {
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables engagement_batches', function () {
     isolatedMigration(
-        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
-            $item = ResourceHubArticle::factory()->createQuietly([
-                'article_details' => [
-                    'type' => 'doc',
-                    'content' => [
-                        [
-                            'type' => 'grid',
-                            'attrs' => ['type' => 'asymetric-left-thirds', 'cols' => '2'],
-                            'content' => [
-                                ['type' => 'gridColumn', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Left wide']]]]],
-                                ['type' => 'gridColumn', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Right narrow']]]]],
-                            ],
-                        ],
-                    ],
-                ],
+            $batch = EngagementBatch::factory()->createQuietly([
+                'body' => imageContent(),
             ]);
 
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 
             expect($migrate)->toBe(Command::SUCCESS);
 
-            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
+            $body = json_decode((string) DB::table('engagement_batches')->where('id', $batch->id)->value('body'), associative: true); /** @phpstan-ignore-line */
 
             /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['attrs']['data-cols'])->toBe('3');
+            expect($body['content'][0]['content'][0]['attrs']['width'])->toBeNull();
             /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['content'][0]['attrs']['data-col-span'])->toBe('2');
+            expect($body['content'][0]['content'][0]['attrs']['height'])->toBeNull();
+
             /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['content'][1]['attrs']['data-col-span'])->toBe('1');
+            expect($body['content'][1]['content'][0]['attrs']['width'])->toBe(300);
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][1]['content'][0]['attrs']['height'])->toBe(200);
         }
     );
 });
 
-test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format transforms checkedList', function () {
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables workflow_engagement_email_details', function () {
     isolatedMigration(
-        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
-            $item = ResourceHubArticle::factory()->createQuietly([
-                'article_details' => [
-                    'type' => 'doc',
-                    'content' => [
-                        [
-                            'type' => 'checkedList',
-                            'content' => [
-                                ['type' => 'checkedListItem', 'attrs' => ['checked' => true], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 1']]]]],
-                                ['type' => 'checkedListItem', 'attrs' => ['checked' => false], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 2']]]]],
-                            ],
-                        ],
-                    ],
-                ],
+            $details = WorkflowEngagementEmailDetails::factory()->createQuietly([
+                'body' => imageContent(),
             ]);
 
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 
             expect($migrate)->toBe(Command::SUCCESS);
 
-            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
+            $body = json_decode((string) DB::table('workflow_engagement_email_details')->where('id', $details->id)->value('body'), associative: true); /** @phpstan-ignore-line */
 
             /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['type'])->toBe('bulletList');
+            expect($body['content'][0]['content'][0]['attrs']['width'])->toBeNull();
             /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['content'][0]['type'])->toBe('listItem');
+            expect($body['content'][0]['content'][0]['attrs']['height'])->toBeNull();
+
             /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['content'][0]['attrs'])->not->toHaveKey('checked');
+            expect($body['content'][1]['content'][0]['attrs']['width'])->toBe(300);
             /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['content'][1]['type'])->toBe('listItem');
+            expect($body['content'][1]['content'][0]['attrs']['height'])->toBe(200);
         }
     );
 });
 
-test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format does not modify unchanged content', function () {
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables campaign_actions', function () {
     isolatedMigration(
-        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
-            $originalContent = [
-                'type' => 'doc',
+            $action = CampaignAction::factory()->createQuietly([
+                'data' => [
+                    'channel' => 'email',
+                    'subject' => [],
+                    'body' => imageContent(),
+                ],
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $data = json_decode((string) DB::table('campaign_actions')->where('id', $action->id)->value('data'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($data['body']['content'][0]['content'][0]['attrs']['width'])->toBeNull();
+            /** @phpstan-ignore-next-line */
+            expect($data['body']['content'][0]['content'][0]['attrs']['height'])->toBeNull();
+
+            /** @phpstan-ignore-next-line */
+            expect($data['body']['content'][1]['content'][0]['attrs']['width'])->toBe(300);
+            /** @phpstan-ignore-next-line */
+            expect($data['body']['content'][1]['content'][0]['attrs']['height'])->toBe(200);
+        }
+    );
+});
+
+test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements_table renames column and backfills source_type', function () {
+    isolatedMigration(
+        '2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements_table',
+        function () {
+            $action = CampaignAction::factory()->createQuietly();
+
+            $engagementWithSource = Engagement::factory()->createQuietly([
+                'campaign_action_id' => $action->id,
+            ]);
+
+            $engagementWithoutSource = Engagement::factory()->createQuietly([
+                'campaign_action_id' => null,
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements_table.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $withSource = DB::table('engagements')->where('id', $engagementWithSource->id)->first();
+
+            expect($withSource->source_id)->toBe($action->id); /** @phpstan-ignore-line */
+            expect($withSource->source_type)->toBe('campaign_action'); /** @phpstan-ignore-line */
+            $withoutSource = DB::table('engagements')->where('id', $engagementWithoutSource->id)->first();
+
+            expect($withoutSource->source_id)->toBeNull(); /** @phpstan-ignore-line */
+            expect($withoutSource->source_type)->toBeNull(); /** @phpstan-ignore-line */
+        }
+    );
+});
+
+/** @return array<string, mixed> */
+function textColorContent(): array
+{
+    return [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'attrs' => ['textAlign' => 'start'],
                 'content' => [
                     [
-                        'type' => 'paragraph',
-                        'content' => [['type' => 'text', 'text' => 'Simple text']],
-                    ],
-                ],
-            ];
-
-            $item = ResourceHubArticle::factory()->createQuietly([
-                'article_details' => $originalContent,
-            ]);
-
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
-
-            expect($migrate)->toBe(Command::SUCCESS);
-
-            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
-            expect($content)->toBe($originalContent);
-        }
-    );
-});
-
-test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format transforms textStyle marks to textColor', function () {
-    isolatedMigration(
-        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
-        function () {
-            $item = ResourceHubArticle::factory()->createQuietly([
-                'article_details' => [
-                    'type' => 'doc',
-                    'content' => [
-                        [
-                            'type' => 'paragraph',
-                            'content' => [
-                                [
-                                    'type' => 'text',
-                                    'text' => 'Red text',
-                                    'marks' => [
-                                        [
-                                            'type' => 'textStyle',
-                                            'attrs' => ['color' => '#ff0000'],
-                                        ],
-                                    ],
-                                ],
-                                [
-                                    'type' => 'text',
-                                    'text' => ' and normal text',
+                        'type' => 'text',
+                        'text' => 'Hello world',
+                        'marks' => [
+                            [
+                                'type' => 'textStyle',
+                                'attrs' => [
+                                    'color' => '#ff0000',
                                 ],
                             ],
                         ],
                     ],
                 ],
+            ],
+            [
+                'type' => 'paragraph',
+                'attrs' => ['textAlign' => 'start'],
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'text' => 'No color',
+                        'marks' => [
+                            [
+                                'type' => 'bold',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ];
+}
+
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables transforms textStyle marks to textColor', function () {
+    isolatedMigration(
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
+        function () {
+            $emailTemplate = EmailTemplate::factory()->createQuietly([
+                'content' => textColorContent(),
             ]);
 
-            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 
             expect($migrate)->toBe(Command::SUCCESS);
 
-            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
+            $content = json_decode((string) DB::table('email_templates')->where('id', $emailTemplate->id)->value('content'), associative: true); /** @phpstan-ignore-line */
 
+            // textStyle mark should be transformed to textColor with data-color attr
             /** @phpstan-ignore-next-line */
             expect($content['content'][0]['content'][0]['marks'][0]['type'])->toBe('textColor');
             /** @phpstan-ignore-next-line */
             expect($content['content'][0]['content'][0]['marks'][0]['attrs']['data-color'])->toBe('#ff0000');
+
+            // bold mark should be unchanged
             /** @phpstan-ignore-next-line */
-            expect($content['content'][0]['content'][0]['marks'][0]['attrs'])->not->toHaveKey('color');
+            expect($content['content'][1]['content'][0]['marks'][0]['type'])->toBe('bold');
+        }
+    );
+});
+
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables transforms textStyle marks in engagements', function () {
+    isolatedMigration(
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
+        function () {
+            $engagement = Engagement::factory()->createQuietly([
+                'body' => textColorContent(),
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $body = json_decode((string) DB::table('engagements')->where('id', $engagement->id)->value('body'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][0]['content'][0]['marks'][0]['type'])->toBe('textColor');
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][0]['content'][0]['marks'][0]['attrs']['data-color'])->toBe('#ff0000');
+        }
+    );
+});
+
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables transforms textStyle marks in campaign_actions', function () {
+    isolatedMigration(
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
+        function () {
+            $action = CampaignAction::factory()->createQuietly([
+                'data' => [
+                    'channel' => 'email',
+                    'subject' => [],
+                    'body' => textColorContent(),
+                ],
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $data = json_decode((string) DB::table('campaign_actions')->where('id', $action->id)->value('data'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($data['body']['content'][0]['content'][0]['marks'][0]['type'])->toBe('textColor');
+            /** @phpstan-ignore-next-line */
+            expect($data['body']['content'][0]['content'][0]['marks'][0]['attrs']['data-color'])->toBe('#ff0000');
+        }
+    );
+});
+
+/** @return array<string, mixed> */
+function studentMergeTagContent(): array
+{
+    return [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    ['type' => 'text', 'text' => 'Hello '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'student first name']],
+                    ['type' => 'text', 'text' => ' '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'student last name']],
+                ],
+            ],
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'student email']],
+                    ['type' => 'text', 'text' => ' - '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'recipient first name']],
+                ],
+            ],
+        ],
+    ];
+}
+
+test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables renames student merge tags to recipient', function () {
+    isolatedMigration(
+        '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
+        function () {
+            $engagement = Engagement::factory()->createQuietly([
+                'body' => studentMergeTagContent(),
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $body = json_decode((string) DB::table('engagements')->where('id', $engagement->id)->value('body'), associative: true); /** @phpstan-ignore-line */
+
+            // student merge tags should be renamed to recipient
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][0]['content'][1]['attrs']['id'])->toBe('recipient first name');
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][0]['content'][3]['attrs']['id'])->toBe('recipient last name');
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][1]['content'][0]['attrs']['id'])->toBe('recipient email');
+
+            // existing recipient merge tags should be unchanged
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][1]['content'][2]['attrs']['id'])->toBe('recipient first name');
         }
     );
 });

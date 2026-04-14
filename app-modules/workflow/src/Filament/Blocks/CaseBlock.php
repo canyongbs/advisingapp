@@ -69,7 +69,7 @@ class CaseBlock extends WorkflowActionBlock
 
         $this->label('Case');
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
     /**
@@ -218,14 +218,6 @@ class CaseBlock extends WorkflowActionBlock
                 ])
                 ->columns(3),
         ];
-    }
-
-    /**
-     * @return array<int, covariant Field|Section>
-     */
-    public function editFields(): array
-    {
-        return $this->generateFields();
     }
 
     public static function type(): string

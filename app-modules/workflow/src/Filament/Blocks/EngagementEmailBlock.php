@@ -38,6 +38,7 @@ namespace AdvisingApp\Workflow\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftEngagementBlockWithAi;
 use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
@@ -45,18 +46,19 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class EngagementEmailBlock extends WorkflowActionBlock
 {
@@ -66,45 +68,43 @@ class EngagementEmailBlock extends WorkflowActionBlock
 
         $this->label('Email');
 
-        $this->schema($this->createFields());
+        $this->model(WorkflowEngagementEmailDetails::class);
+
+        $this->schema($this->generateFields());
     }
 
     /**
      * @return array<int, covariant Field|Section|Actions>
      */
-    public function generateFields(string $fieldPrefix = ''): array
+    public function generateFields(): array
     {
         return [
-            Hidden::make($fieldPrefix . 'channel')
+            Hidden::make('channel')
                 ->default(NotificationChannel::Email->value),
-            TiptapEditor::make($fieldPrefix . 'subject')
+            RichEditor::make('subject')
                 ->label('Subject')
-                ->mergeTags($mergeTags = [
-                    'recipient first name',
-                    'recipient last name',
-                    'recipient full name',
-                    'recipient email',
-                    'recipient preferred name',
-                ])
-                ->profile('sms')
+                ->toolbarButtons([])
+                ->json()
                 ->placeholder('Enter the email subject here...')
-                ->showMergeTagsInBlocksPanel(false)
                 ->required()
                 ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                 ->columnSpanFull(),
-            TiptapEditor::make($fieldPrefix . 'body')
-                ->disk('s3-public')
+            RichEditor::make('body')
+                ->fileAttachmentsDisk('s3-public')
                 ->label('Body')
-                ->mergeTags($mergeTags = [
-                    'recipient first name',
-                    'recipient last name',
-                    'recipient full name',
-                    'recipient email',
-                    'recipient preferred name',
+                ->toolbarButtons([
+                    ['bold', 'italic', 'link'],
+                    [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                    ['textColor', 'small'],
+                    ['attachFiles', 'mergeTags'],
+                    ['clearFormatting'],
+                    ['undo', 'redo'],
                 ])
-                ->profile('email')
+                ->activePanel('mergeTags')
+                ->resizableImages()
+                ->json()
                 ->required()
-                ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
+                ->hintAction(fn (RichEditor $component) => Action::make('loadEmailTemplate')
                     ->schema([
                         Select::make('emailTemplate')
                             ->searchable()
@@ -168,17 +168,33 @@ class EngagementEmailBlock extends WorkflowActionBlock
                             return;
                         }
 
-                        $component->state(
-                            $component->generateImageUrls($template->content),
-                        );
+                        $component->state($template->content);
                     }))
+                ->getFileAttachmentUrlFromAnotherRecordUsing(function (mixed $file): ?string {
+                    return Media::query()
+                        ->where('uuid', $file)
+                        ->where('model_type', (new EmailTemplate())->getMorphClass())
+                        ->first()
+                        ?->getUrl();
+                })
+                ->saveFileAttachmentFromAnotherRecordUsing(function (mixed $file, ?Model $record): ?string {
+                    if (! $record instanceof WorkflowEngagementEmailDetails) {
+                        return null;
+                    }
+
+                    return Media::query()
+                        ->where('uuid', $file)
+                        ->where('model_type', (new EmailTemplate())->getMorphClass())
+                        ->first()
+                        ?->copy($record, 'body', 's3-public')
+                        ->uuid;
+                })
                 ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                 ->columnSpanFull(),
             Actions::make([
                 DraftEngagementBlockWithAi::make()
                     ->channel(NotificationChannel::Email)
-                    ->fieldPrefix($fieldPrefix)
-                    ->mergeTags($mergeTags),
+                    ->mergeTags(Engagement::getMergeTags(withUserTags: false)),
             ]),
             Section::make('How long after the previous step should this occur?')
                 ->schema([
@@ -219,27 +235,6 @@ class EngagementEmailBlock extends WorkflowActionBlock
             return;
         }
 
-        $bodyField = $schema->getComponent(fn (Component $component): bool => ($component instanceof TiptapEditor) && str($component->getName())->endsWith('body'));
-
-        if (! ($bodyField instanceof TiptapEditor)) {
-            return;
-        }
-
-        [$newBody] = tiptap_converter()->saveImages(
-            $details->body,
-            disk: 's3-public',
-            record: $details,
-            recordAttribute: 'body',
-            newImages: array_map(
-                fn (TemporaryUploadedFile $file): array => [
-                    'extension' => $file->getClientOriginalExtension(),
-                    'path' => (fn () => $this->path)->call($file),
-                ],
-                $bodyField->getTemporaryImages(),
-            ),
-        );
-
-        $details->body = $newBody;
-        $details->save();
+        $schema->model($details)->saveRelationships();
     }
 }

@@ -78,9 +78,7 @@ use Rector\Caching\CacheFactory;
 use function Sentry\configureScope;
 
 use Sentry\State\Scope;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -110,35 +108,20 @@ class AppServiceProvider extends ServiceProvider
             });
         });
 
-        $this->app->scoped(
-            HtmlSanitizerInterface::class,
-            fn (): HtmlSanitizer => new HtmlSanitizer(
-                (new HtmlSanitizerConfig())
-                    ->allowSafeElements()
-                    ->allowRelativeLinks()
-                    ->allowRelativeMedias()
-                    ->allowElement('iframe', ['src', 'width', 'height', 'frameborder', 'allowfullscreen', 'allow'])
-                    ->allowAttribute('class', allowedElements: '*')
-                    ->allowAttribute('data-color', allowedElements: '*')
-                    ->allowAttribute('data-cols', allowedElements: '*')
-                    ->allowAttribute('data-col-span', allowedElements: '*')
-                    ->allowAttribute('data-from-breakpoint', allowedElements: '*')
-                    ->allowAttribute('data-id', allowedElements: '*')
-                    ->allowAttribute('data-type', allowedElements: '*')
-                    ->allowAttribute('style', allowedElements: '*')
-                    ->allowAttribute('width', allowedElements: '*')
-                    ->allowAttribute('height', allowedElements: '*')
-                    ->allowAttribute('data-video-embed', allowedElements: '*')
-                    ->allowAttribute('data-video-type', allowedElements: '*')
-                    ->allowAttribute('data-video-src', allowedElements: '*')
-                    ->allowAttribute('data-video-width', allowedElements: '*')
-                    ->allowAttribute('data-video-height', allowedElements: '*')
-                    ->allowAttribute('wire:ignore.self', allowedElements: '*')
-                    ->allowAttribute('controls', allowedElements: 'video')
-                    ->allowAttribute('src', allowedElements: ['img', 'video', 'source', 'iframe'])
-                    ->allowAttribute('type', allowedElements: 'source')
-                    ->withMaxInputLength(500000),
-            ),
+        $this->app->extend(
+            HtmlSanitizerConfig::class,
+            fn (HtmlSanitizerConfig $config): HtmlSanitizerConfig => $config
+                ->allowElement('iframe', ['src', 'width', 'height', 'frameborder', 'allowfullscreen', 'allow'])
+                ->allowAttribute('data-video-embed', allowedElements: '*')
+                ->allowAttribute('data-video-type', allowedElements: '*')
+                ->allowAttribute('data-video-src', allowedElements: '*')
+                ->allowAttribute('data-video-width', allowedElements: '*')
+                ->allowAttribute('data-video-height', allowedElements: '*')
+                ->allowAttribute('wire:ignore.self', allowedElements: '*')
+                ->allowAttribute('controls', allowedElements: 'video')
+                ->allowAttribute('src', allowedElements: ['img', 'video', 'source', 'iframe'])
+                ->allowAttribute('type', allowedElements: 'source')
+                ->allowAttribute('wire:ignore.self', allowedElements: '*'),
         );
 
         $this->app->scoped(GeoPlacesClient::class, fn (): GeoPlacesClient => new GeoPlacesClient([
