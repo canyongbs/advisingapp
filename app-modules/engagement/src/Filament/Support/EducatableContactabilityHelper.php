@@ -46,7 +46,7 @@ class EducatableContactabilityHelper
         return $educatable
             ->emailAddresses()
             ->whereDoesntHave('bounced')
-            ->whereDoesntHave('optedOut', fn ($q) => $q->where('status', 'opted_out'))
+            ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', 'opted_out'))
             ->exists();
     }
 
@@ -84,12 +84,12 @@ class EducatableContactabilityHelper
             NotificationChannel::Email => $educatable
                 ->primaryEmailAddress()
                 ->whereDoesntHave('bounced')
-                ->whereDoesntHave('optedOut', fn ($q) => $q->where('status', 'opted_out'))
+                ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', 'opted_out'))
                 ->first()
                 ?->getKey()
                 ?? $educatable->emailAddresses()
                     ->whereDoesntHave('bounced')
-                    ->whereDoesntHave('optedOut', fn ($q) => $q->where('status', 'opted_out'))
+                    ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', 'opted_out'))
                     ->orderBy('order')
                     ->first()
                     ?->getKey(),
@@ -113,6 +113,9 @@ class EducatableContactabilityHelper
         };
     }
 
+    /**
+     * @return array<int, string>
+     */
     public static function getAvailableChannels(Educatable $educatable): array
     {
         $channels = [];
