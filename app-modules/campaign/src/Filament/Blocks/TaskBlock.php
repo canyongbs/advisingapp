@@ -76,10 +76,10 @@ class TaskBlock extends CampaignActionBlock
                 ->schema([
                     Fieldset::make('Confidentiality')
                         ->schema([
-                            Checkbox::make($fieldPrefix . 'is_confidential')
+                            Checkbox::make('is_confidential')
                                 ->label('Confidential')
                                 ->live(),
-                            Select::make($fieldPrefix . 'confidential_task_projects')
+                            Select::make('confidential_task_projects')
                                 ->options(fn () => Project::query()
                                     ->orderBy('name')
                                     ->limit(50)
@@ -101,8 +101,8 @@ class TaskBlock extends CampaignActionBlock
                                 ->multiple()
                                 ->dehydrated(true)
                                 ->exists('projects', 'id')
-                                ->visible(fn (Get $get) => $get($fieldPrefix . 'is_confidential')),
-                            Select::make($fieldPrefix . 'confidential_task_users')
+                                ->visible(fn (Get $get) => $get('is_confidential')),
+                            Select::make('confidential_task_users')
                                 ->options(fn () => User::query()
                                     ->orderBy('name')
                                     ->limit(50)
@@ -126,8 +126,8 @@ class TaskBlock extends CampaignActionBlock
                                 ->multiple()
                                 ->dehydrated(true)
                                 ->exists('users', 'id')
-                                ->visible(fn (Get $get) => $get($fieldPrefix . 'is_confidential')),
-                            Select::make($fieldPrefix . 'confidential_task_teams')
+                                ->visible(fn (Get $get) => $get('is_confidential')),
+                            Select::make('confidential_task_teams')
                                 ->options(fn () => Team::query()
                                     ->orderBy('name')
                                     ->limit(50)
@@ -150,7 +150,7 @@ class TaskBlock extends CampaignActionBlock
                                 ->multiple()
                                 ->dehydrated(true)
                                 ->exists('teams', 'id')
-                                ->visible(fn (Get $get) => $get($fieldPrefix . 'is_confidential')),
+                                ->visible(fn (Get $get) => $get('is_confidential')),
                         ]),
                     TextInput::make('title')
                         ->required()
