@@ -46,7 +46,6 @@ use DateTimeInterface;
 use Exception;
 use Illuminate\Queue\Middleware\RateLimitedWithRedis;
 use Illuminate\Support\Facades\DB;
-use Symfony\Component\Mime\Email;
 use Throwable;
 
 class EngagementCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
