@@ -63,6 +63,6 @@ class EngagementCreationData extends Data
         public ?string $recipientRoute = null,
         public ?Model $source = null,
         public ?Schema $schema = null,
-        public ?string $emailType = EmailType::Transactional->value,
+        public ?EmailType $emailType = EmailType::Transactional,
     ) {}
 }

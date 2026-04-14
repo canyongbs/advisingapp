@@ -104,7 +104,7 @@ class EngagementCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                         subject: $action->data['subject'] ?? null,
                         body: $action->data['body'] ?? null,
                         source: $action,
-                        emailType: $action->data['email_type'] ?? EmailType::Transactional->value,
+                        emailType: EmailType::tryFrom($action->data['email_type'] ?? '') ?? EmailType::Transactional,
                     ),
                     notifyNow: true,
                 );

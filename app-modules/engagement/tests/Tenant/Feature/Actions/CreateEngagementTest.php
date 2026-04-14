@@ -58,7 +58,7 @@ it('will create and send an engagement immediately', function () {
         subject: $data['subject'],
         body: $data['body'],
         scheduledAt: null,
-        emailType: EmailType::Transactional->value,
+        emailType: EmailType::Transactional,
     ));
 
     assertDatabaseCount(Engagement::class, 1);
@@ -94,7 +94,7 @@ it('will create but not dispatch a scheduled engagement', function () {
         subject: $data['subject'],
         body: $data['body'],
         scheduledAt: $scheduledAt = now()->addMinute(),
-        emailType: EmailType::Transactional->value,
+        emailType: EmailType::Transactional,
     ));
 
     assertDatabaseCount(Engagement::class, 1);
@@ -127,7 +127,7 @@ it('will create a marketing engagement with email_type set to marketing', functi
         subject: $data['subject'],
         body: $data['body'],
         scheduledAt: null,
-        emailType: EmailType::Marketing->value,
+        emailType: EmailType::Marketing,
     ));
 
     assertDatabaseCount(Engagement::class, 1);

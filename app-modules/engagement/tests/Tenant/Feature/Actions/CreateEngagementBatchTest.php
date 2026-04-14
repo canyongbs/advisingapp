@@ -61,7 +61,7 @@ it('will create an engagement batch', function () {
         subject: $data['subject'],
         body: $data['body'],
         scheduledAt: Carbon::parse($data['scheduledAt']),
-        emailType: EmailType::Transactional->value,
+        emailType: EmailType::Transactional,
     ));
 
     assertDatabaseCount(EngagementBatch::class, 1);
@@ -90,7 +90,7 @@ it('will create a marketing engagement batch and each child engagement inherits 
         subject: $data['subject'],
         body: $data['body'],
         scheduledAt: null,
-        emailType: EmailType::Marketing->value,
+        emailType: EmailType::Marketing,
     ));
 
     $batch = EngagementBatch::first();
