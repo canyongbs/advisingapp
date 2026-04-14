@@ -48,6 +48,7 @@ use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 // Add tests for migration files here
 
@@ -481,6 +482,7 @@ test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables engag
         '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
             $engagement = Engagement::factory()->make([
+                'id' => Str::uuid()->toString(),
                 'body' => imageContent(),
             ]);
 
@@ -514,6 +516,7 @@ test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables engag
         '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
             $batch = EngagementBatch::factory()->make([
+                'id' => Str::uuid()->toString(),
                 'body' => imageContent(),
             ]);
 
@@ -547,6 +550,7 @@ test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables workf
         '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
             $details = WorkflowEngagementEmailDetails::factory()->make([
+                'id' => Str::uuid()->toString(),
                 'body' => imageContent(),
             ]);
 
@@ -711,6 +715,7 @@ test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables trans
         '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
             $engagement = Engagement::factory()->make([
+                'id' => Str::uuid()->toString(),
                 'body' => textColorContent(),
             ]);
 
@@ -792,6 +797,7 @@ test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables renam
         '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
             $engagement = Engagement::factory()->make([
+                'id' => Str::uuid()->toString(),
                 'body' => studentMergeTagContent(),
             ]);
 
