@@ -56,6 +56,8 @@ use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
@@ -68,11 +70,9 @@ use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Locked;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 /**
  * @property-read Schema $replyForm
@@ -194,51 +194,37 @@ class ViewEngagementResponse extends Page
                             ->all(),
                     })
                     ->required(),
-                TiptapEditor::make('subject')
+                RichEditor::make('subject')
                     ->label('Subject')
-                    ->mergeTags([
-                        'recipient first name',
-                        'recipient last name',
-                        'recipient full name',
-                        'recipient email',
-                        'recipient preferred name',
-                        'user first name',
-                        'user full name',
-                        'user job title',
-                        'user email',
-                        'user phone number',
-                    ])
-                    ->showMergeTagsInBlocksPanel(false)
+                    ->toolbarButtons([])
+                    ->json()
                     ->hidden($this->record->type === EngagementResponseType::Sms)
-                    ->profile('sms')
                     ->required()
                     ->placeholder('Enter the email subject here...')
                     ->columnSpanFull(),
-                TiptapEditor::make('body')
-                    ->disk('s3-public')
+                RichEditor::make('body')
+                    ->fileAttachmentsDisk('s3-public')
                     ->label('Body')
-                    ->mergeTags($mergeTags = [
-                        'recipient first name',
-                        'recipient last name',
-                        'recipient full name',
-                        'recipient email',
-                        'recipient preferred name',
-                        'user first name',
-                        'user full name',
-                        'user job title',
-                        'user email',
-                        'user phone number',
+                    ->toolbarButtons([
+                        ['bold', 'italic', 'link'],
+                        [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                        ['textColor', 'small'],
+                        ['attachFiles', 'mergeTags'],
+                        ['clearFormatting'],
+                        ['undo', 'redo'],
                     ])
-                    ->profile('email')
+                    ->activePanel('mergeTags')
+                    ->resizableImages()
+                    ->json()
                     ->required()
                     ->hidden($this->record->type === EngagementResponseType::Sms)
                     ->helperText('You can insert recipient or your information by typing {{ and choosing a merge value to insert.')
                     ->columnSpanFull(),
-                EngagementSmsBodyInput::make(context: 'create', form: $schema, withTemplateAction: false)
+                EngagementSmsBodyInput::make(context: 'create', withTemplateAction: false)
                     ->hidden($this->record->type === EngagementResponseType::Email),
                 Actions::make([
                     DraftWithAiAction::make()
-                        ->mergeTags($mergeTags)
+                        ->mergeTags(Engagement::getMergeTags())
                         ->educatable($this->record->sender)
                         ->suffixContent(($this->record->type === EngagementResponseType::Email) ? $this->generateEmailReplyBody('') : null)
                         ->channel(fn (): NotificationChannel => match ($this->record->type) {
@@ -279,11 +265,6 @@ class ViewEngagementResponse extends Page
         ];
         $data['body'] ??= ['type' => 'doc', 'content' => []];
 
-        $formFields = $this->replyForm->getFlatFields();
-
-        /** @var TiptapEditor $bodyField */
-        $bodyField = $formFields['body'] ?? null;
-
         $channel = NotificationChannel::parse($this->record->type->value);
 
         $recipientRoute = match ($channel) {
@@ -298,20 +279,10 @@ class ViewEngagementResponse extends Page
             channel: $channel,
             subject: $data['subject'],
             body: $data['body'],
-            temporaryBodyImages: [
-                ...array_map(
-                    fn (TemporaryUploadedFile $file): array => [
-                        'extension' => $file->getClientOriginalExtension(),
-                        'path' => (fn () => $this->path)->call($file),
-                    ],
-                    $bodyField->getTemporaryImages(),
-                ),
-            ],
             scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['scheduled_at'] ?? null) : null,
             recipientRoute: $recipientRoute,
+            schema: $this->replyForm,
         ));
-
-        $this->replyForm->model($engagement)->saveRelationships();
 
         Notification::make()
             ->title(($data['send_later'] ?? false) ? 'Reply scheduled!' : 'Reply sent!')

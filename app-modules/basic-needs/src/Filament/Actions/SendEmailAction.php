@@ -46,6 +46,8 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
@@ -56,14 +58,11 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\Enums\TiptapOutput;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class SendEmailAction
 {
@@ -156,17 +155,27 @@ class SendEmailAction
                 $educatable = self::resolveRecipient($get('recipient_type'), $get('recipient_id'));
 
                 return [
-                    TiptapEditor::make('subject')
+                    RichEditor::make('subject')
                         ->label('Subject')
-                        ->showMergeTagsInBlocksPanel(false)
-                        ->profile('email')
+                        ->toolbarButtons([])
+                        ->json()
                         ->required()
                         ->placeholder('Enter the email subject here...')
                         ->columnSpanFull(),
-                    TiptapEditor::make('body')
-                        ->disk('s3-public')
+                    RichEditor::make('body')
+                        ->fileAttachmentsDisk('s3-public')
                         ->label('Body')
-                        ->profile('email')
+                        ->toolbarButtons([
+                            ['bold', 'italic', 'link'],
+                            [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                            ['textColor', 'small'],
+                            ['attachFiles', 'mergeTags'],
+                            ['clearFormatting'],
+                            ['undo', 'redo'],
+                        ])
+                        ->activePanel('mergeTags')
+                        ->resizableImages()
+                        ->json()
                         ->default(function (Component $livewire) use ($educatable, $view) {
                             $record = method_exists($livewire, 'getRecord') ? $livewire->getRecord() : null;
 
@@ -189,12 +198,12 @@ class SendEmailAction
                     ->label('Include Signature')
                     ->helperText('You may configure your email signature in Profile Settings by selecting your avatar in the upper right portion of the screen.')
                     ->live(),
-                TiptapEditor::make('signature')
-                    ->profile('signature')
+                RichEditor::make('signature')
+                    ->toolbarButtons([['bold', 'italic', 'strike', 'underline', 'small', 'textColor', 'link', 'attachFiles']])
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                    ->output(TiptapOutput::Json)
+                    ->json()
                     ->required(fn (Get $get) => $get('is_signature_enabled'))
-                    ->disk('s3-public')
+                    ->fileAttachmentsDisk('s3-public')
                     ->visible(fn (Get $get) => $get('is_signature_enabled'))
                     ->default(Auth::user()->signature)
                     ->saveRelationshipsUsing(null),
@@ -232,14 +241,6 @@ class SendEmailAction
             ...($data['signature']['content'] ?? []),
         ];
 
-        $formFields = $schema->getFlatFields();
-
-        /** @var TiptapEditor $bodyField */
-        $bodyField = $formFields['body'] ?? null;
-
-        /** @var ?TiptapEditor $signatureField */
-        $signatureField = $formFields['signature'] ?? null;
-
         $channel = NotificationChannel::parse(NotificationChannel::Email->value);
 
         $recipientRoute = $recipient->emailAddresses()->find($data['recipient_route_id'] ?? null)?->address;
@@ -250,27 +251,10 @@ class SendEmailAction
             channel: $channel,
             subject: $data['subject'] ?? null,
             body: $data['body'] ?? null,
-            temporaryBodyImages: [
-                ...array_map(
-                    fn (TemporaryUploadedFile $file): array => [
-                        'extension' => $file->getClientOriginalExtension(),
-                        'path' => $file->getRealPath(),
-                    ],
-                    $bodyField->getTemporaryImages(),
-                ),
-                ...($signatureField ? array_map(
-                    fn (TemporaryUploadedFile $file): array => [
-                        'extension' => $file->getClientOriginalExtension(),
-                        'path' => $file->getRealPath(),
-                    ],
-                    $signatureField->getTemporaryImages(),
-                ) : []),
-            ],
             scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['scheduled_at'] ?? null) : null,
             recipientRoute: $recipientRoute,
+            schema: $schema,
         ));
-
-        $schema->model($engagement)->saveRelationships();
 
         $livewire->dispatch('engagement-sent');
     }

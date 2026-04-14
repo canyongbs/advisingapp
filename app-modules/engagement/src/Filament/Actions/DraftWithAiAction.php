@@ -48,6 +48,7 @@ use App\Settings\LicenseSettings;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -56,7 +57,6 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\Width;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Vite;
-use Illuminate\Support\Str;
 
 class DraftWithAiAction extends Action
 {
@@ -145,7 +145,7 @@ class DraftWithAiAction extends Action
                         return;
                     }
 
-                    $set('body', Str::markdown($content));
+                    $set('body', RichContentRenderer::make((string) str($content)->markdown())->toArray());
 
                     return;
                 }
@@ -186,12 +186,10 @@ class DraftWithAiAction extends Action
                 }
 
                 if ($this->hasSubject()) {
-                    $set('subject', (string) str($content)
-                        ->before("\n")
-                        ->trim());
+                    $set('subject', RichContentRenderer::make((string) str($content)->before("\n")->trim())->toArray());
                 }
 
-                $set('body', (string) str($content)->after("\n")->markdown()->append($this->getSuffixContent() ?? ''));
+                $set('body', RichContentRenderer::make((string) str($content)->after("\n")->markdown()->append($this->getSuffixContent() ?? ''))->toArray());
             })
             ->visible(
                 auth()->user()->hasLicense(LicenseType::ConversationalAi)

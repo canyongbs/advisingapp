@@ -45,6 +45,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Settings\LicenseSettings;
 use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -53,7 +54,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Facades\Vite;
-use Illuminate\Support\Str;
 
 class RelationManagerDraftWithAiAction extends Action
 {
@@ -125,7 +125,7 @@ class RelationManagerDraftWithAiAction extends Action
                         return;
                     }
 
-                    $set('body', Str::markdown($content));
+                    $set('body', RichContentRenderer::make((string) str($content)->markdown())->toArray());
 
                     return;
                 }
@@ -167,11 +167,9 @@ class RelationManagerDraftWithAiAction extends Action
                     return;
                 }
 
-                $set('subject', (string) str($content)
-                    ->before("\n")
-                    ->trim());
+                $set('subject', RichContentRenderer::make((string) str($content)->before("\n")->trim())->toArray());
 
-                $set('body', (string) str($content)->after("\n")->markdown());
+                $set('body', RichContentRenderer::make((string) str($content)->after("\n")->markdown())->toArray());
             })
             ->visible(
                 auth()->user()->hasLicense(LicenseType::ConversationalAi)

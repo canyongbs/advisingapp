@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Exports;
 
+use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -117,14 +118,14 @@ class StudentMessagesExporter extends Exporter
 
                     return match ($record->record::class) {
                         Engagement::class => match ($record->record->channel) {
-                            NotificationChannel::Email => $record->record->getSubjectMarkdown(),
-                            NotificationChannel::Sms => $record->record->getBodyMarkdown(),
+                            NotificationChannel::Email => (string) $record->record->getSubject(),
+                            NotificationChannel::Sms => $record->record->getBodyText(),
                             default => 'N/A',
                         },
-                        EngagementResponse::class => match ($record->record->type) {
+                        EngagementResponse::class => html_entity_decode(strip_tags(match ($record->record->type) {
                             EngagementResponseType::Email => $record->record->subject,
-                            EngagementResponseType::Sms => $record->record->getBodyMarkdown(),
-                        },
+                            EngagementResponseType::Sms => $record->record->getBody(),
+                        }), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                         default => throw new Exception('Invalid record type'),
                     };
                 }),
@@ -137,7 +138,9 @@ class StudentMessagesExporter extends Exporter
                         return 'N/A';
                     }
 
-                    return $record->record->campaignAction?->campaign->name ?? 'N/A';
+                    return $record->record->source instanceof CampaignAction
+                        ? $record->record->source->campaign->name ?? 'N/A'
+                        : 'N/A';
                 }),
         ];
     }
