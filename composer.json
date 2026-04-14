@@ -71,7 +71,7 @@
         "defstudio/filament-searchable-input": "^4.0",
         "ezimuel/guzzlestreams": "^4.0",
         "fakerphp/faker": "^1.23",
-        "filament/filament": "^4.10.0",
+        "filament/filament": "^4.9.1",
         "filament/spatie-laravel-media-library-plugin": "^4.9.1",
         "filament/spatie-laravel-settings-plugin": "^4.9.1",
         "giggsey/libphonenumber-for-php-lite": "^9.0",
