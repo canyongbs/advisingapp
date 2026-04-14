@@ -43,7 +43,6 @@ use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use App\Features\MaximumLeadTimeFeature;
 use App\Http\Controllers\Controller;
 use App\Settings\CollegeBrandingSettings;
 use Carbon\Carbon;
@@ -169,14 +168,10 @@ class GroupBookingPageWidgetController extends Controller
         }
 
         // Check if the appointment exceeds the maximum lead time
-        $effectiveMaxLeadTimeDays = 0;
-
-        if (MaximumLeadTimeFeature::active()) {
-            $memberMaxLeadTimeDays = PersonalBookingPage::query()
-                ->whereIn('user_id', $members->pluck('id'))
-                ->max('maximum_booking_lead_time_days') ?? 0;
-            $effectiveMaxLeadTimeDays = max($bookingGroup->maximum_booking_lead_time_days ?? 0, $memberMaxLeadTimeDays);
-        }
+        $memberMaxLeadTimeDays = PersonalBookingPage::query()
+            ->whereIn('user_id', $members->pluck('id'))
+            ->max('maximum_booking_lead_time_days') ?? 0;
+        $effectiveMaxLeadTimeDays = max($bookingGroup->maximum_booking_lead_time_days ?? 0, $memberMaxLeadTimeDays);
 
         if ($effectiveMaxLeadTimeDays > 0) {
             $latestAllowed = now()->addDays($effectiveMaxLeadTimeDays);
