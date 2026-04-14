@@ -113,16 +113,16 @@ class SmsChannel
 
         $smsMessage->save();
 
-        if ($notifiable instanceof CanBeNotified && ! $notifiable->canReceiveSms()) {
+        if ($recipientNumber && is_string($recipientNumber) && $this->isNumberBounced($recipientNumber)) {
             $smsMessage->events()->create([
                 'type' => SmsMessageEventType::FailedDispatch,
                 'payload' => [
-                    'error' => 'System determined recipient cannot receive SMS messages.',
+                    'error' => 'Recipient phone number has previously bounced.',
                 ],
                 'occurred_at' => now(),
             ]);
 
-            return;
+            throw new BouncedSmsException($recipientNumber);
         }
 
         if ($recipientNumber && $this->isRecipientOptedOut($notifiable, $recipientNumber)) {
@@ -137,16 +137,16 @@ class SmsChannel
             throw new SmsOptOutException($recipientNumber);
         }
 
-        if ($recipientNumber && is_string($recipientNumber) && $this->isNumberBounced($recipientNumber)) {
+        if ($notifiable instanceof CanBeNotified && ! $notifiable->canReceiveSms()) {
             $smsMessage->events()->create([
                 'type' => SmsMessageEventType::FailedDispatch,
                 'payload' => [
-                    'error' => 'Recipient phone number has previously bounced.',
+                    'error' => 'System determined recipient cannot receive SMS messages.',
                 ],
                 'occurred_at' => now(),
             ]);
 
-            throw new BouncedSmsException($recipientNumber);
+            return;
         }
 
         try {

@@ -194,7 +194,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                         return match (NotificationChannel::parse($get('channel'))) {
                                             NotificationChannel::Email => $livewire->getOwnerRecord()->emailAddresses()
                                                 ->whereDoesntHave('bounced')
-                                                ->whereDoesntHave('optedOut', fn ($q) => $q->where('status', 'opted_out'))
+                                                ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', 'opted_out'))
                                                 ->get()
                                                 ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
                                                     $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
@@ -216,7 +216,7 @@ class RelationManagerSendEngagementAction extends CreateAction
 
                                         return $livewire->getOwnerRecord()->emailAddresses()
                                             ->whereDoesntHave('bounced')
-                                            ->whereDoesntHave('optedOut', fn ($q) => $q->where('status', 'opted_out'))
+                                            ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', 'opted_out'))
                                             ->orderBy('order')
                                             ->first()
                                             ?->getKey()
