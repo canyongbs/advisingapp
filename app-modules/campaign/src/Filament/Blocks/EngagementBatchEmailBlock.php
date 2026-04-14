@@ -185,10 +185,10 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                 })
                 ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                 ->columnSpanFull()
-                // Override the default saveRelationshipsUsing because CampaignAction stores
+                // Override the default `saveRelationshipsUsing()` because `CampaignAction` stores
                 // body inside a JSON `data` column. The default implementation calls
-                // $record->setAttribute('body', ...) which fails since `body` is not a column.
-                // This custom version saves to $record->data['body'] instead.
+                // `$record->setAttribute('body', ...)` which fails since `body` is not a column.
+                // This custom version saves to `$record->data['body']` instead.
                 ->saveRelationshipsUsing(function (RichEditor $component, ?array $rawState, CampaignAction $record): void {
                     $fileAttachmentProvider = $component->getFileAttachmentProvider();
 
@@ -204,53 +204,7 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                         return;
                     }
 
-                    $fileAttachmentIds = [];
-
-                    $component->rawState(
-                        $component->getTipTapEditor()
-                            ->setContent($rawState ?? [
-                                'type' => 'doc',
-                                'content' => [],
-                            ])
-                            ->descendants(function (object &$node) use ($component, &$fileAttachmentIds): void {
-                                if ($node->type !== 'image') {
-                                    return;
-                                }
-
-                                if (blank($node->attrs->id ?? null)) {
-                                    return;
-                                }
-
-                                $attachment = $component->getUploadedFileAttachment($node->attrs->id);
-
-                                if ($attachment) {
-                                    $node->attrs->id = $component->saveUploadedFileAttachment($attachment);
-                                    $node->attrs->src = $component->getFileAttachmentUrl($node->attrs->id);
-
-                                    $fileAttachmentIds[] = $node->attrs->id;
-
-                                    return;
-                                }
-
-                                if (filled($component->getFileAttachmentUrl($node->attrs->id))) {
-                                    $fileAttachmentIds[] = $node->attrs->id;
-
-                                    return;
-                                }
-
-                                $fileAttachmentIdFromAnotherRecord = $component->saveFileAttachmentFromAnotherRecord($node->attrs->id);
-
-                                if (blank($fileAttachmentIdFromAnotherRecord)) {
-                                    $fileAttachmentIds[] = $node->attrs->id;
-
-                                    return;
-                                }
-
-                                $node->attrs->id = $fileAttachmentIdFromAnotherRecord;
-                                $node->attrs->src = $component->getFileAttachmentUrl($fileAttachmentIdFromAnotherRecord) ?? $node->attrs->src ?? null;
-                            })
-                            ->getDocument(),
-                    );
+                    $fileAttachmentIds = $component->resolveFileAttachmentIds();
 
                     // Save body into the JSON `data` column instead of a direct `body` column
                     $data = $record->data ?? [];

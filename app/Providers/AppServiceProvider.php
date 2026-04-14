@@ -110,18 +110,10 @@ class AppServiceProvider extends ServiceProvider
             });
         });
 
-        $this->app->scoped(
-            HtmlSanitizerInterface::class,
-            fn (): HtmlSanitizer => new HtmlSanitizer(
-                (new HtmlSanitizerConfig())
-                    ->allowSafeElements()
-                    ->allowRelativeLinks()
-                    ->allowRelativeMedias()
-                    ->allowAttribute('class', allowedElements: '*')
-                    ->allowAttribute('style', allowedElements: '*')
-                    ->allowAttribute('wire:ignore.self', allowedElements: '*')
-                    ->withMaxInputLength(500000),
-            ),
+        $this->app->extend(
+            HtmlSanitizerConfig::class,
+            fn (HtmlSanitizerConfig $config): HtmlSanitizerConfig => $config
+                ->allowAttribute('wire:ignore.self', allowedElements: '*'),
         );
 
         $this->app->scoped(GeoPlacesClient::class, fn (): GeoPlacesClient => new GeoPlacesClient([

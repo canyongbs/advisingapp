@@ -192,7 +192,7 @@ it('resolves merge tags in the body text', function () {
     ]);
 
     expect($engagement->getBodyText())
-        ->toBe('Dear Jane Doe , your appointment is confirmed.');
+        ->toBe('Dear Jane Doe, your appointment is confirmed.');
 });
 
 it('resolves merge tags in the body html', function () {
@@ -236,7 +236,7 @@ it('resolves user merge tags', function () {
     ]);
 
     expect($engagement->getBodyText())
-        ->toBe('From: John Smith ( john@example.com )');
+        ->toBe('From: John Smith (john@example.com)');
 });
 
 it('returns body markdown', function () {
