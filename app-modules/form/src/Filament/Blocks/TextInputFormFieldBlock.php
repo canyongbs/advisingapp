@@ -43,16 +43,9 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class TextInputFormFieldBlock extends FormFieldBlock
 {
-    public ?string $icon = 'heroicon-m-minus';
-
     public static function type(): string
     {
         return 'text_input';
-    }
-
-    public function fields(): array
-    {
-        return [];
     }
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array

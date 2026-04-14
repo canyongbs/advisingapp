@@ -43,18 +43,14 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class PhoneFormFieldBlock extends FormFieldBlock
 {
-    public ?string $label = 'Phone number';
-
-    public ?string $icon = 'heroicon-m-phone';
-
     public static function type(): string
     {
         return 'phone';
     }
 
-    public function fields(): array
+    public static function getLabel(): string
     {
-        return [];
+        return 'Phone number';
     }
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array

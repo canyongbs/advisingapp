@@ -68,16 +68,16 @@ class ApplicationFactory extends Factory
 
                 $application->content = [
                     'type' => 'doc',
-                    'content' => $application->fields->map(fn (ApplicationField $field): array => [
-                        'type' => 'tiptapBlock',
+                    'content' => $application->fields->map(fn (ApplicationField $field): array => [ // @phpstan-ignore argument.type
+                        'type' => 'customBlock',
                         'attrs' => [
-                            'id' => $field->id,
-                            'type' => $field->type,
-                            'data' => [
+                            'config' => [
+                                'fieldId' => $field->id,
                                 'label' => $field->label,
                                 'isRequired' => $field->is_required,
                                 ...$field->config,
                             ],
+                            'id' => $field->type,
                         ],
                     ])->all(),
                 ];
