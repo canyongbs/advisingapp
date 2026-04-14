@@ -78,9 +78,7 @@ use Rector\Caching\CacheFactory;
 use function Sentry\configureScope;
 
 use Sentry\State\Scope;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
