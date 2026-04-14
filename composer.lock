@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "16e866667a3a194e9e748794365aed6e",
+    "content-hash": "ba1f5402f3d515b298af5597942de06d",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -2144,16 +2144,16 @@
         },
         {
             "name": "canyongbs/common",
-            "version": "2.11.0",
+            "version": "2.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/common.git",
-                "reference": "a41556275d5edf796959f053c66d0c911e23492e"
+                "reference": "61445c39aa590cf5c2c64a570d9e8c5b141a9d59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/common/zipball/a41556275d5edf796959f053c66d0c911e23492e",
-                "reference": "a41556275d5edf796959f053c66d0c911e23492e",
+                "url": "https://api.github.com/repos/canyongbs/common/zipball/61445c39aa590cf5c2c64a570d9e8c5b141a9d59",
+                "reference": "61445c39aa590cf5c2c64a570d9e8c5b141a9d59",
                 "shasum": ""
             },
             "require": {
@@ -2199,22 +2199,22 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/common/issues",
-                "source": "https://github.com/canyongbs/common/tree/2.11.0"
+                "source": "https://github.com/canyongbs/common/tree/2.12.1"
             },
-            "time": "2026-04-10T09:08:07+00:00"
+            "time": "2026-04-13T14:27:06+00:00"
         },
         {
             "name": "canyongbs/filament-tiptap-editor",
-            "version": "2.3.6",
+            "version": "2.3.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/filament-tiptap-editor.git",
-                "reference": "266954dc9f970beb7e062b483402bfb1fc88215f"
+                "reference": "2e6962639449f2456906611b8b037417eb9359fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/filament-tiptap-editor/zipball/266954dc9f970beb7e062b483402bfb1fc88215f",
-                "reference": "266954dc9f970beb7e062b483402bfb1fc88215f",
+                "url": "https://api.github.com/repos/canyongbs/filament-tiptap-editor/zipball/2e6962639449f2456906611b8b037417eb9359fe",
+                "reference": "2e6962639449f2456906611b8b037417eb9359fe",
                 "shasum": ""
             },
             "require": {
@@ -2275,22 +2275,22 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/filament-tiptap-editor/issues",
-                "source": "https://github.com/canyongbs/filament-tiptap-editor/tree/2.3.6"
+                "source": "https://github.com/canyongbs/filament-tiptap-editor/tree/2.3.8"
             },
-            "time": "2026-04-08T00:33:35+00:00"
+            "time": "2026-04-14T14:07:19+00:00"
         },
         {
             "name": "canyongbs/model-state-machine",
-            "version": "2.0.5",
+            "version": "2.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/model-state-machine.git",
-                "reference": "ddbb8422adf1e8599f9be92e8da6d8ea413a5830"
+                "reference": "a1bfcfda2d0acf451941fba6b6c00e6bfe67c62c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/model-state-machine/zipball/ddbb8422adf1e8599f9be92e8da6d8ea413a5830",
-                "reference": "ddbb8422adf1e8599f9be92e8da6d8ea413a5830",
+                "url": "https://api.github.com/repos/canyongbs/model-state-machine/zipball/a1bfcfda2d0acf451941fba6b6c00e6bfe67c62c",
+                "reference": "a1bfcfda2d0acf451941fba6b6c00e6bfe67c62c",
                 "shasum": ""
             },
             "require": {
@@ -2349,9 +2349,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/model-state-machine/issues",
-                "source": "https://github.com/canyongbs/model-state-machine/tree/2.0.5"
+                "source": "https://github.com/canyongbs/model-state-machine/tree/2.0.6"
             },
-            "time": "2026-03-11T10:16:45+00:00"
+            "time": "2026-04-14T14:38:00+00:00"
         },
         {
             "name": "carbonphp/carbon-doctrine-types",
