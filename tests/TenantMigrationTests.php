@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -447,6 +448,403 @@ test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables renam
             // existing recipient merge tags should be unchanged
             /** @phpstan-ignore-next-line */
             expect($body['content'][1]['content'][2]['attrs']['id'])->toBe('recipient first name');
+        }
+    );
+});
+
+test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format transforms grids', function () {
+    isolatedMigration(
+        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
+        function () {
+            $item = ResourceHubArticle::factory()->createQuietly([
+                'article_details' => [
+                    'type' => 'doc',
+                    'content' => [
+                        [
+                            'type' => 'grid',
+                            'attrs' => ['type' => 'fixed', 'cols' => '3'],
+                            'content' => [
+                                ['type' => 'gridColumn', 'attrs' => [], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Col 1']]]]],
+                                ['type' => 'gridColumn', 'attrs' => [], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Col 2']]]]],
+                                ['type' => 'gridColumn', 'attrs' => [], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Col 3']]]]],
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['data-cols'])->toBe('3');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['data-from-breakpoint'])->toBe('sm');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][0]['attrs']['data-col-span'])->toBe('1');
+        }
+    );
+});
+
+test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format transforms youtube', function () {
+    isolatedMigration(
+        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
+        function () {
+            $item = ResourceHubArticle::factory()->createQuietly([
+                'article_details' => [
+                    'type' => 'doc',
+                    'content' => [
+                        [
+                            'type' => 'youtube',
+                            'attrs' => ['src' => 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'width' => 640, 'height' => 480],
+                        ],
+                    ],
+                ],
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['type'])->toBe('videoEmbed');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['src'])->toBe('https://www.youtube.com/embed/dQw4w9WgXcQ');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['type'])->toBe('youtube');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['width'])->toBeNull();
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['height'])->toBeNull();
+        }
+    );
+});
+
+test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format transforms vimeo', function () {
+    isolatedMigration(
+        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
+        function () {
+            $item = ResourceHubArticle::factory()->createQuietly([
+                'article_details' => [
+                    'type' => 'doc',
+                    'content' => [
+                        [
+                            'type' => 'vimeo',
+                            'attrs' => ['src' => 'https://player.vimeo.com/video/123456789', 'width' => 640, 'height' => 480],
+                        ],
+                    ],
+                ],
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['type'])->toBe('videoEmbed');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['type'])->toBe('vimeo');
+        }
+    );
+});
+
+test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format removes hurdles and preserves children', function () {
+    isolatedMigration(
+        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
+        function () {
+            $item = ResourceHubArticle::factory()->createQuietly([
+                'article_details' => [
+                    'type' => 'doc',
+                    'content' => [
+                        [
+                            'type' => 'hurdle',
+                            'attrs' => ['color' => 'gray_light'],
+                            'content' => [
+                                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Inside hurdle']]],
+                            ],
+                        ],
+                        [
+                            'type' => 'paragraph',
+                            'content' => [['type' => 'text', 'text' => 'After hurdle']],
+                        ],
+                    ],
+                ],
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
+
+            // Hurdle should be removed but its child paragraph preserved
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['type'])->toBe('paragraph');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][0]['text'])->toBe('Inside hurdle');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['type'])->toBe('paragraph');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['content'][0]['text'])->toBe('After hurdle');
+        }
+    );
+});
+
+test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format transforms oversized images', function () {
+    isolatedMigration(
+        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
+        function () {
+            $item = ResourceHubArticle::factory()->createQuietly([
+                'article_details' => [
+                    'type' => 'doc',
+                    'content' => [
+                        [
+                            'type' => 'paragraph',
+                            'content' => [
+                                [
+                                    'type' => 'image',
+                                    'attrs' => [
+                                        'id' => 'test-uuid',
+                                        'src' => null,
+                                        'width' => 800,
+                                        'height' => 600,
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            'type' => 'paragraph',
+                            'content' => [
+                                [
+                                    'type' => 'image',
+                                    'attrs' => [
+                                        'id' => 'small-uuid',
+                                        'src' => null,
+                                        'width' => 300,
+                                        'height' => 200,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][0]['attrs']['width'])->toBeNull();
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][0]['attrs']['height'])->toBeNull();
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['content'][0]['attrs']['width'])->toBe(300);
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['content'][0]['attrs']['height'])->toBe(200);
+        }
+    );
+});
+
+test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format transforms gridBuilder', function () {
+    isolatedMigration(
+        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
+        function () {
+            $item = ResourceHubArticle::factory()->createQuietly([
+                'article_details' => [
+                    'type' => 'doc',
+                    'content' => [
+                        [
+                            'type' => 'gridBuilder',
+                            'attrs' => ['data-type' => 'responsive', 'data-cols' => 5, 'data-stack-at' => 'sm'],
+                            'content' => [
+                                ['type' => 'gridBuilderColumn', 'attrs' => ['data-col-span' => null], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => '1']]]]],
+                                ['type' => 'gridBuilderColumn', 'attrs' => ['data-col-span' => null], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => '2']]]]],
+                                ['type' => 'gridBuilderColumn', 'attrs' => ['data-col-span' => null], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => '3']]]]],
+                                ['type' => 'gridBuilderColumn', 'attrs' => ['data-col-span' => null], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => '4']]]]],
+                                ['type' => 'gridBuilderColumn', 'attrs' => ['data-col-span' => null], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => '5']]]]],
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['type'])->toBe('grid');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['data-cols'])->toBe('5');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['data-from-breakpoint'])->toBe('sm');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][0]['type'])->toBe('gridColumn');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][0]['attrs']['data-col-span'])->toBe('1');
+            /** @phpstan-ignore-next-line */
+            expect(count($content['content'][0]['content']))->toBe(5);
+        }
+    );
+});
+
+test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format transforms asymmetric grid', function () {
+    isolatedMigration(
+        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
+        function () {
+            $item = ResourceHubArticle::factory()->createQuietly([
+                'article_details' => [
+                    'type' => 'doc',
+                    'content' => [
+                        [
+                            'type' => 'grid',
+                            'attrs' => ['type' => 'asymetric-left-thirds', 'cols' => '2'],
+                            'content' => [
+                                ['type' => 'gridColumn', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Left wide']]]]],
+                                ['type' => 'gridColumn', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Right narrow']]]]],
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['data-cols'])->toBe('3');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][0]['attrs']['data-col-span'])->toBe('2');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][1]['attrs']['data-col-span'])->toBe('1');
+        }
+    );
+});
+
+test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format transforms checkedList', function () {
+    isolatedMigration(
+        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
+        function () {
+            $item = ResourceHubArticle::factory()->createQuietly([
+                'article_details' => [
+                    'type' => 'doc',
+                    'content' => [
+                        [
+                            'type' => 'checkedList',
+                            'content' => [
+                                ['type' => 'checkedListItem', 'attrs' => ['checked' => true], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 1']]]]],
+                                ['type' => 'checkedListItem', 'attrs' => ['checked' => false], 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 2']]]]],
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['type'])->toBe('bulletList');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][0]['type'])->toBe('listItem');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][0]['attrs'])->not->toHaveKey('checked');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][1]['type'])->toBe('listItem');
+        }
+    );
+});
+
+test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format does not modify unchanged content', function () {
+    isolatedMigration(
+        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
+        function () {
+            $originalContent = [
+                'type' => 'doc',
+                'content' => [
+                    [
+                        'type' => 'paragraph',
+                        'content' => [['type' => 'text', 'text' => 'Simple text']],
+                    ],
+                ],
+            ];
+
+            $item = ResourceHubArticle::factory()->createQuietly([
+                'article_details' => $originalContent,
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
+            expect($content)->toBe($originalContent);
+        }
+    );
+});
+
+test('2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format transforms textStyle marks to textColor', function () {
+    isolatedMigration(
+        '2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format',
+        function () {
+            $item = ResourceHubArticle::factory()->createQuietly([
+                'article_details' => [
+                    'type' => 'doc',
+                    'content' => [
+                        [
+                            'type' => 'paragraph',
+                            'content' => [
+                                [
+                                    'type' => 'text',
+                                    'text' => 'Red text',
+                                    'marks' => [
+                                        [
+                                            'type' => 'textStyle',
+                                            'attrs' => ['color' => '#ff0000'],
+                                        ],
+                                    ],
+                                ],
+                                [
+                                    'type' => 'text',
+                                    'text' => ' and normal text',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_04_13_000000_tmp_data_migrate_resource_hub_articles_to_rich_editor_format.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('resource_hub_articles')->where('id', $item->id)->value('article_details'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][0]['marks'][0]['type'])->toBe('textColor');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][0]['marks'][0]['attrs']['data-color'])->toBe('#ff0000');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['content'][0]['marks'][0]['attrs'])->not->toHaveKey('color');
         }
     );
 });
