@@ -61,6 +61,7 @@ class CreateEngagementBatch
         $engagementBatch->processed_engagements = 0;
         $engagementBatch->successful_engagements = 0;
         $engagementBatch->body = $data->body;
+
         if (EmailTypeFeature::active()) {
             $engagementBatch->email_type = $data->emailType ?? EmailType::Transactional;
         }
