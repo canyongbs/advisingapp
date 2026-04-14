@@ -117,7 +117,6 @@ class AppServiceProvider extends ServiceProvider
                 ->allowAttribute('data-video-src', allowedElements: '*')
                 ->allowAttribute('data-video-width', allowedElements: '*')
                 ->allowAttribute('data-video-height', allowedElements: '*')
-                ->allowAttribute('wire:ignore.self', allowedElements: '*')
                 ->allowAttribute('controls', allowedElements: 'video')
                 ->allowAttribute('src', allowedElements: ['img', 'video', 'source', 'iframe'])
                 ->allowAttribute('type', allowedElements: 'source')
