@@ -92,11 +92,11 @@
 
 <div class="prose max-w-none dark:prose-invert">
     @if (! empty($content['content']))
-        @if ((! $usesRichEditor) && $usesLegacyTipTap)
+        @if (! $usesRichEditor && $usesLegacyTipTap)
             {{-- Legacy TipTap format (Events, Case Forms — until migrated to RichEditor) --}}
             {!! tiptap_converter()->blocks($blocks)->asHTML($content) !!}
         @else
-            {!! $sanitizeSubmissionHtml(RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toUnsafeHtml()) !!}
+            {!! $sanitizeSubmissionHtml( RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toUnsafeHtml(),) !!}
         @endif
     @else
         This submission has no content.
