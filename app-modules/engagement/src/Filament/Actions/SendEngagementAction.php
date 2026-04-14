@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 use AdvisingApp\Engagement\Actions\CreateEngagement;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
+use AdvisingApp\Engagement\Filament\Support\EducatableContactabilityHelper;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -80,6 +81,8 @@ class SendEngagementAction extends Action
     {
         parent::setUp();
 
+        $action = $this;
+
         $this->icon('heroicon-m-chat-bubble-bottom-center-text')
             ->modalHeading('Send Message')
             ->modalDescription(function (): ?string {
@@ -102,6 +105,8 @@ class SendEngagementAction extends Action
             ->mountUsing(function (array $arguments, Schema $schema, Page $livewire) {
                 $livewire->dispatch('engage-action-finished-loading');
 
+                $educatable = $this->getEducatable();
+
                 if (filled($arguments['route'] ?? null)) {
                     $schema->fill([
                         'channel' => $arguments['channel'] ?? 'email',
@@ -109,14 +114,41 @@ class SendEngagementAction extends Action
                         'signature' => auth()->user()->signature,
                     ]);
                 } else {
-                    $schema->fill();
+                    $defaultChannel = $educatable
+                        ? EducatableContactabilityHelper::getDefaultChannel($educatable)
+                        : null;
+
+                    $schema->fill([
+                        'channel' => $defaultChannel?->value,
+                        'recipient_route_id' => ($educatable && $defaultChannel)
+                            ? EducatableContactabilityHelper::getDefaultRouteForChannel($educatable, $defaultChannel)
+                            : null,
+                        'signature' => auth()->user()->signature,
+                    ]);
                 }
             })
             ->steps(fn (): array => [
                 Step::make('Recipient Details')
                     ->schema([
                         ...$this->getEducatable() ? [] : [
-                            EducatableSelect::make('recipient', isExcludingConvertedProspects: true)
+                            EducatableSelect::make(
+                                name: 'recipient',
+                                isExcludingConvertedProspects: true,
+                                modifyKeySelectUsing: function (Select $select): Select {
+                                    return $select->disableOptionWhen(function (string $value): bool {
+                                        static $noContactCache = [];
+                                        $cacheKey = $value;
+                                        if (! array_key_exists($cacheKey, $noContactCache)) {
+                                            $educatable = Student::find($value) ?? Prospect::find($value);
+                                            $noContactCache[$cacheKey] = $educatable
+                                                ? ! EducatableContactabilityHelper::hasAnyValidRoute($educatable)
+                                                : false;
+                                        }
+
+                                        return $noContactCache[$cacheKey];
+                                    });
+                                },
+                            )
                                 ->label('Recipient Info')
                                 ->live()
                                 ->typeSelectToggleButtons()
@@ -129,86 +161,71 @@ class SendEngagementAction extends Action
                                         default => null,
                                     };
 
-                                    if ($educatable && $educatable->emailAddresses()->whereDoesntHave('bounced')->exists()) {
-                                        $set('channel', 'email');
-                                        $set('recipient_route_id', $educatable->emailAddresses()->whereDoesntHave('bounced')->orderBy('order')->first()?->getKey());
-
+                                    if (! $educatable) {
                                         return;
                                     }
 
-                                    if ($educatable && $educatable->phoneNumbers()->where('can_receive_sms', true)->whereDoesntHave('smsOptOut')->exists()) {
-                                        $set('channel', 'sms');
-                                        $set('recipient_route_id', $educatable->phoneNumbers()->where('can_receive_sms', true)->whereDoesntHave('smsOptOut')->orderBy('order')->first()?->getKey());
+                                    $defaultChannel = EducatableContactabilityHelper::getDefaultChannel($educatable);
+
+                                    if ($defaultChannel) {
+                                        $set('channel', $defaultChannel->value);
+                                        $set('recipient_route_id', EducatableContactabilityHelper::getDefaultRouteForChannel($educatable, $defaultChannel));
 
                                         return;
                                     }
                                 }),
                         ],
                         Grid::make(2)
-                            ->schema(function (Get $get): array {
-                                $educatable = $this->getEducatable() ?? match ($get('recipient_type')) {
-                                    'student' => Student::find($get('recipient_id')),
-                                    'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
-                                    default => null,
-                                };
-
+                            ->schema(function (Get $get) use ($action): array {
                                 return [
                                     Fieldset::make('Message Type')
                                         ->schema([
                                             ToggleButtons::make('channel')
-                                                ->options(
-                                                    fn () => array_filter(
-                                                        NotificationChannel::getAvailableEngagementOptions(),
-                                                        function (string $label) use ($educatable): bool {
-                                                            if (NotificationChannel::tryFrom($label)?->getCaseDisabled() ?? false) {
-                                                                return false;
-                                                            }
-
-                                                            if ($label == NotificationChannel::Email->getLabel()) {
-                                                                return $educatable ? $educatable
-                                                                    ->emailAddresses()
-                                                                    ->whereDoesntHave('bounced')
-                                                                    ->exists() : false;
-                                                            }
-
-                                                            if ($label == NotificationChannel::Sms->getLabel()) {
-                                                                return $educatable ? $educatable->phoneNumbers()
-                                                                    ->where('can_receive_sms', true)
-                                                                    ->whereDoesntHave('smsOptOut')
-                                                                    ->exists() : false;
-                                                            }
-
-                                                            return true;
-                                                        }
-                                                    )
-                                                )
-                                                ->default(NotificationChannel::Email->value)
-                                                ->inline()
-                                                ->live()
-                                                ->afterStateUpdated(function (mixed $state, Set $set) use ($educatable) {
-                                                    $channel = NotificationChannel::parse($state);
-
-                                                    $route = match ($channel) {
-                                                        NotificationChannel::Email => $educatable->primaryEmailAddress()
-                                                            ->whereDoesntHave('bounced')
-                                                            ->first()?->getKey(),
-                                                        NotificationChannel::Sms => $educatable->primaryPhoneNumber()
-                                                            ->where('can_receive_sms', true)
-                                                            ->whereDoesntHave('smsOptOut')
-                                                            ->first()?->getKey(),
-                                                        default => null,
-                                                    } ?? match ($channel) {
-                                                        NotificationChannel::Email => $educatable->emailAddresses()
-                                                            ->whereDoesntHave('bounced')
-                                                            ->first()?->getKey(),
-                                                        NotificationChannel::Sms => $educatable->phoneNumbers()
-                                                            ->where('can_receive_sms', true)
-                                                            ->whereDoesntHave('smsOptOut')
-                                                            ->first()?->getKey(),
+                                                ->options(function (Get $get) use ($action): array {
+                                                    $educatable = $action->getEducatable() ?? match ($get('recipient_type')) {
+                                                        'student' => Student::find($get('recipient_id')),
+                                                        'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
                                                         default => null,
                                                     };
 
-                                                    $set('recipient_route_id', $route);
+                                                    if (! $educatable) {
+                                                        return [];
+                                                    }
+
+                                                    return array_filter(
+                                                        NotificationChannel::getAvailableEngagementOptions(),
+                                                        function (string $channelValue) use ($educatable): bool {
+                                                            $channel = NotificationChannel::tryFrom($channelValue);
+
+                                                            if ($channel?->getCaseDisabled() ?? false) {
+                                                                return false;
+                                                            }
+
+                                                            return match ($channel) {
+                                                                NotificationChannel::Email => EducatableContactabilityHelper::hasValidEmail($educatable),
+                                                                NotificationChannel::Sms => EducatableContactabilityHelper::hasValidSms($educatable),
+                                                                default => true,
+                                                            };
+                                                        },
+                                                        ARRAY_FILTER_USE_KEY
+                                                    );
+                                                })
+                                                ->default(NotificationChannel::Email->value)
+                                                ->inline()
+                                                ->live()
+                                                ->afterStateUpdated(function (mixed $state, Get $get, Set $set) use ($action): void {
+                                                    $educatable = $action->getEducatable() ?? match ($get('recipient_type')) {
+                                                        'student' => Student::find($get('recipient_id')),
+                                                        'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
+                                                        default => null,
+                                                    };
+
+                                                    if (! $educatable) {
+                                                        return;
+                                                    }
+
+                                                    $channel = NotificationChannel::parse($state);
+                                                    $set('recipient_route_id', EducatableContactabilityHelper::getDefaultRouteForChannel($educatable, $channel));
                                                 }),
                                             Select::make('recipient_route_id')
                                                 ->label(fn (Get $get): string => match (NotificationChannel::parse($get('channel'))) {
@@ -216,30 +233,74 @@ class SendEngagementAction extends Action
                                                     NotificationChannel::Sms => 'Phone number',
                                                     default => throw new Exception('Invalid channel.'),
                                                 })
-                                                ->options(fn (Get $get): array => match (NotificationChannel::parse($get('channel'))) {
-                                                    NotificationChannel::Email => $educatable ? $educatable->emailAddresses()
-                                                        ->whereDoesntHave('bounced')
-                                                        ->get()
-                                                        ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
-                                                            $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
-                                                        ])
-                                                        ->all() : [],
-                                                    NotificationChannel::Sms => $educatable ? $educatable->phoneNumbers()
-                                                        ->where('can_receive_sms', true)
-                                                        ->whereDoesntHave('smsOptOut')
-                                                        ->get()
-                                                        ->mapWithKeys(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber): array => [
-                                                            $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
-                                                        ])
-                                                        ->all() : [],
-                                                    default => [],
+                                                ->options(function (Get $get) use ($action): array {
+                                                    $educatable = $action->getEducatable() ?? match ($get('recipient_type')) {
+                                                        'student' => Student::find($get('recipient_id')),
+                                                        'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
+                                                        default => null,
+                                                    };
+
+                                                    if (! $educatable) {
+                                                        return [];
+                                                    }
+
+                                                    return match (NotificationChannel::parse($get('channel'))) {
+                                                        NotificationChannel::Email => $educatable->emailAddresses()
+                                                            ->whereDoesntHave('bounced')
+                                                            ->whereDoesntHave('optedOut', fn ($q) => $q->where('status', 'opted_out'))
+                                                            ->get()
+                                                            ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
+                                                                $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
+                                                            ])
+                                                            ->all(),
+                                                        NotificationChannel::Sms => $educatable->phoneNumbers()
+                                                            ->where('can_receive_sms', true)
+                                                            ->whereDoesntHave('smsOptOut')
+                                                            ->get()
+                                                            ->mapWithKeys(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber): array => [
+                                                                $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
+                                                            ])
+                                                            ->all(),
+                                                        default => [],
+                                                    };
                                                 })
-                                                ->disabled(blank($educatable))
+                                                ->disabled(function (Get $get) use ($action): bool {
+                                                    $educatable = $action->getEducatable() ?? match ($get('recipient_type')) {
+                                                        'student' => Student::find($get('recipient_id')),
+                                                        'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
+                                                        default => null,
+                                                    };
+
+                                                    return blank($educatable);
+                                                })
                                                 ->required(),
-                                        ]),
+                                        ])
+                                        ->visible(function (Get $get) use ($action): bool {
+                                            $educatable = $action->getEducatable() ?? match ($get('recipient_type')) {
+                                                'student' => Student::find($get('recipient_id')),
+                                                'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
+                                                default => null,
+                                            };
+
+                                            return $educatable !== null && EducatableContactabilityHelper::hasAnyValidRoute($educatable);
+                                        })
+                                        ->columnSpanFull(),
+                                    \Filament\Forms\Components\Placeholder::make('no_contact_info')
+                                        ->label('')
+                                        ->content('This recipient does not have valid contact information. Please select a different recipient.')
+                                        ->visible(function (Get $get) use ($action): bool {
+                                            $educatable = $action->getEducatable() ?? match ($get('recipient_type')) {
+                                                'student' => Student::find($get('recipient_id')),
+                                                'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
+                                                default => null,
+                                            };
+
+                                            return $educatable !== null && ! EducatableContactabilityHelper::hasAnyValidRoute($educatable);
+                                        })
+                                        ->columnSpanFull(),
                                 ];
                             })
-                            ->visible(fn (Get $get) => ! is_null($this->educatable) || $get('recipient_id')),
+                            ->visible(fn (Get $get) => ! is_null($action->getEducatable()) || $get('recipient_id')),
                     ]),
                 Step::make('Message Details')
                     ->schema(function (Get $get): array {

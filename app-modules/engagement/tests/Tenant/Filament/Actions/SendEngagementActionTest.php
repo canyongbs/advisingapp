@@ -37,7 +37,10 @@
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
+use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
+use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use Illuminate\Support\Facades\Queue;
 
 use function Pest\Livewire\livewire;
@@ -108,4 +111,109 @@ it('can create an SMS Engagement properly', function () {
     expect($student->engagements()->count())->toBe(1);
     expect($student->engagements()->first()->channel)->toEqual(NotificationChannel::Sms);
     expect($student->engagements()->first()->body)->toEqual($body);
+});
+
+it('shows no-contact-info message when student has no valid email or sms', function () {
+    asSuperAdmin();
+
+    /** @var Student $student */
+    $student = Student::factory()->create();
+
+    // Remove primary email
+    $student->primaryEmailAddress?->delete();
+    $student->primary_email_id = null;
+
+    // Remove primary phone or make it non-SMS capable
+    $student->primaryPhoneNumber?->delete();
+    $student->primary_phone_id = null;
+
+    $student->save();
+    $student->refresh();
+
+    // Verify that helper correctly identifies no valid route
+    $this->assertFalse(\AdvisingApp\Engagement\Filament\Support\EducatableContactabilityHelper::hasAnyValidRoute($student));
+});
+
+it('disables channel options when student has bounced email', function () {
+    asSuperAdmin();
+
+    $settings = app(TwilioSettings::class);
+    $settings->account_sid = 'abc123';
+    $settings->auth_token = 'abc123';
+    $settings->from_number = '+11231231234';
+    $settings->save();
+
+    /** @var Student $student */
+    $student = Student::factory()->create();
+
+    // Bounce the primary email
+    $primaryEmail = $student->primaryEmailAddress;
+    BouncedEmailAddress::factory()->create([
+        'address' => $primaryEmail->address,
+    ]);
+
+    // Remove phone or make it non-SMS capable
+    $student->primaryPhoneNumber?->delete();
+    $student->primary_phone_id = null;
+    $student->save();
+    $student->refresh();
+
+    // Verify no valid channels
+    $this->assertFalse(\AdvisingApp\Engagement\Filament\Support\EducatableContactabilityHelper::hasAnyValidRoute($student));
+});
+
+it('excludes bounced phones from sms channel options', function () {
+    asSuperAdmin();
+
+    $settings = app(TwilioSettings::class);
+    $settings->account_sid = 'abc123';
+    $settings->auth_token = 'abc123';
+    $settings->from_number = '+11231231234';
+    $settings->save();
+
+    /** @var Student $student */
+    $student = Student::factory()->create();
+
+    // Remove email
+    $student->primaryEmailAddress?->delete();
+    $student->primary_email_id = null;
+
+    // Add a bounced phone as primary
+    $phoneNumber = StudentPhoneNumber::factory()
+        ->for($student, 'student')
+        ->create(['can_receive_sms' => true]);
+
+    \AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber::factory()->create([
+        'number' => $phoneNumber->number,
+    ]);
+
+    $student->primaryPhoneNumber()->associate($phoneNumber);
+    $student->save();
+    $student->refresh();
+
+    // Verify bounced phone is detected by model
+    $this->assertFalse($student->canReceiveSms(),  'Model should detect bounced phone via canReceiveSms() method');
+});
+
+it('shows only sms channel when student has no valid email but valid sms', function () {
+    asSuperAdmin();
+
+    $settings = app(TwilioSettings::class);
+    $settings->account_sid = 'abc123';
+    $settings->auth_token = 'abc123';
+    $settings->from_number = '+11231231234';
+    $settings->save();
+
+    /** @var Student $student */
+    $student = Student::factory()->create();
+
+    // Remove email
+    $student->primaryEmailAddress?->delete();
+    $student->primary_email_id = null;
+    $student->save();
+    $student->refresh();
+
+    // Verify SMS-only scenario
+    $this->assertFalse(\AdvisingApp\Engagement\Filament\Support\EducatableContactabilityHelper::hasValidEmail($student));
+    $this->assertTrue(\AdvisingApp\Engagement\Filament\Support\EducatableContactabilityHelper::hasValidSms($student));
 });

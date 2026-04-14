@@ -527,7 +527,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function canReceiveSms(): bool
     {
-        return $this->primaryPhoneNumber?->can_receive_sms && (! $this->primaryPhoneNumber->smsOptOut()->exists());
+        return $this->primaryPhoneNumber?->can_receive_sms 
+            && (! $this->primaryPhoneNumber->smsOptOut()->exists())
+            && (! $this->primaryPhoneNumber->bounced()->exists());
     }
 
     /**
