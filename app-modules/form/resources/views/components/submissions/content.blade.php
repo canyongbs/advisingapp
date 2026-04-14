@@ -41,6 +41,8 @@
     use AdvisingApp\Form\Actions\ResolveBlockRegistry;
     use AdvisingApp\Form\Actions\InjectSubmissionStateIntoTipTapContent;
     use Filament\Forms\Components\RichEditor\RichContentRenderer;
+    use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+    use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
     $blocks = app(ResolveBlockRegistry::class)($submission->submissible);
 
@@ -78,18 +80,23 @@
     $detectedType = $detectBlockType($content['content'] ?? []);
     $usesRichEditor = $detectedType === 'customBlock';
     $usesLegacyTipTap = $detectedType === 'tiptapBlock';
+
+    $sanitizeSubmissionHtml = function (string $html): string {
+        $config = app(HtmlSanitizerConfig::class)
+            ->allowElement('svg', ['xmlns', 'fill', 'viewBox', 'stroke-width', 'stroke', 'aria-hidden', 'class', 'data-slot'])
+            ->allowElement('path', ['fill-rule', 'clip-rule', 'd', 'stroke-linecap', 'stroke-linejoin']);
+
+        return (new HtmlSanitizer($config))->sanitize($html);
+    };
 @endphp
 
 <div class="prose max-w-none dark:prose-invert">
     @if (! empty($content['content']))
-        @if ($usesRichEditor)
-            {{-- RichEditor format (Forms, Surveys, Applications) --}}
-            {!! RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toHtml() !!}
-        @elseif ($usesLegacyTipTap)
+        @if ((! $usesRichEditor) && $usesLegacyTipTap)
             {{-- Legacy TipTap format (Events, Case Forms — until migrated to RichEditor) --}}
             {!! tiptap_converter()->blocks($blocks)->asHTML($content) !!}
         @else
-            {!! RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toHtml() !!}
+            {!! $sanitizeSubmissionHtml(RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toUnsafeHtml()) !!}
         @endif
     @else
         This submission has no content.
