@@ -36,13 +36,9 @@
 
 namespace AdvisingApp\StockMedia\Providers;
 
-use AdvisingApp\StockMedia\Enums\StockMediaProvider;
-use AdvisingApp\StockMedia\Settings\StockMediaSettings;
 use AdvisingApp\StockMedia\StockMediaPlugin;
 use Filament\Panel;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class StockMediaServiceProvider extends ServiceProvider
@@ -55,21 +51,5 @@ class StockMediaServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([]);
-
-        TiptapEditor::configureUsing(fn (TiptapEditor $editor) => $editor->stockImagesUrl(function (StockMediaSettings $settings): ?string {
-            if (! $settings->is_active) {
-                return null;
-            }
-
-            if ($settings->provider !== StockMediaProvider::Pexels) {
-                return null;
-            }
-
-            if (blank($settings->pexels_api_key)) {
-                return null;
-            }
-
-            return URL::temporarySignedRoute('api.stock-images', now()->addHour());
-        }));
     }
 }

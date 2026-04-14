@@ -46,13 +46,13 @@ use App\Settings\LicenseSettings;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Facades\Vite;
-use Illuminate\Support\Str;
 
 class DraftEngagementBlockWithAi extends Action
 {
@@ -60,8 +60,6 @@ class DraftEngagementBlockWithAi extends Action
     protected array | Closure $mergeTags = [];
 
     protected NotificationChannel | Closure $channel;
-
-    protected string | Closure $fieldPrefix = '';
 
     protected function setUp(): void
     {
@@ -127,7 +125,7 @@ class DraftEngagementBlockWithAi extends Action
                         return;
                     }
 
-                    $set("{$this->getFieldPrefix()}body", Str::markdown($content));
+                    $set('body', RichContentRenderer::make((string) str($content)->markdown())->toArray());
 
                     return;
                 }
@@ -167,11 +165,9 @@ class DraftEngagementBlockWithAi extends Action
                     return;
                 }
 
-                $set("{$this->getFieldPrefix()}subject", (string) str($content)
-                    ->before("\n")
-                    ->trim());
+                $set('subject', RichContentRenderer::make((string) str($content)->before("\n")->trim())->toArray());
 
-                $set("{$this->getFieldPrefix()}body", (string) str($content)->after("\n")->markdown());
+                $set('body', RichContentRenderer::make((string) str($content)->after("\n")->markdown())->toArray());
             })
             ->visible(
                 auth()->user()->hasLicense(LicenseType::ConversationalAi)
@@ -211,17 +207,5 @@ class DraftEngagementBlockWithAi extends Action
     public function getDeliveryMethod(): NotificationChannel
     {
         return $this->evaluate($this->channel ?? throw new Exception('The [channel()] must be set when using [' . static::class . '].'));
-    }
-
-    public function fieldPrefix(string | Closure $prefix): static
-    {
-        $this->fieldPrefix = $prefix;
-
-        return $this;
-    }
-
-    public function getFieldPrefix(): string
-    {
-        return $this->evaluate($this->fieldPrefix);
     }
 }

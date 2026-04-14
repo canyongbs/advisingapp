@@ -34,56 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Blocks;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
-use AdvisingApp\Concern\Enums\ConcernSeverity;
-use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
-use AdvisingApp\Concern\Models\ConcernStatus;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Schemas\Components\Component;
-
-class ProactiveConcernBlock extends CampaignActionBlock
-{
-    protected function setUp(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        parent::setUp();
+        DB::transaction(function () {
+            Schema::table('engagements', function (Blueprint $table) {
+                $table->dropForeign(['campaign_action_id']);
+                $table->renameColumn('campaign_action_id', 'source_id');
+            });
 
-        $this->label('Proactive Concern');
+            Schema::table('engagements', function (Blueprint $table) {
+                $table->string('source_type')->nullable()->after('source_id');
+            });
 
-        $this->schema($this->generateFields());
+            DB::table('engagements')
+                ->whereNotNull('source_id')
+                ->update(['source_type' => 'campaign_action']);
+
+            Schema::table('engagements', function (Blueprint $table) {
+                $table->index(['source_type', 'source_id']);
+            });
+        });
     }
 
-    /**
-     * @return array<Component>
-     */
-    public function generateFields(): array
+    public function down(): void
     {
-        return [
-            Textarea::make('description')
-                ->required()
-                ->string(),
-            Select::make('severity')
-                ->options(ConcernSeverity::class)
-                ->default(ConcernSeverity::default())
-                ->required()
-                ->enum(ConcernSeverity::class),
-            Textarea::make('suggested_intervention')
-                ->required()
-                ->string(),
-            Select::make('status_id')
-                ->label('Status')
-                ->options(ConcernStatus::orderBy('order')->pluck('name', 'id'))
-                ->default(fn () => SystemConcernStatusClassification::default()?->getKey())
-                ->exists('alert_statuses', 'id')
-                ->required(),
-            CampaignDateTimeInput::make(),
-        ];
-    }
+        DB::transaction(function () {
+            Schema::table('engagements', function (Blueprint $table) {
+                $table->dropIndex(['source_type', 'source_id']);
+                $table->dropColumn('source_type');
+                $table->renameColumn('source_id', 'campaign_action_id');
+            });
 
-    public static function type(): string
-    {
-        return 'proactive_concern';
+            Schema::table('engagements', function (Blueprint $table) {
+                $table->foreign('campaign_action_id')->references('id')->on('campaign_actions');
+            });
+        });
     }
-}
+};

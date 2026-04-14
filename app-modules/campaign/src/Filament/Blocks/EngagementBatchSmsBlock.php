@@ -38,7 +38,9 @@ namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Blocks\Actions\DraftEngagementBlockWithAi;
 use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use Filament\Forms\Components\Hidden;
 use Filament\Schemas\Components\Actions;
@@ -51,25 +53,21 @@ class EngagementBatchSmsBlock extends CampaignActionBlock
 
         $this->label('Text Message');
 
-        $this->schema($this->createFields());
+        $this->model(CampaignAction::class);
+
+        $this->schema($this->generateFields());
     }
 
-    public function generateFields(string $fieldPrefix = ''): array
+    public function generateFields(): array
     {
         return [
-            Hidden::make($fieldPrefix . 'channel')
+            Hidden::make('channel')
                 ->default(NotificationChannel::Sms->value),
-            EngagementSmsBodyInput::make(context: 'create', fieldPrefix: $fieldPrefix),
+            EngagementSmsBodyInput::make(context: 'create'),
             Actions::make([
                 DraftEngagementBlockWithAi::make()
                     ->channel(NotificationChannel::Sms)
-                    ->mergeTags([
-                        'recipient first name',
-                        'recipient last name',
-                        'recipient full name',
-                        'recipient email',
-                        'recipient preferred name',
-                    ]),
+                    ->mergeTags(Engagement::getMergeTags(withUserTags: false)),
             ]),
             CampaignDateTimeInput::make(),
         ];

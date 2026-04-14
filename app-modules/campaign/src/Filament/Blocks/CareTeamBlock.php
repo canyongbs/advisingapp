@@ -61,13 +61,13 @@ class CareTeamBlock extends CampaignActionBlock
 
         $this->label('Care Team');
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
-    public function generateFields(string $fieldPrefix = ''): array
+    public function generateFields(): array
     {
         return [
-            Repeater::make($fieldPrefix . 'careTeam')
+            Repeater::make('careTeam')
                 ->label('Who should be assigned to the care team?')
                 ->schema([
                     Select::make('user_id')
@@ -141,7 +141,7 @@ class CareTeamBlock extends CampaignActionBlock
                 ->addActionLabel('Add User')
                 ->reorderable(false),
 
-            Toggle::make($fieldPrefix . 'remove_prior')
+            Toggle::make('remove_prior')
                 ->label('Remove all prior care team assignments?')
                 ->default(false)
                 ->hintIconTooltip('If checked, all prior care team assignments will be removed.'),

@@ -43,6 +43,8 @@ use AdvisingApp\Workflow\Filament\Blocks\EngagementSmsBlock;
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Jobs\EngagementSmsWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -51,11 +53,12 @@ use OwenIt\Auditing\Contracts\Auditable;
 /**
  * @mixin IdeHelperWorkflowEngagementSmsDetails
  */
-class WorkflowEngagementSmsDetails extends WorkflowDetails implements Auditable
+class WorkflowEngagementSmsDetails extends WorkflowDetails implements Auditable, HasRichContent
 {
     use SoftDeletes;
     use AuditableTrait;
     use HasUuids;
+    use InteractsWithRichContent;
 
     /** @use HasFactory<WorkflowEngagementSmsDetailsFactory> */
     use HasFactory;
@@ -83,5 +86,17 @@ class WorkflowEngagementSmsDetails extends WorkflowDetails implements Auditable
     public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
     {
         return new EngagementSmsWorkflowActionJob($workflowRunStep);
+    }
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('body')
+            ->mergeTags([
+                'recipient first name' => '{{ recipient first name }}',
+                'recipient last name' => '{{ recipient last name }}',
+                'recipient full name' => '{{ recipient full name }}',
+                'recipient email' => '{{ recipient email }}',
+                'recipient preferred name' => '{{ recipient preferred name }}',
+            ]);
     }
 }
