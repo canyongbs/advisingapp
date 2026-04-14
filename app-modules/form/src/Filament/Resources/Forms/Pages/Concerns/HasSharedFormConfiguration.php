@@ -243,6 +243,8 @@ trait HasSharedFormConfiguration
 
                 $record->content = $content;
                 $record->save();
+
+                $component->state($content);
             })
             ->dehydrated(false)
             ->columnSpanFull()
