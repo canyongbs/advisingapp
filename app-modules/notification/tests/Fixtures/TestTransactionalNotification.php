@@ -47,9 +47,9 @@ class TestTransactionalNotification extends Notification implements ShouldQueue,
 {
     use Queueable;
 
-    public function getEmailType(): string
+    public function getEmailType(): EmailType
     {
-        return EmailType::Transactional->value;
+        return EmailType::Transactional;
     }
 
     /**

@@ -66,10 +66,10 @@ class UnsubscribeController extends Controller
 
         $email = $request->query('email');
 
-        EmailAddressOptInOptOut::firstOrCreate(
+        EmailAddressOptInOptOut::updateOrCreate(
             ['address' => $email],
             ['status' => EmailAddressOptInOptOutStatus::OptedOut],
-        )->update(['status' => EmailAddressOptInOptOutStatus::OptedOut]);
+        );
 
         return view('notification::unsubscribe', [
             'confirmUrl' => null,

@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Notification\Notifications\Contracts;
 
+use AdvisingApp\Notification\Enums\EmailType;
+
 interface HasEmailType
 {
-    public function getEmailType(): string;
+    public function getEmailType(): EmailType;
 }

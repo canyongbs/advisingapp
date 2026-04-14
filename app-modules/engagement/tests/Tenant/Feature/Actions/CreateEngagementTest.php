@@ -44,8 +44,6 @@ use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\assertDatabaseCount;
 
-use Symfony\Component\Mime\Email;
-
 it('will create and send an engagement immediately', function () {
     Notification::fake();
 

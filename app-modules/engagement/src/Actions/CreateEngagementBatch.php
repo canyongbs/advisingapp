@@ -61,7 +61,9 @@ class CreateEngagementBatch
         $engagementBatch->processed_engagements = 0;
         $engagementBatch->successful_engagements = 0;
         $engagementBatch->body = $data->body;
-        $engagementBatch->email_type = EmailType::from($data->emailType);
+        if(EmailTypeFeature::active()){
+            $engagementBatch->email_type = EmailType::tryFrom($data->emailType) ?? EmailType::Transactional;
+        }
 
         DB::transaction(function () use ($engagementBatch, $data) {
             $engagementBatch->save();

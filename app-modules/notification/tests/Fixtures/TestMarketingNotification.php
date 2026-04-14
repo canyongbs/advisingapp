@@ -47,9 +47,9 @@ class TestMarketingNotification extends Notification implements ShouldQueue, Has
 {
     use Queueable;
 
-    public function getEmailType(): string
+    public function getEmailType(): EmailType
     {
-        return EmailType::Marketing->value;
+        return EmailType::Marketing;
     }
 
     /**

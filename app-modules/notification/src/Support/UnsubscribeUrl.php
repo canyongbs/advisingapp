@@ -47,16 +47,14 @@ class UnsubscribeUrl
      * without invalidating the signature. No database table needed.
      *
      * @param  string  $email  The recipient email address
-     * @param  int  $expirationMinutes  How long the link remains valid (default: 30 days)
      *
      * @return string The signed unsubscribe URL
      */
-    public static function generate(string $email, int $expirationMinutes = 43200): string
+    public static function generate(string $email): string
     {
         return URL::signedRoute(
             'unsubscribe',
             ['email' => $email],
-            now()->addMinutes($expirationMinutes)->toImmutable(),
         );
     }
 }

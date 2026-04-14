@@ -62,7 +62,10 @@ class CreateEngagement
         $engagement->channel = $data->channel;
         $engagement->subject = $data->subject;
         $engagement->scheduled_at = $data->scheduledAt;
-        $engagement->email_type = EmailTypeFeature::active() ? EmailType::from($data->emailType) : EmailType::Transactional;
+        if(EmailTypeFeature::active()){
+            $engagement->email_type = EmailType::tryFrom($data->emailType) ?? EmailType::Transactional;
+        }
+        
         $engagement->recipient_route = $data->recipientRoute;
 
         if (! $engagement->scheduled_at) {

@@ -38,6 +38,7 @@ namespace AdvisingApp\Campaign\Jobs;
 
 use AdvisingApp\Engagement\Actions\CreateEngagement;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use App\Models\User;
@@ -45,6 +46,7 @@ use DateTimeInterface;
 use Exception;
 use Illuminate\Queue\Middleware\RateLimitedWithRedis;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Mime\Email;
 use Throwable;
 
 class EngagementCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
@@ -103,7 +105,7 @@ class EngagementCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                         subject: $action->data['subject'] ?? null,
                         body: $action->data['body'] ?? null,
                         source: $action,
-                        emailType: $action->data['email_type'] ?? 'transactional',
+                        emailType: $action->data['email_type'] ?? EmailType::Transactional->value,
                     ),
                     notifyNow: true,
                 );

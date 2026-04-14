@@ -48,14 +48,14 @@ it('getEmailType returns the engagement email_type value', function () {
 
     $notification = new EngagementNotification($engagement);
 
-    expect($notification->getEmailType())->toBe(EmailType::Marketing->value);
+    expect($notification->getEmailType())->toBe(EmailType::Marketing);
 
     $engagement->update(['email_type' => EmailType::Transactional]);
     $engagement->refresh();
 
     $notification = new EngagementNotification($engagement);
 
-    expect($notification->getEmailType())->toBe(EmailType::Transactional->value);
+    expect($notification->getEmailType())->toBe(EmailType::Transactional);
 });
 
 it('creates an EmailMessage with email_type marketing when engagement is marketing', function () {
