@@ -39,7 +39,6 @@ namespace AdvisingApp\MeetingCenter\Filament\Pages;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use App\Features\MinimumLeadTimeFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Pages\ProfilePage;
 use App\Models\User;
@@ -132,7 +131,7 @@ class ManagePersonalBookingPage extends ProfilePage
                             ->minValue(0)
                             ->maxValue(720)
                             ->integer()
-                            ->visible(fn (Get $get) => MinimumLeadTimeFeature::active() && $get('is_enabled')),
+                            ->visible(fn (Get $get) => $get('is_enabled')),
                         TextInput::make('maximum_booking_lead_time_days')
                             ->label('Maximum Lead Time')
                             ->suffix('days')

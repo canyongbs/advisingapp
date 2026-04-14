@@ -39,7 +39,6 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use App\Features\MinimumLeadTimeFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -209,8 +208,7 @@ class EditBookingGroup extends EditRecord
                         ->minValue(0)
                         ->maxValue(720)
                         ->integer()
-                        ->columnSpanFull()
-                        ->visible(fn (): bool => MinimumLeadTimeFeature::active()),
+                        ->columnSpanFull(),
                     TextInput::make('maximum_booking_lead_time_days')
                         ->label('Maximum Lead Time')
                         ->suffix('days')

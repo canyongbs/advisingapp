@@ -41,7 +41,6 @@ use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use App\Features\MinimumLeadTimeFeature;
 use App\Models\User;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Builder;
@@ -76,10 +75,6 @@ class GetAvailableGroupAppointmentSlots
             : 0;
 
         $resolveEffectiveLeadTime = function (BookingGroup $bookingGroup, Collection $members): int {
-            if (! MinimumLeadTimeFeature::active()) {
-                return 0;
-            }
-
             $memberMaxLeadTime = PersonalBookingPage::query()
                 ->whereIn('user_id', $members->pluck('id'))
                 ->max('minimum_booking_lead_time_hours') ?? 0;

@@ -39,7 +39,6 @@ use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use App\Features\MinimumLeadTimeFeature;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Mockery\MockInterface;
@@ -79,8 +78,6 @@ beforeEach(function () {
 // Minimum Lead Time - Available Slots Tests
 
 it('filters available slots within lead time window', function () use ($workingHours) {
-    MinimumLeadTimeFeature::activate();
-
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $user = User::factory()
@@ -116,50 +113,9 @@ it('filters available slots within lead time window', function () use ($workingH
     expect($blocksBeforeLeadTime)->toBeEmpty();
 });
 
-// TODO: FeatureFlag Cleanup - This test can be removed when MinimumLeadTimeFeature is removed
-it('returns available slots within lead time window when feature is inactive', function () use ($workingHours) {
-    MinimumLeadTimeFeature::deactivate();
-
-    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
-
-    $user = User::factory()
-        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
-
-    PersonalBookingPage::factory()
-        ->for($user)
-        ->enabled()
-        ->create([
-            'slug' => 'test-slots-no-flag',
-            'minimum_booking_lead_time_hours' => 24,
-        ]);
-
-    $response = getJson(
-        route('widgets.booking-page.personal.api.available-slots', ['slug' => 'test-slots-no-flag']) . '?year=2026&month=4'
-    );
-
-    $response->assertOk();
-
-    /** @var array<int, array{start: string, end: string}> $blocksData */
-    $blocksData = $response->json('blocks');
-    $blocks = collect($blocksData);
-
-    // Feature is off, so Monday slots should still be available
-    $mondayBlocks = $blocks->filter(function (array $block) {
-        return Carbon::parse($block['start'])->day === 6;
-    });
-
-    expect($mondayBlocks)->not->toBeEmpty();
-});
-
 // Minimum Lead Time - Booking Validation Tests
 
 it('rejects booking within minimum lead time window', function () use ($workingHours) {
-    MinimumLeadTimeFeature::activate();
-
     Carbon::setTestNow(Carbon::parse('2026-04-03 10:00:00', 'UTC'));
 
     $user = User::factory()
@@ -194,8 +150,6 @@ it('rejects booking within minimum lead time window', function () use ($workingH
 });
 
 it('allows booking outside minimum lead time window', function () use ($workingHours) {
-    MinimumLeadTimeFeature::activate();
-
     Carbon::setTestNow(Carbon::parse('2026-04-03 10:00:00', 'UTC'));
 
     $user = User::factory()
@@ -221,42 +175,6 @@ it('allows booking outside minimum lead time window', function () use ($workingH
             'email' => 'test@example.com',
             'starts_at' => now()->addHours(8)->toIso8601String(),
             'ends_at' => now()->addHours(8)->addMinutes(30)->toIso8601String(),
-        ]
-    );
-
-    $response->assertStatus(201);
-    $response->assertJsonFragment(['success' => true]);
-});
-
-// TODO: FeatureFlag Cleanup - This test can be removed when MinimumLeadTimeFeature is removed
-it('allows booking within minimum lead time window when feature is inactive', function () use ($workingHours) {
-    MinimumLeadTimeFeature::deactivate();
-
-    Carbon::setTestNow(Carbon::parse('2026-04-03 10:00:00', 'UTC'));
-
-    $user = User::factory()
-        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
-
-    PersonalBookingPage::factory()
-        ->for($user)
-        ->enabled()
-        ->create([
-            'slug' => 'test-no-flag',
-            'minimum_booking_lead_time_hours' => 24,
-        ]);
-
-    // Book 2 hours from now - within the 24h lead time, but flag is off
-    $response = postJson(
-        route('widgets.booking-page.personal.api.book', ['slug' => 'test-no-flag']),
-        [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'starts_at' => now()->addHours(2)->toIso8601String(),
-            'ends_at' => now()->addHours(2)->addMinutes(30)->toIso8601String(),
         ]
     );
 

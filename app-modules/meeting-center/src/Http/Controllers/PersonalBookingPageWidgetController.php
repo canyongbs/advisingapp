@@ -41,7 +41,6 @@ use AdvisingApp\MeetingCenter\Http\Requests\BookPersonalCalendarSlotRequest;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
-use App\Features\MinimumLeadTimeFeature;
 use App\Http\Controllers\Controller;
 use App\Settings\CollegeBrandingSettings;
 use Carbon\Carbon;
@@ -190,7 +189,7 @@ class PersonalBookingPageWidgetController extends Controller
         $endsAt = Carbon::parse($request->validated('ends_at'));
 
         // Check if the appointment meets the minimum lead time requirement
-        $leadTimeHours = MinimumLeadTimeFeature::active() ? ($bookingPage->minimum_booking_lead_time_hours ?? 0) : 0;
+        $leadTimeHours = $bookingPage->minimum_booking_lead_time_hours ?? 0;
         $earliestAllowed = now()->addHours($leadTimeHours);
 
         if ($startsAt->isBefore($earliestAllowed)) {
