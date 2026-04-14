@@ -43,20 +43,9 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class AgreementFormFieldBlock extends FormFieldBlock
 {
-    public string $preview = 'form::blocks.previews.agreement';
-
-    public string $rendered = 'form::blocks.submissions.agreement';
-
-    public ?string $icon = 'heroicon-m-check-circle';
-
     public static function type(): string
     {
         return 'agreement';
-    }
-
-    public function fields(): array
-    {
-        return [];
     }
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
@@ -73,5 +62,15 @@ class AgreementFormFieldBlock extends FormFieldBlock
     public static function getValidationRules(SubmissibleField $field): array
     {
         return ['boolean'];
+    }
+
+    protected static function previewView(): string
+    {
+        return 'form::blocks.previews.agreement';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.agreement';
     }
 }

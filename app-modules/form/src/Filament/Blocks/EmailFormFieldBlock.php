@@ -43,18 +43,14 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class EmailFormFieldBlock extends FormFieldBlock
 {
-    public ?string $label = 'Email address';
-
-    public ?string $icon = 'heroicon-m-at-symbol';
-
     public static function type(): string
     {
         return 'email';
     }
 
-    public function fields(): array
+    public static function getLabel(): string
     {
-        return [];
+        return 'Email address';
     }
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array

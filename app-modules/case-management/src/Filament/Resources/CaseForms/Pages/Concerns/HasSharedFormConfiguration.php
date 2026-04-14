@@ -40,7 +40,7 @@ use AdvisingApp\CaseManagement\Models\CaseForm;
 use AdvisingApp\CaseManagement\Models\CaseFormField;
 use AdvisingApp\CaseManagement\Models\CaseFormStep;
 use AdvisingApp\Form\Enums\Rounding;
-use AdvisingApp\Form\Filament\Blocks\DefaultFieldBlockRegistry;
+use AdvisingApp\Form\Filament\Blocks\Legacy\DefaultFieldBlockRegistry;
 use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;

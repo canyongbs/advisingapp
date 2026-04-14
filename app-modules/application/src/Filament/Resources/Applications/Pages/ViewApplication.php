@@ -43,6 +43,7 @@ use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\IconEntry;
@@ -51,7 +52,6 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
-use FilamentTiptapEditor\TiptapEditor;
 
 class ViewApplication extends ViewRecord
 {
@@ -90,20 +90,15 @@ class ViewApplication extends ViewRecord
                     ]),
                 Section::make('Fields')
                     ->schema([
-                        TiptapEditor::make('content')
-                            ->blocks(FormFieldBlockRegistry::get())
-                            ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks', 'media'])
+                        RichEditor::make('content')
+                            ->json()
+                            ->customBlocks(FormFieldBlockRegistry::get())
+                            ->toolbarButtons([])
+                            ->fileAttachmentsDisk('s3-public')
                             ->placeholder('Drag blocks here to build your form')
                             ->hiddenLabel()
                             ->dehydrated(false)
                             ->columnSpanFull()
-                            ->default(
-                                fn (Application $record) => ! is_null($record->content)
-                                        ? tiptap_converter()
-                                            ->record($record, 'content')
-                                            ->asHTML($record->content)
-                                        : null
-                            )
                             ->extraInputAttributes(['style' => 'min-height: 12rem;']),
                     ])
                     ->hidden(fn (Application $record) => $record->is_wizard)
@@ -117,18 +112,13 @@ class ViewApplication extends ViewRecord
                             ->autocomplete(false)
                             ->columnSpanFull()
                             ->lazy(),
-                        TiptapEditor::make('content')
-                            ->blocks(FormFieldBlockRegistry::get())
-                            ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
+                        RichEditor::make('content')
+                            ->json()
+                            ->customBlocks(FormFieldBlockRegistry::get())
+                            ->toolbarButtons([])
+                            ->fileAttachmentsDisk('s3-public')
                             ->placeholder('Drag blocks here to build your form')
                             ->hiddenLabel()
-                            ->default(
-                                fn (Application $record) => ! is_null($record->content)
-                                        ? tiptap_converter()
-                                            ->record($record, 'content')
-                                            ->asHTML($record->content)
-                                        : null
-                            )
                             ->dehydrated(false)
                             ->columnSpanFull()
                             ->extraInputAttributes(['style' => 'min-height: 12rem;']),

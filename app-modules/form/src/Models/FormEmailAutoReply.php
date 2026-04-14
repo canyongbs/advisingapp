@@ -36,11 +36,13 @@
 
 namespace AdvisingApp\Form\Models;
 
-use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
-use AdvisingApp\Engagement\Actions\GenerateEngagementSubjectContent;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\BaseModel;
+use Closure;
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
@@ -49,10 +51,11 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 /**
  * @mixin IdeHelperFormEmailAutoReply
  */
-class FormEmailAutoReply extends BaseModel implements HasMedia
+class FormEmailAutoReply extends BaseModel implements HasMedia, HasRichContent
 {
     use SoftDeletes;
     use InteractsWithMedia;
+    use InteractsWithRichContent;
 
     protected $fillable = [
         'subject',
@@ -76,37 +79,53 @@ class FormEmailAutoReply extends BaseModel implements HasMedia
 
     public function getBody(Student|Prospect|null $author): string
     {
-        return app(GenerateEngagementBodyContent::class)(
-            $this->body,
-            $this->getMergeData($author),
-            $this,
-            'body',
-        );
+        return $this->getRichContentAttribute('body')
+            ?->mergeTags($this->getMergeData($author))
+            ->toHtml() ?? '';
     }
 
     public function getSubject(Student|Prospect|null $author): string
     {
-        return app(GenerateEngagementSubjectContent::class)(
-            $this->subject,
-            $this->getMergeData($author),
-            $this,
-            'subject',
-        );
+        $html = $this->getRichContentAttribute('subject')
+            ?->mergeTags($this->getMergeData($author))
+            ->toHtml() ?? '';
+
+        $text = strip_tags($html);
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return trim(preg_replace('/\s+/u', ' ', $text));
     }
 
+    /**
+     * @return array<string, Closure>
+     */
     public function getMergeData(Student|Prospect|null $author): array
     {
         return [
-            'recipient first name' => $author->getAttribute($author->displayFirstNameKey()),
-            'recipient last name' => $author->getAttribute($author->displayLastNameKey()),
-            'recipient full name' => $author->getAttribute($author->displayNameKey()),
-            'recipient email' => $author->primaryEmailAddress?->address,
-            'recipient preferred name' => $author->getAttribute($author->displayPreferredNameKey()),
-            'student first name' => $author->getAttribute($author->displayFirstNameKey()),
-            'student last name' => $author->getAttribute($author->displayLastNameKey()),
-            'student full name' => $author->getAttribute($author->displayNameKey()),
-            'student email' => $author->primaryEmailAddress?->address,
-            'student preferred name' => $author->getAttribute($author->displayPreferredNameKey()),
+            'recipient first name' => fn () => $author?->getAttribute($author->displayFirstNameKey()),
+            'recipient last name' => fn () => $author?->getAttribute($author->displayLastNameKey()),
+            'recipient full name' => fn () => $author?->getAttribute($author->displayNameKey()),
+            'recipient email' => fn () => $author?->primaryEmailAddress?->address,
+            'recipient preferred name' => fn () => $author?->getAttribute($author->displayPreferredNameKey()),
         ];
+    }
+
+    public function setUpRichContent(): void
+    {
+        $mergeTags = [
+            'recipient first name' => '{{ recipient first name }}',
+            'recipient last name' => '{{ recipient last name }}',
+            'recipient full name' => '{{ recipient full name }}',
+            'recipient email' => '{{ recipient email }}',
+            'recipient preferred name' => '{{ recipient preferred name }}',
+        ];
+
+        $this->registerRichContent('subject')
+            ->mergeTags($mergeTags);
+
+        $this->registerRichContent('body')
+            ->fileAttachmentsDisk('s3-public')
+            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
+            ->mergeTags($mergeTags);
     }
 }
