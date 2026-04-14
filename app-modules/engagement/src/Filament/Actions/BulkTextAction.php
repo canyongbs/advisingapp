@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
+use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use Filament\Actions\BulkAction;
@@ -50,7 +51,6 @@ use Filament\Schemas\Schema;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class BulkTextAction
 {
@@ -60,6 +60,7 @@ class BulkTextAction
             ->label('Send Text')
             ->icon('heroicon-o-chat-bubble-bottom-center-text')
             ->modalHeading('Send Bulk Text')
+            ->model(EngagementBatch::class)
             ->modalDescription(fn (Collection $records) => "You have selected {$records->count()} {$context} to text.")
             ->steps([
                 Step::make('Engagement Details')
@@ -86,15 +87,8 @@ class BulkTextAction
                     channel: NotificationChannel::Sms,
                     subject: $data['subject'] ?? null,
                     body: $data['body'] ?? null,
-                    temporaryBodyImages: array_map(
-                        fn (TemporaryUploadedFile $file): array => [
-                            'extension' => $file->getClientOriginalExtension(),
-                            'path' => (fn () => $this->path)->call($file),
-                        ],
-                        /**@phpstan-ignore-next-line */
-                        $schema->getFlatFields()['body']->getTemporaryImages(),
-                    ),
                     scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['scheduled_at'] ?? null) : null,
+                    schema: $schema,
                 ));
             })
             ->modalSubmitActionLabel('Send')

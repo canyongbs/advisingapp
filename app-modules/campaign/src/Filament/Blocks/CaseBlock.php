@@ -65,13 +65,13 @@ class CaseBlock extends CampaignActionBlock
 
         $this->label('Case');
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
-    public function generateFields(string $fieldPrefix = ''): array
+    public function generateFields(): array
     {
         return [
-            Select::make($fieldPrefix . 'division_id')
+            Select::make('division_id')
                 ->relationship('division', 'name')
                 ->model(CaseModel::class)
                 ->default(
@@ -88,14 +88,14 @@ class CaseBlock extends CampaignActionBlock
                 ->dehydratedWhenHidden()
                 ->required()
                 ->exists((new Division())->getTable(), 'id'),
-            Select::make($fieldPrefix . 'status_id')
+            Select::make('status_id')
                 ->relationship('status', 'name')
                 ->model(CaseModel::class)
                 ->preload()
                 ->label('Status')
                 ->required()
                 ->exists((new CaseStatus())->getTable(), 'id'),
-            Select::make($fieldPrefix . 'type_id')
+            Select::make('type_id')
                 ->options(CaseType::pluck('name', 'id'))
                 ->afterStateUpdated(function (Set $set) {
                     $set('priority_id', null);
@@ -105,7 +105,7 @@ class CaseBlock extends CampaignActionBlock
                 ->required()
                 ->live()
                 ->exists(CaseType::class, 'id'),
-            Select::make($fieldPrefix . 'priority_id')
+            Select::make('priority_id')
                 ->options(
                     fn (Get $get) => CasePriority::query()
                         ->where('type_id', $get('type_id'))
@@ -116,7 +116,7 @@ class CaseBlock extends CampaignActionBlock
                 ->required()
                 ->exists((new CasePriority())->getTable(), 'id')
                 ->visible(fn (Get $get): bool => filled($get('type_id'))),
-            Select::make($fieldPrefix . 'assigned_to_id')
+            Select::make('assigned_to_id')
                 ->label('Assign Case to')
                 ->options(function (Get $get) {
                     $caseTypeId = $get('type_id');
@@ -145,11 +145,11 @@ class CaseBlock extends CampaignActionBlock
                 ->searchable()
                 ->preload()
                 ->required(),
-            Textarea::make($fieldPrefix . 'close_details')
+            Textarea::make('close_details')
                 ->label('Close Details/Description')
                 ->nullable()
                 ->string(),
-            Textarea::make($fieldPrefix . 'res_details')
+            Textarea::make('res_details')
                 ->label('Internal Case Details')
                 ->nullable()
                 ->string(),

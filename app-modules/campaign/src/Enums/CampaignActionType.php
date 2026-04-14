@@ -160,9 +160,9 @@ enum CampaignActionType: string implements HasLabel
         };
     }
 
-    public function getEditFields(): array
+    public function getGenerateFields(): array
     {
-        return $this->getBlock()->editFields();
+        return $this->getBlock()->generateFields();
     }
 
     public function getStepSummaryView(): string

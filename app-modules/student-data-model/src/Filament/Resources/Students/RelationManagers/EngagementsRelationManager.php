@@ -234,8 +234,12 @@ class EngagementsRelationManager extends RelationManager
                                 ($timelineable instanceof EngagementResponse && $timelineable->type === EngagementResponseType::Email)
                             );
 
-                            if ($isEmail && filled($body = $timelineable->getBodyMarkdown())) {
-                                return Str::limit(strip_tags($body), 50);
+                            if ($isEmail && filled($body = $timelineable->getBody())) {
+                                if ($timelineable instanceof Engagement) {
+                                    return Str::limit($timelineable->getBodyText(), 50);
+                                }
+
+                                return Str::limit(html_entity_decode(strip_tags($body), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50);
                             }
 
                             return null;
@@ -243,11 +247,11 @@ class EngagementsRelationManager extends RelationManager
                     )
                     ->state(fn (Timeline $record) => match ($record->timelineable::class) {
                         Engagement::class => $record->timelineable->channel === NotificationChannel::Sms
-                                ? Str::limit(strip_tags($record->timelineable->getBodyMarkdown()), 50)
-                                : Str::limit(strip_tags($record->timelineable->getSubject()), 50),
+                                ? Str::limit($record->timelineable->getBodyText(), 50)
+                                : Str::limit((string) $record->timelineable->getSubject(), 50),
                         EngagementResponse::class => $record->timelineable->type === EngagementResponseType::Sms
-                                ? Str::limit(strip_tags($record->timelineable->getBodyMarkdown()), 50)
-                                : Str::limit(strip_tags($record->timelineable->subject), 50),
+                                ? Str::limit(html_entity_decode(strip_tags($record->timelineable->getBody()), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50)
+                                : Str::limit(html_entity_decode(strip_tags($record->timelineable->subject), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50),
 
                         default => '',
                     }),

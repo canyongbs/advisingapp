@@ -71,7 +71,8 @@ class CampaignActionsRelationManager extends RelationManager
                     ->required()
                     ->maxLength(255)
                     ->disabled(),
-                Group::make(fn (CampaignAction $record) => $record->type->getEditFields()),
+                Group::make(fn (CampaignAction $record) => $record->type->getGenerateFields())
+                    ->statePath('data'),
             ])
             ->columns(1);
     }
@@ -152,6 +153,18 @@ class CampaignActionsRelationManager extends RelationManager
                 EditAction::make()
                     ->modalHeading(fn (CampaignAction $action) => 'Edit ' . $action->type->getLabel())
                     ->hidden(fn (CampaignAction $record) => $campaign->hasBeenExecuted() === true || $record->cancelled_at !== null)
+                    ->mutateRecordDataUsing(function (array $data): array {
+                        $data['data']['execute_at'] ??= $data['execute_at'] ?? null;
+                        unset($data['execute_at']);
+
+                        return $data;
+                    })
+                    ->mutateDataUsing(function (array $data): array {
+                        $data['execute_at'] ??= $data['data']['execute_at'] ?? null;
+                        $data['data'] = Arr::except($data['data'], ['execute_at']);
+
+                        return $data;
+                    })
                     ->databaseTransaction(),
                 DeleteAction::make()
                     ->modalHeading(fn (CampaignAction $action) => 'Delete ' . $action->type->getLabel())

@@ -103,7 +103,7 @@ class ViewEngagement extends Page
 
     public function getTitle(): string
     {
-        return strip_tags($this->record->getSubjectMarkdown()) ?: 'Sent Items';
+        return ((string) $this->record->getSubject()) ?: 'Sent Items';
     }
 
     public function infolist(Schema $schema): Schema
@@ -121,7 +121,7 @@ class ViewEngagement extends Page
                                     ->schema([
                                         TextEntry::make('subject')
                                             ->state(function (Engagement $record): string {
-                                                return strip_tags($record->getSubjectMarkdown());
+                                                return (string) $record->getSubject();
                                             })
                                             ->visible(fn (Engagement $record): bool => $record->channel === NotificationChannel::Email)
                                             ->columnSpanFull(),

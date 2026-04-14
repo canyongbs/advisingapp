@@ -43,6 +43,9 @@ use App\Models\BaseModel;
 use App\Models\User;
 use DOMDocument;
 use DOMXPath;
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\MediaLibrary\HasMedia;
@@ -52,10 +55,11 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @mixin IdeHelperEngagementBatch
  */
 #[ObservedBy([EngagementBatchObserver::class])]
-class EngagementBatch extends BaseModel implements HasMedia
+class EngagementBatch extends BaseModel implements HasMedia, HasRichContent
 {
     use HasManyEngagements;
     use InteractsWithMedia;
+    use InteractsWithRichContent;
 
     protected $fillable = [
         'user_id',
@@ -84,6 +88,40 @@ class EngagementBatch extends BaseModel implements HasMedia
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('subject')
+            ->mergeTags([
+                'recipient first name' => '{{ recipient first name }}',
+                'recipient last name' => '{{ recipient last name }}',
+                'recipient full name' => '{{ recipient full name }}',
+                'recipient email' => '{{ recipient email }}',
+                'recipient preferred name' => '{{ recipient preferred name }}',
+                'user first name' => '{{ user first name }}',
+                'user full name' => '{{ user full name }}',
+                'user job title' => '{{ user job title }}',
+                'user email' => '{{ user email }}',
+                'user phone number' => '{{ user phone number }}',
+            ]);
+
+        $this->registerRichContent('body')
+            ->fileAttachmentsDisk('s3-public')
+            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
+            ->fileAttachmentsVisibility('public')
+            ->mergeTags([
+                'recipient first name' => '{{ recipient first name }}',
+                'recipient last name' => '{{ recipient last name }}',
+                'recipient full name' => '{{ recipient full name }}',
+                'recipient email' => '{{ recipient email }}',
+                'recipient preferred name' => '{{ recipient preferred name }}',
+                'user first name' => '{{ user first name }}',
+                'user full name' => '{{ user full name }}',
+                'user job title' => '{{ user job title }}',
+                'user email' => '{{ user email }}',
+                'user phone number' => '{{ user phone number }}',
+            ]);
     }
 
     public static function renderWithMergeTags(string $html): string

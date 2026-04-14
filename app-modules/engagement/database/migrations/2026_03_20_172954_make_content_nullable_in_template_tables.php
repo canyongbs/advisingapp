@@ -5,7 +5,7 @@
 
     Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
 
-    Advising App® is licensed under the Elastic License 2.0. For more details,
+    Advising App™ is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -20,7 +20,7 @@
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
     - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
       Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
@@ -34,43 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Blocks;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
-use App\Models\User;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-
-class SubscriptionBlock extends CampaignActionBlock
-{
-    protected function setUp(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        parent::setUp();
+        Schema::table('email_templates', function (Blueprint $table) {
+            $table->json('content')->nullable()->change();
+        });
 
-        $this->schema($this->generateFields());
+        Schema::table('sms_templates', function (Blueprint $table) {
+            $table->json('content')->nullable()->change();
+        });
     }
 
-    public function generateFields(): array
+    public function down(): void
     {
-        return [
-            Select::make('user_ids')
-                ->label('Who should be subscribed?')
-                ->options(User::all()->pluck('name', 'id'))
-                ->multiple()
-                ->searchable()
-                ->default([auth()->id()])
-                ->required()
-                ->exists('users', 'id'),
-            Toggle::make('remove_prior')
-                ->label('Remove all prior subscriptions?')
-                ->default(false)
-                ->hintIconTooltip('If checked, all prior care subscriptions will be removed.'),
-            CampaignDateTimeInput::make(),
-        ];
-    }
+        Schema::table('email_templates', function (Blueprint $table) {
+            $table->json('content')->nullable(false)->change();
+        });
 
-    public static function type(): string
-    {
-        return 'subscription';
+        Schema::table('sms_templates', function (Blueprint $table) {
+            $table->json('content')->nullable(false)->change();
+        });
     }
-}
+};

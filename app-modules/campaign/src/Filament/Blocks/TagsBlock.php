@@ -53,19 +53,18 @@ class TagsBlock extends CampaignActionBlock
 
         $this->label('Tags');
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
     /**
      *
-     * @param string $fieldPrefix
      *
      * @return array<Component>
      */
-    public function generateFields(string $fieldPrefix = ''): array
+    public function generateFields(): array
     {
         return [
-            Select::make($fieldPrefix . 'tag_ids')
+            Select::make('tag_ids')
                 ->label('Which tags should be applied?')
                 ->options(function (Get $get, $livewire, string $operation) {
                     if ($livewire instanceof CreateCampaign) {
@@ -81,7 +80,7 @@ class TagsBlock extends CampaignActionBlock
                 ->searchable()
                 ->required()
                 ->exists('tags', 'id'),
-            Toggle::make($fieldPrefix . 'remove_prior')
+            Toggle::make('remove_prior')
                 ->label('Remove all previously assigned tags?')
                 ->default(false)
                 ->hintIconTooltip('If checked, all prior tags assignments will be removed.'),

@@ -349,10 +349,10 @@ it('ensures details are properly rendered in the table', function () {
         'cacheTag' => 'report-prospect-messages',
         'filters' => [],
     ])
-        ->assertTableColumnStateSet('details', Str::limit($engagementEmail->getSubjectMarkdown(), 50), $holisticEngagementEmail)
-        ->assertTableColumnStateSet('details', Str::limit($engagementSms->getBodyMarkdown(), 50), $holisticEngagementSms)
-        ->assertTableColumnStateSet('details', Str::limit($responseEmail->subject, 50), $holisticResponseEmail)
-        ->assertTableColumnStateSet('details', Str::limit($responseSms->getBodyMarkdown(), 50), $holisticResponseSms);
+        ->assertTableColumnStateSet('details', Str::limit((string) $engagementEmail->getSubject(), 50), $holisticEngagementEmail)
+        ->assertTableColumnStateSet('details', Str::limit($engagementSms->getBodyText(), 50), $holisticEngagementSms)
+        ->assertTableColumnStateSet('details', Str::limit(html_entity_decode(strip_tags($responseEmail->subject), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50), $holisticResponseEmail)
+        ->assertTableColumnStateSet('details', Str::limit(html_entity_decode(strip_tags($responseSms->getBody()), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50), $holisticResponseSms);
 });
 
 it('ensures campaign is properly rendered in the table', function () {
@@ -364,7 +364,8 @@ it('ensures campaign is properly rendered in the table', function () {
     $engagementWithCampaign = Engagement::factory()->create([
         'recipient_id' => $prospect->id,
         'recipient_type' => (new Prospect())->getMorphClass(),
-        'campaign_action_id' => $campaignAction->id,
+        'source_id' => $campaignAction->id,
+        'source_type' => $campaignAction->getMorphClass(),
     ]);
 
     $engagementWithoutCampaign = Engagement::factory()->create([
