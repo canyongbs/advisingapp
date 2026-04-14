@@ -39,6 +39,9 @@ namespace AdvisingApp\Engagement\Models;
 use AdvisingApp\Engagement\Observers\EmailTemplateObserver;
 use App\Models\BaseModel;
 use App\Models\User;
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -49,9 +52,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @mixin IdeHelperEmailTemplate
  */
 #[ObservedBy([EmailTemplateObserver::class])]
-class EmailTemplate extends BaseModel implements HasMedia
+class EmailTemplate extends BaseModel implements HasMedia, HasRichContent
 {
     use InteractsWithMedia;
+    use InteractsWithRichContent;
     use SoftDeletes;
 
     protected $fillable = [
@@ -70,5 +74,25 @@ class EmailTemplate extends BaseModel implements HasMedia
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('content')
+            ->fileAttachmentsDisk('s3-public')
+            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
+            ->fileAttachmentsVisibility('public')
+            ->mergeTags([
+                'recipient first name' => '{{ recipient first name }}',
+                'recipient last name' => '{{ recipient last name }}',
+                'recipient full name' => '{{ recipient full name }}',
+                'recipient email' => '{{ recipient email }}',
+                'recipient preferred name' => '{{ recipient preferred name }}',
+                'user first name' => '{{ user first name }}',
+                'user full name' => '{{ user full name }}',
+                'user job title' => '{{ user job title }}',
+                'user email' => '{{ user email }}',
+                'user phone number' => '{{ user phone number }}',
+            ]);
     }
 }

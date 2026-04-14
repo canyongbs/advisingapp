@@ -88,22 +88,33 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
 
     public function toMail(object $notifiable): MailMessage
     {
+        $bodyContent = (string) $this->engagement->getBody();
+
+        // Convert CSS variable-based text colors to inline color styles for email client compatibility.
+        // The RichEditor renders textColor marks as <span class="color" style="--color: #hex; --dark-color: #hex">
+        // but email clients don't support CSS custom properties.
+        $bodyContent = (string) preg_replace(
+            '/style="--color:\s*([^;]+);\s*--dark-color:\s*[^"]*"/',
+            'style="color: $1"',
+            $bodyContent,
+        );
+
         return MailMessage::make()
             ->to($this->engagement->recipient_route)
             ->when(
                 app(EngagementSettings::class)->are_dynamic_engagements_enabled && $this->engagement->user,
                 fn (MailMessage $message) => $message->from(name: $this->engagement->user->name),
             )
-            ->subject(strip_tags($this->engagement->getSubject()))
+            ->subject((string) $this->engagement->getSubject())
             ->greeting("Hello {$this->engagement->recipient->display_name}!")
-            ->content($this->engagement->getBody());
+            ->content($bodyContent);
     }
 
     public function toSms(object $notifiable): TwilioMessage
     {
         return TwilioMessage::make($notifiable)
             ->to($this->engagement->recipient_route)
-            ->content(strip_tags($this->engagement->getBodyMarkdown()));
+            ->content($this->engagement->getBodyText());
     }
 
     public function failed(?Throwable $exception): void

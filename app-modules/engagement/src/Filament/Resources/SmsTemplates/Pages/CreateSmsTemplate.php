@@ -38,14 +38,15 @@ namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages;
 
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\SmsTemplateResource;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
 
 class CreateSmsTemplate extends CreateRecord
 {
@@ -64,22 +65,17 @@ class CreateSmsTemplate extends CreateRecord
                     ->string(),
                 // TODO Implement length validation (320 characters max)
                 // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
-                TiptapEditor::make('content')
-                    ->mergeTags($mergeTags = [
-                        'recipient first name',
-                        'recipient last name',
-                        'recipient full name',
-                        'recipient email',
-                        'recipient preferred name',
-                    ])
-                    ->profile('sms')
+                RichEditor::make('content')
+                    ->activePanel('mergeTags')
+                    ->toolbarButtons([])
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+                    ->json()
                     ->required(),
                 Actions::make([
                     DraftTemplateWithAiAction::make()
                         ->channel(NotificationChannel::Sms)
-                        ->mergeTags($mergeTags),
+                        ->mergeTags(Engagement::getMergeTags()),
                 ]),
             ]);
     }

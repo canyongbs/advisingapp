@@ -54,25 +54,25 @@ class TaskBlock extends WorkflowActionBlock
 
         $this->label('Task');
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
     /**
      * @return array<int, Section|Fieldset|Checkbox|Select|Textarea|TextInput|DateTimePicker>
      */
-    public function generateFields(string $fieldPrefix = ''): array
+    public function generateFields(): array
     {
         return [
-            TextInput::make($fieldPrefix . 'title')
+            TextInput::make('title')
                 ->required()
                 ->maxLength(100)
                 ->string(),
-            Textarea::make($fieldPrefix . 'description')
+            Textarea::make('description')
                 ->required()
                 ->string(),
-            DateTimePicker::make($fieldPrefix . 'due')
+            DateTimePicker::make('due')
                 ->label('Due Date'),
-            Select::make($fieldPrefix . 'assigned_to')
+            Select::make('assigned_to')
                 ->label('Assigned To')
                 ->relationship('assignedTo', 'name')
                 ->model(WorkflowTaskDetails::class)
