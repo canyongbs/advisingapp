@@ -50,6 +50,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class EditCampaign extends EditRecord
 {
@@ -99,7 +100,7 @@ class EditCampaign extends EditRecord
                             ->success()
                             ->title('Campaign archived successfully')
                             ->send();
-                    } catch (\Throwable $exception) {
+                    } catch (Throwable $exception) {
                         report($exception);
 
                         Notification::make()
