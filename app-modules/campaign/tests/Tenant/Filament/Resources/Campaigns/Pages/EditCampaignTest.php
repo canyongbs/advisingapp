@@ -36,17 +36,34 @@
 
 namespace AdvisingApp\Campaign\Tests\Tenant\Filament\Resources\Campaigns\Pages;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\EditCampaign;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ListCampaigns;
 use AdvisingApp\Campaign\Models\Campaign;
+use App\Models\User;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('archive action is visible on edit page', function () {
-    asSuperAdmin();
-
+    $user = User::factory()->licensed(LicenseType::cases())->create();
     $campaign = Campaign::factory()->enabled()->create();
+
+    // Minimum permissions to access the edit page
+    $user->givePermissionTo('campaign.view-any');
+    $user->givePermissionTo('campaign.*.view');
+    $user->givePermissionTo('campaign.*.update');
+    $user->givePermissionTo('group.*.view');
+
+    // Without delete permission, archive action should be hidden
+    actingAs($user);
+
+    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+        ->assertActionHidden('archive');
+
+    // Add campaign delete permission — now archive should be visible
+    $user->givePermissionTo('campaign.*.delete');
 
     livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertActionVisible('archive');
@@ -112,13 +129,4 @@ test('archive action redirects to index after archiving', function () {
     livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->callAction('archive')
         ->assertRedirect(ListCampaigns::getUrl());
-});
-
-test('archive action exists on edit page', function () {
-    asSuperAdmin();
-
-    $campaign = Campaign::factory()->enabled()->create();
-
-    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
-        ->assertActionExists('archive');
 });

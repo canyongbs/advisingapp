@@ -46,8 +46,10 @@ use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\DB;
 
 class EditCampaign extends EditRecord
 {
@@ -80,15 +82,34 @@ class EditCampaign extends EditRecord
     {
         return [
             ArchiveAction::make()
-                ->label(fn (Campaign $record): string => (bool) $record->getAttribute('enabled') ? 'Disable and Archive' : 'Archive')
-                ->modalHeading(fn (Campaign $record): string => (bool) $record->getAttribute('enabled') ? 'Disable and Archive Campaign' : 'Archive Campaign')
-                ->modalSubmitActionLabel(fn (Campaign $record): string => (bool) $record->getAttribute('enabled') ? 'Disable and Archive' : 'Archive')
+                ->label(fn (Campaign $record): string => $record->enabled ? 'Disable and Archive' : 'Archive')
+                ->modalHeading(fn (Campaign $record): string => $record->enabled ? 'Disable and Archive Campaign' : 'Archive Campaign')
+                ->modalSubmitActionLabel(fn (Campaign $record): string => $record->enabled ? 'Disable and Archive' : 'Archive')
                 ->hidden(fn (): bool => ! CampaignArchivingFeature::active())
                 ->action(function (Campaign $record): void {
-                    if ($record->enabled) {
-                        $record->forceFill(['enabled' => false])->save();
+                    try {
+                        DB::transaction(function () use ($record) {
+                            if ($record->enabled) {
+                                $record->update(['enabled' => false]);
+                            }
+                            $record->archive();
+                        });
+
+                        Notification::make()
+                            ->success()
+                            ->title('Campaign archived successfully')
+                            ->send();
+                    } catch (\Throwable $exception) {
+                        report($exception);
+
+                        Notification::make()
+                            ->danger()
+                            ->title('Failed to archive campaign')
+                            ->body($exception->getMessage())
+                            ->send();
+
+                        throw $exception;
                     }
-                    $record->archive();
                 }),
             DeleteAction::make(),
         ];
