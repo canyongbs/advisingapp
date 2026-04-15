@@ -54,8 +54,8 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Text;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Pages\Page;
@@ -287,9 +287,7 @@ class SendEngagementAction extends Action
                                             return $educatable !== null && EducatableContactabilityHelper::hasAnyValidRoute($educatable);
                                         })
                                         ->columnSpanFull(),
-                                    Placeholder::make('no_contact_info')
-                                        ->label('')
-                                        ->content('This recipient does not have valid contact information. Please select a different recipient.')
+                                    Text::make('This recipient does not have valid contact information. Please select a different recipient.')
                                         ->visible(function (Get $get) use ($action): bool {
                                             $educatable = $action->getEducatable() ?? match ($get('recipient_type')) {
                                                 'student' => Student::find($get('recipient_id')),
